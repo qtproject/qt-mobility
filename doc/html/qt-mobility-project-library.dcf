@@ -2978,8 +2978,7 @@
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemoteDrive</keyword>
         <keyword ref="qsystemstorageinfo.html#logicalDrives-prop">logicalDrives</keyword>
         <keyword ref="qsystemstorageinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemstorageinfo.html#storageAdded">storageAdded</keyword>
-        <keyword ref="qsystemstorageinfo.html#storageRemoved">storageRemoved</keyword>
+        <keyword ref="qsystemstorageinfo.html#logicalDrivesChanged">logicalDrivesChanged</keyword>
         <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
@@ -3567,6 +3566,9 @@
     </section>
     <section ref="classlists.html" title="Class and Function Documentation">
         <keyword ref="classlists.html">Class and Function Documentation</keyword>
+    </section>
+    <section ref="connectivity-api.html" title="Connectivity API (technology preview)">
+        <keyword ref="connectivity-api.html">Connectivity API (technology preview)</keyword>
     </section>
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>

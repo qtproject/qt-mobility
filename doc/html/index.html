@@ -36,6 +36,7 @@
 <li><a href="#service-framework">Service Framework</a></li>
 <li><a href="#system-information">System Information</a></li>
 <li><a href="#versit">Versit</a></li>
+<li><a href="#connectivity">Connectivity</a></li>
 </ul>
 <li><a href="#the-qtmobility-namespace">The QtMobility Namespace</a></li>
 <li><a href="#platform-compatibility">Platform Compatibility</a></li>
@@ -50,15 +51,16 @@
 <p>This release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
-<tr valign="top" class="even"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
-<tr valign="top" class="odd"><th><a href="location-overview.html">Location</a></th><td>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</td></tr>
-<tr valign="top" class="even"><th><a href="messaging.html">Messaging</a></th><td>The Messaging API enables access to messaging services.</td></tr>
-<tr valign="top" class="odd"><th><a href="multimedia.html">Multimedia</a></th><td>Provides a set of APIs to play and record media, and manage a collection of media content.</td></tr>
-<tr valign="top" class="even"><th><a href="publ-subs.html">Publish and Subscribe</a></th><td>The Publish and Subscribe API, containing Value Space, enables applications to read item values, navigate through and subscribe to change notifications.</td></tr>
-<tr valign="top" class="odd"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of Qt APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
-<tr valign="top" class="even"><th><a href="sensors-api.html">Sensors API</a></th><td>The Sensors API provides access to sensors.</td></tr>
-<tr valign="top" class="odd"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
-<tr valign="top" class="even"><th><a href="versit.html">Versit API</a></th><td>An API to manage Versit documents.</td></tr>
+<tr valign="top" class="even"><th><a href="connectivity-api.html">Connectivity API (technology preview)</a></th><td>The connectivity API facilitates communication with local devices.</td></tr>
+<tr valign="top" class="odd"><th><a href="contacts.html">Contacts</a></th><td>An API enabling clients to request contact data from local or remote backends.</td></tr>
+<tr valign="top" class="even"><th><a href="location-overview.html">Location</a></th><td>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</td></tr>
+<tr valign="top" class="odd"><th><a href="messaging.html">Messaging</a></th><td>The Messaging API enables access to messaging services.</td></tr>
+<tr valign="top" class="even"><th><a href="multimedia.html">Multimedia</a></th><td>Provides a set of APIs to play and record media, and manage a collection of media content.</td></tr>
+<tr valign="top" class="odd"><th><a href="publ-subs.html">Publish and Subscribe</a></th><td>The Publish and Subscribe API, containing Value Space, enables applications to read item values, navigate through and subscribe to change notifications.</td></tr>
+<tr valign="top" class="even"><th><a href="service-frameworks.html">Qt Service Framework</a></th><td>A set of Qt APIs to that allows clients to discover and instantiate arbitrary services.</td></tr>
+<tr valign="top" class="odd"><th><a href="sensors-api.html">Sensors API</a></th><td>The Sensors API provides access to sensors.</td></tr>
+<tr valign="top" class="even"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
+<tr valign="top" class="odd"><th><a href="versit.html">Versit API</a></th><td>An API to manage Versit documents.</td></tr>
 </table></p>
 <p>These APIs give the developer a range of desirable functions for a mobile platform, but now these functions become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
 <ul>
@@ -140,6 +142,10 @@
 <h4>Versit</h4>
 <p>An API to manage Versit <sup>&reg;</sup> documents, such as vCards.</p>
 <p>For more details see the <a href="versit.html">Versit API overview</a>.</p>
+<a name="connectivity"></a>
+<h4>Connectivity</h4>
+<p>An API for communicating with local devices. Currently covers APIs for Near Field Communication (NFC). As well as related protocols.</p>
+<p>For more details see the <a href="connectivity-api.html">Connectivity API overview</a>.</p>
 <a name="the-qtmobility-namespace"></a>
 <h3>The QtMobility Namespace</h3>
 <p>The QtMobility APIs are placed into the QtMobility namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
@@ -341,6 +347,20 @@
     <td bgcolor="green"></td>
 
     <td bgcolor="green"></td>
+    </tr>
+    <tr>
+    <td>Connectivity</td>
+    <td>ALPHA</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+
+    <td bgcolor="gray"></td>
     </tr>
     <p></p>
     <p></p>

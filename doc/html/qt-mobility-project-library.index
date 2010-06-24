@@ -6296,8 +6296,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="typeForDrive" fullname="QSystemStorageInfo::typeForDrive" href="qsystemstorageinfo.html#typeForDrive" location="qsystemstorageinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemStorageInfo::DriveType" signature="typeForDrive(const QString &amp; driveVolume)">
                 <parameter left="const QString &amp;" right="" name="driveVolume" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageAdded" fullname="QSystemStorageInfo::storageAdded" href="qsystemstorageinfo.html#storageAdded" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageAdded()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageRemoved" fullname="QSystemStorageInfo::storageRemoved" href="qsystemstorageinfo.html#storageRemoved" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageRemoved()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="logicalDrivesChanged" fullname="QSystemStorageInfo::logicalDrivesChanged" href="qsystemstorageinfo.html#logicalDrivesChanged" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="logicalDrivesChanged(bool added)">
+                <parameter left="bool" right="" name="added" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" href="qvaluespacesubscriber.html" location="qvaluespacesubscriber.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceSubscriber::path" href="qvaluespacesubscriber.html#path-prop" location="qvaluespacesubscriber.h" type="QString">
@@ -7340,6 +7341,10 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SYMBIAN_SETTINGS_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamsControl_iid" href="qmediastreamscontrol.html#QMediaStreamsControl_iid" location="qmediastreamscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaStreamsControl" type="" signature="QMediaStreamsControl_iid()"/>
+        <page access="public" status="commendable" name="connectivity-api.html" href="connectivity-api.html" subtype="page" title="Connectivity API (technology preview)" fulltitle="Connectivity API (technology preview)" subtitle="" location="connectivity.qdoc">
+            <contents name="main-classes" title="Main Classes" level="1"/>
+            <contents name="nfc-classes" title="NFC Classes" level="2"/>
+        </page>
         <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
             <contents name="class-lists" title="Class Lists" level="2"/>
             <contents name="function-lists" title="Function Lists" level="2"/>
@@ -7589,6 +7594,7 @@
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="versit" title="Versit" level="2"/>
+            <contents name="connectivity" title="Connectivity" level="2"/>
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatibility" title="Platform Compatibility" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
@@ -7626,6 +7632,7 @@
         </page>
         <page access="public" status="commendable" name="examples.html" href="examples.html" subtype="page" title="Qt Mobility Examples" fulltitle="Qt Mobility Examples" subtitle="" location="examples.qdoc">
             <contents name="bearer-management" title="Bearer Management" level="2"/>
+            <contents name="connectivity" title="Connectivity" level="2"/>
             <contents name="contacts" title="Contacts" level="2"/>
             <contents name="location" title="Location" level="2"/>
             <contents name="messaging" title="Messaging" level="2"/>

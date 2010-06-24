@@ -648,6 +648,7 @@
                     <section ref="annotated.html" title="Annotated Class List"/>
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
+                    <section ref="connectivity-api.html" title="Connectivity API (technology preview)"/>
                     <section ref="contacts.html" title="Contacts"/>
                     <section ref="contactsusage.html" title="Contacts API Usage"/>
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
@@ -699,6 +700,7 @@
             <keyword name="Bearer Monitor Example" id="Bearer Monitor Example" ref="bearermonitor.html"/>
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
+            <keyword name="Connectivity API (technology preview)" id="Connectivity API (technology preview)" ref="connectivity-api.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
             <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusage.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
@@ -3152,8 +3154,7 @@
             <keyword name="QSystemStorageInfo::CdromDrive" id="QSystemStorageInfo::CdromDrive" ref="qsystemstorageinfo.html#DriveType-enum"/>
             <keyword name="availableDiskSpace" id="QSystemStorageInfo::availableDiskSpace" ref="qsystemstorageinfo.html#availableDiskSpace"/>
             <keyword name="logicalDrives" id="QSystemStorageInfo::logicalDrives" ref="qsystemstorageinfo.html#logicalDrives-prop"/>
-            <keyword name="storageAdded" id="QSystemStorageInfo::storageAdded" ref="qsystemstorageinfo.html#storageAdded"/>
-            <keyword name="storageRemoved" id="QSystemStorageInfo::storageRemoved" ref="qsystemstorageinfo.html#storageRemoved"/>
+            <keyword name="logicalDrivesChanged" id="QSystemStorageInfo::logicalDrivesChanged" ref="qsystemstorageinfo.html#logicalDrivesChanged"/>
             <keyword name="totalDiskSpace" id="QSystemStorageInfo::totalDiskSpace" ref="qsystemstorageinfo.html#totalDiskSpace"/>
             <keyword name="typeForDrive" id="QSystemStorageInfo::typeForDrive" ref="qsystemstorageinfo.html#typeForDrive"/>
             <keyword name="~QSystemStorageInfo" id="QSystemStorageInfo::~QSystemStorageInfo" ref="qsystemstorageinfo.html#dtor.QSystemStorageInfo"/>
@@ -3778,6 +3779,7 @@
             <file>qversitdocument.html</file>
             <file>player-videowidget-h.html</file>
             <file>qnetworkconfiguration.html</file>
+            <file>connectivity-api.html</file>
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
             <file>sysinfo-examples-qrc.html</file>
