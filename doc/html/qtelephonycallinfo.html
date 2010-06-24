@@ -22,8 +22,8 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a></b> { Undefined, NoCall, Ringing, InProgress, OnHold, Dropped }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#CallType-enum">CallType</a></b> { Unknown, Any, Voip, Voice, Video }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a></b> { Idle, Dialing, Alerting, Connected, ..., OnHold }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#CallType-enum">CallType</a></b> { Any, Text, Data, Video, Voice, Other }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -32,8 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#QTelephonyCallInfo">QTelephonyCallInfo</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#QTelephonyCallInfo-2">QTelephonyCallInfo</a></b> ( const QTelephonyCallInfo &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#dtor.QTelephonyCallInfo">~QTelephonyCallInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#callIdentifier">callIdentifier</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;quint32&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#contacts">contacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#remotePartyIdentifier">remotePartyIdentifier</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#status">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#subTyp">subTyp</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#type">type</a></b> () const</td></tr>
@@ -46,38 +45,42 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QTelephonyCallInfo/CallStatus"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Undefined"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/NoCall"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Ringing"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/InProgress"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Idle"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Dialing"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Alerting"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Connected"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Disconnecting"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Incomming"></a>
 <a name="//apple_ref/cpp/econst/QTelephonyCallInfo/OnHold"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Dropped"></a>
 <h3 class="fn"><a name="CallStatus-enum"></a>enum QTelephonyCallInfo::CallStatus</h3>
 <p>This enum type is used to describe the status of a call. A <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object can have a status of:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Undefined</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The call status is not defined.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::NoCall</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The status of the call is not active.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Ringing</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The status of the call is ringing.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::InProgress</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The status of the call is in progress.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::OnHold</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The status of the call is on hold.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Dropped</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The call is dropped.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Idle</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The call status is not defined.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Dialing</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The status of the call is dialing.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Alerting</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The status of the call is alerting.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Connected</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The status of the call is connected.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Disconnecting</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The status of the call is disconnected.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Incomming</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The status of the call is incomming.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::OnHold</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The status of the call is on hold.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QTelephonyCallInfo/CallType"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Unknown"></a>
 <a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Any"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Voip"></a>
-<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Voice"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Text"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Data"></a>
 <a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Video"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Voice"></a>
+<a name="//apple_ref/cpp/econst/QTelephonyCallInfo/Other"></a>
 <h3 class="fn"><a name="CallType-enum"></a>enum QTelephonyCallInfo::CallType</h3>
 <p>This enum decribes the type of the call. A <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object can be a type of:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Unknown</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The call type is not defined.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Any</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The call type can be any type.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Voip</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The call is a Voip call.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Voice</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The call is a Voice call.</td></tr>
-<tr><td valign="top"><tt>QTelephonyCallInfo::Video</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The call is a Video call.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Any</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The call type can be any type.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Text</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The call is a text base call.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Data</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The call is a data based call.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Video</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The call is a video based call.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Voice</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The call is a voice based call.</td></tr>
+<tr><td valign="top"><tt>QTelephonyCallInfo::Other</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The call is a an unknown base call.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -90,12 +93,9 @@
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/~QTelephonyCallInfo"></a>
 <h3 class="fn"><a name="dtor.QTelephonyCallInfo"></a>QTelephonyCallInfo::~QTelephonyCallInfo ()</h3>
 <p>Destructor of a call info object.</p>
-<a name="//apple_ref/cpp/instm/QTelephonyCallInfo/callIdentifier"></a>
-<h3 class="fn"><a name="callIdentifier"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QTelephonyCallInfo::callIdentifier () const</h3>
-<p>Gives back the id of a call. The callIdentifier contains the value dependend on the call <a href="qtelephonycallinfo.html#CallType-enum">CallType</a>. It can be the phone number, IP address or something else.</p>
-<a name="//apple_ref/cpp/instm/QTelephonyCallInfo/contacts"></a>
-<h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a>&gt; QTelephonyCallInfo::contacts () const</h3>
-<p>Gives back a list of contacts ids (can be used in <a href="qcontact.html">QContact</a>). A contact id represent an id to find the contact in the system. If you want to find the contact information for a <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object then call this function.</p>
+<a name="//apple_ref/cpp/instm/QTelephonyCallInfo/remotePartyIdentifier"></a>
+<h3 class="fn"><a name="remotePartyIdentifier"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QTelephonyCallInfo::remotePartyIdentifier () const</h3>
+<p>Gives back the id of a call. The remotePartyIdentifier contains the value dependend on the call <a href="qtelephonycallinfo.html#CallType-enum">CallType</a>. It can be the phone number, IP address or something else.</p>
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/status"></a>
 <h3 class="fn"><a name="status"></a><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a> QTelephonyCallInfo::status () const</h3>
 <p>Gives back the status of the call. A call can be in different conditions like ringing, dropped and so on. You can use this property if you want to know about the current condition of the call.</p>

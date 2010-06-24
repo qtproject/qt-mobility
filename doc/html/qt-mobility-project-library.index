@@ -533,22 +533,23 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QTelephonyCallInfo" fullname="QTelephonyCallInfo::~QTelephonyCallInfo" href="qtelephonycallinfo.html#dtor.QTelephonyCallInfo" location="qtelephonycallinfo.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QTelephonyCallInfo()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="CallType" fullname="QTelephonyCallInfo::CallType" href="qtelephonycallinfo.html#CallType-enum" location="qtelephonycallinfo.h">
-                <value name="Unknown" value="0"/>
-                <value name="Any" value="1"/>
-                <value name="Voip" value="2"/>
-                <value name="Voice" value="3"/>
-                <value name="Video" value="4"/>
+                <value name="Any" value="0"/>
+                <value name="Text" value="1"/>
+                <value name="Data" value="2"/>
+                <value name="Video" value="3"/>
+                <value name="Voice" value="4"/>
+                <value name="Other" value="5"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="CallStatus" fullname="QTelephonyCallInfo::CallStatus" href="qtelephonycallinfo.html#CallStatus-enum" location="qtelephonycallinfo.h">
-                <value name="Undefined" value="0"/>
-                <value name="NoCall" value="1"/>
-                <value name="Ringing" value="2"/>
-                <value name="InProgress" value="3"/>
-                <value name="OnHold" value="4"/>
-                <value name="Dropped" value="5"/>
+                <value name="Idle" value="0"/>
+                <value name="Dialing" value="1"/>
+                <value name="Alerting" value="2"/>
+                <value name="Connected" value="3"/>
+                <value name="Disconnecting" value="4"/>
+                <value name="Incomming" value="5"/>
+                <value name="OnHold" value="6"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="callIdentifier" fullname="QTelephonyCallInfo::callIdentifier" href="qtelephonycallinfo.html#callIdentifier" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="callIdentifier() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QTelephonyCallInfo::contacts" href="qtelephonycallinfo.html#contacts" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;quint32&gt;" signature="contacts() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remotePartyIdentifier" fullname="QTelephonyCallInfo::remotePartyIdentifier" href="qtelephonycallinfo.html#remotePartyIdentifier" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="remotePartyIdentifier() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTelephonyCallInfo::type" href="qtelephonycallinfo.html#type" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallType" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTyp" fullname="QTelephonyCallInfo::subTyp" href="qtelephonycallinfo.html#subTyp" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subTyp() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QTelephonyCallInfo::status" href="qtelephonycallinfo.html#status" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallStatus" signature="status() const"/>

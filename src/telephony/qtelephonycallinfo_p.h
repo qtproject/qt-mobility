@@ -67,7 +67,7 @@ struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
-        : type(QTelephonyCallInfo::Any)
+        : type(QTelephonyCallInfo::Other)
         , subTyp("")
         , status(QTelephonyCallInfo::Idle) { }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)

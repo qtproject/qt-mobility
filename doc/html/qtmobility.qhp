@@ -2973,20 +2973,21 @@
             <keyword name="~QTapSensor" id="QTapSensor::~QTapSensor" ref="qtapsensor.html#dtor.QTapSensor"/>
             <keyword name="QTelephonyCallInfo" id="QTelephonyCallInfo" ref="qtelephonycallinfo.html"/>
             <keyword name="QTelephonyCallInfo::CallStatus" id="QTelephonyCallInfo::CallStatus" ref="qtelephonycallinfo.html#CallStatus-enum"/>
-            <keyword name="QTelephonyCallInfo::Undefined" id="QTelephonyCallInfo::Undefined" ref="qtelephonycallinfo.html#CallStatus-enum"/>
-            <keyword name="QTelephonyCallInfo::NoCall" id="QTelephonyCallInfo::NoCall" ref="qtelephonycallinfo.html#CallStatus-enum"/>
-            <keyword name="QTelephonyCallInfo::Ringing" id="QTelephonyCallInfo::Ringing" ref="qtelephonycallinfo.html#CallStatus-enum"/>
-            <keyword name="QTelephonyCallInfo::InProgress" id="QTelephonyCallInfo::InProgress" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Idle" id="QTelephonyCallInfo::Idle" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Dialing" id="QTelephonyCallInfo::Dialing" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Alerting" id="QTelephonyCallInfo::Alerting" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Connected" id="QTelephonyCallInfo::Connected" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Disconnecting" id="QTelephonyCallInfo::Disconnecting" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Incomming" id="QTelephonyCallInfo::Incomming" ref="qtelephonycallinfo.html#CallStatus-enum"/>
             <keyword name="QTelephonyCallInfo::OnHold" id="QTelephonyCallInfo::OnHold" ref="qtelephonycallinfo.html#CallStatus-enum"/>
-            <keyword name="QTelephonyCallInfo::Dropped" id="QTelephonyCallInfo::Dropped" ref="qtelephonycallinfo.html#CallStatus-enum"/>
             <keyword name="QTelephonyCallInfo::CallType" id="QTelephonyCallInfo::CallType" ref="qtelephonycallinfo.html#CallType-enum"/>
-            <keyword name="QTelephonyCallInfo::Unknown" id="QTelephonyCallInfo::Unknown" ref="qtelephonycallinfo.html#CallType-enum"/>
             <keyword name="QTelephonyCallInfo::Any" id="QTelephonyCallInfo::Any" ref="qtelephonycallinfo.html#CallType-enum"/>
-            <keyword name="QTelephonyCallInfo::Voip" id="QTelephonyCallInfo::Voip" ref="qtelephonycallinfo.html#CallType-enum"/>
-            <keyword name="QTelephonyCallInfo::Voice" id="QTelephonyCallInfo::Voice" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Text" id="QTelephonyCallInfo::Text" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Data" id="QTelephonyCallInfo::Data" ref="qtelephonycallinfo.html#CallType-enum"/>
             <keyword name="QTelephonyCallInfo::Video" id="QTelephonyCallInfo::Video" ref="qtelephonycallinfo.html#CallType-enum"/>
-            <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier"/>
-            <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts"/>
+            <keyword name="QTelephonyCallInfo::Voice" id="QTelephonyCallInfo::Voice" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Other" id="QTelephonyCallInfo::Other" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="remotePartyIdentifier" id="QTelephonyCallInfo::remotePartyIdentifier" ref="qtelephonycallinfo.html#remotePartyIdentifier"/>
             <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status"/>
             <keyword name="subTyp" id="QTelephonyCallInfo::subTyp" ref="qtelephonycallinfo.html#subTyp"/>
             <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type"/>
