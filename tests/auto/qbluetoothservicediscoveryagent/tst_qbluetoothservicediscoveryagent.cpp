@@ -51,7 +51,6 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QBluetoothDeviceInfo)
-Q_DECLARE_METATYPE(QList<QBluetoothUuid>)
 
 // Maximum time to for bluetooth device scan
 const int MaxScanTime = 5 * 60 * 1000;  // 5 minutes in ms
