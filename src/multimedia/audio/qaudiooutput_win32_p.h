@@ -55,7 +55,6 @@
 
 #include <windows.h>
 #include <mmsystem.h>
-#include <audiodefs.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qtimer.h>
