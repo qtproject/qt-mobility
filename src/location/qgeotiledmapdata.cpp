@@ -47,6 +47,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qgeomaprectangleobject.h"
+#include "qgeomapmarkerobject.h"
 
 #include <QDebug>
 
@@ -452,7 +453,7 @@ qulonglong QGeoTiledMapDataPrivate::tileKey(int row, int col, int zoomLevel)
     return result;
 }
 
-bool QGeoTiledMapDataPrivate::intersects(const QGeoMapObject *mapObject, const QRectF &rect) const
+bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF &rect) const
 {
     if (!mapObject)
         return false;
@@ -464,13 +465,19 @@ bool QGeoTiledMapDataPrivate::intersects(const QGeoMapObject *mapObject, const Q
     return rect.intersects(objInfo[mapObject]->boundingBox);
 }
 
-void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, const QGeoMapObject *mapObject) const
+void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const
 {
+    if (!mapObject)
+        return;
+
     if (mapObject->type() == QGeoMapObject::RectangleType)
-        paintMapRectangleObject(painter, static_cast<const QGeoMapRectangleObject*>(mapObject));
+        paintMapRectangle(painter, static_cast<QGeoMapRectangleObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::MarkerType)
+        paintMapMarker(painter, static_cast<QGeoMapMarkerObject*>(mapObject));
+
 }
 
-void QGeoTiledMapDataPrivate::paintMapRectangleObject(QPainter &painter, const QGeoMapRectangleObject *rectangle) const
+void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const
 {
     if (!objInfo.contains(rectangle))
         return;
@@ -480,13 +487,36 @@ void QGeoTiledMapDataPrivate::paintMapRectangleObject(QPainter &painter, const Q
     painter.drawRect(rect);
 }
 
-void QGeoTiledMapDataPrivate::calculateInfo(const QGeoMapObject *mapObject)
+void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const
 {
-    if (mapObject->type() == QGeoMapObject::RectangleType)
-        calculateMapRectangleInfo(static_cast<const QGeoMapRectangleObject*>(mapObject));
+    if (!objInfo.contains(marker))
+        return;
+
+    QPixmap icon = marker->icon();
+
+    if (icon.isNull())
+        return;
+
+    QGeoTiledMapObjectInfo* info = objInfo.value(marker);
+    QRectF rect = info->boundingBox.translated(-(screenRect.topLeft()));
+    painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
 }
 
-void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(const QGeoMapRectangleObject *rectangle)
+void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
+{
+    if (!mapObject)
+        return;
+
+    if (objInfo.contains(mapObject))
+        delete objInfo.take(mapObject);
+
+    if (mapObject->type() == QGeoMapObject::RectangleType)
+        calculateMapRectangleInfo(static_cast<QGeoMapRectangleObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::MarkerType)
+        calculateMapMarkerInfo(static_cast<QGeoMapMarkerObject*>(mapObject));
+}
+
+void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle)
 {
     qulonglong topLeftX;
     qulonglong topLeftY;
@@ -496,12 +526,23 @@ void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(const QGeoMapRectangleOb
     q_ptr->coordinateToWorldPixel(rectangle->boundingBox().topLeft(), &topLeftX, &topLeftY);
     q_ptr->coordinateToWorldPixel(rectangle->boundingBox().bottomRight(), &bottomRightX, &bottomRightY);
 
-    if (objInfo.contains(rectangle))
-        delete objInfo.take(rectangle);
-
     QGeoTiledMapObjectInfo* info = new QGeoTiledMapObjectInfo;
     info->boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
     objInfo[rectangle] = info;
+}
+
+void QGeoTiledMapDataPrivate::calculateMapMarkerInfo(QGeoMapMarkerObject *marker)
+{
+    qulonglong topLeftX;
+    qulonglong topLeftY;
+    
+    q_ptr->coordinateToWorldPixel(marker->boundingBox().topLeft(), &topLeftX, &topLeftY);
+
+    QPointF topLeft(topLeftX, topLeftY);
+    topLeft += marker->anchor();
+    QGeoTiledMapObjectInfo* info = new QGeoTiledMapObjectInfo;
+    info->boundingBox = QRectF(topLeft, marker->icon().size());
+    objInfo[marker] = info;
 }
 
 QTM_END_NAMESPACE

@@ -320,9 +320,13 @@ QGeoMapWidget::MapType QGeoMapWidget::mapType() const
 */
 void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
 {
+    if (!mapObject)
+        return;
+
     if (d_ptr->mapData)
         d_ptr->mapData->addMapObject(mapObject);
-    // TODO update display if visible?
+
+    this->update();
 }
 
 /*!
