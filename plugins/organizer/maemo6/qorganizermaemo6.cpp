@@ -626,12 +626,26 @@ RecurrenceRule* QOrganizerItemMaemo6Engine::createKRecurrenceRule(
     }
     kRRule->setFrequency(qRRule.interval());
     kRRule->setDuration(qRRule.count() > 1 ? qRRule.count() : -1);
-    QList<RecurrenceRule::WDayPos> days;
-    foreach (Qt::DayOfWeek day, qRRule.daysOfWeek()) {
-        days.append(RecurrenceRule::WDayPos(0, (short)day)); // first argument is setByPos
-                                                             // - unimplemented for now
+
+    QList<RecurrenceRule::WDayPos> daysOfWeek;
+    foreach (Qt::DayOfWeek dayOfWeek, qRRule.daysOfWeek()) {
+        // 0 argument is setByPos (unimplemented for now)
+        daysOfWeek.append(RecurrenceRule::WDayPos(0, (short)dayOfWeek));
     }
-    kRRule->setByDays(days);
+    kRRule->setByDays(daysOfWeek);
+
+    kRRule->setByMonthDays(qRRule.daysOfMonth());
+
+    kRRule->setByYearDays(qRRule.daysOfYear());
+
+    kRRule->setByWeekNumbers(qRRule.weeksOfYear());
+
+    QList<int> months;
+    foreach (QOrganizerItemRecurrenceRule::Month month, qRRule.months()) {
+        months.append((int)month);
+    }
+    kRRule->setByMonths(months);
+
     QDate endDate = qRRule.endDate();
     if (endDate.isValid()) {
         // The endDate is non-inclusive, as per iCalendar
