@@ -43,6 +43,7 @@
 #include "monthpage.h"
 #include "daypage.h"
 #include "eventeditpage.h"
+#include "todoeditpage.h"
 #include <QtGui>
 #include <qtorganizer.h>
 
@@ -61,6 +62,7 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     m_monthPage = new MonthPage(m_stackedWidget);
     m_dayPage = new DayPage(m_stackedWidget);
     m_eventEditPage = new EventEditPage(m_stackedWidget);
+    m_todoEditPage = new TodoEditPage(m_stackedWidget);
 
     //qRegisterMetaType<QOrganizerItemManager>("QOrganizerItemManager");
     qRegisterMetaType<QOrganizerItem>("QOrganizerItem");
@@ -70,10 +72,12 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_dayPage, SIGNAL(showMonthPage()), this, SLOT(activateMonthPage()), Qt::QueuedConnection);
     connect(m_dayPage, SIGNAL(showEditPage(QOrganizerItemManager *, const QOrganizerItem &)), this, SLOT(activateEditPage(QOrganizerItemManager *, const QOrganizerItem &)), Qt::QueuedConnection);
     connect(m_eventEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
+    connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
 
     m_stackedWidget->addWidget(m_monthPage);
     m_stackedWidget->addWidget(m_dayPage);
     m_stackedWidget->addWidget(m_eventEditPage);
+    m_stackedWidget->addWidget(m_todoEditPage);
     m_stackedWidget->setCurrentIndex(0);
 
     setCentralWidget(m_stackedWidget);
@@ -111,8 +115,13 @@ void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrgan
         m_eventEditPage->eventChanged(manager, event);
         m_stackedWidget->setCurrentWidget(m_eventEditPage);
     }
+    else if (item.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo todo = static_cast<QOrganizerTodo>(item);
+        m_dayPage->dayChanged(manager, todo.startDateTime().date()); // edit always comes back to day page
+        m_todoEditPage->todoChanged(manager, todo);
+        m_stackedWidget->setCurrentWidget(m_todoEditPage);
+    }
     // TODO:
     //else if (item.type() == QOrganizerItemType::TypeJournal)
     //else if (item.type() == QOrganizerItemType::TypeNote)
-    //else if (item.type() == QOrganizerItemType::TypeTodo)
 }

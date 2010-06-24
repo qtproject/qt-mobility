@@ -37,49 +37,53 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TODOEDITPAGE_H_
+#define TODOEDITPAGE_H_
 
-#ifndef CALENDARDEMO_H
-#define CALENDARDEMO_H
-
-#include <QtGui/QMainWindow>
+#include <QWidget>
 #include <QDate>
 #include <qmobilityglobal.h>
+#include <qorganizeritemid.h>
+#include <qorganizertodo.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-#define ORGANIZER_ITEM_ROLE Qt::UserRole+1
+class QComboBox;
+class QLineEdit;
+class QDateTimeEdit;
 
-class QStackedWidget;
-class MonthPage;
-class DayPage;
-class EventEditPage;
-class TodoEditPage;
-
-class CalendarDemo : public QMainWindow
+class TodoEditPage : public QWidget
 {
     Q_OBJECT
 
 public:
-    CalendarDemo(QWidget *parent = 0);
-    ~CalendarDemo();
+    TodoEditPage(QWidget *parent = 0);
+    ~TodoEditPage();
 
 public Q_SLOTS:
-    void activateMonthPage();
-    void activateDayPage();
-    void activateNewDayPage(QOrganizerItemManager *manager, QDate date);
-    void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
+    void cancelClicked();
+    void saveClicked();
+    void todoChanged(QOrganizerItemManager *manager, const QOrganizerTodo &todo);
+
+Q_SIGNALS:
+    void showDayPage();
+
+protected: // from QWidget
+    void showEvent(QShowEvent *event);
 
 private:
     QOrganizerItemManager *m_manager;
-    QStackedWidget *m_stackedWidget;
-    MonthPage *m_monthPage;
-    DayPage *m_dayPage;
-    EventEditPage *m_eventEditPage;
-    TodoEditPage *m_todoEditPage;
+    QOrganizerTodo m_organizerTodo;
+    QLineEdit *m_subjectEdit;
+    QDateTimeEdit *m_startTimeEdit;
+    QDateTimeEdit *m_dueTimeEdit;
+    QComboBox *m_priorityEdit;
+    QComboBox *m_statusEdit;
 };
 
-#endif // CALENDARDEMO_H
+#endif // TODOEDITPAGE_H_

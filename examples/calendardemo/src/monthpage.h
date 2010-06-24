@@ -67,6 +67,7 @@ public:
 public Q_SLOTS:
     void backendChanged(const QString &managerName);
     void addNewEvent();
+    void addNewTodo();
     void refresh();
     void refreshDayItems();
     void currentMonthChanged();
