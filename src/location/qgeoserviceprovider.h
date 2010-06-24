@@ -53,10 +53,10 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
+class QGeoSearchManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
-class QGeoPlacesManagerEngine;
+class QGeoSearchManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
 class QGeoServiceProviderPrivate;
@@ -77,7 +77,7 @@ public:
 
     ~QGeoServiceProvider();
 
-    QGeoPlacesManager* placesManager() const;
+    QGeoSearchManager* searchManager() const;
     QGeoMappingManager* mappingManager() const;
     QGeoRoutingManager* routingManager() const;
 

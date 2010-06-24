@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_P_H
-#define QGEOPLACESMANAGER_P_H
+#ifndef QGEOSEARCHMANAGER_NOKIA_P_H
+#define QGEOSEARCHMANAGER_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,27 +53,41 @@
 // We mean it.
 //
 
-#include "qgeoplacesmanager.h"
+#include <qgeoserviceprovider.h>
+#include <qgeosearchmanagerengine.h>
 
-#include <QList>
+#include <QNetworkAccessManager>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QLandmarkManager;
-class QGeoPlacesManagerEngine;
-
-class QGeoPlacesManagerPrivate
+class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
+    Q_OBJECT
 public:
-    QGeoPlacesManagerPrivate();
-    QGeoPlacesManagerPrivate(const QGeoPlacesManagerPrivate &other);
-    ~QGeoPlacesManagerPrivate();
+    QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                 QGeoServiceProvider::Error *error,
+                                 QString *errorString);
+    ~QGeoSearchManagerEngineNokia();
 
-    QGeoPlacesManagerPrivate& operator= (const QGeoPlacesManagerPrivate &other);
+    QGeoSearchReply* geocode(const QGeoAddress &address,
+                             const QGeoBoundingBox &bounds);
+    QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
+                             const QGeoBoundingBox &bounds);
 
-    QGeoPlacesManagerEngine *engine;
+    QGeoSearchReply* placesSearch(const QString &searchString,
+                                  QGeoSearchManager::SearchTypes searchTypes,
+                                  const QGeoBoundingBox &bounds);
+
+private slots:
+    void placesFinished();
+    void placesError(QGeoSearchReply::Error error, const QString &errorString);
+
+private:
+    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    QGeoSearchReply* search(QString requestString);
+
+    QNetworkAccessManager *m_networkManager;
+    QString m_host;
 };
-
-QTM_END_NAMESPACE
 
 #endif

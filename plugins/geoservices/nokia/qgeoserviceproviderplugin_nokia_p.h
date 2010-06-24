@@ -69,7 +69,7 @@ public:
     QString providerName() const;
     int providerVersion() const;
 
-    QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
                                                        QGeoServiceProvider::Error *error,
                                                        QString *errorString) const;
     QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,

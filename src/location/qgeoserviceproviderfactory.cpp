@@ -84,7 +84,7 @@ amongst the plugins.
 */
 
 /*!
-    Returns a QGeoPlacesManagerEngine instance which implements as much of the
+    Returns a QGeoSearchManagerEngine instance which implements as much of the
     places searching functionality as the service provider supports.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
@@ -96,7 +96,7 @@ amongst the plugins.
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
 {

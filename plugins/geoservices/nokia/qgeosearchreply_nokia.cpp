@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesreply_nokia_p.h"
+#include "qgeosearchreply_nokia_p.h"
 #include "qgeocodexmlparser_p.h"
 
-QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent)
-        : QGeoPlacesReply(parent),
+QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
+        : QGeoSearchReply(parent),
         m_reply(reply)
 {
     connect(m_reply,
@@ -57,21 +57,21 @@ QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent
             SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
-QGeoPlacesReplyNokia::~QGeoPlacesReplyNokia()
+QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
 {
     //TODO: possible mem leak -> m_reply->deleteLater() ?
 }
 
-void QGeoPlacesReplyNokia::abort()
+void QGeoSearchReplyNokia::abort()
 {
     m_reply->abort();
     m_reply->deleteLater();
 }
 
-void QGeoPlacesReplyNokia::networkFinished()
+void QGeoSearchReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
+        setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
         return;
     }
@@ -84,14 +84,14 @@ void QGeoPlacesReplyNokia::networkFinished()
         setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoPlacesReply::ParseError, "The response from the service was not in a recognisable format.");
+        setError(QGeoSearchReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
     m_reply->deleteLater();
 }
 
-void QGeoPlacesReplyNokia::networkError(QNetworkReply::NetworkError error)
+void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
+    setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

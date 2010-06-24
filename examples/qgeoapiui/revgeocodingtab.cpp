@@ -53,7 +53,7 @@
 
 ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
         QWidget(parent),
-        m_placesManager(NULL)
+        m_searchManager(NULL)
 {
     QLabel *locationlbl = new QLabel(tr("Location:"));
     m_locLong = new QLineEdit("13.377");
@@ -92,41 +92,41 @@ ReverseGeocodingTab::~ReverseGeocodingTab()
 {
 }
 
-void ReverseGeocodingTab::initialize(QGeoPlacesManager *placesManager)
+void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
 {
-    m_placesManager = placesManager;
-    if (m_placesManager) {
-        QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
-                         SLOT(replyFinished(QGeoPlacesReply*)));
-        QObject::connect(m_placesManager,
-                         SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)), this,
-                         SLOT(resultsError(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
+    m_searchManager = searchManager;
+    if (m_searchManager) {
+        QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
+                         SLOT(replyFinished(QGeoSearchReply*)));
+        QObject::connect(m_searchManager,
+                         SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
     }
 }
 
 void ReverseGeocodingTab::on_btnRequest_clicked()
 {
-    if (m_placesManager) {
+    if (m_searchManager) {
         QGeoCoordinate coord(m_locLat->text().toDouble(), m_locLong->text().toDouble());
 
         m_resultTree->clear();
 
-        m_placesManager->geocode(coord);
+        m_searchManager->geocode(coord);
     } else {
         QMessageBox::warning(this, tr("Reverse GeoCoding"), tr("No geocoding service available."));
     }
 }
 
-void ReverseGeocodingTab::replyFinished(QGeoPlacesReply* reply)
+void ReverseGeocodingTab::replyFinished(QGeoSearchReply* reply)
 {
-    if (!isHidden() && reply->error() == QGeoPlacesReply::NoError) {
+    if (!isHidden() && reply->error() == QGeoSearchReply::NoError) {
         PlacePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
     }
 }
 
-void ReverseGeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
+void ReverseGeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString)
 {
     Q_UNUSED(errorCode)
 

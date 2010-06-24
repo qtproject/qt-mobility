@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_P_H
-#define QGEOPLACESREPLY_P_H
+#ifndef QGEOSEARCHREPLY_P_H
+#define QGEOSEARCHREPLY_P_H
 
 //
 //  W A R N I N G
@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeoplacesreply.h"
+#include "qgeosearchreply.h"
 
 #include "qgeoboundingbox.h"
 
@@ -63,17 +63,17 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoPlace;
 
-class QGeoPlacesReplyPrivate
+class QGeoSearchReplyPrivate
 {
 public:
-    QGeoPlacesReplyPrivate();
-    QGeoPlacesReplyPrivate(QGeoPlacesReply::Error error, const QString& errorString);
-    QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &other);
-    ~QGeoPlacesReplyPrivate();
+    QGeoSearchReplyPrivate();
+    QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString& errorString);
+    QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &other);
+    ~QGeoSearchReplyPrivate();
 
-    QGeoPlacesReplyPrivate& operator= (const QGeoPlacesReplyPrivate &other);
+    QGeoSearchReplyPrivate& operator= (const QGeoSearchReplyPrivate &other);
 
-    QGeoPlacesReply::Error error;
+    QGeoSearchReply::Error error;
     QString errorString;
     bool isFinished;
 

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGERENGINE_P_H
-#define QGEOPLACESMANAGERENGINE_P_H
+#ifndef QGEOSEARCHMANAGER_P_H
+#define QGEOSEARCHMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -53,32 +53,25 @@
 // We mean it.
 //
 
-#include "qgeoplacesmanagerengine.h"
+#include "qgeosearchmanager.h"
 
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
+class QGeoSearchManagerEngine;
 
-class QGeoPlacesManagerEnginePrivate
+class QGeoSearchManagerPrivate
 {
 public:
-    QGeoPlacesManagerEnginePrivate(const QMap<QString, QString> &parameters);
-    QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other);
-    ~QGeoPlacesManagerEnginePrivate();
+    QGeoSearchManagerPrivate();
+    QGeoSearchManagerPrivate(const QGeoSearchManagerPrivate &other);
+    ~QGeoSearchManagerPrivate();
 
-    QGeoPlacesManagerEnginePrivate& operator= (const QGeoPlacesManagerEnginePrivate &other);
+    QGeoSearchManagerPrivate& operator= (const QGeoSearchManagerPrivate &other);
 
-    QString managerName;
-    QMap<QString, QString> managerParameters;
-    int managerVersion;
-
-    QLandmarkManager *defaultLandmarkManager;
-    QList<QLandmarkManager*> additionalLandmarkManagers;
-
-    bool supportsGeocoding;
-    QGeoPlacesManager::SearchTypes supportedSearchTypes;
+    QGeoSearchManagerEngine *engine;
 };
 
 QTM_END_NAMESPACE

@@ -44,7 +44,7 @@
 
 #include <QWidget>
 
-#include <qgeoplacesmanager.h>
+#include <qgeosearchmanager.h>
 
 class QTreeWidget;
 class QLineEdit;
@@ -60,15 +60,15 @@ public:
     ~ReverseGeocodingTab();
 
 public slots:
-    void initialize(QGeoPlacesManager *placesManager);
+    void initialize(QGeoSearchManager *searchManager);
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QGeoPlacesReply* reply);
-    void resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString);
+    void replyFinished(QGeoSearchReply* reply);
+    void resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString);
 
 private:
-    QGeoPlacesManager *m_placesManager;
+    QGeoSearchManager *m_searchManager;
     QLineEdit *m_locLong;
     QLineEdit *m_locLat;
     QTreeWidget *m_resultTree;
