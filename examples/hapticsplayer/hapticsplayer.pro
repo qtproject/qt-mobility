@@ -12,8 +12,6 @@ FORMS += dialog.ui
 CONFIG += mobility
 MOBILITY = feedback
 
-LIBS += -lQtFeedback
-
 include(../examples.pri)
 
 
