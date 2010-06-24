@@ -55,6 +55,32 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QContactSaveRequest::contacts" href="qcontactsaverequest.html#contacts" location="qcontactsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContact&gt;" signature="contacts() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactSaveRequest::errorMap" href="qcontactsaverequest.html#errorMap" location="qcontactsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QL2capServer" href="ql2capserver.html" location="ql2capserver.h" bases="QObject" module="QtConnectivity">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QL2capServer" fullname="QL2capServer::QL2capServer" href="ql2capserver.html#QL2capServer" location="ql2capserver.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QL2capServer(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QL2capServer" fullname="QL2capServer::~QL2capServer" href="ql2capserver.html#dtor.QL2capServer" location="ql2capserver.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QL2capServer()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QL2capServer::close" href="ql2capserver.html#close" location="ql2capserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="close()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="listen" fullname="QL2capServer::listen" href="ql2capserver.html#listen" location="ql2capserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="listen(const QBluetoothAddress &amp; address, quint16 port)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default="QBluetoothAddress()"/>
+                <parameter left="quint16" right="" name="port" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isListening" fullname="QL2capServer::isListening" href="ql2capserver.html#isListening" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isListening() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMaxPendingConnections" fullname="QL2capServer::setMaxPendingConnections" href="ql2capserver.html#setMaxPendingConnections" location="ql2capserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMaxPendingConnections(int numConnections)">
+                <parameter left="int" right="" name="numConnections" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maxPendingConnections" fullname="QL2capServer::maxPendingConnections" href="ql2capserver.html#maxPendingConnections" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="maxPendingConnections() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasPendingConnections" fullname="QL2capServer::hasPendingConnections" href="ql2capserver.html#hasPendingConnections" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasPendingConnections() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="nextPendingConnection" fullname="QL2capServer::nextPendingConnection" href="ql2capserver.html#nextPendingConnection" location="ql2capserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QBluetoothSocket *" signature="nextPendingConnection()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serverAddress" fullname="QL2capServer::serverAddress" href="ql2capserver.html#serverAddress" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="serverAddress() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serverPort" fullname="QL2capServer::serverPort" href="ql2capserver.html#serverPort" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="serverPort() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSecurityFlags" fullname="QL2capServer::setSecurityFlags" href="ql2capserver.html#setSecurityFlags" location="ql2capserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSecurityFlags(QFlags&lt;QBluetooth::Security&gt; security)">
+                <parameter left="QFlags&lt;QBluetooth::Security&gt;" right="" name="security" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="securityFlags" fullname="QL2capServer::securityFlags" href="ql2capserver.html#securityFlags" location="ql2capserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetooth::SecurityFlags" signature="securityFlags() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="newConnection" fullname="QL2capServer::newConnection" href="ql2capserver.html#newConnection" location="ql2capserver.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConnection()"/>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QL2capServer::d_ptr" href="ql2capserver.html#d_ptr-var" location="ql2capserver.h" type="QL2capServerPrivate *" static="false"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAmbientLightReading" href="qambientlightreading.html" location="qambientlightsensor.h" bases="QSensorReading" module="">
             <contents name="qambientlightreading-units" title="QAmbientLightReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="lightLevel" fullname="QAmbientLightReading::lightLevel" href="qambientlightreading.html#lightLevel-prop" location="qambientlightsensor.h" type="LightLevel">
@@ -330,6 +356,107 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="vibrationRingtoneUrl" fullname="QContactRingtone::vibrationRingtoneUrl" href="qcontactringtone.html#vibrationRingtoneUrl" location="qcontactringtone.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUrl" signature="vibrationRingtoneUrl() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceInfo" href="qbluetoothserviceinfo.html" location="qbluetoothserviceinfo.h" bases="" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="AttributeId" fullname="QBluetoothServiceInfo::AttributeId" href="qbluetoothserviceinfo.html#AttributeId-enum" location="qbluetoothserviceinfo.h">
+                <value name="ServiceClassIds" value="0x0001"/>
+                <value name="ServiceId" value="0x0003"/>
+                <value name="ProtocolDescriptorList" value="0x0004"/>
+                <value name="BrowseGroupList" value="0x0005"/>
+                <value name="ServiceAvailability" value="0x0008"/>
+                <value name="PrimaryLanguageBase" value="0x0100"/>
+                <value name="ServiceName" value="PrimaryLanguageBase + 0x0000"/>
+                <value name="ServiceDescription" value="PrimaryLanguageBase + 0x0001"/>
+                <value name="ServiceProvider" value="PrimaryLanguageBase + 0x0002"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Protocol" fullname="QBluetoothServiceInfo::Protocol" href="qbluetoothserviceinfo.html#Protocol-enum" location="qbluetoothserviceinfo.h">
+                <value name="UnknownProtocol" value="0"/>
+                <value name="L2capProtocol" value="1"/>
+                <value name="RfcommProtocol" value="2"/>
+            </enum>
+            <class access="public" threadsafety="unspecified" status="commendable" name="Sequence" fullname="QBluetoothServiceInfo::Sequence" href="qbluetoothserviceinfo-sequence.html" location="qbluetoothserviceinfo.h" bases="" module="QtConnectivity">
+                <function access="public" threadsafety="unspecified" status="commendable" name="Sequence" fullname="QBluetoothServiceInfo::Sequence::Sequence" href="qbluetoothserviceinfo-sequence.html#Sequence" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="Sequence()"/>
+                <function access="public" threadsafety="unspecified" status="commendable" name="Sequence" fullname="QBluetoothServiceInfo::Sequence::Sequence" href="qbluetoothserviceinfo-sequence.html#Sequence-2" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="Sequence(const QList&lt;QVariant&gt; &amp; list)">
+                    <parameter left="const QList&lt;QVariant&gt; &amp;" right="" name="list" default=""/>
+                </function>
+            </class>
+            <class access="public" threadsafety="unspecified" status="commendable" name="Alternative" fullname="QBluetoothServiceInfo::Alternative" href="qbluetoothserviceinfo-alternative.html" location="qbluetoothserviceinfo.h" bases="" module="QtConnectivity">
+                <function access="public" threadsafety="unspecified" status="commendable" name="Alternative" fullname="QBluetoothServiceInfo::Alternative::Alternative" href="qbluetoothserviceinfo-alternative.html#Alternative" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="Alternative()"/>
+                <function access="public" threadsafety="unspecified" status="commendable" name="Alternative" fullname="QBluetoothServiceInfo::Alternative::Alternative" href="qbluetoothserviceinfo-alternative.html#Alternative-2" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="Alternative(const QList&lt;QVariant&gt; &amp; list)">
+                    <parameter left="const QList&lt;QVariant&gt; &amp;" right="" name="list" default=""/>
+                </function>
+            </class>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceInfo" fullname="QBluetoothServiceInfo::QBluetoothServiceInfo" href="qbluetoothserviceinfo.html#QBluetoothServiceInfo" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothServiceInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceInfo" fullname="QBluetoothServiceInfo::QBluetoothServiceInfo" href="qbluetoothserviceinfo.html#QBluetoothServiceInfo-2" location="qbluetoothserviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothServiceInfo(const QBluetoothServiceInfo &amp; other)">
+                <parameter left="const QBluetoothServiceInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QBluetoothServiceInfo" fullname="QBluetoothServiceInfo::~QBluetoothServiceInfo" href="qbluetoothserviceinfo.html#dtor.QBluetoothServiceInfo" location="qbluetoothserviceinfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QBluetoothServiceInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QBluetoothServiceInfo::isValid" href="qbluetoothserviceinfo.html#isValid" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isComplete" fullname="QBluetoothServiceInfo::isComplete" href="qbluetoothserviceinfo.html#isComplete" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isComplete() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QBluetoothServiceInfo::setDevice" href="qbluetoothserviceinfo.html#setDevice" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDevice(const QBluetoothDeviceInfo &amp; device)">
+                <parameter left="const QBluetoothDeviceInfo &amp;" right="" name="device" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QBluetoothServiceInfo::device" href="qbluetoothserviceinfo.html#device" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothDeviceInfo" signature="device() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QBluetoothServiceInfo::setAttribute" href="qbluetoothserviceinfo.html#setAttribute" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(quint16 attributeId, const QVariant &amp; value)">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QBluetoothServiceInfo::setAttribute" href="qbluetoothserviceinfo.html#setAttribute-2" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setAttribute(quint16 attributeId, const QBluetoothUuid &amp; value)">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+                <parameter left="const QBluetoothUuid &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QBluetoothServiceInfo::setAttribute" href="qbluetoothserviceinfo.html#setAttribute-3" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="void" signature="setAttribute(quint16 attributeId, const QBluetoothServiceInfo::Sequence &amp; value)">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+                <parameter left="const QBluetoothServiceInfo::Sequence &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QBluetoothServiceInfo::setAttribute" href="qbluetoothserviceinfo.html#setAttribute-4" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="4" type="void" signature="setAttribute(quint16 attributeId, const QBluetoothServiceInfo::Alternative &amp; value)">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+                <parameter left="const QBluetoothServiceInfo::Alternative &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QBluetoothServiceInfo::attribute" href="qbluetoothserviceinfo.html#attribute" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(quint16 attributeId) const">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attributes" fullname="QBluetoothServiceInfo::attributes" href="qbluetoothserviceinfo.html#attributes" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;quint16&gt;" signature="attributes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contains" fullname="QBluetoothServiceInfo::contains" href="qbluetoothserviceinfo.html#contains" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="contains(quint16 attributeId) const">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QBluetoothServiceInfo::removeAttribute" href="qbluetoothserviceinfo.html#removeAttribute" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeAttribute(quint16 attributeId)">
+                <parameter left="quint16" right="" name="attributeId" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceName" fullname="QBluetoothServiceInfo::setServiceName" href="qbluetoothserviceinfo.html#setServiceName" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceName(const QString &amp; name)">
+                <parameter left="const QString &amp;" right="" name="name" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceName" fullname="QBluetoothServiceInfo::serviceName" href="qbluetoothserviceinfo.html#serviceName" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceDescription" fullname="QBluetoothServiceInfo::setServiceDescription" href="qbluetoothserviceinfo.html#setServiceDescription" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceDescription(const QString &amp; description)">
+                <parameter left="const QString &amp;" right="" name="description" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceDescription" fullname="QBluetoothServiceInfo::serviceDescription" href="qbluetoothserviceinfo.html#serviceDescription" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceDescription() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceProvider" fullname="QBluetoothServiceInfo::setServiceProvider" href="qbluetoothserviceinfo.html#setServiceProvider" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceProvider(const QString &amp; provider)">
+                <parameter left="const QString &amp;" right="" name="provider" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceProvider" fullname="QBluetoothServiceInfo::serviceProvider" href="qbluetoothserviceinfo.html#serviceProvider" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="serviceProvider() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="socketProtocol" fullname="QBluetoothServiceInfo::socketProtocol" href="qbluetoothserviceinfo.html#socketProtocol" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothServiceInfo::Protocol" signature="socketProtocol() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="protocolServiceMultiplexer" fullname="QBluetoothServiceInfo::protocolServiceMultiplexer" href="qbluetoothserviceinfo.html#protocolServiceMultiplexer" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="protocolServiceMultiplexer() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serverChannel" fullname="QBluetoothServiceInfo::serverChannel" href="qbluetoothserviceinfo.html#serverChannel" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="serverChannel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="protocolDescriptor" fullname="QBluetoothServiceInfo::protocolDescriptor" href="qbluetoothserviceinfo.html#protocolDescriptor" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothServiceInfo::Sequence" signature="protocolDescriptor(QBluetoothUuid::ProtocolUuid protocol) const">
+                <parameter left="QBluetoothUuid::ProtocolUuid" right="" name="protocol" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceAvailability" fullname="QBluetoothServiceInfo::setServiceAvailability" href="qbluetoothserviceinfo.html#setServiceAvailability" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceAvailability(quint8 availability)">
+                <parameter left="quint8" right="" name="availability" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceAvailability" fullname="QBluetoothServiceInfo::serviceAvailability" href="qbluetoothserviceinfo.html#serviceAvailability" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint8" signature="serviceAvailability() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceUuid" fullname="QBluetoothServiceInfo::setServiceUuid" href="qbluetoothserviceinfo.html#setServiceUuid" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceUuid(const QBluetoothUuid &amp; uuid)">
+                <parameter left="const QBluetoothUuid &amp;" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceUuid" fullname="QBluetoothServiceInfo::serviceUuid" href="qbluetoothserviceinfo.html#serviceUuid" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothUuid" signature="serviceUuid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceClassUuids" fullname="QBluetoothServiceInfo::serviceClassUuids" href="qbluetoothserviceinfo.html#serviceClassUuids" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QBluetoothUuid&gt;" signature="serviceClassUuids() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QBluetoothServiceInfo::operator=" href="qbluetoothserviceinfo.html#operator=" location="qbluetoothserviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QBluetoothServiceInfo &amp;" signature="operator=(const QBluetoothServiceInfo &amp; other)">
+                <parameter left="const QBluetoothServiceInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isRegistered" fullname="QBluetoothServiceInfo::isRegistered" href="qbluetoothserviceinfo.html#isRegistered" location="qbluetoothserviceinfo_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isRegistered() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="registerService" fullname="QBluetoothServiceInfo::registerService" href="qbluetoothserviceinfo.html#registerService" location="qbluetoothserviceinfo_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="registerService() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="unregisterService" fullname="QBluetoothServiceInfo::unregisterService" href="qbluetoothserviceinfo.html#unregisterService" location="qbluetoothserviceinfo_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="unregisterService() const"/>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QBluetoothServiceInfo::d_ptr" href="qbluetoothserviceinfo.html#d_ptr-var" location="qbluetoothserviceinfo.h" type="QBluetoothServiceInfoPrivate *" static="false"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactType" href="qcontacttype.html" location="qcontacttype.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactType::DefinitionName" href="qcontacttype.html#DefinitionName-var" location="qcontacttype.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldType" fullname="QContactType::FieldType" href="qcontacttype.html#FieldType-var" location="qcontacttype.h" type="const QLatin1Constant" static="true"/>
@@ -525,6 +652,48 @@
                 <parameter left="const QList&lt;QContactLocalId&gt; &amp;" right="" name="ids" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactLocalIdFilter::ids" href="qcontactlocalidfilter.html#ids" location="qcontactlocalidfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="ids() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceDiscoveryAgent" href="qbluetoothservicediscoveryagent.html" location="qbluetoothservicediscoveryagent.h" bases="QObject" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QBluetoothServiceDiscoveryAgent::Error" href="qbluetoothservicediscoveryagent.html#Error-enum" location="qbluetoothservicediscoveryagent.h">
+                <value name="NoError" value="0"/>
+                <value name="Canceled" value="1"/>
+                <value name="DeviceDiscoveryError" value="2"/>
+                <value name="UnknownError" value="100"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="DiscoveryMode" fullname="QBluetoothServiceDiscoveryAgent::DiscoveryMode" href="qbluetoothservicediscoveryagent.html#DiscoveryMode-enum" location="qbluetoothservicediscoveryagent.h">
+                <value name="MinimalDiscovery" value="0"/>
+                <value name="FullDiscovery" value="1"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceDiscoveryAgent" fullname="QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent" href="qbluetoothservicediscoveryagent.html#QBluetoothServiceDiscoveryAgent" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothServiceDiscoveryAgent(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothServiceDiscoveryAgent" fullname="QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent" href="qbluetoothservicediscoveryagent.html#QBluetoothServiceDiscoveryAgent-2" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &amp; remoteAddress, QObject * parent)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="remoteAddress" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QBluetoothServiceDiscoveryAgent::isActive" href="qbluetoothservicediscoveryagent.html#isActive" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isActive() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothServiceDiscoveryAgent::error" href="qbluetoothservicediscoveryagent.html#error" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QBluetoothServiceDiscoveryAgent::errorString" href="qbluetoothservicediscoveryagent.html#errorString" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="discoveredServices" fullname="QBluetoothServiceDiscoveryAgent::discoveredServices" href="qbluetoothservicediscoveryagent.html#discoveredServices" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QBluetoothServiceInfo&gt;" signature="discoveredServices() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUuidFilter" fullname="QBluetoothServiceDiscoveryAgent::setUuidFilter" href="qbluetoothservicediscoveryagent.html#setUuidFilter" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setUuidFilter(const QList&lt;QBluetoothUuid&gt; &amp; uuids)">
+                <parameter left="const QList&lt;QBluetoothUuid&gt; &amp;" right="" name="uuids" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUuidFilter" fullname="QBluetoothServiceDiscoveryAgent::setUuidFilter" href="qbluetoothservicediscoveryagent.html#setUuidFilter-2" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setUuidFilter(const QBluetoothUuid &amp; uuid)">
+                <parameter left="const QBluetoothUuid &amp;" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="uuidFilter" fullname="QBluetoothServiceDiscoveryAgent::uuidFilter" href="qbluetoothservicediscoveryagent.html#uuidFilter" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QBluetoothUuid&gt;" signature="uuidFilter() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QBluetoothServiceDiscoveryAgent::start" href="qbluetoothservicediscoveryagent.html#start" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start(DiscoveryMode mode)">
+                <parameter left="DiscoveryMode" right="" name="mode" default="MinimalDiscovery"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QBluetoothServiceDiscoveryAgent::stop" href="qbluetoothservicediscoveryagent.html#stop" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QBluetoothServiceDiscoveryAgent::clear" href="qbluetoothservicediscoveryagent.html#clear" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceDiscovered" fullname="QBluetoothServiceDiscoveryAgent::serviceDiscovered" href="qbluetoothservicediscoveryagent.html#serviceDiscovered" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="serviceDiscovered(const QBluetoothServiceInfo &amp; info)">
+                <parameter left="const QBluetoothServiceInfo &amp;" right="" name="info" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QBluetoothServiceDiscoveryAgent::finished" href="qbluetoothservicediscoveryagent.html#finished" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothServiceDiscoveryAgent::error" href="qbluetoothservicediscoveryagent.html#error-2" location="qbluetoothservicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QBluetoothServiceDiscoveryAgent::Error error)">
+                <parameter left="QBluetoothServiceDiscoveryAgent::Error" right="" name="error" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactThumbnail" href="qcontactthumbnail.html" location="qcontactthumbnail.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactThumbnail::DefinitionName" href="qcontactthumbnail.html#DefinitionName-var" location="qcontactthumbnail.h" type="const QLatin1Constant" static="true"/>
@@ -742,6 +911,75 @@
                 <parameter left="const QString &amp;" right="" name="label" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" href="qbluetoothuuid.html" location="qbluetoothuuid.h" bases="QUuid" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ProtocolUuid" fullname="QBluetoothUuid::ProtocolUuid" href="qbluetoothuuid.html#ProtocolUuid-enum" location="qbluetoothuuid.h">
+                <value name="Sdp" value="0x0001"/>
+                <value name="Udp" value="0x0002"/>
+                <value name="Rfcomm" value="0x0003"/>
+                <value name="Tcp" value="0x0004"/>
+                <value name="TcsBin" value="0x0005"/>
+                <value name="TcsAt" value="0x0006"/>
+                <value name="Obex" value="0x0008"/>
+                <value name="Ip" value="0x0009"/>
+                <value name="Ftp" value="0x000A"/>
+                <value name="Http" value="0x000C"/>
+                <value name="Wsp" value="0x000E"/>
+                <value name="Bnep" value="0x000F"/>
+                <value name="Upnp" value="0x0010"/>
+                <value name="Hidp" value="0x0011"/>
+                <value name="HardcopyControlChannel" value="0x0012"/>
+                <value name="HardcopyDataChannel" value="0x0014"/>
+                <value name="HardcopyNotification" value="0x0016"/>
+                <value name="Avctp" value="0x0017"/>
+                <value name="Avdtp" value="0x0019"/>
+                <value name="Cmtp" value="0x001B"/>
+                <value name="UdiCPlain" value="0x001D"/>
+                <value name="McapControlChannel" value="0x001E"/>
+                <value name="McapDataChannel" value="0x001F"/>
+                <value name="L2cap" value="0x0100"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ServiceClassUuid" fullname="QBluetoothUuid::ServiceClassUuid" href="qbluetoothuuid.html#ServiceClassUuid-enum" location="qbluetoothuuid.h">
+                <value name="PublicBrowseGroup" value="0x1002"/>
+                <value name="ObexObjectPush" value="0x1105"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothUuid()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-2" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothUuid(ProtocolUuid uuid)">
+                <parameter left="ProtocolUuid" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-3" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QBluetoothUuid(ServiceClassUuid uuid)">
+                <parameter left="ServiceClassUuid" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-4" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QBluetoothUuid(quint16 uuid)">
+                <parameter left="quint16" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-5" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QBluetoothUuid(quint32 uuid)">
+                <parameter left="quint32" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-6" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QBluetoothUuid(quint128 uuid)">
+                <parameter left="quint128" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-7" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="7" type="" signature="QBluetoothUuid(const QString &amp; uuid)">
+                <parameter left="const QString &amp;" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-8" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="8" type="" signature="QBluetoothUuid(const QBluetoothUuid &amp; uuid)">
+                <parameter left="const QBluetoothUuid &amp;" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothUuid" fullname="QBluetoothUuid::QBluetoothUuid" href="qbluetoothuuid.html#QBluetoothUuid-9" location="qbluetoothuuid.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="9" type="" signature="QBluetoothUuid(const QUuid &amp; uuid)">
+                <parameter left="const QUuid &amp;" right="" name="uuid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QBluetoothUuid" fullname="QBluetoothUuid::~QBluetoothUuid" href="qbluetoothuuid.html#dtor.QBluetoothUuid" location="qbluetoothuuid.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QBluetoothUuid()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QBluetoothUuid::operator==" href="qbluetoothuuid.html#operator==" location="qbluetoothuuid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QBluetoothUuid &amp; other) const">
+                <parameter left="const QBluetoothUuid &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minimumSize" fullname="QBluetoothUuid::minimumSize" href="qbluetoothuuid.html#minimumSize" location="qbluetoothuuid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="minimumSize() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="toUInt16" fullname="QBluetoothUuid::toUInt16" href="qbluetoothuuid.html#toUInt16" location="qbluetoothuuid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="toUInt16(bool * ok) const">
+                <parameter left="bool *" right="" name="ok" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="toUInt32" fullname="QBluetoothUuid::toUInt32" href="qbluetoothuuid.html#toUInt32" location="qbluetoothuuid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="toUInt32(bool * ok) const">
+                <parameter left="bool *" right="" name="ok" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="toUInt128" fullname="QBluetoothUuid::toUInt128" href="qbluetoothuuid.html#toUInt128" location="qbluetoothuuid.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint128" signature="toUInt128() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFetchRequest" href="qcontactrelationshipfetchrequest.html" location="qcontactrelationshipfetchrequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFetchRequest" fullname="QContactRelationshipFetchRequest::QContactRelationshipFetchRequest" href="qcontactrelationshipfetchrequest.html#QContactRelationshipFetchRequest" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipFetchRequest(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -893,6 +1131,86 @@
                 <parameter left="const QByteArray &amp;" right="" name="name" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="headerFields" fullname="QMessageContentContainer::headerFields" href="qmessagecontentcontainer.html#headerFields" location="qmessagecontentcontainer_stub.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="headerFields() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothSocket" href="qbluetoothsocket.html" location="qbluetoothsocket.h" bases="QIODevice" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SocketType" fullname="QBluetoothSocket::SocketType" href="qbluetoothsocket.html#SocketType-enum" location="qbluetoothsocket.h">
+                <value name="UnknownSocketType" value="-1"/>
+                <value name="L2capSocket" value="0"/>
+                <value name="RfcommSocket" value="1"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SocketState" fullname="QBluetoothSocket::SocketState" href="qbluetoothsocket.html#SocketState-enum" location="qbluetoothsocket.h">
+                <value name="UnconnectedState" value="QAbstractSocket::UnconnectedState"/>
+                <value name="ServiceLookupState" value="QAbstractSocket::HostLookupState"/>
+                <value name="ConnectingState" value="QAbstractSocket::ConnectingState"/>
+                <value name="ConnectedState" value="QAbstractSocket::ConnectedState"/>
+                <value name="BoundState" value="QAbstractSocket::BoundState"/>
+                <value name="ClosingState" value="QAbstractSocket::ClosingState"/>
+                <value name="ListeningState" value="QAbstractSocket::ListeningState"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SocketError" fullname="QBluetoothSocket::SocketError" href="qbluetoothsocket.html#SocketError-enum" location="qbluetoothsocket.h">
+                <value name="UnknownSocketError" value="QAbstractSocket::UnknownSocketError"/>
+                <value name="ConnectionRefusedError" value="QAbstractSocket::ConnectionRefusedError"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothSocket" fullname="QBluetoothSocket::QBluetoothSocket" href="qbluetoothsocket.html#QBluetoothSocket" location="qbluetoothsocket.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothSocket(SocketType socketType, QObject * parent)">
+                <parameter left="SocketType" right="" name="socketType" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothSocket" fullname="QBluetoothSocket::QBluetoothSocket" href="qbluetoothsocket.html#QBluetoothSocket-2" location="qbluetoothsocket.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothSocket(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QBluetoothSocket" fullname="QBluetoothSocket::~QBluetoothSocket" href="qbluetoothsocket.html#dtor.QBluetoothSocket" location="qbluetoothsocket.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QBluetoothSocket()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="abort" fullname="QBluetoothSocket::abort" href="qbluetoothsocket.html#abort" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="abort()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QBluetoothSocket::close" href="qbluetoothsocket.html#close" location="qbluetoothsocket_bluez.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="close()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isSequential" fullname="QBluetoothSocket::isSequential" href="qbluetoothsocket.html#isSequential" location="qbluetoothsocket.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSequential() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bytesAvailable" fullname="QBluetoothSocket::bytesAvailable" href="qbluetoothsocket.html#bytesAvailable" location="qbluetoothsocket.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="qint64" signature="bytesAvailable() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bytesToWrite" fullname="QBluetoothSocket::bytesToWrite" href="qbluetoothsocket.html#bytesToWrite" location="qbluetoothsocket.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="qint64" signature="bytesToWrite() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="canReadLine" fullname="QBluetoothSocket::canReadLine" href="qbluetoothsocket.html#canReadLine" location="qbluetoothsocket.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="canReadLine() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="connectToService" fullname="QBluetoothSocket::connectToService" href="qbluetoothsocket.html#connectToService" location="qbluetoothsocket.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="connectToService(const QBluetoothServiceInfo &amp; service, OpenMode openMode)">
+                <parameter left="const QBluetoothServiceInfo &amp;" right="" name="service" default=""/>
+                <parameter left="OpenMode" right="" name="openMode" default="ReadWrite"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="connectToService" fullname="QBluetoothSocket::connectToService" href="qbluetoothsocket.html#connectToService-2" location="qbluetoothsocket.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="connectToService(const QBluetoothAddress &amp; address, const QBluetoothUuid &amp; uuid, OpenMode openMode)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default=""/>
+                <parameter left="const QBluetoothUuid &amp;" right="" name="uuid" default=""/>
+                <parameter left="OpenMode" right="" name="openMode" default="ReadWrite"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="connectToService" fullname="QBluetoothSocket::connectToService" href="qbluetoothsocket.html#connectToService-3" location="qbluetoothsocket.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="void" signature="connectToService(const QBluetoothAddress &amp; address, quint16 port, OpenMode openMode)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default=""/>
+                <parameter left="quint16" right="" name="port" default=""/>
+                <parameter left="OpenMode" right="" name="openMode" default="ReadWrite"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="disconnectFromService" fullname="QBluetoothSocket::disconnectFromService" href="qbluetoothsocket.html#disconnectFromService" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="disconnectFromService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="localName" fullname="QBluetoothSocket::localName" href="qbluetoothsocket.html#localName" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="localName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="localAddress" fullname="QBluetoothSocket::localAddress" href="qbluetoothsocket.html#localAddress" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="localAddress() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="localPort" fullname="QBluetoothSocket::localPort" href="qbluetoothsocket.html#localPort" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="localPort() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="peerName" fullname="QBluetoothSocket::peerName" href="qbluetoothsocket.html#peerName" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="peerName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="peerAddress" fullname="QBluetoothSocket::peerAddress" href="qbluetoothsocket.html#peerAddress" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="peerAddress() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="peerPort" fullname="QBluetoothSocket::peerPort" href="qbluetoothsocket.html#peerPort" location="qbluetoothsocket_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="peerPort() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="socketType" fullname="QBluetoothSocket::socketType" href="qbluetoothsocket.html#socketType" location="qbluetoothsocket.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SocketType" signature="socketType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QBluetoothSocket::state" href="qbluetoothsocket.html#state" location="qbluetoothsocket.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SocketState" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothSocket::error" href="qbluetoothsocket.html#error" location="qbluetoothsocket.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SocketError" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="connected" fullname="QBluetoothSocket::connected" href="qbluetoothsocket.html#connected" location="qbluetoothsocket.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="connected()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="disconnected" fullname="QBluetoothSocket::disconnected" href="qbluetoothsocket.html#disconnected" location="qbluetoothsocket.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="disconnected()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothSocket::error" href="qbluetoothsocket.html#error-2" location="qbluetoothsocket.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QBluetoothSocket::SocketError error)">
+                <parameter left="QBluetoothSocket::SocketError" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QBluetoothSocket::stateChanged" href="qbluetoothsocket.html#stateChanged" location="qbluetoothsocket.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QBluetoothSocket::SocketState state)">
+                <parameter left="QBluetoothSocket::SocketState" right="" name="state" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="readData" fullname="QBluetoothSocket::readData" href="qbluetoothsocket.html#readData" location="qbluetoothsocket_bluez.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="qint64" signature="readData(char * data, qint64 maxSize)">
+                <parameter left="char *" right="" name="data" default=""/>
+                <parameter left="qint64" right="" name="maxSize" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="writeData" fullname="QBluetoothSocket::writeData" href="qbluetoothsocket.html#writeData" location="qbluetoothsocket_bluez.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="qint64" signature="writeData(const char * data, qint64 maxSize)">
+                <parameter left="const char *" right="" name="data" default=""/>
+                <parameter left="qint64" right="" name="maxSize" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setSocketState" fullname="QBluetoothSocket::setSocketState" href="qbluetoothsocket.html#setSocketState" location="qbluetoothsocket.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSocketState(SocketState state)">
+                <parameter left="SocketState" right="" name="state" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setSocketError" fullname="QBluetoothSocket::setSocketError" href="qbluetoothsocket.html#setSocketError" location="qbluetoothsocket.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSocketError(SocketError error)">
+                <parameter left="SocketError" right="" name="error" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMetaDataWriterControl" href="qmetadatawritercontrol.html" location="qmetadatawritercontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMetaDataWriterControl" fullname="QMetaDataWriterControl::~QMetaDataWriterControl" href="qmetadatawritercontrol.html#dtor.QMetaDataWriterControl" location="qmetadatawritercontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMetaDataWriterControl()"/>
@@ -3563,6 +3881,32 @@
                 <parameter left="const QString &amp;" right="" name="text" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRfcommServer" href="qrfcommserver.html" location="qrfcommserver.h" bases="QObject" module="QtConnectivity">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QRfcommServer" fullname="QRfcommServer::QRfcommServer" href="qrfcommserver.html#QRfcommServer" location="qrfcommserver.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRfcommServer(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QRfcommServer" fullname="QRfcommServer::~QRfcommServer" href="qrfcommserver.html#dtor.QRfcommServer" location="qrfcommserver.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRfcommServer()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QRfcommServer::close" href="qrfcommserver.html#close" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="close()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="listen" fullname="QRfcommServer::listen" href="qrfcommserver.html#listen" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="listen(const QBluetoothAddress &amp; address, quint16 port)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default="QBluetoothAddress()"/>
+                <parameter left="quint16" right="" name="port" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isListening" fullname="QRfcommServer::isListening" href="qrfcommserver.html#isListening" location="qrfcommserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isListening() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMaxPendingConnections" fullname="QRfcommServer::setMaxPendingConnections" href="qrfcommserver.html#setMaxPendingConnections" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMaxPendingConnections(int numConnections)">
+                <parameter left="int" right="" name="numConnections" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maxPendingConnections" fullname="QRfcommServer::maxPendingConnections" href="qrfcommserver.html#maxPendingConnections" location="qrfcommserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="maxPendingConnections() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasPendingConnections" fullname="QRfcommServer::hasPendingConnections" href="qrfcommserver.html#hasPendingConnections" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="hasPendingConnections() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="nextPendingConnection" fullname="QRfcommServer::nextPendingConnection" href="qrfcommserver.html#nextPendingConnection" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QBluetoothSocket *" signature="nextPendingConnection()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serverAddress" fullname="QRfcommServer::serverAddress" href="qrfcommserver.html#serverAddress" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="serverAddress() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serverPort" fullname="QRfcommServer::serverPort" href="qrfcommserver.html#serverPort" location="qrfcommserver_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="serverPort() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSecurityFlags" fullname="QRfcommServer::setSecurityFlags" href="qrfcommserver.html#setSecurityFlags" location="qrfcommserver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSecurityFlags(QFlags&lt;QBluetooth::Security&gt; security)">
+                <parameter left="QFlags&lt;QBluetooth::Security&gt;" right="" name="security" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="securityFlags" fullname="QRfcommServer::securityFlags" href="qrfcommserver.html#securityFlags" location="qrfcommserver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetooth::SecurityFlags" signature="securityFlags() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="newConnection" fullname="QRfcommServer::newConnection" href="qrfcommserver.html#newConnection" location="qrfcommserver.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="newConnection()"/>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QRfcommServer::d_ptr" href="qrfcommserver.html#d_ptr-var" location="qrfcommserver.h" type="QRfcommServerPrivate *" static="false"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceInfo" href="qaudiodeviceinfo.html" location="qaudiodeviceinfo.h" bases="" module="QtMultimediaKit">
             <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceInfo" fullname="QAudioDeviceInfo::QAudioDeviceInfo" href="qaudiodeviceinfo.html#QAudioDeviceInfo" location="qaudiodeviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAudioDeviceInfo()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QAudioDeviceInfo" fullname="QAudioDeviceInfo::QAudioDeviceInfo" href="qaudiodeviceinfo.html#QAudioDeviceInfo-2" location="qaudiodeviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QAudioDeviceInfo(const QAudioDeviceInfo &amp; other)">
@@ -3713,6 +4057,15 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="date" fullname="QContactBirthday::date" href="qcontactbirthday.html#date" location="qcontactbirthday.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDate" signature="date() const"/>
         </class>
+        <namespace access="public" threadsafety="unspecified" status="commendable" name="QBluetooth" href="qbluetooth.html" location="qbluetooth.h" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Security" fullname="QBluetooth::Security" href="qbluetooth.html#Security-enum" location="qbluetooth.h" typedef="QBluetooth::SecurityFlags">
+                <value name="NoSecurity" value="0x00"/>
+                <value name="Authorization" value="0x01"/>
+                <value name="Authentication" value="0x02"/>
+                <value name="Encryption" value="0x04"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="SecurityFlags" fullname="QBluetooth::SecurityFlags" href="qbluetooth.html#SecurityFlags-typedef" location="qbluetooth.h" enum="QBluetooth::Security"/>
+        </namespace>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfo" href="qgeosatelliteinfo.html" location="qgeosatelliteinfo.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Attribute" fullname="QGeoSatelliteInfo::Attribute" href="qgeosatelliteinfo.html#Attribute-enum" location="qgeosatelliteinfo.h">
                 <value name="Elevation" value="0"/>
@@ -3754,7 +4107,7 @@
                 <parameter left="Attribute" right="" name="attribute" default=""/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeosatelliteinfo.html#operator&lt;&lt;-81" location="qgeosatelliteinfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="81" relates="QGeoSatelliteInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoSatelliteInfo &amp; info)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeosatelliteinfo.html#operator&lt;&lt;-83" location="qgeosatelliteinfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="83" relates="QGeoSatelliteInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoSatelliteInfo &amp; info)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="const QGeoSatelliteInfo &amp;" right="" name="info" default=""/>
         </function>
@@ -4560,6 +4913,167 @@
                 <parameter left="const QContactLocalId &amp;" right="" name="id" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceInfo" href="qbluetoothdeviceinfo.html" location="qbluetoothdeviceinfo.h" bases="" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MajorDeviceClass" fullname="QBluetoothDeviceInfo::MajorDeviceClass" href="qbluetoothdeviceinfo.html#MajorDeviceClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="MiscellaneousDevice" value="0"/>
+                <value name="ComputerDevice" value="1"/>
+                <value name="PhoneDevice" value="2"/>
+                <value name="LANAccessDevice" value="3"/>
+                <value name="AudioVideoDevice" value="4"/>
+                <value name="PeripheralDevice" value="5"/>
+                <value name="ImagingDevice" value="6"/>
+                <value name="WearableDevice" value="7"/>
+                <value name="ToyDevice" value="8"/>
+                <value name="UncategorizedDevice" value="9"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorMiscellaneousClass" fullname="QBluetoothDeviceInfo::MinorMiscellaneousClass" href="qbluetoothdeviceinfo.html#MinorMiscellaneousClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedMiscellaneous" value="0"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorComputerClass" fullname="QBluetoothDeviceInfo::MinorComputerClass" href="qbluetoothdeviceinfo.html#MinorComputerClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedComputer" value="0"/>
+                <value name="DesktopComputer" value="1"/>
+                <value name="ServerComputer" value="2"/>
+                <value name="LaptopComputer" value="3"/>
+                <value name="HandheldClamShellComputer" value="4"/>
+                <value name="HandheldComputer" value="5"/>
+                <value name="WearableComputer" value="6"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorPhoneClass" fullname="QBluetoothDeviceInfo::MinorPhoneClass" href="qbluetoothdeviceinfo.html#MinorPhoneClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedPhone" value="0"/>
+                <value name="CellularPhone" value="1"/>
+                <value name="CordlessPhone" value="2"/>
+                <value name="SmartPhone" value="3"/>
+                <value name="WiredModemOrVoiceGatewayPhone" value="4"/>
+                <value name="CommonIsdnAccessPhone" value="5"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorNetworkClass" fullname="QBluetoothDeviceInfo::MinorNetworkClass" href="qbluetoothdeviceinfo.html#MinorNetworkClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="NetworkFullService" value="0x00"/>
+                <value name="NetworkLoadFactorOne" value="0x08"/>
+                <value name="NetworkLoadFactorTwo" value="0x10"/>
+                <value name="NetworkLoadFactorThree" value="0x18"/>
+                <value name="NetworkLoadFactorFour" value="0x20"/>
+                <value name="NetworkLoadFactorFive" value="0x28"/>
+                <value name="NetworkLoadFactorSix" value="0x30"/>
+                <value name="NetworkNoService" value="0x38"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorAudioVideoClass" fullname="QBluetoothDeviceInfo::MinorAudioVideoClass" href="qbluetoothdeviceinfo.html#MinorAudioVideoClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedAudioVideoDevice" value="0"/>
+                <value name="WearableHeadsetDevice" value="1"/>
+                <value name="HandsFreeDevice" value="2"/>
+                <value name="Microphone" value="4"/>
+                <value name="Loudspeaker" value="5"/>
+                <value name="Headphones" value="6"/>
+                <value name="PortableAudioDevice" value="7"/>
+                <value name="CarAudio" value="8"/>
+                <value name="SetTopBox" value="9"/>
+                <value name="HiFiAudioDevice" value="10"/>
+                <value name="Vcr" value="11"/>
+                <value name="VideoCamera" value="12"/>
+                <value name="Camcorder" value="13"/>
+                <value name="VideoMonitor" value="14"/>
+                <value name="VideoDisplayAndLoudspeaker" value="15"/>
+                <value name="VideoConferencing" value="17"/>
+                <value name="GamingDevice" value="19"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorPeripheralClass" fullname="QBluetoothDeviceInfo::MinorPeripheralClass" href="qbluetoothdeviceinfo.html#MinorPeripheralClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedPeripheral" value="0"/>
+                <value name="KeyboardPeripheral" value="0x10"/>
+                <value name="PointingDevicePeripheral" value="0x20"/>
+                <value name="KeyboardWithPointingDevicePeripheral" value="0x30"/>
+                <value name="JoystickPeripheral" value="0x01"/>
+                <value name="GamepadPeripheral" value="0x02"/>
+                <value name="RemoteControlPeripheral" value="0x03"/>
+                <value name="SensingDevicePeripheral" value="0x04"/>
+                <value name="DigitizerTabletPeripheral" value="0x05"/>
+                <value name="CardReaderPeripheral" value="0x06"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorImagingClass" fullname="QBluetoothDeviceInfo::MinorImagingClass" href="qbluetoothdeviceinfo.html#MinorImagingClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedImagingDevice" value="0"/>
+                <value name="ImageDisplay" value="0x04"/>
+                <value name="ImageCamera" value="0x08"/>
+                <value name="ImageCamera2" value="0x0C"/>
+                <value name="ImageScanner" value="0x10"/>
+                <value name="ImageScanner2" value="0x14"/>
+                <value name="ImageScanner3" value="0x18"/>
+                <value name="ImageScanner4" value="0x1C"/>
+                <value name="ImagePrinter" value="0x20"/>
+                <value name="ImagePrinter2" value="0x24"/>
+                <value name="ImagePrinter3" value="0x28"/>
+                <value name="ImagePrinter4" value="0x2C"/>
+                <value name="ImagePrinter5" value="0x30"/>
+                <value name="ImagePrinter6" value="0x34"/>
+                <value name="ImagePrinter7" value="0x38"/>
+                <value name="ImagePrinter8" value="0x3C"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorWearableClass" fullname="QBluetoothDeviceInfo::MinorWearableClass" href="qbluetoothdeviceinfo.html#MinorWearableClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedWearableDevice" value="0"/>
+                <value name="WearableWristWatch" value="1"/>
+                <value name="WearablePager" value="2"/>
+                <value name="WearableJacket" value="3"/>
+                <value name="WearableHelmet" value="4"/>
+                <value name="WearableGlasses" value="5"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MinorToyClass" fullname="QBluetoothDeviceInfo::MinorToyClass" href="qbluetoothdeviceinfo.html#MinorToyClass-enum" location="qbluetoothdeviceinfo.h">
+                <value name="UncategorizedToy" value="0"/>
+                <value name="ToyRobot" value="1"/>
+                <value name="ToyVehicle" value="2"/>
+                <value name="ToyDoll" value="3"/>
+                <value name="ToyController" value="4"/>
+                <value name="ToyGame" value="5"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ServiceClass" fullname="QBluetoothDeviceInfo::ServiceClass" href="qbluetoothdeviceinfo.html#ServiceClass-enum" location="qbluetoothdeviceinfo.h" typedef="QBluetoothDeviceInfo::ServiceClasses">
+                <value name="NoService" value="0x0000"/>
+                <value name="PositioningService" value="0x0001"/>
+                <value name="NetworkingService" value="0x0002"/>
+                <value name="RenderingService" value="0x0004"/>
+                <value name="CapturingService" value="0x0008"/>
+                <value name="ObjectTransferService" value="0x0010"/>
+                <value name="AudioService" value="0x0020"/>
+                <value name="TelephonyService" value="0x0040"/>
+                <value name="InformationService" value="0x0080"/>
+                <value name="AllServices" value="0x07ff"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="ServiceClasses" fullname="QBluetoothDeviceInfo::ServiceClasses" href="qbluetoothdeviceinfo.html#ServiceClasses-typedef" location="qbluetoothdeviceinfo.h" enum="QBluetoothDeviceInfo::ServiceClass"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="DataCompleteness" fullname="QBluetoothDeviceInfo::DataCompleteness" href="qbluetoothdeviceinfo.html#DataCompleteness-enum" location="qbluetoothdeviceinfo.h">
+                <value name="DataComplete" value="0"/>
+                <value name="DataIncomplete" value="1"/>
+                <value name="DataUnavailable" value="2"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceInfo" fullname="QBluetoothDeviceInfo::QBluetoothDeviceInfo" href="qbluetoothdeviceinfo.html#QBluetoothDeviceInfo" location="qbluetoothdeviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothDeviceInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceInfo" fullname="QBluetoothDeviceInfo::QBluetoothDeviceInfo" href="qbluetoothdeviceinfo.html#QBluetoothDeviceInfo-2" location="qbluetoothdeviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothDeviceInfo(const QBluetoothAddress &amp; address, const QString &amp; name, quint32 classOfDevice)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default=""/>
+                <parameter left="const QString &amp;" right="" name="name" default=""/>
+                <parameter left="quint32" right="" name="classOfDevice" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceInfo" fullname="QBluetoothDeviceInfo::QBluetoothDeviceInfo" href="qbluetoothdeviceinfo.html#QBluetoothDeviceInfo-3" location="qbluetoothdeviceinfo.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QBluetoothDeviceInfo(const QBluetoothDeviceInfo &amp; other)">
+                <parameter left="const QBluetoothDeviceInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QBluetoothDeviceInfo" fullname="QBluetoothDeviceInfo::~QBluetoothDeviceInfo" href="qbluetoothdeviceinfo.html#dtor.QBluetoothDeviceInfo" location="qbluetoothdeviceinfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QBluetoothDeviceInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QBluetoothDeviceInfo::isValid" href="qbluetoothdeviceinfo.html#isValid" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QBluetoothDeviceInfo::operator=" href="qbluetoothdeviceinfo.html#operator=" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QBluetoothDeviceInfo &amp;" signature="operator=(const QBluetoothDeviceInfo &amp; other)">
+                <parameter left="const QBluetoothDeviceInfo &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="address" fullname="QBluetoothDeviceInfo::address" href="qbluetoothdeviceinfo.html#address" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="address() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QBluetoothDeviceInfo::name" href="qbluetoothdeviceinfo.html#name" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceClasses" fullname="QBluetoothDeviceInfo::serviceClasses" href="qbluetoothdeviceinfo.html#serviceClasses" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ServiceClasses" signature="serviceClasses() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="majorDeviceClass" fullname="QBluetoothDeviceInfo::majorDeviceClass" href="qbluetoothdeviceinfo.html#majorDeviceClass" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MajorDeviceClass" signature="majorDeviceClass() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minorDeviceClass" fullname="QBluetoothDeviceInfo::minorDeviceClass" href="qbluetoothdeviceinfo.html#minorDeviceClass" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint8" signature="minorDeviceClass() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setServiceUuids" fullname="QBluetoothDeviceInfo::setServiceUuids" href="qbluetoothdeviceinfo.html#setServiceUuids" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setServiceUuids(const QList&lt;QBluetoothUuid&gt; &amp; uuids, DataCompleteness completeness)">
+                <parameter left="const QList&lt;QBluetoothUuid&gt; &amp;" right="" name="uuids" default=""/>
+                <parameter left="DataCompleteness" right="" name="completeness" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceUuids" fullname="QBluetoothDeviceInfo::serviceUuids" href="qbluetoothdeviceinfo.html#serviceUuids" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QBluetoothUuid&gt;" signature="serviceUuids(DataCompleteness * completeness) const">
+                <parameter left="DataCompleteness *" right="" name="completeness" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="serviceUuidsCompleteness" fullname="QBluetoothDeviceInfo::serviceUuidsCompleteness" href="qbluetoothdeviceinfo.html#serviceUuidsCompleteness" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="DataCompleteness" signature="serviceUuidsCompleteness() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setManufacturerSpecificData" fullname="QBluetoothDeviceInfo::setManufacturerSpecificData" href="qbluetoothdeviceinfo.html#setManufacturerSpecificData" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setManufacturerSpecificData(const QByteArray &amp; data)">
+                <parameter left="const QByteArray &amp;" right="" name="data" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="manufacturerSpecificData" fullname="QBluetoothDeviceInfo::manufacturerSpecificData" href="qbluetoothdeviceinfo.html#manufacturerSpecificData" location="qbluetoothdeviceinfo.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="manufacturerSpecificData(bool * available) const">
+                <parameter left="bool *" right="" name="available" default="0"/>
+            </function>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QBluetoothDeviceInfo::d_ptr" href="qbluetoothdeviceinfo.html#d_ptr-var" location="qbluetoothdeviceinfo.h" type="QBluetoothDeviceInfoPrivate *" static="false"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" href="qmessagefolderid.html" location="qmessagefolderid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId-2" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolderId(const QMessageFolderId &amp; other)">
@@ -4637,7 +5151,7 @@
                 <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeocoordinate.html#operator&lt;&lt;-84" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="84" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoCoordinate &amp; coordinate)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeocoordinate.html#operator&lt;&lt;-86" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="86" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoCoordinate &amp; coordinate)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
         </function>
@@ -5031,7 +5545,7 @@
                 <parameter left="Attribute" right="" name="attribute" default=""/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeopositioninfo.html#operator&lt;&lt;-88" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="88" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoPositionInfo &amp; info)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeopositioninfo.html#operator&lt;&lt;-90" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="90" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoPositionInfo &amp; info)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="const QGeoPositionInfo &amp;" right="" name="info" default=""/>
         </function>
@@ -6101,7 +6615,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilityMatchRule" fullname="QServiceFilter::capabilityMatchRule" href="qservicefilter.html#capabilityMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CapabilityMatchRule" signature="capabilityMatchRule() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-90" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="90" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-92" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="92" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
@@ -6296,8 +6810,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="typeForDrive" fullname="QSystemStorageInfo::typeForDrive" href="qsystemstorageinfo.html#typeForDrive" location="qsystemstorageinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemStorageInfo::DriveType" signature="typeForDrive(const QString &amp; driveVolume)">
                 <parameter left="const QString &amp;" right="" name="driveVolume" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageAdded" fullname="QSystemStorageInfo::storageAdded" href="qsystemstorageinfo.html#storageAdded" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageAdded()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageRemoved" fullname="QSystemStorageInfo::storageRemoved" href="qsystemstorageinfo.html#storageRemoved" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageRemoved()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="logicalDrivesChanged" fullname="QSystemStorageInfo::logicalDrivesChanged" href="qsystemstorageinfo.html#logicalDrivesChanged" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="logicalDrivesChanged(bool added)">
+                <parameter left="bool" right="" name="added" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" href="qvaluespacesubscriber.html" location="qvaluespacesubscriber.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceSubscriber::path" href="qvaluespacesubscriber.html#path-prop" location="qvaluespacesubscriber.h" type="QString">
@@ -6599,6 +7114,79 @@
                 <parameter left="QObject *" right="" name="parent" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaService::d_ptr" href="qmediaservice.html#d_ptr-var" location="qmediaservice.h" type="QMediaServicePrivate *" static="false"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceDiscoveryAgent" href="qbluetoothdevicediscoveryagent.html" location="qbluetoothdevicediscoveryagent.h" bases="QObject" module="QtConnectivity">
+            <property access="public" threadsafety="unspecified" status="commendable" name="inquiryType" fullname="QBluetoothDeviceDiscoveryAgent::inquiryType" href="qbluetoothdevicediscoveryagent.html#inquiryType-prop" location="qbluetoothdevicediscoveryagent.h" type="QBluetoothDeviceDiscoveryAgent::InquiryType">
+                <getter name="inquiryType"/>
+                <setter name="setInquiryType"/>
+            </property>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QBluetoothDeviceDiscoveryAgent::Error" href="qbluetoothdevicediscoveryagent.html#Error-enum" location="qbluetoothdevicediscoveryagent.h">
+                <value name="NoError" value="0"/>
+                <value name="Canceled" value="1"/>
+                <value name="UnknownError" value="100"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="InquiryType" fullname="QBluetoothDeviceDiscoveryAgent::InquiryType" href="qbluetoothdevicediscoveryagent.html#InquiryType-enum" location="qbluetoothdevicediscoveryagent.h">
+                <value name="GeneralUnlimitedInquiry" value="0"/>
+                <value name="LimitedInquiry" value="1"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothDeviceDiscoveryAgent" fullname="QBluetoothDeviceDiscoveryAgent::QBluetoothDeviceDiscoveryAgent" href="qbluetoothdevicediscoveryagent.html#QBluetoothDeviceDiscoveryAgent" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothDeviceDiscoveryAgent(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="inquiryType" fullname="QBluetoothDeviceDiscoveryAgent::inquiryType" href="qbluetoothdevicediscoveryagent.html#inquiryType-prop" location="qbluetoothdevicediscoveryagent.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="inquiryType" type="QBluetoothDeviceDiscoveryAgent::InquiryType" signature="inquiryType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setInquiryType" fullname="QBluetoothDeviceDiscoveryAgent::setInquiryType" href="qbluetoothdevicediscoveryagent.html#inquiryType-prop" location="qbluetoothdevicediscoveryagent.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="inquiryType" type="void" signature="setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type)">
+                <parameter left="QBluetoothDeviceDiscoveryAgent::InquiryType" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QBluetoothDeviceDiscoveryAgent::isActive" href="qbluetoothdevicediscoveryagent.html#isActive" location="qbluetoothdevicediscoveryagent_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isActive() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothDeviceDiscoveryAgent::error" href="qbluetoothdevicediscoveryagent.html#error" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QBluetoothDeviceDiscoveryAgent::errorString" href="qbluetoothdevicediscoveryagent.html#errorString" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="discoveredDevices" fullname="QBluetoothDeviceDiscoveryAgent::discoveredDevices" href="qbluetoothdevicediscoveryagent.html#discoveredDevices" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QBluetoothDeviceInfo&gt;" signature="discoveredDevices() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QBluetoothDeviceDiscoveryAgent::start" href="qbluetoothdevicediscoveryagent.html#start" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QBluetoothDeviceDiscoveryAgent::stop" href="qbluetoothdevicediscoveryagent.html#stop" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="deviceDiscovered" fullname="QBluetoothDeviceDiscoveryAgent::deviceDiscovered" href="qbluetoothdevicediscoveryagent.html#deviceDiscovered" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="deviceDiscovered(const QBluetoothDeviceInfo &amp; info)">
+                <parameter left="const QBluetoothDeviceInfo &amp;" right="" name="info" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QBluetoothDeviceDiscoveryAgent::finished" href="qbluetoothdevicediscoveryagent.html#finished" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QBluetoothDeviceDiscoveryAgent::error" href="qbluetoothdevicediscoveryagent.html#error-2" location="qbluetoothdevicediscoveryagent.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QBluetoothDeviceDiscoveryAgent::Error error)">
+                <parameter left="QBluetoothDeviceDiscoveryAgent::Error" right="" name="error" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothLocalDevice" href="qbluetoothlocaldevice.html" location="qbluetoothlocaldevice.h" bases="" module="QtConnectivity">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Pairing" fullname="QBluetoothLocalDevice::Pairing" href="qbluetoothlocaldevice.html#Pairing-enum" location="qbluetoothlocaldevice.h">
+                <value name="Unpaired" value="0"/>
+                <value name="Paired" value="1"/>
+                <value name="AuthorizedPaired" value="2"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="PowerState" fullname="QBluetoothLocalDevice::PowerState" href="qbluetoothlocaldevice.html#PowerState-enum" location="qbluetoothlocaldevice.h">
+                <value name="PowerOn" value="0"/>
+                <value name="PowerOff" value="1"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="HostMode" fullname="QBluetoothLocalDevice::HostMode" href="qbluetoothlocaldevice.html#HostMode-enum" location="qbluetoothlocaldevice.h">
+                <value name="HostUnconnectable" value="0"/>
+                <value name="HostConnectable" value="1"/>
+                <value name="HostDiscoverable" value="2"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothLocalDevice" fullname="QBluetoothLocalDevice::QBluetoothLocalDevice" href="qbluetoothlocaldevice.html#QBluetoothLocalDevice" location="qbluetoothlocaldevice.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothLocalDevice()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QBluetoothLocalDevice" fullname="QBluetoothLocalDevice::~QBluetoothLocalDevice" href="qbluetoothlocaldevice.html#dtor.QBluetoothLocalDevice" location="qbluetoothlocaldevice.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QBluetoothLocalDevice()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QBluetoothLocalDevice::isValid" href="qbluetoothlocaldevice.html#isValid" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPairing" fullname="QBluetoothLocalDevice::setPairing" href="qbluetoothlocaldevice.html#setPairing" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPairing(const QBluetoothAddress &amp; address, Pairing pairing)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default=""/>
+                <parameter left="Pairing" right="" name="pairing" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pairing" fullname="QBluetoothLocalDevice::pairing" href="qbluetoothlocaldevice.html#pairing" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Pairing" signature="pairing(const QBluetoothAddress &amp; address) const">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="address" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPowerState" fullname="QBluetoothLocalDevice::setPowerState" href="qbluetoothlocaldevice.html#setPowerState" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPowerState(PowerState powerState)">
+                <parameter left="PowerState" right="" name="powerState" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="powerState" fullname="QBluetoothLocalDevice::powerState" href="qbluetoothlocaldevice.html#powerState" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="PowerState" signature="powerState() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setHostMode" fullname="QBluetoothLocalDevice::setHostMode" href="qbluetoothlocaldevice.html#setHostMode" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setHostMode(QBluetoothLocalDevice::HostMode mode)">
+                <parameter left="QBluetoothLocalDevice::HostMode" right="" name="mode" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hostMode" fullname="QBluetoothLocalDevice::hostMode" href="qbluetoothlocaldevice.html#hostMode" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="HostMode" signature="hostMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QBluetoothLocalDevice::name" href="qbluetoothlocaldevice.html#name" location="qbluetoothlocaldevice_bluez.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="address" fullname="QBluetoothLocalDevice::address" href="qbluetoothlocaldevice.html#address" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QBluetoothAddress" signature="address() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultDevice" fullname="QBluetoothLocalDevice::defaultDevice" href="qbluetoothlocaldevice.html#defaultDevice" location="qbluetoothlocaldevice_bluez.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QBluetoothLocalDevice" signature="defaultDevice()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="allDevices" fullname="QBluetoothLocalDevice::allDevices" href="qbluetoothlocaldevice.html#allDevices" location="qbluetoothlocaldevice.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QBluetoothLocalDevice&gt;" signature="allDevices()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaBindableInterface" href="qmediabindableinterface.html" location="qmediabindableinterface.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaBindableInterface" fullname="QMediaBindableInterface::~QMediaBindableInterface" href="qmediabindableinterface.html#dtor.QMediaBindableInterface" location="qmediabindableinterface.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaBindableInterface()"/>
@@ -7039,6 +7627,34 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaObject::d_ptr" href="qmediaobject.html#d_ptr-var" location="qmediaobject.h" type="QMediaObjectPrivate *" static="false"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QBluetoothAddress" href="qbluetoothaddress.html" location="qbluetoothaddress.h" bases="" module="QtConnectivity">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothAddress" fullname="QBluetoothAddress::QBluetoothAddress" href="qbluetoothaddress.html#QBluetoothAddress" location="qbluetoothaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QBluetoothAddress()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothAddress" fullname="QBluetoothAddress::QBluetoothAddress" href="qbluetoothaddress.html#QBluetoothAddress-2" location="qbluetoothaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QBluetoothAddress(quint64 address)">
+                <parameter left="quint64" right="" name="address" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothAddress" fullname="QBluetoothAddress::QBluetoothAddress" href="qbluetoothaddress.html#QBluetoothAddress-3" location="qbluetoothaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QBluetoothAddress(const QString &amp; address)">
+                <parameter left="const QString &amp;" right="" name="address" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QBluetoothAddress" fullname="QBluetoothAddress::QBluetoothAddress" href="qbluetoothaddress.html#QBluetoothAddress-4" location="qbluetoothaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QBluetoothAddress(const QBluetoothAddress &amp; other)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QBluetoothAddress::operator=" href="qbluetoothaddress.html#operator=" location="qbluetoothaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QBluetoothAddress &amp;" signature="operator=(const QBluetoothAddress &amp; other)">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QBluetoothAddress::isNull" href="qbluetoothaddress.html#isNull" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QBluetoothAddress::clear" href="qbluetoothaddress.html#clear" location="qbluetoothaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;" fullname="QBluetoothAddress::operator&lt;" href="qbluetoothaddress.html#operator&lt;" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator&lt;(const QBluetoothAddress &amp; other) const">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QBluetoothAddress::operator==" href="qbluetoothaddress.html#operator==" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QBluetoothAddress &amp; other) const">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QBluetoothAddress::operator!=" href="qbluetoothaddress.html#operator!=" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QBluetoothAddress &amp; other) const">
+                <parameter left="const QBluetoothAddress &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="toUInt64" fullname="QBluetoothAddress::toUInt64" href="qbluetoothaddress.html#toUInt64" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="toUInt64() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="toString" fullname="QBluetoothAddress::toString" href="qbluetoothaddress.html#toString" location="qbluetoothaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="toString() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactUrl" href="qcontacturl.html" location="qcontacturl.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactUrl::DefinitionName" href="qcontacturl.html#DefinitionName-var" location="qcontacturl.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldUrl" fullname="QContactUrl::FieldUrl" href="qcontacturl.html#FieldUrl-var" location="qcontacturl.h" type="const QLatin1Constant" static="true"/>
@@ -7090,7 +7706,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="customAttributes" fullname="QServiceInterfaceDescriptor::customAttributes" href="qserviceinterfacedescriptor.html#customAttributes" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributes() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-92" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="92" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-94" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="94" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
@@ -7340,6 +7956,10 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SYMBIAN_SETTINGS_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamsControl_iid" href="qmediastreamscontrol.html#QMediaStreamsControl_iid" location="qmediastreamscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaStreamsControl" type="" signature="QMediaStreamsControl_iid()"/>
+        <page access="public" status="commendable" name="connectivity-api.html" href="connectivity-api.html" subtype="page" title="Connectivity API (technology preview)" fulltitle="Connectivity API (technology preview)" subtitle="" location="connectivity.qdoc">
+            <contents name="main-classes" title="Main Classes" level="1"/>
+            <contents name="bluetooth-classes" title="Bluetooth Classes" level="2"/>
+        </page>
         <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
             <contents name="class-lists" title="Class Lists" level="2"/>
             <contents name="function-lists" title="Function Lists" level="2"/>
@@ -7589,6 +8209,7 @@
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="versit" title="Versit" level="2"/>
+            <contents name="connectivity" title="Connectivity" level="2"/>
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatibility" title="Platform Compatibility" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
@@ -7626,6 +8247,7 @@
         </page>
         <page access="public" status="commendable" name="examples.html" href="examples.html" subtype="page" title="Qt Mobility Examples" fulltitle="Qt Mobility Examples" subtitle="" location="examples.qdoc">
             <contents name="bearer-management" title="Bearer Management" level="2"/>
+            <contents name="connectivity" title="Connectivity" level="2"/>
             <contents name="contacts" title="Contacts" level="2"/>
             <contents name="location" title="Location" level="2"/>
             <contents name="messaging" title="Messaging" level="2"/>
@@ -7931,6 +8553,21 @@
             <page access="public" status="commendable" name="serviceactions/mainwindow.h" href="serviceactions-mainwindow-h.html" subtype="file" title="" fulltitle="mainwindow.h Example File" subtitle="serviceactions/mainwindow.h" location=""/>
             <page access="public" status="commendable" name="serviceactions/main.cpp" href="serviceactions-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="serviceactions/main.cpp" location=""/>
             <page access="public" status="commendable" name="serviceactions/serviceactions.pro" href="serviceactions-serviceactions-pro.html" subtype="file" title="" fulltitle="serviceactions.pro Example File" subtitle="serviceactions/serviceactions.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="btchat" href="btchat.html" subtype="example" title="Bluetooth Chat Example" fulltitle="Bluetooth Chat Example" subtitle="" location="btchat.qdoc">
+            <contents name="chat-server" title="Chat Server" level="1"/>
+            <contents name="chat-client" title="Chat Client" level="1"/>
+            <contents name="chat-dialog" title="Chat Dialog" level="1"/>
+            <page access="public" status="commendable" name="btchat/chat.cpp" href="btchat-chat-cpp.html" subtype="file" title="" fulltitle="chat.cpp Example File" subtitle="btchat/chat.cpp" location=""/>
+            <page access="public" status="commendable" name="btchat/chat.h" href="btchat-chat-h.html" subtype="file" title="" fulltitle="chat.h Example File" subtitle="btchat/chat.h" location=""/>
+            <page access="public" status="commendable" name="btchat/chatclient.cpp" href="btchat-chatclient-cpp.html" subtype="file" title="" fulltitle="chatclient.cpp Example File" subtitle="btchat/chatclient.cpp" location=""/>
+            <page access="public" status="commendable" name="btchat/chatclient.h" href="btchat-chatclient-h.html" subtype="file" title="" fulltitle="chatclient.h Example File" subtitle="btchat/chatclient.h" location=""/>
+            <page access="public" status="commendable" name="btchat/chatserver.cpp" href="btchat-chatserver-cpp.html" subtype="file" title="" fulltitle="chatserver.cpp Example File" subtitle="btchat/chatserver.cpp" location=""/>
+            <page access="public" status="commendable" name="btchat/chatserver.h" href="btchat-chatserver-h.html" subtype="file" title="" fulltitle="chatserver.h Example File" subtitle="btchat/chatserver.h" location=""/>
+            <page access="public" status="commendable" name="btchat/remoteselector.cpp" href="btchat-remoteselector-cpp.html" subtype="file" title="" fulltitle="remoteselector.cpp Example File" subtitle="btchat/remoteselector.cpp" location=""/>
+            <page access="public" status="commendable" name="btchat/remoteselector.h" href="btchat-remoteselector-h.html" subtype="file" title="" fulltitle="remoteselector.h Example File" subtitle="btchat/remoteselector.h" location=""/>
+            <page access="public" status="commendable" name="btchat/main.cpp" href="btchat-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="btchat/main.cpp" location=""/>
+            <page access="public" status="commendable" name="btchat/btchat.pro" href="btchat-btchat-pro.html" subtype="file" title="" fulltitle="btchat.pro Example File" subtitle="btchat/btchat.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="player" href="player.html" subtype="example" title="Media Player Example" fulltitle="Media Player Example" subtitle="" location="player.qdoc">
             <page access="public" status="commendable" name="player/mediakeysobserver.cpp" href="player-mediakeysobserver-cpp.html" subtype="file" title="" fulltitle="mediakeysobserver.cpp Example File" subtitle="player/mediakeysobserver.cpp" location=""/>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.1: chat.cpp Example File (btchat/chat.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">chat.cpp Example File<br /><span class="small-subtitle">btchat/chat.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;chat.h&quot;
+    #include &quot;remoteselector.h&quot;
+    #include &quot;chatserver.h&quot;
+    #include &quot;chatclient.h&quot;
+
+    #include &lt;bluetooth/qbluetoothuuid.h&gt;
+    #include &lt;bluetooth/qrfcommserver.h&gt;
+    #include &lt;bluetooth/qbluetoothservicediscoveryagent.h&gt;
+    #include &lt;bluetooth/qbluetoothdeviceinfo.h&gt;
+    #include &lt;bluetooth/qbluetoothlocaldevice.h&gt;
+
+    #include &lt;QTimer&gt;
+
+    #include &lt;QDebug&gt;
+
+    static const QLatin1String serviceUuid(&quot;e8e10f95-1a70-4b27-9ccf-02010264e9c8&quot;);
+
+    Chat::Chat(QWidget *parent)
+    : QDialog(parent), ui(new Ui_Chat)
+    {
+        //! [Construct UI]
+        ui-&gt;setupUi(this);
+
+    #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        setWindowState(Qt::WindowMaximized);
+    #endif
+
+        connect(ui-&gt;quitButton, SIGNAL(clicked()), this, SLOT(accept()));
+        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
+        connect(ui-&gt;sendButton, SIGNAL(clicked()), this, SLOT(sendClicked()));
+        //! [Construct UI]
+
+        //! [Create Chat Server]
+        server = new ChatServer(this);
+        connect(server, SIGNAL(clientConnected(QString)), this, SLOT(clientConnected(QString)));
+        connect(server, SIGNAL(clientDisconnected(QString)), this, SLOT(clientDisconnected(QString)));
+        connect(server, SIGNAL(messageReceived(QString,QString)),
+                this, SLOT(showMessage(QString,QString)));
+        server-&gt;startServer();
+        //! [Create Chat Server]
+
+        //! [Get local device name]
+        localName = QBluetoothLocalDevice::defaultDevice().name();
+        //! [Get local device name]
+    }
+
+    Chat::~Chat()
+    {
+        qDeleteAll(clients);
+        delete server;
+    }
+
+    void Chat::clientConnected(const QString &amp;name)
+    {
+        ui-&gt;chat-&gt;insertPlainText(QString::fromLatin1(&quot;%1 has joined chat.&quot;).arg(name));
+    }
+
+    void Chat::clientDisconnected(const QString &amp;name)
+    {
+        ui-&gt;chat-&gt;insertPlainText(QString::fromLatin1(&quot;%1 has left.&quot;).arg(name));
+    }
+
+    void Chat::connected(const QString &amp;name)
+    {
+        ui-&gt;chat-&gt;insertPlainText(QString::fromLatin1(&quot;Joined chat with %1.&quot;).arg(name));
+    }
+
+    void Chat::clientDisconnected()
+    {
+        ChatClient *client = qobject_cast&lt;ChatClient *&gt;(sender());
+        if (client) {
+            clients.removeOne(client);
+            client-&gt;deleteLater();
+        }
+    }
+
+    void Chat::connectClicked()
+    {
+        ui-&gt;connectButton-&gt;setEnabled(false);
+
+        <span class="comment">// scan for services</span>
+        RemoteSelector remoteSelector;
+        remoteSelector.startDiscovery(QBluetoothUuid(serviceUuid));
+        if (remoteSelector.exec() == QDialog::Accepted) {
+            QBluetoothServiceInfo service = remoteSelector.service();
+
+            qDebug() &lt;&lt; &quot;Connecting to service&quot; &lt;&lt; service.serviceName()
+                     &lt;&lt; &quot;on&quot; &lt;&lt; service.device().name();
+
+            <span class="comment">// Create client</span>
+            ChatClient *client = new ChatClient(this);
+
+            connect(client, SIGNAL(messageReceived(QString,QString)),
+                    this, SLOT(showMessage(QString,QString)));
+            connect(client, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
+            connect(client, SIGNAL(connected(QString)), this, SLOT(connected(QString)));
+            connect(this, SIGNAL(sendMessage(QString)), client, SLOT(sendMessage(QString)));
+
+            client-&gt;startClient(service);
+
+            clients.append(client);
+        }
+
+        ui-&gt;connectButton-&gt;setEnabled(true);
+    }
+
+    void Chat::sendClicked()
+    {
+        ui-&gt;sendButton-&gt;setEnabled(false);
+        ui-&gt;sendText-&gt;setEnabled(false);
+
+        showMessage(localName, ui-&gt;sendText-&gt;text());
+        emit sendMessage(ui-&gt;sendText-&gt;text());
+
+        ui-&gt;sendText-&gt;clear();
+
+        ui-&gt;sendText-&gt;setEnabled(true);
+        ui-&gt;sendButton-&gt;setEnabled(true);
+    }
+
+    void Chat::showMessage(const QString &amp;sender, const QString &amp;message)
+    {
+        ui-&gt;chat-&gt;insertPlainText(QString::fromLatin1(&quot;%1: %2\n&quot;).arg(sender, message));
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

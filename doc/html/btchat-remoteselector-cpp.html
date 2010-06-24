@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.1: messagesender.h Example File (writemessage/messagesender.h)</title>
+  <title>Qt Mobility Project 1.1: remoteselector.cpp Example File (btchat/remoteselector.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -11,7 +11,7 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">messagesender.h Example File<br /><span class="small-subtitle">writemessage/messagesender.h</span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">remoteselector.cpp Example File<br /><span class="small-subtitle">btchat/remoteselector.cpp</span>
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
@@ -53,57 +53,88 @@
     **
     ****************************************************************************/</span>
 
-    #ifndef MESSAGESENDER_H
-    #define MESSAGESENDER_H
+    #include &quot;remoteselector.h&quot;
+    #include &quot;ui_remoteselector.h&quot;
 
-    #include &quot;qmessageservice.h&quot;
-
-    #include &lt;QMap&gt;
-    #include &lt;QWidget&gt;
-
-    class QComboBox;
-    class QLineEdit;
-    class QListWidget;
-    class QPushButton;
-    class QTextEdit;
+    #include &lt;bluetooth/qbluetoothdeviceinfo.h&gt;
+    #include &lt;bluetooth/qbluetoothaddress.h&gt;
 
     QTM_USE_NAMESPACE
 
-    class MessageSender : public QWidget
+    RemoteSelector::RemoteSelector(QWidget *parent)
+    :   QDialog(parent), ui(new Ui::RemoteSelector),
+        m_discoveryAgent(new QBluetoothServiceDiscoveryAgent)
     {
-        Q_OBJECT
+        ui-&gt;setupUi(this);
 
-    public:
-        MessageSender(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-        ~MessageSender();
+        connect(m_discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+                this, SLOT(serviceDiscovered(QBluetoothServiceInfo)));
+        connect(m_discoveryAgent, SIGNAL(finished()), this, SLOT(discoveryFinished()));
+    }
 
-    private slots:
-        void populateAccounts();
-        void stateChanged(QMessageService::State s);
-        void removeAttachment();
-        void addAttachment();
-        void accountSelected(int);
-        void attachmentSelected(int);
-        void send();
+    RemoteSelector::~RemoteSelector()
+    {
+        delete ui;
+    }
 
-    private:
-        QComboBox *accountCombo;
-        QLineEdit *toEdit;
-        QLineEdit *subjectEdit;
-        QTextEdit *textEdit;
-        QPushButton *sendButton;
-        QPushButton *removeButton;
-        QPushButton *addButton;
-        QListWidget *attachmentsList;
+    void RemoteSelector::startDiscovery(const QBluetoothUuid &amp;uuid)
+    {
+        if (m_discoveryAgent-&gt;isActive())
+            m_discoveryAgent-&gt;stop();
 
-        QMessageId sendId;
-        QMap&lt;QString, QPair&lt;QMessage::Type, QMessageAccountId&gt; &gt; accountDetails;
+        ui-&gt;remoteDevices-&gt;clear();
 
-        QMessageManager manager;
-        QMessageService service;
-    };
+        m_discoveryAgent-&gt;setUuidFilter(uuid);
+        m_discoveryAgent-&gt;start();
 
-    #endif</pre>
+        ui-&gt;status-&gt;setText(tr(&quot;Scanning...&quot;));
+    }
+
+    QBluetoothServiceInfo RemoteSelector::service() const
+    {
+        return m_service;
+    }
+
+    void RemoteSelector::serviceDiscovered(const QBluetoothServiceInfo &amp;serviceInfo)
+    {
+    #if 0
+        qDebug() &lt;&lt; &quot;Discovered service on&quot;
+                 &lt;&lt; serviceInfo.device().name() &lt;&lt; serviceInfo.device().address().toString();
+        qDebug() &lt;&lt; &quot;\tService name:&quot; &lt;&lt; serviceInfo.serviceName();
+        qDebug() &lt;&lt; &quot;\tDescription:&quot;
+                 &lt;&lt; serviceInfo.attribute(QBluetoothServiceInfo::ServiceDescription).toString();
+        qDebug() &lt;&lt; &quot;\tProvider:&quot;
+                 &lt;&lt; serviceInfo.attribute(QBluetoothServiceInfo::ServiceProvider).toString();
+        qDebug() &lt;&lt; &quot;\tL2CAP protocol service multiplexer:&quot;
+                 &lt;&lt; serviceInfo.protocolServiceMultiplexer();
+        qDebug() &lt;&lt; &quot;\tRFCOMM server channel:&quot; &lt;&lt; serviceInfo.serverChannel();
+    #endif
+
+        QString remoteName;
+        if (serviceInfo.device().name().isEmpty())
+            remoteName = serviceInfo.device().address().toString();
+        else
+            remoteName = serviceInfo.device().name();
+
+        QListWidgetItem *item =
+            new QListWidgetItem(QString::fromLatin1(&quot;%1 %2&quot;).arg(remoteName,
+                                                                 serviceInfo.serviceName()));
+
+        m_discoveredServices.insert(item, serviceInfo);
+        ui-&gt;remoteDevices-&gt;addItem(item);
+    }
+
+    void RemoteSelector::discoveryFinished()
+    {
+        ui-&gt;status-&gt;setText(tr(&quot;Select the chat service to connect to.&quot;));
+    }
+
+    void RemoteSelector::on_remoteDevices_itemActivated(QListWidgetItem *item)
+    {
+        m_service = m_discoveredServices.value(item);
+
+        accept();
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

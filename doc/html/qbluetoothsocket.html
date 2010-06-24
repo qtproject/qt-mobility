@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qbluetoothsocket.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QBluetoothSocket Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QBluetoothSocket"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QBluetoothSocket Class Reference<br /><span class="small-subtitle">[QtConnectivity module]</span>
+</h1>
+<p>The QBluetoothSocket class provides a Bluetooth socket. <a href="#details">More...</a></p>
+<pre>    #include &lt;QBluetoothSocket&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>.</p>
+<ul>
+<li><a href="qbluetoothsocket-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#SocketError-enum">SocketError</a></b> { UnknownSocketError, ConnectionRefusedError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#SocketState-enum">SocketState</a></b> { UnconnectedState, ServiceLookupState, ConnectingState, ConnectedState, ..., ListeningState }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#SocketType-enum">SocketType</a></b> { UnknownSocketType, L2capSocket, RfcommSocket }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#QBluetoothSocket">QBluetoothSocket</a></b> ( SocketType <i>socketType</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#QBluetoothSocket-2">QBluetoothSocket</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#dtor.QBluetoothSocket">~QBluetoothSocket</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#abort">abort</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#connectToService">connectToService</a></b> ( const QBluetoothServiceInfo &amp; <i>service</i>, OpenMode <i>openMode</i> = ReadWrite )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#connectToService-2">connectToService</a></b> ( const QBluetoothAddress &amp; <i>address</i>, const QBluetoothUuid &amp; <i>uuid</i>, OpenMode <i>openMode</i> = ReadWrite )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#connectToService-3">connectToService</a></b> ( const QBluetoothAddress &amp; <i>address</i>, quint16 <i>port</i>, OpenMode <i>openMode</i> = ReadWrite )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">SocketError </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothAddress </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#localAddress">localAddress</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#localName">localName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#localPort">localPort</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothAddress </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#peerAddress">peerAddress</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#peerName">peerName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#peerPort">peerPort</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">SocketType </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#socketType">socketType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">SocketState </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#state">state</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#bytesAvailable">bytesAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#bytesToWrite">bytesToWrite</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#canReadLine">canReadLine</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#close">close</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#isSequential">isSequential</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>33 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#public-functions">QIODevice</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#connected">connected</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#disconnected">disconnected</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#error-2">error</a></b> ( QBluetoothSocket::SocketError <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#stateChanged">stateChanged</a></b> ( QBluetoothSocket::SocketState <i>state</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#signals">QIODevice</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#setSocketError">setSocketError</a></b> ( SocketError <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#setSocketState">setSocketState</a></b> ( SocketState <i>state</i> )</td></tr>
+</table>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#readData">readData</a></b> ( char * <i>data</i>, qint64 <i>maxSize</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qbluetoothsocket.html#writeData">writeData</a></b> ( const char * <i>data</i>, qint64 <i>maxSize</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#protected-functions">QIODevice</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QBluetoothSocket class provides a Bluetooth socket.</p>
+<p>QBluetoothSocket supports two socket types, <a href="qbluetoothsocket.html#SocketType-enum">L2CAP</a> and <a href="qbluetoothsocket.html#SocketType-enum">RFCOMM</a>.</p>
+<p><a href="qbluetoothsocket.html#SocketType-enum">L2CAP</a> is a low level datagram-oriented Bluetooth socket.</p>
+<p><a href="qbluetoothsocket.html#SocketType-enum">RFCOMM</a> is a reliable, stream-oriented socket. RFCOMM sockets emulate an RS-232 serial port.</p>
+<p>To create a connection to a Bluetooth service create a socket of the appropriate type and call <a href="qbluetoothsocket.html#connectToService">connectToService</a>() passing the Bluetooth address and port number. QBluetoothSocket will emit the <a href="qbluetoothsocket.html#connected">connected</a>() signal when the connection is established.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QBluetoothSocket/SocketError"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/UnknownSocketError"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ConnectionRefusedError"></a>
+<h3 class="fn"><a name="SocketError-enum"></a>enum QBluetoothSocket::SocketError</h3>
+<p>This enum describes Bluetooth socket error types.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::UnknownSocketError</tt></td><td align="center" valign="top"><tt>QAbstractSocket::UnknownSocketError</tt></td><td valign="top">An unknown error has occurred.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ConnectionRefusedError</tt></td><td align="center" valign="top"><tt>QAbstractSocket::ConnectionRefusedError</tt></td><td valign="top">Connection refused or device not available.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QBluetoothSocket/SocketState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/UnconnectedState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ServiceLookupState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ConnectingState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ConnectedState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/BoundState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ClosingState"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/ListeningState"></a>
+<h3 class="fn"><a name="SocketState-enum"></a>enum QBluetoothSocket::SocketState</h3>
+<p>This enum describes the state of the Bluetooth socket.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::UnconnectedState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::UnconnectedState</tt></td><td valign="top">Socket is not connected.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ServiceLookupState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::HostLookupState</tt></td><td valign="top">Socket is querying connection parameters.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ConnectingState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::ConnectingState</tt></td><td valign="top">Socket is attempting to connect to a device.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ConnectedState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::ConnectedState</tt></td><td valign="top">Socket is connected to a device.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::BoundState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::BoundState</tt></td><td valign="top">Socket is bound to a local address and port.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ClosingState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::ClosingState</tt></td><td valign="top">Socket is connected and will be closed once all pending data is written to the socket.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::ListeningState</tt></td><td align="center" valign="top"><tt>QAbstractSocket::ListeningState</tt></td><td valign="top">Socket is listening for incoming connections.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QBluetoothSocket/SocketType"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/UnknownSocketType"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/L2capSocket"></a>
+<a name="//apple_ref/cpp/econst/QBluetoothSocket/RfcommSocket"></a>
+<h3 class="fn"><a name="SocketType-enum"></a>enum QBluetoothSocket::SocketType</h3>
+<p>This enum describes the Bluetooth socket type.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::UnknownSocketType</tt></td><td align="center" valign="top"><tt>-1</tt></td><td valign="top">Unknown socket type.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::L2capSocket</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">L2CAP socket.</td></tr>
+<tr><td valign="top"><tt>QBluetoothSocket::RfcommSocket</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">RFCOMM socket.</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/QBluetoothSocket"></a>
+<h3 class="fn"><a name="QBluetoothSocket"></a>QBluetoothSocket::QBluetoothSocket ( <a href="qbluetoothsocket.html#SocketType-enum">SocketType</a> <i>socketType</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a Bluetooth socket of <i>socketType</i> type, with <i>parent</i>.</p>
+<h3 class="fn"><a name="QBluetoothSocket-2"></a>QBluetoothSocket::QBluetoothSocket ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a Bluetooth socket with <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/~QBluetoothSocket"></a>
+<h3 class="fn"><a name="dtor.QBluetoothSocket"></a>QBluetoothSocket::~QBluetoothSocket ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the Bluetooth socket.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/abort"></a>
+<h3 class="fn"><a name="abort"></a>void QBluetoothSocket::abort ()</h3>
+<p>Aborts the current connection and resets the socket. Unlike <a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a>(), this function immediately closes the socket, discarding any pending data in the write buffer.</p>
+<p>See also <a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a>() and <a href="qbluetoothsocket.html#close">close</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/bytesAvailable"></a>
+<h3 class="fn"><a name="bytesAvailable"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QBluetoothSocket::bytesAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#bytesAvailable">QIODevice::bytesAvailable</a>().</p>
+<p>Returns the number of incoming bytes that are waiting to be read.</p>
+<p>See also <a href="qbluetoothsocket.html#bytesToWrite">bytesToWrite</a>() and <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#read">read</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/bytesToWrite"></a>
+<h3 class="fn"><a name="bytesToWrite"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QBluetoothSocket::bytesToWrite () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#bytesToWrite">QIODevice::bytesToWrite</a>().</p>
+<p>Returns the number of bytes that are waiting to be written. The bytes are written when control goes back to the event loop.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/canReadLine"></a>
+<h3 class="fn"><a name="canReadLine"></a>bool QBluetoothSocket::canReadLine () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#canReadLine">QIODevice::canReadLine</a>().</p>
+<p>Returns true if a line of data can be read from the socket; otherwise returns false.</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#readLine">readLine</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/close"></a>
+<h3 class="fn"><a name="close"></a>void QBluetoothSocket::close ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#close">QIODevice::close</a>().</p>
+<p>Disconnects the socket's connection with the device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/connectToService"></a>
+<h3 class="fn"><a name="connectToService"></a>void QBluetoothSocket::connectToService ( const <a href="qbluetoothserviceinfo.html">QBluetoothServiceInfo</a> &amp; <i>service</i>, <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenMode-typedef">OpenMode</a> <i>openMode</i> = ReadWrite )</h3>
+<p>Attempts to connect to the service described by <i>service</i>.</p>
+<p>The socket is opened in the given <i>openMode</i>.</p>
+<p>The socket first enters <a href="qbluetoothsocket.html#SocketState-enum">ConnectingState</a> and attempts to connect to the device providing <i>service</i>. If a connection is established, <a href="qbluetoothsocket.html">QBluetoothSocket</a> enters <a href="qbluetoothsocket.html#SocketState-enum">ConnectedState</a> and emits <a href="qbluetoothsocket.html#connected">connected</a>().</p>
+<p>At any point, the socket can emit <a href="qbluetoothsocket.html#error">error</a>() to siganl that an error occurred.</p>
+<p>See also <a href="qbluetoothsocket.html#state">state</a>() and <a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a>().</p>
+<h3 class="fn"><a name="connectToService-2"></a>void QBluetoothSocket::connectToService ( const <a href="qbluetoothaddress.html">QBluetoothAddress</a> &amp; <i>address</i>, const <a href="qbluetoothuuid.html">QBluetoothUuid</a> &amp; <i>uuid</i>, <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenMode-typedef">OpenMode</a> <i>openMode</i> = ReadWrite )</h3>
+<p>Attempts to make a connection to the service identified by <i>uuid</i> on the device with address <i>address</i>.</p>
+<p>The socket is opened in the given <i>openMode</i>.</p>
+<p>The socket first enters the <a href="qbluetoothsocket.html#SocketState-enum">ServiceLookupState</a> and queries the connection parameters for <i>uuid</i>. If the service parameters are successfully retrieved the socket enters <a href="qbluetoothsocket.html#SocketState-enum">ConnectingState</a>, and attempts to connect to <i>address</i>. If a connection is established, <a href="qbluetoothsocket.html">QBluetoothSocket</a> enters Connected State and emits <a href="qbluetoothsocket.html#connected">connected</a>().</p>
+<p>At any point, the socket can emit <a href="qbluetoothsocket.html#error">error</a>() to signal that an error occurred.</p>
+<p>See also <a href="qbluetoothsocket.html#state">state</a>() and <a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a>().</p>
+<h3 class="fn"><a name="connectToService-3"></a>void QBluetoothSocket::connectToService ( const <a href="qbluetoothaddress.html">QBluetoothAddress</a> &amp; <i>address</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>port</i>, <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenMode-typedef">OpenMode</a> <i>openMode</i> = ReadWrite )</h3>
+<p>Attempts to make a connection with <i>address</i> on the given <i>port</i>.</p>
+<p>The socket is opened in the given <i>openMode</i>.</p>
+<p>The socket first enters <a href="qbluetoothsocket.html#SocketState-enum">ConnectingState</a>, and attempts to connect to <i>address</i>. If a connection is established, <a href="qbluetoothsocket.html">QBluetoothSocket</a> enters <a href="qbluetoothsocket.html#SocketState-enum">ConnectedState</a> and emits <a href="qbluetoothsocket.html#connected">connected</a>().</p>
+<p>At any point, the socket can emit <a href="qbluetoothsocket.html#error">error</a>() to signal that an error occurred.</p>
+<p>See also <a href="qbluetoothsocket.html#state">state</a>() and <a href="qbluetoothsocket.html#disconnectFromService">disconnectFromService</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/connected"></a>
+<h3 class="fn"><a name="connected"></a>void QBluetoothSocket::connected ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a connection is established.</p>
+<p>See also <a href="qbluetoothsocket.html#SocketState-enum">QBluetoothSocket::ConnectedState</a> and <a href="qbluetoothsocket.html#stateChanged">stateChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/disconnectFromService"></a>
+<h3 class="fn"><a name="disconnectFromService"></a>void QBluetoothSocket::disconnectFromService ()</h3>
+<p>Attempts to close the socket. If there is pending data waiting to be written <a href="qbluetoothsocket.html">QBluetoothSocket</a> will enter <a href="qbluetoothsocket.html#SocketState-enum">ClosingState</a> and wait until all data has been written. Eventually, it will enter <a href="qbluetoothsocket.html#SocketState-enum">UnconnectedState</a> and emit the <a href="qbluetoothsocket.html#disconnected">disconnected</a>() signal.</p>
+<p>See also <a href="qbluetoothsocket.html#connectToService">connectToService</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/disconnected"></a>
+<h3 class="fn"><a name="disconnected"></a>void QBluetoothSocket::disconnected ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the socket is disconnected.</p>
+<p>See also <a href="qbluetoothsocket.html#SocketState-enum">QBluetoothSocket::UnconnectedState</a> and <a href="qbluetoothsocket.html#stateChanged">stateChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/error"></a>
+<h3 class="fn"><a name="error"></a><a href="qbluetoothsocket.html#SocketError-enum">SocketError</a> QBluetoothSocket::error () const</h3>
+<p>Returns the last error.</p>
+<h3 class="fn"><a name="error-2"></a>void QBluetoothSocket::error ( <a href="qbluetoothsocket.html#SocketError-enum">QBluetoothSocket::SocketError</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when an <i>error</i> occurs.</p>
+<p>See also <a href="qbluetoothsocket.html#error">error</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/isSequential"></a>
+<h3 class="fn"><a name="isSequential"></a>bool QBluetoothSocket::isSequential () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#isSequential">QIODevice::isSequential</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/localAddress"></a>
+<h3 class="fn"><a name="localAddress"></a><a href="qbluetoothaddress.html">QBluetoothAddress</a> QBluetoothSocket::localAddress () const</h3>
+<p>Returns the address of the local device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/localName"></a>
+<h3 class="fn"><a name="localName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QBluetoothSocket::localName () const</h3>
+<p>Returns the name of the local device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/localPort"></a>
+<h3 class="fn"><a name="localPort"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QBluetoothSocket::localPort () const</h3>
+<p>Returns the port number of the local socket if available; otherwise returns 0.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/peerAddress"></a>
+<h3 class="fn"><a name="peerAddress"></a><a href="qbluetoothaddress.html">QBluetoothAddress</a> QBluetoothSocket::peerAddress () const</h3>
+<p>Returns the address of the peer device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/peerName"></a>
+<h3 class="fn"><a name="peerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QBluetoothSocket::peerName () const</h3>
+<p>Returns the name of the peer device.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/peerPort"></a>
+<h3 class="fn"><a name="peerPort"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QBluetoothSocket::peerPort () const</h3>
+<p>Return the port number of the peer socket if available; otherwise returns 0.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/readData"></a>
+<h3 class="fn"><a name="readData"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QBluetoothSocket::readData ( char * <i>data</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>maxSize</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#readData">QIODevice::readData</a>().</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/setSocketError"></a>
+<h3 class="fn"><a name="setSocketError"></a>void QBluetoothSocket::setSocketError ( <a href="qbluetoothsocket.html#SocketError-enum">SocketError</a> <i>error</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets the type of error that last occurred to <i>error</i>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/setSocketState"></a>
+<h3 class="fn"><a name="setSocketState"></a>void QBluetoothSocket::setSocketState ( <a href="qbluetoothsocket.html#SocketState-enum">SocketState</a> <i>state</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets the socket state to <i>state</i>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/socketType"></a>
+<h3 class="fn"><a name="socketType"></a><a href="qbluetoothsocket.html#SocketType-enum">SocketType</a> QBluetoothSocket::socketType () const</h3>
+<p>Returns the socket type.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/state"></a>
+<h3 class="fn"><a name="state"></a><a href="qbluetoothsocket.html#SocketState-enum">SocketState</a> QBluetoothSocket::state () const</h3>
+<p>Returns the current state of the socket.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/stateChanged"></a>
+<h3 class="fn"><a name="stateChanged"></a>void QBluetoothSocket::stateChanged ( <a href="qbluetoothsocket.html#SocketState-enum">QBluetoothSocket::SocketState</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the socket state changes to <i>state</i>.</p>
+<p>See also <a href="qbluetoothsocket.html#connected">connected</a>(), <a href="qbluetoothsocket.html#disconnected">disconnected</a>(), <a href="qbluetoothsocket.html#state">state</a>(), and <a href="qbluetoothsocket.html#SocketState-enum">QBluetoothSocket::SocketState</a>.</p>
+<a name="//apple_ref/cpp/instm/QBluetoothSocket/writeData"></a>
+<h3 class="fn"><a name="writeData"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QBluetoothSocket::writeData ( const char * <i>data</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>maxSize</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#writeData">QIODevice::writeData</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

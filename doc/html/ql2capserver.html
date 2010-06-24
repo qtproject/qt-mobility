@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- ql2capserver.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QL2capServer Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QL2capServer"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QL2capServer Class Reference<br /><span class="small-subtitle">[QtConnectivity module]</span>
+</h1>
+<p>The QL2capServer class provides an L2CAP server. <a href="#details">More...</a></p>
+<pre>    #include &lt;QL2capServer&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="ql2capserver-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#QL2capServer">QL2capServer</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#dtor.QL2capServer">~QL2capServer</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#close">close</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#hasPendingConnections">hasPendingConnections</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#isListening">isListening</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#listen">listen</a></b> ( const QBluetoothAddress &amp; <i>address</i> = QBluetoothAddress(), quint16 <i>port</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#maxPendingConnections">maxPendingConnections</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothSocket * </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#nextPendingConnection">nextPendingConnection</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetooth::SecurityFlags </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#securityFlags">securityFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBluetoothAddress </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#serverAddress">serverAddress</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#serverPort">serverPort</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#setMaxPendingConnections">setMaxPendingConnections</a></b> ( int <i>numConnections</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#setSecurityFlags">setSecurityFlags</a></b> ( QBluetooth::SecurityFlags <i>security</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="ql2capserver.html#newConnection">newConnection</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QL2capServer class provides an L2CAP server.</p>
+<p>QL2capServer is used to implement Bluetooth services over L2CAP.</p>
+<p>Start listening for incoming connections with <a href="ql2capserver.html#listen">listen</a>(). The <a href="ql2capserver.html#newConnection">newConnection</a>() signal is emitted when a new connection is established. Call <a href="ql2capserver.html#nextPendingConnection">nextPendingConnection</a>() to get a <a href="qbluetoothsocket.html">QBluetoothSocket</a> for the new connection.</p>
+<p>to enable other devices to find your service create a <a href="qbluetoothserviceinfo.html">QBluetoothServiceInfo</a> with the applicable attributes for your service and register it with <a href="qbluetoothserviceinfo.html#registerService">QBluetoothServiceInfo::registerService</a>(). Call <a href="ql2capserver.html#serverPort">serverPort</a>() to get the L2CAP port number that is being used.</p>
+<p>See also <a href="qbluetoothserviceinfo.html">QBluetoothServiceInfo</a> and <a href="qbluetoothsocket.html">QBluetoothSocket</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QL2capServer/QL2capServer"></a>
+<h3 class="fn"><a name="QL2capServer"></a>QL2capServer::QL2capServer ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs an L2CAP server with <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/~QL2capServer"></a>
+<h3 class="fn"><a name="dtor.QL2capServer"></a>QL2capServer::~QL2capServer ()</h3>
+<p>Destorys the L2CAP server.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/close"></a>
+<h3 class="fn"><a name="close"></a>void QL2capServer::close ()</h3>
+<p>Closes and resets the listening socket.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/hasPendingConnections"></a>
+<h3 class="fn"><a name="hasPendingConnections"></a>bool QL2capServer::hasPendingConnections () const</h3>
+<p>Returns true if a connection is pending; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/isListening"></a>
+<h3 class="fn"><a name="isListening"></a>bool QL2capServer::isListening () const</h3>
+<p>Returns true if the L2CAP server is listening for incoming connections; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/listen"></a>
+<h3 class="fn"><a name="listen"></a>bool QL2capServer::listen ( const <a href="qbluetoothaddress.html">QBluetoothAddress</a> &amp; <i>address</i> = QBluetoothAddress(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>port</i> = 0 )</h3>
+<p>Start listening for incoming connections to <i>address</i> on <i>port</i>.</p>
+<p>Returns true if the operation succeeded and the L2CAP server is listening for incoming connections; otherwise returns false.</p>
+<p>See also <a href="ql2capserver.html#isListening">isListening</a>() and <a href="ql2capserver.html#newConnection">newConnection</a>().</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/maxPendingConnections"></a>
+<h3 class="fn"><a name="maxPendingConnections"></a>int QL2capServer::maxPendingConnections () const</h3>
+<p>Returns the maximum number of pending connections.</p>
+<p>See also <a href="ql2capserver.html#setMaxPendingConnections">setMaxPendingConnections</a>().</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/newConnection"></a>
+<h3 class="fn"><a name="newConnection"></a>void QL2capServer::newConnection ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a new connection is available.</p>
+<p>The connected slot should call <a href="ql2capserver.html#nextPendingConnection">nextPendingConnection</a>() to get a <a href="qbluetoothsocket.html">QBluetoothSocket</a> object to send and receive data over the connection.</p>
+<p>See also <a href="ql2capserver.html#nextPendingConnection">nextPendingConnection</a>() and <a href="ql2capserver.html#hasPendingConnections">hasPendingConnections</a>().</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/nextPendingConnection"></a>
+<h3 class="fn"><a name="nextPendingConnection"></a><a href="qbluetoothsocket.html">QBluetoothSocket</a> * QL2capServer::nextPendingConnection ()</h3>
+<p>Returns a pointer to a <a href="qbluetoothsocket.html">QBluetoothSocket</a> for the next pending connection. It is the callers responsibility to delete the pointer.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/securityFlags"></a>
+<h3 class="fn"><a name="securityFlags"></a><a href="qbluetooth.html#Security-enum">QBluetooth::SecurityFlags</a> QL2capServer::securityFlags () const</h3>
+<p>Returns the Bluetooth security flags.</p>
+<p>See also <a href="ql2capserver.html#setSecurityFlags">setSecurityFlags</a>().</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/serverAddress"></a>
+<h3 class="fn"><a name="serverAddress"></a><a href="qbluetoothaddress.html">QBluetoothAddress</a> QL2capServer::serverAddress () const</h3>
+<p>Returns the server address.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/serverPort"></a>
+<h3 class="fn"><a name="serverPort"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QL2capServer::serverPort () const</h3>
+<p>Returns the server's port number.</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/setMaxPendingConnections"></a>
+<h3 class="fn"><a name="setMaxPendingConnections"></a>void QL2capServer::setMaxPendingConnections ( int <i>numConnections</i> )</h3>
+<p>Sets the maximum number of pending connections to <i>numConnections</i>.</p>
+<p>See also <a href="ql2capserver.html#maxPendingConnections">maxPendingConnections</a>().</p>
+<a name="//apple_ref/cpp/instm/QL2capServer/setSecurityFlags"></a>
+<h3 class="fn"><a name="setSecurityFlags"></a>void QL2capServer::setSecurityFlags ( <a href="qbluetooth.html#Security-enum">QBluetooth::SecurityFlags</a> <i>security</i> )</h3>
+<p>Sets the Bluetooth security flags to <i>security</i>. This function must be called prior to calling <a href="ql2capserver.html#listen">listen</a>().</p>
+<p>See also <a href="ql2capserver.html#securityFlags">securityFlags</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>
