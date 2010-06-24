@@ -327,11 +327,11 @@ QPixmap QGeoTiledMapData::mapObjectsOverlay() const
 
     while (it.hasNext()) {
         it.next();
-        const QGeoMapObject &obj = it.value();
+        QGeoMapObject *obj = it.value();
 
-        if (d_ptr->intersects(&obj, d_ptr->screenRect)) {
+        if (d_ptr->intersects(obj, d_ptr->screenRect)) {
             needsPainting = true;
-            d_ptr->paintMapObject(painter, &obj);
+            d_ptr->paintMapObject(painter, obj);
         }
     }
 
