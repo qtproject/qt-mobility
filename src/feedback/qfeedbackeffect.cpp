@@ -433,7 +433,7 @@ QString QFeedbackFileEffect::fileName() const
 }
 void QFeedbackFileEffect::setFileName(const QString &fileName)
 {
-    if (state() != QAbstractAnimation::Stopped) {
+    if (state() != QFeedbackEffect::Stopped) {
         qWarning("QFeedbackFileEffect::setFileName: can't set the file while the feedback is running");
         return;
     }
@@ -455,7 +455,7 @@ void QFeedbackFileEffect::setLoaded(bool load)
     if (priv->loaded == load)
         return;
 
-    if (state() != QAbstractAnimation::Stopped) {
+    if (state() != QFeedbackEffect::Stopped) {
         qWarning() << "QFeedbackFileEffect::setLoaded: can't load/unload a file while the effect is not stopped";
         return;
     }

@@ -256,6 +256,8 @@ void QFeedbackImmersion::setEffectState(const QFeedbackHapticsEffect *effect, QF
                 effectHandles.insert(effect, effectHandle);
         }
         break;
+    default:
+        break;
     }
 }
 
@@ -345,6 +347,8 @@ void QFeedbackImmersion::setEffectState(QFeedbackFileEffect *effect, QFeedbackEf
             if (VIBE_SUCCEEDED(status))
                 effectHandles.insert(effect, effectHandle);
         }
+        break;
+    default:
         break;
     }
 
