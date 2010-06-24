@@ -200,9 +200,9 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += "waypoint";
         requestString += QString::number(i);
         requestString += "=";
-        requestString += trimDouble(request.waypoints().at(i).longitude());
-        requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).latitude());
+        requestString += ",";
+        requestString += trimDouble(request.waypoints().at(i).longitude());
     }
 
     requestString += "&modes=";
