@@ -267,7 +267,7 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
         interval = 1;
 
     QDate tempDate = currDate;
-    while (tempDate <= realUntilDate) {
+    while (tempDate < realUntilDate) {
         // first, do FREQ+INTERVAL matching based on dateStart+rrule
         switch (freq) {
             case QOrganizerItemRecurrenceRule::Yearly:
@@ -374,7 +374,7 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
         }
 
         // matches every criteria
-        if (tempDate >= initialDate && tempDate <= realUntilDate)
+        if (tempDate >= initialDate && tempDate < realUntilDate)
             return tempDate;
         tempDate = tempDate.addDays(1);
     }
@@ -509,8 +509,11 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
 
     // save those details in the instance.
     foreach (const QOrganizerItemDetail& det, occDets) {
-        QOrganizerItemDetail modifiable = det;
-        instanceItem.saveDetail(&modifiable);
+        // copy every detail except the type
+        if (det.definitionName() != QOrganizerItemType::DefinitionName) {
+            QOrganizerItemDetail modifiable = det;
+            instanceItem.saveDetail(&modifiable);
+        }
     }
 
     // and update the time range in the instance based on the current instance date

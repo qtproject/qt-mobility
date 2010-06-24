@@ -1367,6 +1367,7 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
+    managers.removeAll("skeleton");
 
     foreach(QString mgr, managers) {
         QString managerUri = QOrganizerItemManager::buildUri(mgr, QMap<QString, QString>());
@@ -1374,10 +1375,31 @@ void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
         {
             QOrganizerItemRecurrenceRule rrule;
             rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-            rrule.setEndDate(QDate(2010, 2, 1));
+            rrule.setEndDate(QDate(2010, 1, 22));
             QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
                 << managerUri << QDate(2010, 1, 1) << rrule
                 << QDate(2010, 1, 1) << QDate(2010, 1, 20)
+                // stops at the 15th because the query end date is the 20th
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is non-inclusive").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                // still stops at the 15th because the recurrence end date is 22nd, non-inclusively
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+
+            rrule.setEndDate(QDate(2010, 1, 23));
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (+1)").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                // now stop of the 22nd
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
+
+            rrule.setEndDate(QDate(2010, 1, 21));
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (-1)").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                // now stop of the 22nd
                 << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
         }
     }

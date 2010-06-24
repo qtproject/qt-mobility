@@ -635,7 +635,7 @@ RecurrenceRule* QOrganizerItemMaemo6Engine::createKRecurrenceRule(
     QDate endDate = qRRule.endDate();
     if (endDate.isValid()) {
         // The endDate is non-inclusive, as per iCalendar
-        kRRule->setEndDt(KDateTime(endDate));
+        kRRule->setEndDt(KDateTime(endDate.addDays(-1)));
     }
     return kRRule;
 }
