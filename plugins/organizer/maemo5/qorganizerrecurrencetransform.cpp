@@ -88,7 +88,22 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
 
     // Add the recursion and exception rules
     if( !m_vRRuleList.empty() ) {
-        if( !retn->setRecurrenceRule( m_vRRuleList ) ) {
+        // Make a copy of the rules
+        std::vector< CRecurrenceRule* > copyOfRules;
+        std::vector< CRecurrenceRule* >::const_iterator i;
+        for(i = m_vRRuleList.begin(); i != m_vRRuleList.end(); ++i) {
+            CRecurrenceRule* curr = *i;
+            CRecurrenceRule* copyOfRule = new CRecurrenceRule( *curr );
+            copyOfRules.push_back(copyOfRule);
+        }
+
+        // Setting the rules transfers ownership of all the rules
+        if( !retn->setRecurrenceRule(copyOfRules) ) {
+            // If failed, the ownership was not transferred
+            std::vector< CRecurrenceRule* >::iterator i;
+            for( i = copyOfRules.begin(); i != copyOfRules.end(); ++i )
+                delete *i;
+
             delete retn;
             return 0; // failed
         }
@@ -281,4 +296,159 @@ int OrganizerRecurrenceTransform::qfrequencyToRtype( QOrganizerItemRecurrenceRul
     case QOrganizerItemRecurrenceRule::Monthly: return NATIVE_CAL_APP_MONTHLY;
     case QOrganizerItemRecurrenceRule::Yearly: return NATIVE_CAL_APP_YEARLY;
     }
+}
+
+void OrganizerRecurrenceTransform::transformToQrecurrence( CRecurrence* crecurrence )
+{
+    m_lRecurrenceRules.clear();
+    m_lExceptionRules.clear();
+
+    if ( !crecurrence )
+        return;
+
+    std::vector< CRecurrenceRule* > rules = crecurrence->getRecurrenceRule();
+    std::vector< CRecurrenceRule* >::const_iterator i;
+    for( i = rules.begin(); i != rules.end(); ++i )
+    {
+        CRecurrenceRule* rule = *i;
+        if ( rule )
+        {
+            QOrganizerItemRecurrenceRule qrule( icalRecurrenceRuleToQrecurrenceRule( rule ) );
+            if( rule->getRuleType() == RECURRENCE_RULE )
+                m_lRecurrenceRules << qrule;
+            else if( rule->getRuleType() == EXCEPTION_RULE )
+                m_lExceptionRules << qrule;
+        }
+    }
+}
+
+QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
+{
+    return m_lRecurrenceRules;
+}
+
+QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
+{
+    return m_lExceptionRules;
+}
+
+QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQrecurrenceRule( CRecurrenceRule* rule ) const
+{
+    QOrganizerItemRecurrenceRule retn;
+    // Parse rrule
+    if (!rule->rruleParser(rule->getRrule()))
+        return retn; // parsing failed
+
+    // Now it's enough to just set the fields
+    retn.setFrequency(icalFrequencyToQfrequency(rule->getFrequency()));
+
+    time_t until = rule->getUntil();
+    if (until > 0) {
+        QDateTime endDate(QDateTime::fromTime_t(until));
+        retn.setEndDate(endDate.date());
+    }
+
+    int count = rule->getCount();
+    if (count > 0)
+        retn.setCount(count);
+
+    retn.setInterval(rule->getInterval());
+
+    QList<QOrganizerItemRecurrenceRule::Month> qMonths;
+    std::vector< short > months = rule->getMonth();
+    std::vector< short >::const_iterator month;
+    for(month = months.begin(); month != months.end(); ++month)
+        qMonths << static_cast<QOrganizerItemRecurrenceRule::Month>(*month);
+    retn.setMonths(qMonths);
+
+    QList<Qt::DayOfWeek> qDaysOfWeek;
+    std::vector< short > daysOfWeek = rule->getWeekDay();
+    std::vector< short >::const_iterator dayOfWeek;
+    for(dayOfWeek = daysOfWeek.begin(); dayOfWeek != daysOfWeek.end(); ++dayOfWeek)
+        qDaysOfWeek << icalWeekdayToQdayOfWeek(*dayOfWeek);
+    retn.setDaysOfWeek(qDaysOfWeek);
+
+    QList<int> qDaysOfMonth;
+    std::vector< short > daysOfMonth = rule->getMonthDay();
+    std::vector< short >::const_iterator dayOfMonth;
+    for(dayOfMonth = daysOfMonth.begin(); dayOfMonth != daysOfMonth.end(); ++dayOfMonth)
+        qDaysOfMonth << static_cast<int>(*dayOfMonth);
+    retn.setDaysOfMonth(qDaysOfMonth);
+
+    QList<int> qDaysOfYear;
+    std::vector< short > daysOfYear = rule->getYearDay();
+    std::vector< short >::const_iterator dayOfYear;
+    for(dayOfYear = daysOfYear.begin(); dayOfYear != daysOfYear.end(); ++dayOfYear)
+        qDaysOfYear << static_cast<int>(*dayOfYear);
+    retn.setDaysOfYear(qDaysOfYear);
+
+    QList<int> qWeeksOfYear;
+    std::vector< short > weekNumbers = rule->getWeekNumber();
+    std::vector< short >::const_iterator weekNumber;
+    for(weekNumber = weekNumbers.begin(); weekNumber != weekNumbers.end(); ++weekNumber)
+        qWeeksOfYear << static_cast<int>(*weekNumber);
+    retn.setWeeksOfYear(qWeeksOfYear);
+
+    QList<int> qPositions;
+    std::vector< short > positions = rule->getPos();
+    std::vector< short >::const_iterator position;
+    for(position = positions.begin(); position != positions.end(); ++position)
+        qPositions << static_cast<int>(*position);
+    retn.setPositions(qPositions);
+
+    // Parse the start of week here as it does not seem to become
+    // parsed correctly with the rruleParser
+    QString qrule(QString::fromStdString(rule->getRrule()));
+    const QString weekstartField("WKST=");
+    int weekstartAt = qrule.indexOf(weekstartField);
+    QString weekday;
+    if(weekstartAt>=0)
+        weekday = qrule.mid( weekstartAt + weekstartField.length(), 2 );
+    retn.setWeekStart(icalrecurrencetypeWeekdayToQdayOfWeek(weekday));
+
+    return retn;
+}
+
+QOrganizerItemRecurrenceRule::Frequency OrganizerRecurrenceTransform::icalFrequencyToQfrequency( FREQUENCY frequency ) const
+{
+    switch( frequency )
+    {
+    case DAILY_RECURRENCE: return QOrganizerItemRecurrenceRule::Daily;
+    case WEEKLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Weekly;
+    case MONTHLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Monthly;
+    case YEARLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Yearly;
+    }
+}
+
+Qt::DayOfWeek OrganizerRecurrenceTransform::icalWeekdayToQdayOfWeek( short weekday, bool* status ) const
+{
+    // The Fremantle calendar representation of weekdays is 1=Sunday, 2=Monday,..., 7=Saturday
+    QList<Qt::DayOfWeek> week;
+    week << Qt::Sunday << Qt::Monday << Qt::Tuesday << Qt::Wednesday << Qt::Thursday << Qt::Friday << Qt::Saturday;
+    if( weekday >= 1 && weekday <= 7 ) {
+        if(status)
+            *status = true;
+        return week[weekday-1];
+    }
+    else {
+        if(status)
+            *status = false;
+        return Qt::Monday; // This should never happen and should be interpreted as an error
+    }
+}
+
+Qt::DayOfWeek OrganizerRecurrenceTransform::icalrecurrencetypeWeekdayToQdayOfWeek(const QString& weekday) const
+{
+    QMap<QString,Qt::DayOfWeek> mapping;
+    mapping["MO"] = Qt::Monday;
+    mapping["TU"] = Qt::Tuesday;
+    mapping["WE"] = Qt::Wednesday;
+    mapping["TH"] = Qt::Thursday;
+    mapping["FR"] = Qt::Friday;
+    mapping["SA"] = Qt::Saturday;
+    mapping["SU"] = Qt::Sunday;
+    if(mapping.contains(weekday))
+        return mapping.value(weekday);
+    else
+        return Qt::Monday; // Return Monday as a default start of week
 }

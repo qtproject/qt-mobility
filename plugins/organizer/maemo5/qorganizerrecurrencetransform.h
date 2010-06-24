@@ -65,14 +65,27 @@ public:
     OrganizerRecurrenceTransform();
     ~OrganizerRecurrenceTransform();
 
+public: // Conversion from QRecurrence to CRecurrence
+    // init
     void beginTransformToCrecurrence();
-    CRecurrence* crecurrence( bool* success = 0 ) const;
 
+    // set rules and dates
     void addQOrganizerItemRecurrenceRule( const QOrganizerItemRecurrenceRule& rule );
     void addQOrganizerItemExceptionRule( const QOrganizerItemRecurrenceRule& rule );
 
+    // get recurrence
+    CRecurrence* crecurrence( bool* success = 0 ) const;
+
+public: // Conversion from CRecurrence to QRecurrence
+    // init and set recurrence
+    void transformToQrecurrence( CRecurrence* crecurrence );
+
+    // get rules and dates
+    QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
+    QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
+
 private:
-    // conversions
+    // qrule -> crule conversions
     QString qrecurrenceRuleToIcalRecurrenceRule( const QOrganizerItemRecurrenceRule& rule ) const;
     QString qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
     QString qcountToIcalCount( int count ) const;
@@ -89,11 +102,22 @@ private:
     QString listOfNumbers( const QList<int>& list ) const;
     int qfrequencyToRtype( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
 
+    // crule -> qrule conversions
+    QOrganizerItemRecurrenceRule icalRecurrenceRuleToQrecurrenceRule( CRecurrenceRule* rule ) const;
+    QOrganizerItemRecurrenceRule::Frequency icalFrequencyToQfrequency( FREQUENCY frequency ) const;
+    Qt::DayOfWeek icalWeekdayToQdayOfWeek( short weekday, bool* status = 0 ) const;
+    Qt::DayOfWeek icalrecurrencetypeWeekdayToQdayOfWeek(const QString& weekday) const;
+
 private:
+    // QRecurrence -> CRecurrence
     int m_rtype; // Recursion type parameter for the native calendar backend
     std::vector< CRecurrenceRule* > m_vRRuleList; // recurrence and exception rules
     std::vector< std::string > m_vRecDateList; // recursion dates
     std::vector< std::string > m_vExceptionDateList; // exception dates
+
+    // CRecurrence -> QRecurrence
+    QList<QOrganizerItemRecurrenceRule> m_lRecurrenceRules;
+    QList<QOrganizerItemRecurrenceRule> m_lExceptionRules;
 };
 
 #endif // QORGANIZERRECURRENCETRANSFORM_H
