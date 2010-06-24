@@ -53,7 +53,9 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
 
     TCalRRule calRRule;
     entry.GetRRuleL(calRRule);
-    recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
+    if (calRRule.Type() != TCalRRule::EInvalid) {
+        recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
+    }
 
     RArray<TCalTime> calRDateList;
     entry.GetRDatesL(calRDateList);
