@@ -44,6 +44,9 @@
 
 #include "qgeomapobject.h"
 
+#include <QPen>
+#include <QBrush>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObjectPrivate;
@@ -56,6 +59,12 @@ public:
     QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent = 0);
     QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent = 0);
     ~QGeoMapRectangleObject();
+
+    QPen pen() const;
+    void setPen(const QPen &aPen);
+
+    QBrush brush() const;
+    void setBrush(const QBrush &aBrush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapRectangleObject)

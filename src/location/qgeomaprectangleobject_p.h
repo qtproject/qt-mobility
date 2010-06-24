@@ -44,6 +44,9 @@
 
 #include "qgeomapobject_p.h"
 
+#include <QPen>
+#include <QBrush>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObjectPrivate : public QGeoMapObjectPrivate
@@ -53,6 +56,9 @@ public:
     QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other);
     ~QGeoMapRectangleObjectPrivate();
     QGeoMapRectangleObjectPrivate& operator= (const QGeoMapRectangleObjectPrivate &other);
+
+    QPen pen;
+    QBrush brush;
 };
 
 QTM_END_NAMESPACE

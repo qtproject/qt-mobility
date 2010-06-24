@@ -257,9 +257,11 @@ void MainWindow::drawRect(bool /*checked*/)
         pen.setWidth(2);
         QColor fill(Qt::black);
         fill.setAlpha(65);
-    
-        m_mapWidget->addMapObject(new QGeoMapRectangleObject(m_mapWidget->screenPositionToCoordinate(p1),
-                                                             m_mapWidget->screenPositionToCoordinate(p2)));
+        QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(m_mapWidget->screenPositionToCoordinate(p1),
+                                                             m_mapWidget->screenPositionToCoordinate(p2));
+        rectangle->setPen(pen);
+        rectangle->setBrush(QBrush(fill));
+        m_mapWidget->addMapObject(rectangle);
     }
 
     markers.clear();

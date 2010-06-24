@@ -482,9 +482,15 @@ void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectan
     if (!objInfo.contains(rectangle))
         return;
 
+    QPen oldPen = painter.pen();
+    QBrush oldBrush = painter.brush();
+    painter.setPen(rectangle->pen());
+    painter.setBrush(rectangle->brush());
     QGeoTiledMapObjectInfo* info = objInfo.value(rectangle);
     QRectF rect = info->boundingBox.translated(-(screenRect.topLeft()));
     painter.drawRect(rect);
+    painter.setPen(oldPen);
+    painter.setBrush(oldBrush);
 }
 
 void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const
