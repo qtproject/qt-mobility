@@ -101,6 +101,19 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QList<QLandmarkCategoryId>);
+Q_DECLARE_METATYPE(QList<QLandmarkId>);
+Q_DECLARE_METATYPE(QList<QLandmark>);
+Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
+Q_DECLARE_METATYPE(QLandmarkAbstractRequest::State)
+Q_DECLARE_METATYPE(QLandmarkAbstractRequest *)
+Q_DECLARE_METATYPE(QLandmarkFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkManager::Error)
+Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
+Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
 static const double EARTH_MEAN_RADIUS = 6371.0072;
@@ -2152,6 +2165,20 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
 
 {
     qRegisterMetaType<ERROR_MAP >();
+    qRegisterMetaType<QList<QLandmarkCategoryId> >();
+    qRegisterMetaType<QList<QLandmarkId> >();
+    qRegisterMetaType<QList<QLandmark> >();
+    qRegisterMetaType<QList<QLandmarkCategory> >();
+    qRegisterMetaType<QLandmarkAbstractRequest::State>();
+    qRegisterMetaType<QLandmarkAbstractRequest *>();
+    qRegisterMetaType<QLandmarkFetchRequest *>();
+    qRegisterMetaType<QLandmarkSaveRequest *>();
+    qRegisterMetaType<QLandmarkRemoveRequest *>();
+    qRegisterMetaType<QLandmarkCategoryFetchRequest *>();
+    qRegisterMetaType<QLandmarkCategorySaveRequest *>();
+    qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
+    qRegisterMetaType<QLandmarkManager::Error>();
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
 
     if (m_dbFilename.isEmpty()) {
