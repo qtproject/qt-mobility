@@ -74,6 +74,7 @@ public:
 
     virtual bool operator== (const QGeoPlacePrivate &other) const;
 
+    virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
     QGeoPlace::PlaceType type;
     QGeoBoundingBox boundingBox;
     QGeoCoordinate coordinate;
@@ -81,6 +82,18 @@ public:
 };
 
 QTM_END_NAMESPACE
+
+#if defined(Q_CC_MWERKS)
+// This results in multiple symbol definition errors on all other compilers
+// but not having a definition here results in an attempt to use the unspecialized
+// clone (which fails because of the pure virtuals above)
+template<> QTM_PREPEND_NAMESPACE(QGePlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+{
+    return d->clone();
+}
+#else
+template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone();
+#endif
 
 #endif
 

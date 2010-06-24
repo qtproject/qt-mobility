@@ -41,8 +41,14 @@
 
 #include "qgeoplace.h"
 #include "qgeoplace_p.h"
-
 #include "qlandmark.h"
+
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -132,7 +138,7 @@ inline const QGeoPlacePrivate* QGeoPlace::d_func() const
 */
 bool QGeoPlace::operator== (const QGeoPlace &other) const
 {
-    return (d_ptr.constData() == other.d_ptr.constData());
+    return ( *(d_ptr.constData()) == *(other.d_ptr.constData()));
 }
 
 /*!
