@@ -44,11 +44,17 @@
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
 #ifdef Q_OS_SYMBIAN
-    #include "databasemanager_symbian_p.h"
     #include "qremoteservicecontrol_s60_p.h"
+#elif QT_NO_DBUS
+    #include "qremoteservicecontrol_p.h"
+#else
+    #include "qremoteservicecontrol_dbus_p.h"
+#endif
+
+#ifdef Q_OS_SYMBIAN
+    #include "databasemanager_symbian_p.h"
 #else
     #include "databasemanager_p.h"
-    #include "qremoteservicecontrol_p.h"
 #endif
 
 #include <QObject>
@@ -98,7 +104,8 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 }
 
 /*!
-    For now we assume that localsocket means IPC via QLocalSocket. 
+    For now we assume that localsocket means IPC via QLocalSocket and
+    dbus means IPC via QDBusConnection on the system bus.
     This needs to be extended as new IPC mechanisms are incorporated.
 */
 static bool qservicemanager_isIpcBasedService(const QString& location)
@@ -107,7 +114,8 @@ static bool qservicemanager_isIpcBasedService(const QString& location)
     // TODO: we don't actually have to specify the specific ipc mechanism
     // a simple flag would do.
     if (location.startsWith("localsocket:") ||
-        location.startsWith("symbianclientserver:"))
+        location.startsWith("symbianclientserver:") ||
+        location.startsWith("dbus:"))
         return true;
     return false;
 }
@@ -416,7 +424,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     if (qservicemanager_isIpcBasedService(location)) {
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
                 .arg(descriptor.minorVersion()).toLatin1();
-        const QRemoteServiceIdentifier ident(descriptor.interfaceName().toLatin1(), version);
+        const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
         QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
         if (!service)
             d->setError(InvalidServiceLocation);

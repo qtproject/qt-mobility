@@ -97,20 +97,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \macro Q_SERVICE(T, interface, version)
+    \macro Q_SERVICE(T, name, interface, version)
     \relates QRemoteServiceClassRegister
 
     This macro marks a class as remote service and should be placed next to the Q_OBJECT
-    macro. \a T represents the name of the class implementing the service, \a interface
-    specifies the service framework interface name and \a version represents the interface version. Version
-    and interface parameter must match the interface information provided by the associated
+    macro. \a T represents the name of the class implementing the service, \a interface specifies 
+    the service framework service name, interface name and \a version represents the interface 
+    version. All parameters must match the interface information provided by the associated
     service XML file.
 
     \code
         class ServiceClass : public QObject
         {
             Q_OBJECT
-            Q_SERVICE(ServiceClass, "com.nokia.qt.interfacename", "1.2");
+            Q_SERVICE(ServiceClass, "ServiceName", "com.nokia.qt.interfacename", "1.2");
         public:
             ServiceClass(QObject* parent) : QObject(parent) {};
         public slots:

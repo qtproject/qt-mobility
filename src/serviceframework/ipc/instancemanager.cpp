@@ -74,7 +74,7 @@ InstanceManager::~InstanceManager()
 
 }
 
-bool InstanceManager::addType(const QMetaObject* meta, 
+bool InstanceManager::addType(const QMetaObject* meta,
         QRemoteServiceClassRegister::CreateServiceFunc func, 
         QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
         QRemoteServiceClassRegister::InstanceType type)
@@ -84,13 +84,13 @@ bool InstanceManager::addType(const QMetaObject* meta,
     QMutexLocker ml(&lock);
 
     if (metaMap.contains(ident)) {
-        qWarning() << "Service" << ident.first << "(" << ident.second << ")"
+        qWarning() << "Service" << ident.name << "(" << ident.interface << ", " << ident.version << ")"
             << "already registered";
     } else {
         ServiceIdentDescriptor d;
         d.meta = meta;
-        d.instanceType = type;
         d.create = func;
+        d.instanceType = type;
         metaMap.insert(ident, d);
         return true;
     }

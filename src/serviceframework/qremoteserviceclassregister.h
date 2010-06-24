@@ -45,10 +45,66 @@
 #include "qmobilityglobal.h"
 #include <QList>
 #include <QPair>
+#include <QDebug>
+#include <QHash>
+
+QT_BEGIN_NAMESPACE
+class QDataStream;
+class QDebug;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-typedef QPair<QByteArray, QByteArray> QRemoteServiceIdentifier;
+//typedef QPair<QByteArray, QByteArray> QRemoteServiceIdentifier;
+
+struct QRemoteServiceIdentifier
+{
+    QByteArray name;
+    QByteArray interface;
+    QByteArray version;
+
+    QRemoteServiceIdentifier() : name(QByteArray()), interface(QByteArray()), version(QByteArray()) {}
+
+    QRemoteServiceIdentifier(const QByteArray &n, const QByteArray &i, const QByteArray &v) :
+        name(n), interface(i), version(v) {}
+
+    QRemoteServiceIdentifier& operator=(const QRemoteServiceIdentifier& other)
+    { name = other.name; interface = other.interface; version = other.version; return *this; }
+
+    bool operator==(const QRemoteServiceIdentifier& other) const {
+        if ( name == other.name && interface == other.interface && version == other.version ) return true;
+        return false;
+    }
+
+    inline bool operator!=(const QRemoteServiceIdentifier& other ) { return !operator==(other); }
+};
+
+    inline uint qHash(const QRemoteServiceIdentifier& key) { 
+        return ( qHash(key.name) + qHash(key.interface) + qHash(key.version) );
+    }
+
+#ifndef QT_NO_DATASTREAM
+    inline QDataStream& operator>>(QDataStream& s, QRemoteServiceIdentifier& ident) {
+        s >> ident.name >> ident.interface >> ident.version;
+        return s;
+    }
+
+    inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& ident) {
+        s << ident.name << ident.interface << ident.version;
+        return s;
+    }
+#endif
+
+#ifndef QT_NO_DEBUG_STREAM
+    inline QDebug operator<<(QDebug dbg, const QRemoteServiceIdentifier& ident) {
+        dbg.nospace() << "QRemoteServiceIdentifier(" 
+                      << ident.name << ", "
+                      << ident.interface << ", "
+                      << ident.version << ")";
+        return dbg.space();
+    }
+#endif
+
 
 class Q_SERVICEFW_EXPORT QRemoteServiceClassRegister 
 {
@@ -72,7 +128,7 @@ public:
     }
 };
 
-#define Q_SERVICE(T, interface, version) \
+#define Q_SERVICE(T, service, interface, version) \
 public:\
     static QObject* qt_sfw_create_instance() \
     { \
@@ -80,7 +136,7 @@ public:\
     } \
     static QRemoteServiceIdentifier qt_sfw_type_ident() \
     { \
-        return QRemoteServiceIdentifier(interface, version); \
+        return QRemoteServiceIdentifier(service, interface, version); \
     } \
 private:
 
