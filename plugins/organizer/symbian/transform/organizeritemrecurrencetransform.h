@@ -54,8 +54,12 @@ public:
 private:
     void toTCalTimesL(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
     QList<QDate> toQDatesL(const RArray<TCalTime> &calDates) const;
-    QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRules(const TCalRRule &rrule) const;
-    TCalRRule toCalRRule(QList<QOrganizerItemRecurrenceRule> recrules) const;
+    QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRulesL(const TCalRRule &calrrule) const;
+    TCalRRule toCalRRuleL(QList<QOrganizerItemRecurrenceRule> recrules, QDateTime startDateTime) const;
+    Qt::DayOfWeek toDayOfWeekL(TDay day) const;
+    TDay toTDayL(Qt::DayOfWeek dayOfWeek) const;
+    QOrganizerItemRecurrenceRule::Month toMonthL(TMonth month) const;
+    TMonth toTMonthL(QOrganizerItemRecurrenceRule::Month month) const;
 };
 
 #endif // ORGANIZERITEMRECURRENCETRANSFORM_H_

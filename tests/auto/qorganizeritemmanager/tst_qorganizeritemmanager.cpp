@@ -113,6 +113,8 @@ class UnsupportedMetatype {
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QOrganizerItem)
 Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
+Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
+Q_DECLARE_METATYPE(QList<QDate>)
 
 class tst_QOrganizerItemManager : public QObject
 {
@@ -146,12 +148,13 @@ private slots:
     /* Special test with special data */
     void uriParsing();
     void compatibleItem();
+    void recurrenceWithGenerator();
 
     /* Tests that are run on all managers */
     void metadata();
     void nullIdOperations();
     void add();
-    void addOccurrences();
+    void addOccurrenceExceptionsWithGuid();
     void update();
     void remove();
     void batch();
@@ -172,11 +175,12 @@ private slots:
     /* Special test with special data */
     void uriParsing_data();
     void compatibleItem_data();
+    void recurrenceWithGenerator_data();
     /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
-    void addOccurrences_data() {addManagers();}
+    void addOccurrenceExceptionsWithGuid_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
     void batch_data() {addManagers();}
@@ -776,11 +780,11 @@ void tst_QOrganizerItemManager::add()
 
     // now a item with many details of a particular definition
     // if the detail is not unique it should then support minumum of two of the same kind
-    const int nrOfdetails = 2;
+    // const int nrOfdetails = 2;
     // XXX TODO.
 }
 
-void tst_QOrganizerItemManager::addOccurrences()
+void tst_QOrganizerItemManager::addOccurrenceExceptionsWithGuid()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
@@ -1347,6 +1351,213 @@ void tst_QOrganizerItemManager::compatibleItem()
     QCOMPARE(cm.error(), error);
 }
 
+void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
+{
+    QTest::addColumn<QString>("uri");
+    QTest::addColumn<QDate>("eventDate");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("recurrenceRule");
+    QTest::addColumn<QDate>("startDate");
+    QTest::addColumn<QDate>("endDate");
+    QTest::addColumn<QList<QDate> >("occurrenceDates");
+
+    QStringList managers = QOrganizerItemManager::availableManagers();
+
+    /* Known one that will not pass */
+    managers.removeAll("invalid");
+    managers.removeAll("testdummy");
+    managers.removeAll("teststaticdummy");
+    managers.removeAll("maliciousplugin");
+    managers.removeAll("skeleton");
+
+    foreach(QString mgr, managers) {
+        QString managerUri = QOrganizerItemManager::buildUri(mgr, QMap<QString, QString>());
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+            rrule.setEndDate(QDate(2010, 1, 22));
+            QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 1, 20)
+                // stops at the 15th because the query end date is the 20th
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+
+            // change the end date of the query to 2010-02-01
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date is non-inclusive").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                // still stops at the 15th because the recurrence end date is 22nd, non-inclusively
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+
+            // Now let's fiddle with the recurrence end date and see what happens
+            rrule.setEndDate(QDate(2010, 1, 23));
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (+1)").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                // now stop on the 22nd
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15) << QDate(2010, 1, 22));
+
+            rrule.setEndDate(QDate(2010, 1, 21));
+            QTest::newRow(QString("mgr=%1, weekly recurrence, end date observed (-1)").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+
+            rrule.setEndDate(QDate());
+            rrule.setCount(2);
+            QTest::newRow(QString("mgr=%1, weekly recurrence, count").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+            rrule.setEndDate(QDate(2010, 1, 5));
+            QTest::newRow(QString("mgr=%1, daily").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2)
+                                   << QDate(2010, 1, 3) << QDate(2010, 1, 4));
+
+            rrule.setInterval(2);
+            QTest::newRow(QString("mgr=%1, daily, interval").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 3));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setWeekStart(Qt::Monday);
+            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Friday << Qt::Saturday << Qt::Sunday);
+            rrule.setEndDate(QDate(2010, 1, 20));
+            QTest::newRow(QString("mgr=%1, weekly, days of week").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2) << QDate(2010, 1, 3)
+                                   << QDate(2010, 1, 8) << QDate(2010, 1, 9) << QDate(2010, 1, 10)
+                                   << QDate(2010, 1, 15) << QDate(2010, 1, 16) << QDate(2010, 1, 17));
+
+            rrule.setInterval(2);
+            QTest::newRow(QString("mgr=%1, weekly, days of week, interval").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 2) << QDate(2010, 1, 3)
+                                   << QDate(2010, 1, 15) << QDate(2010, 1, 16) << QDate(2010, 1, 17));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+            rrule.setDaysOfMonth(QList<int>() << 1 << 10);
+            rrule.setEndDate(QDate(2010, 3, 15));
+            QTest::newRow(QString("mgr=%1, monthly recurrence").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 10)
+                                   << QDate(2010, 2, 1) << QDate(2010, 2, 10)
+                                   << QDate(2010, 3, 1) << QDate(2010, 3, 10));
+
+            rrule.setInterval(2);
+            QTest::newRow(QString("mgr=%1, monthly recurrence, interval").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 10)
+                                   << QDate(2010, 3, 1) << QDate(2010, 3, 10));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            rrule.setDaysOfYear(QList<int>() << 1 << 32);
+            rrule.setEndDate(QDate(2012, 3, 15));
+            QTest::newRow(QString("mgr=%1, yearly recurrence").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                                   << QDate(2011, 1, 1) << QDate(2011, 2, 1)
+                                   << QDate(2012, 1, 1) << QDate(2012, 2, 1));
+
+            rrule.setInterval(2);
+            QTest::newRow(QString("mgr=%1, yearly recurrence, interval").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 2, 1)
+                                   << QDate(2012, 1, 1) << QDate(2012, 2, 1));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            rrule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                    << QOrganizerItemRecurrenceRule::January
+                    << QOrganizerItemRecurrenceRule::March);
+            rrule.setEndDate(QDate(2011, 3, 15));
+            QTest::newRow(QString("mgr=%1, yearly recurrence, by month").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 3, 1)
+                                   << QDate(2011, 1, 1) << QDate(2011, 3, 1));
+        }
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+            rrule.setWeeksOfYear(QList<int>() << 1 << 4);
+            rrule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Thursday);
+            rrule.setEndDate(QDate(2011, 3, 15));
+            QTest::newRow(QString("mgr=%1, yearly recurrence, by week").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 7) << rrule // this is the first day of week 1
+                << QDate(2010, 1, 1) << QDate(2015, 1, 1)
+                << (QList<QDate>() << QDate(2010, 1, 7) << QDate(2010, 1, 28)
+                                   << QDate(2011, 1, 6) << QDate(2011, 1, 27));
+        }
+    }
+}
+
+void tst_QOrganizerItemManager::recurrenceWithGenerator()
+{
+    QFETCH(QString, uri);
+    QFETCH(QDate, eventDate);
+    QFETCH(QOrganizerItemRecurrenceRule, recurrenceRule);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QFETCH(QDate, startDate);
+    QFETCH(QDate, endDate);
+    QFETCH(QList<QDate>, occurrenceDates);
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+    QVERIFY(cm->saveItem(&event));
+    QList<QOrganizerItem> items = cm->itemInstances(event,
+            QDateTime(startDate, QTime(0, 0, 0)),
+            QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
+
+    QList<QDate> actualDates;
+    for (int i = 0; i < items.size(); i++) {
+        QOrganizerItem item = items.at(i);
+        QCOMPARE(item.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
+        QDate occurrenceDate;
+        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            occurrenceDate = item.detail<QOrganizerEventTimeRange>().startDateTime().date();
+        } else if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+            occurrenceDate = item.detail<QOrganizerTodoTimeRange>().startDateTime().date();
+        }
+        //QCOMPARE(occurrenceDate, occurrenceDates.at(i));
+        actualDates << occurrenceDate;
+    }
+
+    if (actualDates != occurrenceDates) {
+        qDebug() << "Actual: " << actualDates;
+        qDebug() << "Expected: " << occurrenceDates;
+        QCOMPARE(actualDates, occurrenceDates);
+    }
+}
+
 void tst_QOrganizerItemManager::itemValidation()
 {
     /* Use the memory engine as a reference (validation is not engine specific) */
@@ -1660,6 +1871,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
     QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions();
+    QVERIFY(defs.size() > 0);
 
     /* Validate the existing definitions */
 

@@ -80,6 +80,8 @@ class QOrganizerEvent;
 class QOrganizerTodo;
 class QOrganizerNote;
 class QOrganizerJournal;
+class QOrganizerItemRecurrence;
+class QOrganizerItemRecurrenceRule;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -111,6 +113,9 @@ public:
     // value = QOrganizerItemLocalId(qHash(key));
     QMap<QOrganizerItemLocalId, QString> m_QIdToKId;
 
+    // map of organizeritem type to map of definition name to definitions:
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions;
+
     ExtendedCalendar m_calendarBackend;
 };
 
@@ -132,6 +137,7 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
     bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
@@ -154,13 +160,18 @@ public:
 
 private:
     QOrganizerItemMaemo6Engine();
+    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     Incidence* incidence(const QOrganizerItemLocalId& itemId) const;
     Incidence* softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
-    Event* convertQEventToKEvent(const QOrganizerEvent& note);
-    Todo* convertQTodoToKTodo(const QOrganizerTodo& note);
-    Journal* convertQJournalToKJournal(const QOrganizerJournal& note);
-    Journal* convertQNoteToKJournal(const QOrganizerNote& note);
-    void convertDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence);
+    Event* createKEvent(const QOrganizerEvent& note);
+    Todo* createKTodo(const QOrganizerTodo& note);
+    Journal* createKJournal(const QOrganizerJournal& note);
+    Journal* createKNote(const QOrganizerNote& note);
+    void convertCommonDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence);
+    void convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence,
+            Recurrence* kRecurrence);
+    RecurrenceRule* createKRecurrenceRule(Recurrence* kRecurrence,
+            const QOrganizerItemRecurrenceRule& rrule);
 
     QOrganizerItemMaemo6EngineData* d;
 

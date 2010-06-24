@@ -114,7 +114,40 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    QOrganizerItemLocalId generatorId = generator.localId();
+    if (!d->m_QIdToKId.contains(generatorId)) {
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return QList<QOrganizerItem>();
+    }
+
+    QString kId = d->m_QIdToKId.value(generatorId);
+    Incidence* generatorIncidence = d->m_calendarBackend.incidence(kId);
+    Incidence::List generatorList;
+    generatorList.append(generatorIncidence);
+    ExtendedCalendar::ExpandedIncidenceList incidenceList = d->m_calendarBackend.expandRecurrences(
+            &generatorList,
+            KDateTime(periodStart),
+            KDateTime(periodEnd));
+    QList<QOrganizerItem> instances;
+    foreach (const ExtendedCalendar::ExpandedIncidence& expandedIncidence, incidenceList) {
+        QDateTime incidenceDateTime = expandedIncidence.first;
+        Incidence* incidence = expandedIncidence.second;
+        IncidenceToItemConverter converter(managerUri());
+        QOrganizerItem instance;
+        if (converter.convertIncidenceToItem(incidence, &instance)) {
+            if (instance.type() == QOrganizerItemType::TypeEvent) {
+                QOrganizerEventOccurrence* event = static_cast<QOrganizerEventOccurrence*>(&instance);
+                event->setType(QOrganizerItemType::TypeEventOccurrence);
+                event->setStartDateTime(incidenceDateTime);
+            } else if (instance.type() == QOrganizerItemType::TypeTodo) {
+                QOrganizerTodoOccurrence* todo = static_cast<QOrganizerTodoOccurrence*>(&instance);
+                todo->setType(QOrganizerItemType::TypeTodo);
+                todo->setStartDateTime(incidenceDateTime);
+            }
+            instances << instance;
+        }
+    }
+    return instances;
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo6Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -182,24 +215,36 @@ bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     for (int i = 0; i < items->size(); i++) {
         QOrganizerItemManager::Error thisError;
         QOrganizerItem item = items->at(i);
-        Incidence* theIncidence = softSaveItem(&item, &thisError);
-        if (theIncidence) {
-            d->m_calendarBackend.save();
-            QString kId = theIncidence->uid();
-            QOrganizerItemLocalId qLocalId = qHash(kId);
-            QOrganizerItemId qId;
-            qId.setManagerUri(managerUri());
-            qId.setLocalId(qLocalId);
-            item.setId(qId);
+        if (saveItem(&item, &thisError)) {
             items->replace(i, item);
-            d->m_QIdToKId.insert(qLocalId, kId);
         } else {
             *error = thisError;
             errorMap->insert(i, thisError);
         }
     }
-    // TODO: save the calendar to disk
     return *error == QOrganizerItemManager::NoError;
+}
+
+bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemManager::Error* error)
+{
+    // ensure that the organizeritem's details conform to their definitions
+    if (!validateItem(*item, error)) {
+        return false;
+    }
+
+    Incidence* theIncidence = softSaveItem(item, error);
+    if (theIncidence) {
+        d->m_calendarBackend.save();
+        QString kId = theIncidence->uid();
+        QOrganizerItemLocalId qLocalId = qHash(kId);
+        QOrganizerItemId qId;
+        qId.setManagerUri(managerUri());
+        qId.setLocalId(qLocalId);
+        item->setId(qId);
+        d->m_QIdToKId.insert(qLocalId, kId);
+        return true;
+    }
+    return false;
 }
 
 bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -225,8 +270,8 @@ bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>&
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
+    *error = QOrganizerItemManager::NoError;
+    return schemaDefinitions().value(itemType);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -394,6 +439,44 @@ QStringList QOrganizerItemMaemo6Engine::supportedItemTypes() const
     return ret;
 }
 
+QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaemo6Engine::schemaDefinitions() const {
+    // lazy initialisation of schema definitions.
+    if (d->m_definitions.isEmpty()) {
+        // Loop through default schema definitions
+        QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schema
+                = QOrganizerItemManagerEngine::schemaDefinitions();
+        foreach (const QString& itemType, schema.keys()) {
+            // Only add the item types that we support
+            if (itemType == QOrganizerItemType::TypeEvent ||
+                itemType == QOrganizerItemType::TypeEventOccurrence ||
+                itemType == QOrganizerItemType::TypeTodo ||
+                itemType == QOrganizerItemType::TypeTodoOccurrence ||
+                itemType == QOrganizerItemType::TypeJournal ||
+                itemType == QOrganizerItemType::TypeNote) {
+                QMap<QString, QOrganizerItemDetailDefinition> definitions
+                        = schema.value(itemType);
+                
+                QMap<QString, QOrganizerItemDetailDefinition> supportedDefinitions;
+
+                QMapIterator<QString, QOrganizerItemDetailDefinition> it(definitions);
+                while (it.hasNext()) {
+                    it.next();
+                    // Only add the definitions that we support
+                    if (it.key() == QOrganizerItemType::DefinitionName ||
+                        it.key() == QOrganizerItemDescription::DefinitionName ||
+                        it.key() == QOrganizerItemDisplayLabel::DefinitionName ||
+                        it.key() == QOrganizerItemRecurrence::DefinitionName ||
+                        it.key() == QOrganizerEventTimeRange::DefinitionName) {
+                        supportedDefinitions.insert(it.key(), it.value());
+                    }
+                }
+                d->m_definitions.insert(itemType, supportedDefinitions);
+            }
+        }
+    }
+    return d->m_definitions;
+}
+
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
 {
     // TODO: check managerUri as well
@@ -412,9 +495,18 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
     bool itemIsNew = (managerUri() != item->id().managerUri()
             || item->localId() == 0);
     Incidence* incidence = 0;
-    if (item->type() == QOrganizerItemType::TypeNote) {
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent* event = static_cast<QOrganizerEvent*>(item);
+        incidence = createKEvent(*event);
+    } else if (item->type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>(item);
+        incidence = createKTodo(*todo);
+    } else if (item->type() == QOrganizerItemType::TypeNote) {
         QOrganizerNote* note = static_cast<QOrganizerNote*>(item);
-        incidence = convertQNoteToKJournal(*note);
+        incidence = createKNote(*note);
+    } else if (item->type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal* journal = static_cast<QOrganizerJournal*>(item);
+        incidence = createKJournal(*journal);
     } else {
         *error = QOrganizerItemManager::InvalidItemTypeError;
         return 0;
@@ -436,19 +528,130 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
 }
 
 /*!
- * Converts \a note into an Incidence which is of subclass Journal.  The caller is responsible
+ * Converts \a qEvent into an Incidence which is of subclass Event.  The caller is responsible
  * for deleting the object.
  */
-Incidence* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& note)
+Event* QOrganizerItemMaemo6Engine::createKEvent(const QOrganizerEvent& qEvent)
 {
-    Journal* journal = new Journal;
-    if (!note.description().isEmpty()) {
-        journal->setDescription(note.description());
+    Event* kEvent = new Event;
+    convertCommonDetailsToIncidenceFields(qEvent, kEvent);
+    kEvent->setDtStart(KDateTime(qEvent.startDateTime()));
+    kEvent->setDtEnd(KDateTime(qEvent.endDateTime()));
+    convertQRecurrenceToKRecurrence(qEvent.detail<QOrganizerItemRecurrence>(), kEvent->recurrence());
+    return kEvent;
+}
+
+/*!
+ * Converts \a qTodo into an Incidence which is of subclass Todo.  The caller is responsible
+ * for deleting the object.
+ */
+Todo* QOrganizerItemMaemo6Engine::createKTodo(const QOrganizerTodo& qTodo)
+{
+    Todo* kTodo = new Todo;
+    convertCommonDetailsToIncidenceFields(qTodo, kTodo);
+    kTodo->setDtStart(KDateTime(qTodo.startDateTime()));
+    kTodo->setDtDue(KDateTime(qTodo.dueDateTime()));
+    convertQRecurrenceToKRecurrence(qTodo.detail<QOrganizerItemRecurrence>(), kTodo->recurrence());
+    return kTodo;
+}
+
+/*!
+ * Converts \a qJournal into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::createKJournal(const QOrganizerJournal& qJournal)
+{
+    Journal* kJournal = new Journal;
+    convertCommonDetailsToIncidenceFields(qJournal, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts \a qNote into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::createKNote(const QOrganizerNote& qNote)
+{
+    Journal* kJournal = new Journal;
+    convertCommonDetailsToIncidenceFields(qNote, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts the item-common details of \a item to fields to set in \a incidence.
+ */
+void QOrganizerItemMaemo6Engine::convertCommonDetailsToIncidenceFields(
+        const QOrganizerItem& item, Incidence* incidence)
+{
+    incidence->setDescription(item.description());
+    incidence->setSummary(item.displayLabel());
+}
+
+/*! Converts \a qRecurrence into the libkcal equivalent, stored in \a kRecurrence.  kRecurrence must
+ * point to an initialized Recurrence.
+ */
+void QOrganizerItemMaemo6Engine::convertQRecurrenceToKRecurrence(
+        const QOrganizerItemRecurrence& qRecurrence,
+        Recurrence* kRecurrence)
+{
+    // Remove all recurrence rules in kRecurrence
+    foreach (RecurrenceRule* rrule, kRecurrence->rRules()) {
+        kRecurrence->deleteRRule(rrule);
     }
-    if (!note.displayLabel().isEmpty()) {
-        journal->setSummary(note.displayLabel());
+
+    foreach (const QOrganizerItemRecurrenceRule& rrule, qRecurrence.recurrenceRules()) {
+        RecurrenceRule* krrule = createKRecurrenceRule(kRecurrence, rrule);
+        kRecurrence->addRRule(krrule);
     }
-    return journal;
+}
+
+RecurrenceRule* QOrganizerItemMaemo6Engine::createKRecurrenceRule(
+        Recurrence* kRecurrence,
+        const QOrganizerItemRecurrenceRule& qRRule)
+{
+    RecurrenceRule* kRRule = kRecurrence->defaultRRule(true);
+    switch (qRRule.frequency()) {
+        case QOrganizerItemRecurrenceRule::Daily:
+            kRRule->setRecurrenceType(RecurrenceRule::rDaily);
+            break;
+        case QOrganizerItemRecurrenceRule::Weekly:
+            kRRule->setRecurrenceType(RecurrenceRule::rWeekly);
+            break;
+        case QOrganizerItemRecurrenceRule::Monthly:
+            kRRule->setRecurrenceType(RecurrenceRule::rMonthly);
+            break;
+        case QOrganizerItemRecurrenceRule::Yearly:
+            kRRule->setRecurrenceType(RecurrenceRule::rYearly);
+            break;
+    }
+    kRRule->setFrequency(qRRule.interval());
+    kRRule->setDuration(qRRule.count() > 1 ? qRRule.count() : -1);
+
+    QList<RecurrenceRule::WDayPos> daysOfWeek;
+    foreach (Qt::DayOfWeek dayOfWeek, qRRule.daysOfWeek()) {
+        // 0 argument is setByPos (unimplemented for now)
+        daysOfWeek.append(RecurrenceRule::WDayPos(0, (short)dayOfWeek));
+    }
+    kRRule->setByDays(daysOfWeek);
+
+    kRRule->setByMonthDays(qRRule.daysOfMonth());
+
+    kRRule->setByYearDays(qRRule.daysOfYear());
+
+    kRRule->setByWeekNumbers(qRRule.weeksOfYear());
+
+    QList<int> months;
+    foreach (QOrganizerItemRecurrenceRule::Month month, qRRule.months()) {
+        months.append((int)month);
+    }
+    kRRule->setByMonths(months);
+
+    QDate endDate = qRRule.endDate();
+    if (endDate.isValid()) {
+        // The endDate is non-inclusive, as per iCalendar
+        kRRule->setEndDt(KDateTime(endDate.addDays(-1)));
+    }
+    return kRRule;
 }
 
 
@@ -480,7 +683,10 @@ bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::convertIncidenceToIte
 bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::addEvent(Event* e)
 {
     m_converted = QOrganizerEvent();
-    convertCommonDetails(e, &m_converted);
+    QOrganizerEvent* event = static_cast<QOrganizerEvent*>(&m_converted);
+    convertCommonDetails(e, event);
+    event->setStartDateTime(e->dtStart().dateTime());
+    event->setEndDateTime(e->dtEnd().dateTime());
     return true;
 }
 

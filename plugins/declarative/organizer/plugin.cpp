@@ -47,6 +47,7 @@
 #include "qmlorganizeritem.h"
 #include "qmlorganizer.h"
 #include "qmlorganizeritemdetail.h"
+#include "qmlorganizeritemdetailfield.h"
 
 QT_USE_NAMESPACE
 
@@ -62,6 +63,7 @@ public:
         qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
         qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
         qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
+        qmlRegisterType<QMLOrganizerItemDetailField>(uri, 1, 0, "QmlOrganizerItemDetailField");
     }
 };
 

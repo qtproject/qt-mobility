@@ -50,21 +50,36 @@ QTM_USE_NAMESPACE;
 
 class QMLOrganizerItemDetail : public QObject
 {
-Q_OBJECT
-Q_PROPERTY(QVariant defaultProperty READ defaultProperty WRITE setDefaultProperty)
-Q_CLASSINFO("DefaultProperty", "defaultProperty")
-
+    Q_OBJECT
 public:
-    explicit QMLOrganizerItemDetail(QObject *parent = 0);
-    explicit QMLOrganizerItemDetail(const QOrganizerItemDetail& detail, QObject *parent = 0);
-    void setItemDetail(const QOrganizerItemDetail& detail);
-    QVariant defaultProperty() const;
-    void setDefaultProperty(const QVariant& value);
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(bool detailChanged READ detailChanged NOTIFY onDetailChanged)
 
-    QDeclarativePropertyMap m_Properties;
-    QString m_defaultPropertyName;
+    explicit QMLOrganizerItemDetail(QObject* parent = 0);
+    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    QDeclarativePropertyMap* propertyMap() const;
+    Q_INVOKABLE QList<QObject*> fields() const;
+    bool detailChanged() const;
+    void setDetailChanged(bool changed);
+    QOrganizerItemDetail detail() const;
+    QString name() const;
+    void setName(const QString& name);
+
+signals:
+    void nameChanged();
+    void onDetailChanged();
+private slots:
+    void detailChanged(const QString &key, const QVariant &value);
+private:
+    bool m_detailChanged;
+    QDeclarativePropertyMap* m_map;
+    QString m_detailName;
+    QList<QObject*> m_fields;
 };
 
 QML_DECLARE_TYPE(QMLOrganizerItemDetail)
 
 #endif // QMLORGANIZERITEMDETAIL_H
+
+
+
