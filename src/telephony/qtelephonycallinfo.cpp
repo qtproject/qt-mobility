@@ -116,32 +116,17 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 }
 
 /*!
-    \fn  QString QTelephonyCallInfo::callIdentifier() const
+    \fn  QString QTelephonyCallInfo::remotePartyIdentifier() const
 
     Gives back the id of a call.
-    The callIdentifier contains the value dependend on the call CallType.
+    The remotePartyIdentifier contains the value dependend on the call CallType.
     It can be the phone number, IP address or something else.
 */
-QString QTelephonyCallInfo::callIdentifier() const
+QString QTelephonyCallInfo::remotePartyIdentifier() const
 {
     if(d)
-        return d->callIdentifier;
+        return d->remotePartyIdentifier;
     return QString();
-}
-
-/*!
-    \fn  QList<quint32> QTelephonyCallInfo::contacts() const
-
-    Gives back a list of contacts ids (can be used in QContact).
-    A contact id represent an id to find the contact in the system.
-    If you want to find the contact information for a QTelephonyCallInfo object then call this function.
-*/
-QList<quint32> QTelephonyCallInfo::contacts() const
-{
-    QList<quint32> ret;
-    if(d)
-        ret = d->contacts;
-    return ret;
 }
 
 /*!
@@ -155,7 +140,7 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 {
     if(d)
         return d->type;
-    return Unknown;
+    return Any;
 }
 
 /*!
@@ -183,7 +168,7 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
         return d->status;
-    return Undefined;
+    return Idle;
 }
 
 /*!
