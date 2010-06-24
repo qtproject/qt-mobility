@@ -71,7 +71,7 @@ public:
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
-    virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability);
+    virtual bool isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability);
 
     virtual void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
     virtual void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State);

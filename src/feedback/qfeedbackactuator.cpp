@@ -62,8 +62,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QFeedbackActuator::Capability
 
-    \value Envelope Capacity defining the wave type with attack/fade times and levels.
-    \value Period   Capacity defining that the device can play periodic effects.
+    \value Envelope Capability defining the wave type with attack/fade times and levels.
+    \value Period   Capability defining that the device can play periodic effects.
 */
 
 /*!
@@ -148,7 +148,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 */
 bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 {
-    return QFeedbackHapticsInterface::instance()->isActuatorCapabilitySupported(capability);
+    return QFeedbackHapticsInterface::instance()->isActuatorCapabilitySupported(*this, capability);
 }
 
 /*!

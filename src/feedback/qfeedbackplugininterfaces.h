@@ -95,7 +95,7 @@ public:
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) = 0;
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) = 0;
-    virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability) = 0;
+    virtual bool isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability) = 0;
     
     //effects
     virtual void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) = 0;
@@ -131,8 +131,7 @@ public:
     static QFeedbackFileInterface *instance();
 
 protected:
-    //function called from the plugin when it has finished loading a file
-    static void asyncLoadFinished(QFeedbackFileEffect*, bool success);
+    static void reportLoadFinished(QFeedbackFileEffect*, bool success);
 
 };
 

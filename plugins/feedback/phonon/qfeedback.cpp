@@ -88,7 +88,7 @@ void QFeedbackPhonon::mediaObjectStateChanged()
     case Phonon::StoppedState:
     case Phonon::PausedState:
     case Phonon::PlayingState:
-        asyncLoadFinished(effect, true);
+        reportLoadFinished(effect, true);
         break;
     case Phonon::ErrorState:
     default:
@@ -96,7 +96,7 @@ void QFeedbackPhonon::mediaObjectStateChanged()
         //we need to delete the mediaobject
         mediaObject->deleteLater();
         audioPlayers.remove(effect);
-        asyncLoadFinished(effect, false);
+        reportLoadFinished(effect, false);
     }
 }
 
@@ -110,7 +110,7 @@ void QFeedbackPhonon::setLoaded(QFeedbackFileEffect *effect, bool load)
         Phonon::AudioOutput *audio = new Phonon::AudioOutput(mediaObject);
         if (!Phonon::createPath(mediaObject, audio).isValid()) {
             mediaObject->deleteLater();
-            asyncLoadFinished(effect, false); //an error occurred
+            reportLoadFinished(effect, false); //an error occurred
         }
 
         audioPlayers[effect] = mediaObject;

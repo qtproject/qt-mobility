@@ -76,7 +76,7 @@ public:
 
     void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
     QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
-    bool isActuatorCapabilitySupported(QFeedbackActuator::Capability) { return false; }
+    bool isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability) { return false; }
 
     void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { }
     void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) { }

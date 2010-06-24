@@ -52,6 +52,44 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QFeedbackInterface
+    \ingroup feedback
+
+    \brief The QFeedbackInterface class is the base class for interfaces providing feedback.
+
+    It gives the possibility to report errors from within a backend plugin.
+*/
+
+/*!
+    \fn QFeedbackInterface::reportError(const QFeedbackEffect *effect, QFeedbackEffect::ErrorType error)
+
+    Allows to report error whenever necessary from a backend plugin. Errors most likely can happen
+    trying to play an effect.
+*/
+
+/*!
+    \enum QFeedbackEffect::PluginPriority
+
+    This enum describes the priority that the plugin should have in case more than one is found.
+    If more than one plugin have the same priority the first one that has been loaded will be used.
+    
+    That priority is only used for interfaces where only one instance is loaded.
+    This does not apply to the file effects. It applies for the theme and haptics effects.
+
+    \value PluginLowPriority The plugin will have a low priority. This is usually the case for
+    platform specific-APIs.
+
+    \value PluginNormalPriority The plugin will have a normal priority. 
+    This is usually the case for advances technologies.
+
+    \value PluginHighPriority The plugin will have higher priority. Use this priority if you 
+    want your own plugin to be used.
+
+    \value Loading The feedback is loading. That can happen when loading
+    is done asynchronously.
+*/
+
 
 void QFeedbackInterface::reportError(const QFeedbackEffect *effect, QFeedbackEffect::ErrorType error)
 {
@@ -145,7 +183,7 @@ public:
         subBackends.append(backend);
     }
 
-    void asyncLoadFinished(QFeedbackFileEffect *effect, bool success)
+    void reportLoadFinished(QFeedbackFileEffect *effect, bool success)
     {
         if (success) {
             //the file was loaded by the current backend
@@ -224,29 +262,206 @@ public:
 
 Q_GLOBAL_STATIC(BackendManager, backendManager);
 
-QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
-{
-    return QFeedbackActuator(id);
-}
+/*!
+    \class QFeedbackHapticsInterface
+    \ingroup feedback
+
+    \brief The QFeedbackHapticsInterface class is the base class for objects providing custom haptics effects.
+
+    This interface will be used to try to play custom effects with specific duration, intensity, envelope and period.
+    An effect is always played on a specified actuator.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::actuators()
+
+    return the available actuators on the system.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::pluginPriority()
+
+    returns the priority for the plugin.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &)
+
+    Sets a priority on the actuator.
+
+    \sa ActuatorProperty
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::actuatorProperty(const QFeedbackActuator &, ActuatorProperty)
+
+    returns a property for an actuator
+
+    \sa ActuatorProperty
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::isActuatorCapabilitySupported(const QFeedbackActuator &actuator, QFeedbackActuator::Capability capability)
+
+    return true if the \actuator supports the \capability.
+*/
+
+
+/*!
+    \fn QFeedbackHapticsInterface::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty property)
+
+    Tells the backend that the property \property has been update for the effect \effect.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
+
+    Sets the state to \state for the effect \effect. If that fails the backend will report an error by
+    calling reportError and \effect will in turn emit the error signal.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::effectState(const QFeedbackHapticsEffect *effect)
+
+    Get the current state for the effect \effect.
+*/
+
+/*!
+    \fn QFeedbackHapticsInterface::instance()
+
+    returns the instance of the object managing haptics custom effects. 
+    If no backend has been loaded, this will return a null pointer.
+*/
 
 QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 {
     return backendManager()->hapticsBackend.instance();
 }
 
+/*!
+    \fn QFeedbackHapticsInterface::createFeedbackActuator(int id)
+
+    Creates an instance of QFeedbackActuator with the identifier \id. That is the way
+    of the backends to create instances of actuators. It is then up to the backends to manage
+    the identifiers according to their needs.
+*/
+
+QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
+{
+    return QFeedbackActuator(id);
+}
+
+
+/*!
+    \class QFeedbackThemeInterface
+    \ingroup feedback
+
+    \brief The QFeedbackThemeInterface class is the base class for objects providing themed effects.
+
+    They can be of any nature (tactile, audio...).
+    This simple interface will be used to play those themed effects by a simple call to the play method.
+*/
+
+/*!
+    \fn QFeedbackThemeInterface::pluginPriority()
+
+    returns the priority for the plugin.
+*/
+
+/*!
+    \fn play(QFeedbackEffect::ThemeEffect effect)
+
+    Plays the theme effect \effect. Returns false in case of an error.
+*/
+
+/*!
+    \fn QFeedbackThemeInterface::instance()
+
+    returns the instance of the object managing theme effects. 
+    If no backend has been loaded, this will return a null pointer.
+*/
+
 QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 {
     return backendManager()->themeBackend.instance();
 }
+
+/*!
+    \class QFeedbackFileInterface
+    \ingroup feedback
+
+    \brief The QFeedbackFileInterface class is the base class for objects providing support for effects stored in files.
+
+    They can be of any nature (tactile, audio...). As it is possible to load many different file types using
+    different technologies, all the backend plugins exposing this interface will be loaded at the same time.
+    When loading a file all the backend will be tried in order until one can load the file. It is thus very important
+    that the backends return a load status as soon as possible to not take a too long time to load a file.
+*/
+
+/*!
+    \fn setLoaded(QFeedbackFileEffect*, bool)
+
+    Sets the state of the effect \effect to be loaded or unloaded.
+    Loading a file is asynchronous. Once the backend know if it has loaded or can't load the plugin, it must
+    call the reportLoadFinished function.
+
+    \sa reportLoadFinished
+*/
+
+/*!
+    \fn setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
+
+    set the state of \effect to \state.
+
+*/
+
+/*!
+    \fn effectState(const QFeedbackFileEffect *effect)
+
+    returns the current state of the effect \effect.
+
+*/
+
+/*!
+    \fn effectDuration(const QFeedbackFileEffect *effect)
+
+    return the duration in msecs of \effect.
+    It should return QFileFeedbackEffect::INFINITE in case the duration is infinite or undefined.
+
+*/
+
+/*!
+    \fn supportedMimeTypes()
+
+    returns a list of supported MIME types.
+
+*/
+
+/*!
+    \fn QFeedbackFileInterface::instance()
+
+    returns the instance of the object managing theme effects. 
+    Even if no backend has been loaded, this will never return a null pointer.
+*/
 
 QFeedbackFileInterface *QFeedbackFileInterface::instance()
 {
     return &backendManager()->fileBackend;
 }
 
-void QFeedbackFileInterface::asyncLoadFinished(QFeedbackFileEffect *effect, bool success)
+/*!
+    \fn QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect *effect, bool success)
+
+    This is the function the backend should call when it has finished trying to load the effect \effect.
+    As loading a file is asynchronous, the backend has to call this function in order for the process
+    to perform smoothly.
+    The success of the operation is indicated by \success.
+
+*/
+
+void QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect *effect, bool success)
 {
-    backendManager()->fileBackend.asyncLoadFinished(effect, success);
+    backendManager()->fileBackend.reportLoadFinished(effect, success);
 }
 
 

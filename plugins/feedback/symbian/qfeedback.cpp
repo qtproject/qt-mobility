@@ -205,7 +205,7 @@ public:
 bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 {
     QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
-    return true; //there is no way to kno if there was a failure
+    return true; //there is no way to know if there was a failure
 }
 
 #endif //NO_TACTILE_SUPPORT
@@ -320,7 +320,7 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
 
 }
 
-bool QFeedbackSymbian::isActuatorCapabilitySupported(QFeedbackActuator::Capability)
+bool QFeedbackSymbian::isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability)
 {
     return false;
 }

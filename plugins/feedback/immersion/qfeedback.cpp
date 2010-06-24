@@ -106,7 +106,7 @@ QVariant QFeedbackImmersion::actuatorProperty(const QFeedbackActuator &actuator,
     case Name:
         {
             char szDeviceName[VIBE_MAX_DEVICE_NAME_LENGTH] = { 0 };
-            if (VIBE_FAILED(ImmVibeGetDeviceCapabilityString(actuator.id(),VIBE_DEVCAPTYPE_DEVICE_NAME,
+            if (VIBE_FAILED(ImmVibeGetDeviceCapabilityString(actuator.id(), VIBE_DEVCAPTYPE_DEVICE_NAME,
                 VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName)))
                 return QString();
 
@@ -138,7 +138,7 @@ QVariant QFeedbackImmersion::actuatorProperty(const QFeedbackActuator &actuator,
     }
 }
 
-bool QFeedbackImmersion::isActuatorCapabilitySupported(QFeedbackActuator::Capability cap)
+bool QFeedbackImmersion::isActuatorCapabilitySupported(const QFeedbackActuator &, QFeedbackActuator::Capability cap)
 {
     switch(cap)
     {
@@ -306,7 +306,7 @@ void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
                 }
             }
         }
-        asyncLoadFinished(effect, success);
+        reportLoadFinished(effect, success);
     } else {
         //unload
         fc.refCount--;
