@@ -42,6 +42,9 @@ contains(mobility_modules,location) {
 #Contacts examples
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        sources.files += qmlcontacts
+    }
 }
 
 #Publish and Subscribe examples
