@@ -71,7 +71,7 @@ public:
     virtual QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
                                      const QGeoBoundingBox &bounds);
 
-    virtual QGeoSearchReply* textSearch(const QString &searchString,
+    virtual QGeoSearchReply* placeSearch(const QString &searchString,
                                           QGeoSearchManager::SearchTypes searchTypes,
                                           const QGeoBoundingBox &bounds);
 

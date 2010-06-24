@@ -63,7 +63,7 @@ public:
     QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
                              const QGeoBoundingBox &bounds);
 
-    QGeoSearchReply* placesSearch(const QString &searchString,
+    QGeoSearchReply* placeSearch(const QString &searchString,
                                   QGeoSearchManager::SearchTypes searchTypes,
                                   const QGeoBoundingBox &bounds);
 

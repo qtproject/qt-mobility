@@ -68,18 +68,18 @@ QTM_BEGIN_NAMESPACE
     const QGeoBoundingBox &bounds) and and call setSupportsGeocoding(true) at
     some point in time before either of the geoocode() methods are called.
 
-    The textSearch() function will make use of the QLandmarkManager instances
+    The placeSearch() function will make use of the QLandmarkManager instances
     returned by additionalLandmarkManagers(). If a QLandmarkManager is used
     internally to query the service providers landmark data the
     QLandmarkManager can be made available to the users with
     setDefaultLandmarkManager().
 
     The subclass should call setSupportedSearchTypes() at some point in time
-    before textSearch() is called.
+    before placeSearch() is called.
 
     If the service supports searching for places the subclass should provide
-    an implementetation of textSearch() and call setSupportedSearchTypes() at
-    some point in time before textSearch() is called.
+    an implementetation of placeSearch() and call setSupportedSearchTypes() at
+    some point in time before placeSearch() is called.
 
     The functions setSupportsGeocoding() and setSupportedSearchTypes() are used
     to configure the reported capabilities of the engine. If the capabilities
@@ -89,7 +89,7 @@ QTM_BEGIN_NAMESPACE
     It is important that this is done before
     geocode(const QGeoAddress &address,const QGeoBoundingBox &bounds),
     geocode(const QGeoCoordinate &coordinate,const QGeoBoundingBox &bounds),
-    textSearch(const QString &searchString,
+    placeSearch(const QString &searchString,
     QGeoSearchManager::SearchTypes searchTypes, constQGeoBoundingBox &bounds
     or any of the capability reporting functions are used to prevent
     incorrect or inconsistent behaviour.
@@ -291,7 +291,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoCoordinate &coordina
     QGeoSearchManagerEngine::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManagerEngine::textSearch(const QString &searchString,
+QGeoSearchReply* QGeoSearchManagerEngine::placeSearch(const QString &searchString,
                                                        QGeoSearchManager::SearchTypes searchTypes,
                                                        const QGeoBoundingBox &bounds)
 {
@@ -324,7 +324,7 @@ bool QGeoSearchManagerEngine::supportsGeocoding() const
 }
 
 /*!
-    Sets the search types supported by the textSearch() with this engine to \a searchTypes.
+    Sets the search types supported by the placeSearch() with this engine to \a searchTypes.
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
@@ -336,7 +336,7 @@ void QGeoSearchManagerEngine::setSupportedSearchTypes(QGeoSearchManager::SearchT
 }
 
 /*!
-    Returns the search types supported by the textSearch() with this engine.
+    Returns the search types supported by the placeSearch() with this engine.
 */
 QGeoSearchManager::SearchTypes QGeoSearchManagerEngine::supportedSearchTypes() const
 {
@@ -345,9 +345,9 @@ QGeoSearchManager::SearchTypes QGeoSearchManagerEngine::supportedSearchTypes() c
 
 /*!
     Sets the landmark manager provided by the service provider for
-    use with textSearch() to \a landmarkManager.
+    use with placeSearch() to \a landmarkManager.
 
-    This should only be set if textSearch() makes use of a QLandmarkManager
+    This should only be set if placeSearch() makes use of a QLandmarkManager
     instance to provide landmark searching functionality.
 
     It is important that subclasses use this method to ensure that the engine
@@ -361,12 +361,12 @@ void QGeoSearchManagerEngine::setDefaultLandmarkManager(QLandmarkManager *landma
 
 /*!
     Returns the landmark manager provided by the service provider for
-    use with textSearch().
+    use with placeSearch().
 
     Will return 0 if the no landmark manager is associated with the service
-    provider. This does not indicate that textSearch() does not support
+    provider. This does not indicate that placeSearch() does not support
     landmark searching, only that any landmark searching which occurs within in
-    textSearch() is done without the use of a QLandmarkManager.
+    placeSearch() is done without the use of a QLandmarkManager.
 */
 QLandmarkManager* QGeoSearchManagerEngine::defaultLandmarkManager() const
 {
@@ -374,7 +374,7 @@ QLandmarkManager* QGeoSearchManagerEngine::defaultLandmarkManager() const
 }
 
 /*!
-    Sets the landmark managers to be used with textSearch() to \a landmarkManagers.
+    Sets the landmark managers to be used with placeSearch() to \a landmarkManagers.
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
@@ -387,7 +387,7 @@ void QGeoSearchManagerEngine::setAdditionalLandmarkManagers(const QList<QLandmar
 }
 
 /*!
-    Returns the landmark managers that will be used with textSearch().
+    Returns the landmark managers that will be used with placeSearch().
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().
@@ -398,7 +398,7 @@ QList<QLandmarkManager *> QGeoSearchManagerEngine::additionalLandmarkManagers() 
 }
 
 /*!
-    Adds \a landmarkManager to the list of landmark managers that will be used with textSearch().
+    Adds \a landmarkManager to the list of landmark managers that will be used with placeSearch().
 
     These landmark managers will be used along with the landmark manager returned
     by defaultLandmarkManager().

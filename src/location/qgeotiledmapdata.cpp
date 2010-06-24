@@ -223,7 +223,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
 {
-    d_ptr->protectRegion = d_ptr->screenRect;
+    //d_ptr->protectRegion = d_ptr->screenRect;
     d_ptr->screenRect.setSize(size);
     QGeoMapData::setViewportSize(size);
 
@@ -281,7 +281,7 @@ void QGeoTiledMapData::pan(int dx, int dy)
     if (!QGeoMapData::mapImage().isNull()) {
         p.drawPixmap(target, QGeoMapData::mapImage(), source);
         //TODO: is this correct?
-        d_ptr->protectRegion = target.translated(d_ptr->screenRect.topLeft());
+        //d_ptr->protectRegion = target.translated(d_ptr->screenRect.topLeft());
         setMapImage(pm);
     }
 }
