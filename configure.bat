@@ -58,7 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors connectivity
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -129,7 +129,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
-    echo                     sensors
+    echo                     sensors connectivity
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -285,6 +285,8 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == connectivity (
+    echo     Connectivity selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -558,6 +560,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == connectivity (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtConnectivity %SOURCE_PATH%\src\connectivity\bluetooth
 )
 
 if "%REMAINING%" == "" (

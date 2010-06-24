@@ -151,3 +151,17 @@ contains(mobility_modules,messaging) {
 contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
+
+# Local Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += \
+        qbluetoothaddress\
+        qbluetoothuuid\
+        qbluetoothdeviceinfo\
+        qbluetoothdevicediscoveryagent\
+        qbluetoothserviceinfo\
+        qbluetoothservicediscoveryagent\
+        qbluetoothsocket\
+        qrfcommserver
+}
+

@@ -1,0 +1,286 @@
+class QBluetoothAddress
+{
+public:
+    QBluetoothAddress();
+    QBluetoothAddress(const QBluetoothAddress &other);
+    explicit QBluetoothAddress(const QString &address);
+    ~QBluetoothAddress();
+
+    bool operator==(const QBluetoothAddress &other) const;
+    inline bool operator!=(const QBluetoothAddress &other) const { return !operator==(other); }
+
+    bool operator==(const QString &address) const;
+    inline bool operator!=(const QString &address) const { return !operator==(address); }
+
+    QBluetoothAddress &operator=(const QBluetoothAddress &other);
+
+    bool isValid() const;
+    QString toString() const;
+};
+
+
+class QBluetoothDeviceInfo
+{
+public:
+    enum MajorDeviceClass { MiscellaneousDevice, Computer, [etc.] };
+
+    enum MinorComputerClass { UncategorizedComputer, DesktopComputer, ServerComputer, [etc.] };
+
+    enum MinorPhoneClass { UncategorizedPhone, CellularPhone, CordlessPhone, [etc.] };
+
+    enum MinorNetworkClass { UncategorizedNetworkDevice, NetworkFullService, NetworkLoadFactorOne, [etc.] };
+
+    enum MinorAudioVideoClass { UncategorizedAudioVideoDevice, WearableHeadsetDevice, HandsFreeDevice, [etc] };
+
+    enum MinorPeripheralClass { UncategorizedPeripheralDevice, Keyboard, PointingDevice, [etc.] };
+
+    enum MinorImagingClass { UncategorizedImagingDevice, ImageDisplay, Camera, [etc.] };
+
+    enum ServiceClass { PositioningService, NetwokingService, RenderingService, [etc.] };
+    Q_DECLARE_FLAGS(ServiceClasses, ServiceClass)
+
+    QBluetoothDeviceInfo();
+    QBluetoothDeviceInfo(const QBluetoothAddress &address, const QString &name, quint32 classOfDevice);
+    QBluetoothDeviceInfo(const QBluetoothAddress &address, const QString &name, quint32 classOfDevice, QList<QBluetoothUuid> &uuids);
+    QBluetoothDeviceInfo(const QBluetoothDeviceInfo &other);
+    ~QBluetoothDeviceInfo();
+
+    bool isValid() const;
+
+    QBluetoothDeviceInfo &operator=(const QBluetoothDeviceInfo &other);
+
+    QBluetoothAddress address() const;
+    QString name() const;
+
+    MajorDeviceClass majorDeviceClass() const;
+    quint8 minorDeviceClass() const;
+    ServiceClasses serviceClasses() const;
+
+    bool matchesMinorClass(MinorComputerClass minor) const;
+    bool matchesMinorClass(MinorPhoneClass minor) const;
+    bool matchesMinorClass(MinorNetworkClass minor) const;
+    bool matchesMinorClass(MinorAudioVideoClass minor) const;
+    bool matchesMinorClass(MinorPeripheralClass minor) const;
+    bool matchesMinorClass(MinorImagingClass minor) const;
+
+    QList<QBluetoothUuid> serviceUuids(bool *available = 0) const;
+};
+
+
+class QBluetoothHostInfo
+{
+public:
+    enum HostMode {
+        Available,
+        Connectable,
+        Discoverable,
+    };
+    Q_DECLARE_FLAGS(HostModes, HostMode)
+
+    QBluetoothHostInfo(const QBluetoothAddress &address);
+    ~QBluetoothHostInfo();
+
+    HostMode mode() const;
+    QBluetoothDeviceInfo deviceInfo() const;
+
+    bool hasPairing(const QBluetoothAddress &address) const;
+    bool hasConnection(const QBluetoothAddress &address) const;
+
+    static QBluetoothHostInfo defaultHost();
+    static QList<QBluetoothAddress> allHostAddresses();
+};
+
+
+class QBluetoothDeviceDiscoveryAgent : public QObject
+{
+    Q_OBJECT
+public:
+    enum Error {
+        NoError,
+        Canceled,
+        DiscoveryAlreadyStarted,
+        UnknownError = 100
+    };
+
+    QBluetoothDeviceDiscoveryAgent(QObject *parent = 0);
+
+    bool isActive() const;
+    Error error() const;
+    QList<QBluetoothDeviceInfo> discoveredDevices() const;
+
+public slots:
+    void start();
+    void stop();
+
+signals:
+    void deviceDiscovered(const QBluetoothDeviceInfo &info);
+    void finished(bool error);
+};
+
+
+class QBluetoothServiceDiscoveryAgent : public QObject
+{
+    Q_OBJECT
+public:
+    enum Error {
+        NoError,
+        Canceled,
+        DiscoveryAlreadyStarted,
+        UnknownError = 100
+    };
+
+    QBluetoothServiceDiscoveryAgent(QObject *parent = 0);
+    QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent = 0);
+
+    bool isActive() const;
+    Error error() const;
+    QList<QBluetoothServiceInfo> discoveredServices() const;
+
+    void setUuidFilter(const QBluetoothUuid &uuid);
+    QBluetoothUuid uuidFilter() const;
+
+public slots:
+    void start();
+    void start(const QBluetoothUuid &uuidFilter);
+    void stop();
+
+signals:
+    void serviceDiscovered(const QBluetoothServiceInfo &info);
+    void finished(bool error);
+};
+
+
+class QBluetoothUuid
+{
+public:
+    enum UuidType {
+        NullUuid,
+        Uuid16,
+        Uuid32,
+        Uuid128
+    };
+
+    enum ProtocolUuid {
+        L2cap,
+        Rfcomm,
+        Obex
+    };
+
+    enum ServiceClassUuid {
+        AdvancedAudioDistribution,
+        AudioSink,
+        AudioSource,
+        BasicImaging,
+        BasicPrinting,
+        DialUpNetworking,
+        Fax,
+        FileTransfer,
+        HandsFree,
+        HandsFreeAudioGateway,
+        Headset,
+        HeadsetAudioGateway,
+        IrMcSyncCommand,
+        IrMcSync,
+        ObjectPush,
+        PersonalPhoneBookAccessClient,
+        PersonalPhoneBookAccessServer,
+        SerialPort
+    };
+
+    QBluetoothUuid();
+    QBluetoothUuid(ProtocolUuid protocol);
+    QBluetoothUuid(ServiceClassUuid serviceClass);
+    QBluetoothUuid(const QString &uuidString);
+    QBluetoothUuid(const QBluetoothUuid &other);
+    ~QBluetoothUuid();
+
+    bool operator==(const QBluetoothUuid &other) const;
+    inline bool operator!=(const QBluetoothUuid &other) const { return !operator==(other); }
+
+    bool operator==(ProtocolUuid protocol) const;
+    inline bool operator!=(ProtocolUuid protocol) const { return !operator==(protocol); }
+
+    bool operator==(ServiceClassUuid serviceClass) const;
+    inline bool operator!=(ServiceClassUuid serviceClass) const { return !operator==(serviceClass); }
+
+    QBluetoothUuid &operator=(const QBluetoothUuid &other);
+
+    bool isNull() const;
+    QString toString() const;
+
+    UuidType type() const;
+    quint16 toUInt16(bool *ok = 0) const;
+    quint32 toUInt32(bool *ok = 0) const;
+    quint128 toUInt128() const;
+
+    static QBluetoothUuid fromUInt16(quint16 value);
+    static QBluetoothUuid fromUInt32(quint32 value);
+    static QBluetoothUuid fromUInt128(quint128 value);
+};
+
+
+class QBluetoothServiceRecord
+{
+public:
+    enum Attribute {
+        ServiceRecordHandle,
+        ServiceClassIdList,
+        ServiceRecordState,
+        ServiceId,
+        ProtocolDescriptorList,
+        AdditionalProtocolDescriptorList,
+        BrowseGroupList,
+        LanguageBaseAttributeIdList,
+        ServiceInfoTimeToLive,
+        ServiceAvailability,
+        BluetoothProfileDescriptorList,
+        DocumentationUrl,
+        ClientExecutableUrl,
+        IconUrl,
+        ServiceName,
+        ServiceDescription,
+        ProviderName
+    };
+
+    enum XmlRecordFormat {
+        BlueZXmlRecord,
+        IOBluetoothPlistRecord
+    };
+
+    QBluetoothServiceRecord();
+    QBluetoothServiceRecord(const QBluetoothServiceRecord &other);
+    ~QBluetoothServiceRecord();
+
+    QBluetoothServiceRecord &operator=(const QBluetoothServiceRecord &other);
+
+    bool isEmpty() const;
+
+    quint32 handle() const;
+    QString name() const;
+    QString description() const;
+    QBluetoothUuid serviceId() const;
+    QList<QBluetoothUuid> serviceClassIdList() const;
+
+    quint8 rfcommChannel(bool *ok = 0) const;
+    quint16 l2capPsm(bool *ok = 0) const;
+
+    QBluetoothDataElementSequence findProtocolDescriptor(const QBluetoothUuid &uuid) const;
+
+    quint16 attributeId(Attribute attribute) const;
+    bool contains(quint16 attributeId) const;
+    QVariant attributeValue(quint16 attributeId) const;
+
+    void setAttributeValue(quint16 attributeId, const QVariant &value);
+    void removeAttribute(quint16 attributeId);
+
+    QList<quint16> attributeIds() const;
+
+    QByteArray toXml(XmlRecordFormat format) const;
+    static QBluetoothServiceRecord fromXml(XmlRecordFormat format, const QByteArray &xml);
+
+private:
+    friend class QBluetoothServiceRecordPrivate;
+    QBluetoothServiceRecordPrivate *d;
+};
+
+

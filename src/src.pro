@@ -25,6 +25,7 @@ contains(mobility_modules,publishsubscribe) {
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,versit): SUBDIRS += versit
 contains(mobility_modules,sensors): SUBDIRS += sensors
+contains(mobility_modules,connectivity): SUBDIRS += connectivity
 
 # Versit depends on Contacts
 versit.subdir=versit

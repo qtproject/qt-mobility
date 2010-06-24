@@ -74,6 +74,12 @@ contains(MOBILITY, sensors) {
     qtAddLibrary(QtSensors)
 }
 
+contains(MOBILITY, connectivity) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtConnectivity
+    INCLUDEPATH += $${QMAKE_INCDIR_QT}/QtNetwork
+    qtAddLibrary(QtConnectivity)
+}
+
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.
 # Mobility libs have UID3 0x2002AC89
 # self-signed Mobility libs have UID3 0xE002AC89

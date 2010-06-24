@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QMOBILITYGLOBAL_H
 #define QMOBILITYGLOBAL_H
 
@@ -122,6 +123,11 @@
 #    else
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
+#    if defined(QT_BUILD_CONNECTIVITY_LIB)
+#      define Q_CONNECTIVITY_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_CONNECTIVITY_EXPORT Q_DECL_IMPORT
+#    endif
 #  elif defined(QT_DLL) /* use a Qt DLL library */
 #    define Q_BEARER_EXPORT Q_DECL_IMPORT
 #    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
@@ -137,6 +143,7 @@
 #    endif
 #    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #    define Q_SENSORS_EXPORT Q_DECL_IMPORT
+#    define Q_CONNECTIVITY_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
 
@@ -152,6 +159,7 @@
 #    define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #    define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    define Q_SENSORS_EXPORT Q_DECL_EXPORT
+#    define Q_CONNECTIVITY_EXPORT Q_DECL_EXPORT
 #  else
 #    define Q_BEARER_EXPORT
 #    define Q_PUBLISHSUBSCRIBE_EXPORT
@@ -163,6 +171,7 @@
 #    define Q_SERVICEFW_EXPORT
 #    define Q_SYSINFO_EXPORT
 #    define Q_SENSORS_EXPORT
+#    define Q_CONNECTIVITY_EXPORT
 #  endif
 #endif
 
