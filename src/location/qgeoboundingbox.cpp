@@ -89,7 +89,7 @@ QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 */
 bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 {
-    return (d_ptr.constData() == other.d_ptr.constData());
+    return ((*(d_ptr.constData()) == *(other.d_ptr.constData())));
 }
 
 /*!
@@ -324,7 +324,12 @@ QGeoBoundingBox& QGeoBoundingBox::operator &= (const QGeoBoundingBox & boundingB
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate() : QSharedData() {}
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate()
+    : QSharedData(),
+      width(0.0),
+      height(0.0)
+{
+}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
         : QSharedData(),
@@ -370,8 +375,8 @@ QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBox
 bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) const
 {
     return ((center == other.center)
-            && (width == other.width)
-            && (height == other.height));
+            && (qFuzzyCompare(width,other.width))
+            && (qFuzzyCompare(height,other.height)));
 }
 
 // assumes longitude is in the range  -180 <= l <= 180
