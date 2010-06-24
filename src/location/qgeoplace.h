@@ -45,13 +45,13 @@
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 
+#include "qgeoaddress.h"
+#include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
+
 class QString;
 
 QTM_BEGIN_NAMESPACE
-
-class QGeoAddress;
-class QGeoBoundingBox;
-class QGeoCoordinate;
 
 class QLandmark;
 
