@@ -133,7 +133,8 @@ void QLandmarkId::setManagerUri(const QString &uri)
 */
 QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
 {
-    d = other.d;
+    if (this != &other)
+        d = other.d;
     return *this;
 }
 
