@@ -248,7 +248,8 @@ void MainWindow::drawRect(bool /*checked*/)
     //}
 
     //selectedMarkers.clear();
-    m_mapWidget->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(48,10), QGeoCoordinate(52,12)));
+    m_mapWidget->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(52,10), QGeoCoordinate(48,12)));
+    m_mapWidget->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(51,10), QGeoCoordinate(49,12)));
 }
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
