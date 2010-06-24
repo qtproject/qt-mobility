@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,22 +38,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QFEEDBACK_MEEGOTOUCH_H
+#define QFEEDBACK_MEEGOTOUCH_H
 
-#include <QtGui/QApplication>
-#include "dialog.h"
+#include <QObject>
+#include <qmobilityglobal.h>
+#include <qfeedbackplugininterfaces.h>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    a.addLibraryPath("../../plugins"); //allows the plugins to be loaded
+class MComponentData;
 
-    Dialog w;
-    
-//#ifdef Q_OS_SYMBIAN
-    w.showMaximized();
-//#else
-//    w.show();
-//#endif
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
-    return a.exec();
-}
+class QFeedbackMeegoTouch : public QObject, public QFeedbackThemeInterface {
+    Q_OBJECT
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackThemeInterface)
+public:
+    QFeedbackMeegoTouch(QObject *parent = 0);
+
+    virtual bool play(QFeedbackEffect::ThemeEffect);
+    virtual QFeedbackInterface::PluginPriority pluginPriority();
+
+private:
+    MComponentData *componentData;
+};
+
+QT_END_HEADER
+
+#endif // QFEEDBACK_MEEGOTOUCH_H

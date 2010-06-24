@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = hapticsplayer
 DEPENDPATH += .
 INCLUDEPATH += . $$QT_MOBILITY_SOURCE_TREE/src/feedback
-
+LIBS += -lQtFeedback
 
 # Input
 HEADERS += dialog.h
