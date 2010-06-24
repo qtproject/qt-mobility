@@ -94,5 +94,9 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+# Connectivity
+contains(mobility_modules,connectivity) {
+}
+
 sources.path = $$QT_MOBILITY_PREFIX/bin
 INSTALLS += sources

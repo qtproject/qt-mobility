@@ -262,7 +262,15 @@
     An API to manage Versit \reg documents, such as vCards.
 
     For more details see the \l{Versit API}{Versit API overview}.
-    
+
+    \section2 Connectivity
+
+    An API for communicating with local devices. Currently covers APIs for Near Field
+    Communication (NFC).  As well as related protocols.
+
+    For more details see the
+    \l {Connectivity API (technology preview)}{Connectivity API overview}.
+
     \section1 The QtMobility Namespace 
 
     The QtMobility APIs are placed into the QtMobility namespace. This is
@@ -472,6 +480,20 @@
     <td bgcolor="green"></td>
 
     <td bgcolor="green"></td>
+    </tr>
+    <tr>
+    <td>Connectivity</td>
+    <td>ALPHA</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+
+    <td bgcolor="gray"></td>
     </tr>
     <p></p>
     <p></p>

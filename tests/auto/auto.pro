@@ -151,3 +151,10 @@ contains(mobility_modules,messaging) {
 contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
+
+# Connectivity
+contains(mobility_modules,connectivity) {
+    SUBDIRS += \
+        qndefmessage
+}
+
