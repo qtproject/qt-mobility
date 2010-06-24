@@ -46,7 +46,7 @@
 #include <QtGui/QFileDialog>
 #include <QDebug>
 
-static const char ENUM_INSTANT_EFFECT[] = "InstantEffect";
+static const char ENUM_THEME_EFFECT[] = "ThemeEffect";
 static const char ENUM_ANIMATION_STATE[] = "State";
 
 Dialog::Dialog()
@@ -84,7 +84,8 @@ Dialog::Dialog()
 
     //adding the instant effects
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
-    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
+    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_THEME_EFFECT));
+    Q_ASSERT(me.keyCount());
     for (int i = 0 ; i < me.keyCount(); ++i) {
         ui.instantEffect->addItem(me.key(i));
     }
@@ -220,7 +221,7 @@ void Dialog::periodChanged(int value)
 void Dialog::instantPlayClicked()
 {
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
-    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
+    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_THEME_EFFECT));
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
 }
 
