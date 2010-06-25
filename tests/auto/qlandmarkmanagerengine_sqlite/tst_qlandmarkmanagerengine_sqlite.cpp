@@ -63,6 +63,7 @@
 #include <qlandmarkdistancesort.h>
 
 #include <qlandmarkabstractrequest.h>
+#include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
@@ -150,6 +151,29 @@ private:
             ret = false;
         }
         return ret;
+    }
+
+    //checks if an id fetch request will return the ids for the same landmarks as in \a lms
+    bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter, const QLandmarkSortOrder &sorting = QLandmarkSortOrder()) {
+        //check that the id request will return the same results
+        QLandmarkIdFetchRequest idFetchRequest(m_manager);
+        idFetchRequest.setFilter(filter);
+        idFetchRequest.setSorting(sorting);
+
+        QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        idFetchRequest.start();
+
+        if (!waitForAsync(spyId, &idFetchRequest))
+            return false;
+        QList<QLandmarkId> lmIds = idFetchRequest.landmarkIds();
+        if (lmIds.count() != lms.count())
+            return false;
+        for (int i=0; i < lmIds.count(); ++i) {
+            if( !(lms.at(i).landmarkId() == lmIds.at(i)))
+                return false;
+        }
+
+        return true;
     }
 
     void createDb() {
@@ -2009,6 +2033,9 @@ private slots:
         QCOMPARE(lms1.at(1).landmarkId(), lm3.landmarkId());
         QCOMPARE(lms1.at(2).landmarkId(), lm5.landmarkId());
 
+        QVERIFY(checkIdFetchRequest(lms1,filter));
+
+        //do a case sensitive filter this time
         filter.setCaseSensitivity(Qt::CaseSensitive);
         fetchRequest.setFilter(filter);
         spy.clear();
@@ -2023,6 +2050,9 @@ private slots:
         QCOMPARE(lms2.size(), 1);
         QCOMPARE(lms2.at(0).landmarkId(), lm3.landmarkId());
 
+        QVERIFY(checkIdFetchRequest(lms2,filter));
+
+        //try a filter which won't have a match
         filter.setName("No match");
         fetchRequest.setFilter(filter);
         spy.clear();
@@ -2034,6 +2064,8 @@ private slots:
 
         QList<QLandmark> lms3 = fetchRequest.landmarks();
         QCOMPARE(lms3.size(), 0);
+
+        QVERIFY(checkIdFetchRequest(lms3,filter));
     }
 
     void filterLandmarksProximity() {
@@ -2278,6 +2310,8 @@ private slots:
 
                 QVERIFY(waitForAsync(spy, &fetchRequest));
                 QList<QLandmark>lms = fetchRequest.landmarks();
+
+                QVERIFY(checkIdFetchRequest(lms,filter));
 
                 if (lms.size() != lmCoords.size()) {
                     for (int k = 0; k < lms.size(); ++k)
@@ -2570,6 +2604,8 @@ private slots:
             QVERIFY(waitForAsync(spy, &fetchRequest));
             QList<QLandmark> lms = fetchRequest.landmarks();
 
+            QVERIFY(checkIdFetchRequest(lms,filter));
+
             QCOMPARE(lms.size(), 1);
             QCOMPARE(lms.at(0).coordinate(), lmCoord);
         }
@@ -2585,6 +2621,8 @@ private slots:
         QVERIFY(waitForAsync(spy, &fetchRequest));
         QList<QLandmark> lms = fetchRequest.landmarks();
 
+        QVERIFY(checkIdFetchRequest(lms,filter1));
+
         QCOMPARE(lms.size(), 1);
         QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
 
@@ -2595,6 +2633,9 @@ private slots:
 
         QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+
+        QVERIFY(checkIdFetchRequest(lms,filter2));
+
         QCOMPARE(lms.size(), 0);
     }
 
@@ -2709,6 +2750,7 @@ private slots:
 
         QVERIFY(waitForAsync(spy, &fetchRequest));
         QList<QLandmark> lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 3);
 
@@ -3057,6 +3099,7 @@ private slots:
         QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
         QVERIFY(fetchRequest.errorString().isEmpty());
         QList<QLandmark> lms1 = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms1,filter1));
 
         QCOMPARE(lms1.size(), inBox1.size());
 
@@ -3082,6 +3125,7 @@ private slots:
         QVERIFY(fetchRequest.errorString().isEmpty());
 
         QList<QLandmark> lms2 = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms2,filter2));
 
         QCOMPARE(lms2.size(), inBox2.size());
 
@@ -3107,6 +3151,7 @@ private slots:
         QVERIFY(fetchRequest.errorString().isEmpty());
 
         QList<QLandmark> lms3 = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms3,filter3));
 
         QCOMPARE(lms3.size(), inBox3.size());
 
@@ -3132,6 +3177,7 @@ private slots:
         QVERIFY(fetchRequest.errorString().isEmpty());
 
         QList<QLandmark> lms4 = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms4,filter4));
         QCOMPARE(lms4.size(), inBox4.size());
 
         QSet<QString> testSet4;
@@ -3156,6 +3202,7 @@ private slots:
         QVERIFY(fetchRequest.errorString().isEmpty());
 
         QList<QLandmark> lms5 = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms5, filter5));
         QCOMPARE(lms5.size(), inBox5.size());
 
         QSet<QString> testSet5;
@@ -3338,6 +3385,7 @@ private slots:
 
         QVERIFY(waitForAsync(spy, &fetchRequest));
         QList<QLandmark>lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 1);
 
@@ -3362,6 +3410,7 @@ private slots:
         QVERIFY(waitForAsync(spy, &fetchRequest));
 
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 3);
 
@@ -3385,6 +3434,7 @@ private slots:
         fetchRequest.start();
         QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 1);
 
@@ -3573,6 +3623,7 @@ private slots:
 
         QVERIFY(waitForAsync(spy, &fetchRequest));
         QList<QLandmark>lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, filter));
 
         QCOMPARE(lms.size(), 19);
 
@@ -3597,6 +3648,7 @@ private slots:
         fetchRequest.start();
         QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 15);
 
@@ -3620,6 +3672,7 @@ private slots:
         fetchRequest.start();
         QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter));
 
         QCOMPARE(lms.size(), 19);
 
@@ -3763,12 +3816,10 @@ private slots:
         QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         fetchRequest.start();
 
-        QTest::qWait(1000);
-        QCOMPARE(spy.count(), 2);
-        spy.clear();
-        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
-        QVERIFY(fetchRequest.errorString().isEmpty());
+        QVERIFY(waitForAsync(spy,&fetchRequest));
         QList<QLandmark> lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter, sortAscending));
+
         QCOMPARE(lms, expectedAscending);
 
         //test case insensitive descending order
@@ -3776,12 +3827,10 @@ private slots:
         fetchRequest.setSorting(sortDescending);
         fetchRequest.start();
 
-        QTest::qWait(1000);
-        QCOMPARE(spy.count(), 2);
-        spy.clear();
-        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
-        QVERIFY(fetchRequest.errorString().isEmpty());
+        QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, filter, sortDescending));
+
         QCOMPARE(lms, expectedDescending);
 
         //test case sensitive ascending order
@@ -3797,12 +3846,10 @@ private slots:
         fetchRequest.setSorting(sortAscending);
         fetchRequest.start();
 
-        QTest::qWait(1000);
-        QCOMPARE(spy.count(), 2);
-        spy.clear();
-        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
-        QVERIFY(fetchRequest.errorString().isEmpty());
+        QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter,sortAscending));
+
         QCOMPARE(lms, expectedAscending);
 
         //test case sensitive descending order
@@ -3818,12 +3865,10 @@ private slots:
         fetchRequest.setSorting(sortDescending);
         fetchRequest.start();
 
-        QTest::qWait(1000);
-        QCOMPARE(spy.count(), 2);
-        spy.clear();
-        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
-        QVERIFY(fetchRequest.errorString().isEmpty());
+        QVERIFY(waitForAsync(spy, &fetchRequest));
         lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter,sortDescending));
+
         QCOMPARE(lms, expectedDescending);
     }
 
@@ -3865,6 +3910,60 @@ private slots:
         QLandmarkDistanceSort sortDescending(QGeoCoordinate(0.0, 0.0), Qt::DescendingOrder);
 
         lms = m_manager->landmarks(filter, sortDescending);
+
+        QCOMPARE(lms, expectedDescending);
+    }
+
+    void sortLandmarksDistanceAsync() {
+        QLandmark lm1;
+        lm1.setCoordinate(QGeoCoordinate(2.0, 2.0));
+        QVERIFY(m_manager->saveLandmark(&lm1));
+
+        QLandmark lm2;
+        lm2.setCoordinate(QGeoCoordinate(1.0, 1.0));
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmark lm3;
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        QLandmark lm4;
+        lm4.setCoordinate(QGeoCoordinate(3.0, 3.0));
+        QVERIFY(m_manager->saveLandmark(&lm4));
+
+        QList<QLandmark> expectedAscending;
+        expectedAscending << lm2;
+        expectedAscending << lm1;
+        expectedAscending << lm4;
+        expectedAscending << lm3;
+
+        QList<QLandmark> expectedDescending;
+        expectedDescending << lm3;
+        expectedDescending << lm4;
+        expectedDescending << lm1;
+        expectedDescending << lm2;
+
+        QLandmarkFilter filter;
+        QLandmarkDistanceSort sortAscending(QGeoCoordinate(0.0, 0.0), Qt::AscendingOrder);
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.setFilter(filter);
+        fetchRequest.setSorting(sortAscending);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmark> lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter,sortAscending));
+
+        QCOMPARE(lms, expectedAscending);
+
+        QLandmarkDistanceSort sortDescending(QGeoCoordinate(0.0, 0.0), Qt::DescendingOrder);
+        fetchRequest.setSorting(sortDescending);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms,filter,sortDescending));
 
         QCOMPARE(lms, expectedDescending);
     }

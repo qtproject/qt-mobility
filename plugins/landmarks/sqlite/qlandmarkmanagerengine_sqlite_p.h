@@ -147,6 +147,8 @@ public:
     bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
 
 public slots:
+    void updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
+            QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,

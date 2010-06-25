@@ -62,6 +62,7 @@
 #include <qlandmarkidfilter.h>
 
 #include <qlandmarkabstractrequest.h>
+#include <qlandmarkidfetchrequest.h>
 #include <qlandmarkfetchrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
@@ -108,6 +109,7 @@ Q_DECLARE_METATYPE(QList<QLandmark>);
 Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 Q_DECLARE_METATYPE(QLandmarkAbstractRequest::State)
 Q_DECLARE_METATYPE(QLandmarkAbstractRequest *)
+Q_DECLARE_METATYPE(QLandmarkIdFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkManager::Error)
 Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
@@ -2091,6 +2093,29 @@ void QueryRun::run()
                                   Q_ARG(QLandmarkAbstractRequest *, request),
                                   Q_ARG(QLandmarkAbstractRequest::State, QLandmarkAbstractRequest::ActiveState));
         switch(request->type()){
+        case QLandmarkAbstractRequest::LandmarkIdFetchRequest: {
+                QLandmarkIdFetchRequest *idFetchRequest = static_cast<QLandmarkIdFetchRequest *>(request);
+                QList<QLandmarkId> lmIds = ::landmarkIds(connectionName, idFetchRequest->filter(), idFetchRequest->sorting(), idFetchRequest->fetchHint(),
+                                                   &error, &errorString, managerUri);
+
+                if (this->isCanceled) {
+                    lmIds.clear();
+                    QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
+                                              Q_ARG(QLandmarkIdFetchRequest *,idFetchRequest),
+                                              Q_ARG(QList<QLandmarkId>, lmIds),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
+                } else {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
+                                              Q_ARG(QLandmarkIdFetchRequest *, idFetchRequest),
+                                              Q_ARG(QList<QLandmarkId>,lmIds),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                }
+                break;
+            }
         case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                 QLandmarkFetchRequest *fetchRequest = static_cast<QLandmarkFetchRequest *>(request);
                 QList<QLandmark> lms = ::landmarks(connectionName, fetchRequest->filter(), fetchRequest->sorting(), fetchRequest->fetchHint(),
@@ -2279,6 +2304,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QList<QLandmarkCategory> >();
     qRegisterMetaType<QLandmarkAbstractRequest::State>();
     qRegisterMetaType<QLandmarkAbstractRequest *>();
+    qRegisterMetaType<QLandmarkIdFetchRequest *>();
     qRegisterMetaType<QLandmarkFetchRequest *>();
     qRegisterMetaType<QLandmarkSaveRequest *>();
     qRegisterMetaType<QLandmarkRemoveRequest *>();
@@ -3160,7 +3186,12 @@ bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* reque
 bool QLandmarkManagerEngineSqlite::waitForRequestFinished(QLandmarkAbstractRequest* request,
         int msecs)
 {
-    return false;
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
+                                  QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkIdFetchRequest(req, result, error, errorString, newState);
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
