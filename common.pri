@@ -175,6 +175,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
