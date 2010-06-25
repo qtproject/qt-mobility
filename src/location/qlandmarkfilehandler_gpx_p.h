@@ -71,7 +71,7 @@ class Q_AUTOTEST_EXPORT QLandmarkFileHandlerGpx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerGpx(QLandmarkManagerEngine *engine);
+    QLandmarkFileHandlerGpx();
     ~QLandmarkFileHandlerGpx();
 
     QList<QLandmark> waypoints() const;
@@ -104,8 +104,6 @@ private:
     bool writeWaypoint(const QLandmark &landmark, const QString &elementName);
     bool writeRoute(const QList<QLandmark> &route);
     bool writeTrack(const QList<QLandmark> &track);
-
-    QLandmarkManagerEngine *m_engine;
 
     QString m_nsPrefix;
     QString m_ns;

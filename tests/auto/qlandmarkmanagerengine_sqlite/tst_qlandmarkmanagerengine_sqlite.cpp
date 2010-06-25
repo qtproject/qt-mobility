@@ -3868,6 +3868,28 @@ private slots:
         QCOMPARE(lms, expectedDescending);
     }
 
+    void importGpx()
+    {
+        QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", "GpxV1.1"));
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+
+        QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
+
+
+        QLandmark lmFirst;
+        lmFirst.setName("McDonald s Airlie Beac... (sample)");
+        lmFirst.setCoordinate(QGeoCoordinate(-20.269213, 148.718128));
+        lmFirst.setLandmarkId(landmarks.first().landmarkId());
+        QCOMPARE(lmFirst, landmarks.first());
+
+        QLandmark lmLast;
+        lmLast.setName("McDonald s Yamant... (sample)");
+        lmLast.setCoordinate(QGeoCoordinate(-27.660976,152.738973));
+        lmLast.setLandmarkId(landmarks.last().landmarkId());
+
+        QCOMPARE(lmLast, landmarks.last());
+    }
+
     /*
     void sortLandmarksNameDistance()
     {

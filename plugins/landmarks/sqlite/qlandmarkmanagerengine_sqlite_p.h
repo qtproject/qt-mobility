@@ -178,13 +178,6 @@ private:
                                 QString *errorString,
                                 bool *removed);
 
-    bool importLandmarksLmx(QIODevice *device,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-    bool importLandmarksGpx(QIODevice *device,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-
     bool exportLandmarksLmx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,
                             QLandmarkManager::Error *error,

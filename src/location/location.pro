@@ -133,7 +133,7 @@ PRIVATE_HEADERS += \
                     qlandmarksortorder_p.h \
                     qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
-                    qnmeapositioninfosource_p.h 
+                    qnmeapositioninfosource_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -282,7 +282,7 @@ SOURCES += \
             qlandmarksortorder.cpp \
             qlandmarkunionfilter.cpp \
             qlocationutils.cpp \
-            qnmeapositioninfosource.cpp 
+            qnmeapositioninfosource.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -69,7 +69,7 @@ class Q_AUTOTEST_EXPORT QLandmarkFileHandlerLmx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(QLandmarkManagerEngine *engine);
+    QLandmarkFileHandlerLmx();
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
@@ -101,8 +101,6 @@ private:
     bool writeAddressInfo(const QLandmark &landmark);
     bool writeMediaLink(const QLandmark &landmark);
     bool writeCategory(const QLandmarkCategoryId &categoryId);
-
-    QLandmarkManagerEngine *m_engine;
 
     QString m_ns;
     QString m_nsPrefix;
