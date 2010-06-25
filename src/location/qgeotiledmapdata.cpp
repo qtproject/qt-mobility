@@ -432,8 +432,22 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &
         q_ptr(other.q_ptr)
 {}
 
-QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate() {}
+QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
+{
+    clearObjInfo();
+}
 
+void QGeoTiledMapDataPrivate::clearObjInfo()
+{
+    QMutableHashIterator<QGeoMapObject*, QGeoTiledMapObjectInfo*> it(objInfo);
+
+    while (it.hasNext()) {
+        it.next();
+        QGeoTiledMapObjectInfo* info = it.value();
+        it.remove();
+        delete info;
+    }
+}
 QGeoTiledMapDataPrivate& QGeoTiledMapDataPrivate::operator= (const QGeoTiledMapDataPrivate & other)
 {
     width = other.width;

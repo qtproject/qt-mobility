@@ -313,6 +313,8 @@ QGeoMapWidget::MapType QGeoMapWidget::mapType() const
     If \a mapObject is within the viewport of the map and
     QGeoMapObject::isVisible() returns true then the map will display the map
     object immediately.
+
+    The widget will take ownership of the \a mapObject.
 */
 void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
 {
@@ -331,6 +333,8 @@ void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
     If \a mapObject is within the viewport of the map and
     QGeoMapObject::isVisible() returns true then the map will stop displaying
     the map object immediately.
+
+    The widget will release ownership of the \a mapObject.
 */
 void QGeoMapWidget::removeMapObject(QGeoMapObject *mapObject)
 {

@@ -216,6 +216,7 @@ QGeoMapWidget::MapType QGeoMapData::mapType() const
 
 /*!
     Adds \a mapObject to the list of map objects managed by this map.
+    The map will take ownership of the \a mapObject.
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 {
@@ -224,6 +225,7 @@ void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 
 /*!
     Removes \a mapObject from the list of map objects managed by this map.
+    The map will release ownership of the \a mapObject.
 */
 void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 {

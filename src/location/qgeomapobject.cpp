@@ -216,6 +216,8 @@ QGeoMapObject* QGeoMapObject::parentObject() const
     Adds \a childObject to the list of children of this map object.
 
     If \a childObject is 0 it will not be added.
+
+    The map object will take ownership of \a childObject.
 */
 void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 {
@@ -233,12 +235,15 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 
     This method does nothing if \a childObject is not contained in this
     map objects list of children.
+
+    The map object will release ownership of \a childObject.
 */
 void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
 {
     Q_D(QGeoMapObject);
     if (childObject) {
-        d->children.removeAll(childObject);
+        if (d->children.removeAll(childObject) > 0)
+            childObject->d_ptr->parent = 0;
     }
 }
 

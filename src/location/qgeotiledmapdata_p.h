@@ -106,6 +106,8 @@ public:
     void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const;
     void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const;
 
+    void clearObjInfo();
+
     qulonglong width;
     qulonglong height;
 
