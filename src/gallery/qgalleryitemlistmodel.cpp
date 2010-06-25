@@ -95,6 +95,8 @@ void QGalleryItemListModelPrivate::updateRoles(int column)
 
         const RoleProperties &properties = roleProperties.at(column);
 
+        itemFlags[column] = Qt::ItemFlags();
+
         typedef RoleProperties::const_iterator iterator;
         for (iterator it = properties.begin(), end = properties.end(); it != end; ++it) {
             if (propertyNames.contains(it.value())) {
@@ -105,11 +107,16 @@ void QGalleryItemListModelPrivate::updateRoles(int column)
 
                 offset += 2;
 
+                if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole)) {
+                    roleKeys.append(Qt::EditRole);
+                    roleKeys.append(key);
+
+                    offset += 2;
+                }
+
                 if ((it.key() == Qt::DisplayRole || it.key() == Qt::EditRole)
                         && (itemList->propertyAttributes(key) & QGalleryProperty::CanWrite)) {
-                    itemFlags[column] = Qt::ItemIsEditable;
-                } else {
-                    itemFlags[column] = Qt::ItemFlags();
+                    itemFlags[column] |= Qt::ItemIsEditable;
                 }
             }
         }
@@ -134,6 +141,8 @@ void QGalleryItemListModelPrivate::updateRoles()
         for (int column = 0; column < columnCount; ++column) {
             const RoleProperties &properties = roleProperties.at(column);
 
+            itemFlags[column] = Qt::ItemFlags();
+
             typedef RoleProperties::const_iterator iterator;
             for (iterator it = properties.begin(), end = properties.end(); it != end; ++it) {
                 if (propertyNames.contains(it.value())) {
@@ -144,11 +153,15 @@ void QGalleryItemListModelPrivate::updateRoles()
 
                     offset += 2;
 
+                    if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole)) {
+                        roleKeys.append(Qt::EditRole);
+                        roleKeys.append(key);
+
+                        offset += 2;
+                    }
                     if ((it.key() == Qt::DisplayRole || it.key() == Qt::EditRole)
                             && (itemList->propertyAttributes(key) & QGalleryProperty::CanWrite)) {
-                        itemFlags[column] = Qt::ItemIsEditable;
-                    } else {
-                        itemFlags[column] = Qt::ItemFlags();
+                        itemFlags[column] |= Qt::ItemIsEditable;
                     }
                 }
             }

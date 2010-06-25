@@ -239,7 +239,7 @@ namespace
         CanSort         = QGalleryProperty::CanSort,
         CanFilter       = QGalleryProperty::CanFilter,
         IsResource      = 0x100,
-        PropertyMask    = ~0xFF
+        PropertyMask    = 0xFF
     };
 
     class QGalleryReorderLessThan
@@ -614,7 +614,7 @@ static bool qt_writeCondition(
     QT_GALLERY_ITEM_PROPERTY("fileName"    , "File:Name"     , String  , CanRead | CanSort | CanFilter), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Contents" , String  , QGalleryProperty::Attributes()),*/ \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Link"     , String  , QGalleryProperty::Attributes()),*/ \
-  /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Size"     , Int     , QGalleryProperty::Attributes()),*/ \
+    QT_GALLERY_ITEM_PROPERTY("fileSize"    , "File:Size"     , Int     , QGalleryProperty::Attributes()), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:License"  , String  , QGalleryProperty::Attributes()),*/ \
     QT_GALLERY_ITEM_PROPERTY("copyright"   , "File:Copyright", String  , CanRead | CanWrite | CanSort | CanFilter), \
     QT_GALLERY_ITEM_PROPERTY("lastModified", "File:Modified" , DateTime, CanRead | CanSort | CanFilter), \
@@ -736,7 +736,7 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
 ////////
 
 #define QT_GALLERY_AUDIO_ARTIST_PROPERTY \
-    QT_GALLERY_ITEM_PROPERTY("artist"      , "Audio:Artist"     , StringList, CanRead | CanWrite | CanSort | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("artist"      , "Audio:Artist"     , String, CanRead | CanWrite | CanSort | CanFilter)
 #define QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY \
     QT_GALLERY_ITEM_PROPERTY("albumTitle"  , "Audio:Album"      , String    , CanRead | CanWrite | CanSort | CanFilter)
 #define QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY \
@@ -749,7 +749,7 @@ static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
     QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY,
     QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY,
     QT_GALLERY_ITEM_PROPERTY("title"       , "Audio:Title"        , String    , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("genre"       , "Audio:Genre"        , StringList, CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("genre"       , "Audio:Genre"        , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("duration"    , "Audio:Duration"     , Int       ,  CanRead | CanSort | CanFilter | IsResource),
 //    QT_GALLERY_ITEM_PROPERTY(""          , "Audio:ReleaseDate"  , DateTime  , QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("trackNumber" , "Audio:TrackNo"      , Int       , CanRead | CanWrite | CanSort | CanFilter),
@@ -1629,7 +1629,7 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
     arguments->valueColumns = qt_createValueColumns(valueTypes);
     arguments->imageColumns = qt_createImageColumns(
-            dbus, imageProperties, imageColumns, valueNames.count() + aliasNames.count());
+            dbus, imageProperties, imageColumns, 2 + valueNames.count() + aliasNames.count());
     arguments->propertyNames = valueNames + aliasNames + thumbnailNames;
     arguments->propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
     arguments->propertyTypes = valueTypes + aliasTypes + thumbnailTypes;
