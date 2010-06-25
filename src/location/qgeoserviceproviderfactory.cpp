@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoServiceProviderFactory class is a factory class used as the
     plugin interface for services related to geographical information.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     Implementers must provide a unique combination of providerName() and

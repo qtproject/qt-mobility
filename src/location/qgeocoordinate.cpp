@@ -85,6 +85,9 @@ public:
 /*!
     \class QGeoCoordinate
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.

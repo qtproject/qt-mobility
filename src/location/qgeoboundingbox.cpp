@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoBoundingBox
     \brief The QGeoBoundingBox class defines a rectangular geographic area.
+
+    \inmodule QtLocation
+    
     \ingroup maps
 */
 

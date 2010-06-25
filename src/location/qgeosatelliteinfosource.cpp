@@ -55,6 +55,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoSatelliteInfoSource
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default

@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoSearchReply class manages an operation started by an
     instance of QGeoSearchManager.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-places
 
     Instances of QGeoSearchReply manage the state and results of these

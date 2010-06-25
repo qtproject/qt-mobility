@@ -53,6 +53,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoSearchManager class provides support for searching
     operations related to geographic information.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-places
 
     The geocode(QGeoAddress), geocode(QGeoCoordinate) and textSearch()

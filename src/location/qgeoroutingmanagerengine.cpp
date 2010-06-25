@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide access to geographic routing information.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of

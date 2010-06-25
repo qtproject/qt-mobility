@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoMapData class are used as a bridge between QGeoMapWidget and
     QGeoMappingManager.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     Instances of QGeoMapData are created with

@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
     to implementors of QGeoServiceProvider plugins who want to provides support for displaying
     and interacting with maps.
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
@@ -73,7 +76,7 @@ QTM_BEGIN_NAMESPACE
     There are convinience classes for working with tile based mapping services
     on the way.  They won't be ready for review until they stabilize.
 
-    A vector based mappin service exists.  Once we get a hold of it, the
+    A vector based mapping service exists.  Once we get a hold of it, the
     mapping engine and widget will probably get methods related to tilt and
     heading, as well as the associated supportsXYZ methods.
 */

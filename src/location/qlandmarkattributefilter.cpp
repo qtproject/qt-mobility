@@ -78,6 +78,9 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
 /*!
     \class QLandmarkAttributeFilter
     \brief The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-filter
 
     The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values.
