@@ -65,6 +65,7 @@ public:
     ~QGeoTiledMapRequest();
 
     QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
+    bool operator== (const QGeoTiledMapRequest &other) const;
 
     QGeoTiledMapData *mapData() const;
 

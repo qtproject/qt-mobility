@@ -82,6 +82,14 @@ QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest &
     return *this;
 }
 
+bool QGeoTiledMapRequest::operator== (const QGeoTiledMapRequest &other) const
+{
+    return (d_ptr->row == other.d_ptr->row) &&
+           (d_ptr->column == other.d_ptr->column) &&
+           (d_ptr->zoomLevel == other.d_ptr->zoomLevel) &&
+           (d_ptr->mapType == other.d_ptr->mapType);
+}
+
 /*!
 */
 QGeoTiledMapData* QGeoTiledMapRequest::mapData() const

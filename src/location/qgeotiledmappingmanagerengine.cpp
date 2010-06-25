@@ -114,6 +114,7 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
     QRectF protectedRegion = tiledMapData->protectedRegion();
 
     while (it.hasNext()) {
+        it.next();
         int col = it.col();
         int row = it.row();
         QRectF tileRect = it.tileRect();
@@ -124,8 +125,6 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
         // region.
         //if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
             requests.append(QGeoTiledMapRequest(tiledMapData, row, col, tileRect));
-
-        it.next();
     }
 
     emit tileRequestsPrepared(tiledMapData, requests);
