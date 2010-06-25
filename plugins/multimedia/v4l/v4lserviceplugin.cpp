@@ -79,13 +79,6 @@ QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QBy
     return QString();
 }
 
-QVariant V4LServicePlugin::deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property)
-{
-    Q_UNUSED(service);
-    Q_UNUSED(device);
-    Q_UNUSED(property);
-    return QVariant();
-}
 
 Q_EXPORT_PLUGIN2(qtmedia_v4lengine, V4LServicePlugin);
 

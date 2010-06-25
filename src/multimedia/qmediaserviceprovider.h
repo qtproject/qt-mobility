@@ -109,9 +109,6 @@ public:
 
     virtual QList<QByteArray> devices(const QByteArray &serviceType) const;
     virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);
-    virtual QVariant deviceProperty(const QByteArray &serviceType,
-                                    const QByteArray &device,
-                                    const QByteArray &property);
 
     static QMediaServiceProvider* defaultServiceProvider();
 

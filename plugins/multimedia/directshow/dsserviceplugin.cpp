@@ -129,14 +129,6 @@ QString DSServicePlugin::deviceDescription(const QByteArray &service, const QByt
     return QString();
 }
 
-QVariant DSServicePlugin::deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property)
-{
-    Q_UNUSED(service);
-    Q_UNUSED(device);
-    Q_UNUSED(property);
-    return QVariant();
-}
-
 #ifdef QMEDIA_DIRECTSHOW_CAMERA
 void DSServicePlugin::updateDevices() const
 {

@@ -57,7 +57,6 @@ public:
 
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
 
 private:
 #ifdef QMEDIA_DIRECTSHOW_CAMERA

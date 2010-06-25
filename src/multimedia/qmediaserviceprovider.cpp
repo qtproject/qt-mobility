@@ -507,21 +507,6 @@ public:
 
         return QString();
     }
-
-    QVariant deviceProperty(const QByteArray &serviceType, const QByteArray &device, const QByteArray &property)
-    {
-        foreach(QObject *obj, loader()->instances(serviceType)) {
-            QMediaServiceSupportedDevicesInterface *iface =
-                    qobject_cast<QMediaServiceSupportedDevicesInterface*>(obj);
-
-            if (iface) {
-                if (iface->devices(serviceType).contains(device))
-                    return iface->deviceProperty(serviceType, device, property);
-            }
-        }
-
-        return QVariant();
-    }
 };
 
 Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
@@ -607,19 +592,6 @@ QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, 
     Q_UNUSED(serviceType);
     Q_UNUSED(device);
     return QString();
-}
-
-/*!
-    Returns the \a device specific \property value related to \a serviceType.
-*/
-QVariant QMediaServiceProvider::deviceProperty(const QByteArray &serviceType,
-                                               const QByteArray &device,
-                                               const QByteArray &property)
-{
-    Q_UNUSED(serviceType);
-    Q_UNUSED(device);
-    Q_UNUSED(property);
-    return QVariant();
 }
 
 

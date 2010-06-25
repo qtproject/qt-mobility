@@ -121,13 +121,6 @@ public:
         else
             return QString();
     }
-
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property)
-    {
-        if (devices(service).contains(device) && property == "test property")
-            return QVariant(1);
-        return QVariant();
-    }
 };
 
 class MockServicePlugin2 : public QMediaServiceProviderPlugin,
@@ -224,16 +217,6 @@ public:
         else
             return QString();
     }
-
-    QVariant deviceProperty(const QByteArray &service,
-                                        const QByteArray &device,
-                                        const QByteArray &property)
-    {
-        if (devices(service).contains(device) && property == "test property")
-            return QVariant(1);
-        return QVariant();
-
-    }
 };
 
 class MockServicePlugin4 : public QMediaServiceProviderPlugin,
@@ -317,7 +300,6 @@ private slots:
     void testHasSupport();
     void testSupportedMimeTypes();
     void testProviderHints();
-    void testDeviceProperties();
 
 private:
     QObjectList plugins;
@@ -498,19 +480,6 @@ void tst_QMediaServiceProvider::testProviderHints()
         QMediaServiceProviderHint hint5(mimeType,QStringList());
         QVERIFY(hint != hint5);
     }
-}
-
-void tst_QMediaServiceProvider::testDeviceProperties()
-{
-    MockMediaServiceProvider mockProvider;
-
-    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
-    QVERIFY(provider->deviceProperty("Unsupported service", "Unsupported device", "property").isNull());
-    QCOMPARE(provider->deviceProperty(Q_MEDIASERVICE_AUDIOSOURCE, "audiosource2", "test property").toInt(), 1);
-    QVERIFY(provider->deviceProperty(Q_MEDIASERVICE_AUDIOSOURCE, "audiosource2", "unsupported property").isNull());
-    QVERIFY(provider->deviceProperty(Q_MEDIASERVICE_AUDIOSOURCE, "unsupported device", "test property").isNull());
-    QVERIFY(provider->deviceProperty(Q_MEDIASERVICE_RADIO, "unsupported device", "test property").isNull());
-    QVERIFY(provider->deviceProperty(Q_MEDIASERVICE_AUDIOSOURCE, "test device", "unknown property").isNull());
 }
 
 QTEST_MAIN(tst_QMediaServiceProvider)

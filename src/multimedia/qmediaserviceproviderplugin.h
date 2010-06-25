@@ -85,9 +85,6 @@ struct Q_MULTIMEDIA_EXPORT QMediaServiceSupportedDevicesInterface
     virtual ~QMediaServiceSupportedDevicesInterface() {}
     virtual QList<QByteArray> devices(const QByteArray &service) const = 0;
     virtual QString deviceDescription(const QByteArray &service, const QByteArray &device) = 0;
-    virtual QVariant deviceProperty(const QByteArray &service,
-                                    const QByteArray &device,
-                                    const QByteArray &property) = 0;
 };
 
 #define QMediaServiceSupportedDevicesInterface_iid \
