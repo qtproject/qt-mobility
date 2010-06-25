@@ -154,7 +154,8 @@ private slots:
     void metadata();
     void nullIdOperations();
     void add();
-    void addOccurrenceExceptionsWithGuid();
+    void addExceptions();
+    void addExceptionsWithGuid();
     void update();
     void remove();
     void batch();
@@ -180,7 +181,8 @@ private slots:
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
-    void addOccurrenceExceptionsWithGuid_data() {addManagers();}
+    void addExceptions_data() {addManagers();}
+    void addExceptionsWithGuid_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
     void batch_data() {addManagers();}
@@ -784,7 +786,64 @@ void tst_QOrganizerItemManager::add()
     // XXX TODO.
 }
 
-void tst_QOrganizerItemManager::addOccurrenceExceptionsWithGuid()
+void tst_QOrganizerItemManager::addExceptions()
+{
+    QFETCH(QString, uri);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+
+    QOrganizerEvent event;
+    event.setDisplayLabel(QLatin1String("meeting"));
+    event.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rrule.setCount(3);
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+    QVERIFY(cm->saveItem(&event));
+    QVERIFY(event.localId() != 0);
+    event = cm->item(event.localId());
+    // the guid must be set so when it is exported to iCalendar, the relationship can be represented
+    QVERIFY(!event.guid().isEmpty());
+
+    QList<QOrganizerItem> items =
+        cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                 QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+    QCOMPARE(items.size(), 3);
+    QOrganizerItem secondItem = items.at(1);
+    QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
+    QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(2010, 1, 8), QTime(11, 0, 0)));
+    QCOMPARE(secondEvent.localId(), (unsigned int)0);
+    QCOMPARE(secondEvent.parentLocalId(), event.localId());
+    // save a change to an occurrence's detail (ie. create an exception)
+    secondEvent.setDisplayLabel(QLatin1String("seminar"));
+    QVERIFY(cm->saveItem(&secondEvent));
+
+    // save a change to an occurrence's time
+    QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
+    QCOMPARE(thirdEvent.localId(), (unsigned int)0);
+    QCOMPARE(thirdEvent.parentLocalId(), event.localId());
+    thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
+    QVERIFY(cm->saveItem(&thirdEvent));
+
+    items =
+        cm->itemInstances(event, QDateTime(QDate(2010, 1, 1), QTime(0, 0, 0)),
+                                 QDateTime(QDate(2010, 2, 1), QTime(0, 0, 0)));
+    QCOMPARE(items.size(), 3);
+    QOrganizerItem firstItem = items.at(0);
+    // check that saving an exception doesn't change other items
+    QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting"));
+    secondItem = items.at(1);
+    // the exception's changes have been persisted
+    QCOMPARE(secondItem.displayLabel(), QLatin1String("seminar"));
+    //QVERIFY(secondItem.localId() != 0);
+
+    thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
+    QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
+    //QVERIFY(secondEvent.localId() != 0);
+}
+
+void tst_QOrganizerItemManager::addExceptionsWithGuid()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
@@ -815,7 +874,7 @@ void tst_QOrganizerItemManager::addOccurrenceExceptionsWithGuid()
     report.setDisplayLabel(QLatin1String("Report"));
     QVERIFY(cm->saveItem(&report));
 
-    // exception with no guid fails
+    // exception with no guid or parentId fails
     QOrganizerEventOccurrence exception;
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 25), QTime(0, 0, 0)));
     exception.setStartDateTime(QDateTime(QDate(2010, 12, 26), QTime(0, 0, 0)));
