@@ -66,20 +66,20 @@ public:
 
     QString value() const
     {
-        qDebug() << "Reading property";
+        qDebug() << "SharedTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "Writing property";
+        qDebug() << "SharedTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "Resetting property";
+        qDebug() << "SharedTestService: Resetting property";
         m_value = "<empty>";
         emit valueChanged();
     }
@@ -205,20 +205,20 @@ public:
 
     QString value() const
     {
-        qDebug() << "Reading property";
+        qDebug() << "UniqueTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "Writing property";
+        qDebug() << "UniqueTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "Resetting value";
+        qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
         emit valueChanged();
     }
