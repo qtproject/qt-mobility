@@ -123,13 +123,15 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
         // start of a resize or pan.
         // We shouldn't request tiles that are entirely contained in this
         // region.
-        //if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
+        if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
             requests.append(QGeoTiledMapRequest(tiledMapData, row, col, tileRect));
     }
 
-    emit tileRequestsPrepared(tiledMapData, requests);
+    if (requests.count() > 0)
+        emit tileRequestsPrepared(tiledMapData, requests);
 
     tiledMapData->clearProtectedRegion();
+
 }
 
 void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)

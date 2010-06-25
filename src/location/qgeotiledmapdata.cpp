@@ -291,8 +291,7 @@ void QGeoTiledMapData::pan(int dx, int dy)
     QPainter p(&pm);
     if (!QGeoMapData::mapImage().isNull()) {
         p.drawPixmap(target, QGeoMapData::mapImage(), source);
-        //TODO: is this correct?
-        //d_ptr->protectRegion = target.translated(d_ptr->screenRect.topLeft());
+        d_ptr->protectRegion = oldScreenRect;
         setMapImage(pm);
     }
 }

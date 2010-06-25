@@ -56,6 +56,7 @@
 #include "qgeomappingmanagerengine_p.h"
 
 #include <QSize>
+#include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
