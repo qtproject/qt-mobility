@@ -219,7 +219,17 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         painter.drawPixmap(target, QGeoMapData::mapImage(), source);
     }
 
+    //recompute obj info
+    d_ptr->clearObjInfo();
+    QHashIterator<QGeoMapObject*, QGeoCompositeZValue> it(d_ptr->objToCompZValue);
+
+    while (it.hasNext()) {
+        it.next();
+        d_ptr->calculateInfo(it.key());
+    }
+
     setMapImage(pm);
+
 }
 
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
