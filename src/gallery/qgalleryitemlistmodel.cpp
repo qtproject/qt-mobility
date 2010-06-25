@@ -59,6 +59,8 @@ public:
         , updateCursorPosition(true)
         , rowCount(0)
         , columnCount(0)
+        , lowerOffset(0)
+        , upperOffset(0)
     {
     }
 
@@ -75,10 +77,13 @@ public:
     bool updateCursorPosition;
     int rowCount;
     int columnCount;
+    int lowerOffset;
+    int upperOffset;
     QVector<RoleProperties> roleProperties;
     QVector<int> roleKeys;
     QVector<int> columnOffsets;
     QVector<Qt::ItemFlags> itemFlags;
+    QVector<QHash<int, QVariant> > headerData;
 };
 
 void QGalleryItemListModelPrivate::updateRoles(int column)
@@ -220,7 +225,7 @@ QGalleryItemListModel::QGalleryItemListModel(QObject *parent)
 }
 
 /*!
-    Destroys a gallert item list model.
+    Destroys a gallery item list model.
 */
 
 QGalleryItemListModel::~QGalleryItemListModel()
@@ -266,6 +271,9 @@ void QGalleryItemListModel::setItemList(QGalleryItemList *list)
         connect(d->itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_moved(int,int,int)));
         connect(d->itemList, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+
+        d->lowerOffset = d->itemList->minimumPagedItems() / 4;
+        d->upperOffset = d->lowerOffset - d->itemList->minimumPagedItems();
 
         if (d->itemList->count() > 0) {
             beginInsertRows(QModelIndex(), 0, d->itemList->count() - 1);
@@ -338,6 +346,7 @@ void QGalleryItemListModel::addColumn(const QHash<int, QString> &properties)
     d->roleProperties.append(properties);
     d->itemFlags.append(Qt::ItemFlags());
     d->columnOffsets.append(d->columnOffsets.isEmpty() ? 0 : d->columnOffsets.last());
+    d->headerData.append(QHash<int, QVariant>());
 
     d->columnCount += 1;
 
@@ -375,6 +384,7 @@ void QGalleryItemListModel::insertColumn(int index, const QHash<int, QString> &p
     d->roleProperties.insert(index, properties);
     d->itemFlags.insert(index, Qt::ItemFlags());
     d->columnOffsets.insert(index, index == 0 ? 0 : d->columnOffsets.at(index - 1));
+    d->headerData.insert(index, QHash<int, QVariant>());
 
     d->columnCount += 1;
 
@@ -415,6 +425,7 @@ void QGalleryItemListModel::removeColumn(int index)
     d->itemFlags.remove(index);
     d->columnOffsets.remove(index);
     d->roleKeys.remove(offset, difference);
+    d->headerData.remove(index);
 
     d->columnCount -= 1;
 
@@ -453,17 +464,6 @@ QModelIndex QGalleryItemListModel::index(int row, int column, const QModelIndex 
     if (!parent.isValid()
             && row >= 0 && row < d->rowCount
             && column >= 0 && column < d->columnCount) {
-
-        if (d->updateCursorPosition  && row < d->rowCount - 1) {
-            const int position = d->itemList->cursorPosition();
-            const int pageSize = d->itemList->minimumPagedItems();
-
-            if (row - 16 < position && position > 0)
-                d->itemList->setCursorPosition(qMax(0, row - 16));
-            else if (row + 16 > position + pageSize)
-                d->itemList->setCursorPosition(qMax(0, row + 16 - pageSize));
-        }
-
         return createIndex(row, column);
     } else {
         return QModelIndex();
@@ -534,15 +534,60 @@ bool QGalleryItemListModel::setData(const QModelIndex &index, const QVariant &va
     \reimp
 */
 
+QVariant QGalleryItemListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    return orientation == Qt::Horizontal
+            ? d_func()->headerData.value(section).value(role)
+            : QVariant();
+}
+
+/*!
+    \reimp
+*/
+
+bool QGalleryItemListModel::setHeaderData(
+        int section, Qt::Orientation orientation, const QVariant &value, int role)
+{
+    Q_D(QGalleryItemListModel);
+
+    if (orientation == Qt::Horizontal && section >= 0 && section < d->columnCount) {
+        if (role == Qt::EditRole)
+            role = Qt::DisplayRole;
+
+        d->headerData[section].insert(role, value);
+
+        emit headerDataChanged(orientation, section, section);
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+    \reimp
+*/
+
 Qt::ItemFlags QGalleryItemListModel::flags(const QModelIndex &index) const
 {
+    Q_D(const QGalleryItemListModel);
+
     Qt::ItemFlags flags;
 
     if (index.isValid()) {
-        flags |= d_func()->itemFlags.at(index.column());
+        flags |= d->itemFlags.at(index.column());
 
-        if (!(d_func()->itemList->status(index.row()) & QGalleryItemList::OutOfRange))
+        if (!(d->itemList->status(index.row()) & QGalleryItemList::OutOfRange))
             flags |= Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+
+        if (d->updateCursorPosition  && index.row() < d->rowCount - 1) {
+            const int position = d->itemList->cursorPosition();
+
+            if (index.row() - d->lowerOffset < position && position > 0)
+                d->itemList->setCursorPosition(qMax(0, index.row() - d->lowerOffset));
+            else if (index.row() + d->upperOffset > position)
+                d->itemList->setCursorPosition(qMax(0, index.row() + d->upperOffset));
+        }
     }
 
     return flags;

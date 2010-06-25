@@ -68,11 +68,11 @@ SongView::SongView(QWidget *parent)
     model->addColumn(QDocumentGallery::artist);
     model->addColumn(QDocumentGallery::albumArtist);
 
-//    model->setColumnName(0, tr("Track"));
-//    model->setColumnName(1, tr("Title"));
-//    model->setColumnName(2, tr("Duration"));
-//    model->setColumnName(3, tr("Artist"));
-//    model->setColumnName(4, tr("Album Artist"));
+    model->setHeaderData(0, Qt::Horizontal, tr("Track"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Title"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Duration"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Artist"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Album Artist"));
 
     QTableView *view = new QTableView;
     view->setShowGrid(false);
