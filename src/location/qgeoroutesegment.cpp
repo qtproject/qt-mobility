@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoRouteSegment
     \brief The QGeoRouteSegment class represents a segment of a route.
+
+    \inmodule QtLocation
+    
     \ingroup maps-routing
 
     A QGeoRouteSegment instance has information about the physcial layout

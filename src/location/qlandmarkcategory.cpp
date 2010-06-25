@@ -100,6 +100,9 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,

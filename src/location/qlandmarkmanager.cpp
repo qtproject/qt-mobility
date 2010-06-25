@@ -61,6 +61,9 @@ QTM_USE_NAMESPACE
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
     and retrieval of landmarks from a landmark store.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-main
 */
 

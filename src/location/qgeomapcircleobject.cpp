@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMapCircleObject
     \brief The QGeoMapCircleObject class is a QGeoMapObject used to draw the region
     within a certain distance of a coordinate.
+
+    \inmodule QtLocation
+    
     \ingroup maps-mapping-objects
 
     TODO add pen and brush attributes as per alignment doc

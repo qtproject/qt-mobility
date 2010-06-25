@@ -55,6 +55,9 @@ QTM_BEGIN_NAMESPACE
      as well as if an overall operation error occurred(which may be retrieved by calling
      QLandmarkAbstractRequest::error()).
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 */
 

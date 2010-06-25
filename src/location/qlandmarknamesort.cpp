@@ -47,6 +47,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkNameSort
     \brief The QLandmarkNameSort class is used to sort landmarks by name.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-sort
 */
 

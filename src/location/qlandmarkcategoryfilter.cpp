@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkCategoryFilter
     \brief The QLandmarkCategoryFilter class is used to search for landmarks that
     belong to a certain category.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-filter
 */
 

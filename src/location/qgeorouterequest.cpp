@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
     \class QGeoRouteRequest
     \brief The QGeoRouteRequest class represents the parameters and restrictions
     which define a request for routing information.
+
+    \inmodule QtLocation
+    
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request

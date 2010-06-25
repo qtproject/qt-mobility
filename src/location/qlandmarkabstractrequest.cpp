@@ -59,6 +59,9 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     \brief The QLandmarkAbstractRequest class provides the interface
     from which all asynchronous request classes inherit.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality
