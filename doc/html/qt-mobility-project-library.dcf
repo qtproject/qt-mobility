@@ -1276,6 +1276,7 @@
     <section ref="qgeoaddress.html" title="QGeoAddress Class Reference">
         <keyword ref="qgeoaddress.html">QGeoAddress</keyword>
         <keyword ref="qgeoaddress.html#city">city</keyword>
+        <keyword ref="qgeoaddress.html#clear">clear</keyword>
         <keyword ref="qgeoaddress.html#country">country</keyword>
         <keyword ref="qgeoaddress.html#countryCode">countryCode</keyword>
         <keyword ref="qgeoaddress.html#county">county</keyword>
@@ -1404,6 +1405,7 @@
         <keyword ref="qgeomapdata.html#mapObjects">mapObjects</keyword>
         <keyword ref="qgeomapdata.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</keyword>
         <keyword ref="qgeomapdata.html#mapObjectsInScreenRect">mapObjectsInScreenRect</keyword>
+        <keyword ref="qgeomapdata.html#mapObjectsOverlay">mapObjectsOverlay</keyword>
         <keyword ref="qgeomapdata.html#mapType">mapType</keyword>
         <keyword ref="qgeomapdata.html#pan">pan</keyword>
         <keyword ref="qgeomapdata.html#removeMapObject">removeMapObject</keyword>
@@ -1545,72 +1547,6 @@
         <keyword ref="qgeoplace.html#operator-eq">operator=</keyword>
         <keyword ref="qgeoplace.html#operator-eq-eq">operator==</keyword>
         <section ref="qgeoplace-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeoplacesmanager.html" title="QGeoPlacesManager Class Reference">
-        <keyword ref="qgeoplacesmanager.html">QGeoPlacesManager</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">SearchType</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">SearchTypes</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchGeocode</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchAll</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchLandmarks</keyword>
-        <keyword ref="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchNone</keyword>
-        <keyword ref="qgeoplacesmanager.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</keyword>
-        <keyword ref="qgeoplacesmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</keyword>
-        <keyword ref="qgeoplacesmanager.html#defaultLandmarkManager">defaultLandmarkManager</keyword>
-        <keyword ref="qgeoplacesmanager.html#error">error</keyword>
-        <keyword ref="qgeoplacesmanager.html#finished">finished</keyword>
-        <keyword ref="qgeoplacesmanager.html#geocode">geocode</keyword>
-        <keyword ref="qgeoplacesmanager.html#managerName">managerName</keyword>
-        <keyword ref="qgeoplacesmanager.html#managerParameters">managerParameters</keyword>
-        <keyword ref="qgeoplacesmanager.html#managerVersion">managerVersion</keyword>
-        <keyword ref="qgeoplacesmanager.html#placesSearch">placesSearch</keyword>
-        <keyword ref="qgeoplacesmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</keyword>
-        <keyword ref="qgeoplacesmanager.html#supportedSearchTypes">supportedSearchTypes</keyword>
-        <keyword ref="qgeoplacesmanager.html#supportsGeocoding">supportsGeocoding</keyword>
-        <section ref="qgeoplacesmanager-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeoplacesmanagerengine.html" title="QGeoPlacesManagerEngine Class Reference">
-        <keyword ref="qgeoplacesmanagerengine.html">QGeoPlacesManagerEngine</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#additionalLandmarkManagers">additionalLandmarkManagers</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#error">error</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#finished">finished</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#geocode">geocode</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#managerName">managerName</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#managerParameters">managerParameters</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#managerVersion">managerVersion</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#placesSearch">placesSearch</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#supportedSearchTypes">supportedSearchTypes</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</keyword>
-        <section ref="qgeoplacesmanagerengine-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeoplacesreply.html" title="QGeoPlacesReply Class Reference">
-        <keyword ref="qgeoplacesreply.html">QGeoPlacesReply</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">Error</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::NoError</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnknownError</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::EngineNotSetError</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::CommunicationError</keyword>
-        <keyword ref="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::ParseError</keyword>
-        <keyword ref="qgeoplacesreply.html#abort">abort</keyword>
-        <keyword ref="qgeoplacesreply.html#addPlace">addPlace</keyword>
-        <keyword ref="qgeoplacesreply.html#bounds">bounds</keyword>
-        <keyword ref="qgeoplacesreply.html#error">error</keyword>
-        <keyword ref="qgeoplacesreply.html#errorString">errorString</keyword>
-        <keyword ref="qgeoplacesreply.html#finished">finished</keyword>
-        <keyword ref="qgeoplacesreply.html#isFinished">isFinished</keyword>
-        <keyword ref="qgeoplacesreply.html#places">places</keyword>
-        <keyword ref="qgeoplacesreply.html#setBounds">setBounds</keyword>
-        <keyword ref="qgeoplacesreply.html#setError">setError</keyword>
-        <keyword ref="qgeoplacesreply.html#setFinished">setFinished</keyword>
-        <keyword ref="qgeoplacesreply.html#setPlaces">setPlaces</keyword>
-        <section ref="qgeoplacesreply-members.html" title="List of all members"/>
     </section>
     <section ref="qgeopositioninfo.html" title="QGeoPositionInfo Class Reference">
         <keyword ref="qgeopositioninfo.html">QGeoPositionInfo</keyword>
@@ -1854,6 +1790,72 @@
         <keyword ref="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</keyword>
         <section ref="qgeosatelliteinfosource-members.html" title="List of all members"/>
     </section>
+    <section ref="qgeosearchmanager.html" title="QGeoSearchManager Class Reference">
+        <keyword ref="qgeosearchmanager.html">QGeoSearchManager</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">SearchType</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">SearchTypes</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchGeocode</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchAll</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchLandmarks</keyword>
+        <keyword ref="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchNone</keyword>
+        <keyword ref="qgeosearchmanager.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</keyword>
+        <keyword ref="qgeosearchmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</keyword>
+        <keyword ref="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</keyword>
+        <keyword ref="qgeosearchmanager.html#error">error</keyword>
+        <keyword ref="qgeosearchmanager.html#finished">finished</keyword>
+        <keyword ref="qgeosearchmanager.html#geocode">geocode</keyword>
+        <keyword ref="qgeosearchmanager.html#managerName">managerName</keyword>
+        <keyword ref="qgeosearchmanager.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qgeosearchmanager.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qgeosearchmanager.html#placeSearch">placeSearch</keyword>
+        <keyword ref="qgeosearchmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</keyword>
+        <keyword ref="qgeosearchmanager.html#supportedSearchTypes">supportedSearchTypes</keyword>
+        <keyword ref="qgeosearchmanager.html#supportsGeocoding">supportsGeocoding</keyword>
+        <section ref="qgeosearchmanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeosearchmanagerengine.html" title="QGeoSearchManagerEngine Class Reference">
+        <keyword ref="qgeosearchmanagerengine.html">QGeoSearchManagerEngine</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#additionalLandmarkManagers">additionalLandmarkManagers</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#error">error</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#finished">finished</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#geocode">geocode</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#managerName">managerName</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#placeSearch">placeSearch</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#supportedSearchTypes">supportedSearchTypes</keyword>
+        <keyword ref="qgeosearchmanagerengine.html#supportsGeocoding">supportsGeocoding</keyword>
+        <section ref="qgeosearchmanagerengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeosearchreply.html" title="QGeoSearchReply Class Reference">
+        <keyword ref="qgeosearchreply.html">QGeoSearchReply</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">Error</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::UnsupportedOptionError</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::NoError</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::UnknownError</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::EngineNotSetError</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::CommunicationError</keyword>
+        <keyword ref="qgeosearchreply.html#Error-enum">QGeoSearchReply::ParseError</keyword>
+        <keyword ref="qgeosearchreply.html#abort">abort</keyword>
+        <keyword ref="qgeosearchreply.html#addPlace">addPlace</keyword>
+        <keyword ref="qgeosearchreply.html#bounds">bounds</keyword>
+        <keyword ref="qgeosearchreply.html#error">error</keyword>
+        <keyword ref="qgeosearchreply.html#errorString">errorString</keyword>
+        <keyword ref="qgeosearchreply.html#finished">finished</keyword>
+        <keyword ref="qgeosearchreply.html#isFinished">isFinished</keyword>
+        <keyword ref="qgeosearchreply.html#places">places</keyword>
+        <keyword ref="qgeosearchreply.html#setBounds">setBounds</keyword>
+        <keyword ref="qgeosearchreply.html#setError">setError</keyword>
+        <keyword ref="qgeosearchreply.html#setFinished">setFinished</keyword>
+        <keyword ref="qgeosearchreply.html#setPlaces">setPlaces</keyword>
+        <section ref="qgeosearchreply-members.html" title="List of all members"/>
+    </section>
     <section ref="qgeoserviceprovider.html" title="QGeoServiceProvider Class Reference">
         <keyword ref="qgeoserviceprovider.html">QGeoServiceProvider</keyword>
         <keyword ref="qgeoserviceprovider.html#Error-enum">Error</keyword>
@@ -1865,15 +1867,15 @@
         <keyword ref="qgeoserviceprovider.html#error">error</keyword>
         <keyword ref="qgeoserviceprovider.html#errorString">errorString</keyword>
         <keyword ref="qgeoserviceprovider.html#mappingManager">mappingManager</keyword>
-        <keyword ref="qgeoserviceprovider.html#placesManager">placesManager</keyword>
         <keyword ref="qgeoserviceprovider.html#routingManager">routingManager</keyword>
+        <keyword ref="qgeoserviceprovider.html#searchManager">searchManager</keyword>
         <section ref="qgeoserviceprovider-members.html" title="List of all members"/>
     </section>
     <section ref="qgeoserviceproviderfactory.html" title="QGeoServiceProviderFactory Class Reference">
         <keyword ref="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</keyword>
         <keyword ref="qgeoserviceproviderfactory.html#createMappingManagerEngine">createMappingManagerEngine</keyword>
-        <keyword ref="qgeoserviceproviderfactory.html#createPlacesManagerEngine">createPlacesManagerEngine</keyword>
         <keyword ref="qgeoserviceproviderfactory.html#createRoutingManagerEngine">createRoutingManagerEngine</keyword>
+        <keyword ref="qgeoserviceproviderfactory.html#createSearchManagerEngine">createSearchManagerEngine</keyword>
         <keyword ref="qgeoserviceproviderfactory.html#providerName">providerName</keyword>
         <keyword ref="qgeoserviceproviderfactory.html#providerVersion">providerVersion</keyword>
         <section ref="qgeoserviceproviderfactory-members.html" title="List of all members"/>
@@ -1940,6 +1942,7 @@
         <keyword ref="qlandmark.html#attribute">attribute</keyword>
         <keyword ref="qlandmark.html#attributeKeys">attributeKeys</keyword>
         <keyword ref="qlandmark.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmark.html#clear">clear</keyword>
         <keyword ref="qlandmark.html#description">description</keyword>
         <keyword ref="qlandmark.html#iconUrl">iconUrl</keyword>
         <keyword ref="qlandmark.html#landmarkId">landmarkId</keyword>
@@ -4659,6 +4662,9 @@
     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
         <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
     </section>
+    <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
+        <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
+    </section>
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
@@ -4668,8 +4674,11 @@
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
     </section>
-    <section ref="lightmaps.html" title="LightMap Example">
-        <keyword ref="lightmaps.html">LightMap Example</keyword>
+    <section ref="lightmaps.html" title="LightMaps Example">
+        <keyword ref="lightmaps.html">LightMaps Example</keyword>
+    </section>
+    <section ref="logfilepositionsource.html" title="Log File Position Source Example">
+        <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>

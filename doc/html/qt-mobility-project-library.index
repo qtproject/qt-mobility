@@ -970,6 +970,52 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="second" fullname="QContactRelationshipFetchRequest::second" href="qcontactrelationshipfetchrequest.html#second" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactId" signature="second() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContactRelationshipFetchRequest::relationships" href="qcontactrelationshipfetchrequest.html#relationships" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSearchReply" href="qgeosearchreply.html" location="qgeosearchreply.h" bases="QObject" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QGeoSearchReply::Error" href="qgeosearchreply.html#Error-enum" location="qgeosearchreply.h">
+                <value name="NoError" value="0"/>
+                <value name="EngineNotSetError" value="1"/>
+                <value name="CommunicationError" value="2"/>
+                <value name="ParseError" value="3"/>
+                <value name="UnsupportedOptionError" value="4"/>
+                <value name="UnknownError" value="5"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSearchReply" fullname="QGeoSearchReply::QGeoSearchReply" href="qgeosearchreply.html#QGeoSearchReply" location="qgeosearchreply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoSearchReply(Error error, const QString &amp; errorString, QObject * parent)">
+                <parameter left="Error" right="" name="error" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoSearchReply" fullname="QGeoSearchReply::~QGeoSearchReply" href="qgeosearchreply.html#dtor.QGeoSearchReply" location="qgeosearchreply.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoSearchReply()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isFinished" fullname="QGeoSearchReply::isFinished" href="qgeosearchreply.html#isFinished" location="qgeosearchreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFinished() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoSearchReply::error" href="qgeosearchreply.html#error" location="qgeosearchreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QGeoSearchReply::errorString" href="qgeosearchreply.html#errorString" location="qgeosearchreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bounds" fullname="QGeoSearchReply::bounds" href="qgeosearchreply.html#bounds" location="qgeosearchreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoBoundingBox" signature="bounds() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="places" fullname="QGeoSearchReply::places" href="qgeosearchreply.html#places" location="qgeosearchreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QGeoPlace&gt;" signature="places() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="abort" fullname="QGeoSearchReply::abort" href="qgeosearchreply.html#abort" location="qgeosearchreply.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="abort()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoSearchReply::finished" href="qgeosearchreply.html#finished" location="qgeosearchreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoSearchReply::error" href="qgeosearchreply.html#error-2" location="qgeosearchreply.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QGeoSearchReply::Error error, const QString &amp; errorString)">
+                <parameter left="QGeoSearchReply::Error" right="" name="error" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default="QString()"/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="QGeoSearchReply" fullname="QGeoSearchReply::QGeoSearchReply" href="qgeosearchreply.html#QGeoSearchReply-2" location="qgeosearchreply.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoSearchReply(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setError" fullname="QGeoSearchReply::setError" href="qgeosearchreply.html#setError" location="qgeosearchreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setError(Error error, const QString &amp; errorString)">
+                <parameter left="Error" right="" name="error" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setFinished" fullname="QGeoSearchReply::setFinished" href="qgeosearchreply.html#setFinished" location="qgeosearchreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFinished(bool finished)">
+                <parameter left="bool" right="" name="finished" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setBounds" fullname="QGeoSearchReply::setBounds" href="qgeosearchreply.html#setBounds" location="qgeosearchreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBounds(const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="addPlace" fullname="QGeoSearchReply::addPlace" href="qgeosearchreply.html#addPlace" location="qgeosearchreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addPlace(const QGeoPlace &amp; place)">
+                <parameter left="const QGeoPlace &amp;" right="" name="place" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setPlaces" fullname="QGeoSearchReply::setPlaces" href="qgeosearchreply.html#setPlaces" location="qgeosearchreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaces(const QList&lt;QGeoPlace&gt; &amp; places)">
+                <parameter left="const QList&lt;QGeoPlace&gt; &amp;" right="" name="places" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactFamily" href="qcontactfamily.html" location="qcontactfamily.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactFamily::DefinitionName" href="qcontactfamily.html#DefinitionName-var" location="qcontactfamily.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSpouse" fullname="QContactFamily::FieldSpouse" href="qcontactfamily.html#FieldSpouse-var" location="qcontactfamily.h" type="const QLatin1Constant" static="true"/>
@@ -1519,6 +1565,50 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QTapSensor::reading" href="qtapsensor.html#reading" location="qtapsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QTapReading *" signature="reading() const"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTapSensor::type" href="qtapsensor.html#type-var" location="qtapsensor.h" type="char const * const" static="true"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSearchManager" href="qgeosearchmanager.html" location="qgeosearchmanager.h" bases="QObject" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SearchType" fullname="QGeoSearchManager::SearchType" href="qgeosearchmanager.html#SearchType-enum" location="qgeosearchmanager.h" typedef="QGeoSearchManager::SearchTypes">
+                <value name="SearchNone" value="0x0000"/>
+                <value name="SearchGeocode" value="0x0001"/>
+                <value name="SearchLandmarks" value="0x0002"/>
+                <value name="SearchAll" value="0xFFFF"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="SearchTypes" fullname="QGeoSearchManager::SearchTypes" href="qgeosearchmanager.html#SearchTypes-typedef" location="qgeosearchmanager.h" enum="QGeoSearchManager::SearchType"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoSearchManager" fullname="QGeoSearchManager::~QGeoSearchManager" href="qgeosearchmanager.html#dtor.QGeoSearchManager" location="qgeosearchmanager.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoSearchManager()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QGeoSearchManager::managerName" href="qgeosearchmanager.html#managerName" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QGeoSearchManager::managerParameters" href="qgeosearchmanager.html#managerParameters" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerVersion" fullname="QGeoSearchManager::managerVersion" href="qgeosearchmanager.html#managerVersion" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="managerVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoSearchManager::geocode" href="qgeosearchmanager.html#geocode" location="qgeosearchmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoSearchReply *" signature="geocode(const QGeoAddress &amp; address, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QGeoAddress &amp;" right="" name="address" default=""/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoSearchManager::geocode" href="qgeosearchmanager.html#geocode-2" location="qgeosearchmanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeoSearchReply *" signature="geocode(const QGeoCoordinate &amp; coordinate, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="placeSearch" fullname="QGeoSearchManager::placeSearch" href="qgeosearchmanager.html#placeSearch" location="qgeosearchmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoSearchReply *" signature="placeSearch(const QString &amp; searchString, QFlags&lt;QGeoSearchManager::SearchType&gt; searchTypes, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QString &amp;" right="" name="searchString" default=""/>
+                <parameter left="QFlags&lt;QGeoSearchManager::SearchType&gt;" right="" name="searchTypes" default="SearchTypes( SearchAll )"/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportsGeocoding" fullname="QGeoSearchManager::supportsGeocoding" href="qgeosearchmanager.html#supportsGeocoding" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="supportsGeocoding() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedSearchTypes" fullname="QGeoSearchManager::supportedSearchTypes" href="qgeosearchmanager.html#supportedSearchTypes" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SearchTypes" signature="supportedSearchTypes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultLandmarkManager" fullname="QGeoSearchManager::defaultLandmarkManager" href="qgeosearchmanager.html#defaultLandmarkManager" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkManager *" signature="defaultLandmarkManager() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAdditionalLandmarkManagers" fullname="QGeoSearchManager::setAdditionalLandmarkManagers" href="qgeosearchmanager.html#setAdditionalLandmarkManagers" location="qgeosearchmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAdditionalLandmarkManagers(const QList&lt;QLandmarkManager *&gt; &amp; landmarkManagers)">
+                <parameter left="const QList&lt;QLandmarkManager *&gt; &amp;" right="" name="landmarkManagers" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="additionalLandmarkManagers" fullname="QGeoSearchManager::additionalLandmarkManagers" href="qgeosearchmanager.html#additionalLandmarkManagers" location="qgeosearchmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkManager *&gt;" signature="additionalLandmarkManagers() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addAdditionalLandmarkManager" fullname="QGeoSearchManager::addAdditionalLandmarkManager" href="qgeosearchmanager.html#addAdditionalLandmarkManager" location="qgeosearchmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addAdditionalLandmarkManager(QLandmarkManager * landmarkManager)">
+                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoSearchManager::finished" href="qgeosearchmanager.html#finished" location="qgeosearchmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoSearchReply * reply)">
+                <parameter left="QGeoSearchReply *" right="" name="reply" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoSearchManager::error" href="qgeosearchmanager.html#error" location="qgeosearchmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoSearchReply * reply, QGeoSearchReply::Error error, QString errorString)">
+                <parameter left="QGeoSearchReply *" right="" name="reply" default=""/>
+                <parameter left="QGeoSearchReply::Error" right="" name="error" default=""/>
+                <parameter left="QString" right="" name="errorString" default="QString()"/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylistReader" href="qmediaplaylistreader.html" location="qmediaplaylistioplugin.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlaylistReader" fullname="QMediaPlaylistReader::~QMediaPlaylistReader" href="qmediaplaylistreader.html#dtor.QMediaPlaylistReader" location="qmediaplaylistioplugin.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlaylistReader()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="atEnd" fullname="QMediaPlaylistReader::atEnd" href="qmediaplaylistreader.html#atEnd" location="qmediaplaylistioplugin.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="atEnd() const"/>
@@ -1587,52 +1677,6 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QVideoRendererControl" fullname="QVideoRendererControl::QVideoRendererControl" href="qvideorenderercontrol.html#QVideoRendererControl" location="qvideorenderercontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVideoRendererControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPlacesReply" href="qgeoplacesreply.html" location="qgeoplacesreply.h" bases="QObject" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QGeoPlacesReply::Error" href="qgeoplacesreply.html#Error-enum" location="qgeoplacesreply.h">
-                <value name="NoError" value="0"/>
-                <value name="EngineNotSetError" value="1"/>
-                <value name="CommunicationError" value="2"/>
-                <value name="ParseError" value="3"/>
-                <value name="UnsupportedOptionError" value="4"/>
-                <value name="UnknownError" value="5"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoPlacesReply" fullname="QGeoPlacesReply::QGeoPlacesReply" href="qgeoplacesreply.html#QGeoPlacesReply" location="qgeoplacesreply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoPlacesReply(Error error, const QString &amp; errorString, QObject * parent)">
-                <parameter left="Error" right="" name="error" default=""/>
-                <parameter left="const QString &amp;" right="" name="errorString" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoPlacesReply" fullname="QGeoPlacesReply::~QGeoPlacesReply" href="qgeoplacesreply.html#dtor.QGeoPlacesReply" location="qgeoplacesreply.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoPlacesReply()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFinished" fullname="QGeoPlacesReply::isFinished" href="qgeoplacesreply.html#isFinished" location="qgeoplacesreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFinished() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoPlacesReply::error" href="qgeoplacesreply.html#error" location="qgeoplacesreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QGeoPlacesReply::errorString" href="qgeoplacesreply.html#errorString" location="qgeoplacesreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bounds" fullname="QGeoPlacesReply::bounds" href="qgeoplacesreply.html#bounds" location="qgeoplacesreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoBoundingBox" signature="bounds() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="places" fullname="QGeoPlacesReply::places" href="qgeoplacesreply.html#places" location="qgeoplacesreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QGeoPlace&gt;" signature="places() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="abort" fullname="QGeoPlacesReply::abort" href="qgeoplacesreply.html#abort" location="qgeoplacesreply.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="abort()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoPlacesReply::finished" href="qgeoplacesreply.html#finished" location="qgeoplacesreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoPlacesReply::error" href="qgeoplacesreply.html#error-2" location="qgeoplacesreply.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QGeoPlacesReply::Error error, const QString &amp; errorString)">
-                <parameter left="QGeoPlacesReply::Error" right="" name="error" default=""/>
-                <parameter left="const QString &amp;" right="" name="errorString" default="QString()"/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QGeoPlacesReply" fullname="QGeoPlacesReply::QGeoPlacesReply" href="qgeoplacesreply.html#QGeoPlacesReply-2" location="qgeoplacesreply.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoPlacesReply(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setError" fullname="QGeoPlacesReply::setError" href="qgeoplacesreply.html#setError" location="qgeoplacesreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setError(Error error, const QString &amp; errorString)">
-                <parameter left="Error" right="" name="error" default=""/>
-                <parameter left="const QString &amp;" right="" name="errorString" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setFinished" fullname="QGeoPlacesReply::setFinished" href="qgeoplacesreply.html#setFinished" location="qgeoplacesreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFinished(bool finished)">
-                <parameter left="bool" right="" name="finished" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setBounds" fullname="QGeoPlacesReply::setBounds" href="qgeoplacesreply.html#setBounds" location="qgeoplacesreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBounds(const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="addPlace" fullname="QGeoPlacesReply::addPlace" href="qgeoplacesreply.html#addPlace" location="qgeoplacesreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addPlace(const QGeoPlace &amp; place)">
-                <parameter left="const QGeoPlace &amp;" right="" name="place" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setPlaces" fullname="QGeoPlacesReply::setPlaces" href="qgeoplacesreply.html#setPlaces" location="qgeoplacesreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaces(const QList&lt;QGeoPlace&gt; &amp; places)">
-                <parameter left="const QList&lt;QGeoPlace&gt; &amp;" right="" name="places" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoMapCircleObject" href="qgeomapcircleobject.html" location="qgeomapcircleobject.h" bases="QGeoMapObject" module="">
@@ -2178,6 +2222,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsInScreenRect" fullname="QGeoMapData::mapObjectsInScreenRect" href="qgeomapdata.html#mapObjectsInScreenRect" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjectsInScreenRect(const QRectF &amp; screenRect)">
                 <parameter left="const QRectF &amp;" right="" name="screenRect" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsOverlay" fullname="QGeoMapData::mapObjectsOverlay" href="qgeomapdata.html#mapObjectsOverlay" location="qgeomapdata.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPixmap" signature="mapObjectsOverlay() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinateToScreenPosition" fullname="QGeoMapData::coordinateToScreenPosition" href="qgeomapdata.html#coordinateToScreenPosition" location="qgeomapdata.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="coordinateToScreenPosition(const QGeoCoordinate &amp; coordinate) const">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
@@ -2722,6 +2767,56 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="metaDataChanged" fullname="QMediaRecorder::metaDataChanged" href="qmediarecorder.html#metaDataChanged" location="qmediarecorder.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="metaDataChanged()"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QMediaRecorder::setMediaObject" href="qmediarecorder.html#setMediaObject" location="qmediarecorder.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMediaObject(QMediaObject * object)">
                 <parameter left="QMediaObject *" right="" name="object" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSearchManagerEngine" href="qgeosearchmanagerengine.html" location="qgeosearchmanagerengine.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSearchManagerEngine" fullname="QGeoSearchManagerEngine::QGeoSearchManagerEngine" href="qgeosearchmanagerengine.html#QGeoSearchManagerEngine" location="qgeosearchmanagerengine.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoSearchManagerEngine(const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
+                <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoSearchManagerEngine" fullname="QGeoSearchManagerEngine::~QGeoSearchManagerEngine" href="qgeosearchmanagerengine.html#dtor.QGeoSearchManagerEngine" location="qgeosearchmanagerengine.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoSearchManagerEngine()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QGeoSearchManagerEngine::managerName" href="qgeosearchmanagerengine.html#managerName" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QGeoSearchManagerEngine::managerParameters" href="qgeosearchmanagerengine.html#managerParameters" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="managerVersion" fullname="QGeoSearchManagerEngine::managerVersion" href="qgeosearchmanagerengine.html#managerVersion" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="managerVersion() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoSearchManagerEngine::geocode" href="qgeosearchmanagerengine.html#geocode" location="qgeosearchmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QGeoSearchReply *" signature="geocode(const QGeoAddress &amp; address, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QGeoAddress &amp;" right="" name="address" default=""/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoSearchManagerEngine::geocode" href="qgeosearchmanagerengine.html#geocode-2" location="qgeosearchmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeoSearchReply *" signature="geocode(const QGeoCoordinate &amp; coordinate, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="placeSearch" fullname="QGeoSearchManagerEngine::placeSearch" href="qgeosearchmanagerengine.html#placeSearch" location="qgeosearchmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QGeoSearchReply *" signature="placeSearch(const QString &amp; searchString, QFlags&lt;QGeoSearchManager::SearchType&gt; searchTypes, const QGeoBoundingBox &amp; bounds)">
+                <parameter left="const QString &amp;" right="" name="searchString" default=""/>
+                <parameter left="QFlags&lt;QGeoSearchManager::SearchType&gt;" right="" name="searchTypes" default=""/>
+                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportsGeocoding" fullname="QGeoSearchManagerEngine::supportsGeocoding" href="qgeosearchmanagerengine.html#supportsGeocoding" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="supportsGeocoding() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedSearchTypes" fullname="QGeoSearchManagerEngine::supportedSearchTypes" href="qgeosearchmanagerengine.html#supportedSearchTypes" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoSearchManager::SearchTypes" signature="supportedSearchTypes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultLandmarkManager" fullname="QGeoSearchManagerEngine::defaultLandmarkManager" href="qgeosearchmanagerengine.html#defaultLandmarkManager" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkManager *" signature="defaultLandmarkManager() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAdditionalLandmarkManagers" fullname="QGeoSearchManagerEngine::setAdditionalLandmarkManagers" href="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAdditionalLandmarkManagers(const QList&lt;QLandmarkManager *&gt; &amp; landmarkManagers)">
+                <parameter left="const QList&lt;QLandmarkManager *&gt; &amp;" right="" name="landmarkManagers" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="additionalLandmarkManagers" fullname="QGeoSearchManagerEngine::additionalLandmarkManagers" href="qgeosearchmanagerengine.html#additionalLandmarkManagers" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkManager *&gt;" signature="additionalLandmarkManagers() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addAdditionalLandmarkManager" fullname="QGeoSearchManagerEngine::addAdditionalLandmarkManager" href="qgeosearchmanagerengine.html#addAdditionalLandmarkManager" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addAdditionalLandmarkManager(QLandmarkManager * landmarkManager)">
+                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoSearchManagerEngine::finished" href="qgeosearchmanagerengine.html#finished" location="qgeosearchmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoSearchReply * reply)">
+                <parameter left="QGeoSearchReply *" right="" name="reply" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoSearchManagerEngine::error" href="qgeosearchmanagerengine.html#error" location="qgeosearchmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoSearchReply * reply, QGeoSearchReply::Error error, QString errorString)">
+                <parameter left="QGeoSearchReply *" right="" name="reply" default=""/>
+                <parameter left="QGeoSearchReply::Error" right="" name="error" default=""/>
+                <parameter left="QString" right="" name="errorString" default="QString()"/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setDefaultLandmarkManager" fullname="QGeoSearchManagerEngine::setDefaultLandmarkManager" href="qgeosearchmanagerengine.html#setDefaultLandmarkManager" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefaultLandmarkManager(QLandmarkManager * landmarkManager)">
+                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setSupportsGeocoding" fullname="QGeoSearchManagerEngine::setSupportsGeocoding" href="qgeosearchmanagerengine.html#setSupportsGeocoding" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSupportsGeocoding(bool supported)">
+                <parameter left="bool" right="" name="supported" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setSupportedSearchTypes" fullname="QGeoSearchManagerEngine::setSupportedSearchTypes" href="qgeosearchmanagerengine.html#setSupportedSearchTypes" location="qgeosearchmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSupportedSearchTypes(QFlags&lt;QGeoSearchManager::SearchType&gt; searchTypes)">
+                <parameter left="QFlags&lt;QGeoSearchManager::SearchType&gt;" right="" name="searchTypes" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html" location="qcontactdetaildefinitionremoverequest.h" bases="QContactAbstractRequest" module="">
@@ -4847,6 +4942,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarkId" fullname="QLandmark::setLandmarkId" href="qlandmark.html#setLandmarkId" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarkId(const QLandmarkId &amp; id)">
                 <parameter left="const QLandmarkId &amp;" right="" name="id" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QLandmark::clear" href="qlandmark.html#clear" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkImportRequest" href="qlandmarkimportrequest.html" location="qlandmarkimportrequest.h" bases="QLandmarkAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkImportRequest" fullname="QLandmarkImportRequest::QLandmarkImportRequest" href="qlandmarkimportrequest.html#QLandmarkImportRequest" location="qlandmarkimportrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkImportRequest(QLandmarkManager * manager, QObject * parent)">
@@ -5439,7 +5535,7 @@
                 <parameter left="QString" right="" name="" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoServiceProvider" fullname="QGeoServiceProvider::~QGeoServiceProvider" href="qgeoserviceprovider.html#dtor.QGeoServiceProvider" location="qgeoserviceprovider.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoServiceProvider()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="placesManager" fullname="QGeoServiceProvider::placesManager" href="qgeoserviceprovider.html#placesManager" location="qgeoserviceprovider.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoPlacesManager *" signature="placesManager() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="searchManager" fullname="QGeoServiceProvider::searchManager" href="qgeoserviceprovider.html#searchManager" location="qgeoserviceprovider.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoSearchManager *" signature="searchManager() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mappingManager" fullname="QGeoServiceProvider::mappingManager" href="qgeoserviceprovider.html#mappingManager" location="qgeoserviceprovider.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMappingManager *" signature="mappingManager() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="routingManager" fullname="QGeoServiceProvider::routingManager" href="qgeoserviceprovider.html#routingManager" location="qgeoserviceprovider.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoRoutingManager *" signature="routingManager() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoServiceProvider::error" href="qgeoserviceprovider.html#error" location="qgeoserviceprovider.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
@@ -5820,6 +5916,7 @@
                 <parameter left="const QString &amp;" right="" name="postOfficeBox" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QGeoAddress::isEmpty" href="qgeoaddress.html#isEmpty" location="qgeoaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QGeoAddress::clear" href="qgeoaddress.html#clear" location="qgeoaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractVideoSurface" href="qabstractvideosurface.html" location="qabstractvideosurface.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QAbstractVideoSurface::Error" href="qabstractvideosurface.html#Error-enum" location="qabstractvideosurface.h">
@@ -5958,50 +6055,6 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="MatchFlags" fullname="QMessageDataComparator::MatchFlags" href="qmessagedatacomparator.html#MatchFlags-typedef" location="qmessagedatacomparator.h" enum="QMessageDataComparator::MatchFlag"/>
         </namespace>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPlacesManager" href="qgeoplacesmanager.html" location="qgeoplacesmanager.h" bases="QObject" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="SearchType" fullname="QGeoPlacesManager::SearchType" href="qgeoplacesmanager.html#SearchType-enum" location="qgeoplacesmanager.h" typedef="QGeoPlacesManager::SearchTypes">
-                <value name="SearchNone" value="0x0000"/>
-                <value name="SearchGeocode" value="0x0001"/>
-                <value name="SearchLandmarks" value="0x0002"/>
-                <value name="SearchAll" value="0xFFFF"/>
-            </enum>
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="SearchTypes" fullname="QGeoPlacesManager::SearchTypes" href="qgeoplacesmanager.html#SearchTypes-typedef" location="qgeoplacesmanager.h" enum="QGeoPlacesManager::SearchType"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoPlacesManager" fullname="QGeoPlacesManager::~QGeoPlacesManager" href="qgeoplacesmanager.html#dtor.QGeoPlacesManager" location="qgeoplacesmanager.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoPlacesManager()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QGeoPlacesManager::managerName" href="qgeoplacesmanager.html#managerName" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QGeoPlacesManager::managerParameters" href="qgeoplacesmanager.html#managerParameters" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerVersion" fullname="QGeoPlacesManager::managerVersion" href="qgeoplacesmanager.html#managerVersion" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="managerVersion() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoPlacesManager::geocode" href="qgeoplacesmanager.html#geocode" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoPlacesReply *" signature="geocode(const QGeoAddress &amp; address, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QGeoAddress &amp;" right="" name="address" default=""/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoPlacesManager::geocode" href="qgeoplacesmanager.html#geocode-2" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeoPlacesReply *" signature="geocode(const QGeoCoordinate &amp; coordinate, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="placesSearch" fullname="QGeoPlacesManager::placesSearch" href="qgeoplacesmanager.html#placesSearch" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoPlacesReply *" signature="placesSearch(const QString &amp; searchString, QFlags&lt;QGeoPlacesManager::SearchType&gt; searchTypes, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QString &amp;" right="" name="searchString" default=""/>
-                <parameter left="QFlags&lt;QGeoPlacesManager::SearchType&gt;" right="" name="searchTypes" default="SearchTypes( SearchAll )"/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default="QGeoBoundingBox()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportsGeocoding" fullname="QGeoPlacesManager::supportsGeocoding" href="qgeoplacesmanager.html#supportsGeocoding" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="supportsGeocoding() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportedSearchTypes" fullname="QGeoPlacesManager::supportedSearchTypes" href="qgeoplacesmanager.html#supportedSearchTypes" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="SearchTypes" signature="supportedSearchTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultLandmarkManager" fullname="QGeoPlacesManager::defaultLandmarkManager" href="qgeoplacesmanager.html#defaultLandmarkManager" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkManager *" signature="defaultLandmarkManager() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAdditionalLandmarkManagers" fullname="QGeoPlacesManager::setAdditionalLandmarkManagers" href="qgeoplacesmanager.html#setAdditionalLandmarkManagers" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAdditionalLandmarkManagers(const QList&lt;QLandmarkManager *&gt; &amp; landmarkManagers)">
-                <parameter left="const QList&lt;QLandmarkManager *&gt; &amp;" right="" name="landmarkManagers" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="additionalLandmarkManagers" fullname="QGeoPlacesManager::additionalLandmarkManagers" href="qgeoplacesmanager.html#additionalLandmarkManagers" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkManager *&gt;" signature="additionalLandmarkManagers() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addAdditionalLandmarkManager" fullname="QGeoPlacesManager::addAdditionalLandmarkManager" href="qgeoplacesmanager.html#addAdditionalLandmarkManager" location="qgeoplacesmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addAdditionalLandmarkManager(QLandmarkManager * landmarkManager)">
-                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoPlacesManager::finished" href="qgeoplacesmanager.html#finished" location="qgeoplacesmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoPlacesReply * reply)">
-                <parameter left="QGeoPlacesReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoPlacesManager::error" href="qgeoplacesmanager.html#error" location="qgeoplacesmanager.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoPlacesReply * reply, QGeoPlacesReply::Error error, QString errorString)">
-                <parameter left="QGeoPlacesReply *" right="" name="reply" default=""/>
-                <parameter left="QGeoPlacesReply::Error" right="" name="error" default=""/>
-                <parameter left="QString" right="" name="errorString" default="QString()"/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QVideoSurfaceFormat" href="qvideosurfaceformat.html" location="qvideosurfaceformat.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Direction" fullname="QVideoSurfaceFormat::Direction" href="qvideosurfaceformat.html#Direction-enum" location="qvideosurfaceformat.h">
                 <value name="TopToBottom" value="0"/>
@@ -8754,7 +8807,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoServiceProviderFactory" fullname="QGeoServiceProviderFactory::~QGeoServiceProviderFactory" href="qgeoserviceproviderfactory.html#dtor.QGeoServiceProviderFactory" location="qgeoserviceproviderfactory.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoServiceProviderFactory()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="providerName" fullname="QGeoServiceProviderFactory::providerName" href="qgeoserviceproviderfactory.html#providerName" location="qgeoserviceproviderfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="providerName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="providerVersion" fullname="QGeoServiceProviderFactory::providerVersion" href="qgeoserviceproviderfactory.html#providerVersion" location="qgeoserviceproviderfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="providerVersion() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createPlacesManagerEngine" fullname="QGeoServiceProviderFactory::createPlacesManagerEngine" href="qgeoserviceproviderfactory.html#createPlacesManagerEngine" location="qgeoserviceproviderfactory.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QGeoPlacesManagerEngine *" signature="createPlacesManagerEngine(const QMap&lt;QString, QString&gt; &amp; parameters, QGeoServiceProvider::Error * error, QString * errorString) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="createSearchManagerEngine" fullname="QGeoServiceProviderFactory::createSearchManagerEngine" href="qgeoserviceproviderfactory.html#createSearchManagerEngine" location="qgeoserviceproviderfactory.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QGeoSearchManagerEngine *" signature="createSearchManagerEngine(const QMap&lt;QString, QString&gt; &amp; parameters, QGeoServiceProvider::Error * error, QString * errorString) const">
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default=""/>
                 <parameter left="QGeoServiceProvider::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
@@ -9199,56 +9252,6 @@
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPlacesManagerEngine" href="qgeoplacesmanagerengine.html" location="qgeoplacesmanagerengine.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoPlacesManagerEngine" fullname="QGeoPlacesManagerEngine::QGeoPlacesManagerEngine" href="qgeoplacesmanagerengine.html#QGeoPlacesManagerEngine" location="qgeoplacesmanagerengine.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoPlacesManagerEngine(const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
-                <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoPlacesManagerEngine" fullname="QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine" href="qgeoplacesmanagerengine.html#dtor.QGeoPlacesManagerEngine" location="qgeoplacesmanagerengine.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoPlacesManagerEngine()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QGeoPlacesManagerEngine::managerName" href="qgeoplacesmanagerengine.html#managerName" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QGeoPlacesManagerEngine::managerParameters" href="qgeoplacesmanagerengine.html#managerParameters" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="managerVersion" fullname="QGeoPlacesManagerEngine::managerVersion" href="qgeoplacesmanagerengine.html#managerVersion" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="managerVersion() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoPlacesManagerEngine::geocode" href="qgeoplacesmanagerengine.html#geocode" location="qgeoplacesmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QGeoPlacesReply *" signature="geocode(const QGeoAddress &amp; address, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QGeoAddress &amp;" right="" name="address" default=""/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeoPlacesManagerEngine::geocode" href="qgeoplacesmanagerengine.html#geocode-2" location="qgeoplacesmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeoPlacesReply *" signature="geocode(const QGeoCoordinate &amp; coordinate, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="placesSearch" fullname="QGeoPlacesManagerEngine::placesSearch" href="qgeoplacesmanagerengine.html#placesSearch" location="qgeoplacesmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QGeoPlacesReply *" signature="placesSearch(const QString &amp; searchString, QFlags&lt;QGeoPlacesManager::SearchType&gt; searchTypes, const QGeoBoundingBox &amp; bounds)">
-                <parameter left="const QString &amp;" right="" name="searchString" default=""/>
-                <parameter left="QFlags&lt;QGeoPlacesManager::SearchType&gt;" right="" name="searchTypes" default=""/>
-                <parameter left="const QGeoBoundingBox &amp;" right="" name="bounds" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportsGeocoding" fullname="QGeoPlacesManagerEngine::supportsGeocoding" href="qgeoplacesmanagerengine.html#supportsGeocoding" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="supportsGeocoding() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportedSearchTypes" fullname="QGeoPlacesManagerEngine::supportedSearchTypes" href="qgeoplacesmanagerengine.html#supportedSearchTypes" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoPlacesManager::SearchTypes" signature="supportedSearchTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultLandmarkManager" fullname="QGeoPlacesManagerEngine::defaultLandmarkManager" href="qgeoplacesmanagerengine.html#defaultLandmarkManager" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkManager *" signature="defaultLandmarkManager() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAdditionalLandmarkManagers" fullname="QGeoPlacesManagerEngine::setAdditionalLandmarkManagers" href="qgeoplacesmanagerengine.html#setAdditionalLandmarkManagers" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAdditionalLandmarkManagers(const QList&lt;QLandmarkManager *&gt; &amp; landmarkManagers)">
-                <parameter left="const QList&lt;QLandmarkManager *&gt; &amp;" right="" name="landmarkManagers" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="additionalLandmarkManagers" fullname="QGeoPlacesManagerEngine::additionalLandmarkManagers" href="qgeoplacesmanagerengine.html#additionalLandmarkManagers" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkManager *&gt;" signature="additionalLandmarkManagers() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addAdditionalLandmarkManager" fullname="QGeoPlacesManagerEngine::addAdditionalLandmarkManager" href="qgeoplacesmanagerengine.html#addAdditionalLandmarkManager" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addAdditionalLandmarkManager(QLandmarkManager * landmarkManager)">
-                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoPlacesManagerEngine::finished" href="qgeoplacesmanagerengine.html#finished" location="qgeoplacesmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoPlacesReply * reply)">
-                <parameter left="QGeoPlacesReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoPlacesManagerEngine::error" href="qgeoplacesmanagerengine.html#error" location="qgeoplacesmanagerengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoPlacesReply * reply, QGeoPlacesReply::Error error, QString errorString)">
-                <parameter left="QGeoPlacesReply *" right="" name="reply" default=""/>
-                <parameter left="QGeoPlacesReply::Error" right="" name="error" default=""/>
-                <parameter left="QString" right="" name="errorString" default="QString()"/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setDefaultLandmarkManager" fullname="QGeoPlacesManagerEngine::setDefaultLandmarkManager" href="qgeoplacesmanagerengine.html#setDefaultLandmarkManager" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefaultLandmarkManager(QLandmarkManager * landmarkManager)">
-                <parameter left="QLandmarkManager *" right="" name="landmarkManager" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setSupportsGeocoding" fullname="QGeoPlacesManagerEngine::setSupportsGeocoding" href="qgeoplacesmanagerengine.html#setSupportsGeocoding" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSupportsGeocoding(bool supported)">
-                <parameter left="bool" right="" name="supported" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setSupportedSearchTypes" fullname="QGeoPlacesManagerEngine::setSupportedSearchTypes" href="qgeoplacesmanagerengine.html#setSupportedSearchTypes" location="qgeoplacesmanagerengine.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSupportedSearchTypes(QFlags&lt;QGeoPlacesManager::SearchType&gt; searchTypes)">
-                <parameter left="QFlags&lt;QGeoPlacesManager::SearchType&gt;" right="" name="searchTypes" default=""/>
-            </function>
-        </class>
         <page access="public" status="commendable" name="SoundEffect" href="qml-soundeffect.html" title="QML SoundEffect Element Reference" fulltitle="QML SoundEffect Element Reference" subtitle="" location="qsoundeffect.cpp">
             <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
             <page access="public" status="commendable" name="loops" href="loops.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
@@ -9408,6 +9411,12 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SYMBIAN_SETTINGS_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamsControl_iid" href="qmediastreamscontrol.html#QMediaStreamsControl_iid" location="qmediastreamscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaStreamsControl" type="" signature="QMediaStreamsControl_iid()"/>
+        <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="fetchgooglemaps.qdoc">
+            <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.cpp" href="fetchgooglemaps-mapwindow-cpp.html" subtype="file" title="" fulltitle="mapwindow.cpp Example File" subtitle="fetchgooglemaps/mapwindow.cpp" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.h" href="fetchgooglemaps-mapwindow-h.html" subtype="file" title="" fulltitle="mapwindow.h Example File" subtitle="fetchgooglemaps/mapwindow.h" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/main.cpp" href="fetchgooglemaps-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="fetchgooglemaps/main.cpp" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/fetchgooglemaps.pro" href="fetchgooglemaps-fetchgooglemaps-pro.html" subtype="file" title="" fulltitle="fetchgooglemaps.pro Example File" subtitle="fetchgooglemaps/fetchgooglemaps.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
             <contents name="class-lists" title="Class Lists" level="2"/>
             <contents name="function-lists" title="Function Lists" level="2"/>
@@ -9696,6 +9705,14 @@
             <parameter left="" right="" name="Class" default=""/>
             <parameter left="" right="" name="IId" default=""/>
         </function>
+        <page access="public" status="commendable" name="logfilepositionsource" href="logfilepositionsource.html" subtype="example" title="Log File Position Source Example" fulltitle="Log File Position Source Example" subtitle="" location="logfilepositionsource.qdoc">
+            <page access="public" status="commendable" name="logfilepositionsource/clientapplication.cpp" href="logfilepositionsource-clientapplication-cpp.html" subtype="file" title="" fulltitle="clientapplication.cpp Example File" subtitle="logfilepositionsource/clientapplication.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/clientapplication.h" href="logfilepositionsource-clientapplication-h.html" subtype="file" title="" fulltitle="clientapplication.h Example File" subtitle="logfilepositionsource/clientapplication.h" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.cpp" href="logfilepositionsource-logfilepositionsource-cpp.html" subtype="file" title="" fulltitle="logfilepositionsource.cpp Example File" subtitle="logfilepositionsource/logfilepositionsource.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.h" href="logfilepositionsource-logfilepositionsource-h.html" subtype="file" title="" fulltitle="logfilepositionsource.h Example File" subtitle="logfilepositionsource/logfilepositionsource.h" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/main.cpp" href="logfilepositionsource-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="logfilepositionsource/main.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.pro" href="logfilepositionsource-logfilepositionsource-pro.html" subtype="file" title="" fulltitle="logfilepositionsource.pro Example File" subtitle="logfilepositionsource/logfilepositionsource.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
             <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
@@ -9717,7 +9734,7 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContainerControl_iid" href="qmediacontainercontrol.html#QMediaContainerControl_iid" location="qmediacontainercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaContainerControl" type="" signature="QMediaContainerControl_iid()"/>
         <page access="public" status="commendable" name="editions.html" href="editions.html" subtype="page" title="Qt Editions" fulltitle="Qt Editions" subtitle="" location="editions.qdoc"/>
-        <page access="public" status="commendable" name="lightmaps" href="lightmaps.html" subtype="example" title="LightMap Example" fulltitle="LightMap Example" subtitle="" location="lightmaps.qdoc">
+        <page access="public" status="commendable" name="lightmaps" href="lightmaps.html" subtype="example" title="LightMaps Example" fulltitle="LightMaps Example" subtitle="" location="lightmaps.qdoc">
             <page access="public" status="commendable" name="lightmaps/lightmaps.cpp" href="lightmaps-lightmaps-cpp.html" subtype="file" title="" fulltitle="lightmaps.cpp Example File" subtitle="lightmaps/lightmaps.cpp" location=""/>
             <page access="public" status="commendable" name="lightmaps/lightmaps.pro" href="lightmaps-lightmaps-pro.html" subtype="file" title="" fulltitle="lightmaps.pro Example File" subtitle="lightmaps/lightmaps.pro" location=""/>
         </page>

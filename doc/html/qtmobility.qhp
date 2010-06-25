@@ -291,15 +291,6 @@
                     <section ref="qgeoplace.html" title="QGeoPlace Class Reference">
                         <section ref="qgeoplace-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgeoplacesmanager.html" title="QGeoPlacesManager Class Reference">
-                        <section ref="qgeoplacesmanager-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgeoplacesmanagerengine.html" title="QGeoPlacesManagerEngine Class Reference">
-                        <section ref="qgeoplacesmanagerengine-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgeoplacesreply.html" title="QGeoPlacesReply Class Reference">
-                        <section ref="qgeoplacesreply-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgeopositioninfo.html" title="QGeoPositionInfo Class Reference">
                         <section ref="qgeopositioninfo-members.html" title="List of all members"/>
                     </section>
@@ -329,6 +320,15 @@
                     </section>
                     <section ref="qgeosatelliteinfosource.html" title="QGeoSatelliteInfoSource Class Reference">
                         <section ref="qgeosatelliteinfosource-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeosearchmanager.html" title="QGeoSearchManager Class Reference">
+                        <section ref="qgeosearchmanager-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeosearchmanagerengine.html" title="QGeoSearchManagerEngine Class Reference">
+                        <section ref="qgeosearchmanagerengine-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeosearchreply.html" title="QGeoSearchReply Class Reference">
+                        <section ref="qgeosearchreply-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgeoserviceprovider.html" title="QGeoServiceProvider Class Reference">
                         <section ref="qgeoserviceprovider-members.html" title="List of all members"/>
@@ -783,7 +783,7 @@
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
                     <section ref="flickrdemo.html" title="Flickr Demo Example"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
-                    <section ref="lightmaps.html" title="LightMap Example"/>
+                    <section ref="lightmaps.html" title="LightMaps Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="player.html" title="Media Player Example"/>
                     <section ref="notesmanagerplugin.html" title="Notes Manager Plugin Example"/>
@@ -880,7 +880,7 @@
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
             <keyword name="Landmarks" id="Landmarks" ref="landmarks.html"/>
-            <keyword name="LightMap Example" id="LightMap Example" ref="lightmaps.html"/>
+            <keyword name="LightMaps Example" id="LightMaps Example" ref="lightmaps.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
@@ -1822,6 +1822,7 @@
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
             <keyword name="QGeoAddress" id="QGeoAddress" ref="qgeoaddress.html"/>
             <keyword name="city" id="QGeoAddress::city" ref="qgeoaddress.html#city"/>
+            <keyword name="clear" id="QGeoAddress::clear" ref="qgeoaddress.html#clear"/>
             <keyword name="country" id="QGeoAddress::country" ref="qgeoaddress.html#country"/>
             <keyword name="countryCode" id="QGeoAddress::countryCode" ref="qgeoaddress.html#countryCode"/>
             <keyword name="county" id="QGeoAddress::county" ref="qgeoaddress.html#county"/>
@@ -1938,6 +1939,7 @@
             <keyword name="mapObjects" id="QGeoMapData::mapObjects" ref="qgeomapdata.html#mapObjects"/>
             <keyword name="mapObjectsAtScreenPosition" id="QGeoMapData::mapObjectsAtScreenPosition" ref="qgeomapdata.html#mapObjectsAtScreenPosition"/>
             <keyword name="mapObjectsInScreenRect" id="QGeoMapData::mapObjectsInScreenRect" ref="qgeomapdata.html#mapObjectsInScreenRect"/>
+            <keyword name="mapObjectsOverlay" id="QGeoMapData::mapObjectsOverlay" ref="qgeomapdata.html#mapObjectsOverlay"/>
             <keyword name="mapType" id="QGeoMapData::mapType" ref="qgeomapdata.html#mapType"/>
             <keyword name="pan" id="QGeoMapData::pan" ref="qgeomapdata.html#pan"/>
             <keyword name="removeMapObject" id="QGeoMapData::removeMapObject" ref="qgeomapdata.html#removeMapObject"/>
@@ -2067,66 +2069,6 @@
             <keyword name="setCoordinate" id="QGeoPlace::setCoordinate" ref="qgeoplace.html#setCoordinate"/>
             <keyword name="type" id="QGeoPlace::type" ref="qgeoplace.html#type"/>
             <keyword name="~QGeoPlace" id="QGeoPlace::~QGeoPlace" ref="qgeoplace.html#dtor.QGeoPlace"/>
-            <keyword name="QGeoPlacesManager" id="QGeoPlacesManager" ref="qgeoplacesmanager.html"/>
-            <keyword name="QGeoPlacesManager::SearchType" id="QGeoPlacesManager::SearchType" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="QGeoPlacesManager::SearchNone" id="QGeoPlacesManager::SearchNone" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="QGeoPlacesManager::SearchGeocode" id="QGeoPlacesManager::SearchGeocode" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="QGeoPlacesManager::SearchLandmarks" id="QGeoPlacesManager::SearchLandmarks" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="QGeoPlacesManager::SearchAll" id="QGeoPlacesManager::SearchAll" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="QGeoPlacesManager::SearchTypes" id="QGeoPlacesManager::SearchTypes" ref="qgeoplacesmanager.html#SearchType-enum"/>
-            <keyword name="addAdditionalLandmarkManager" id="QGeoPlacesManager::addAdditionalLandmarkManager" ref="qgeoplacesmanager.html#addAdditionalLandmarkManager"/>
-            <keyword name="additionalLandmarkManagers" id="QGeoPlacesManager::additionalLandmarkManagers" ref="qgeoplacesmanager.html#additionalLandmarkManagers"/>
-            <keyword name="defaultLandmarkManager" id="QGeoPlacesManager::defaultLandmarkManager" ref="qgeoplacesmanager.html#defaultLandmarkManager"/>
-            <keyword name="error" id="QGeoPlacesManager::error" ref="qgeoplacesmanager.html#error"/>
-            <keyword name="finished" id="QGeoPlacesManager::finished" ref="qgeoplacesmanager.html#finished"/>
-            <keyword name="geocode" id="QGeoPlacesManager::geocode" ref="qgeoplacesmanager.html#geocode"/>
-            <keyword name="managerName" id="QGeoPlacesManager::managerName" ref="qgeoplacesmanager.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoPlacesManager::managerParameters" ref="qgeoplacesmanager.html#managerParameters"/>
-            <keyword name="managerVersion" id="QGeoPlacesManager::managerVersion" ref="qgeoplacesmanager.html#managerVersion"/>
-            <keyword name="placesSearch" id="QGeoPlacesManager::placesSearch" ref="qgeoplacesmanager.html#placesSearch"/>
-            <keyword name="setAdditionalLandmarkManagers" id="QGeoPlacesManager::setAdditionalLandmarkManagers" ref="qgeoplacesmanager.html#setAdditionalLandmarkManagers"/>
-            <keyword name="supportedSearchTypes" id="QGeoPlacesManager::supportedSearchTypes" ref="qgeoplacesmanager.html#supportedSearchTypes"/>
-            <keyword name="supportsGeocoding" id="QGeoPlacesManager::supportsGeocoding" ref="qgeoplacesmanager.html#supportsGeocoding"/>
-            <keyword name="~QGeoPlacesManager" id="QGeoPlacesManager::~QGeoPlacesManager" ref="qgeoplacesmanager.html#dtor.QGeoPlacesManager"/>
-            <keyword name="QGeoPlacesManagerEngine" id="QGeoPlacesManagerEngine" ref="qgeoplacesmanagerengine.html"/>
-            <keyword name="addAdditionalLandmarkManager" id="QGeoPlacesManagerEngine::addAdditionalLandmarkManager" ref="qgeoplacesmanagerengine.html#addAdditionalLandmarkManager"/>
-            <keyword name="additionalLandmarkManagers" id="QGeoPlacesManagerEngine::additionalLandmarkManagers" ref="qgeoplacesmanagerengine.html#additionalLandmarkManagers"/>
-            <keyword name="defaultLandmarkManager" id="QGeoPlacesManagerEngine::defaultLandmarkManager" ref="qgeoplacesmanagerengine.html#defaultLandmarkManager"/>
-            <keyword name="error" id="QGeoPlacesManagerEngine::error" ref="qgeoplacesmanagerengine.html#error"/>
-            <keyword name="finished" id="QGeoPlacesManagerEngine::finished" ref="qgeoplacesmanagerengine.html#finished"/>
-            <keyword name="geocode" id="QGeoPlacesManagerEngine::geocode" ref="qgeoplacesmanagerengine.html#geocode"/>
-            <keyword name="managerName" id="QGeoPlacesManagerEngine::managerName" ref="qgeoplacesmanagerengine.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoPlacesManagerEngine::managerParameters" ref="qgeoplacesmanagerengine.html#managerParameters"/>
-            <keyword name="managerVersion" id="QGeoPlacesManagerEngine::managerVersion" ref="qgeoplacesmanagerengine.html#managerVersion"/>
-            <keyword name="placesSearch" id="QGeoPlacesManagerEngine::placesSearch" ref="qgeoplacesmanagerengine.html#placesSearch"/>
-            <keyword name="setAdditionalLandmarkManagers" id="QGeoPlacesManagerEngine::setAdditionalLandmarkManagers" ref="qgeoplacesmanagerengine.html#setAdditionalLandmarkManagers"/>
-            <keyword name="setDefaultLandmarkManager" id="QGeoPlacesManagerEngine::setDefaultLandmarkManager" ref="qgeoplacesmanagerengine.html#setDefaultLandmarkManager"/>
-            <keyword name="setSupportedSearchTypes" id="QGeoPlacesManagerEngine::setSupportedSearchTypes" ref="qgeoplacesmanagerengine.html#setSupportedSearchTypes"/>
-            <keyword name="setSupportsGeocoding" id="QGeoPlacesManagerEngine::setSupportsGeocoding" ref="qgeoplacesmanagerengine.html#setSupportsGeocoding"/>
-            <keyword name="supportedSearchTypes" id="QGeoPlacesManagerEngine::supportedSearchTypes" ref="qgeoplacesmanagerengine.html#supportedSearchTypes"/>
-            <keyword name="supportsGeocoding" id="QGeoPlacesManagerEngine::supportsGeocoding" ref="qgeoplacesmanagerengine.html#supportsGeocoding"/>
-            <keyword name="~QGeoPlacesManagerEngine" id="QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine" ref="qgeoplacesmanagerengine.html#dtor.QGeoPlacesManagerEngine"/>
-            <keyword name="QGeoPlacesReply" id="QGeoPlacesReply" ref="qgeoplacesreply.html"/>
-            <keyword name="QGeoPlacesReply::Error" id="QGeoPlacesReply::Error" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::NoError" id="QGeoPlacesReply::NoError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::EngineNotSetError" id="QGeoPlacesReply::EngineNotSetError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::CommunicationError" id="QGeoPlacesReply::CommunicationError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::ParseError" id="QGeoPlacesReply::ParseError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::UnsupportedOptionError" id="QGeoPlacesReply::UnsupportedOptionError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="QGeoPlacesReply::UnknownError" id="QGeoPlacesReply::UnknownError" ref="qgeoplacesreply.html#Error-enum"/>
-            <keyword name="abort" id="QGeoPlacesReply::abort" ref="qgeoplacesreply.html#abort"/>
-            <keyword name="addPlace" id="QGeoPlacesReply::addPlace" ref="qgeoplacesreply.html#addPlace"/>
-            <keyword name="bounds" id="QGeoPlacesReply::bounds" ref="qgeoplacesreply.html#bounds"/>
-            <keyword name="error" id="QGeoPlacesReply::error" ref="qgeoplacesreply.html#error"/>
-            <keyword name="errorString" id="QGeoPlacesReply::errorString" ref="qgeoplacesreply.html#errorString"/>
-            <keyword name="finished" id="QGeoPlacesReply::finished" ref="qgeoplacesreply.html#finished"/>
-            <keyword name="isFinished" id="QGeoPlacesReply::isFinished" ref="qgeoplacesreply.html#isFinished"/>
-            <keyword name="places" id="QGeoPlacesReply::places" ref="qgeoplacesreply.html#places"/>
-            <keyword name="setBounds" id="QGeoPlacesReply::setBounds" ref="qgeoplacesreply.html#setBounds"/>
-            <keyword name="setError" id="QGeoPlacesReply::setError" ref="qgeoplacesreply.html#setError"/>
-            <keyword name="setFinished" id="QGeoPlacesReply::setFinished" ref="qgeoplacesreply.html#setFinished"/>
-            <keyword name="setPlaces" id="QGeoPlacesReply::setPlaces" ref="qgeoplacesreply.html#setPlaces"/>
-            <keyword name="~QGeoPlacesReply" id="QGeoPlacesReply::~QGeoPlacesReply" ref="qgeoplacesreply.html#dtor.QGeoPlacesReply"/>
             <keyword name="QGeoPositionInfo" id="QGeoPositionInfo" ref="qgeopositioninfo.html"/>
             <keyword name="QGeoPositionInfo::Attribute" id="QGeoPositionInfo::Attribute" ref="qgeopositioninfo.html#Attribute-enum"/>
             <keyword name="QGeoPositionInfo::Direction" id="QGeoPositionInfo::Direction" ref="qgeopositioninfo.html#Attribute-enum"/>
@@ -2348,6 +2290,66 @@
             <keyword name="satellitesInViewUpdated" id="QGeoSatelliteInfoSource::satellitesInViewUpdated" ref="qgeosatelliteinfosource.html#satellitesInViewUpdated"/>
             <keyword name="startUpdates" id="QGeoSatelliteInfoSource::startUpdates" ref="qgeosatelliteinfosource.html#startUpdates"/>
             <keyword name="stopUpdates" id="QGeoSatelliteInfoSource::stopUpdates" ref="qgeosatelliteinfosource.html#stopUpdates"/>
+            <keyword name="QGeoSearchManager" id="QGeoSearchManager" ref="qgeosearchmanager.html"/>
+            <keyword name="QGeoSearchManager::SearchType" id="QGeoSearchManager::SearchType" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="QGeoSearchManager::SearchNone" id="QGeoSearchManager::SearchNone" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="QGeoSearchManager::SearchGeocode" id="QGeoSearchManager::SearchGeocode" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="QGeoSearchManager::SearchLandmarks" id="QGeoSearchManager::SearchLandmarks" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="QGeoSearchManager::SearchAll" id="QGeoSearchManager::SearchAll" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="QGeoSearchManager::SearchTypes" id="QGeoSearchManager::SearchTypes" ref="qgeosearchmanager.html#SearchType-enum"/>
+            <keyword name="addAdditionalLandmarkManager" id="QGeoSearchManager::addAdditionalLandmarkManager" ref="qgeosearchmanager.html#addAdditionalLandmarkManager"/>
+            <keyword name="additionalLandmarkManagers" id="QGeoSearchManager::additionalLandmarkManagers" ref="qgeosearchmanager.html#additionalLandmarkManagers"/>
+            <keyword name="defaultLandmarkManager" id="QGeoSearchManager::defaultLandmarkManager" ref="qgeosearchmanager.html#defaultLandmarkManager"/>
+            <keyword name="error" id="QGeoSearchManager::error" ref="qgeosearchmanager.html#error"/>
+            <keyword name="finished" id="QGeoSearchManager::finished" ref="qgeosearchmanager.html#finished"/>
+            <keyword name="geocode" id="QGeoSearchManager::geocode" ref="qgeosearchmanager.html#geocode"/>
+            <keyword name="managerName" id="QGeoSearchManager::managerName" ref="qgeosearchmanager.html#managerName"/>
+            <keyword name="managerParameters" id="QGeoSearchManager::managerParameters" ref="qgeosearchmanager.html#managerParameters"/>
+            <keyword name="managerVersion" id="QGeoSearchManager::managerVersion" ref="qgeosearchmanager.html#managerVersion"/>
+            <keyword name="placeSearch" id="QGeoSearchManager::placeSearch" ref="qgeosearchmanager.html#placeSearch"/>
+            <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManager::setAdditionalLandmarkManagers" ref="qgeosearchmanager.html#setAdditionalLandmarkManagers"/>
+            <keyword name="supportedSearchTypes" id="QGeoSearchManager::supportedSearchTypes" ref="qgeosearchmanager.html#supportedSearchTypes"/>
+            <keyword name="supportsGeocoding" id="QGeoSearchManager::supportsGeocoding" ref="qgeosearchmanager.html#supportsGeocoding"/>
+            <keyword name="~QGeoSearchManager" id="QGeoSearchManager::~QGeoSearchManager" ref="qgeosearchmanager.html#dtor.QGeoSearchManager"/>
+            <keyword name="QGeoSearchManagerEngine" id="QGeoSearchManagerEngine" ref="qgeosearchmanagerengine.html"/>
+            <keyword name="addAdditionalLandmarkManager" id="QGeoSearchManagerEngine::addAdditionalLandmarkManager" ref="qgeosearchmanagerengine.html#addAdditionalLandmarkManager"/>
+            <keyword name="additionalLandmarkManagers" id="QGeoSearchManagerEngine::additionalLandmarkManagers" ref="qgeosearchmanagerengine.html#additionalLandmarkManagers"/>
+            <keyword name="defaultLandmarkManager" id="QGeoSearchManagerEngine::defaultLandmarkManager" ref="qgeosearchmanagerengine.html#defaultLandmarkManager"/>
+            <keyword name="error" id="QGeoSearchManagerEngine::error" ref="qgeosearchmanagerengine.html#error"/>
+            <keyword name="finished" id="QGeoSearchManagerEngine::finished" ref="qgeosearchmanagerengine.html#finished"/>
+            <keyword name="geocode" id="QGeoSearchManagerEngine::geocode" ref="qgeosearchmanagerengine.html#geocode"/>
+            <keyword name="managerName" id="QGeoSearchManagerEngine::managerName" ref="qgeosearchmanagerengine.html#managerName"/>
+            <keyword name="managerParameters" id="QGeoSearchManagerEngine::managerParameters" ref="qgeosearchmanagerengine.html#managerParameters"/>
+            <keyword name="managerVersion" id="QGeoSearchManagerEngine::managerVersion" ref="qgeosearchmanagerengine.html#managerVersion"/>
+            <keyword name="placeSearch" id="QGeoSearchManagerEngine::placeSearch" ref="qgeosearchmanagerengine.html#placeSearch"/>
+            <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManagerEngine::setAdditionalLandmarkManagers" ref="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers"/>
+            <keyword name="setDefaultLandmarkManager" id="QGeoSearchManagerEngine::setDefaultLandmarkManager" ref="qgeosearchmanagerengine.html#setDefaultLandmarkManager"/>
+            <keyword name="setSupportedSearchTypes" id="QGeoSearchManagerEngine::setSupportedSearchTypes" ref="qgeosearchmanagerengine.html#setSupportedSearchTypes"/>
+            <keyword name="setSupportsGeocoding" id="QGeoSearchManagerEngine::setSupportsGeocoding" ref="qgeosearchmanagerengine.html#setSupportsGeocoding"/>
+            <keyword name="supportedSearchTypes" id="QGeoSearchManagerEngine::supportedSearchTypes" ref="qgeosearchmanagerengine.html#supportedSearchTypes"/>
+            <keyword name="supportsGeocoding" id="QGeoSearchManagerEngine::supportsGeocoding" ref="qgeosearchmanagerengine.html#supportsGeocoding"/>
+            <keyword name="~QGeoSearchManagerEngine" id="QGeoSearchManagerEngine::~QGeoSearchManagerEngine" ref="qgeosearchmanagerengine.html#dtor.QGeoSearchManagerEngine"/>
+            <keyword name="QGeoSearchReply" id="QGeoSearchReply" ref="qgeosearchreply.html"/>
+            <keyword name="QGeoSearchReply::Error" id="QGeoSearchReply::Error" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::NoError" id="QGeoSearchReply::NoError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::EngineNotSetError" id="QGeoSearchReply::EngineNotSetError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::CommunicationError" id="QGeoSearchReply::CommunicationError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::ParseError" id="QGeoSearchReply::ParseError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::UnsupportedOptionError" id="QGeoSearchReply::UnsupportedOptionError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::UnknownError" id="QGeoSearchReply::UnknownError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="abort" id="QGeoSearchReply::abort" ref="qgeosearchreply.html#abort"/>
+            <keyword name="addPlace" id="QGeoSearchReply::addPlace" ref="qgeosearchreply.html#addPlace"/>
+            <keyword name="bounds" id="QGeoSearchReply::bounds" ref="qgeosearchreply.html#bounds"/>
+            <keyword name="error" id="QGeoSearchReply::error" ref="qgeosearchreply.html#error"/>
+            <keyword name="errorString" id="QGeoSearchReply::errorString" ref="qgeosearchreply.html#errorString"/>
+            <keyword name="finished" id="QGeoSearchReply::finished" ref="qgeosearchreply.html#finished"/>
+            <keyword name="isFinished" id="QGeoSearchReply::isFinished" ref="qgeosearchreply.html#isFinished"/>
+            <keyword name="places" id="QGeoSearchReply::places" ref="qgeosearchreply.html#places"/>
+            <keyword name="setBounds" id="QGeoSearchReply::setBounds" ref="qgeosearchreply.html#setBounds"/>
+            <keyword name="setError" id="QGeoSearchReply::setError" ref="qgeosearchreply.html#setError"/>
+            <keyword name="setFinished" id="QGeoSearchReply::setFinished" ref="qgeosearchreply.html#setFinished"/>
+            <keyword name="setPlaces" id="QGeoSearchReply::setPlaces" ref="qgeosearchreply.html#setPlaces"/>
+            <keyword name="~QGeoSearchReply" id="QGeoSearchReply::~QGeoSearchReply" ref="qgeosearchreply.html#dtor.QGeoSearchReply"/>
             <keyword name="QGeoServiceProvider" id="QGeoServiceProvider" ref="qgeoserviceprovider.html"/>
             <keyword name="QGeoServiceProvider::Error" id="QGeoServiceProvider::Error" ref="qgeoserviceprovider.html#Error-enum"/>
             <keyword name="QGeoServiceProvider::NoError" id="QGeoServiceProvider::NoError" ref="qgeoserviceprovider.html#Error-enum"/>
@@ -2358,13 +2360,13 @@
             <keyword name="error" id="QGeoServiceProvider::error" ref="qgeoserviceprovider.html#error"/>
             <keyword name="errorString" id="QGeoServiceProvider::errorString" ref="qgeoserviceprovider.html#errorString"/>
             <keyword name="mappingManager" id="QGeoServiceProvider::mappingManager" ref="qgeoserviceprovider.html#mappingManager"/>
-            <keyword name="placesManager" id="QGeoServiceProvider::placesManager" ref="qgeoserviceprovider.html#placesManager"/>
             <keyword name="routingManager" id="QGeoServiceProvider::routingManager" ref="qgeoserviceprovider.html#routingManager"/>
+            <keyword name="searchManager" id="QGeoServiceProvider::searchManager" ref="qgeoserviceprovider.html#searchManager"/>
             <keyword name="~QGeoServiceProvider" id="QGeoServiceProvider::~QGeoServiceProvider" ref="qgeoserviceprovider.html#dtor.QGeoServiceProvider"/>
             <keyword name="QGeoServiceProviderFactory" id="QGeoServiceProviderFactory" ref="qgeoserviceproviderfactory.html"/>
             <keyword name="createMappingManagerEngine" id="QGeoServiceProviderFactory::createMappingManagerEngine" ref="qgeoserviceproviderfactory.html#createMappingManagerEngine"/>
-            <keyword name="createPlacesManagerEngine" id="QGeoServiceProviderFactory::createPlacesManagerEngine" ref="qgeoserviceproviderfactory.html#createPlacesManagerEngine"/>
             <keyword name="createRoutingManagerEngine" id="QGeoServiceProviderFactory::createRoutingManagerEngine" ref="qgeoserviceproviderfactory.html#createRoutingManagerEngine"/>
+            <keyword name="createSearchManagerEngine" id="QGeoServiceProviderFactory::createSearchManagerEngine" ref="qgeoserviceproviderfactory.html#createSearchManagerEngine"/>
             <keyword name="providerName" id="QGeoServiceProviderFactory::providerName" ref="qgeoserviceproviderfactory.html#providerName"/>
             <keyword name="providerVersion" id="QGeoServiceProviderFactory::providerVersion" ref="qgeoserviceproviderfactory.html#providerVersion"/>
             <keyword name="~QGeoServiceProviderFactory" id="QGeoServiceProviderFactory::~QGeoServiceProviderFactory" ref="qgeoserviceproviderfactory.html#dtor.QGeoServiceProviderFactory"/>
@@ -2425,6 +2427,7 @@
             <keyword name="attribute" id="QLandmark::attribute" ref="qlandmark.html#attribute"/>
             <keyword name="attributeKeys" id="QLandmark::attributeKeys" ref="qlandmark.html#attributeKeys"/>
             <keyword name="categoryIds" id="QLandmark::categoryIds" ref="qlandmark.html#categoryIds"/>
+            <keyword name="clear" id="QLandmark::clear" ref="qlandmark.html#clear"/>
             <keyword name="description" id="QLandmark::description" ref="qlandmark.html#description"/>
             <keyword name="iconUrl" id="QLandmark::iconUrl" ref="qlandmark.html#iconUrl"/>
             <keyword name="landmarkId" id="QLandmark::landmarkId" ref="qlandmark.html#landmarkId"/>
@@ -4748,6 +4751,7 @@
             <file>qlandmarksortorder.html</file>
             <file>flickrdemo-xqlistwidget-cpp.html</file>
             <file>qversitdefaultresourcehandler-members.html</file>
+            <file>qgeosearchreply-members.html</file>
             <file>qaudioendpointselector.html</file>
             <file>qml-audio.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
@@ -4768,11 +4772,11 @@
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
             <file>qabstractvideosurface-members.html</file>
-            <file>qgeoplacesmanager.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qmagnetometerfilter.html</file>
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
+            <file>qgeosearchreply.html</file>
             <file>qabstractvaluespacelayer.html</file>
             <file>qversitproperty-members.html</file>
             <file>weatherinfo-icons-weather-storm-svg.html</file>
@@ -4930,7 +4934,6 @@
             <file>qmessageaccount-members.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
-            <file>qgeoplacesreply-members.html</file>
             <file>qgeoroutingmanagerengine-members.html</file>
             <file>qgeomapcircleobject.html</file>
             <file>images/publish-subscribe-publisher.png</file>
@@ -5020,6 +5023,7 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
+            <file>qgeosearchmanager.html</file>
             <file>qgeoplace.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
@@ -5028,6 +5032,7 @@
             <file>fetchgooglemaps-main-cpp.html</file>
             <file>qgeotiledmapreply.html</file>
             <file>qcontactbirthday-members.html</file>
+            <file>qgeosearchmanager-members.html</file>
             <file>publ-subs.html</file>
             <file>qversitcontactexporterdetailhandler-members.html</file>
             <file>qcontactsaverequest-members.html</file>
@@ -5107,14 +5112,12 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
-            <file>qgeoplacesreply.html</file>
             <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
             <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
-            <file>qgeoplacesmanager-members.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
             <file>qaudioendpointselector-members.html</file>
@@ -5253,7 +5256,6 @@
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qservicefilter.html</file>
             <file>versit.html</file>
-            <file>qgeoplacesmanagerengine.html</file>
             <file>qvaluespace.html</file>
             <file>bearermonitor-sessionwidget-cpp.html</file>
             <file>qmessagedatacomparator.html</file>
@@ -5314,6 +5316,7 @@
             <file>lightmaps-lightmaps-cpp.html</file>
             <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>qserviceplugininterface.html</file>
+            <file>qgeosearchmanagerengine-members.html</file>
             <file>qambientlightsensor-members.html</file>
             <file>weatherinfo-icons-weather-few-clouds-svg.html</file>
             <file>qvideowidget.html</file>
@@ -5326,7 +5329,6 @@
             <file>qserviceinterfacedescriptor-members.html</file>
             <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
-            <file>qgeoplacesmanagerengine-members.html</file>
             <file>qgeoserviceproviderfactory-members.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
             <file>qcontactmanager-members.html</file>
@@ -5343,6 +5345,7 @@
             <file>qlandmarkidfetchrequest.html</file>
             <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
+            <file>qgeosearchmanagerengine.html</file>
             <file>qgeomappingmanager.html</file>
             <file>qcontactavatar-members.html</file>
             <file>qlandmarkcategoryidfetchrequest-members.html</file>

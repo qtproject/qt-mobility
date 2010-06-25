@@ -215,7 +215,11 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &
         path(other.path),
         instruction(other.instruction) {}
 
-QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
+{
+    if (instruction)
+        delete instruction;
+}
 
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {

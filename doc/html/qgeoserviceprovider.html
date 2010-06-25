@@ -34,8 +34,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoMappingManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#mappingManager">mappingManager</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoPlacesManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#placesManager">placesManager</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRoutingManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#routingManager">routingManager</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoSearchManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoserviceprovider.html#searchManager">searchManager</a></b> () const</td></tr>
 </table>
 <hr />
 <a name="static-public-members"></a>
@@ -91,18 +91,18 @@
 <p>This function will return 0 if the service provider does not provide any mapping services.</p>
 <p>This function will attempt to construct a <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance when it is called for the first time. If the attempt is succesful the <a href="qgeomappingmanager.html">QGeoMappingManager</a> will be cached, otherwise each call of this function will attempt to construct a <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance until the construction is successful.</p>
 <p>After this function has been called, <a href="qgeoserviceprovider.html#error">error</a>() and <a href="qgeoserviceprovider.html#errorString">errorString</a>() will report any errors which occurred during the construction of the <a href="qgeomappingmanager.html">QGeoMappingManager</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoServiceProvider/placesManager"></a>
-<h3 class="fn"><a name="placesManager"></a><a href="qgeoplacesmanager.html">QGeoPlacesManager</a> * QGeoServiceProvider::placesManager () const</h3>
-<p>Returns the <a href="qgeoplacesmanager.html">QGeoPlacesManager</a> made available by the service provider.</p>
-<p>This function will return 0 if the service provider does not provide any geocoding services.</p>
-<p>This function will attempt to construct a <a href="qgeoplacesmanager.html">QGeoPlacesManager</a> instance when it is called for the first time. If the attempt is succesful the <a href="qgeoplacesmanager.html">QGeoPlacesManager</a> will be cached, otherwise each call of this function will attempt to construct a <a href="qgeoplacesmanager.html">QGeoPlacesManager</a> instance until the construction is successful.</p>
-<p>After this function has been called, <a href="qgeoserviceprovider.html#error">error</a>() and <a href="qgeoserviceprovider.html#errorString">errorString</a>() will report any errors which occurred during the construction of the <a href="qgeoplacesmanager.html">QGeoPlacesManager</a>.</p>
 <a name="//apple_ref/cpp/instm/QGeoServiceProvider/routingManager"></a>
 <h3 class="fn"><a name="routingManager"></a><a href="qgeoroutingmanager.html">QGeoRoutingManager</a> * QGeoServiceProvider::routingManager () const</h3>
 <p>Returns the <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> made available by the service provider.</p>
 <p>This function will return 0 if the service provider does not provide any geographic routing services.</p>
 <p>This function will attempt to construct a <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> instance when it is called for the first time. If the attempt is succesful the <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> will be cached, otherwise each call of this function will attempt to construct a <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> instance until the construction is successful.</p>
 <p>After this function has been called, <a href="qgeoserviceprovider.html#error">error</a>() and <a href="qgeoserviceprovider.html#errorString">errorString</a>() will report any errors which occurred during the construction of the <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoServiceProvider/searchManager"></a>
+<h3 class="fn"><a name="searchManager"></a><a href="qgeosearchmanager.html">QGeoSearchManager</a> * QGeoServiceProvider::searchManager () const</h3>
+<p>Returns the <a href="qgeosearchmanager.html">QGeoSearchManager</a> made available by the service provider.</p>
+<p>This function will return 0 if the service provider does not provide any geocoding services.</p>
+<p>This function will attempt to construct a <a href="qgeosearchmanager.html">QGeoSearchManager</a> instance when it is called for the first time. If the attempt is succesful the <a href="qgeosearchmanager.html">QGeoSearchManager</a> will be cached, otherwise each call of this function will attempt to construct a <a href="qgeosearchmanager.html">QGeoSearchManager</a> instance until the construction is successful.</p>
+<p>After this function has been called, <a href="qgeoserviceprovider.html#error">error</a>() and <a href="qgeoserviceprovider.html#errorString">errorString</a>() will report any errors which occurred during the construction of the <a href="qgeosearchmanager.html">QGeoSearchManager</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

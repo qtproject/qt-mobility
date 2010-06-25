@@ -105,7 +105,11 @@ QGeoMapObject::Type QGeoMapObject::type() const
 /*!
     Sets the z-value of this map object to \a zValue.
 
-    TODO describe the z-value semantics - see QGraphicsItem in the meantime
+    The z-value determines the order in which the objects are drawn on the
+    screen.  Objects with the same value will be drawn in the order that
+    they were added to the map or map object.
+
+    This is the same behaviour as QGraphicsItem.
 */
 void QGeoMapObject::setZValue(int zValue)
 {
@@ -116,7 +120,11 @@ void QGeoMapObject::setZValue(int zValue)
 /*!
     Returns the z-value of this map object.
 
-    TODO describe the z-value semantics - see QGraphicsItem in the meantime
+    The z-value determines the order in which the objects are drawn on the
+    screen.  Objects with the same value will be drawn in the order that
+    they were added to the map or map object.
+
+    This is the same behaviour as QGraphicsItem.
 */
 int QGeoMapObject::zValue() const
 {

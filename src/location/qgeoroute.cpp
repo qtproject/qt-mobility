@@ -223,10 +223,12 @@ QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
     return d_ptr->routeSegments;
 }
 
+/*
 void QGeoRoute::appendRouteSegment(const QGeoRouteSegment* routeSegment)
 {
     d_ptr->routeSegments.append(routeSegment);
 }
+*/
 
 /*!
     Sets the estimated amount of time it will take to traverse this route,
@@ -392,7 +394,10 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         travelMode(other.travelMode),
         optimization(other.optimization) {}
 
-QGeoRoutePrivate::~QGeoRoutePrivate() {}
+QGeoRoutePrivate::~QGeoRoutePrivate()
+{
+    //qDeleteAll(routeSegments);
+}
 
 QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {

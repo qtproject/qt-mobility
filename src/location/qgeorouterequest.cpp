@@ -64,6 +64,10 @@ QTM_BEGIN_NAMESPACE
     There are several functions in QGeoRoutingManager which can be used to
     check which features are supported with the current provider and
     authorization level.
+    \sa QGeoRoutingManager
+*/
+
+/*
 
     DESIGN NOTE FOR API REVIEW:
 
@@ -85,8 +89,6 @@ QTM_BEGIN_NAMESPACE
     options subclass (and the fact that user auth said that the user had
     support) would mean we could provide better values for the estimated
     travel times etc...
-
-    \sa QGeoRoutingManager
 */
 
 /*!

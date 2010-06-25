@@ -70,6 +70,7 @@ bool QGeoRouteParser::parse(QIODevice* source)
     }
 
     QGeoRoute route;
+    QList<const QGeoRouteSegment*> routeSegments;
     route.setRequest(m_request);
     for (int itemCount = 0; itemCount < decoded.count(); ++itemCount) {
         QGeoRouteDataContainer cont = decoded[itemCount];
@@ -85,12 +86,14 @@ bool QGeoRouteParser::parse(QIODevice* source)
             }
             QGeoRouteSegment* segment = new QGeoRouteSegment();
             segment->setPath(path);
-            route.appendRouteSegment(segment);
+            routeSegments.append(segment);
+            //route.appendRouteSegment(segment);
             }
         else if(cont.id == HL_DURATION) {
             route.setTravelTime(int32FromByteArray(cont.data));
             }
         }
+    route.setRouteSegments(routeSegments);
     m_results.append(route);
     m_errorString = "";
     return true;

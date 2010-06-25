@@ -88,7 +88,7 @@ QTM_BEGIN_NAMESPACE
     Subclasses of QGeoServiceProvider guarantee that the different services
     that they provide are interoperable.
 
-    At this point only the Nokia Servics plugin is pacakged with Qt Mobility,
+    At this point only the Nokia Services plugin is pacakged with Qt Mobility,
     which is accessible using the provider name "nokia".
 */
 

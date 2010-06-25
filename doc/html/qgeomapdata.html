@@ -32,6 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjects">mapObjects</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</a></b> ( const QPointF &amp; <i>screenPosition</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjectsInScreenRect">mapObjectsInScreenRect</a></b> ( const QRectF &amp; <i>screenRect</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPixmap </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjectsOverlay">mapObjectsOverlay</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoMapWidget::MapType </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapType">mapType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#pan">pan</a></b> ( int <i>dx</i>, int <i>dy</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#removeMapObject">removeMapObject</a></b> ( QGeoMapObject * <i>mapObject</i> )</td></tr>
@@ -103,6 +104,8 @@
 <a name="//apple_ref/cpp/instm/QGeoMapData/mapObjectsInScreenRect"></a>
 <h3 class="fn"><a name="mapObjectsInScreenRect"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapData::mapObjectsInScreenRect ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>screenRect</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of map objects managed by this map which are visible and which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapObjectsOverlay"></a>
+<h3 class="fn"><a name="mapObjectsOverlay"></a><a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> QGeoMapData::mapObjectsOverlay () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <a name="//apple_ref/cpp/instm/QGeoMapData/mapType"></a>
 <h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> QGeoMapData::mapType () const</h3>
 <p>Returns the type of map data which is being displayed.</p>

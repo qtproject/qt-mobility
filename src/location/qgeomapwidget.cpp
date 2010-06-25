@@ -68,16 +68,12 @@ QTM_BEGIN_NAMESPACE
     functions can be used to convert between positions on the screen and
     global coordinates.
 
-    TODO describe map objects
-
     Mouse and keyboard events should be handled by subclassing QGeoMapWidget
     and providing implementations of the event handling functions present in
     QGraphicsWidget.
-
-    TODO example code
-
-    DESIGN TODO do we need a signal for when the user pans the map?
 */
+
+// DESIGN TODO do we need a signal for when the user pans the map?
 
 /*!
 \enum QGeoMapWidget::MapType

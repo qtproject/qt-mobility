@@ -186,7 +186,7 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
 
 bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
-    QList<QGeoRouteSegment*> routesegments;
+    QList<const QGeoRouteSegment*> routesegments;
 
     for (int i=0;i<segments.length();++i) {
         QGeoRouteSegment* segment = segments[i].segment;
@@ -244,9 +244,10 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 
     }
 
-    for (int i = 0; i < routesegments.length(); ++i) {
-        route->appendRouteSegment(routesegments[i]);
-    }
+    //for (int i = 0; i < routesegments.length(); ++i) {
+    //    route->appendRouteSegment(routesegments[i]);
+    //}
+    route->setRouteSegments(routesegments);
 
     instructions.clear();
     segments.clear();

@@ -82,9 +82,8 @@ public:
     void setBounds(const QGeoBoundingBox &bounds);
     QGeoBoundingBox bounds() const;
 
-    void appendRouteSegment(const QGeoRouteSegment* routeSegment);
+    //void appendRouteSegment(const QGeoRouteSegment* routeSegment);
     void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
-
     QList<const QGeoRouteSegment *> routeSegments() const;
 
     void setTravelTime(int secs);
