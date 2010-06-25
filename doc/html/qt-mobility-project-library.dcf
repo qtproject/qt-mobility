@@ -2615,6 +2615,22 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+        <keyword ref="qremoteserviceclassregister.html">QRemoteServiceClassRegister</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">InstanceType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::SharedInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::UniqueInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#registerType">registerType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#types">types</keyword>
+        <keyword ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</keyword>
+        <keyword ref="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</keyword>
+        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+    </section>
+    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+        <keyword ref="qremoteservicecontrol.html">QRemoteServiceControl</keyword>
+        <keyword ref="qremoteservicecontrol.html#publishServices">publishServices</keyword>
+        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+    </section>
     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
         <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
         <keyword ref="qrotationfilter.html#filter">filter</keyword>
@@ -3584,9 +3600,6 @@
     </section>
     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin">
         <keyword ref="creating-a-sensor-plugin.html">Creating a sensor plugin</keyword>
-    </section>
-    <section ref="docgallery.html" title="Doc Gallery">
-        <keyword ref="docgallery.html">Doc Gallery</keyword>
     </section>
     <section ref="future.html" title="Future Additional APIs">
         <keyword ref="future.html">Future Additional APIs</keyword>

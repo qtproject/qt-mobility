@@ -471,6 +471,12 @@
                     <section ref="qradiotunercontrol.html" title="QRadioTunerControl Class Reference">
                         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+                        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+                        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
                         <section ref="qrotationfilter-members.html" title="List of all members"/>
                     </section>
@@ -654,7 +660,6 @@
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
                     <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
-                    <section ref="docgallery.html" title="Doc Gallery"/>
                     <section ref="future.html" title="Future Additional APIs"/>
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
@@ -710,7 +715,6 @@
             <keyword name="DECLARE_READING" id="DECLARE_READING" ref="qsensorreading.html#DECLARE_READING"/>
             <keyword name="Declarative Service Framework Example" id="Declarative Service Framework Example" ref="declarative-sfw-dialer.html"/>
             <keyword name="Declarative Service Framework Notes Manager" id="Declarative Service Framework Notes Manager" ref="declarative-sfw-notes.html"/>
-            <keyword name="Doc Gallery" id="Doc Gallery" ref="docgallery.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Flickr Demo Example" id="Flickr Demo Example" ref="flickrdemo.html"/>
@@ -2848,6 +2852,16 @@
             <keyword name="volumeChanged" id="QRadioTunerControl::volumeChanged" ref="qradiotunercontrol.html#volumeChanged"/>
             <keyword name="~QRadioTunerControl" id="QRadioTunerControl::~QRadioTunerControl" ref="qradiotunercontrol.html#dtor.QRadioTunerControl"/>
             <keyword name="QRadioTunerControl_iid" id="QRadioTunerControl_iid" ref="qradiotunercontrol.html#QRadioTunerControl_iid"/>
+            <keyword name="QRemoteServiceClassRegister" id="QRemoteServiceClassRegister" ref="qremoteserviceclassregister.html"/>
+            <keyword name="QRemoteServiceClassRegister::InstanceType" id="QRemoteServiceClassRegister::InstanceType" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="QRemoteServiceClassRegister::SharedInstance" id="QRemoteServiceClassRegister::SharedInstance" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="QRemoteServiceClassRegister::UniqueInstance" id="QRemoteServiceClassRegister::UniqueInstance" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="registerType" id="QRemoteServiceClassRegister::registerType" ref="qremoteserviceclassregister.html#registerType"/>
+            <keyword name="types" id="QRemoteServiceClassRegister::types" ref="qremoteserviceclassregister.html#types"/>
+            <keyword name="QRemoteServiceControl" id="QRemoteServiceControl" ref="qremoteservicecontrol.html"/>
+            <keyword name="publishServices" id="QRemoteServiceControl::publishServices" ref="qremoteservicecontrol.html#publishServices"/>
+            <keyword name="~QRemoteServiceControl" id="QRemoteServiceControl::~QRemoteServiceControl" ref="qremoteservicecontrol.html#dtor.QRemoteServiceControl"/>
+            <keyword name="QRemoteServiceIdentifier" id="QRemoteServiceIdentifier" ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef"/>
             <keyword name="QRotationFilter" id="QRotationFilter" ref="qrotationfilter.html"/>
             <keyword name="filter" id="QRotationFilter::filter" ref="qrotationfilter.html#filter"/>
             <keyword name="QRotationReading" id="QRotationReading" ref="qrotationreading.html"/>
@@ -3578,6 +3592,7 @@
             <keyword name="Q_DECLARE_LATIN1_CONSTANT" id="Q_DECLARE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT"/>
             <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
+            <keyword name="Q_SERVICE" id="Q_SERVICE" ref="qremoteserviceclassregister.html#Q_SERVICE"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
             <keyword name="Qt Contacts Manager Engines" id="Qt Contacts Manager Engines" ref="contactsengines.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
@@ -3750,6 +3765,7 @@
             <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-h.html</file>
+            <file>qremoteservicecontrol.html</file>
             <file>lightmaps.html</file>
             <file>flickrdemo-flickr-icon-svg.html</file>
             <file>qsystemnetworkinfo-members.html</file>
@@ -4034,7 +4050,6 @@
             <file>qmediaplaylistwriter-members.html</file>
             <file>declarative-sfw-notes.html</file>
             <file>weatherinfo-weatherinfo-cpp.html</file>
-            <file>docgallery.html</file>
             <file>audiorecorder.html</file>
             <file>qcontactrelationshipfilter.html</file>
             <file>bearercloud-icons-qrc.html</file>
@@ -4058,6 +4073,7 @@
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
+            <file>qremoteservicecontrol-members.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
@@ -4172,6 +4188,7 @@
             <file>qcontactrelationship.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
+            <file>qremoteserviceclassregister-members.html</file>
             <file>publish-subscribe-subscriberdialog-h.html</file>
             <file>qcontactchangelogfilter.html</file>
             <file>bearermonitor-bearermonitor-h.html</file>
@@ -4323,6 +4340,7 @@
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
             <file>qmlcontacts-qmlcontactdetail-cpp.html</file>
+            <file>qremoteserviceclassregister.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
             <file>multimedia.html</file>
