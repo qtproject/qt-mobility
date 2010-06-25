@@ -81,11 +81,9 @@
 
     \list
     \o \l{audiorecorder}{Audio Recorder}
-    \o \l{cameracapture}{Camera Capture}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
     \o \l{slideshow}{Slideshow}
-    \o \l{streamplayer}{Stream Player}
     \endlist
 
     \section2 Publish and Subscribe
