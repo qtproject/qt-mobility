@@ -90,6 +90,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
+    QString QLocaleToISO639_1(QLocale::Language language) const;  
     QString TLanguageToISO639_1(TLanguage language) const;
     QString S60Version() const;
 };

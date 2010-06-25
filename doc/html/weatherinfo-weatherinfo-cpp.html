@@ -118,7 +118,7 @@
             QAction *your = new QAction(&quot;Your weather&quot;, this);
             connect(your, SIGNAL(triggered()), SLOT(yourWeather()));
             addAction(your);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
             menuBar()-&gt;addAction(your);
     #endif
 
@@ -132,7 +132,7 @@
                 QAction *action = new QAction(cities[i], this);
                 connect(action, SIGNAL(triggered()), SLOT(chooseCity()));
                 addAction(action);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
                 menuBar()-&gt;addAction(action);
     #endif
             }
@@ -681,7 +681,7 @@
         QApplication app(argc, argv);
 
         WeatherInfo w;
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         w.showMaximized();
     #else
         w.resize(520, 288);
@@ -694,6 +694,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

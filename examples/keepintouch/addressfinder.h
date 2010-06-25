@@ -40,7 +40,7 @@
 #ifndef ADDRESSFINDER_H
 #define ADDRESSFINDER_H
 
-#include "qtmessaging.h"
+#include "qmessageservice.h"
 
 #include <QMap>
 #include <QObject>

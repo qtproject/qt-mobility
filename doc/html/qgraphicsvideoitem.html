@@ -74,18 +74,6 @@
 <li><div bar="2" class="fn"></div>9 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#signals">QGraphicsObject</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
-<hr />
-<a name="reimplemented-protected-functions"></a>
-<h2>Reimplemented Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qgraphicsvideoitem.html#setMediaObject">setMediaObject</a></b> ( QMediaObject * <i>object</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgraphicsvideoitem.html#timerEvent">timerEvent</a></b> ( QTimerEvent * <i>event</i> )</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
-<li><div bar="2" class="fn"></div>23 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-functions">QGraphicsItem</a></li>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
@@ -102,7 +90,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGraphicsVideoItem class provides a graphics item which display video produced by a <a href="qmediaobject.html">QMediaObject</a>.</p>
-<p>Attaching a QGraphicsVideoItem to a <a href="qmediaobject.html">QMediaObject</a> allows it to display the video or image output of that media object. A QGraphicsVideoItem is attached to a media object by passing a pointer to the <a href="qmediaobject.html">QMediaObject</a> to the <a href="qgraphicsvideoitem.html#setMediaObject">setMediaObject</a>() function.</p>
+<p>Attaching a QGraphicsVideoItem to a <a href="qmediaobject.html">QMediaObject</a> allows it to display the video or image output of that media object. A QGraphicsVideoItem is attached to a media object by passing a pointer to the <a href="qmediaobject.html">QMediaObject</a> to the <a href="qmediabindableinterface.html#setMediaObject">setMediaObject</a>() function.</p>
 <pre>    player = new QMediaPlayer(this);
 
     QGraphicsVideoItem *item = new QGraphicsVideoItem;
@@ -182,15 +170,10 @@
 <a name="//apple_ref/cpp/instm/QGraphicsVideoItem/paint"></a>
 <h3 class="fn"><a name="paint"></a>void QGraphicsVideoItem::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstyleoptiongraphicsitem.html">QStyleOptionGraphicsItem</a> * <i>option</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>widget</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#paint">QGraphicsItem::paint</a>().</p>
-<a name="//apple_ref/cpp/instm/QGraphicsVideoItem/setMediaObject"></a>
-<h3 class="fn"><a name="setMediaObject"></a>bool QGraphicsVideoItem::setMediaObject ( <a href="qmediaobject.html">QMediaObject</a> * <i>object</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>See also <a href="qgraphicsvideoitem.html#mediaObject-prop">mediaObject</a>().</p>
-<a name="//apple_ref/cpp/instm/QGraphicsVideoItem/timerEvent"></a>
-<h3 class="fn"><a name="timerEvent"></a>void QGraphicsVideoItem::timerEvent ( <a href="http://qt.nokia.com/doc/4.6/qtimerevent.html">QTimerEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>
