@@ -45,7 +45,7 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.0.2 > $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.0.2 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
     system(echo MOBILITY_MINOR_VERSION = 0 >> $$PRF_CONFIG)
     system(echo MOBILITY_PATCH_VERSION = 2 >> $$PRF_CONFIG)
