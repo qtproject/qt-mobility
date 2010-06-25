@@ -46,9 +46,7 @@
  * Constructor
  */
 
-CntDisplayLabel::CntDisplayLabel() :
-m_settings(NULL),
-m_nameOrder(CntOrderFirstLast)
+CntDisplayLabel::CntDisplayLabel()
 {
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     m_settings = new CntCenrep(KCntNameOrdering, *this);
@@ -62,7 +60,9 @@ m_nameOrder(CntOrderFirstLast)
  */
 CntDisplayLabel::~CntDisplayLabel()
 {
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
     delete m_settings;
+#endif
 }
 
 /*! 
@@ -96,11 +96,6 @@ void CntDisplayLabel::setDisplayLabelDetails()
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), firstLatin));
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), secondLatin));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
-
-    //if preferred details doesn't exist use these
-    QList<QPair<QLatin1String, QLatin1String> > contactSecondaryDisplayLabelDetails;
-    contactSecondaryDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
-    m_contactDisplayLabelDetails.append(contactSecondaryDisplayLabelDetails);
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
@@ -174,9 +169,11 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 
                 if(!label.isEmpty())
                 {
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
                     // Inlcude a comma if needed in the display label
                     if (m_nameOrder == CntOrderLastCommaFirst)
                         displayLabel.append(comma());
+#endif
                     displayLabel.append(delimiter());                        
                     displayLabel.append(label);
                 }  

@@ -50,7 +50,8 @@
 // SELECT statement.
 #define USE_DEMORGAN
 
-class CQwertyKeyMap;
+class CPcsKeyMap; 
+class CQwertyKeyMap; 
 class C12keyKeyMap;
 
 class CntSqlSearch// : public QObject
@@ -69,7 +70,8 @@ enum QueryType
         };
 
 public:
-    CntSqlSearch();
+    CntSqlSearch( const CPcsKeyMap& twelveKeyKeyMap,
+                  const CPcsKeyMap& qertyKeyMap );
     
     ~CntSqlSearch();
 
@@ -148,8 +150,8 @@ private:
     
 private:
     
-    CQwertyKeyMap* mQertyKeyMap; 
-    C12keyKeyMap* mkeyKeyMap;
+    const C12keyKeyMap* mkeyKeyMap;
+    const CQwertyKeyMap* mQertyKeyMap; 
     
     friend class UT_CntSqlSearch;
 };

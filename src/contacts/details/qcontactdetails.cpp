@@ -77,6 +77,9 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-details
  */
 

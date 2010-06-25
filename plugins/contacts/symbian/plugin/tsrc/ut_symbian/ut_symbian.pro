@@ -26,7 +26,6 @@ symbian:
                ut_cntrelationship.h \
                ut_cntsymbiandatabase.h \
                ut_transformcontactdata.h \
-               ut_cntsqlsearch.h \
                mt_cntsqlsort.h
     
     SOURCES += $$SYMBIAN_SOURCES \
@@ -38,7 +37,6 @@ symbian:
                ut_cntrelationship.cpp \
                ut_cntsymbiandatabase.cpp \
                ut_transformcontactdata.cpp \
-               ut_cntsqlsearch.cpp \
                mt_cntsqlsort.cpp
 
     CONFIG += mobility

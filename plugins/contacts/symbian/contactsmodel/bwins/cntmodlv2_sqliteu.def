@@ -537,4 +537,6 @@ EXPORTS
 	?RemoveObserver@CContactDatabase@@QAEXABVMContactDbObserver@@@Z @ 536 NONAME ; void CContactDatabase::RemoveObserver(class MContactDbObserver const &)
 	?RemoveObserverV2@CContactDatabase@@QAEXABVMContactDbObserverV2@@@Z @ 537 NONAME ; void CContactDatabase::RemoveObserverV2(class MContactDbObserverV2 const &)
 	?AddObserverV2L@CContactDatabase@@QAEXAAVMContactDbObserverV2@@@Z @ 538 NONAME ; void CContactDatabase::AddObserverV2L(class MContactDbObserverV2 &)
+	?OpenV2L@CContactDatabase@@SAPAV1@W4TThreadAccess@1@@Z @ 539 NONAME ; class CContactDatabase * CContactDatabase::OpenV2L(enum CContactDatabase::TThreadAccess)
+	?CreateV2L@CContactDatabase@@SAPAV1@W4TThreadAccess@1@@Z @ 540 NONAME ; class CContactDatabase * CContactDatabase::CreateV2L(enum CContactDatabase::TThreadAccess)
 

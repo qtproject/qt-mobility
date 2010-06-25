@@ -102,8 +102,6 @@ private:
     int                         iValue;
 };
 
-#else
-class CntCenrep;
 #endif
 
 class CntDisplayLabel : public QObject
@@ -134,8 +132,10 @@ private:
 private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
     CntCenrep* m_settings;
     int m_nameOrder;
+#endif
 };
 
 #endif /* CNTDISPLAYLABEL_H_ */

@@ -57,6 +57,7 @@ set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
+set BUILD_SYMBIANCNTMODEL=no
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors organizer
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
@@ -93,6 +94,7 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
+if "%1" == "-symbian-qtm-cntmodel"  goto cntmodelTag
 
 
 echo Unknown option: "%1"
@@ -200,6 +202,12 @@ REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
+shift
+goto cmdline_parsing
+
+:cntmodelTag
+REM Selects using the local CNTMODEL code instead of the SDKs
+set BUILD_SYMBIANCNTMODEL=yes
 shift
 goto cmdline_parsing
 
@@ -341,6 +349,9 @@ set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
+echo build_symbiancntmodel = %BUILD_SYMBIANCNTMODEL% >> %PROJECT_CONFIG%
+set BUILD_SYMBIANCNTMODEL=
+
 echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
@@ -473,7 +484,7 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
-
+REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
 REM compile tests go here.
@@ -495,9 +506,6 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
-
-REM this isn't a test, since configure isn't called during MCL builds
-echo build_symbiancntmodel = no >> %PROJECT_CONFIG%
 
 :noTests
 

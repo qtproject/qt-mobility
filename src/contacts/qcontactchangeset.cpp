@@ -49,6 +49,8 @@ QTM_BEGIN_NAMESPACE
 /*!
    \class QContactChangeSet
   
+  \inmodule QtContacts
+  
    \brief The QContactChangeSet class provides a simple API to
    simplify the emission of state-change signals from
    QContactManagerEngine implementations.

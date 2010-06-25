@@ -59,6 +59,13 @@ QTM_USE_NAMESPACE
 class CntSymbianSrvConnection : public RSessionBase
 {
 public:
+
+    enum QueryType {
+            CntNotdefined = 0,
+            CntPredictiveSearchList = 98,
+            CntSearchResultList = 99
+        };
+public:
     /*Constructor and destructor*/
     CntSymbianSrvConnection(QContactManagerEngine* engine);
     ~CntSymbianSrvConnection();
@@ -69,13 +76,16 @@ public:
                                           QContactManager::Error* error);
     QContact searchContactName(QContactLocalId contactId,
                                QContactManager::Error* error);
+    QList<QContactLocalId> searchOnServer(const QString& searchQuery,
+                            QueryType aQueryType,
+                            QContactManager::Error* error);
     QList<QContact> searchAllContactNames(QContactManager::Error* error);
 
 private:
     /* Symbian Leaving functions */
-    QList<QContactLocalId> searchContactIdsL(const TDesC& aSqlQuery);
+    QList<QContactLocalId> searchContactIdsL(const TDesC& aSqlQuery, QueryType aQueryType);
     QList<QContact> searchContactNamesL(const TDesC& aSqlQuery);
-    void readContactsToBufferL(const TDesC& aSqlQuery);
+    void readContactsToBufferL(const TDesC& aSqlQuery, QueryType aQueryType);
     void ConnectSrvL();
     void OpenDatabaseL();
     TVersion Version() const;
