@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
 class UniqueService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(UniqueService, "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
+    Q_SERVICE(UniqueService, "RemoteServiceClasRegisterService", "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
 public:
     UniqueService() {}
     static int counter;
@@ -72,7 +72,7 @@ public:
 class SharedService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(SharedService, "com.nokia.qt.iremoteserviceclassregistertest", "2.2");
+    Q_SERVICE(SharedService,  "RemoteServiceClasRegisterService","com.nokia.qt.iremoteserviceclassregistertest", "2.2");
 public:
     SharedService() { }
     static int counter;
@@ -81,7 +81,7 @@ public:
 class DefaultService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(DefaultService, "com.nokia.qt.iremoteserviceclassregistertest", "2.3");
+    Q_SERVICE(DefaultService, "RemoteServiceClasRegisterService", "com.nokia.qt.iremoteserviceclassregistertest", "2.3");
 public:
     DefaultService() { }
     static int counter;
@@ -90,7 +90,7 @@ public:
 class DuplicateService : public QObject
 {
     Q_OBJECT
-    Q_SERVICE(DuplicateService, "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
+    Q_SERVICE(DuplicateService, "RemoteServiceClasRegisterService",  "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
 public:
     DuplicateService() { }
     static int counter;
@@ -145,16 +145,16 @@ void tst_QRemoteServiceClassRegister::testRegistration()
     QVERIFY(idents.count() == 3);
     QSet<QByteArray> discoveredValues;
     foreach(QRemoteServiceIdentifier type, idents) {
-        discoveredValues.insert(type.first+'-'+type.second);
+        discoveredValues.insert(type.interface+'-'+type.version);
         const QMetaObject* meta = reg.metaObject(type);
-        if (type.second == QByteArray("2.1"))
+        if (type.version == QByteArray("2.1"))
             QCOMPARE(meta->className(), UniqueService::staticMetaObject.className());
-        else if (type.second == QByteArray("2.2"))
+        else if (type.version == QByteArray("2.2"))
             QCOMPARE(meta->className(), SharedService::staticMetaObject.className());
-        else if (type.second == QByteArray("2.3"))
+        else if (type.version == QByteArray("2.3"))
             QCOMPARE(meta->className(), DefaultService::staticMetaObject.className());
         else {
-            QString msg = type.first+'-'+type.second;
+            QString msg = type.interface+'-'+type.version;
             QFAIL("Unknown type: " + msg.toLatin1());
         }
     }
