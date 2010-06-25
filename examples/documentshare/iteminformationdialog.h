@@ -38,59 +38,56 @@
 **
 ****************************************************************************/
 
-#ifndef SHAREWIDGET_H
-#define SHAREWIDGET_H
+#ifndef DOWNLOADCOMPLETEDIALOG_H
+#define DOWNLOADCOMPLETEDIALOG_H
 
 #include <qmobilityglobal.h>
 
-#include <QtGui/QMainWindow>
+#include <QtCore/QVariant>
+#include <QtGui/QDialog>
 
 QT_BEGIN_NAMESPACE
-class QComboBox;
-class QListView;
-class QModelIndex;
-class QNetworkReply;
-class QNetworkRequest;
-class QSplitter;
-class QUrl;
-class QWebView;
+class QLabel;
+class QLineEdit;
+class QTextEdit;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
+class QGalleryItemList;
+class QGalleryItemRequest;
 QTM_END_NAMESPACE
 
 class Download;
-class DownloadModel;
 
 QTM_USE_NAMESPACE;
 
-class ShareWidget : public QMainWindow
+class ItemInformationDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ShareWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ItemInformationDialog(
+            QDocumentGallery *gallery,
+            QWidget *parent = 0,
+            Qt::WindowFlags flags = 0);
+
+    void addProperty(const QString &propertyName, const QString &displayName);
+
+    void showItem(const QVariant &itemId);
 
 private slots:
-    void unsupportedContent(QNetworkReply *reply);
-    void downloadRequested(const QNetworkRequest &request);
-    void loadStarted();
-    void loadFinished();
-    void load();
-    void loadUrl(const QString &url);
-    void urlChanged(const QUrl &url);
-    void downloadActivated(const QModelIndex &index);
+    void itemsInserted(int index, int count);
+    void itemsRemoved(int index, int count);
+    void metaDataChanged(int index, int count, const QList<int> &keys);
 
 private:
-    QDocumentGallery *documentGallery;
-    DownloadModel *downloadModel;
-    QWebView *webView;
-    QListView *downloadView;
-    QSplitter *splitter;
-    QComboBox *urlCombo;
-    QAction *reloadAction;
-    QAction *stopAction;
-
+    QGalleryItemRequest *request;
+    QGalleryItemList *item;
+    QStringList propertyNames;
+    QStringList displayNames;
+    QList<int> propertyKeys;
+    QList<QVariant::Type> propertyTypes;
+    QList<QLabel *> propertyWidgets;
 };
 
 #endif

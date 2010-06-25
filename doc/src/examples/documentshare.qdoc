@@ -49,7 +49,11 @@
     This example demonstrates using the Document Gallery to access the meta-data
     of a newly created file.
 
-    The Document Sharing example downloads files from the Ovi Share website and
-    requests a gallery item from the document gallery using the URL of the saved
-    file.
+    The Document Sharing example uses QGalleryUrlRequest to find the gallery
+    ID and type of a downloaded file and QGalleryItemRequest to query
+    properties of that item.
+
+    Files can be downloaded in the example by selecting a download link from
+    the embedded QWebView.  Information about a finished download can be viewed
+    by selecting the download from the list on right.
 */

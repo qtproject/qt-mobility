@@ -50,15 +50,21 @@
 
 Download::Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent)
     : QObject(parent)
+    , downloadState(Downloading)
+    , currentDownloadProgress(0)
+    , maximumDownloadProgress(0)
     , networkReply(networkReply)
     , urlRequest(0)
 {
     connect(networkReply, SIGNAL(metaDataChanged()), this, SLOT(networkMetaDataChanged()));
+    connect(networkReply, SIGNAL(downloadProgress(qint64,qint64)),
+            this, SLOT(networkProgress(qint64,qint64)));
     connect(networkReply, SIGNAL(readyRead()), this, SLOT(networkReadyRead()));
     connect(networkReply, SIGNAL(finished()), this, SLOT(networkFinished()));
 
     urlRequest = new QGalleryUrlRequest(gallery, this);
     urlRequest->setCreate(true);
+    connect(urlRequest, SIGNAL(progressChanged(int,int)), this, SLOT(urlRequestProgress(int,int)));
     connect(urlRequest, SIGNAL(finished(int)), this, SLOT(urlRequestFinished(int)));
 }
 
@@ -67,16 +73,39 @@ Download::~Download()
     delete networkReply;
 }
 
+Download::State Download::state() const
+{
+    return downloadState;
+}
+
 QVariant Download::itemId() const
 {
     return urlRequest->itemId();
 }
 
+QString Download::itemType() const
+{
+    return urlRequest->itemType();
+}
+
+QString Download::displayName() const
+{
+    return fileName;
+}
+
+int Download::currentProgress() const
+{
+    return currentDownloadProgress;
+}
+
+int Download::maximumProgress() const
+{
+    return maximumDownloadProgress;
+}
+
 void Download::networkMetaDataChanged()
 {
     if (!file.isOpen()) {
-        QString fileName;
-
         QByteArray disposition = networkReply->rawHeader("Content-Disposition");
 
         if (!disposition.isEmpty()) {
@@ -106,21 +135,28 @@ void Download::networkMetaDataChanged()
                 fileName = QLatin1String("unnamed_download");
         }
 
-        fileName = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)
+        QString filePath = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)
                 + QLatin1Char('/')
                 + fileName;
 
-        fileName = QFileDialog::getSaveFileName(
-                qobject_cast<QWidget *>(parent()), tr("Save File"), fileName);
+        filePath = QFileDialog::getSaveFileName(0, tr("Save File"), filePath);
 
-        if (!fileName.isEmpty()) {
-            file.setFileName(fileName);
+        if (!filePath.isEmpty()) {
+            file.setFileName(filePath);
             if (file.open(QIODevice::WriteOnly))
                 networkReadyRead();
             else
                 networkReply->abort();
         }
     }
+}
+
+void Download::networkProgress(qint64 current, qint64 maximum)
+{
+    currentDownloadProgress = current;
+    maximumDownloadProgress = maximum;
+
+    emit progressChanged(this);
 }
 
 void Download::networkReadyRead()
@@ -146,26 +182,39 @@ void Download::networkFinished()
             file.remove();
         }
 
-        emit failed(this);
+        downloadState = DownloadError;
     } else {
         networkMetaDataChanged();
         networkReadyRead();
 
         file.close();
 
+        downloadState = Finalizing;
+
         urlRequest->setItemUrl(QUrl::fromLocalFile(file.fileName()));
         urlRequest->execute();
     }
+
+    emit stateChanged(this);
+}
+
+void Download::urlRequestProgress(int current, int maximum)
+{
+    currentDownloadProgress = current;
+    maximumDownloadProgress = maximum;
+
+    emit progressChanged(this);
 }
 
 void Download::urlRequestFinished(int result)
 {
     if (result == QGalleryAbstractRequest::Succeeded) {
-        emit succeeded(this);
+        downloadState = Finished;
     } else {
         qWarning("URL request failed %d", result);
 
-        emit failed(this);
+        downloadState = ItemError;
     }
-}
 
+    emit stateChanged(this);
+}

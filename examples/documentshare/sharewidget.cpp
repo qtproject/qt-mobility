@@ -41,7 +41,9 @@
 #include "sharewidget.h"
 
 #include "download.h"
-#include "downloadcompletedialog.h"
+#include "downloaddelegate.h"
+#include "downloadmodel.h"
+#include "iteminformationdialog.h"
 
 #include <qdocumentgallery.h>
 
@@ -49,55 +51,138 @@
 #include <QtWebKit>
 
 ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
+    : QMainWindow(parent, flags)
     , documentGallery(0)
+    , downloadModel(0)
     , webView(0)
-    , downloadCompleteDialog(0)
+    , downloadView(0)
 {
+    documentGallery = new QDocumentGallery(this);
+
+    downloadModel = new DownloadModel(documentGallery, this);
+
     webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
     webView->page()->setForwardUnsupportedContent(true);
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
+    connect(webView, SIGNAL(loadStarted()), this, SLOT(loadStarted()));
+    connect(webView, SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
+    connect(webView, SIGNAL(urlChanged(QUrl)), this, SLOT(urlChanged(QUrl)));
     connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
             this, SLOT(downloadRequested(QNetworkRequest)));
+    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
+            this, SLOT(unsupportedContent(QNetworkReply*)));
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+    downloadView = new QListView;
+    downloadView->setVisible(false);
+    downloadView->setItemDelegate(new DownloadDelegate(this));
+    downloadView->setModel(downloadModel);
+    connect(downloadView, SIGNAL(activated(QModelIndex)),
+            this, SLOT(downloadActivated(QModelIndex)));
 
-    setLayout(layout);
+    splitter = new QSplitter;
+    splitter->addWidget(webView);
+    splitter->addWidget(downloadView);
 
-    documentGallery = new QDocumentGallery(this);
-}
+    urlCombo = new QComboBox;
+    urlCombo->setEditable(true);
+    urlCombo->addItem(QLatin1String("http://www.flickr.com/explore"));
+    urlCombo->addItem(QLatin1String("http://picasaweb.google.com/explore"));
+    urlCombo->addItem(QLatin1String("http://share.ovi.com"));
+    connect(urlCombo, SIGNAL(activated(QString)), this, SLOT(loadUrl(QString)));
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, documentGallery, this);
+    QWidgetAction *urlAction = new QWidgetAction(this);
+    urlAction->setDefaultWidget(urlCombo);
 
-    connect(download, SIGNAL(succeeded(Download*)), this, SLOT(downloadSucceeded(Download*)));
-    connect(download, SIGNAL(failed(Download*)), this, SLOT(downloadFailed(Download*)));
+    QToolBar *toolBar = new QToolBar;
+    toolBar->addAction(urlAction);
+
+    reloadAction = toolBar->addAction(style()->standardIcon(QStyle::SP_BrowserReload), tr("Reload"));
+    connect(reloadAction, SIGNAL(triggered()), this, SLOT(load()));
+
+    stopAction = toolBar->addAction(style()->standardIcon(QStyle::SP_BrowserStop), tr("Stop"));
+    stopAction->setEnabled(false);
+    connect(stopAction, SIGNAL(triggered()), webView, SLOT(reload()));
+
+    addToolBar(toolBar);
+    setCentralWidget(splitter);
+
+    QUrl url;
+    QStringList arguments = QCoreApplication::arguments();
+    if (arguments.count() > 1)
+        url = QUrl(arguments.at(1));
+
+    if (url.isValid()) {
+        urlCombo->setEditText(arguments.at(1));
+        webView->load(url);
+    } else {
+        urlCombo->setEditText(QLatin1String("http://"));
+    }
 }
 
 void ShareWidget::downloadRequested(const QNetworkRequest &request)
 {
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
+    downloadModel->addDownload(webView->page()->networkAccessManager()->get(request));
+    downloadView->setVisible(true);
 }
 
-void ShareWidget::downloadSucceeded(Download *download)
+void ShareWidget::unsupportedContent(QNetworkReply *reply)
 {
-    if (!downloadCompleteDialog) {
-        downloadCompleteDialog = new DownloadCompleteDialog(documentGallery, this);
-        downloadCompleteDialog->setModal(true);
+    downloadModel->addDownload(reply);
+    downloadView->setVisible(true);
+}
+
+void ShareWidget::loadStarted()
+{
+    stopAction->setEnabled(true);
+}
+
+void ShareWidget::loadFinished()
+{
+    stopAction->setEnabled(false);
+}
+
+void ShareWidget::load()
+{
+    if (urlCombo->currentText() != webView->url().toString())
+        webView->load(urlCombo->currentText());
+    else
+        webView->reload();
+}
+
+void ShareWidget::loadUrl(const QString &url)
+{
+    webView->load(QUrl(url));
+}
+
+void ShareWidget::urlChanged(const QUrl &url)
+{
+    urlCombo->setEditText(url.toString());
+}
+
+void ShareWidget::downloadActivated(const QModelIndex &index)
+{
+    QVariant itemId = index.data(DownloadModel::ItemIdRole);
+    QString itemType = index.data(DownloadModel::ItemTypeRole).toString();
+
+    if (itemId.isValid()) {
+        ItemInformationDialog *dialog = new ItemInformationDialog(documentGallery, this);
+        dialog->setModal(true);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+        dialog->addProperty(QDocumentGallery::fileName, tr("File Name"));
+        dialog->addProperty(QDocumentGallery::fileSize, tr("File Size"));
+        dialog->addProperty(QDocumentGallery::mimeType, tr("MIME Type"));
+
+        if (itemType == QDocumentGallery::Image) {
+            dialog->addProperty(QDocumentGallery::thumbnailPixmap, tr("Preview"));
+            dialog->addProperty(QDocumentGallery::keywords, tr("Keywords"));
+        } else if (itemType == QDocumentGallery::Audio) {
+            dialog->addProperty(QDocumentGallery::albumTitle, tr("Album"));
+            dialog->addProperty(QDocumentGallery::artist, tr("Artist"));
+            dialog->addProperty(QDocumentGallery::genre, tr("Genre"));
+            dialog->addProperty(QDocumentGallery::duration, tr("Duration"));
+        }
+        dialog->showItem(itemId);
     }
-
-    downloadCompleteDialog->show(download->itemId());
-
-    download->deleteLater();
 }
 
-void ShareWidget::downloadFailed(Download *download)
-{
-    download->deleteLater();
-}

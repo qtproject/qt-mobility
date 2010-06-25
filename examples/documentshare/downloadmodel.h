@@ -38,60 +38,54 @@
 **
 ****************************************************************************/
 
-#ifndef DOWNLOADCOMPLETEDIALOG_H
-#define DOWNLOADCOMPLETEDIALOG_H
+#ifndef DOWNLOADMODEL_H
+#define DOWNLOADMODEL_H
 
 #include <qmobilityglobal.h>
 
-#include <QtGui/qdialog.h>
+#include <QtCore/QAbstractListModel>
 
 QT_BEGIN_NAMESPACE
-class QLabel;
-class QLineEdit;
-class QTextEdit;
+class QNetworkReply;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
-class QGalleryItemList;
-class QGalleryItemRequest;
 QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class Download;
 
-QTM_USE_NAMESPACE;
-
-class DownloadCompleteDialog : public QDialog
+class DownloadModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    DownloadCompleteDialog(
-            QDocumentGallery *gallery, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    enum
+    {
+        ItemIdRole = Qt::UserRole,
+        ItemTypeRole,
+        StateRole,
+        CurrentProgressRole,
+        MaximumProgressRole
+    };
+    
+    DownloadModel(QDocumentGallery *gallery, QObject *parent = 0);
+    ~DownloadModel();
 
-    void show(const QVariant &itemId);
+    int rowCount(const QModelIndex &parent) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+
+    QVariant data(const QModelIndex &data, int role) const;
+
+    void addDownload(QNetworkReply *networkReply);
 
 private slots:
-    void itemChanged();
-    void itemsInserted(int index, int count);
-    void itemsRemoved(int index, int count);
-    void metaDataChanged(int index, int count, const QList<int> &keys);
-
-    void titleEdited();
-    void subjectEdited();
+    void downloadChanged(Download *download);
 
 private:
-    QGalleryItemRequest *request;
-    QGalleryItemList *item;
-    QLabel *fileName;
-    QLabel *mimeType;
-    QLineEdit *title;
-    QLineEdit *subject;
-    QTextEdit *description;
-    int fileNameKey;
-    int mimeTypeKey;
-    int titleKey;
-    int subjectKey;
-    int descriptionKey;
+    QDocumentGallery *gallery;
+    QList<Download *> downloads;
 };
 
 #endif

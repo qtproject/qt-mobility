@@ -38,59 +38,69 @@
 **
 ****************************************************************************/
 
-#ifndef SHAREWIDGET_H
-#define SHAREWIDGET_H
+#include "downloadmodel.h"
 
-#include <qmobilityglobal.h>
+#include "download.h"
 
-#include <QtGui/QMainWindow>
-
-QT_BEGIN_NAMESPACE
-class QComboBox;
-class QListView;
-class QModelIndex;
-class QNetworkReply;
-class QNetworkRequest;
-class QSplitter;
-class QUrl;
-class QWebView;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
-
-class Download;
-class DownloadModel;
-
-QTM_USE_NAMESPACE;
-
-class ShareWidget : public QMainWindow
+DownloadModel::DownloadModel(QDocumentGallery *gallery, QObject *parent)
+    : QAbstractListModel(parent)
+    , gallery(gallery)
 {
-    Q_OBJECT
-public:
-    ShareWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+}
 
-private slots:
-    void unsupportedContent(QNetworkReply *reply);
-    void downloadRequested(const QNetworkRequest &request);
-    void loadStarted();
-    void loadFinished();
-    void load();
-    void loadUrl(const QString &url);
-    void urlChanged(const QUrl &url);
-    void downloadActivated(const QModelIndex &index);
+DownloadModel::~DownloadModel()
+{
+    qDeleteAll(downloads);
+}
 
-private:
-    QDocumentGallery *documentGallery;
-    DownloadModel *downloadModel;
-    QWebView *webView;
-    QListView *downloadView;
-    QSplitter *splitter;
-    QComboBox *urlCombo;
-    QAction *reloadAction;
-    QAction *stopAction;
+int DownloadModel::rowCount(const QModelIndex &parent) const
+{
+    return !parent.isValid() ? downloads.count() : 0;
+}
 
-};
+QModelIndex DownloadModel::index(int row, int column, const QModelIndex &parent) const
+{
+    return !parent.isValid() && row >= 0 && row < downloads.count() && column == 0
+            ? createIndex(row, 0, downloads.at(row))
+            : QModelIndex();
+}
 
-#endif
+QVariant DownloadModel::data(const QModelIndex &index, int role) const
+{
+    Download *download = reinterpret_cast<Download *>(index.internalPointer());
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return download->displayName();
+    case ItemIdRole:
+        return download->itemId();
+    case ItemTypeRole:
+        return download->itemType();
+    case StateRole:
+        return int(download->state());
+    case CurrentProgressRole:
+        return download->currentProgress();
+    case MaximumProgressRole:
+        return download->maximumProgress();
+    default:
+        return QVariant();
+    }
+}
+
+void DownloadModel::addDownload(QNetworkReply *networkReply)
+{
+    Download *download = new Download(networkReply, gallery, this);
+    connect(download, SIGNAL(progressChanged(Download*)), this, SLOT(downloadChanged(Download*)));
+    connect(download, SIGNAL(stateChanged(Download*)), this, SLOT(downloadChanged(Download*)));
+
+    beginInsertRows(QModelIndex(), downloads.count(), downloads.count());
+    downloads.append(download);
+    endInsertRows();
+}
+
+void DownloadModel::downloadChanged(Download *download)
+{
+    QModelIndex index = createIndex(downloads.indexOf(download), 0, download);
+
+    emit dataChanged(index, index);
+}

@@ -38,59 +38,32 @@
 **
 ****************************************************************************/
 
-#ifndef SHAREWIDGET_H
-#define SHAREWIDGET_H
+#ifndef DOWNLOADDELEGATE_H
+#define DOWNLOADDELEGATE_H
 
-#include <qmobilityglobal.h>
+#include <QtGui/QAbstractItemDelegate>
 
-#include <QtGui/QMainWindow>
-
-QT_BEGIN_NAMESPACE
-class QComboBox;
-class QListView;
-class QModelIndex;
-class QNetworkReply;
-class QNetworkRequest;
-class QSplitter;
-class QUrl;
-class QWebView;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
-
-class Download;
-class DownloadModel;
-
-QTM_USE_NAMESPACE;
-
-class ShareWidget : public QMainWindow
+class DownloadDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    ShareWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    DownloadDelegate(QObject *parent = 0);
+    ~DownloadDelegate();
 
-private slots:
-    void unsupportedContent(QNetworkReply *reply);
-    void downloadRequested(const QNetworkRequest &request);
-    void loadStarted();
-    void loadFinished();
-    void load();
-    void loadUrl(const QString &url);
-    void urlChanged(const QUrl &url);
-    void downloadActivated(const QModelIndex &index);
+    void paint(
+            QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
-    QDocumentGallery *documentGallery;
-    DownloadModel *downloadModel;
-    QWebView *webView;
-    QListView *downloadView;
-    QSplitter *splitter;
-    QComboBox *urlCombo;
-    QAction *reloadAction;
-    QAction *stopAction;
+    void layout(
+            const QStyleOptionViewItem &option,
+            const QModelIndex &index,
+            QRect *stateRect,
+            QRect *displayRect,
+            QRect *progressRect) const;
 
+    QString stateText(int state, const QString &displayText) const;
 };
 
 #endif
