@@ -54,12 +54,6 @@ public:
             QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
-    void layout(const QStyleOptionViewItem &option) const;
-
-    QRect thumbnailRect;
-    QSize size;
 };
 
 #endif

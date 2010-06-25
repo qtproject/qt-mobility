@@ -47,9 +47,10 @@ class AlbumDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    enum Role
+    enum
     {
-        ArtistRole = Qt::UserRole
+        Artist = Qt::UserRole,
+        TrackCount
     };
 
     AlbumDelegate(QObject *parent = 0);
@@ -59,14 +60,6 @@ public:
             QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
-    void layout(const QStyleOptionViewItem &option) const;
-
-    QRect thumbnailRect;
-    QRect titleRect;
-    QRect artistRect;
-    QSize size;
 };
 
 #endif

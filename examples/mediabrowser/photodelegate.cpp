@@ -54,44 +54,42 @@ PhotoDelegate::~PhotoDelegate()
 void PhotoDelegate::paint(
         QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    layout(option);
+    QPen oldPen = painter->pen();
 
-    QRect imageRect = thumbnailRect.translated(option.rect.topLeft());
-    QPixmap thumbnail = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
-    if (!thumbnail.isNull()) {
-        painter->drawPixmap(imageRect, thumbnail);
+    QStyle *style = QApplication::style();
 
-        if (option.state & QStyle::State_HasFocus) {
-            imageRect.adjust(0, 0, -1, -1);
-            painter->drawRect(imageRect);
-        }
-    } else {
-        if (option.state & QStyle::State_HasFocus)
-            painter->fillRect(imageRect, option.palette.highlight());
+    int margin = style->pixelMetric(QStyle::PM_ButtonMargin);
 
-        imageRect.adjust(0, 0, -1, -1);
-        painter->drawRect(imageRect);
+    QRect rect = option.rect;
+
+    if (option.state & QStyle::State_HasFocus) {
+        painter->fillRect(rect, option.palette.highlight());
+
+        painter->setPen(option.palette.color(QPalette::HighlightedText));
     }
+
+    rect.adjust(margin, margin, -margin, -margin);
+
+    QRect decorationRect = rect;
+    decorationRect.setRight(decorationRect.left() + option.decorationSize.width());
+
+    QPixmap decoration = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+    if (!decoration.isNull())
+        style->drawItemPixmap(painter, decorationRect, Qt::AlignCenter, decoration);
+    else
+        painter->drawRect(decorationRect);
+
+    painter->setPen(oldPen);
 }
 
 QSize PhotoDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const
 {
-    layout(option);
+    int margin = QApplication::style()->pixelMetric(QStyle::PM_ButtonMargin);
+
+    QSize size = option.decorationSize;
+
+    size.rheight() += 2 * margin;
+    size.rwidth() += 2 * margin;
 
     return size;
-}
-
-
-void PhotoDelegate::layout(const QStyleOptionViewItem &option) const
-{
-    PhotoDelegate *delegate = const_cast<PhotoDelegate *>(this);
-
-    int height = option.decorationSize.height();
-
-    int width = qMax(height, option.decorationSize.width());
-
-    delegate->thumbnailRect = QRect(
-            QPoint((width - option.decorationSize.width()) / 2, 0), option.decorationSize);
-
-    delegate->size = QSize(width, height);
 }

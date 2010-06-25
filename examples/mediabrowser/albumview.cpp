@@ -66,7 +66,7 @@ AlbumView::AlbumView(QWidget *parent)
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::title);
     properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
-    properties.insert(AlbumDelegate::ArtistRole, QDocumentGallery::artist);
+    properties.insert(AlbumDelegate::Artist, QDocumentGallery::artist);
 
     model = new QGalleryItemListModel;
     model->addColumn(properties);

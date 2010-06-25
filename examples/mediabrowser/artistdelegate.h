@@ -47,6 +47,11 @@ class ArtistDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
+    enum
+    {
+        TrackCount
+    };
+
     ArtistDelegate(QObject *parent = 0);
     ~ArtistDelegate();
 
@@ -54,13 +59,6 @@ public:
             QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-private:
-    void layout(const QStyleOptionViewItem &option) const;
-
-    QRect thumbnailRect;
-    QRect artistRect;
-    QSize size;
 };
 
 #endif

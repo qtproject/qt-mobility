@@ -55,73 +55,64 @@ AlbumDelegate::~AlbumDelegate()
 void AlbumDelegate::paint(
         QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    layout(option);
+    QPen oldPen = painter->pen();
 
-    QBrush oldBrush = painter->brush();
+    QStyle *style = QApplication::style();
 
-    if (option.state & QStyle::State_Selected) {
-        painter->fillRect(option.rect, option.palette.highlight());
-        painter->setBrush(option.palette.highlightedText());
+    int margin = style->pixelMetric(QStyle::PM_ButtonMargin);
+
+    QRect rect = option.rect;
+
+    if (option.state & QStyle::State_HasFocus) {
+        painter->fillRect(rect, option.palette.highlight());
+
+        painter->setPen(option.palette.color(QPalette::HighlightedText));
     }
 
-    QRect imageRect = thumbnailRect.translated(option.rect.topLeft());
-    QPixmap thumbnail = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
-    if (!thumbnail.isNull()) {
-        painter->drawPixmap(imageRect, thumbnail);
+    rect.adjust(margin, margin, -margin, -margin);
 
-        if (option.state & QStyle::State_HasFocus) {
-            imageRect.adjust(0, 0, -1, -1);
-            painter->drawRect(imageRect);
-        }
-    } else {
-        if (option.state & QStyle::State_HasFocus)
-            painter->fillRect(imageRect, option.palette.highlight());
+    QRect decorationRect = rect;
+    decorationRect.setRight(decorationRect.left() + option.decorationSize.width());
 
-        imageRect.adjust(0, 0, -1, -1);
-        painter->drawRect(imageRect);
-    }
+    QPixmap decoration = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+    if (!decoration.isNull())
+        style->drawItemPixmap(painter, decorationRect, Qt::AlignCenter, decoration);
+    else
+        painter->drawRect(decorationRect);
 
-    QTextOption textOption;
-    textOption.setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    rect.setLeft(decorationRect.right() + margin);
 
-    QString title = index.data(Qt::DisplayRole).toString();
-    title = option.fontMetrics.elidedText(title, Qt::ElideRight, size.width());
-    painter->drawText(titleRect.translated(option.rect.topLeft()), title, textOption);
+    QString text = index.data(Qt::DisplayRole).toString();
 
-    QString artist = index.data(ArtistRole).toString();
-    artist = option.fontMetrics.elidedText(artist, Qt::ElideRight, size.width());
-    painter->drawText(artistRect.translated(option.rect.topLeft()), artist, textOption);
-    
-    painter->setBrush(oldBrush);
+    QRect textRect;
+    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+    rect.setTop(textRect.bottom() + margin);
+
+    text = index.data(Artist).toString();
+
+    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+    rect.setTop(textRect.bottom() + margin);
+
+    int trackCount =  index.data(TrackCount).toInt();
+
+    text = trackCount != 1
+            ? tr("%1 Songs").arg(trackCount)
+            : tr("1 Song");
+
+    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+
+    painter->setPen(oldPen);
 }
 
 QSize AlbumDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const
 {
-    layout(option);
+    int margin = QApplication::style()->pixelMetric(QStyle::PM_ButtonMargin);
+
+    QSize size = option.decorationSize;
+
+    size.rheight() += 2 * margin;
+    size.rwidth() *= 2;
+    size.rwidth() += 3 * margin;
 
     return size;
-}
-
-
-void AlbumDelegate::layout(const QStyleOptionViewItem &option) const
-{
-    AlbumDelegate *delegate = const_cast<AlbumDelegate *>(this);
-
-    int height = option.decorationSize.height()
-            + option.fontMetrics.height()
-            + option.fontMetrics.lineSpacing();
-
-    int width = qMax(height, option.decorationSize.width());
-
-    delegate->thumbnailRect = QRect(
-            QPoint((width - option.decorationSize.width()) / 2, 0), option.decorationSize);
-
-    QSize textSize(width, option.fontMetrics.height());
-
-    delegate->titleRect = QRect(QPoint(0, delegate->thumbnailRect.bottom()), textSize);
-
-    delegate->artistRect = QRect(
-            QPoint(0, delegate->titleRect.top() + option.fontMetrics.lineSpacing()), textSize);
-
-    delegate->size = QSize(width, height);
 }

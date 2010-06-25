@@ -54,70 +54,48 @@ ArtistDelegate::~ArtistDelegate()
 void ArtistDelegate::paint(
         QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    layout(option);
-
     QPen oldPen = painter->pen();
 
-    if (option.state & QStyle::State_Selected) {
-        painter->fillRect(option.rect, option.palette.highlight());
-        QPen pen = oldPen;
-        pen.setBrush(option.palette.highlightedText());
-        painter->setPen(pen);
+    int margin = QApplication::style()->pixelMetric(QStyle::PM_ButtonMargin);
+
+    QRect rect = option.rect;
+
+    if (option.state & QStyle::State_HasFocus) {
+        painter->fillRect(rect, option.palette.highlight());
+
+        painter->setPen(option.palette.color(QPalette::HighlightedText));
     }
 
-    QRect imageRect = thumbnailRect.translated(option.rect.topLeft());
-    QPixmap thumbnail = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
-    if (!thumbnail.isNull()) {
-        painter->drawPixmap(imageRect, thumbnail);
+    rect.adjust(margin, margin, -margin, -margin);
 
-        if (option.state & QStyle::State_HasFocus) {
-            imageRect.adjust(0, 0, -1, -1);
-            painter->drawRect(imageRect);
-        }
-    } else {
-        if (option.state & QStyle::State_HasFocus)
-            painter->fillRect(imageRect, option.palette.highlight());
+    QString text = index.data(Qt::DisplayRole).toString();
 
-        imageRect.adjust(0, 0, -1, -1);
-        painter->drawRect(imageRect);
-    }
+    QRect textRect;
+    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
+    rect.setTop(textRect.bottom() + margin);
 
+    int trackCount =  index.data(TrackCount).toInt();
 
+    text = trackCount != 1
+            ? tr("%1 Songs").arg(trackCount)
+            : tr("1 Song");
 
-    QTextOption textOption;
-    textOption.setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    painter->drawText(rect, Qt::TextWordWrap, text, &textRect);
 
-    QString artist = index.data(Qt::DisplayRole).toString();
-    artist = option.fontMetrics.elidedText(artist, Qt::ElideRight, size.width());
-    painter->drawText(artistRect.translated(option.rect.topLeft()), artist, textOption);
-    
     painter->setPen(oldPen);
 }
 
 QSize ArtistDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const
 {
-    layout(option);
+    QString placeholder = QLatin1String("This is a longish name\n\n\nW");
+
+    int margin = QApplication::style()->pixelMetric(QStyle::PM_ButtonMargin);
+
+    QSize size = option.fontMetrics.size(0, placeholder);
+
+    size.rheight() += 2 * margin;
+    size.rwidth() += 2 * margin;
 
     return size;
-}
-
-void ArtistDelegate::layout(const QStyleOptionViewItem &option) const
-{
-    ArtistDelegate *delegate = const_cast<ArtistDelegate *>(this);
-
-    int height = option.decorationSize.height()
-            + option.fontMetrics.height();
-
-    int width = qMax(height, option.decorationSize.width());
-
-    delegate->thumbnailRect = QRect(
-            QPoint((width - option.decorationSize.width()) / 2, 0), option.decorationSize);
-
-    QSize textSize(width, option.fontMetrics.height());
-
-    delegate->artistRect = QRect(
-            QPoint(0, delegate->thumbnailRect.bottom()), textSize);
-
-    delegate->size = QSize(width, height);
 }
 
