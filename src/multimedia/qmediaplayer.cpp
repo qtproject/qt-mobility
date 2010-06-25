@@ -93,7 +93,7 @@ QT_BEGIN_NAMESPACE
         player->setPlaylist(playlist);
 
         widget = new QVideoWidget;
-        player->addVideoOutput(widget);
+        player->setVideoOutput(widget);
         widget->show();
 
         player->play();

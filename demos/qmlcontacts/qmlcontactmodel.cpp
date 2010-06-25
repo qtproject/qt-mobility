@@ -45,12 +45,12 @@
 #include "qcontactdetailfilter.h"
 #include "qversitreader.h"
 #include "qversitcontactimporter.h"
-
 #include <QColor>
 #include <QHash>
 #include <QDebug>
 #include <QPixmap>
 #include <QFile>
+
 
 QMLContactModel::QMLContactModel(QObject *parent) :
     QAbstractListModel(parent),
@@ -60,6 +60,8 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(InterestLabelRole, "interestLabel");
     roleNames.insert(InterestRole, "interest");
+    roleNames.insert(ContactRole, "contact");
+    roleNames.insert(ContactIdRole, "contactId");
     roleNames.insert(AvatarRole, "avatar");
     roleNames.insert(PresenceAvailableRole, "presenceSupported");
     roleNames.insert(PresenceTextRole, "presenceText");
@@ -97,15 +99,33 @@ QStringList QMLContactModel::availableManagers() const
     return QContactManager::availableManagers();
 }
 
-QString QMLContactModel::manager()
+QString QMLContactModel::manager() const
 {
     return m_manager->managerName();
+}
+QList<QObject*> QMLContactModel::details(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id)->details();
+    return QList<QObject*>();
+}
+void QMLContactModel::exposeContactsToQML()
+{
+    foreach (const QContact& c, m_contacts) {
+        if (!m_contactMap.contains(c.localId())) {
+            QMLContact* qc = new QMLContact(this);
+            qc->setContact(c);
+            m_contactMap.insert(c.localId(), qc);
+        } else {
+            m_contactMap.value(c.localId())->setContact(c);
+        }
+    }
 }
 
 void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
 {
     QVersitReader reader;
-    QFile file(":/contents/example.vcf");
+    QFile file("contents/example.vcf");
     bool ok = file.open(QIODevice::ReadOnly);
     if (ok) {
        reader.setDevice(&file);
@@ -126,7 +146,14 @@ int QMLContactModel::rowCount(const QModelIndex &parent) const
 
 void QMLContactModel::setManager(const QString& managerName)
 {
-    delete m_manager;
+    if (m_manager)
+        delete m_manager;
+
+    foreach (const QContactLocalId& id, m_contactMap.keys()) {
+        delete m_contactMap.value(id);
+    }
+    m_contactMap.clear();
+
     m_manager = new QContactManager(managerName);
 
     if (managerName == "memory" && m_manager->contactIds().isEmpty()) {
@@ -142,6 +169,7 @@ void QMLContactModel::setManager(const QString& managerName)
 void QMLContactModel::resultsReceived()
 {
     int oldCount = m_contacts.count();
+
     int newCount = m_contactsRequest.contacts().count();
     if (newCount > oldCount) {
         // Assuming the order is the same
@@ -155,6 +183,8 @@ void QMLContactModel::resultsReceived()
         m_contacts =  m_contactsRequest.contacts();
         endInsertRows();
     }
+
+    exposeContactsToQML();
 }
 
 void QMLContactModel::fetchAgain()
@@ -184,6 +214,8 @@ QPair<QString, QString> QMLContactModel::interestingDetail(const QContact&c) con
     return qMakePair(QString(), QString());
 }
 
+
+
 QVariant QMLContactModel::data(const QModelIndex &index, int role) const
 {
     QContact c = m_contacts.value(index.row());
@@ -194,17 +226,15 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             return interestingDetail(c).first;
         case InterestRole:
             return interestingDetail(c).second;
+        case ContactRole:
+            if (m_contactMap.contains(c.localId())) {
+               return m_contactMap.value(c.localId())->contactMap();
+           }
+        case ContactIdRole:
+            return c.localId();
         case AvatarRole:
-            if (c.detail<QContactThumbnail>().isEmpty()) {
-                QContactAvatar a = c.detail<QContactAvatar>();
-                if (!a.imageUrl().isEmpty())
-                    return a.imageUrl();
-                else
-                    return QString("qrc:/default.svg");
-            } else {
-                // We have a thumbnail, so return empty
-                return QString("");
-            }
+            //Just let the imager provider deal with it
+            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
         case Qt::DecorationRole:
             {
                 QContactThumbnail t = c.detail<QContactThumbnail>();

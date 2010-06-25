@@ -161,12 +161,18 @@ these domains have dependencies and these are outlined below:
     \o On all platforms, QtSystemInfo depends on QtNetwork.
 
        On Linux, it depends on QtDBus (auto-detected), HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
-       although System Information will compile without them, there will be reduced functionality. It also depends on QtGui.
+       although System Information will compile without them, there will be reduced functionality. It also depends on QtGui, and 
+       on libbluetooth development headers.
        
        On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
        with older SSDKsbut there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       
+       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
+
+       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
     \o N(Y)
     \o N
 \row
