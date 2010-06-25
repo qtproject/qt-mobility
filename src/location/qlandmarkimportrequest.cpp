@@ -115,6 +115,7 @@ QString QLandmarkImportRequest::fileName() const
 void QLandmarkImportRequest::setFileName(const QString &fileName)
 {
     Q_D(QLandmarkImportRequest);
+
     d->device = new QFile(fileName);
 }
 

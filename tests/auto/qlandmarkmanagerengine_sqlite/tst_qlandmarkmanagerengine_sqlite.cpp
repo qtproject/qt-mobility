@@ -69,6 +69,7 @@
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkimportrequest.h>
 #include <QMetaType>
 #include <QDebug>
 
@@ -122,9 +123,9 @@ public:
 private:
     QLandmarkManager *m_manager;
 
-    bool waitForAsync(QSignalSpy &spy, QLandmarkAbstractRequest *request, QLandmarkManager::Error error = QLandmarkManager::NoError) {
+    bool waitForAsync(QSignalSpy &spy, QLandmarkAbstractRequest *request, QLandmarkManager::Error error = QLandmarkManager::NoError, int ms=500) {
         bool ret = true;
-        QTest::qWait(500);
+        QTest::qWait(ms);
         if (spy.count() != 2) {
             qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
             ret = false;
@@ -3888,6 +3889,39 @@ private slots:
         lmLast.setLandmarkId(landmarks.last().landmarkId());
 
         QCOMPARE(lmLast, landmarks.last());
+    }
+
+    void importGpxAsync()
+    {
+        QLandmarkImportRequest importRequest(m_manager);
+        QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
+        importRequest.setFormat("GpxV1.1");
+        importRequest.start();
+
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,2000));
+
+        QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
+
+        QLandmark lmFirst;
+        lmFirst.setName("McDonald s Airlie Beac... (sample)");
+        lmFirst.setCoordinate(QGeoCoordinate(-20.269213, 148.718128));
+        lmFirst.setLandmarkId(landmarks.first().landmarkId());
+        QCOMPARE(lmFirst, landmarks.first());
+
+        QLandmark lmLast;
+        lmLast.setName("McDonald s Yamant... (sample)");
+        lmLast.setCoordinate(QGeoCoordinate(-27.660976,152.738973));
+        lmLast.setLandmarkId(landmarks.last().landmarkId());
+
+        QCOMPARE(lmLast, landmarks.last());
+
+        //try a non-existent file
+        importRequest.setFileName("doesnnotexist.gpx");
+        importRequest.setFormat("GpxV1.1");
+        importRequest.start();
+
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
     }
 
     /*

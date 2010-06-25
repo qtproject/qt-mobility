@@ -68,6 +68,7 @@
 #include <qlandmarkcategoryfetchrequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
+#include <qlandmarkimportrequest.h>
 
 #include <qlandmarkfilehandler_gpx_p.h>
 #include <qlandmarkfilehandler_lmx_p.h>
@@ -114,6 +115,7 @@ Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkImportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
 static const double EARTH_MEAN_RADIUS = 6371.0072;
@@ -2020,6 +2022,25 @@ bool importLandmarks(const QString &connectionName,
                      QLandmarkManager::Error *error,
                      QString *errorString, const QString &managerUri)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    QFile *file = qobject_cast<QFile *>(device);
+    if (file)
+    {
+        if (!file->exists()) {
+            *error = QLandmarkManager::DoesNotExistError;
+            *errorString = QString("Import operation failed, file does not exist: %1").arg(file->fileName());
+            return false;
+        }
+    }
+
+    if (!device->open(QIODevice::ReadOnly)) {
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "Unable to open io device for importing landmarks";
+        return false;
+    }
+
     if (format ==  "LmxV1.0") {
             return importLandmarksLmx(connectionName, device, error, errorString, managerUri);
     } else if (format == "GpxV1.1") {
@@ -2218,6 +2239,26 @@ void QueryRun::run()
                 }
                 break;
             }
+        case QLandmarkAbstractRequest::ImportRequest :
+            {
+                QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
+                ::importLandmarks(connectionName, importRequest->device(), importRequest->format(), &error, &errorString, managerUri);
+
+                if (this->isCanceled) {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
+                                              Q_ARG(QLandmarkImportRequest *,importRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
+                } else {
+                   QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
+                                              Q_ARG(QLandmarkImportRequest *, importRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                }
+                break;
+            }
         default:
             break;
         }
@@ -2244,6 +2285,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QLandmarkCategoryFetchRequest *>();
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
+    qRegisterMetaType<QLandmarkImportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
@@ -3160,4 +3202,10 @@ void QLandmarkManagerEngineSqlite::updateLandmarkCategoryRemoveRequest(QLandmark
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
     QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(req, error, errorString, errorMap, newState);
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+                                 QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkImportRequest(req, error, errorString, newState);
 }

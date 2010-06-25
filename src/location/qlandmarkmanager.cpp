@@ -649,17 +649,8 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
 {
+    Q_D(QLandmarkManager);
     QFile file(fileName);
-
-    if (!file.exists()) {
-        // TODO set error
-        return false;
-    }
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        // TODO set error
-        return false;
-    }
 
     return importLandmarks(&file, format);
 }
