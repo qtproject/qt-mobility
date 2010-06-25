@@ -110,7 +110,7 @@ and an audio source object for sound configuration details.
     audioSource = new QAudioCaptureSource(camera);
     \endcode
 
-Signals from the \e mediaRecorder can be connected to slots to react to
+Signals from the \i mediaRecorder can be connected to slots to react to
 changes in the state of the recorder or error events. Recording itself
 starts with the \l {QMediaRecorder::record()}{record()} function of
 mediaRecorder being called, this causes the signal \l
@@ -146,7 +146,7 @@ operation as long as this is supported by the backend. For image capture,
 the operation can be cancelled by calling
 \l {QStillImageCapture::cancelCapture()}{cancelCapture()}. For AutoFocus,
 autoexposure or white balance cancellation can be done by calling
-\e {QCamera::unlock(QCamera::LockFocus)}.
+\i {QCamera::unlock(QCamera::LockFocus)}.
 
 
 
