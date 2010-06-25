@@ -14,11 +14,10 @@ SOURCES += publishsubscribe.cpp
 CONFIG += mobility
 MOBILITY += publishsubscribe
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
