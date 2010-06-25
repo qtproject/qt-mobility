@@ -43,6 +43,10 @@
 #define QGEOMAPMARKEROBJECT_H
 
 #include "qgeomapobject.h"
+#include "qgeocoordinate.h"
+
+#include <QPixmap>
+#include <QPoint>
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,8 +55,12 @@ class QGeoMapMarkerObjectPrivate;
 class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
 {
 public:
-    QGeoMapMarkerObject(QGeoMapObject *parent = 0);
+    QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
     ~QGeoMapMarkerObject();
+
+    QGeoCoordinate coordinate() const;
+    QPixmap icon() const;
+    QPoint anchor() const;
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapMarkerObject)

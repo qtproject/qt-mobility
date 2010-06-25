@@ -75,7 +75,7 @@ public:
     QString errorString() const;
 
 private:
-    QList<QGeoRouteDataContainer> decodeTLV(QByteArray data, bool base64=false);
+    QList<QGeoRouteDataContainer> decodeTLV(QByteArray data);
     QGeoCoordinate coordinateFromByteArray(QByteArray array);
     quint32 int32FromByteArray(QByteArray array);
     double fromInt32(quint32 value);

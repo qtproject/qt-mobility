@@ -51,6 +51,8 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
+#include <QPixmap>
+#include <QList>
 
 namespace Ui
 {
@@ -99,9 +101,11 @@ private:
 
     void setProvider(QString providerId);
     void createMenus();
+    void createMarkerIcon();
 
 private slots:
     void drawRect(bool checked);
+    void drawMarker(bool checked);
     void customContextMenuRequest(const QPoint&);
 
 private:
@@ -109,6 +113,9 @@ private:
     QGeoMappingManager *m_mapManager;
     MapWidget *m_mapWidget;
     QMenu* m_popupMenu;
+    QPixmap m_markerIcon;
+    QPoint lastClicked;
+    QList<QPoint> markers;
 
     QGraphicsView* qgv;
 

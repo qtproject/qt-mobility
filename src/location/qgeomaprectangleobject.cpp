@@ -61,6 +61,34 @@ QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
 }
 
+QPen QGeoMapRectangleObject::pen() const
+{
+    Q_D(const QGeoMapRectangleObject);
+
+    return d->pen;
+}
+
+void QGeoMapRectangleObject::setPen(const QPen &aPen)
+{
+    Q_D(QGeoMapRectangleObject);
+
+    d->pen = aPen;
+}
+
+QBrush QGeoMapRectangleObject::brush() const
+{
+    Q_D(const QGeoMapRectangleObject);
+
+    return d->brush;
+}
+
+void QGeoMapRectangleObject::setBrush(const QBrush &aBrush)
+{
+    Q_D(QGeoMapRectangleObject);
+
+    d->brush = aBrush;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

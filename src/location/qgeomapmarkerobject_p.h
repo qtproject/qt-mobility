@@ -44,6 +44,9 @@
 
 #include "qgeomapobject_p.h"
 
+#include <QPixmap>
+#include <QPoint>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapMarkerObjectPrivate : public QGeoMapObjectPrivate
@@ -53,6 +56,9 @@ public:
     QGeoMapMarkerObjectPrivate(const QGeoMapMarkerObjectPrivate &other);
     ~QGeoMapMarkerObjectPrivate();
     QGeoMapMarkerObjectPrivate& operator= (const QGeoMapMarkerObjectPrivate &other);
+
+    QPixmap icon;
+    QPoint anchor;
 };
 
 QTM_END_NAMESPACE

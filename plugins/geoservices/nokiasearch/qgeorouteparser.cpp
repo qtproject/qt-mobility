@@ -50,6 +50,14 @@ const quint8 HL_DURATION=0xB3;
 const quint8 HL_POINTCOUNT=0x19;
 const quint8 HL_POINT=0x1A;
 
+const quint8 HL_MAN_INFO=0x8C;
+const quint8 HL_MAN_COUNT=0x8D;
+const quint8 HL_MAN_ACTION_ID=0x8E;
+const quint8 HL_MAN_STARTSEGMENT_INDEX=0x95;
+const quint8 HL_MAN_DIRECTIONS=0xB1;
+const quint8 HL_END_OF_RECORD=0xFE;
+
+
 
 QGeoRouteParser::QGeoRouteParser(const QGeoRouteRequest &request)
         : m_request(request)
@@ -62,12 +70,14 @@ QGeoRouteParser::~QGeoRouteParser()
 
 bool QGeoRouteParser::parse(QIODevice* source)
 {
-    QList<QGeoRouteDataContainer> decoded = decodeTLV(source->readAll());
+    QList<QGeoRouteDataContainer> decoded = decodeTLV(QByteArray::fromHex(source->readAll()));
 
     if (decoded.count()==0) {
         m_errorString = "Unknown response format";
         return false;
     }
+
+    QList<QGeoRouteSegment*> segments;
 
     QGeoRoute route;
     QList<const QGeoRouteSegment*> routeSegments;
@@ -92,8 +102,47 @@ bool QGeoRouteParser::parse(QIODevice* source)
         else if(cont.id == HL_DURATION) {
             route.setTravelTime(int32FromByteArray(cont.data));
             }
+        else if(cont.id == HL_MAN_INFO) {
+            QList<QGeoRouteDataContainer> decodedMan = decodeTLV(cont.data);
+            for (int manCount = 0; manCount < decodedMan.count(); ++manCount) {
+                QGeoRouteDataContainer man = decodedMan[manCount];
+                if (man.id == HL_MAN_COUNT) {
+                    int count = int32FromByteArray(man.data);
+                    ++manCount; // step to next from HL_MAN_COUNT
+                    QGeoNavigationInstruction* instruction = 0;
+                    int segmentIndex = 0;
+                    for (int i = 0; i < count && manCount < decoded.count(); ++i, ++manCount) {
+                        man = decodedMan[manCount];
+                        if (man.id == HL_MAN_ACTION_ID) {
+                            instruction = new QGeoNavigationInstruction();
+                            segmentIndex = 0;
+                        }
+                        else if (man.id == HL_MAN_STARTSEGMENT_INDEX) {
+                            segmentIndex = int32FromByteArray(man.data);
+                        }
+                        else if (man.id == HL_MAN_DIRECTIONS) {
+                            instruction->setInstructionText(QString(man.data));
+                        }
+                        else if (man.id == HL_END_OF_RECORD) {
+                            if (segments.count() > segmentIndex) {
+                                QGeoRouteSegment* segment = segments.at(segmentIndex);
+                                instruction->setPosition(segment->path().at(0));
+                                segment->setInstruction(instruction);
+                                instruction = 0;
+                            }
+                            else {
+                                delete instruction;
+                                instruction = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
+
     route.setRouteSegments(routeSegments);
+
     m_results.append(route);
     m_errorString = "";
     return true;
@@ -109,15 +158,10 @@ QString QGeoRouteParser::errorString() const
     return m_errorString;
 }
 
-QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data, bool base64)
+QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data)
 {
     QList<QGeoRouteDataContainer> decoded;
-    QByteArray dataArray;
-    if(base64)
-        dataArray = QByteArray::fromBase64(data);
-    else
-        dataArray = QByteArray::fromHex(data);
-    QDataStream dataStream(&dataArray,QIODevice::ReadOnly);
+    QDataStream dataStream(&data,QIODevice::ReadOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
     quint8 id;
     quint16 dataLen;
@@ -152,6 +196,7 @@ quint32 QGeoRouteParser::int32FromByteArray(QByteArray array)
     dataStream >> value;
     return value;
 }
+
 
 double QGeoRouteParser::fromInt32(quint32 value)
 {

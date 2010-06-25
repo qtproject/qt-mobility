@@ -48,15 +48,21 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QAction>
+#include <QPainter>
 
 #include <qgeocoordinate.h>
 #include <qgeomaprectangleobject.h>
+#include <qgeomapmarkerobject.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
 #endif
+
+#define MARKER_HEIGHT 36
+#define MARKER_WIDTH 25
+#define MARKER_PIN_LEN 10
 
 QTM_USE_NAMESPACE
 
@@ -159,6 +165,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QGraphicsScene* scene = new QGraphicsScene(0, 0, width(), height());
     qgv->setScene(scene);
 
+    createMarkerIcon();
+
     m_mapWidget = new MapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
     m_mapWidget->setGeometry(0, 0, width(), height());
@@ -229,6 +237,11 @@ void MainWindow::createMenus()
     QMenu* subMenuItem = new QMenu(tr("Draw"), this);
     m_popupMenu->addMenu(subMenuItem);
 
+    menuItem = new QAction(tr("Marker"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawMarker(bool)));
+
     menuItem = new QAction(tr("Rectangle"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
@@ -237,25 +250,61 @@ void MainWindow::createMenus()
 
 void MainWindow::drawRect(bool /*checked*/)
 {
-    //for (int i = 0; i < selectedMarkers.count() - 1; i++) {
-    //    const QMapMarker* m1 = selectedMarkers[i];
-    //    const QMapMarker* m2 = selectedMarkers[i + 1];
-    //    QPen pen(Qt::white);
-    //    pen.setWidth(2);
-    //    QColor fill(Qt::black);
-    //    fill.setAlpha(65);
-    //    mapView->addMapObject(new QMapRect(m1->point(), m2->point(), pen, QBrush(fill), 1));
-    //}
+    while (markers.count() >= 2) {
+        QPoint p1 = markers.takeFirst();
+        QPoint p2 = markers.takeFirst();
+        QPen pen(Qt::white);
+        pen.setWidth(2);
+        QColor fill(Qt::black);
+        fill.setAlpha(65);
+        QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(m_mapWidget->screenPositionToCoordinate(p1),
+                                                             m_mapWidget->screenPositionToCoordinate(p2));
+        rectangle->setPen(pen);
+        rectangle->setBrush(QBrush(fill));
+        m_mapWidget->addMapObject(rectangle);
+    }
 
-    //selectedMarkers.clear();
-    m_mapWidget->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(48,10), QGeoCoordinate(52,12)));
+    markers.clear();
+}
+
+void MainWindow::drawMarker(bool /*checked*/)
+{
+    m_mapWidget->addMapObject(new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked), 
+                              QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon));
+    markers.append(lastClicked);
 }
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    //if (focusWidget() == qgv) {
+    lastClicked = point;
+
+    if (focusWidget() == qgv) {
+
         if (!m_popupMenu)
             createMenus();
-        m_popupMenu->popup(QPoint(100,100));
-    //}
+
+        m_popupMenu->popup(mapToGlobal(point));
+    }
+}
+
+void MainWindow::createMarkerIcon()
+{
+    m_markerIcon = QPixmap(MARKER_WIDTH, MARKER_HEIGHT);
+    m_markerIcon.fill(Qt::transparent);
+    QPainter painter(&m_markerIcon);
+
+    QPointF p1(MARKER_WIDTH / 2, MARKER_HEIGHT - 1);
+    QPointF p2(MARKER_WIDTH / 2, MARKER_HEIGHT - 1 - MARKER_PIN_LEN);
+    QPen pen(Qt::black);
+    pen.setWidth(2);
+    painter.setPen(pen);
+    painter.drawLine(p1, p2);
+    QRectF ellipse(0, 0, MARKER_WIDTH - 1, MARKER_WIDTH - 1);
+    pen.setWidth(1);
+    painter.setPen(pen);
+    QColor color(Qt::green);
+    color.setAlpha(127);
+    QBrush brush(color);
+    painter.setBrush(brush);
+    painter.drawEllipse(ellipse);
 }

@@ -41,14 +41,43 @@
 
 #include "qgeomapmarkerobject.h"
 #include "qgeomapmarkerobject_p.h"
+#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent)) {}
+QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+{
+    Q_D(QGeoMapMarkerObject);
+
+    d->boundingBox = QGeoBoundingBox(coordinate, coordinate);
+    d->icon = icon;
+    d->anchor = anchor;
+}
 
 QGeoMapMarkerObject::~QGeoMapMarkerObject()
 {
+}
+
+QPixmap QGeoMapMarkerObject::icon() const
+{
+    Q_D(const QGeoMapMarkerObject);
+
+    return d->icon;
+}
+
+QPoint QGeoMapMarkerObject::anchor() const
+{
+    Q_D(const QGeoMapMarkerObject);
+
+    return d->anchor;
+}
+
+QGeoCoordinate QGeoMapMarkerObject::coordinate() const
+{
+    Q_D(const QGeoMapMarkerObject);
+
+    return d->boundingBox.topLeft();
 }
 
 /*******************************************************************************
