@@ -102,8 +102,8 @@ public:
     void CancelListenForPackages();
 
  public:
-    TBuf8<1550> iMessageFromServer; // TODO not necessarily enough (was 255)
-    TPckgBuf<TInt> iState; // TPckgBuf type can be used directly as IPC parameter
+    TBuf8<255> iMessageFromServer; // TODO not necessarily enough (was 255)    
+    TPckgBuf<TInt> iSize; // TPckgBuf type can be used directly as IPC parameter   
 
 signals:
     // void ReadyRead();
@@ -115,7 +115,7 @@ private:
 private: 
     TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
-    QString iServerAddress;
+    QString iServerAddress;    
 };
 
 // needed for creating server thread.
@@ -163,6 +163,8 @@ class CServiceProviderServerSession : public CSession2
         RMessage2 iMsg; // For replying pending service package requests
         QQueue<QServicePackage> iPendingPackageQueue;
         TBool iPendingPackageRequest;
+        QByteArray iBlockData;
+        int iTotalSize;
     };
 
 
@@ -195,6 +197,7 @@ protected:
 private:
     RServiceSession* iClientSession;
     SymbianClientEndPoint* iOwnerEndPoint;
+    QByteArray iByteArray;
 };
 
 QTM_END_NAMESPACE
