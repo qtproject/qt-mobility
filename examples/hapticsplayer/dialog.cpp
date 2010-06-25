@@ -80,7 +80,6 @@ Dialog::Dialog()
     foreach(const QFeedbackActuator &dev, QFeedbackActuator::actuators()) {
         ui.actuators->addItem(dev.name());
     }
-    ui.actuators->addItem("test actuator");
 
     //adding the instant effects
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;

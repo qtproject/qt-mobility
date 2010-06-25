@@ -201,15 +201,15 @@ void QFeedbackImmersion::updateEffectProperty(const QFeedbackHapticsEffect *effe
                                            convertedDuration(effect->duration()),
                                            effect->intensity() * qreal(VIBE_MAX_MAGNITUDE), effect->period(),
                                            VIBE_DEFAULT_STYLE,
-                                           effect->attackTime(), effect->attackIntensity(),
-                                           effect->fadeTime(), effect->fadeIntensity());
+                                           effect->attackTime(), effect->attackIntensity() * qreal(VIBE_MAX_MAGNITUDE),
+                                           effect->fadeTime(), effect->fadeIntensity() * qreal(VIBE_MAX_MAGNITUDE));
     } else {
         status = ImmVibeModifyPlayingMagSweepEffect(handleForActuator(effect->actuator()), effectHandle,
                                            convertedDuration(effect->duration()),
                                            effect->intensity() * qreal(VIBE_MAX_MAGNITUDE),
                                            VIBE_DEFAULT_STYLE,
-                                           effect->attackTime(), effect->attackIntensity(),
-                                           effect->fadeTime(), effect->fadeIntensity());
+                                           effect->attackTime(), effect->attackIntensity() * qreal(VIBE_MAX_MAGNITUDE),
+                                           effect->fadeTime(), effect->fadeIntensity() * qreal(VIBE_MAX_MAGNITUDE));
     }
 
     if (VIBE_FAILED(status))
@@ -244,13 +244,13 @@ void QFeedbackImmersion::setEffectState(const QFeedbackHapticsEffect *effect, QF
             if (effect->period() > 0) {
                 status = ImmVibePlayPeriodicEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
                     qRound(effect->intensity() * qreal(VIBE_MAX_MAGNITUDE)), effect->period(),
-                    VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
-                    effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
+                    VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity() * qreal(VIBE_MAX_MAGNITUDE),
+                    effect->fadeTime(), effect->fadeIntensity() * qreal(VIBE_MAX_MAGNITUDE), &effectHandle);
             } else {
                 status = ImmVibePlayMagSweepEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
                     qRound(effect->intensity() * qreal(VIBE_MAX_MAGNITUDE)),
-                    VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
-                    effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
+                    VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity() * qreal(VIBE_MAX_MAGNITUDE),
+                    effect->fadeTime(), effect->fadeIntensity() * qreal(VIBE_MAX_MAGNITUDE), &effectHandle);
             }
             if (VIBE_SUCCEEDED(status))
                 effectHandles.insert(effect, effectHandle);
