@@ -75,7 +75,7 @@ public:
         : QServiceIpcEndPoint(parent), session(session)
     {
         Q_ASSERT(session);
-        qDebug() << "Symbian IPC endpoint created. 1550 buffer v2";
+        qDebug() << "Symbian IPC endpoint created. 255 buffer v3";
         // TODO does not exist / work / may be useless.
         // connect(session, SIGNAL(ReadyRead()), this, SLOT(readIncoming()));
         // connect(session, SIGNAL(Disconnected()), this, SIGNAL(disconnected()));
@@ -213,7 +213,8 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     return proxy;
 }
 
-RServiceSession::RServiceSession(QString address)
+RServiceSession::RServiceSession(QString address) 
+: iSize(0)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "RServiceSession() for address: " << address;
@@ -320,10 +321,10 @@ TInt RServiceSession::StartServer()
 }
 
 void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
-{
-    qDebug("GTR RServiceSession::ListenForPackages()");
-    iArgs.Set(0, &iMessageFromServer);
-    iArgs.Set(1, &iState); // TODO Not sure if needed
+{    
+    qDebug() << "GTR RServiceSession::ListenForPackages(), iSize: " << iSize();
+    iArgs.Set(0, &iMessageFromServer); 
+    iArgs.Set(1, &iSize); // TODO Not sure if needed
     iArgs.Set(2, &iError); // TODO Not sure if needed
     // TODO needs to be enough room for response, currently is not
     // and also the possibility for error codes needs to be analyzed -
@@ -399,6 +400,8 @@ CServiceProviderServerSession::CServiceProviderServerSession(CServiceProviderSer
 void CServiceProviderServerSession::ConstructL()
 {
     qDebug("OTR CServiceProviderServerSession::ConstructL() TODO empty");
+    iTotalSize = 0;    // No data
+    iBlockData.clear();// clear the buffer
 }
 
 CServiceProviderServerSession::~CServiceProviderServerSession()
@@ -493,17 +496,34 @@ void CServiceProviderServerSession::SendServicePackage(const QServicePackage& aP
     qDebug("CServiceProviderServerSession:: SendServicePackage for package: ");
     printServicePackage(aPackage);
     if (iPendingPackageRequest) {
-        // Serialize the package
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_6);
-        out << aPackage;
-        qDebug() << "Size of package sent from server to client: " << block.count();
-        TPtrC8 ptr8((TUint8*)(block.constData()), block.size());
-
-        TPckgBuf<TInt> state(0);
-        iMsg.Write(0, ptr8);
-        // iMsg.Write(1, state); // TODO not sure if needed
+        if(iBlockData.isEmpty()){
+          // Serialize the package        
+          QDataStream out(&iBlockData, QIODevice::WriteOnly);
+          out.setVersion(QDataStream::Qt_4_6);
+          out << aPackage;
+          iTotalSize = iBlockData.size();
+        }
+        qDebug() << "Size of package sent from server to client: " << iBlockData.count();               
+        qDebug() << "Size of buffer from client: " << iMsg.GetDesMaxLength(0);
+        
+        int size = iBlockData.size();
+        if(size > iMsg.GetDesMaxLength(0)){
+          size = iMsg.GetDesMaxLength(0);
+          // enequeue the package so we send the  next chunk
+          // when the next request comes through
+          iPendingPackageQueue.enqueue(aPackage); 
+        }
+        TPtrC8 ptr8((TUint8*)(iBlockData.constData()), size);      
+        TInt status = iMsg.Write(0, ptr8);
+        iBlockData.remove(0, size); // TODO: if this efficient?
+        if(status == KErrOverflow){
+          qDebug() << "OTR Server to client, got overflow, sending 0 bytes";
+        }
+        else if(status != KErrNone){
+          qDebug() << "OTR SendServicePackage: error code from send: " << status;
+        }
+        TPckgBuf<TInt> totalSize(iTotalSize);
+        iMsg.WriteL(1,totalSize);        
         // iMsg.Write(2, ); // TODO not sure if needed
         iMsg.Complete(EPackageRequestComplete);
         iPendingPackageRequest = EFalse;
@@ -551,16 +571,26 @@ void ServiceMessageListener::RunL()
         // Client side has received a service package from server. Pass it onwards and
         // issue new pending request.
         qDebug() << "RunL length of the package received client side is: " << iClientSession->iMessageFromServer.Length();
-        QByteArray byteArray((const char*)iClientSession->iMessageFromServer.Ptr(),
+        if(iClientSession->iMessageFromServer.Length() == 0){
+          // we received 0 bytes from the other side, 
+          // normally because it tried to write more bytes 
+          // than were in the TDes
+          User::Leave(KErrTooBig); 
+        }
+                
+        iByteArray.append((const char*)iClientSession->iMessageFromServer.Ptr(),
                              iClientSession->iMessageFromServer.Length());
-        QDataStream in(byteArray);
-        QServicePackage results;
-        in >> results;
+        if(iByteArray.length() >= iClientSession->iSize()){        
+          QDataStream in(iByteArray);
+          iByteArray.clear();
+          QServicePackage results;
+          in >> results;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-        qDebug() << "ServiceMessageListener Reproduced service package: ";
-        printServicePackage(results);
+          qDebug() << "ServiceMessageListener Reproduced service package: ";
+          printServicePackage(results);
 #endif
-        iOwnerEndPoint->PackageReceived(results);
+          iOwnerEndPoint->PackageReceived(results);
+        }          
         StartListening();
     }
 }
