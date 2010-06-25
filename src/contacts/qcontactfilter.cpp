@@ -54,6 +54,8 @@
   \brief The QContactFilter class is used to select contacts made available
   through a QContactManager.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class is used as a parameter to various functions offered by QContactManager, to allow
