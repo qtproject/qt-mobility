@@ -50,6 +50,10 @@
 #include <bt_sock.h>
 #endif
 
+#ifndef QT_NO_DBUS
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -84,13 +88,20 @@ public:
 public:
     QBluetoothSocket *socket;
 
+#ifdef Q_OS_SYMBIAN
     QBluetoothSocket *pendingSocket;
-    QList<QBluetoothSocket *> activeSockets;
+#endif
+    mutable QList<QBluetoothSocket *> activeSockets;
 
     int maxPendingConnections;
 
 protected:
     QRfcommServer *q_ptr;
+
+private:
+#ifndef QT_NO_DBUS
+    QSocketNotifier *socketNotifier;
+#endif
 };
 
 QTM_END_NAMESPACE

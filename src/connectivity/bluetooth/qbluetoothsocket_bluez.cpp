@@ -284,6 +284,21 @@ void QBluetoothSocket::close()
     qDebug() << Q_FUNC_INFO << "not implemented";
 }
 
+bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketState socketState,
+                                           OpenMode openMode)
+{
+    Q_D(QBluetoothSocket);
+
+    d->socket = socketDescriptor;
+}
+
+int QBluetoothSocket::socketDescriptor() const
+{
+    Q_D(const QBluetoothSocket);
+
+    return d->socket;
+}
+
 QBluetoothSocketPrivate::QBluetoothSocketPrivate()
 :   socketType(QBluetoothSocket::UnknownSocketType), state(QBluetoothSocket::UnconnectedState),
     socketError(QBluetoothSocket::UnknownSocketError), rxOffset(0), socket(-1),

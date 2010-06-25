@@ -121,8 +121,9 @@ public:
     //qint64 readBufferSize() const;
     //void setReadBufferSize(qint64 size);
 
-    //bool setSocketDescriptor(int socketDescriptor, SocketState socketState = ConnectedState, OpenMode openMode = ReadWrite);
-    //int socketDescriptor() const;
+    bool setSocketDescriptor(int socketDescriptor, SocketState socketState = ConnectedState,
+                             OpenMode openMode = ReadWrite);
+    int socketDescriptor() const;
 
     SocketType socketType() const;
     SocketState state() const;
