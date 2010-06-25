@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ Q_DECLARE_METATYPE(QList<int>)
 
 #define RETURN_s_IF_m_impl_IS_NULL(s) \
     if (!m_impl) { \
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started")); \
+        emit error(QMediaRecorder::ResourceError, QXARecordSession::tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Service has not been started\"))"); \
         return s; \
         }
@@ -68,7 +68,7 @@ Q_DECLARE_METATYPE(QList<int>)
  */
 #define RETURN_IF_m_impl_IS_NULL \
     if (!m_impl) { \
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started")); \
+        emit error(QMediaRecorder::ResourceError, QXARecordSession::tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Service has not been started\"))"); \
         return; \
         }
@@ -88,10 +88,10 @@ m_previousState(QMediaRecorder::StoppedState)
             m_containerMimeType = QString("audio/wav");
             m_audioencodersettings.setCodec("pcm");
             m_audioencodersettings.setBitRate(0);
-            m_audioencodersettings.setChannelCount(1);
-            m_audioencodersettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
-            m_audioencodersettings.setQuality(QtMediaServices::VeryLowQuality);
-            m_audioencodersettings.setSampleRate(8000);
+            m_audioencodersettings.setChannelCount(-1);
+            m_audioencodersettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+            m_audioencodersettings.setQuality(QtMultimediaKit::NormalQuality);
+            m_audioencodersettings.setSampleRate(-1);
             QT_TRACE1("Initialized implementation");
         }
         else {
@@ -198,8 +198,8 @@ qint64 QXARecordSession::duration()
 void QXARecordSession::applySettings()
 {
     /* Settings can only be applied when the recorder is in the stopped
-     * state after creation.*/
-    if ((state() == QMediaRecorder::StoppedState)) {
+     * state after creation. */
+    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
         if (m_appliedaudioencodersettings != m_audioencodersettings)
             setEncoderSettingsToImpl();
     }
@@ -455,7 +455,7 @@ void QXARecordSession::setAudioSettings(const QAudioEncoderSettings &settings)
 {
     /* Settings can only be set when the recorder is in the stopped
      * state after creation. */
-    if ((state() == QMediaRecorder::StoppedState) /*&& (m_state == m_previousState)*/) {
+    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
         m_audioencodersettings = settings;
     }
     else {
@@ -469,7 +469,8 @@ QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
     QT_TRACE_FUNCTION_ENTRY;
     Q_UNUSED(codec);
     QStringList options;
-    if (codec.compare("aac") == 0)
+    if ((codec.compare("aac") == 0) ||
+            (codec.compare("amr") == 0))
         {
         options << "bitrate";
         }
@@ -616,12 +617,10 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     TPtrC16 tempPtr(reinterpret_cast<const TUint16 *>(tempStr.utf16()));
     m_impl->setContainerType(tempPtr);
 
-    /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
-        if (m_audioencodersettings.bitRate() == -1) {
-            m_impl->setOptimalBitRate();
-        }
-        else if (m_audioencodersettings.bitRate() < 0 ) {
+    /* Validate and set bitrate only if encoding mode is other than quality encoding and container type is not wav*/
+    if ((m_audioencodersettings.encodingMode() != QtMultimediaKit::ConstantQualityEncoding) && 
+        (m_containerMimeType.toLower().compare("audio/wav") != 0)) {
+        if (m_audioencodersettings.bitRate() < 0 ) {
             emit error(QMediaRecorder::FormatError, tr("Invalid bitrate"));
             SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid bitrate\"))");
             return false;
@@ -657,21 +656,21 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     }
 
     switch (m_audioencodersettings.encodingMode()) {
-    case QtMediaServices::ConstantQualityEncoding: {
+    case QtMultimediaKit::ConstantQualityEncoding: {
             switch (m_audioencodersettings.quality()) {
-            case QtMediaServices::VeryLowQuality:
+            case QtMultimediaKit::VeryLowQuality:
                 m_impl->setVeryLowQuality();
                 break;
-            case QtMediaServices::LowQuality:
+            case QtMultimediaKit::LowQuality:
                 m_impl->setLowQuality();
                 break;
-            case QtMediaServices::NormalQuality:
+            case QtMultimediaKit::NormalQuality:
                 m_impl->setNormalQuality();
                 break;
-            case QtMediaServices::HighQuality:
+            case QtMultimediaKit::HighQuality:
                 m_impl->setHighQuality();
                 break;
-            case QtMediaServices::VeryHighQuality:
+            case QtMultimediaKit::VeryHighQuality:
                 m_impl->setVeryHighQuality();
                 break;
             default:
@@ -681,7 +680,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }; /* end of switch (m_audioencodersettings.quality())*/
         }
         break;
-    case QtMediaServices::ConstantBitRateEncoding: {
+    case QtMultimediaKit::ConstantBitRateEncoding: {
             TInt32 status = m_impl->setCBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -695,7 +694,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMediaServices::AverageBitRateEncoding: {
+    case QtMultimediaKit::AverageBitRateEncoding: {
             TInt32 status = m_impl->setVBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -709,7 +708,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMediaServices::TwoPassEncoding:
+    case QtMultimediaKit::TwoPassEncoding:
         // fall through
     default: {
             emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -718,19 +717,16 @@ bool QXARecordSession::setEncoderSettingsToImpl()
         }
     }; /* switch (m_audioencodersettings.encodingMode()) */
 
-    /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
-        if (m_audioencodersettings.sampleRate() == -1) {
-            m_impl->setOptimalSampleRate();
-        }
-        else if (m_audioencodersettings.sampleRate() <= 0) {
-            emit error(QMediaRecorder::FormatError, tr("Invalid sample rate"));
-            SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid sample rate\"));");
-            return false;
-        }
-        else {
-            m_impl->setSampleRate(m_audioencodersettings.sampleRate());
-        }
+    if (m_audioencodersettings.sampleRate() == -1) {
+        m_impl->setOptimalSampleRate();
+    }
+    else if (m_audioencodersettings.sampleRate() <= 0) {
+        emit error(QMediaRecorder::FormatError, tr("Invalid sample rate"));
+        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid sample rate\"));");
+        return false;
+    }
+    else {
+        m_impl->setSampleRate(m_audioencodersettings.sampleRate());
     }
     m_appliedaudioencodersettings = m_audioencodersettings;
     QT_TRACE_FUNCTION_EXIT;
