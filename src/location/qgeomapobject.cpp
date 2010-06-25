@@ -192,7 +192,7 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
     Q_D(const QGeoMapObject);
 
     if (d->children.size() == 0)
-        return false;
+        return d_ptr->boundingBox.contains(coordinate);
 
     for (int i = 0; i < d->children.size(); ++i)
         if (d->children.at(i)->contains(coordinate))
