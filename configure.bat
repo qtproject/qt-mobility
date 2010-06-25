@@ -207,7 +207,7 @@ goto cmdline_parsing
 
 :cntmodelTag
 REM Selects using the local CNTMODEL code instead of the SDKs
-set BUILD_SYMBIANCNTMODEL = yes
+set BUILD_SYMBIANCNTMODEL=yes
 shift
 goto cmdline_parsing
 
@@ -482,7 +482,7 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
-
+REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
 REM compile tests go here.
