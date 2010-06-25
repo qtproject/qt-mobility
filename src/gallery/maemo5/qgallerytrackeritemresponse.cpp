@@ -58,9 +58,10 @@ public:
     QGalleryTrackerItemResponsePrivate(
             const QGalleryTrackerItemListArguments &arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
+            bool live,
             int cursorPosition,
             int minimumPagedItems)
-        : QGalleryTrackerItemListPrivate(arguments, cursorPosition, minimumPagedItems)
+        : QGalleryTrackerItemListPrivate(arguments, live, cursorPosition, minimumPagedItems)
         , metaDataInterface(metaDataInterface)
         , fieldNames(arguments.fieldNames)
     {
@@ -73,12 +74,13 @@ public:
 QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
         const QGalleryTrackerItemListArguments &arguments,
         const QGalleryDBusInterfacePointer &metaDataInterface,
+        bool live,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerItemList(
             *new QGalleryTrackerItemResponsePrivate(
-                    arguments, metaDataInterface, cursorPosition, minimumPagedItems),
+                    arguments, metaDataInterface, live, cursorPosition, minimumPagedItems),
             parent)
 {
 }
@@ -134,10 +136,12 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
         connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
                 this, SLOT(_q_editFinished(QGalleryTrackerMetaDataEdit*)));
 
-        if (d->edits.isEmpty())
-            QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+        connect(this, SIGNAL(inserted(int,int)), edit, SLOT(itemsInserted(int,int)));
+        connect(this, SIGNAL(removed(int,int)), edit, SLOT(itemsRemoved(int,int)));
 
         d->edits.append(edit);
+
+        d->requestUpdate();
     }
 
     edit->setValue(

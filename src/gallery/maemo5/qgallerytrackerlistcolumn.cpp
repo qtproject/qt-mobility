@@ -53,6 +53,18 @@ QVariant QGalleryTrackerStringColumn::toVariant(const QString &string) const
     return QVariant(string);
 }
 
+QVariant QGalleryTrackerStringListColumn::toVariant(const QString &string) const
+{
+    return string.split(m_separatorChar, QString::SkipEmptyParts);
+}
+
+QString QGalleryTrackerStringListColumn::toString(const QVariant &variant) const
+{
+    return variant.type() == QVariant::StringList
+        ? variant.toStringList().join(m_separatorString)
+        : variant.toString();
+}
+
 QVariant QGalleryTrackerIntegerColumn::toVariant(const QString &string) const
 {
     bool ok;

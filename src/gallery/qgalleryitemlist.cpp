@@ -228,6 +228,12 @@ QGalleryItemList::~QGalleryItemList()
 */
 
 /*!
+    \fn QGalleryItemList::propertyType(int key) const
+
+    Returns the type of the property identified by \a key.
+*/
+
+/*!
     \property QGalleryItemList::cursorPosition
 
     \brief The current position of the cache cursor.
@@ -337,6 +343,13 @@ void QGalleryItemList::setMetaData(int index, const QString &property, const QVa
 
     Signals that \a count gallery items have been moved \a from one starting index
     \a to another.
+*/
+
+/*!
+    \fn QGalleryItemList::statusChanged(int index, int count)
+
+    Signals that the status of \a count gallery items starting at \a index has
+    changed.
 */
 
 /*!

@@ -203,7 +203,7 @@ void QGalleryTrackerThumbnailColumn::loadWatcherFinished()
 
     for (int i = 0, count = loadWatcher->future().resultCount(); i < count; ++i) {
         if (loadWatcher->resultAt(i).isNull()) {
-            urls.append(QLatin1String("file://") + loadWatcher->filePaths.at(i));
+            urls.append(QUrl::fromLocalFile(loadWatcher->filePaths.at(i)).toString());
             mimeTypes.append(loadWatcher->mimeTypes.at(i));
             filePaths.append(loadWatcher->filePaths.at(i));
             imageIds.append(loadWatcher->imageIds.at(i));
@@ -321,6 +321,7 @@ void QGalleryTrackerThumbnailColumn::dbusFinished(uint id)
             it != m_dbusWatchers.end();
             ++it) {
         if ((*it)->id == id) {
+
             QGalleryTrackerThumbnailDBusWatcher *dbusWatcher = *it;
 
             QGalleryTrackerThumbnailLoadWatcher *loadWatcher
@@ -345,12 +346,15 @@ void QGalleryTrackerThumbnailColumn::dbusFinished(uint id)
 
 QVariant QGalleryTrackerThumbnailColumn::loadThumbnail(const QString &filePath)
 {
+#ifdef Q_WS_MAEMO_5
+    const QString hash = QCryptographicHash::hash(
+            QUrl::fromLocalFile(filePath).toString().toUtf8(), QCryptographicHash::Md5).toHex();
+
+    QString imagePath = m_thumbnailDir + hash + QLatin1String(".jpeg");
+#else
     const QString hash = QCryptographicHash::hash(
             QUrl::fromLocalFile(filePath).toEncoded(), QCryptographicHash::Md5).toHex();
 
-#ifdef Q_WS_MAEMO_5
-    QString imagePath = m_thumbnailDir + hash + QLatin1String(".jpeg");
-#else
     QString imagePath = m_thumbnailDir + hash + QLatin1String(".png");
 #endif
 
@@ -360,8 +364,17 @@ QVariant QGalleryTrackerThumbnailColumn::loadThumbnail(const QString &filePath)
         if (index != -1 && index != filePath.count() - 1) {
             imagePath = filePath.mid(0, index + 1)
                     + m_localDir
-                    + QUrl::toPercentEncoding(filePath.mid(index + 1))
+#ifdef Q_WS_MAEMO_5
+                    + QCryptographicHash::hash(
+                            filePath.mid(index + 1).toUtf8(),
+                            QCryptographicHash::Md5).toHex()
                     + QLatin1String(".jpeg");
+#else
+            + QCryptographicHash::hash(
+                    QUrl::toPercentEncoding(filePath.mid(index + 1)),
+                    QCryptographicHash::Md5).toHex()
+                    + QLatin1String(".png");
+#endif
 
             if (!QFile::exists(imagePath)) {
 #ifdef Q_WS_MAEMO_5

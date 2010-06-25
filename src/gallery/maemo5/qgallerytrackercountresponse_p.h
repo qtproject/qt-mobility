@@ -64,9 +64,10 @@ QTM_BEGIN_NAMESPACE
 
 struct QGalleryTrackerCountResponseArguments
 {
-    QGalleryTrackerCountResponseArguments() : accumulative(false) {}
+    QGalleryTrackerCountResponseArguments() : accumulative(false), updateMask(0) {}
 
     bool accumulative;
+    int updateMask;
     QGalleryDBusInterfacePointer queryInterface;
     QString queryMethod;
     QVariantList queryArguments;
@@ -87,6 +88,9 @@ public:
     void cancel();
 
     bool waitForFinished(int msecs);
+
+public Q_SLOTS:
+    void refresh(int serviceId = -1);
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerCountResponse)

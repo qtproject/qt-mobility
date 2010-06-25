@@ -12,11 +12,15 @@ DEPENDPATH += ../../src/gallery
 
 HEADERS = \
     download.h \
-    downloadcompletedialog.h \
+    downloaddelegate.h \
+    downloadmodel.h \
+    iteminformationdialog.h \
     sharewidget.h
 
 SOURCES = \
     download.cpp \
-    downloadcompletedialog.cpp \
+    downloaddelegate.cpp \
+    downloadmodel.cpp \
+    iteminformationdialog.cpp \
     main.cpp \
     sharewidget.cpp

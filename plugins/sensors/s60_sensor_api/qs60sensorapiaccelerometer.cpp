@@ -50,7 +50,7 @@
 // Constants
 const int KAccelerometerSensorUID = 0x10273024;
 
-const char *QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
+char const * const QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
 
 QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     : QSensorBackend(sensor)
@@ -72,7 +72,6 @@ QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     
     // 2G - mode
     addDataRate(100, 100);
-    sensor->setDataRate(100);
     addOutputRange(-22.418, 22.418, 0.17651);
     setDescription(QLatin1String("lis302dl"));
     

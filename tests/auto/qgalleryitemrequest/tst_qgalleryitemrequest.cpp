@@ -76,6 +76,7 @@ public:
     int propertyKey(const QString &) const { return -1; }
     QGalleryProperty::Attributes propertyAttributes(int) const {
         return QGalleryProperty::Attributes(); }
+    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
 
     int count() const { return 0; }
 

@@ -101,6 +101,7 @@ public:
     virtual QStringList propertyNames() const = 0;
     virtual int propertyKey(const QString &property) const = 0;
     virtual QGalleryProperty::Attributes propertyAttributes(int key) const = 0;
+    virtual QVariant::Type propertyType(int key) const = 0;
 
     int cursorPosition() const;
     virtual int minimumPagedItems() const;
@@ -126,6 +127,7 @@ Q_SIGNALS:
     void inserted(int index, int count);
     void removed(int index, int count);
     void moved(int from, int to, int count);
+    void statusChanged(int index, int count);
 
     void metaDataChanged(int index, int count, const QList<int> &keys = QList<int>());
 

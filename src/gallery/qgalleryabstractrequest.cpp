@@ -169,6 +169,17 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 */
 
 /*!
+    \enum QGalleryAbstractRequest::Scope
+
+    Identifies the scope of query.
+
+    \value AllDescendants The query will return all descendents of the scope
+    item.
+    \value DirectDescendants The query will return only direct descendents of
+    the scope item.
+*/
+
+/*!
     Constructs a new gallery \a type request.
 
     The \a parent is passed to QObject.

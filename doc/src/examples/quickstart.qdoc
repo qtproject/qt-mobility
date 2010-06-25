@@ -142,7 +142,7 @@ on which parts of an API is utilized by an application.
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
 \row
     \o \l {Contacts}
-    \o ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData
+    \o ReadUserData WriteUserData
 \row
     \o \l {Location}
     \o Location
@@ -154,7 +154,7 @@ on which parts of an API is utilized by an application.
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
 \row
     \o \l {Publish And Subscribe}
-    \o ReadDeviceData WriteDeviceData
+    \o Capability depends on P&S value being read/written. API itself doesn't require any capability.
 \row
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.

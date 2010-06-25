@@ -99,7 +99,7 @@ void GrueSensorReading::setChanceOfBeingEaten(qreal chanceOfBeingEaten)
     \sa QSensorFilter::filter()
 */
 
-const char *GrueSensor::type("GrueSensor");
+char const * const GrueSensor::type("GrueSensor");
 
 /*!
     \class GrueSensor

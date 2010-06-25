@@ -4,11 +4,8 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Qt Mobility Project 1.1: bearermonitor.cpp Example File (bearermonitor/bearermonitor.cpp)</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
-</head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
@@ -16,7 +13,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">bearermonitor.cpp Example File</h1>
 <span class="small-subtitle">bearermonitor/bearermonitor.cpp</span>
 <div class="descr"/>
-<pre class="highlightedCode"><span class="comment">    /****************************************************************************
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
     **
     ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
@@ -98,7 +95,7 @@
                 break;
             }
         }
-
+        connect(&amp;manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
         connect(&amp;manager, SIGNAL(configurationAdded(const QNetworkConfiguration&amp;)),
                 this, SLOT(configurationAdded(const QNetworkConfiguration&amp;)));
         connect(&amp;manager, SIGNAL(configurationRemoved(const QNetworkConfiguration&amp;)),
@@ -106,7 +103,6 @@
         connect(&amp;manager, SIGNAL(configurationChanged(const QNetworkConfiguration&amp;)),
                 this, SLOT(configurationChanged(const QNetworkConfiguration)));
         connect(&amp;manager, SIGNAL(updateCompleted()), this, SLOT(updateConfigurations()));
-        connect(&amp;manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
 
     #ifdef Q_OS_WIN
         connect(registerButton, SIGNAL(clicked()), this, SLOT(registerNetwork()));
@@ -129,6 +125,10 @@
     #endif
         connect(scanButton, SIGNAL(clicked()),
                 this, SLOT(performScan()));
+
+        <span class="comment">// Just in case update all configurations so that all</span>
+        <span class="comment">// configurations are up to date.</span>
+        manager.updateConfigurations();
     }
 
     BearerMonitor::~BearerMonitor()
@@ -226,6 +226,10 @@
     {
         progressBar-&gt;hide();
         scanButton-&gt;show();
+
+        <span class="comment">// Just in case update online state, on Symbian platform</span>
+        <span class="comment">// WLAN scan needs to be triggered initially to have their true state.</span>
+        onlineStateChanged(manager.isOnline());
 
         QList&lt;QTreeWidgetItem *&gt; items = treeWidget-&gt;findItems(QLatin1String(&quot;*&quot;), Qt::MatchWildcard);
         QMap&lt;QString, QTreeWidgetItem *&gt; itemMap;
@@ -435,6 +439,5 @@
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+</tr></table></div></address></body>
 </html>

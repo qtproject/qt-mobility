@@ -54,32 +54,51 @@ class QDocumentGallery;
 class QGalleryUrlRequest;
 QTM_END_NAMESPACE
 
-class ShareWidget;
-
 QTM_USE_NAMESPACE
 
 class Download : public QObject
 {
     Q_OBJECT
 public:
+    enum State
+    {
+        Downloading,
+        Finalizing,
+        Finished,
+        DownloadError,
+        ItemError
+    };
+
     Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent);
     ~Download();
 
+    State state() const;
+
     QVariant itemId() const;
+    QString itemType() const;
+    QString displayName() const;
+    int currentProgress() const;
+    int maximumProgress() const;
 
 signals:
-    void succeeded(Download *download);
-    void failed(Download *download);
+    void progressChanged(Download *download);
+    void stateChanged(Download *download);
 
 private slots:
     void networkMetaDataChanged();
+    void networkProgress(qint64 current, qint64 maximum);
     void networkReadyRead();
     void networkFinished();
+    void urlRequestProgress(int current, int maximum);
     void urlRequestFinished(int result);
 
 private:
+    State downloadState;
+    int currentDownloadProgress;
+    int maximumDownloadProgress;
     QNetworkReply *networkReply;
     QGalleryUrlRequest *urlRequest;
+    QString fileName;
     QFile file;
 };
 

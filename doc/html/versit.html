@@ -5,16 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- versit.qdoc -->
   <title>Qt Mobility Project 1.1: Versit API</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
-</head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="versit.html">Versit API</a></li><div class="toc">
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Versit API</li><div class="toc">
 <h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
@@ -28,7 +25,7 @@
 <div class="descr"/>
 <a name="namespace"></a>
 <h2>Namespace</h2>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h2>Overview</h2>
 <p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
@@ -36,7 +33,7 @@
 <p>Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="usage"></a>
 <h2>Usage</h2>
-<pre class="highlightedCode">        <span class="comment">// Create the input vCard</span>
+<pre class="highlightedCode brush: cpp">        <span class="comment">// Create the input vCard</span>
         QBuffer input;
         input.open(QBuffer::ReadWrite);
         QByteArray inputVCard =
@@ -94,6 +91,5 @@
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+</tr></table></div></address></body>
 </html>

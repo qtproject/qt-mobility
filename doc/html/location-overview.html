@@ -5,16 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- location.qdoc -->
   <title>Qt Mobility Project 1.1: Location</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
-</head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="location-overview.html">Location</a></li><div class="toc">
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Location</li><div class="toc">
 <h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
@@ -36,7 +33,7 @@
 <p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
 <a name="namespace"></a>
 <h2>Namespace</h2>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h2>Overview</h2>
 <p>Location data involves a precisely specified position on the Earth's surface &#x2014; as provided by a latitude-longitude coordinate &#x2014; along with associated data, such as:</p>
@@ -55,7 +52,7 @@
 <h3>Requesting location data from data sources</h3>
 <p>To receive data from a source, connect to its <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal, then call either <a href="qgeopositioninfosource.html#startUpdates">startUpdates()</a> or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate()</a> to begin.</p>
 <p>Here is an example of a client that receives data from the default location data source, as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>():</p>
-<pre class="highlightedCode">    class MyClass : public QObject
+<pre class="highlightedCode brush: cpp">    class MyClass : public QObject
     {
         Q_OBJECT
     public:
@@ -88,12 +85,12 @@
 <p>Generally, the capabilities provided by the default position source as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>(), along with the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> class, are sufficient for retrieving location data. However, in some cases developers may wish to write their own custom location data sources.</p>
 <p>The <tt>LogFilePositionSource</tt> class in <tt>examples/logfilepositionsource</tt> shows how to subclass <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> to create a custom location data source.</p>
 <p>This example class reads location data from a text file, <i>log.txt</i>. The file specifies location data using a simple text format: it contains one location update per line, where each line contains a date/time, a latitude and a longitude, separated by spaces. The date/time is in ISO 8601 format and the latitude and longitude are in degrees decimal format. Here is an excerpt from <i>log.txt</i>:</p>
-<pre class="highlightedCode">        2009-08-24T22:25:01 -27.576082 153.092415
+<pre class="highlightedCode brush: cpp">        2009-08-24T22:25:01 -27.576082 153.092415
         2009-08-24T22:25:02 -27.576223 153.092530
         2009-08-24T22:25:03 -27.576364 153.092648</pre>
 <p>The class reads this data and distributes it via the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal.</p>
 <p>Here is the definition of the <tt>LogFilePositionSource</tt> class:</p>
-<pre class="highlightedCode">    class LogFilePositionSource : public QGeoPositionInfoSource
+<pre class="highlightedCode brush: cpp">    class LogFilePositionSource : public QGeoPositionInfoSource
     {
         Q_OBJECT
     public:
@@ -126,7 +123,7 @@
 </ul>
 <p>When a position update is available, the subclass emits the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal.</p>
 <p>Here are the key methods in the class implementation:</p>
-<pre class="highlightedCode">    LogFilePositionSource::LogFilePositionSource(QObject *parent)
+<pre class="highlightedCode brush: cpp">    LogFilePositionSource::LogFilePositionSource(QObject *parent)
         : QGeoPositionInfoSource(parent),
           logFile(new QFile(this)),
           timer(new QTimer(this))
@@ -186,7 +183,7 @@
             }
         }
     }</pre>
-<p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the exaple to see the data that is received by <tt>ClientApplication</tt>.</p>
+<p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the example to see the data that is received by <tt>ClientApplication</tt>.</p>
 <p>Before running the example, make sure you have done both <tt>make</tt> and <tt>make install</tt>.</p>
 <a name="examples"></a>
 <h2>Examples</h2>
@@ -216,6 +213,5 @@
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+</tr></table></div></address></body>
 </html>

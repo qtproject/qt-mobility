@@ -68,6 +68,7 @@ public:
     QStringList propertyNames() const;
     int propertyKey(const QString &name) const;
     QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
 
     int count() const;
 

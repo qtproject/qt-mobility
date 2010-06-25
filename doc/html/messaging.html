@@ -5,16 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- messaging.qdoc -->
   <title>Qt Mobility Project 1.1: Messaging</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
-</head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="messaging.html">Messaging</a></li><div class="toc">
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Messaging</li><div class="toc">
 <h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
@@ -40,7 +37,7 @@
 <p>The Qt Messaging API enables access to messaging services to search and sort messages, send messages, retrieve message data, and launch the preferred messaging client on the system to either display an existing message, compose a new message, or respond to an existing message.</p>
 <a name="namespace"></a>
 <h2>Namespace</h2>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h2>Overview</h2>
 <p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, MIME Email and TNEF Email messages is provided. Handling of messages that have only been partially retrieved is supported.</p>
@@ -115,12 +112,12 @@
 <a name="using-the-ordering-functions"></a>
 <h3>Using the Ordering Functions</h3>
 <p>An example of the use of Ordering functions can be found in the Send Message example.</p>
-<pre class="highlightedCode">    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
+<pre class="highlightedCode brush: cpp">    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
         QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);</pre>
 <a name="using-the-filter-functions"></a>
 <h3>Using the Filter Functions</h3>
 <p>The following code is taken from the Keep In Touch example, it demonstrates the use of filters to achieve desired effects. You can also see how the filters once constructed can be operated on by typical boolean operators, in the same way you would manipulate bit settings in C. In this way we can build more complex conditions.</p>
-<pre class="highlightedCode">    QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate,
+<pre class="highlightedCode brush: cpp">    QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate,
             QMessageDataComparator::GreaterThanEqual));
     QMessageFilter excludeFilter(QMessageFilter::byTimeStamp(maximumDate,
             QMessageDataComparator::GreaterThanEqual));
@@ -159,6 +156,5 @@
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+</tr></table></div></address></body>
 </html>

@@ -43,11 +43,16 @@
 
 #include <qmobilityglobal.h>
 
-#include <QtGui/qwidget.h>
+#include <QtGui/QMainWindow>
 
 QT_BEGIN_NAMESPACE
+class QComboBox;
+class QListView;
+class QModelIndex;
 class QNetworkReply;
 class QNetworkRequest;
+class QSplitter;
+class QUrl;
 class QWebView;
 QT_END_NAMESPACE
 
@@ -56,11 +61,11 @@ class QDocumentGallery;
 QTM_END_NAMESPACE
 
 class Download;
-class DownloadCompleteDialog;
+class DownloadModel;
 
 QTM_USE_NAMESPACE;
 
-class ShareWidget : public QWidget
+class ShareWidget : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -69,14 +74,22 @@ public:
 private slots:
     void unsupportedContent(QNetworkReply *reply);
     void downloadRequested(const QNetworkRequest &request);
-    void downloadSucceeded(Download *download);
-    void downloadFailed(Download *download);
+    void loadStarted();
+    void loadFinished();
+    void load();
+    void loadUrl(const QString &url);
+    void urlChanged(const QUrl &url);
+    void downloadActivated(const QModelIndex &index);
 
 private:
     QDocumentGallery *documentGallery;
+    DownloadModel *downloadModel;
     QWebView *webView;
-    DownloadCompleteDialog *downloadCompleteDialog;
-
+    QListView *downloadView;
+    QSplitter *splitter;
+    QComboBox *urlCombo;
+    QAction *reloadAction;
+    QAction *stopAction;
 
 };
 

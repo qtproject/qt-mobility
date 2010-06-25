@@ -47,7 +47,7 @@
 /**
  * set the id of the proximity sensor
  */
-const char *CRotationSensorSym::id("sym.rotation");
+char const * const CRotationSensorSym::id("sym.rotation");
 
 const TInt KMinimumRange = -180;
 const TInt KMaximumRange = 180;

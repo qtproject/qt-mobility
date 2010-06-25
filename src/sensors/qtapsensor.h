@@ -94,7 +94,7 @@ public:
     explicit QTapSensor(QObject *parent = 0) : QSensor(QTapSensor::type, parent) {}
     virtual ~QTapSensor() {}
     QTapReading *reading() const { return static_cast<QTapReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

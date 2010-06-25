@@ -88,6 +88,7 @@ QT_MOBILITY_BIN=
 QT_MOBILITY_PLUGINS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DEMOS=
 BUILD_DOCS=yes
 BUILD_TOOLS=yes
 RELEASEMODE=
@@ -129,6 +130,7 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
+    echo "-demos ............ Build demo applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
@@ -180,6 +182,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tests)
             BUILD_UNITTESTS="yes"
+            ;;
+        -demos)
+            BUILD_DEMOS="yes"
             ;;
         -examples)
             BUILD_EXAMPLES="yes"
@@ -383,6 +388,12 @@ else
     echo "build_examples = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$BUILD_DEMOS" ]; then
+    echo "build_demos = no" >> "$CONFIG_IN"
+else
+    echo "build_demos = yes" >> "$CONFIG_IN"
+fi
+
 if [ -z "$BUILD_DOCS" ]; then
     echo "build_docs = no" >> "$CONFIG_IN"
 else
@@ -468,13 +479,6 @@ else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
 fi
 
-# Now module selection
-# using 'expr match ....' should help a bit
-#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
-    # In theory we should do some sanity checking here.
-#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
-#fi
-
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
@@ -492,42 +496,44 @@ mkdir $shadowpath/include
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
-            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
+            $relpath/bin/syncheaders $shadowpath/include/QtBearer $relpath/src/bearer
             ;;
         publishsubscribe)
-            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
+            $relpath/bin/syncheaders $shadowpath/include/QtPublishSubscribe $relpath/src/publishsubscribe
             ;;
         location)
-            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location
             ;;
         serviceframework)
-            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             ;;
         systeminfo)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
+            $relpath/bin/syncheaders $shadowpath/include/QtSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include/QtmMedia $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/audio
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/video
             ;;
         messaging)
-            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
+            $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
             ;;
         versit)
             #versit implies contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         sensors)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
             ;;
         gallery)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/gallery

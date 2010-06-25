@@ -43,7 +43,9 @@
 #define QX11VIDEOSURFACE_H
 
 #include <QtGui/qwidget.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <qabstractvideosurface.h>
+
+#ifndef QT_NO_XVIDEO
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xv.h>
@@ -109,5 +111,7 @@ private:
 
     static int redistribute(int value, int fromLower, int fromUpper, int toLower, int toUpper);
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif

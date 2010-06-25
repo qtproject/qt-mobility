@@ -73,7 +73,7 @@ public:
     explicit QProximitySensor(QObject *parent = 0) : QSensor(QProximitySensor::type, parent) {}
     virtual ~QProximitySensor() {}
     QProximityReading *reading() const { return static_cast<QProximityReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

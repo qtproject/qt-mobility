@@ -260,7 +260,7 @@ void QGalleryQueryRequest::setScopeItemId(const QVariant &id)
     \brief A filter identifying the items a request should return.
 
     If no filter is set the results of the request will be determined
-    by the \l itemType and \scopeItemId properties.
+    by the \l itemType and \l scopeItemId properties.
 */
 
 QGalleryFilter QGalleryQueryRequest::filter() const

@@ -5,16 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- sf.qdoc -->
   <title>Qt Mobility Project 1.1: Qt Service Framework</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
-</head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="service-frameworks.html">Qt Service Framework</a></li><div class="toc">
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Qt Service Framework</li><div class="toc">
 <h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
@@ -44,7 +41,7 @@
 <p>The Qt Service Framework allows clients to discover and instantiate arbitrary services.</p>
 <a name="namespace"></a>
 <h2>Namespace</h2>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The Qt Service Framework defines a unified way of finding, implementing and accessing services across multiple platforms.</p>
@@ -62,7 +59,7 @@
 <a name="verbose-lookup"></a>
 <h3>Verbose Lookup</h3>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
-<pre class="highlightedCode">    QServiceManager manager;
+<pre class="highlightedCode brush: cpp">    QServiceManager manager;
     QServiceFilter filter(&quot;com.nokia.qt.examples.FileStorage&quot;);
     filter.setServiceName(&quot;FileStorage&quot;);
 
@@ -77,22 +74,22 @@
 <a name="default-lookup"></a>
 <h3>Default Lookup</h3>
 <p>It is assumed that the client has knowledge of the interface but does not really care about the specific type or version of the service implementing the interface. In such cases the default service lookup can be utilized to create a service object instance.</p>
-<pre class="highlightedCode">    QServiceManager manager;
+<pre class="highlightedCode brush: cpp">    QServiceManager manager;
     manager.setInterfaceDefault(&quot;FileStorageService&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <p>The above call to <a href="qservicemanager.html#setInterfaceDefault">QServiceManager::setInterfaceDefault</a>() registers the <i>FileStorageService</i> as default implementation. Whenever a client asks for an implementation of <i>com.nokia.qt.examples.FileStorage</i> the <i>FileStorageService</i> service will be loaded. If (at the time of this call) the <i>FileStorageService</i> provides multiple registered implementations/versions for the same interface the latest version becomes the default. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
 <p>The current scope of the service manager object determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface becomes the system wide default selection.</p>
 <a name="qobject-based-services"></a>
 <h4>QObject based services</h4>
 <p>This is the most common way of interacting with services.</p>
-<pre class="highlightedCode">    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
+<pre class="highlightedCode brush: cpp">    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
     if (storage)
         QMetaObject::invokeMethod(storage, &quot;deleteFile&quot;, Q_ARG(QString, &quot;/tmp/readme.txt&quot;));</pre>
 <p>The above invocation of the file storage object's deleteFile() function is done via the service's <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a>. The client does not require any knowledge of the objects actual type and therefore does not have to link against a service specific library.</p>
 <a name="typed-services"></a>
 <h4>Typed services</h4>
-<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disdvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
+<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilized by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disadvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
-<pre class="highlightedCode">    #include &lt;filestorage.h&gt;
+<pre class="highlightedCode brush: cpp">    #include &lt;filestorage.h&gt;
     ...
     QServiceManager manager;
     FileStorage *storage = 0;
@@ -119,7 +116,7 @@
 <a name="xml-format"></a>
 <h3>XML Format</h3>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
-<pre class="highlightedCode">    &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
+<pre class="highlightedCode brush: cpp">    &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
     &lt;!ELEMENT description ( #CDATA ) &gt;
     &lt;!ELEMENT filepath ( #PCDATA ) &gt;
     &lt;!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) &gt;
@@ -136,7 +133,7 @@
 <tr class="odd topAlign"><td><p>&quot;</p></td><td><p>filepath</p></td><td><p>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. <a href="http://qt.nokia.com/doc/4.6/qlibrary.html">QLibrary</a> is used to determine the platform specific parts of the plugin.</p></td></tr>
 <tr class="even topAlign"><td><p>&quot;</p></td><td><p>name</p></td><td><p>The name of the service.</p></td></tr>
 <tr class="odd topAlign"><td><p>interface</p></td><td><p></p></td><td><p>The <i>interface</i> describes the properties of the interface.</p></td></tr>
-<tr class="even topAlign"><td><p>&quot;</p></td><td><p>capabilities</p></td><td><p>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>capabilities</p></td><td><p>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. The list elements are comma-separated and spaces after commas are not permitted. This list can be empty.</p></td></tr>
 <tr class="odd topAlign"><td><p>&quot;</p></td><td><p>name</p></td><td><p>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</p></td></tr>
 <tr class="even topAlign"><td><p>&quot;</p></td><td><p>version</p></td><td><p>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
 </p></td></tr>
@@ -144,7 +141,7 @@
 <tr class="even topAlign"><td><p>&quot;</p></td><td><p>customproperty</p></td><td><p>An implementation specific key value pair which can be used for filtering or as description.</p></td></tr>
 </table>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
-<pre class="highlightedCode">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+<pre class="highlightedCode brush: cpp">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
     &lt;service&gt;
         &lt;name&gt;TestService&lt;/name&gt;
         &lt;filepath&gt;testserviceplugin&lt;/filepath&gt;
@@ -182,9 +179,9 @@
 <h2>Identifying Services</h2>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
-<pre class="highlightedCode">    QServiceManager mgr;
+<pre class="highlightedCode brush: cpp">    QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
+    filter.setInterface(&quot;com.nokia.qt.ILocation&quot;);
     QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
     for(int i = 0; i &lt; list.size(); i++) {
         QObject *serviceObject;
@@ -223,6 +220,5 @@
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+</tr></table></div></address></body>
 </html>

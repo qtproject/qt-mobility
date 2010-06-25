@@ -68,6 +68,7 @@ public:
     QGalleryTrackerItemResponse(
             const QGalleryTrackerItemListArguments &arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
+            bool live,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);
