@@ -93,19 +93,19 @@ Chat::~Chat()
 //! [clientConnected clientDisconnected]
 void Chat::clientConnected(const QString &name)
 {
-    ui->chat->insertPlainText(QString::fromLatin1("%1 has joined chat.").arg(name));
+    ui->chat->insertPlainText(QString::fromLatin1("%1 has joined chat.\n").arg(name));
 }
 
 void Chat::clientDisconnected(const QString &name)
 {
-    ui->chat->insertPlainText(QString::fromLatin1("%1 has left.").arg(name));
+    ui->chat->insertPlainText(QString::fromLatin1("%1 has left.\n").arg(name));
 }
 //! [clientConnected clientDisconnected]
 
 //! [connected]
 void Chat::connected(const QString &name)
 {
-    ui->chat->insertPlainText(QString::fromLatin1("Joined chat with %1.").arg(name));
+    ui->chat->insertPlainText(QString::fromLatin1("Joined chat with %1.\n").arg(name));
 }
 //! [connected]
 

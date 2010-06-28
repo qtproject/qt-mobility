@@ -165,7 +165,7 @@ void ChatServer::readSocket()
         return;
 
     while (socket->canReadLine()) {
-        QByteArray line = socket->readLine();
+        QByteArray line = socket->readLine().trimmed();
         emit messageReceived(socket->peerName(),
                              QString::fromUtf8(line.constData(), line.length()));
     }
