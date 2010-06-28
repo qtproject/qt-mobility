@@ -451,10 +451,10 @@ bool QValueSpaceSubscriber::isConnected() const
 
     \code
         QValueSpaceSubscriber base("/Settings");
-        QValueSpaceSubscriber equiv("/Settings/Nokia/General/Mappings);
+        QValueSpaceSubscriber equiv("/Settings/Nokia/General/Mappings");
 
         // Is true
-        equiv.value() == base.value("Nokia/General/Mapping");
+        equiv.value() == base.value("Nokia/General/Mappings");
     \endcode
 */
 QVariant QValueSpaceSubscriber::value(const QString & subPath, const QVariant &def) const
