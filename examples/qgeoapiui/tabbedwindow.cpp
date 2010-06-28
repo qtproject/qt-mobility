@@ -87,14 +87,12 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     m_geocodingTab = new GeocodingTab();
     m_reverseTab = new ReverseGeocodingTab();
     m_routingTab = new RouteTab();
-    m_mappingTab = new MapTileTab();
 
     m_tabWidget = new QTabWidget;
     m_tabWidget->addTab(servicesTab, tr("Service Providers"));
     m_tabWidget->addTab(m_routingTab, tr("Route"));
     m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
     m_tabWidget->addTab(m_reverseTab, tr("Reverse Geocoding"));
-    m_tabWidget->addTab(m_mappingTab, tr("Map Tile"));
 
     setCentralWidget(m_tabWidget);
     QTimer::singleShot(0, servicesTab, SLOT(initialize()));
@@ -120,6 +118,5 @@ void TabbedWindow::setProvider(QString providerId)
     m_geocodingTab->initialize(m_serviceProvider->searchManager());
     m_reverseTab->initialize(m_serviceProvider->searchManager());
     m_routingTab->initialize(m_serviceProvider->routingManager());
-    m_mappingTab->initialize(m_serviceProvider->mappingManager());
 }
 

@@ -48,6 +48,7 @@
 
 class QTreeWidget;
 class QLineEdit;
+class QPushButton;
 
 QTM_USE_NAMESPACE
 
@@ -75,6 +76,7 @@ private:
     QLineEdit *m_destLong;
     QLineEdit *m_destLat;
     QTreeWidget *m_resultTree;
+    QPushButton *updateBtn;
     QList<QGeoRoute> routes;
 };
 #endif /* ROUTETAB_H_ */

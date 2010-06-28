@@ -102,9 +102,12 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     QTreeWidgetItem* routeItem = new QTreeWidgetItem(top);
     routeItem->setText(0, "route");
 
-    QTreeWidgetItem* prop = new QTreeWidgetItem(routeItem);
-    prop->setText(0, "id");
-    prop->setText(1, route.routeId());
+    QTreeWidgetItem* prop=0;
+    if(!route.routeId().isEmpty()) {
+        prop = new QTreeWidgetItem(routeItem);
+        prop->setText(0, "id");
+        prop->setText(1, route.routeId());
+    }
 
     prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "mode");
@@ -117,12 +120,20 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     showBoundingBox(routeItem, route.bounds());
 
     QTreeWidgetItem* wayPointsItem = new QTreeWidgetItem(routeItem);
-    wayPointsItem->setText(0, "route overview");
+    QString overviewLabel = "route overview";
+    if(route.path().count()>100)
+        overviewLabel += " (First 100)";
+    wayPointsItem->setText(0, overviewLabel);
     showPoints(wayPointsItem, route.path());
 
     QList<QGeoRouteSegment> segments = route.routeSegments();
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
-    segmentsItem->setText(0, "segments (max 100 shown)");
+    QString segmentsLabel = "segments";
+    if(segments.length()>100)
+        segmentsLabel += " (First 100)";
+
+    segmentsItem->setText(0, segmentsLabel);
+
     segmentsItem->setText(1, QString().setNum(segments.length()));
     for (int i = 0; i < segments.length() && i<100; ++i) {
         showRouteSegment(segmentsItem, segments[i]);
@@ -210,7 +221,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
 
 void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)
 {
-    for (int i = 0; i < points.count(); ++i) {
+    for (int i = 0; i < points.count() && i<100; ++i) {
         QTreeWidgetItem* point = new QTreeWidgetItem(pointsItem);
         point->setText(0, QString().setNum(i + 1));
         point->setText(1, formatGeoCoordinate(points[i]));

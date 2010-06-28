@@ -13,7 +13,6 @@ SOURCES += main.cpp\
         routetab.cpp \
         geocodingtab.cpp \
         revgeocodingtab.cpp \
-        maptiletab.cpp \
         servicestab.cpp
 
 HEADERS  += routepresenter.h \
@@ -22,7 +21,6 @@ HEADERS  += routepresenter.h \
         routetab.h \
         geocodingtab.h \
         revgeocodingtab.h \
-        maptiletab.h \
         servicestab.h
 
 include(../examples.pri)
