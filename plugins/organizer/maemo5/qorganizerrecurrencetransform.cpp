@@ -352,19 +352,17 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
 
     // Recurrence dates
     std::vector< std::string > recurrenceDates = crecurrence->getRDays();
-    std::vector< std::string >::const_iterator i;
-    for (i = recurrenceDates.begin(); i != recurrenceDates.end(); ++i)
+    std::vector< std::string >::const_iterator recurrenceDate;
+    for (recurrenceDate = recurrenceDates.begin(); recurrenceDate != recurrenceDates.end(); ++recurrenceDate)
     {
-        std::string recurrenceDate = *i;
         // TODO: Here RDATE type from string should be parsed to QDate...
     }
 
     // Exception dates
     std::vector< std::string > exceptionDates = crecurrence->getEDays();
-    std::vector< std::string >::const_iterator i;
-    for (i = exceptionDates.begin(); i != exceptionDates.end(); ++i)
+    std::vector< std::string >::const_iterator exceptionDate;
+    for (exceptionDate = exceptionDates.begin(); exceptionDate != exceptionDates.end(); ++exceptionDate)
     {
-        std::string exceptionDate = *i;
         // TODO: Here RDATE type from string should be parsed to QDate...
     }
 }
