@@ -247,7 +247,7 @@ void tst_QContactActions::testDescriptor()
     // implementations (Provider is different) so they should NOT be equal.
     QVERIFY(multiActionOneDescriptor.actionName() == multiActionTwoDescriptor.actionName());
     QVERIFY(multiActionOneDescriptor.serviceName() == multiActionTwoDescriptor.serviceName());
-    //QVERIFY(multiActionOneDescriptor.implementationVersion() == multiActionTwoDescriptor.implementationVersion());// XXX TODO FIXME after QTMOBILITY-316 is fixed
+    QVERIFY(multiActionOneDescriptor.implementationVersion() == multiActionTwoDescriptor.implementationVersion());
     QVERIFY(multiActionOneDescriptor != multiActionTwoDescriptor);
 
     // verify that the meta data is reported correctly

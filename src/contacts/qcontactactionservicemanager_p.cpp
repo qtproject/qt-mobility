@@ -73,7 +73,16 @@ QContactActionServiceManager::QContactActionServiceManager()
 
 QContactActionServiceManager::~QContactActionServiceManager()
 {
-    qDeleteAll(m_actionFactoryHash);
+    // we don't use qDeleteAll() because some factories produce more than one action descriptor.
+    QList<QContactActionDescriptor> keys = m_actionFactoryHash.keys();
+    QSet<QContactActionFactory*> deletedFactories;
+    foreach (const QContactActionDescriptor& key, keys) {
+        QContactActionFactory *curr = m_actionFactoryHash.value(key);
+        if (!deletedFactories.contains(curr)) {
+            deletedFactories.insert(curr);
+            delete curr;
+        }
+    }
 }
 
 void QContactActionServiceManager::init()
