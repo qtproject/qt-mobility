@@ -44,6 +44,7 @@
 
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkcategoryid.h"
+#include "qlandmarknamesort.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,6 +66,9 @@ public:
 
     MatchingScheme matchingScheme() const;
     void setMatchingScheme(QLandmarkCategoryFetchRequest::MatchingScheme scheme);
+
+    QLandmarkNameSort sorting() const;
+    void setSorting(const QLandmarkNameSort &nameSort);
 
 private:
     Q_DISABLE_COPY(QLandmarkCategoryFetchRequest)

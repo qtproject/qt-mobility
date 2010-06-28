@@ -57,8 +57,17 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
+*/
+
+/*!
+    \enum QLandmarkCategoryFetchRequest::MatchingScheme
+    Defines the matching behavior of the request when a specific set of category ids is to be retrieved.
+    \value MatchAll A category must be returned for every id assigned to the filter.
+                    Failure to match every id results in a QLandmarkManager::DoesNotExistError.
+    \value MatchSubset Every id does not have to be matched to a category.  Matching
+                       only a subset of the assigned ids is acceptable.
 */
 
 /*!
@@ -124,7 +133,9 @@ void QLandmarkCategoryFetchRequest::setCategoryId(const QLandmarkCategoryId &cat
 /*!
     Returns the matching scheme for the fetch request.
 
-    By default the matching scheme is set to to \a MatchSubset
+    By default the matching scheme is set to to \c MatchSubset.  The matching scheme
+    only has an effect when a particular set of category ids are assigned to the fetch request.
+    If all categories are to be retrieved, then the matching scheme is ignored.
 */
 QLandmarkCategoryFetchRequest::MatchingScheme QLandmarkCategoryFetchRequest::matchingScheme() const
 {
@@ -133,12 +144,36 @@ QLandmarkCategoryFetchRequest::MatchingScheme QLandmarkCategoryFetchRequest::mat
 }
 
 /*!
-    Sets the \matchingScheme of the fetch request.
+    Sets the \a matchingScheme of the fetch request.
 */
 void QLandmarkCategoryFetchRequest::setMatchingScheme(QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme)
 {
     Q_D(QLandmarkCategoryFetchRequest);
     d->matchingScheme = matchingScheme;
+}
+
+/*!
+    Returns the sorting of the categories.
+    By default the sorting is case insensitive and in ascending order
+    according to the category name.
+
+    The sorting only takes effect when all categories are to be retrieved. (i.e. no category ids
+    are assigned to the fetch request).  If a particular set of categories are to be retrieved
+    then the sorting is ignored.
+*/
+QLandmarkNameSort QLandmarkCategoryFetchRequest::sorting() const
+{
+    Q_D(const QLandmarkCategoryFetchRequest);
+    return d->sorting;
+}
+
+/*!
+    Sets \a nameSort to specify the sorting of the returned categories.
+*/
+void QLandmarkCategoryFetchRequest::setSorting(const QLandmarkNameSort &nameSort)
+{
+    Q_D(QLandmarkCategoryFetchRequest);
+    d->sorting = nameSort;
 }
 
 #include "moc_qlandmarkcategoryfetchrequest.cpp"

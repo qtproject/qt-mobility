@@ -81,7 +81,7 @@ QTM_BEGIN_NAMESPACE
     of the landmark manager backend functionality.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-backend
 
     Instances of this class are usually provided by \l QLandmarkManagerEngineFactory, which is loaded
@@ -153,7 +153,7 @@ QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& fi
     Returns a list of all category identifiers.  Any error which occurs will be saved in \a
     error and \a errorString.
 */
-QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(QLandmarkManager::Error *error,
+QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
         QString *errorString) const
 {
     return QList<QLandmarkCategoryId>();
@@ -199,7 +199,16 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
     Overall operation errors are stored in \a error and \a errorString.
 */
 QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
-        QLandmarkManager::Error *error, QString *errorString) const
+                                                            QLandmarkManager::Error *error, QString *errorString) const
+{
+    return QList<QLandmarkCategory>();
+}
+
+/*!
+    Returns a list of all categories sorted according to the gien \a nameSort.
+*/
+QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QLandmarkNameSort &nameSort,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();
 }

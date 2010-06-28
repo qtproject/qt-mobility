@@ -67,9 +67,10 @@
 #include <qlandmarkfetchrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
+#include <qlandmarkcategoryidfetchrequest.h>
+#include <qlandmarkcategoryfetchrequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
-#include <qlandmarkcategoryfetchrequest.h>
 #include <qlandmarkimportrequest.h>
 #include <QMetaType>
 #include <QDebug>
@@ -172,6 +173,25 @@ private:
             if( !(lms.at(i).landmarkId() == lmIds.at(i)))
                 return false;
         }
+
+        return true;
+    }
+
+    bool checkCategoryIdFetchRequest(const QList<QLandmarkCategory> &cats, const QLandmarkNameSort &nameSort)
+    {
+        QLandmarkCategoryIdFetchRequest catIdFetchRequest(m_manager);
+        catIdFetchRequest.setSorting(nameSort);
+        QSignalSpy spyCatId(&catIdFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catIdFetchRequest.start();
+        if (!waitForAsync(spyCatId, &catIdFetchRequest))
+            return false;
+         QList<QLandmarkCategoryId> catIds = catIdFetchRequest.categoryIds();
+         if (catIds.count() != cats.count())
+            return false;
+         for (int i=0; i < catIds.count(); ++i) {
+            if (!(cats.at(i).categoryId() == catIds.at(i)))
+                return false;
+         }
 
         return true;
     }
@@ -1267,9 +1287,9 @@ private slots:
         QCOMPARE(cats.size(), 3);
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(0).categoryId().isValid(), true);
-        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).name(), QString("CAT3"));
         QCOMPARE(cats.at(1).categoryId().isValid(), true);
-        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).name(), QString("CAT2"));
         QCOMPARE(cats.at(2).categoryId().isValid(), true);
 
         QList<QLandmarkCategoryId> invalidCatIds;
@@ -1293,16 +1313,83 @@ private slots:
         QCOMPARE(cats.count(), 0);
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
 
-        //retrieve all categories
+        m_manager->removeCategory(cat1.categoryId());
+        cat1.setCategoryId(QLandmarkCategoryId());
+        m_manager->removeCategory(cat2.categoryId());
+        cat2.setCategoryId(QLandmarkCategoryId());
+        m_manager->removeCategory(cat3.categoryId());
+        cat3.setCategoryId(QLandmarkCategoryId());
+
+        QLandmarkCategory cat1lc;
+        cat1lc.setName("cat1");
+
+        QLandmarkCategory cat2lc;
+        cat2lc.setName("cat2");
+
+        QLandmarkCategory cat3lc;
+        cat3lc.setName("cat3");
+
+        //save categories of different case in a randomish order
+        QVERIFY(m_manager->saveCategory(&cat2lc));
+        QVERIFY(m_manager->saveCategory(&cat1));
+        QVERIFY(m_manager->saveCategory(&cat3));
+        QVERIFY(m_manager->saveCategory(&cat3lc));
+        QVERIFY(m_manager->saveCategory(&cat2));
+        QVERIFY(m_manager->saveCategory(&cat1lc));
+
+        //retrieve all categories in ascending order, case insensitive
         cats = m_manager->categories();
+
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
-        QCOMPARE(cats.count(), 3);
+        QCOMPARE(cats.count(), 6);
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
-        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("cat1"));
+        QCOMPARE(cats.at(2).name(), QString("cat2"));
+        QCOMPARE(cats.at(3).name(), QString("CAT2"));
+        QCOMPARE(cats.at(4).name(), QString("CAT3"));
+        QCOMPARE(cats.at(5).name(), QString("cat3"));
+
+        //try descending order, case insensitive
+        QLandmarkNameSort nameSort;
+        nameSort.setDirection(Qt::DescendingOrder);
+        cats = m_manager->categories(nameSort);
+
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("CAT3"));
+        QCOMPARE(cats.at(1).name(), QString("cat3"));
+        QCOMPARE(cats.at(2).name(), QString("cat2"));
+        QCOMPARE(cats.at(3).name(), QString("CAT2"));
+        QCOMPARE(cats.at(4).name(), QString("CAT1"));
+        QCOMPARE(cats.at(5).name(), QString("cat1"));
+
+        //try ascending order, case sensitive
+        nameSort.setDirection(Qt::AscendingOrder);
+        nameSort.setCaseSensitivity(Qt::CaseSensitive);
+        cats = m_manager->categories(nameSort);
+
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(1).name(), QString("CAT2"));
-        QCOMPARE(cats.at(1).categoryId().isValid(), true);
         QCOMPARE(cats.at(2).name(), QString("CAT3"));
-        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+        QCOMPARE(cats.at(3).name(), QString("cat1"));
+        QCOMPARE(cats.at(4).name(), QString("cat2"));
+        QCOMPARE(cats.at(5).name(), QString("cat3"));
+
+        //try descending order, case sensitive
+        nameSort.setDirection(Qt::DescendingOrder);
+        nameSort.setCaseSensitivity(Qt::CaseSensitive);
+        cats = m_manager->categories(nameSort);
+
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("cat3"));
+        QCOMPARE(cats.at(1).name(), QString("cat2"));
+        QCOMPARE(cats.at(2).name(), QString("cat1"));
+        QCOMPARE(cats.at(3).name(), QString("CAT3"));
+        QCOMPARE(cats.at(4).name(), QString("CAT2"));
+        QCOMPARE(cats.at(5).name(), QString("CAT1"));
     }
 
      void retrieveMultipleCategoriesAsync() {
@@ -1338,9 +1425,9 @@ private slots:
 
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(0).categoryId().isValid(), true);
-        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).name(), QString("CAT3"));
         QCOMPARE(cats.at(1).categoryId().isValid(), true);
-        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).name(), QString("CAT2"));
         QCOMPARE(cats.at(2).categoryId().isValid(), true);
 
         //try matching subset
@@ -1354,9 +1441,9 @@ private slots:
 
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(0).categoryId().isValid(), true);
-        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).name(), QString("CAT3"));
         QCOMPARE(cats.at(1).categoryId().isValid(), true);
-        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).name(), QString("CAT2"));
         QCOMPARE(cats.at(2).categoryId().isValid(), true);
 
 //
@@ -1394,26 +1481,107 @@ private slots:
 
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(0).categoryId().isValid(), true);
-        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).name(), QString("CAT3"));
         QCOMPARE(cats.at(1).categoryId().isValid(), true);
-        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).name(), QString("CAT2"));
         QCOMPARE(cats.at(2).categoryId().isValid(), true);
 
-        //try fetching all categories i.e. pass in an empty category id list
-        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchSubset);
+        //Setup categories of different case and spelling
+        //saved in random order
+        m_manager->removeCategory(cat1.categoryId());
+        cat1.setCategoryId(QLandmarkCategoryId());
+        m_manager->removeCategory(cat2.categoryId());
+        cat2.setCategoryId(QLandmarkCategoryId());
+        m_manager->removeCategory(cat3.categoryId());
+        cat3.setCategoryId(QLandmarkCategoryId());
+
+        QLandmarkCategory cat1lc;
+        cat1lc.setName("cat1");
+
+        QLandmarkCategory cat2lc;
+        cat2lc.setName("cat2");
+
+        QLandmarkCategory cat3lc;
+        cat3lc.setName("cat3");
+
+        QVERIFY(m_manager->saveCategory(&cat2lc));
+        QVERIFY(m_manager->saveCategory(&cat1));
+        QVERIFY(m_manager->saveCategory(&cat3));
+        QVERIFY(m_manager->saveCategory(&cat3lc));
+        QVERIFY(m_manager->saveCategory(&cat2));
+        QVERIFY(m_manager->saveCategory(&cat1lc));
+
+
+        //try fetching all categories in ascending order, case insensitive
+        QLandmarkNameSort nameSort;
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchAll);//this should be ignored since we're requesting all categories
         fetchRequest.setCategoryIds(QList<QLandmarkCategoryId>());
         fetchRequest.start();
 
         QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
         cats = fetchRequest.categories();
-        QCOMPARE(cats.size(), 3);
+        QVERIFY(checkCategoryIdFetchRequest(cats,nameSort));
 
+        QCOMPARE(cats.size(), 6);
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
-        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("cat1"));
+        QCOMPARE(cats.at(2).name(), QString("cat2"));
+        QCOMPARE(cats.at(3).name(), QString("CAT2"));
+        QCOMPARE(cats.at(4).name(), QString("CAT3"));
+        QCOMPARE(cats.at(5).name(), QString("cat3"));
+
+        //try descnding order case insensitive
+        nameSort.setDirection(Qt::DescendingOrder);
+        fetchRequest.setSorting(nameSort);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        cats = fetchRequest.categories();
+        QVERIFY(checkCategoryIdFetchRequest(cats,nameSort));
+
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("CAT3"));
+        QCOMPARE(cats.at(1).name(), QString("cat3"));
+        QCOMPARE(cats.at(2).name(), QString("cat2"));
+        QCOMPARE(cats.at(3).name(), QString("CAT2"));
+        QCOMPARE(cats.at(4).name(), QString("CAT1"));
+        QCOMPARE(cats.at(5).name(), QString("cat1"));
+
+        //try asending order, case sensitive
+        nameSort.setDirection(Qt::AscendingOrder);
+        nameSort.setCaseSensitivity(Qt::CaseSensitive);
+        fetchRequest.setSorting(nameSort);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        cats = fetchRequest.categories();
+        QVERIFY(checkCategoryIdFetchRequest(cats,nameSort));
+
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
         QCOMPARE(cats.at(1).name(), QString("CAT2"));
-        QCOMPARE(cats.at(1).categoryId().isValid(), true);
         QCOMPARE(cats.at(2).name(), QString("CAT3"));
-        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+        QCOMPARE(cats.at(3).name(), QString("cat1"));
+        QCOMPARE(cats.at(4).name(), QString("cat2"));
+        QCOMPARE(cats.at(5).name(), QString("cat3"));
+
+        //try descending order, case sensitive
+        nameSort.setDirection(Qt::DescendingOrder);
+        nameSort.setCaseSensitivity(Qt::CaseSensitive);
+        fetchRequest.setSorting(nameSort);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        cats = fetchRequest.categories();
+        QVERIFY(checkCategoryIdFetchRequest(cats,nameSort));
+
+        QCOMPARE(cats.count(), 6);
+        QCOMPARE(cats.at(0).name(), QString("cat3"));
+        QCOMPARE(cats.at(1).name(), QString("cat2"));
+        QCOMPARE(cats.at(2).name(), QString("cat1"));
+        QCOMPARE(cats.at(3).name(), QString("CAT3"));
+        QCOMPARE(cats.at(4).name(), QString("CAT2"));
+        QCOMPARE(cats.at(5).name(), QString("CAT1"));
     }
 
     void retrieveMultipleLandmarks() {
@@ -1795,7 +1963,6 @@ private slots:
         QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
         QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
 
-
         QLandmarkRemoveRequest removeRequest(m_manager);
         QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         removeRequest.setLandmarkIds(lmIds1);
@@ -1857,7 +2024,6 @@ private slots:
 
         QList<QLandmarkId> lmIds3;
         lmIds3 << lm4.landmarkId() << lm5.landmarkId() << lm6.landmarkId();
-
 
         removeRequest.setLandmarkIds(lmIds3);
         removeRequest.start();
