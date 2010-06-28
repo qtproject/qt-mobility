@@ -97,7 +97,7 @@ public:
     /* Filtering */
     virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint &fetchHint,
                                            QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual QList<QLandmarkCategoryId> categoryIds(QLandmarkManager::Error *error,
+    virtual QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
             QString *errorString) const = 0;
 
     /* Retrieval */
@@ -109,6 +109,8 @@ public:
                                        QString *errorString) const = 0;
     virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QLandmarkManager::Error *error,
             QString *errorString) const = 0;
+    virtual QList<QLandmarkCategory> categories(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,
+                                                QString *errorString) const = 0;
 
     /*saving and removing*/
     virtual bool saveLandmark(QLandmark* landmark, QLandmarkManager::Error *error, QString *errorString) = 0;

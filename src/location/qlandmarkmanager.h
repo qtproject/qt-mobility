@@ -48,6 +48,7 @@
 #include "qlandmarksortorder.h"
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkfetchhint.h"
+#include "qlandmarknamesort.h"
 
 #include <QObject>
 #include <QMap>
@@ -110,8 +111,10 @@ public:
     bool removeCategory(const QLandmarkCategoryId &categoryId);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
-    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds = QList<QLandmarkCategoryId>()) const;
-    QList<QLandmarkCategoryId> categoryIds() const;
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds) const;
+
+    QList<QLandmarkCategory> categories( const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
+    QList<QLandmarkCategoryId> categoryIds(const QLandmarkNameSort &nameSort = QLandmarkNameSort()) const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,

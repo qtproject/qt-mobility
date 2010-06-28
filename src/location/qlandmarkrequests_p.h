@@ -57,6 +57,7 @@
 #include "qlandmark.h"
 #include "qlandmarkcategory.h"
 #include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarknamesort.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -114,7 +115,6 @@ public:
 
     QList<QLandmark> landmarks;
     QMap<int, QLandmarkManager::Error> errorMap;
-
 };
 
 class QLandmarkCategoryIdFetchRequestPrivate: public QLandmarkAbstractRequestPrivate
@@ -127,6 +127,7 @@ public:
     }
 
     QList<QLandmarkCategoryId> categoryIds;
+    QLandmarkNameSort sorting;
 };
 
 class QLandmarkCategoryFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
@@ -142,6 +143,7 @@ public:
     QList<QLandmarkCategory> categories;
     QList<QLandmarkCategoryId> categoryIds;
     QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme;
+    QLandmarkNameSort sorting;
 };
 
 

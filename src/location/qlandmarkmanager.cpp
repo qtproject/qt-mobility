@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
     and retrieval of landmarks from a landmark store.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
 */
 
@@ -392,12 +392,9 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 
 /*!
     Returns a list of categories identified by \a categoryIds.
-    The returned list is sorted in alphabetical order according to the
-    category name.
 
-    if \a categoryIds is empty, then all categories are returned.
-
-    If any of the \a categoryIds are not found by the manager, they are simply ignored.
+    If any of the category ids cannot be found, no categories are returned
+    and an error is set.
  */
 QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds) const
 {
@@ -420,9 +417,33 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
 }
 
 /*!
-    Returns a list of all category identifiers.
+    Returns a list of all categories sorted according to the given \a nameSort.
 */
-QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
+QList<QLandmarkCategory> QLandmarkManager::categories(const QLandmarkNameSort &nameSort) const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return QList<QLandmarkCategory>();
+    }
+
+    QList<QLandmarkCategory> cats = d->engine->categories(nameSort,
+                                    &(d->errorCode),
+                                    &(d->errorString));
+
+    if (d->errorCode != NoError)
+        return QList<QLandmarkCategory>();
+
+    return cats;
+}
+
+/*!
+    Returns a list of all category identifiers.  The identifiers
+    are returned in order as designed by \a nameSort.
+*/
+QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(const QLandmarkNameSort &nameSort) const
 {
     Q_D(const QLandmarkManager);
 
@@ -432,8 +453,9 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
         return QList<QLandmarkCategoryId>();
     }
 
-    QList<QLandmarkCategoryId> ids = d->engine->categoryIds(&(d->errorCode),
-                                     &(d->errorString));
+    QList<QLandmarkCategoryId> ids = d->engine->categoryIds(nameSort,
+                                                            &(d->errorCode),
+                                                            &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkCategoryId>();

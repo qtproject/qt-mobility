@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -85,6 +85,26 @@ QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
     return d->categoryIds;
+}
+
+/*!
+    Returns the sorting of the categories.
+    By default the sorting is case insensitive and in ascending order
+    according to the category name.
+*/
+QLandmarkNameSort QLandmarkCategoryIdFetchRequest::sorting() const
+{
+    Q_D(const QLandmarkCategoryIdFetchRequest);
+    return d->sorting;
+}
+
+/*!
+    Sets \a nameSort to specify the sorting of the returned category ids.
+*/
+void QLandmarkCategoryIdFetchRequest::setSorting(const QLandmarkNameSort &nameSort)
+{
+    Q_D(QLandmarkCategoryIdFetchRequest);
+    d->sorting = nameSort;
 }
 
 #include "moc_qlandmarkcategoryidfetchrequest.cpp"

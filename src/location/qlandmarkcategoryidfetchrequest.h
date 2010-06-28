@@ -43,6 +43,7 @@
 #define QLANDMARKCATEGORYIDFETCHREQUEST_H
 
 #include "qlandmarkabstractrequest.h"
+#include "qlandmarknamesort.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,6 +56,10 @@ public:
     ~QLandmarkCategoryIdFetchRequest();
 
     QList<QLandmarkCategoryId> categoryIds() const;
+
+    void setSorting(const QLandmarkNameSort &nameSort);
+    QLandmarkNameSort sorting() const;
+
 private:
     Q_DISABLE_COPY(QLandmarkCategoryIdFetchRequest)
     Q_DECLARE_PRIVATE(QLandmarkCategoryIdFetchRequest)
