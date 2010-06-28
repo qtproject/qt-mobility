@@ -80,6 +80,8 @@ private:
     QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
 };
 
+Q_LOCATION_EXPORT uint qHash(const QGeoTiledMapRequest &key);
+
 QTM_END_NAMESPACE
 
 #endif

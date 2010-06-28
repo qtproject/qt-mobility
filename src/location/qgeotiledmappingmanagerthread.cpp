@@ -47,9 +47,21 @@
 
 #include "qgeotiledmapdata.h"
 
+#include <QSet>
+#include <QMutableSetIterator>
+
 #include <QTimer>
 
 #include <QDebug>
+
+uint qHash(const QRectF& key)
+{
+    uint result = qHash(qRound(key.x()));
+    result += qHash(qRound(key.y()));
+    result += qHash(qRound(key.width()));
+    result += qHash(qRound(key.height()));
+    return result;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -159,9 +171,7 @@ QGeoTiledMapRequestHandler::~QGeoTiledMapRequestHandler()
 
 void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &requests)
 {
-    bool wasEmpty = (queue.size() == 0);
-
-    queue.clear();
+    QSet<QRectF> replyRects;
 
     if (lastZoomLevel != -1.0) {
         // TODO make the viewport access thread-safe
@@ -178,20 +188,14 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
             }
             replies.clear();
 
-            // use all of the requests
-
-            queue.append(requests);
-
         } else {
 
             QRectF screenRect = mapData->screenRect();
 
             // abort all replies that are off screen
 
+            /*
             QList<QGeoTiledMapReply*> replyList = replies.toList();
-
-            // TODO replace with a set - too busy to stop and write a qHash overload for rects
-            QList<QRectF> replyRects;
 
             for (int i = 0; i < replyList.size(); ++i) {
                 if (screenRect.intersected(replyList.at(i)->request().tileRect()).isEmpty()) {
@@ -201,14 +205,22 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
                     replies.remove(replyList.at(i));
                 } else {
                     if (replyList.at(i)->error() == QGeoTiledMapReply::NoError)
-                        replyRects.append(replyList.at(i)->request().tileRect());
+                        replyRects.insert(replyList.at(i)->request().tileRect());
                 }
             }
+            */
 
-            // Do not use the requests which have pending replies
-            for (int i = 0; i < requests.size(); ++i) {
-                if (!replyRects.contains(requests.at(i).tileRect()))
-                    queue.append(requests.at(i));
+            QMutableSetIterator<QGeoTiledMapReply*> replyIter(replies);
+
+            while (replyIter.hasNext()) {
+                QGeoTiledMapReply *reply = replyIter.next();
+                if (screenRect.intersected(reply->request().tileRect()).isEmpty()) {
+                    reply->abort();
+                    replyIter.remove();
+                } else {
+                    if (reply->error() == QGeoTiledMapReply::NoError)
+                        replyRects.insert(reply->request().tileRect());
+                }
             }
         }
     }
@@ -216,8 +228,12 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
     lastZoomLevel = mapData->zoomLevel();
     lastMapType = mapData->mapType();
 
-    for (int i = 0; i < queue.size(); ++i) {
-        QGeoTiledMapReply *reply = thread->getTileImage(queue.at(i));
+    for (int i = 0; i < requests.size(); ++i) {
+        // Do not use the requests which have pending replies
+        if (replyRects.contains(requests.at(i).tileRect()))
+            continue;
+
+        QGeoTiledMapReply *reply = thread->getTileImage(requests.at(i));
         if (!reply)
             continue;
 
@@ -237,8 +253,6 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
             emit error(reply, reply->error(), reply->errorString());
         }
     }
-
-    queue.clear();
 }
 
 void QGeoTiledMapRequestHandler::tileFinished()

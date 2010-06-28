@@ -88,7 +88,6 @@ private:
     qreal lastZoomLevel;
     QGeoMapWidget::MapType lastMapType;
 
-    QList<QGeoTiledMapRequest> queue;
     QSet<QGeoTiledMapReply*> replies;
 };
 

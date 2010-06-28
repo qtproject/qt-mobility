@@ -51,10 +51,6 @@ QTM_BEGIN_NAMESPACE
     \class QGeoTiledMapReply
     \brief The QGeoTiledMapReply class represents the response from a geocoding service.
 
-    \inmodule QtLocation
-    
-    \ingroup location
-
     This class represents the response from a geocoding service.
     It also takes responsibility for any errors that happen while the request is
     in submitted to and processed by the service.
@@ -129,18 +125,11 @@ QGeoTiledMapRequest QGeoTiledMapReply::request() const
     return d_ptr->request;
 }
 
-/*!
-    Returns a list of places corresponding to the request.
-*/
 QPixmap QGeoTiledMapReply::mapImage() const
 {
     return d_ptr->mapImage;
 }
 
-
-/*!
-    Sets the list of places in the reply to \a places.
-*/
 void QGeoTiledMapReply::setMapImage(const QPixmap &image)
 {
     d_ptr->mapImage = image;
