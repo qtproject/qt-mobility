@@ -3662,6 +3662,7 @@ QMessage CMTMEngine::smsMessageL(CMsvEntry& receivedEntry, long int messageId) c
     ipSmsMtm->SwitchCurrentEntryL(messageId);
     ipSmsMtm->LoadMessageL();
     CSmsHeader& header = ipSmsMtm->SmsHeader();
+    
     message.setFrom(QMessageAddress(QMessageAddress::Phone, QString::fromUtf16(header.FromAddress().Ptr(), header.FromAddress().Length())));
     QMessagePrivate::setSenderName(message, QString::fromUtf16(header.FromAddress().Ptr(), header.FromAddress().Length()));
     
@@ -4283,11 +4284,67 @@ void CMTMEngine::unregisterNotificationFilter(QMessageManager::NotificationFilte
     }
 }
 
+bool CMTMEngine::checkIfWaitingDiscardClearMessage(TMsvId aMessageId)
+{
+    TRAPD(err, ipSmsMtm->SwitchCurrentEntryL(aMessageId));
+    if (err != KErrNone) {
+        return false;
+    }
+    TRAPD(err2, ipSmsMtm->LoadMessageL());
+    if (err2 != KErrNone) {
+        return false;
+    }
+
+    CSmsHeader& header = ipSmsMtm->SmsHeader();       
+    CSmsPDU& pdu = header.Message().SmsPDU();
+    
+    TInt bits7to4 = pdu.Bits7To4();
+
+    TSmsDataCodingScheme::TSmsIndicationState indicationState =
+        TSmsDataCodingScheme::ESmsIndicationInactive;
+
+    switch (bits7to4) {
+        case TSmsDataCodingScheme::ESmsDCSMessageWaitingIndication7Bit:
+        case TSmsDataCodingScheme::ESmsDCSMessageWaitingIndicationUCS2:
+        case TSmsDataCodingScheme::ESmsDCSMessageWaitingIndicationDiscardMessage:
+            { 
+            indicationState = pdu.IndicationState();
+            
+            if (indicationState == TSmsDataCodingScheme::ESmsIndicationInactive) {
+                return true; // discard clear message
+            } else if (indicationState == TSmsDataCodingScheme::ESmsIndicationActive) {
+                return false; // set message
+            }
+            }
+
+        default:
+            return false; // normal sms message
+    }
+
+}
+
 void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId)
 {
     if (aFolderId == 0x100001 || aFolderId == 0x100002) { // MMS Notifications Folder
         // Ignore MMS Notifications <=> Wait until actual MMS message has been received
         return;
+    }
+
+    if (aMsgType == KUidMsgTypeSMS) { // we need to check if sms message is 'indicator clear message' (for voice messages)
+        if (aEvent == EMsvEntriesCreated) {
+            iNewMessage = true;
+            iMessageId = aMessageId;
+            // cannot be sure if sms is indicator clear message, we have to wait changed event
+            return;
+        }
+        if (aEvent == EMsvEntriesChanged && iNewMessage && iMessageId == aMessageId) {
+            iNewMessage = false;
+            aEvent = EMsvEntriesCreated;
+            bool clearMessage = checkIfWaitingDiscardClearMessage(aMessageId);
+            if (clearMessage){
+                return;
+            }
+        }
     }
 
     QMessageManager::NotificationFilterIdSet matchingFilters;
@@ -4329,7 +4386,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else if (aFolderId == KMsvDeletedEntryFolderEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
                 }
-            } else if (!messageRetrieved) {
+            } else if (!messageRetrieved) {           
                 message = this->message(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
                 if (message.type() == QMessage::NoType) {
                     unableToReadAndFilterMessage = true;
