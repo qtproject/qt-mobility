@@ -56,8 +56,6 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QTouchFeedback;
-
 class QFeedbackSymbian : public QObject, public QFeedbackHapticsInterface
 #ifndef NO_TACTILE_SUPPORT
 , public QFeedbackThemeInterface

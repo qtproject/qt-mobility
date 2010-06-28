@@ -124,7 +124,7 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
         themeFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
         break;
     case QFeedbackEffect::ThemeCheckBox:
-        themeFeedbackSymbian = ETouchFeedbackCheckBox;
+        themeFeedbackSymbian = ETouchFeedbackCheckbox;
         break;
     case QFeedbackEffect::ThemeMultipleCheckBox:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
