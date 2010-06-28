@@ -23,7 +23,6 @@ QT += declarative
 CONFIG += mobility
 MOBILITY = contacts versit
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
@@ -44,6 +43,4 @@ SOURCES += plugin.cpp \
     qmlcontactdetail.cpp \
     qmlcontactdetailfield.cpp
 
-OTHER_FILES += qmldir
-    
-INSTALLS += target qmldir
+INSTALLS += qmldir
