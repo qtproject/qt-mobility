@@ -106,13 +106,14 @@ void AlbumDelegate::paint(
 
 QSize AlbumDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const
 {
+    QString placeholder = QLatin1String("This is a longish name");
+
     int margin = QApplication::style()->pixelMetric(QStyle::PM_ButtonMargin);
 
     QSize size = option.decorationSize;
 
     size.rheight() += 2 * margin;
-    size.rwidth() *= 2;
-    size.rwidth() += 3 * margin;
+    size.rwidth() += 3 * margin + option.fontMetrics.size(0, placeholder).width();
 
     return size;
 }

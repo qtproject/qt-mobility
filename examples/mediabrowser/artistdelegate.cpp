@@ -64,6 +64,8 @@ void ArtistDelegate::paint(
         painter->fillRect(rect, option.palette.highlight());
 
         painter->setPen(option.palette.color(QPalette::HighlightedText));
+    } else {
+        painter->drawRoundedRect(rect, margin, margin);
     }
 
     rect.adjust(margin, margin, -margin, -margin);
