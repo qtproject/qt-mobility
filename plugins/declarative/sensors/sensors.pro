@@ -1,18 +1,19 @@
-INCLUDEPATH += ../../../src/systeminfo
-DEPENDPATH += ../../../src/systeminfo
+INCLUDEPATH += ../../../src/sensors
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_systeminfo
-TARGETPATH = QtMobility/systeminfo
+TARGET  = declarative_sensors
+TARGETPATH = QtMobility/sensors
 include(../../qimportbase.pri)
 include(../../../common.pri)
 
 QT += declarative
 
-SOURCES += systeminfo.cpp
+#HEADERS += qdeclarativeservice.h
+
+SOURCES += sensors.cpp 
 
 CONFIG += mobility
-MOBILITY += systeminfo
+MOBILITY += sensors
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
