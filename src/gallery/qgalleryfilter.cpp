@@ -55,15 +55,9 @@ public:
     {
     }
 
-    QGalleryFilterPrivate(const QGalleryFilterPrivate &other)
-        : QSharedData(other)
-        , type(other.type)
-    {
-    }
 
     virtual ~QGalleryFilterPrivate() {}
 
-    virtual QGalleryFilterPrivate *clone() const = 0;
     virtual bool isEqual(const QGalleryFilterPrivate &other) const = 0;
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -71,25 +65,20 @@ public:
 #endif
 
     const QGalleryFilter::Type type;
+
+protected:
+    QGalleryFilterPrivate(const QGalleryFilterPrivate &other)
+        : QSharedData(other)
+        , type(other.type)
+    {
+    }
 };
-
-QTM_END_NAMESPACE
-
-template <>
-QTM_PREPEND_NAMESPACE(QGalleryFilterPrivate) *
-        QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGalleryFilterPrivate)>::clone()
-{
-    return d->clone();
-}
-
-QTM_BEGIN_NAMESPACE
 
 class QGalleryInvalidFilterPrivate : public QGalleryFilterPrivate
 {
 public:
     QGalleryInvalidFilterPrivate() : QGalleryFilterPrivate(QGalleryFilter::Invalid) {}
 
-    QGalleryFilterPrivate *clone() const { return new QGalleryInvalidFilterPrivate; }
     bool isEqual(const QGalleryFilterPrivate &other) const { return type == other.type; }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -109,11 +98,6 @@ public:
         : QGalleryFilterPrivate(other)
         , filters(other.filters)
     {
-    }
-
-    QGalleryFilterPrivate *clone() const
-    {
-        return new QGalleryIntersectionFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
@@ -150,11 +134,6 @@ public:
         : QGalleryFilterPrivate(other)
         , filters(other.filters)
     {
-    }
-
-    QGalleryFilterPrivate *clone() const
-    {
-        return new QGalleryUnionFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
@@ -195,11 +174,6 @@ public:
         , property(other.property)
         , value(other.value)
     {
-    }
-
-    QGalleryFilterPrivate *clone() const
-    {
-        return new QGalleryMetaDataFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
@@ -251,11 +225,6 @@ public:
         , minimum(other.minimum)
         , maximum(other.maximum)
     {
-    }
-
-    QGalleryFilterPrivate *clone() const
-    {
-        return new QGalleryMetaDataRangeFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
