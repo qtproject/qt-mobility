@@ -281,7 +281,13 @@ qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
 
 void QBluetoothSocket::close()
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_D(QBluetoothSocket);
+
+    setSocketState(ClosingState);
+
+    ::close(d->socket);
+
+    setSocketState(UnconnectedState);
 }
 
 bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketState socketState,

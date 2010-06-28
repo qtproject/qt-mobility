@@ -108,7 +108,10 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     if (::listen(sock, d->maxPendingConnections) < 0)
         return false;
 
+    d->socket->setSocketState(QBluetoothSocket::ListeningState);
+
     if (!d->socketNotifier) {
+        qDebug() << "connecting socket notifier";
         d->socketNotifier = new QSocketNotifier(d->socket->socketDescriptor(),
                                                 QSocketNotifier::Read);
         connect(d->socketNotifier, SIGNAL(activated(int)), this, SIGNAL(newConnection()));
@@ -152,12 +155,10 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
 {
     Q_D(QRfcommServer);
 
-    if (d->activeSockets.isEmpty())
-        return 0;
+    if (hasPendingConnections())
+        return d->activeSockets.takeFirst();
 
-    QBluetoothSocket *next = d->activeSockets.takeFirst();
-
-    return next;
+    return 0;
 }
 
 QBluetoothAddress QRfcommServer::serverAddress() const
@@ -173,7 +174,5 @@ quint16 QRfcommServer::serverPort() const
 
     return d->socket->localPort();
 }
-
-
 
 QTM_END_NAMESPACE
