@@ -47,6 +47,9 @@ QTM_USE_NAMESPACE
 
 /*!
     \class QLandmarkId
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-main
 
     \brief The QLandmarkId class provides a unique identifier for
@@ -133,7 +136,8 @@ void QLandmarkId::setManagerUri(const QString &uri)
 */
 QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
 {
-    d = other.d;
+    if (this != &other)
+        d = other.d;
     return *this;
 }
 

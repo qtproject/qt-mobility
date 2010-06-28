@@ -61,6 +61,9 @@ QTM_USE_NAMESPACE
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
     and retrieval of landmarks from a landmark store.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-main
 */
 
@@ -649,17 +652,8 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
 {
+    Q_D(QLandmarkManager);
     QFile file(fileName);
-
-    if (!file.exists()) {
-        // TODO set error
-        return false;
-    }
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        // TODO set error
-        return false;
-    }
 
     return importLandmarks(&file, format);
 }

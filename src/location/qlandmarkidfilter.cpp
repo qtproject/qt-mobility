@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkIdFilter
     \brief The QLandmarkIdFilter class is used to search for landmarks based
            on a list of landmark identifiers.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-filter
 */
 

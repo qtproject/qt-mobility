@@ -46,6 +46,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QLandmarkFetchHint
+
+  \inmodule QtLocation
+    
   \ingroup landmarks-main
   \brief The QLandmarkFetchHint class provides miscellaneous hints to the manager
   when fetching landmarks.

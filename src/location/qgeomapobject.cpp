@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoMapObject class is graphical item for display in
     QGeoMapWidget instancse, that is specified in terms of coordinates and
     distances.
+
+    \inmodule QtLocation
+    
     \ingroup maps-mapping-objects
 
     QGeoMapObject instances can also be grouped into heirarchies in order to

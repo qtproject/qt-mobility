@@ -6,10 +6,12 @@ include (../../../common.pri)
 
 INCLUDEPATH += ../../../src/location
 
-# Input 
+# Input
 SOURCES += tst_qlandmarkmanagerengine_sqlite.cpp
 
 QT += sql testlib
+
+RESOURCES += data.qrc
 
 CONFIG += mobility
 MOBILITY = location

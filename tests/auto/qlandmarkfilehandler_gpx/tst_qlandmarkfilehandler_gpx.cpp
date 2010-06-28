@@ -72,7 +72,7 @@ private slots:
         map["filename"] = "test.db";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
-        m_handler = new QLandmarkFileHandlerGpx(m_manager->d_ptr->engine);
+        m_handler = new QLandmarkFileHandlerGpx();
     }
 
     void cleanup() {

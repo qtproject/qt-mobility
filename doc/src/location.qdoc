@@ -40,6 +40,15 @@
 ****************************************************************************/
 
 /*!
+    \module QtLocation
+    \title  QtLocation Module
+    \brief  The QtLocation module provides geographical support for position
+    and map use.
+
+*/
+
+
+/*!
     \group location
     \title Location API
 

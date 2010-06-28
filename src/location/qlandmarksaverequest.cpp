@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkSaveRequest
     \brief The QLandmarkSaveRequest class allows a client to asynchronously
     request that certain landmarks be saved by a landmark manager.
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted

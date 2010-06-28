@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
     identifiers (which may be retrieved by calling ids()), are updated, as well as if
     the overall operation error (which may be retrieved by calling error()) is updated.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 */
 

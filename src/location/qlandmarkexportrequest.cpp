@@ -60,6 +60,9 @@ QTM_BEGIN_NAMESPACE
     an empty list is passed in, then all the landmarks will be exported.
     Invalid landmark identifiers that do not refer to landmarks will be ignored.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 */
 

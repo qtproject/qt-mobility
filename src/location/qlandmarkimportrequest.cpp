@@ -55,6 +55,9 @@ QTM_BEGIN_NAMESPACE
     of added landmarks may be retrieved by the ids() function.  The resultsAvailable()
     signal may also be emitted if an overall operational error occurs.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 */
 
@@ -115,6 +118,7 @@ QString QLandmarkImportRequest::fileName() const
 void QLandmarkImportRequest::setFileName(const QString &fileName)
 {
     Q_D(QLandmarkImportRequest);
+
     d->device = new QFile(fileName);
 }
 

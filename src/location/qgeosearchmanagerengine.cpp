@@ -55,6 +55,9 @@ QTM_BEGIN_NAMESPACE
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide support for searching operations related to geographic data.
 
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     In the default implementation, supportsGeocoding() returns false while

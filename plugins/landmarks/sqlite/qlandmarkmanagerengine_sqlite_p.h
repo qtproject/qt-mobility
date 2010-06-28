@@ -147,6 +147,8 @@ public:
     bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
 
 public slots:
+    void updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,
+            QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,
@@ -159,6 +161,8 @@ public slots:
                                      const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error,
                                            const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+                                            QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
 public:
@@ -177,13 +181,6 @@ private:
                                 QLandmarkManager::Error *error,
                                 QString *errorString,
                                 bool *removed);
-
-    bool importLandmarksLmx(QIODevice *device,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-    bool importLandmarksGpx(QIODevice *device,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
 
     bool exportLandmarksLmx(QIODevice *device,
                             QList<QLandmarkId> landmarkIds,

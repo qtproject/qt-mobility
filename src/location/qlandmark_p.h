@@ -73,6 +73,7 @@ public:
     QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
 
     bool operator== (const QLandmarkPrivate &other) const;
+    virtual QGeoPlacePrivate* clone() const { return new QLandmarkPrivate(*this); }
 
     QString name;
     QList<QLandmarkCategoryId> categoryIds;

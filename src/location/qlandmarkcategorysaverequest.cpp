@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling categories()).
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-request
 */
 

@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
     to implementors of QGeoServiceProvider plugins who want to provides support for displaying
     and interacting with maps.
+
+    \inmodule QtLocation
+    
     \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations

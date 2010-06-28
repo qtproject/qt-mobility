@@ -100,6 +100,9 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
 
+
+    \inmodule QtLocation
+    
     \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,
@@ -277,4 +280,16 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 QStringList QLandmarkCategory::attributeKeys() const
 {
     return d->attributes.keys();
+}
+
+/*!
+    Clears all the data fields of the category.
+*/
+void QLandmarkCategory::clear()
+{
+    d->name.clear();
+    d->iconUrl.clear();
+    d->description.clear();
+    d->attributes.clear();
+    d->id = QLandmarkCategoryId();
 }

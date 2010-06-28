@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMapWidget
     \brief The QGeoMapWidget class is used to display a map and manager the
     interactions between the user and the map.
+
+    \inmodule QtLocation
+    
     \ingroup maps-mapping
 
     Most of the functionality is provided by QGeoMappingManager, which

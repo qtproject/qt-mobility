@@ -57,9 +57,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx(QLandmarkManagerEngine *engine)
+QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx()
     : QObject(),
-    m_engine(engine),
     m_writer(0),
     m_reader(0)
 {

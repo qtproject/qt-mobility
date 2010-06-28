@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoTiledMapReply
     \brief The QGeoTiledMapReply class represents the response from a geocoding service.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     This class represents the response from a geocoding service.

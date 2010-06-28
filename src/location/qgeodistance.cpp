@@ -47,6 +47,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoDistance
     \brief The QGeoDistance class represents a geographical distance.
+
+    \inmodule QtLocation
+    
     \ingroup maps
 
     The QGeoDistance class represents geographical distance in either metres,
