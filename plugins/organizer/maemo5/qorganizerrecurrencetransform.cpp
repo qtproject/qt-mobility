@@ -87,7 +87,7 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence(bool *success) const
     retn->setRtype(m_rtype);
 
     // Add the recursion and exception rules
-    if(!m_vRRuleList.empty()) {
+    if (!m_vRRuleList.empty()) {
         // Make a copy of the rules
         std::vector< CRecurrenceRule* > copyOfRules;
         std::vector< CRecurrenceRule* >::const_iterator i;
@@ -109,7 +109,21 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence(bool *success) const
         }
     }
 
-    // TODO: recurrence dates & exception dates
+    // Set the recursion dates
+    if (!m_vRecDateList.empty()) {
+        if (!retn->setRDays(m_vRecDateList)) {
+            delete retn;
+            return 0; // failed
+        }
+    }
+
+    // Set the exception dates
+    if (!m_vExceptionDateList.empty()) {
+        if (!retn->setEDays(m_vExceptionDateList)) {
+            delete retn;
+            return 0; // failed
+        }
+    }
 
     if (success)
         *success = true;
@@ -141,6 +155,22 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule(const QOrganiz
     crecrule->setRuleType(EXCEPTION_RULE);
     crecrule->setRrule(icalRule.toStdString());
     m_vRRuleList.push_back(crecrule);
+}
+
+void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceDate(const QDate &date)
+{
+    QString icalDate = qrecurrenceDateToIcalRecurrenceDate(date);
+
+    // Store the new date to the recurrence date vector
+    m_vRecDateList.push_back(icalDate.toStdString());
+}
+
+void OrganizerRecurrenceTransform::addQOrganizerItemExceptionDate(const QDate &date)
+{
+    QString icalDate = qrecurrenceDateToIcalRecurrenceDate(date);
+
+    // Store the new date to the exception date vector
+    m_vExceptionDateList.push_back(icalDate.toStdString());
 }
 
 QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule(const QOrganizerItemRecurrenceRule& rule) const
@@ -289,14 +319,22 @@ int OrganizerRecurrenceTransform::qfrequencyToRtype(QOrganizerItemRecurrenceRule
     }
 }
 
+QString OrganizerRecurrenceTransform::qrecurrenceDateToIcalRecurrenceDate(const QDate &date) const
+{
+    return QString("VALUE=DATE:") + date.toString("yyyyMMdd");
+}
+
 void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurrence)
 {
     m_lRecurrenceRules.clear();
     m_lExceptionRules.clear();
+    m_lRecurrenceDates.clear();
+    m_lExceptionDates.clear();
 
     if (!crecurrence)
         return;
 
+    // Recurrence and exception rules
     std::vector< CRecurrenceRule* > rules = crecurrence->getRecurrenceRule();
     std::vector< CRecurrenceRule* >::const_iterator i;
     for (i = rules.begin(); i != rules.end(); ++i)
@@ -311,6 +349,24 @@ void OrganizerRecurrenceTransform::transformToQrecurrence(CRecurrence *crecurren
                 m_lExceptionRules << qrule;
         }
     }
+
+    // Recurrence dates
+    std::vector< std::string > recurrenceDates = crecurrence->getRDays();
+    std::vector< std::string >::const_iterator i;
+    for (i = recurrenceDates.begin(); i != recurrenceDates.end(); ++i)
+    {
+        std::string recurrenceDate = *i;
+        // TODO: Here RDATE type from string should be parsed to QDate...
+    }
+
+    // Exception dates
+    std::vector< std::string > exceptionDates = crecurrence->getEDays();
+    std::vector< std::string >::const_iterator i;
+    for (i = exceptionDates.begin(); i != exceptionDates.end(); ++i)
+    {
+        std::string exceptionDate = *i;
+        // TODO: Here RDATE type from string should be parsed to QDate...
+    }
 }
 
 QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRules() const
@@ -321,6 +377,16 @@ QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::recurrenceRule
 QList<QOrganizerItemRecurrenceRule> OrganizerRecurrenceTransform::exceptionRules() const
 {
     return m_lExceptionRules;
+}
+
+QList<QDate> OrganizerRecurrenceTransform::recurrenceDates() const
+{
+    return m_lRecurrenceDates;
+}
+
+QList<QDate> OrganizerRecurrenceTransform::exceptionDates() const
+{
+    return m_lExceptionDates;
 }
 
 QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule ) const

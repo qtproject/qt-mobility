@@ -704,8 +704,11 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent *cevent
 
     // Recurrence information
     d->m_recTransformer.transformToQrecurrence(cevent->getRecurrence());
+
     retn.setRecurrenceRules(d->m_recTransformer.recurrenceRules());
     retn.setExceptionRules(d->m_recTransformer.exceptionRules());
+    retn.setRecurrenceDates(d->m_recTransformer.recurrenceDates());
+    retn.setExceptionDates(d->m_recTransformer.exceptionDates());
 
     return retn;
 }
@@ -1063,7 +1066,15 @@ CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence(const QOrganizerItem*
         foreach (QOrganizerItemRecurrenceRule rule, exceptionRules)
             d->m_recTransformer.addQOrganizerItemExceptionRule(rule);
 
-        // TODO: Add recurrenceDates & exceptionDates
+        // Add recurrence dates
+        QList<QDate> recurrenceDates = event->recurrenceDates();
+        foreach (QDate recDate, recurrenceDates)
+            d->m_recTransformer.addQOrganizerItemRecurrenceDate(recDate);
+
+        // Add exception dates
+        QList<QDate> exceptionDates = event->exceptionDates();
+        foreach (QDate exceptionDate, exceptionDates)
+            d->m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
 
         return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }

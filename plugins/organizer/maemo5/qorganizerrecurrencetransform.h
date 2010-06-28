@@ -72,6 +72,8 @@ public: // Conversion from QRecurrence to CRecurrence
     // set rules and dates
     void addQOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule &rule);
     void addQOrganizerItemExceptionRule(const QOrganizerItemRecurrenceRule &rule);
+    void addQOrganizerItemRecurrenceDate(const QDate &date);
+    void addQOrganizerItemExceptionDate(const QDate &date);
 
     // get recurrence
     CRecurrence* crecurrence(bool *success = 0) const;
@@ -83,6 +85,9 @@ public: // Conversion from CRecurrence to QRecurrence
     // get rules and dates
     QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
     QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
+    QList<QDate> recurrenceDates() const;
+    QList<QDate> exceptionDates() const;
+
 
 private:
     // qrule -> crule conversions
@@ -101,6 +106,8 @@ private:
     QString qpositionsToIcalBySetPos(const QList<int> &positions) const;
     QString listOfNumbers(const QList<int> &list) const;
     int qfrequencyToRtype(QOrganizerItemRecurrenceRule::Frequency frequency) const;
+
+    QString qrecurrenceDateToIcalRecurrenceDate(const QDate &date) const;
 
     // crule -> qrule conversions
     QOrganizerItemRecurrenceRule icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule) const;
@@ -121,6 +128,8 @@ private:
     // CRecurrence -> QRecurrence
     QList<QOrganizerItemRecurrenceRule> m_lRecurrenceRules;
     QList<QOrganizerItemRecurrenceRule> m_lExceptionRules;
+    QList<QDate> m_lRecurrenceDates;
+    QList<QDate> m_lExceptionDates;
 };
 
 #endif // QORGANIZERRECURRENCETRANSFORM_H
