@@ -41,6 +41,7 @@
 
 #include "qgalleryfilter.h"
 
+#include <QtCore/qdebug.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
 
@@ -65,6 +66,10 @@ public:
     virtual QGalleryFilterPrivate *clone() const = 0;
     virtual bool isEqual(const QGalleryFilterPrivate &other) const = 0;
 
+#ifndef QT_NO_DEBUG_STREAM
+    virtual void printDebug(QDebug &debug) const = 0;
+#endif
+
     const QGalleryFilter::Type type;
 };
 
@@ -86,6 +91,10 @@ public:
 
     QGalleryFilterPrivate *clone() const { return new QGalleryInvalidFilterPrivate; }
     bool isEqual(const QGalleryFilterPrivate &other) const { return type == other.type; }
+
+#ifndef QT_NO_DEBUG_STREAM
+    void printDebug(QDebug &debug) const { debug << "QGalleryFilter()"; }
+#endif
 };
 
 class QGalleryIntersectionFilterPrivate : public QGalleryFilterPrivate
@@ -113,6 +122,21 @@ public:
                 (other).filters == filters;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    void printDebug(QDebug &debug) const
+    {
+        debug << "QGalleryIntersectionFilter(";
+        QList<QGalleryFilter>::const_iterator filter = filters.begin();
+        if (filter != filters.end()) {
+            debug << *filter;
+
+            while (++filter != filters.end())
+                debug << " || " << *filter;
+        }
+        debug << ")";
+    }
+#endif
+
     QList<QGalleryFilter> filters;
 };
 
@@ -139,6 +163,20 @@ public:
                 (other).filters == filters;
     }
 
+#ifndef QT_NO_DEBUG_STREAM
+    void printDebug(QDebug &debug) const
+    {
+        debug << "QGalleryUnionFilter(";
+        QList<QGalleryFilter>::const_iterator filter = filters.begin();
+        if (filter != filters.end()) {
+            debug << *filter;
+
+            while (++filter != filters.end())
+                debug << " && " << *filter;
+        }
+        debug << ")";
+    }
+#endif
     QList<QGalleryFilter> filters;
 };
 
@@ -177,6 +215,20 @@ public:
             return false;
         }
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    void printDebug(QDebug &debug) const
+    {
+        debug << "QGalleryMetaDataFilter(";
+        if (!property.isNull())
+            debug << "propertyName: " << property;
+        if (flags != 0)
+            debug << " flags: " << flags;
+        if (!value.isNull())
+            debug << " value: " << value;
+        debug << ")";
+    }
+#endif
 
     Qt::MatchFlags flags;
     QString property;
@@ -220,6 +272,22 @@ public:
             return false;
         }
     }
+
+#ifndef QT_NO_DEBUG_STREAM
+    void printDebug(QDebug &debug) const
+    {
+        debug << "QGalleryMetaDataRangeFilter(";
+        if (!property.isNull())
+            debug << "propertyName: " << property;
+        if (flags != 0)
+            debug << " flags: " << flags;
+        if (!minimum.isNull())
+            debug << " minimum: " << minimum;
+        if (!maximum.isNull())
+            debug << " maximum: " << maximum;
+        debug << ")";
+    }
+#endif
 
     void setRange(const QVariant &min, const QVariant &max, QGalleryFilter::RangeFlags f)
     {
@@ -1250,6 +1318,15 @@ QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
             ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
             : QGalleryMetaDataRangeFilter(QGalleryFilter::Invalid);
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator <<(QDebug debug, const QGalleryFilter &filter)
+{
+    filter.d->printDebug(debug.nospace());
+
+    return debug;
+}
+#endif
 
 QTM_END_NAMESPACE
 

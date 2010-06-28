@@ -49,6 +49,10 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qvector.h>
 
+QT_BEGIN_NAMESPACE
+class QDebug;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 class QGalleryFilter;
 class QGalleryIntersectionFilter;
@@ -123,7 +127,15 @@ private:
 
     friend bool ::operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
     friend bool ::operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+
+#ifndef QT_NO_DEBUG_STREAM
+    friend QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
+#endif
 };
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
+#endif
 
 class QGalleryIntersectionFilterPrivate;
 

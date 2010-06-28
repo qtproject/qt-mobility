@@ -115,7 +115,7 @@ public:
     QVariant value() const { return m_value; }
     void setValue(const QVariant &value) { m_value = value; }
 
-    MatchFlags matchFlags() const;
+    MatchFlags matchFlags() const { return m_matchFlags; }
     void setMatchFlags(MatchFlags flags) { m_matchFlags = flags; }
 
     QGalleryFilter filter() const;
