@@ -88,6 +88,11 @@ these domains have dependencies and these are outlined below:
        While not supported for this release the desktop Windows backend
        requires that a MAPI subsystem is installed. Note that messaging
        functionality will not work if you are using the MinGW compiler.
+       Additionally note that CE MAPI is available on Windows Mobile and
+       does not need to be installed separately.
+
+       For more detailed instructions on installation on Windows Mobile
+       see \l {Messaging Installation On Windows Mobile}
 
        The messaging API SMS/MMS functionality requires that the platform
        provides SMS/MMS facilities. Email functionality requires that an email

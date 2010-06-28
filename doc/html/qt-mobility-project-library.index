@@ -7375,6 +7375,12 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_CONTEXTKIT_LAYER" href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_CONTEXTKIT_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER" href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER" location="qvaluespace.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QValueSpace" type="" signature="QVALUESPACE_SYMBIAN_SETTINGS_LAYER()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaStreamsControl_iid" href="qmediastreamscontrol.html#QMediaStreamsControl_iid" location="qmediastreamscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaStreamsControl" type="" signature="QMediaStreamsControl_iid()"/>
+        <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="fetchgooglemaps.qdoc">
+            <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.cpp" href="fetchgooglemaps-mapwindow-cpp.html" subtype="file" title="" fulltitle="mapwindow.cpp Example File" subtitle="fetchgooglemaps/mapwindow.cpp" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.h" href="fetchgooglemaps-mapwindow-h.html" subtype="file" title="" fulltitle="mapwindow.h Example File" subtitle="fetchgooglemaps/mapwindow.h" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/main.cpp" href="fetchgooglemaps-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="fetchgooglemaps/main.cpp" location=""/>
+            <page access="public" status="commendable" name="fetchgooglemaps/fetchgooglemaps.pro" href="fetchgooglemaps-fetchgooglemaps-pro.html" subtype="file" title="" fulltitle="fetchgooglemaps.pro Example File" subtitle="fetchgooglemaps/fetchgooglemaps.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
             <contents name="class-lists" title="Class Lists" level="2"/>
             <contents name="function-lists" title="Function Lists" level="2"/>
@@ -7650,6 +7656,14 @@
             <parameter left="" right="" name="Class" default=""/>
             <parameter left="" right="" name="IId" default=""/>
         </function>
+        <page access="public" status="commendable" name="logfilepositionsource" href="logfilepositionsource.html" subtype="example" title="Log File Position Source Example" fulltitle="Log File Position Source Example" subtitle="" location="logfilepositionsource.qdoc">
+            <page access="public" status="commendable" name="logfilepositionsource/clientapplication.cpp" href="logfilepositionsource-clientapplication-cpp.html" subtype="file" title="" fulltitle="clientapplication.cpp Example File" subtitle="logfilepositionsource/clientapplication.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/clientapplication.h" href="logfilepositionsource-clientapplication-h.html" subtype="file" title="" fulltitle="clientapplication.h Example File" subtitle="logfilepositionsource/clientapplication.h" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.cpp" href="logfilepositionsource-logfilepositionsource-cpp.html" subtype="file" title="" fulltitle="logfilepositionsource.cpp Example File" subtitle="logfilepositionsource/logfilepositionsource.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.h" href="logfilepositionsource-logfilepositionsource-h.html" subtype="file" title="" fulltitle="logfilepositionsource.h Example File" subtitle="logfilepositionsource/logfilepositionsource.h" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/main.cpp" href="logfilepositionsource-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="logfilepositionsource/main.cpp" location=""/>
+            <page access="public" status="commendable" name="logfilepositionsource/logfilepositionsource.pro" href="logfilepositionsource-logfilepositionsource-pro.html" subtype="file" title="" fulltitle="logfilepositionsource.pro Example File" subtitle="logfilepositionsource/logfilepositionsource.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
             <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
@@ -7671,7 +7685,7 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContainerControl_iid" href="qmediacontainercontrol.html#QMediaContainerControl_iid" location="qmediacontainercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaContainerControl" type="" signature="QMediaContainerControl_iid()"/>
         <page access="public" status="commendable" name="editions.html" href="editions.html" subtype="page" title="Qt Editions" fulltitle="Qt Editions" subtitle="" location="editions.qdoc"/>
-        <page access="public" status="commendable" name="lightmaps" href="lightmaps.html" subtype="example" title="LightMap Example" fulltitle="LightMap Example" subtitle="" location="lightmaps.qdoc">
+        <page access="public" status="commendable" name="lightmaps" href="lightmaps.html" subtype="example" title="LightMaps Example" fulltitle="LightMaps Example" subtitle="" location="lightmaps.qdoc">
             <page access="public" status="commendable" name="lightmaps/lightmaps.cpp" href="lightmaps-lightmaps-cpp.html" subtype="file" title="" fulltitle="lightmaps.cpp Example File" subtitle="lightmaps/lightmaps.cpp" location=""/>
             <page access="public" status="commendable" name="lightmaps/lightmaps.pro" href="lightmaps-lightmaps-pro.html" subtype="file" title="" fulltitle="lightmaps.pro Example File" subtitle="lightmaps/lightmaps.pro" location=""/>
         </page>

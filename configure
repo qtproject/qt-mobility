@@ -492,7 +492,7 @@ compileTest()
     printf "."
     "$MAKE" >> "$CONFIG_LOG" 2>&1
     printf ". "
-    if ./$2 >> "$CONFIG_LOG" 2>&1; then
+    if [ -e ./$2 ]; then
         echo "OK"
         echo "$2_enabled = yes" >> "$CONFIG_IN"
     else

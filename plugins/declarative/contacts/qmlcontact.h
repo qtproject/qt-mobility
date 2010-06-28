@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,40 +38,42 @@
 **
 ****************************************************************************/
 
+#ifndef QMLCONTACT_H
+#define QMLCONTACT_H
 
-#include <QApplication>
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlcontactmodel.h"
-#include "qmlcontact.h"
-#include "qmlcontactdetail.h"
-#include "qmlcontactdetailfield.h"
-#include "imageprovider.h"
+#include <QDeclarativePropertyMap>
+#include "qcontact.h"
+#include "qcontactmanager.h"
+#include "qcontactsaverequest.h"
 
-QT_USE_NAMESPACE
+QTM_USE_NAMESPACE;
 
-
-class QContactQmlPlugin : public QDeclarativeExtensionPlugin
+class QMLContact : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY (bool contactChanged READ contactChanged NOTIFY onContactChanged);
 public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
-        qmlRegisterType<QMLContactDetailField>(uri, 1, 0, "QmlContactDetailField");
-    }
+    explicit QMLContact(QObject *parent = 0);
+    void setContact(const QContact& c);
+    void setManager(QContactManager* manager);
+    QContact contact() const;
+    QVariant contactMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
+    Q_INVOKABLE QList<QObject*> detailFields() const;
+    bool contactChanged() const; 
+    Q_INVOKABLE void save();
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
-        Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
-    }
+signals:
+    void onContactChanged();
+private slots:
+    void onContactSaved();
+private:
+    QContact m_contact;
+    QDeclarativePropertyMap* m_contactMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
+    QList<QObject*> m_details;
+    QContactManager* m_manager;
+    QContactSaveRequest m_saveRequest;
 };
 
-#include "plugin.moc"
-
-Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
-
+#endif // QMLCONTACT_H

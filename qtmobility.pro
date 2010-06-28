@@ -151,12 +151,6 @@ contains(build_docs, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderssysteminfo
     }
 
-    contains(mobility_modules,systeminfo) {
-        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
-        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
-        INSTALLS += qtmheaderssysteminfo
-    }
-
     contains(mobility_modules,sensors) {
         qtmheaderssensors.path = $${QT_MOBILITY_INCLUDE}/QtSensors
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
