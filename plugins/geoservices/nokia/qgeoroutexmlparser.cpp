@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeoroutexmlparser_p.h"
+#include "qgeoroutexmlparser.h"
 
 #include <QXmlStreamReader>
 #include <QIODevice>
@@ -187,62 +187,35 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
     QList<QGeoRouteSegment> routesegments;
 
-    for (int i=0;i<segments.length();++i) {
+    for (int i = 0; i < segments.count(); ++i) {
         QGeoRouteSegment segment = segments[i].segment;
-        for (int j=0;j<instructions.length();++j) {
-            if(instructions[j].id==segments[i].instructionId) {
-                segment.setInstruction(instructions[j].instruction);
-                break;
+        for (int j = instructions.count() - 1; j >= 0; --j) {
+            if (instructions[j].id == segments[i].instructionId || instructions[j].toId == segments[i].id) {
+                if (!segment.instruction().instructionText().isEmpty()) {
+                    if (segment.instruction() != instructions[j].instruction) {
+                        QGeoRouteSegment seg;
+                        seg.setInstruction(instructions[j].instruction);
+                        routesegments.append(seg);
+                        instructions.removeAt(j);
+                    }
                 }
+                else {
+                    segment.setInstruction(instructions[j].instruction);
+                    instructions.removeAt(j);
+                }
+            }
         }
         routesegments.append(segment);
     }
 
-    for (int i=0;i<instructions.length();++i) {
+    for (int i=0;i<instructions.count();++i) {
         QGeoNavigationInstruction instruction = instructions[i].instruction;
-        bool found=false;
-        for (int j=0;j<segments.length();++j) {
-            if(instructions[i].toId==segments[j].id) {
-                QGeoRouteSegment segment=segments[j].segment;
-                if (!segment.instruction().instructionText().isEmpty()) {
-                    if (segment.instruction() != instruction) {
-                        QGeoRouteSegment segment;
-                        segment.setInstruction(instruction);
-                        routesegments.append(segment);
-                    }
-                }
-                else {
-                    segment.setInstruction(instruction);
-                }
-                found=true;
-                break;
-            }
-        }
-        if (!found) {
-            if(instructions[i].toId != 0) {
-                QGeoRouteSegment segment;
-                segment.setInstruction(instruction);
-                routesegments.append(segment);
-            }
-            else {
-                bool found = false;
-                for (int j=0;j<segments.length();++j) {
-                    if (segments[j].instructionId == instructions[i].id) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    //Add orphan instruction into new empty segment
-                    QGeoRouteSegment segment;
-                    segment.setInstruction(instruction);
-                    routesegments.append(segment);
-                }
-            }
-        }
-
+        //Add orphan instruction into new empty segment
+        QGeoRouteSegment segment;
+        segment.setInstruction(instruction);
+        routesegments.append(segment);
+        instructions.removeAt(i);
     }
-
     route->setRouteSegments(routesegments);
 
     instructions.clear();

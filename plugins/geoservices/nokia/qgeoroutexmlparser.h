@@ -39,58 +39,72 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_P_H
-#define QGEOCODEXMLPARSER_P_H
+#ifndef QROUTEXMLPARSER_H
+#define QROUTEXMLPARSER_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-//#include <qmobilityglobal.h>
-
-#include <QString>
 #include <QList>
+#include <QMap>
+#include <QString>
 
 class QXmlStreamReader;
 class QIODevice;
 
+#include <qgeoroute.h>
+#include <qgeoroutesegment.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
+#include <qgeorouterequest.h>
+#include <qgeonavigationinstruction.h>
 
 QTM_USE_NAMESPACE
 
-class QGeoCodeXmlParser
+class QGeoNavigationInstructionContainer
 {
 public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
+    QGeoNavigationInstruction instruction;
+    QString id;
+    QString toId;
+};
+
+class QGeoRouteSegmentContainer
+{
+public:
+    QGeoRouteSegment segment;
+    QString id;
+    QString nextId;
+    QString instructionId;
+};
+
+class QGeoRouteXmlParser
+{
+public:
+    QGeoRouteXmlParser(const QGeoRouteRequest &request);
+    ~QGeoRouteXmlParser();
 
     bool parse(QIODevice* source);
-
-    QList<QGeoPlace> results() const;
+    QList<QGeoRoute> results() const;
     QString errorString() const;
 
 private:
     bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
+    bool parseRoute(QGeoRoute *route);
+    //bool parseWaypoint(QGeoRoute *route);
+    bool parseCoordinates(QGeoCoordinate &coord);
+    bool parseMode(QGeoRoute *route);
+    bool parseSummary(QGeoRoute *route);
+    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
+    bool parseManeuver();
+    bool parseLink();
+    bool postProcessRoute(QGeoRoute *route);
 
+    bool parseBoundingBox(QGeoBoundingBox &bounds);
+
+    QGeoRouteRequest m_request;
     QXmlStreamReader *m_reader;
-
-    QList<QGeoPlace> m_results;
+    QList<QGeoRoute> m_results;
     QString m_errorString;
+    QList<QGeoNavigationInstructionContainer> instructions;
+    QList<QGeoRouteSegmentContainer> segments;
 };
 
 #endif

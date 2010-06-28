@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeomapviewport_nokia_p.h"
-#include "qgeomappingmanager_nokia_p.h"
+#include "qgeomapviewport_nokia.h"
+#include "qgeomappingmanager_nokia.h"
 
 #include <QNetworkProxy>
 
@@ -177,7 +177,7 @@ void QGeoMapViewportNokia::requestMissingMapTiles()
                                    m_boundingBox.height() + (2*m_verticalPadding));
     int zLevel = zoomLevel();
     TileIterator it(paddedViewport, zLevel, m_tileSize);
-    
+
     while (it.hasNext()) {
         it.next();
         if (!it.isValid())
@@ -339,7 +339,7 @@ void QGeoMapViewportNokia::releaseUnusedTiles()
 
         if (tileRect.intersects(paddedViewPort))
             continue;
-        
+
         it.remove();
     }
 }

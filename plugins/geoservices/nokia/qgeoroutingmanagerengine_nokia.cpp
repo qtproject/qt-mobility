@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeoroutingmanagerengine_nokia_p.h"
-#include "qgeoroutereply_nokia_p.h"
+#include "qgeoroutingmanagerengine_nokia.h"
+#include "qgeoroutereply_nokia.h"
 
 #include <QStringList>
 #include <QNetworkProxy>

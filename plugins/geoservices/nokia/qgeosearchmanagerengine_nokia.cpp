@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeosearchmanagerengine_nokia_p.h"
-#include "qgeosearchreply_nokia_p.h"
+#include "qgeosearchmanagerengine_nokia.h"
+#include "qgeosearchreply_nokia.h"
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>

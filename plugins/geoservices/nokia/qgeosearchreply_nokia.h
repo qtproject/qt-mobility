@@ -39,31 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTEREPLY_NOKIA_P_H
-#define QGEOROUTEREPLY_NOKIA_P_H
+#ifndef QGEOPLACESREPLY_NOKIA_H
+#define QGEOPLACESREPLY_NOKIA_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qgeoroutereply.h>
+#include <qgeosearchreply.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoRouteReplyNokia : public QGeoRouteReply
+class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
 public:
-    QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent = 0);
-    ~QGeoRouteReplyNokia();
+    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoSearchReplyNokia();
 
     void abort();
 

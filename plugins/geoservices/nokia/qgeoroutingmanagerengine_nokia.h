@@ -39,40 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_NOKIA_P_H
-#define QGEOPLACESREPLY_NOKIA_P_H
+#ifndef QGEOROUTINGMANAGER_NOKIA_H
+#define QGEOROUTINGMANAGER_NOKIA_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qgeosearchreply.h>
-#include <QNetworkReply>
+#include <qgeoserviceprovider.h>
+#include <qgeoroutingmanagerengine.h>
+#include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoSearchReplyNokia : public QGeoSearchReply
+class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
-    ~QGeoSearchReplyNokia();
+    QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                  QGeoServiceProvider::Error *error,
+                                  QString *errorString);
+    ~QGeoRoutingManagerEngineNokia();
 
-    void abort();
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
 private slots:
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+    void routeFinished();
+    void routeError(QGeoRouteReply::Error error, const QString &errorString);
 
 private:
-    QNetworkReply *m_reply;
+    QString calculateRouteRequestString(const QGeoRouteRequest &request);
+    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
+    QString routeRequestString(const QGeoRouteRequest &request);
+    QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
+                               QGeoRouteRequest::TravelModes travelModes,
+                               QGeoRouteRequest::AvoidFeatureTypes avoid);
+    static QString trimDouble(qreal degree, int decimalDigits = 10);
+
+    QNetworkAccessManager *m_networkManager;
+    QString m_host;
 };
 
 #endif

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeosearchreply_nokia_p.h"
-#include "qgeocodexmlparser_p.h"
+#include "qgeosearchreply_nokia.h"
+#include "qgeocodexmlparser.h"
 
 QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
         : QGeoSearchReply(parent),
@@ -92,6 +92,7 @@ void QGeoSearchReplyNokia::networkFinished()
 
 void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
+    Q_UNUSED(error)
     setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

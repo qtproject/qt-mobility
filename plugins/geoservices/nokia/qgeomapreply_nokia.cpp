@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeomapreply_nokia_p.h"
+#include "qgeomapreply_nokia.h"
 
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),

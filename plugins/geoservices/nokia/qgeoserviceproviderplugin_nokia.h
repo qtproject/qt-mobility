@@ -39,55 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGER_NOKIA_P_H
-#define QGEOSEARCHMANAGER_NOKIA_P_H
+#ifndef QGEOSERVICEPROVIDER_NOKIA_H
+#define QGEOSERVICEPROVIDER_NOKIA_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qgeoserviceprovider.h>
-#include <qgeosearchmanagerengine.h>
-
-#include <QNetworkAccessManager>
+#include <qgeoserviceproviderfactory.h>
+#include <QObject>
 
 QTM_USE_NAMESPACE
 
-class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
+class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters,
-                                 QGeoServiceProvider::Error *error,
-                                 QString *errorString);
-    ~QGeoSearchManagerEngineNokia();
+    QGeoServiceProviderFactoryNokia();
+    ~QGeoServiceProviderFactoryNokia();
 
-    QGeoSearchReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds);
-    QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds);
+    QString providerName() const;
+    int providerVersion() const;
 
-    QGeoSearchReply* placeSearch(const QString &searchString,
-                                  QGeoSearchManager::SearchTypes searchTypes,
-                                  const QGeoBoundingBox &bounds);
-
-private slots:
-    void placesFinished();
-    void placesError(QGeoSearchReply::Error error, const QString &errorString);
-
-private:
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
-    QGeoSearchReply* search(QString requestString);
-
-    QNetworkAccessManager *m_networkManager;
-    QString m_host;
+    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
+                                                       QGeoServiceProvider::Error *error,
+                                                       QString *errorString) const;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
 };
 
 #endif
