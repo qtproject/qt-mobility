@@ -45,9 +45,15 @@
 #include <QDir>
 #include <QRegExp>
 #include <QTimer>
+#include <QList>
 
 #include <sysutil.h>
+#ifdef HB_SUPPORTED
+#include <hbinputkeymapfactory.h>
+#include <hbinputlanguage.h>
+#else
 #include <ptiengine.h>
+#endif // HB_SUPPORTED
 #include <featdiscovery.h>
 #ifndef KFeatureIdMmc
 #include <featureinfo.h>
@@ -83,6 +89,21 @@ QString QSystemInfoPrivate::currentLanguage() const
     return TLanguageToISO639_1(User::Language());
 }
 
+#ifdef HB_SUPPORTED
+QStringList QSystemInfoPrivate::availableLanguages() const
+{
+    QStringList languages;
+    QList<HbInputLanguage> hblanguages = HbKeymapFactory::availableLanguages();
+    foreach(HbInputLanguage lang, hblanguages) {       
+        QString language = QLocaleToISO639_1(lang.language());
+        if (!language.isEmpty()) {
+            languages << language;
+        }
+    }
+    languages.removeDuplicates();
+    return languages;
+}  
+#else
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
@@ -102,6 +123,60 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     )
     languages.removeDuplicates();
     return languages;
+}
+#endif //HB_SUPPORTED
+
+QString QSystemInfoPrivate::QLocaleToISO639_1(QLocale::Language language) const    
+{
+       switch(language) {
+       case QLocale::English: return "en";
+       case QLocale::Lithuanian: return "lt";
+       case QLocale::Malay: return "ms";
+       case QLocale::Polish: return "pl";
+       case QLocale::Portuguese: return "pt";
+       case QLocale::Romanian: return "ro";
+       case QLocale::Serbian: return "sr";
+       case QLocale::Slovak: return "sk";
+       case QLocale::Slovenian: return "sl";
+       case QLocale::Spanish: return "es";
+       case QLocale::Swedish: return "sv";
+       case QLocale::Tagalog: return "tl";
+       case QLocale::Czech: return "cs";
+       case QLocale::Dutch: return "nl";
+       case QLocale::Turkish: return "tr";
+       case QLocale::Estonian: return "et";
+       case QLocale::French: return "fr";
+       case QLocale::Greek: return "el";
+       case QLocale::Icelandic: return "is";
+       case QLocale::Indonesian: return "id";
+       case QLocale::Italian: return "it";
+       case QLocale::Latvian: return "lv";
+       case QLocale::Croatian: return "hr";
+       case QLocale::German: return "de";
+       case QLocale::Hungarian: return "hu";
+       case QLocale::Bulgarian: return "bg";
+       case QLocale::Finnish: return "fi";
+       case QLocale::Russian: return "ru";
+       case QLocale::Danish: return "da";
+       case QLocale::Norwegian: return "no";
+       case QLocale::Ukrainian: return "uk";
+       case QLocale::Arabic: return "ar";
+       case QLocale::Hebrew: return "he";
+       case QLocale::Thai: return "th";
+       case QLocale::Japanese: return "ja";
+       case QLocale::Vietnamese: return "vi";
+       case QLocale::Persian: return "fa";
+       case QLocale::Hindi: return "hi";
+       case QLocale::Urdu: return "ur";
+       case QLocale::Catalan: return "ca";
+       case QLocale::Galician: return "gl";
+       case QLocale::Basque: return "eu";
+       case QLocale::Marathi: return "mr";
+       case QLocale::Korean: return "ko";       
+       default:
+           break;
+       }
+    return "";        
 }
 
 QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
