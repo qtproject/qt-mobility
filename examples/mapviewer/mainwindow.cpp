@@ -190,16 +190,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::setProvider(QString providerId)
 {
-    QMap<QString, QString> parameters;
-    if (providerId == "nokia") {
-        parameters.insert("places.host", "dev-a7.bln.gate5.de");
-        parameters.insert("routing.host", "172.24.32.155");
-        parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
-    }
-
     if (m_serviceProvider)
         delete m_serviceProvider ;
-    m_serviceProvider = new QGeoServiceProvider(providerId, parameters);
+    m_serviceProvider = new QGeoServiceProvider(providerId);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("MapViewer Example"), tr(
                                      "Unable to find the %1 geoservices plugin.").arg(providerId));
