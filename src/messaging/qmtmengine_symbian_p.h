@@ -254,6 +254,7 @@ private:
                                                               CBaseMtm* mtm,
                                                               TMsvId serviceId);
     void deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation);
+    bool checkIfWaitingDiscardClearMessage(TMsvId aMessageId);
 
 private: // from CActive
     void RunL();
@@ -303,6 +304,8 @@ private:
     QList<MessageEvent> iUndeliveredMessageEvents;
     RTimer              iTimer; // Timer used for delaying delivering of received
                                 // messages until messages are ready to be read
+    TMsvId iMessageId;
+    bool iNewMessage;
     
     mutable int iOperationIds;
     mutable QList<MessageQueryInfo> iMessageQueries;
