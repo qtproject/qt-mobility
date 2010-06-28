@@ -115,7 +115,7 @@ public:
             debug << *filter;
 
             while (++filter != filters.end())
-                debug << " || " << *filter;
+                debug << " ||" << *filter;
         }
         debug << ")";
     }
@@ -151,7 +151,7 @@ public:
             debug << *filter;
 
             while (++filter != filters.end())
-                debug << " && " << *filter;
+                debug << " &&" << *filter;
         }
         debug << ")";
     }
@@ -199,7 +199,7 @@ public:
         if (flags != 0)
             debug << " flags: " << flags;
         if (!value.isNull())
-            debug << " value: " << value;
+            debug << " value:" << value;
         debug << ")";
     }
 #endif
@@ -251,9 +251,9 @@ public:
         if (flags != 0)
             debug << " flags: " << flags;
         if (!minimum.isNull())
-            debug << " minimum: " << minimum;
+            debug << " minimum:" << minimum;
         if (!maximum.isNull())
-            debug << " maximum: " << maximum;
+            debug << " maximum:" << maximum;
         debug << ")";
     }
 #endif

@@ -72,6 +72,11 @@ private Q_SLOTS:
     void equality();
     void inequality_data();
     void inequality();
+
+#ifndef QT_NO_DEBUG_STREAM
+    void debugMessage_data();
+    void debugMessage();
+#endif
 };
 
 void tst_QGalleryFilter::nullFilter()
@@ -527,7 +532,6 @@ void tst_QGalleryFilter::copyOnWrite()
         QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaDataRange);
         QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
     }
-
 
     QCOMPARE(metaDataFilter.propertyName(), QLatin1String("albumTitle"));
     QCOMPARE(metaDataFilter.value(), QVariant(QLatin1String("Greatest Hits")));
@@ -988,6 +992,109 @@ void tst_QGalleryFilter::inequality()
     QCOMPARE(filter1 != filter2, !isEqual);
     QCOMPARE(filter2 != filter1, !isEqual);
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+
+#define TST_QGALLERYMETADATAFILTER_DEBUG_TEXT "QGalleryMetaDataFilter(" \
+        "propertyName: \"title\" " \
+        "flags: QFlags(0x2)  "  \
+        "value: QVariant(QString, \"Greatest\") ) "
+
+#define TST_QGALLERYMETADATARANGEFILTER_DEBUG_TEXT "QGalleryMetaDataRangeFilter(" \
+        "propertyName: \"trackCount\" " \
+        "flags: QFlags(0x2|0x4)  " \
+        "minimum: QVariant(int, 4)  " \
+        "maximum: QVariant(int, 12) ) "
+
+void tst_QGalleryFilter::debugMessage_data()
+{
+    QTest::addColumn<QGalleryFilter>("filter");
+    QTest::addColumn<QByteArray>("message");
+
+    QTest::newRow("null QGalleryFilter")
+            << QGalleryFilter(QGalleryFilter())
+            << QByteArray("QGalleryFilter()");
+    QTest::newRow("null QGalleryMetaDataFilter")
+            << QGalleryFilter(QGalleryMetaDataFilter())
+            << QByteArray("QGalleryMetaDataFilter()");
+    QTest::newRow("null QGalleryMetaDataFilter")
+            << QGalleryFilter(QGalleryMetaDataRangeFilter())
+            << QByteArray("QGalleryMetaDataRangeFilter()");
+    QTest::newRow("null QGalleryUnionFilter")
+            << QGalleryFilter(QGalleryUnionFilter())
+            << QByteArray("QGalleryUnionFilter()");
+    QTest::newRow("null QGalleryIntersectionFilter")
+            << QGalleryFilter(QGalleryIntersectionFilter())
+            << QByteArray("QGalleryIntersectionFilter()");
+
+    QGalleryMetaDataFilter metaDataFilter;
+    metaDataFilter.setPropertyName(QLatin1String("title"));
+    metaDataFilter.setValue(QLatin1String("Greatest"));
+    metaDataFilter.setMatchFlags(Qt::MatchStartsWith);
+
+    QTest::newRow("Populated QGalleryMetaDataFilter")
+            << QGalleryFilter(metaDataFilter)
+            << QByteArray(TST_QGALLERYMETADATAFILTER_DEBUG_TEXT);
+
+    QGalleryMetaDataRangeFilter metaDataRangeFilter;
+    metaDataRangeFilter.setPropertyName(QLatin1String("trackCount"));
+    metaDataRangeFilter.setExclusiveRange(4, 12);
+
+    QTest::newRow("Populated QGalleryMetaDataRangeFilter")
+            << QGalleryFilter(metaDataRangeFilter)
+            << QByteArray(TST_QGALLERYMETADATARANGEFILTER_DEBUG_TEXT);
+
+    QGalleryUnionFilter unionFilter;
+    unionFilter.append(metaDataFilter);
+
+    QTest::newRow("Single Child QGalleryUnionFilter")
+            << QGalleryFilter(unionFilter)
+            << QByteArray("QGalleryUnionFilter("
+                TST_QGALLERYMETADATAFILTER_DEBUG_TEXT
+                ") ");
+
+    QGalleryIntersectionFilter intersectionFilter;
+    intersectionFilter.append(metaDataFilter);
+
+    QTest::newRow("Single Child QGalleryIntersectionFilter")
+            << QGalleryFilter(intersectionFilter)
+            << QByteArray("QGalleryIntersectionFilter("
+                TST_QGALLERYMETADATAFILTER_DEBUG_TEXT
+                ") ");
+
+    unionFilter.append(metaDataRangeFilter);
+
+    QTest::newRow("Multiple Child QGalleryUnionFilter")
+            << QGalleryFilter(unionFilter)
+            << QByteArray("QGalleryUnionFilter("
+                TST_QGALLERYMETADATAFILTER_DEBUG_TEXT
+                " && "
+                TST_QGALLERYMETADATARANGEFILTER_DEBUG_TEXT
+                ") ");
+
+    intersectionFilter.append(metaDataRangeFilter);
+
+    QTest::newRow("Multiple Child QGalleryIntersectionFilter")
+            << QGalleryFilter(intersectionFilter)
+            << QByteArray("QGalleryIntersectionFilter("
+                TST_QGALLERYMETADATAFILTER_DEBUG_TEXT
+                " || "
+                TST_QGALLERYMETADATARANGEFILTER_DEBUG_TEXT
+                ") ");
+}
+
+#undef TST_QGALLERYMETADATAFILTER_DEBUG_TEXT
+#undef TST_QGALLERYMETADATARANGEFILTER_DEBUG_TEXT
+
+void tst_QGalleryFilter::debugMessage()
+{
+    QFETCH(QGalleryFilter, filter);
+    QFETCH(QByteArray, message);
+
+    QTest::ignoreMessage(QtDebugMsg, message.constData());
+    qDebug() << filter;
+}
+#endif
 
 QTEST_MAIN(tst_QGalleryFilter)
 
