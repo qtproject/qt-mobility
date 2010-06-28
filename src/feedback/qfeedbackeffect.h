@@ -71,7 +71,7 @@ public:
         ThemeBasicItem, ThemeSensitiveItem, ThemeItemScroll, ThemeItemPick, ThemeItemDrop,
         ThemeItemMoveOver, ThemeBounceEffect, ThemeCheckBox, ThemeMultipleCheckBox, ThemeEditor,
         ThemeTextSelection, ThemeBlankSelection, ThemeLineSelection, ThemeEmptyLineSelection,
-        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick,
+        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick, // XXX PopUp -> Popup
         ThemeMultitouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
         ThemeNeutralTacticon, ThemeNegativeTacticon,
         NumberOfThemeEffects,

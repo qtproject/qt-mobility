@@ -123,10 +123,10 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     case QFeedbackEffect::ThemeEmptyLineSelection:
         themeFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
         break;
-    case QFeedbackEffect::ThemeCheckbox:
-        themeFeedbackSymbian = ETouchFeedbackCheckbox;
+    case QFeedbackEffect::ThemeCheckBox:
+        themeFeedbackSymbian = ETouchFeedbackCheckBox;
         break;
-    case QFeedbackEffect::ThemeMultipleCheckbox:
+    case QFeedbackEffect::ThemeMultipleCheckBox:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::ThemeSensitiveKeypad:
@@ -144,19 +144,19 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
     case QFeedbackEffect::ThemeItemDrop:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::ItemMoveOver:
+    case QFeedbackEffect::ThemeItemMoveOver:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::ItemPick:
+    case QFeedbackEffect::ThemeItemPick:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect:::ItemScroll:
+    case QFeedbackEffect::ThemeItemScroll:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::PopUp:
+    case QFeedbackEffect::ThemePopUp:
         themeFeedbackSymbian = ETouchFeedbackPopUp;
         break;
-    case QFeedbackEffect::LongPress:
+    case QFeedbackEffect::ThemeLongPress:
         themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
 #endif //ADVANCED_TACTILE_SUPPORT
@@ -167,7 +167,7 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
 }
 
 #ifdef ADVANCED_TACTILE_SUPPORT
-typedef QTouchFeedback MTouchFeedback;
+typedef MTouchFeedback QTouchFeedback;
 #else
 class QTouchFeedback : public MTouchFeedback
 {
