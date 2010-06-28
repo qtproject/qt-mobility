@@ -66,6 +66,8 @@ void tst_QGalleryBaseResponse::noResult()
     QCOMPARE(response.propertyKey(QString()), -1);
     QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
     QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
+    QCOMPARE(response.propertyType(0), QVariant::Invalid);
+    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
     QCOMPARE(response.count(), 0);
     QCOMPARE(response.id(0), QVariant());
     QCOMPARE(response.id(-1), QVariant());
@@ -104,6 +106,8 @@ void tst_QGalleryBaseResponse::successfulResult()
     QCOMPARE(response.propertyKey(QString()), -1);
     QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
     QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
+    QCOMPARE(response.propertyType(0), QVariant::Invalid);
+    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
     QCOMPARE(response.count(), 0);
     QCOMPARE(response.id(0), QVariant());
     QCOMPARE(response.id(-1), QVariant());
@@ -141,6 +145,8 @@ void tst_QGalleryBaseResponse::unsuccessfulResult()
     QCOMPARE(response.propertyKey(QString()), -1);
     QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
     QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
+    QCOMPARE(response.propertyType(0), QVariant::Invalid);
+    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
     QCOMPARE(response.count(), 0);
     QCOMPARE(response.id(0), QVariant());
     QCOMPARE(response.id(-1), QVariant());
