@@ -125,14 +125,24 @@ QGeoTiledMapRequest QGeoTiledMapReply::request() const
     return d_ptr->request;
 }
 
-QPixmap QGeoTiledMapReply::mapImage() const
+QByteArray QGeoTiledMapReply::mapImageData() const
 {
-    return d_ptr->mapImage;
+    return d_ptr->mapImageData;
 }
 
-void QGeoTiledMapReply::setMapImage(const QPixmap &image)
+void QGeoTiledMapReply::setMapImageData(const QByteArray &data)
 {
-    d_ptr->mapImage = image;
+    d_ptr->mapImageData = data;
+}
+
+QString QGeoTiledMapReply::mapImageFormat() const
+{
+    return d_ptr->mapImageFormat;
+}
+
+void QGeoTiledMapReply::setMapImageFormat(const QString &format)
+{
+    d_ptr->mapImageFormat = format;
 }
 
 /*!
@@ -170,7 +180,8 @@ QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapReplyPrivat
         errorString(errorString),
         isFinished(isFinished),
         request(other.request),
-        mapImage(other.mapImage) {}
+        mapImageData(other.mapImageData),
+        mapImageFormat(other.mapImageFormat) {}
 
 QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
 
@@ -180,7 +191,8 @@ QGeoTiledMapReplyPrivate& QGeoTiledMapReplyPrivate::operator= (const QGeoTiledMa
     errorString = other.errorString;
     isFinished = other.isFinished;
     request = other.request;
-    mapImage = other.mapImage;
+    mapImageData = other.mapImageData;
+    mapImageFormat = other.mapImageFormat;
 
     return *this;
 }

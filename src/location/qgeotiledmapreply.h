@@ -45,7 +45,6 @@
 #include "qmobilityglobal.h"
 
 #include <QObject>
-#include <QPixmap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,7 +73,9 @@ public:
     QString errorString() const;
 
     QGeoTiledMapRequest request() const;
-    QPixmap mapImage() const;
+
+    QByteArray mapImageData() const;
+    QString mapImageFormat() const;
 
 public slots:
     virtual void abort();
@@ -87,7 +88,8 @@ protected:
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void setMapImage(const QPixmap &image);
+    void setMapImageData(const QByteArray &data);
+    void setMapImageFormat(const QString &format);
 
 private:
     QGeoTiledMapReplyPrivate *d_ptr;
