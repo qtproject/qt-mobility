@@ -94,5 +94,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
+sources.path = $$QT_MOBILITY_EXAMPLES
 INSTALLS += sources

@@ -35,3 +35,6 @@ contains(mobility_modules,contacts) {
         sources.files += qmlcontacts
     }
 }
+
+sources.path = $$QT_MOBILITY_DEMOS
+INSTALLS += sources
