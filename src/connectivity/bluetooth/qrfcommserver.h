@@ -89,6 +89,10 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QRfcommServer)
+
+#ifndef QT_NO_DBUS
+    Q_PRIVATE_SLOT(d_func(), void _q_newConnection())
+#endif
 };
 
 

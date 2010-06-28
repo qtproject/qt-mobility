@@ -295,7 +295,23 @@ bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketState soc
 {
     Q_D(QBluetoothSocket);
 
+    if (d->readNotifier)
+        delete d->readNotifier;
+
     d->socket = socketDescriptor;
+
+    // ensure that O_NONBLOCK is set on new connections.
+    int flags = fcntl(d->socket, F_GETFL, 0);
+    if (!(flags & O_NONBLOCK))
+        fcntl(d->socket, F_SETFL, flags | O_NONBLOCK);
+
+    d->readNotifier = new QSocketNotifier(d->socket, QSocketNotifier::Read);
+    connect(d->readNotifier, SIGNAL(activated(int)), this, SLOT(_q_readNotify()));
+
+    setSocketState(socketState);
+    setOpenMode(openMode);
+
+    return true;
 }
 
 int QBluetoothSocket::socketDescriptor() const

@@ -69,6 +69,9 @@ private slots:
 
     void tst_pendingConnections_data();
     void tst_pendingConnections();
+
+    void tst_receive_data();
+    void tst_receive();
 };
 
 tst_QRfcommServer::tst_QRfcommServer()
@@ -153,7 +156,7 @@ void tst_QRfcommServer::tst_pendingConnections_data()
     QTest::addColumn<int>("maxConnections");
 
     QTest::newRow("1 connection") << 1;
-    QTest::newRow("2 connections") << 2;
+    //QTest::newRow("2 connections") << 2;
 }
 
 void tst_QRfcommServer::tst_pendingConnections()
@@ -199,6 +202,7 @@ void tst_QRfcommServer::tst_pendingConnections()
             foreach (QBluetoothSocket *socket, sockets) {
                 qDebug() << socket->state();
                 QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
+                QVERIFY(socket->openMode() == QIODevice::ReadWrite);
             }
 
             QVERIFY(!server.hasPendingConnections());
@@ -215,7 +219,53 @@ void tst_QRfcommServer::tst_pendingConnections()
     }
 }
 
+void tst_QRfcommServer::tst_receive_data()
+{
+    QTest::addColumn<QByteArray>("expected");
+
+    QTest::newRow("test") << QByteArray("hello\r\n");
+}
+
+void tst_QRfcommServer::tst_receive()
+{
+    QFETCH(QByteArray, expected);
+
+    QRfcommServer server;
+
+    bool result = server.listen();
+
+    QVERIFY(result);
+
+    qDebug() << "Listening on RFCOMM channel:" << server.serverPort();
+
+    int connectTime = MaxConnectTime;
+    while (!server.hasPendingConnections() && connectTime > 0) {
+        QTest::qWait(1000);
+        connectTime -= 1000;
+    }
+
+    QVERIFY(server.hasPendingConnections());
+
+    QBluetoothSocket *socket = server.nextPendingConnection();
+
+    QVERIFY(socket->state() == QBluetoothSocket::ConnectedState);
+    QVERIFY(socket->openMode() == QIODevice::ReadWrite);
+
+    QSignalSpy readyReadSpy(socket, SIGNAL(readyRead()));
+
+    int readyReadTime = 60000;
+    while (readyReadSpy.isEmpty() && readyReadTime > 0) {
+        QTest::qWait(1000);
+        readyReadTime -= 1000;
+    }
+
+    QVERIFY(!readyReadSpy.isEmpty());
+
+    const QByteArray data = socket->readAll();
+
+    QCOMPARE(data, expected);
+}
+
 QTEST_MAIN(tst_QRfcommServer)
 
 #include "tst_qrfcommserver.moc"
-

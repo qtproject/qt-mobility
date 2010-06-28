@@ -72,9 +72,15 @@ QRfcommServerPrivate::~QRfcommServerPrivate()
 {
     delete socketNotifier;
 
-    qDeleteAll(activeSockets);
-
     delete socket;
+}
+
+void QRfcommServerPrivate::_q_newConnection()
+{
+    // disable socket notifier until application calls nextPendingConnection().
+    socketNotifier->setEnabled(false);
+
+    emit q_ptr->newConnection();
 }
 
 void QRfcommServer::close()
@@ -100,7 +106,7 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     if (!address.isNull())
         convertAddress(address.toUInt64(), addr.rc_bdaddr.b);
     else
-        convertAddress(Q_UINT64_C(0xffffffffffffffff), addr.rc_bdaddr.b);
+        convertAddress(Q_UINT64_C(0), addr.rc_bdaddr.b);
 
     if (::bind(sock, reinterpret_cast<sockaddr *>(&addr), sizeof(sockaddr_rc)) < 0)
         return false;
@@ -111,10 +117,9 @@ bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
     d->socket->setSocketState(QBluetoothSocket::ListeningState);
 
     if (!d->socketNotifier) {
-        qDebug() << "connecting socket notifier";
         d->socketNotifier = new QSocketNotifier(d->socket->socketDescriptor(),
                                                 QSocketNotifier::Read);
-        connect(d->socketNotifier, SIGNAL(activated(int)), this, SIGNAL(newConnection()));
+        connect(d->socketNotifier, SIGNAL(activated(int)), this, SLOT(_q_newConnection()));
     }
 
     return true;
@@ -132,8 +137,19 @@ bool QRfcommServer::hasPendingConnections() const
 {
     Q_D(const QRfcommServer);
 
-    if (!d->activeSockets.isEmpty())
-        return true;
+    if (!d || !d->socketNotifier)
+        return false;
+
+    // if the socket notifier is disable there is a pending connection waiting for us to accept.
+    return !d->socketNotifier->isEnabled();
+}
+
+QBluetoothSocket *QRfcommServer::nextPendingConnection()
+{
+    Q_D(QRfcommServer);
+
+    if (!hasPendingConnections())
+        return 0;
 
     sockaddr_rc addr;
     socklen_t length = sizeof(sockaddr_rc);
@@ -143,20 +159,14 @@ bool QRfcommServer::hasPendingConnections() const
     if (pending >= 0) {
         QBluetoothSocket *newSocket = new QBluetoothSocket;
         newSocket->setSocketDescriptor(pending);
-        d->activeSockets.append(newSocket);
 
-        return true;
+        d->socketNotifier->setEnabled(true);
+
+        return newSocket;
+    } else {
+        qDebug() << "Hmm, could have sworn there was a connection waiting to be accepted!";
+        d->socketNotifier->setEnabled(true);
     }
-
-    return false;
-}
-
-QBluetoothSocket *QRfcommServer::nextPendingConnection()
-{
-    Q_D(QRfcommServer);
-
-    if (hasPendingConnections())
-        return d->activeSockets.takeFirst();
 
     return 0;
 }

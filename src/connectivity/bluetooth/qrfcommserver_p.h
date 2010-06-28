@@ -85,13 +85,17 @@ public:
     void HandleShutdownCompleteL(TInt aErr);
 #endif
 
+#ifndef QT_NO_DBUS
+    void _q_newConnection();
+#endif
+
 public:
     QBluetoothSocket *socket;
 
 #ifdef Q_OS_SYMBIAN
     QBluetoothSocket *pendingSocket;
-#endif
     mutable QList<QBluetoothSocket *> activeSockets;
+#endif
 
     int maxPendingConnections;
 
