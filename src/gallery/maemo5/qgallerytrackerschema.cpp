@@ -47,6 +47,7 @@
 #include "qgallerytrackeritemlist_p.h"
 #include "qgallerytrackerthumbnailcolumn_p.h"
 
+#include <QtCore/qdatetime.h>
 #include <QtCore/qmetatype.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
@@ -371,7 +372,7 @@ template <> bool qt_writeValue<qreal>(int *, QXmlStreamWriter *xml, const QVaria
 template <> bool qt_writeValue<QDateTime>(int *, QXmlStreamWriter *xml, const QVariant &value)
 {
     xml->writeStartElement(QLatin1String("rdf:Date"));
-    xml->writeCharacters(value.toString());
+    xml->writeCharacters(value.toDateTime().toString(Qt::ISODate));
     xml->writeEndElement();
 
     return true;
