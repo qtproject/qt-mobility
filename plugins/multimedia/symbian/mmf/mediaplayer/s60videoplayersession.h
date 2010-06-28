@@ -90,6 +90,7 @@ public:
     QString defaultEndpoint() const;
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
+    void resizeVideoWindow();
 
 protected:
     //From S60MediaPlayerSession

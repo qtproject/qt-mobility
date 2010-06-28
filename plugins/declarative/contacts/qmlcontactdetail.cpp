@@ -53,7 +53,7 @@ static QString ToContactDetailName(const QString& name)
 
 QMLContactDetail::QMLContactDetail(QObject* parent)
     :QObject(parent),
-    m_contactChanged(false)
+    m_detailChanged(false)
 {
 
 }
@@ -90,9 +90,9 @@ void QMLContactDetail::setName(const QString& name)
     m_detailName = name;
 }
 
-bool QMLContactDetail::isDetailChanged() const
+bool QMLContactDetail::detailChanged() const
 {
-    return m_contactChanged;
+    return m_detailChanged;
 }
 
 QContactDetail QMLContactDetail::detail() const
@@ -107,5 +107,12 @@ QContactDetail QMLContactDetail::detail() const
 void QMLContactDetail::detailChanged(const QString &key, const QVariant &value)
 {
     qWarning() << "detailChanged field:"  << key << " value:" << value;
-    m_contactChanged = true;
+    m_detailChanged = true;
 }
+
+void QMLContactDetail::setDetailChanged(bool changed)
+{
+    m_detailChanged = changed;
+    emit onDetailChanged();
+}
+
