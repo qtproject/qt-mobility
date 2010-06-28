@@ -41,7 +41,7 @@
 #ifndef BROWSER_H
 #define BROWSER_H
 
-#include <QtGui/QWidget>
+#include <QtGui/QMainWindow>
 
 #include <qgalleryfilter.h>
 
@@ -57,19 +57,20 @@ class GalleryView;
 
 QTM_USE_NAMESPACE
 
-class Browser : public QWidget
+class Browser : public QMainWindow
 {
     Q_OBJECT
 public:
     Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~Browser();
 
-public Q_SLOTS:
-    void showArtists(const QVariant &containerId = QVariant());
-    void showAlbumArtists(const QVariant &containerId = QVariant());
-    void showAlbums(const QVariant &containerId = QVariant());
-    void showSongs(const QVariant &containerId = QVariant());
-    void showPhotos(const QVariant &containerId = QVariant());
+public slots:
+    void showArtists(const QVariant &containerId = QVariant(), const QString &title = QString());
+    void showAlbumArtists(
+            const QVariant &containerId = QVariant(), const QString &title = QString());
+    void showAlbums(const QVariant &containerId = QVariant(), const QString &title = QString());
+    void showSongs(const QVariant &containerId = QVariant(), const QString &title = QString());
+    void showPhotos(const QVariant &containerId = QVariant(), const QString &title = QString());
 
 private:
     QDocumentGallery *gallery;

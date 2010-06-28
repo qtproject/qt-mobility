@@ -102,6 +102,6 @@ void AlbumView::mediaChanged(QGalleryItemList *media)
 
 void AlbumView::activated(const QModelIndex &index)
 {
-    emit showSongs(media()->id(index.row()));
+    emit showSongs(media()->id(index.row()), index.data(Qt::DisplayRole).toString());
 }
 

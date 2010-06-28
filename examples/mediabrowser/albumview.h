@@ -59,7 +59,7 @@ public:
     ~AlbumView();
 
 signals:
-    void showSongs(const QVariant &containerId);
+    void showSongs(const QVariant &containerId, const QString &title);
 
 protected slots:
     void mediaChanged(QGalleryItemList *media);

@@ -68,7 +68,6 @@ PhotoView::PhotoView(QWidget *parent)
     view->setIconSize(QSize(124, 124));
     view->setFlow(QListView::TopToBottom);
     view->setViewMode(QListView::IconMode);
-    view->setSpacing(4);
     view->setUniformItemSizes(true);
     view->setWrapping(true);
     view->setModel(model);

@@ -50,7 +50,7 @@
 #include <QtGui>
 
 Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
+    : QMainWindow(parent, flags)
     , gallery(0)
     , stack(0)
     , artistView(0)
@@ -63,17 +63,22 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
 
     artistView = new ArtistView(QDocumentGallery::Artist);
     artistView->setGallery(gallery);
-    connect(artistView, SIGNAL(showAlbums(QVariant)), this, SLOT(showAlbums(QVariant)));
-    connect(artistView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
+    connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
+            this, SLOT(showAlbums(QVariant,QString)));
+    connect(artistView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
 
     albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
     albumArtistView->setGallery(gallery);
-    connect(albumArtistView, SIGNAL(showAlbums(QVariant)), this, SLOT(showAlbums(QVariant)));
-    connect(albumArtistView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
+    connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
+            this, SLOT(showAlbums(QVariant,QString)));
+    connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
 
     albumView = new AlbumView;
     albumView->setGallery(gallery);
-    connect(albumView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
+    connect(albumView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
 
     songView = new SongView;
     songView->setGallery(gallery);
@@ -88,73 +93,62 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
     stack->addWidget(songView);
     stack->addWidget(photoView);
 
-    QPushButton *artistButton = new QPushButton(tr("Artists"));
-    connect(artistButton, SIGNAL(clicked()), this, SLOT(showArtists()));
+    menuBar()->addAction(tr("Artists"), this, SLOT(showArtists()));
+    menuBar()->addAction(tr("Album Artists"), this, SLOT(showAlbumArtists()));
+    menuBar()->addAction(tr("Albums"), this, SLOT(showAlbums()));
+    menuBar()->addAction(tr("Songs"), this, SLOT(showSongs()));
+    menuBar()->addAction(tr("Photos"), this, SLOT(showPhotos()));
 
-    QPushButton *albumArtistButton = new QPushButton(tr("Album Artists"));
-    connect(albumArtistButton, SIGNAL(clicked()), this, SLOT(showAlbumArtists()));
-
-    QPushButton *albumButton = new QPushButton(tr("Albums"));
-    connect(albumButton, SIGNAL(clicked()), this, SLOT(showAlbums()));
-
-    QPushButton *songButton = new QPushButton(tr("Songs"));
-    connect(songButton, SIGNAL(clicked()), this, SLOT(showSongs()));
-
-    QPushButton *photoButton = new QPushButton(tr("Photos"));
-    connect(photoButton, SIGNAL(clicked()), this, SLOT(showPhotos()));
-
-    QBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addWidget(artistButton);
-    hLayout->addWidget(albumArtistButton);
-    hLayout->addWidget(albumButton);
-    hLayout->addWidget(songButton);
-    hLayout->addWidget(photoButton);
-
-    QBoxLayout *vLayout = new QVBoxLayout;
-    vLayout->setMargin(0);
-    vLayout->setSpacing(0);
-    vLayout->addWidget(stack);
-    vLayout->addLayout(hLayout);
-
-    setLayout(vLayout);
+    setCentralWidget(stack);
+    showArtists();
 }
 
 Browser::~Browser()
 {
 }
 
-void Browser::showArtists(const QVariant &containerId)
+void Browser::showArtists(const QVariant &containerId, const QString &title)
 {
     artistView->showChildren(containerId);
 
     stack->setCurrentWidget(artistView);
+
+    setWindowTitle(containerId.isValid() ? title : tr("Artists"));
 }
 
-void Browser::showAlbumArtists(const QVariant &containerId)
+void Browser::showAlbumArtists(const QVariant &containerId, const QString &title)
 {
     albumArtistView->showChildren(containerId);
 
     stack->setCurrentWidget(albumArtistView);
+
+    setWindowTitle(containerId.isValid() ? title : tr("Album Artists"));
 }
 
-void Browser::showAlbums(const QVariant &containerId)
+void Browser::showAlbums(const QVariant &containerId, const QString &title)
 {
     albumView->showChildren(containerId);
 
     stack->setCurrentWidget(albumView);
+
+    setWindowTitle(containerId.isValid() ? title : tr("Albums"));
 }
 
-void Browser::showSongs(const QVariant &containerId)
+void Browser::showSongs(const QVariant &containerId, const QString &title)
 {
     songView->showChildren(containerId);
 
     stack->setCurrentWidget(songView);
+
+    setWindowTitle(containerId.isValid() ? title : tr("Songs"));
 }
 
-void Browser::showPhotos(const QVariant &containerId)
+void Browser::showPhotos(const QVariant &containerId, const QString &title)
 {
     photoView->showChildren(containerId);
 
     stack->setCurrentWidget(photoView);
+
+    setWindowTitle(containerId.isValid() ? title : tr("Photos"));
 }
 
