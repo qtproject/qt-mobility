@@ -334,10 +334,7 @@ bool QGeoRouteXmlParser::parseManeuver()
         return false;
     }
     QGeoNavigationInstructionContainer instructionContainer;
-    QGeoNavigationInstruction instruction;
-
     instructionContainer.id = m_reader->attributes().value("id").toString();
-    instructionContainer.instruction = instruction;
 
     m_reader->readNext();
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Maneuver")) {
@@ -345,10 +342,10 @@ bool QGeoRouteXmlParser::parseManeuver()
             if (m_reader->name() == "Position") {
                 QGeoCoordinate coordinates;
                 if(parseCoordinates(coordinates))
-                    instruction.setPosition(coordinates);
+                    instructionContainer.instruction.setPosition(coordinates);
             }
             else if (m_reader->name() == "Instruction") {
-                instruction.setInstructionText(m_reader->readElementText());
+                instructionContainer.instruction.setInstructionText(m_reader->readElementText());
             }
             else if (m_reader->name() == "ToLink") {
                 instructionContainer.toId = m_reader->readElementText();
