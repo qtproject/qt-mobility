@@ -89,7 +89,7 @@ QTM_BEGIN_NAMESPACE
                 filter: GalleryFilter {
                     property: "fileName";
                     value: "*.jpg";
-                    matchFlags: GalleryFilter.MatchExactly
+                    matchFlags: GalleryFilter.Wildcard
                 }
             }
 

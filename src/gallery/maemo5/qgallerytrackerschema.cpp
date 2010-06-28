@@ -499,11 +499,14 @@ static bool qt_writeCondition(
         xml->writeStartElement(QLatin1String("rdfq:startsWith"));
         break;
     case Qt::MatchEndsWith:
-        xml->writeStartElement(QLatin1String("rdfq:contains"));
+        xml->writeStartElement(QLatin1String("rdfq:equals"));
         value = QLatin1Char('*') + value.toString();
         break;
     case Qt::MatchRegExp:
         xml->writeStartElement(QLatin1String("rdfq:regex"));
+        break;
+    case Qt::MatchWildcard:
+        xml->writeStartElement(QLatin1String("rdfq:equals"));
         break;
     default:
         *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
