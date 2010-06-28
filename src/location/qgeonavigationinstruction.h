@@ -42,7 +42,9 @@
 #ifndef QGEONAVIGATIONINSTRUCTION_H
 #define QGEONAVIGATIONINSTRUCTION_H
 
-#include "qgeodistance.h"
+#include "qmobilityglobal.h"
+
+#include <QSharedDataPointer>
 
 class QString;
 
@@ -51,38 +53,20 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-
 class QGeoNavigationInstructionPrivate;
-
-/*
- Note:
-
- This was initially called QGeoNavigationAction.
- From the point of view of the Nokia Location API alignment:
-   Link <-> QGeoRouteSegment
-   Maneuver <-> QGeoNavigationInstruction
-
- The link/maneuver inter-relationships from the API alignment were used at first.
-
- The current inter-relationships and the new name were inspired by JSR 293,
- which was already a close match to what I was after.
-*/
 
 class Q_LOCATION_EXPORT QGeoNavigationInstruction
 {
 
 public:
-    enum InstructionType {
-        NormalInstruction,
-        PrivateTransportInstruction,
-        PublicTransportInstruction,
-        TruckInstruction
-    };
-
     QGeoNavigationInstruction();
-    virtual ~QGeoNavigationInstruction();
+    QGeoNavigationInstruction(const QGeoNavigationInstruction &other);
+    ~QGeoNavigationInstruction();
 
-    virtual InstructionType type() const;
+    QGeoNavigationInstruction& operator= (const QGeoNavigationInstruction &other);
+
+    bool operator== (const QGeoNavigationInstruction &other) const;
+    bool operator!= (const QGeoNavigationInstruction &other) const;
 
     void setPosition(const QGeoCoordinate &position);
     QGeoCoordinate position() const;
@@ -93,16 +77,11 @@ public:
     void setTimeToNextInstruction(int secs);
     int timeToNextInstruction() const;
 
-    void setDistanceToNextInstruction(const QGeoDistance &distance);
-    QGeoDistance distanceToNextInstruction() const;
-
-protected:
-    QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr);
-    QGeoNavigationInstructionPrivate* d_ptr;
+    void setDistanceToNextInstruction(qreal distance);
+    qreal distanceToNextInstruction() const;
 
 private:
-    Q_DECLARE_PRIVATE(QGeoNavigationInstruction)
-    Q_DISABLE_COPY(QGeoNavigationInstruction)
+    QSharedDataPointer<QGeoNavigationInstructionPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

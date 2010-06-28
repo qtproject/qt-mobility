@@ -56,35 +56,31 @@
 #include "qgeoroute.h"
 #include "qgeorouterequest.h"
 #include "qgeoboundingbox.h"
-#include "qgeodistance.h"
+
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoRouteSegment;
 
-class QGeoRoutePrivate
+class QGeoRoutePrivate : public QSharedData
 {
 public:
     QGeoRoutePrivate();
     QGeoRoutePrivate(const QGeoRoutePrivate &other);
     ~QGeoRoutePrivate();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
-
     QString id;
     QGeoRouteRequest request;
 
-    QList<QGeoCoordinate> pathSummary;
     QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
+    QList<QGeoRouteSegment> routeSegments;
 
     int travelTime;
-    QGeoDistance distance;
+    qreal distance;
 
     QGeoRouteRequest::TravelMode travelMode;
-    QGeoRouteRequest::RouteOptimization optimization;
-    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
 
     QList<QGeoCoordinate> path;
 };

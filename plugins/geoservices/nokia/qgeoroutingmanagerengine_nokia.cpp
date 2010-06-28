@@ -80,7 +80,6 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
 
     QGeoRouteRequest::InstructionDetails instructionDetails;
     instructionDetails |= QGeoRouteRequest::BasicInstructions;
-    instructionDetails |= QGeoRouteRequest::DetailedInstructions;
     setSupportedInstructionDetails(instructionDetails);
 
     QGeoRouteRequest::RouteOptimizations optimizations;
@@ -97,7 +96,6 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
 
     QGeoRouteRequest::SegmentDetails segmentDetails;
     segmentDetails |= QGeoRouteRequest::BasicSegmentData;
-    segmentDetails |= QGeoRouteRequest::DetailedSegmentData;
     setSupportedSegmentDetails(segmentDetails);
 
     if (error)
@@ -230,7 +228,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     if ((route.request().segmentDetail() & supportedSegmentDetails()) != route.request().segmentDetail())
         supported = false;
 
-    if ((route.optimization() & supportedRouteOptimizations()) != route.optimization())
+    if ((route.request().routeOptimization() & supportedRouteOptimizations()) != route.request().routeOptimization())
         supported = false;
 
     if ((route.travelMode() & supportedTravelModes()) != route.travelMode())
@@ -253,7 +251,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += QString::number(position.longitude());
 
     requestString += "&mode=";
-    requestString += modesRequestString(route.optimization(), route.travelMode(),
+    requestString += modesRequestString(route.request().routeOptimization(), route.travelMode(),
         route.request().avoidFeatureTypes());
 
     requestString += "&alternatives=0";
@@ -347,6 +345,11 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     }
 
     QStringList responseAttributes;
+    // Not sure what definition of Basic/Detailed Instructions/Segments was being
+    // used here
+    // For reference - the enum doc stated the difference was that Basic used
+    // the regular classes and that Detailed needed to use a subclass
+    /*
     if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
         requestString += "&linkattribute=shape,nextLink";
         responseAttributes.append("links");
@@ -366,6 +369,19 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
         if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
             requestString += ",link";
     }
+    */
+    if (request.instructionDetail() & QGeoRouteRequest::BasicInstructions) {
+        requestString += "&linkattribute=shape,length,nextLink";
+        responseAttributes.append("links");
+    }
+
+    if (request.instructionDetail() & QGeoRouteRequest::BasicSegmentData) {
+        responseAttributes.append("maneuvers");
+        requestString += "&maneuverattribute=position";
+        if (!(request.instructionDetail() & QGeoRouteRequest::NoInstructions))
+            requestString += ",link";
+    }
+
 
     requestString += "&routeattribute=waypoints,summary,shape,boundingBox";
     if (responseAttributes.count() > 0) {

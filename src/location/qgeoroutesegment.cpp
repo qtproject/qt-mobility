@@ -58,67 +58,34 @@ QTM_BEGIN_NAMESPACE
     A QGeoRouteSegment instance has information about the physcial layout
     of the route segment, the length of the route and the estimated time and
     navigation instructions required to traverse the route segment.
-
-    Subclasses of QGeoRouteSegment will provide more detailed information about
-    the segment.  The type() function can be used to determine the subclass
-    that is being used.
-
-    \sa QGeoRouteSegment::SegmentType
 */
 
 /*!
-    \enum QGeoRouteSegment::SegmentType
-
-    This is used to distinguish between different subclasses of
-    QGeoRouteSegment when they are accessed as QGeoRouteSegment objects.
-
-    \value NormalSegment
-        The route segment information is not specialized.
-    \value PrivateTransportSegment
-        The route segment information is specialized for travel by private transport.
-    \value PublicTransportSegment
-        The route segment information is specialized for travel by public transport.
-    \value TruckSegment
-        The route segment information is specialized for travel by truck.
-
-    \sa QGeoRouteSegment::type()
-*/
-
-/*!
-    Constructs a QGeoRouteSegment object.
+    Constructs a route segment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
         : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*!
-        \internal
-    Internal use
+    Constructs a route segment object from the contents of \a other.
 */
-QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
-        : d_ptr(d_ptr) {}
+QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
+    : d_ptr(other.d_ptr) {}
 
 /*!
-    Destroys this QGeoRouteSegment object.
+    Destroys this route segment object.
 */
-QGeoRouteSegment::~QGeoRouteSegment()
-{
-    Q_D(QGeoRouteSegment);
-    delete d;
-}
+QGeoRouteSegment::~QGeoRouteSegment() {}
+
 
 /*!
-    Returns the type of this segment.
-
-    If the type is something other than QGeoRouteSegment::NormalSegment then
-    this QGeoRouteSegment object has been created as a subclass of
-    QGeoRouteSegment which contains more detailed information about the segment.
-
-    \sa QGeoRouteSegment::SegmentType
+    Assigns \a other to this route segment object and then returns a
+    reference to this route segment object.
 */
-QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
+QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment &other)
 {
-    Q_D(const QGeoRouteSegment);
-    return d->type;
+    d_ptr = other.d_ptr;
+    return *this;
 }
 
 /*!
@@ -127,8 +94,7 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
 */
 void QGeoRouteSegment::setTravelTime(int secs)
 {
-    Q_D(QGeoRouteSegment);
-    d->travelTime = secs;
+    d_ptr->travelTime = secs;
 }
 
 /*!
@@ -137,26 +103,23 @@ void QGeoRouteSegment::setTravelTime(int secs)
 */
 int QGeoRouteSegment::travelTime() const
 {
-    Q_D(const QGeoRouteSegment);
-    return d->travelTime;
+    return d_ptr->travelTime;
 }
 
 /*!
-    Sets the \a distance covered by this segment of the route.
+    Sets the distance covered by this segment of the route, in metres, to \a distance.
 */
-void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
+void QGeoRouteSegment::setDistance(qreal distance)
 {
-    Q_D(QGeoRouteSegment);
-    d->distance = distance;
+    d_ptr->distance = distance;
 }
 
 /*!
-    Returns the distance covered by this segment of the route.
+    Returns the distance covered by this segment of the route, in metres.
 */
-QGeoDistance QGeoRouteSegment::distance() const
+qreal QGeoRouteSegment::distance() const
 {
-    Q_D(const QGeoRouteSegment);
-    return d->distance;
+    return d_ptr->distance;
 }
 
 /*!
@@ -167,8 +130,7 @@ QGeoDistance QGeoRouteSegment::distance() const
 */
 void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
-    Q_D(QGeoRouteSegment);
-    d->path = path;
+    d_ptr->path = path;
 }
 
 /*!
@@ -180,25 +142,22 @@ void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 
 QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
-    Q_D(const QGeoRouteSegment);
-    return d->path;
+    return d_ptr->path;
 }
 /*!
     Sets the instruction for this route segement to \a instruction.
 */
-void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction *instruction)
+void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction &instruction)
 {
-    Q_D(QGeoRouteSegment);
-    d->instruction = instruction;
+    d_ptr->instruction = instruction;
 }
 
 /*!
     Returns the instruction for this route segment.
 */
-const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
+QGeoNavigationInstruction QGeoRouteSegment::instruction() const
 {
-    Q_D(const QGeoRouteSegment);
-    return d->instruction;
+    return d_ptr->instruction;
 }
 
 /*******************************************************************************
@@ -206,33 +165,16 @@ const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
     : travelTime(0),
-    instruction(0)
-{
-    type = QGeoRouteSegment::NormalSegment;
-}
+    distance(0.0) {}
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
-        : type(other.type),
+        : QSharedData(other),
         travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
         instruction(other.instruction) {}
 
-QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate()
-{
-    if (instruction)
-        delete instruction;
-}
-
-QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
-{
-    type = other.type;
-    travelTime = other.travelTime;
-    distance = other.distance;
-    path = other.path;
-    instruction = other.instruction;
-    return *this;
-}
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
 QTM_END_NAMESPACE
 

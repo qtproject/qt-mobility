@@ -77,6 +77,11 @@ QTM_BEGIN_NAMESPACE
     or any of the capability reporting functions are used to prevent
     incorrect or inconsistent behaviour.
 
+    A subclass of QGeoRouteManagerEngine will often make use of a subclass
+    fo QGeoRouteReply internally, in order to add any engine-specific
+    data (such as a QNetworkReply object for network-based services) to the
+    QGeoRouteReply instances used by the engine.
+
     \sa QGeoRoutingManager
 */
 

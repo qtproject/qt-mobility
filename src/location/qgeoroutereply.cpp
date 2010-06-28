@@ -61,6 +61,17 @@ QTM_BEGIN_NAMESPACE
     The isFinished(), error() and errorString() methods provide information
     on whether the operation has completed and if it completed succesfully.
 
+    The finished() and error(QGeoRouteReply::Error,QString)
+    signals can be used to monitor the progress of the operation.
+
+    It is possible that a newly created QGeoRouteReply may be in a finished
+    state, most commonly because an error has occurred. Since such an instance
+    will never emit the finished() or
+    error(QGeoRouteReply::Error,QString) signals, it is
+    important to check the result of isFinished() before making the connections
+    to the signals. The documentation for QGeoRoutingManager demonstrates how
+    this might be carried out.
+
     If the operation completes successfully the results will be able to be
     accessed with routes().
 */

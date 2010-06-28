@@ -56,71 +56,50 @@ QTM_BEGIN_NAMESPACE
 
     A QGeoNavigationInstruction instance has a position at which the
     instruction applies and a textual instruction to provide at that position.
-
-    Subclasses of QGeoNavigationInstruction will provide more detailed
-    instruction information.  The type() function can be used to determine
-    the subclass that is being used.
-
-    \sa QGeoNavigationInstruction::InstructionType
 */
 
 /*!
-    \enum QGeoNavigationInstruction::InstructionType
-
-    Describes the specialization of a QGeoNavigationInstruction object.
-
-    This is used to distinguish between different subclasses of
-    QGeoNavigationInstruction when they are accessed as
-    QGeoNavigationInstruction objects.
-
-    \value NormalInstruction
-        The instruction is not specialized.
-    \value PrivateTransportInstruction
-        The instruction is specialized for those travelling by private transport.
-    \value PublicTransportInstruction
-        The instruction is specialized for those travelling by public transport
-    \value TruckInstruction
-        The instruction is specialized for those travelling by truck.
-
-    \sa QGeoNavigationInstruction::type()
-*/
-
-/*!
-    Constructs a QGeoNavigationInstruction object.
+    Constructs a navigation instruction object.
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction()
         : d_ptr(new QGeoNavigationInstructionPrivate()) {}
 
-/*
-    For internal use
-*/
-QGeoNavigationInstruction::QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr)
-        : d_ptr(d_ptr) {}
 
 /*!
-    Destroys this QGeoNavigationInstruction object.
+    Constructs a navigation instruction object from the contents of \a other.
 */
-QGeoNavigationInstruction::~QGeoNavigationInstruction()
+QGeoNavigationInstruction::QGeoNavigationInstruction(const QGeoNavigationInstruction &other)
+    : d_ptr(other.d_ptr) {}
+
+/*!
+    Destroys this navigation instruction object.
+*/
+QGeoNavigationInstruction::~QGeoNavigationInstruction() {}
+
+/*!
+    Assigns \a other to this navigation instruction object and then returns
+    a reference to this navigation instruction object.
+*/
+QGeoNavigationInstruction& QGeoNavigationInstruction::operator= (const QGeoNavigationInstruction &other)
 {
-    Q_D(QGeoNavigationInstruction);
-    delete d;
+    d_ptr = other.d_ptr;
+    return *this;
 }
 
 /*!
-    Returns the type of this instruction.
-
-    If the type is something other than
-    QGeoNavigationInstruction::NormalInstruction then this
-    QGeoNavigationInstruction object has been created as a subclass of
-    QGeoNavigationInstruction which contains more detailed information about
-    the instructions.
-
-    \sa QGeoNavigationInstruction::InstructionType
+    Returns whether this navigation instruction is equal to \a other.
 */
-QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() const
+bool QGeoNavigationInstruction::operator== (const QGeoNavigationInstruction &other) const
 {
-    Q_D(const QGeoNavigationInstruction);
-    return d->type;
+    return (*(d_ptr.constData()) == *(other.d_ptr.constData()));
+}
+
+/*!
+    Returns whether this navigation instruction is not equal to \a other.
+*/
+bool QGeoNavigationInstruction::operator!= (const QGeoNavigationInstruction &other) const
+{
+    return !(operator==(other));
 }
 
 /*!
@@ -128,8 +107,7 @@ QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() con
 */
 void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 {
-    Q_D(QGeoNavigationInstruction);
-    d->position = position;
+    d_ptr->position = position;
 }
 
 /*!
@@ -137,8 +115,7 @@ void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 */
 QGeoCoordinate QGeoNavigationInstruction::position() const
 {
-    Q_D(const QGeoNavigationInstruction);
-    return d->position;
+    return d_ptr->position;
 }
 
 /*!
@@ -146,8 +123,7 @@ QGeoCoordinate QGeoNavigationInstruction::position() const
 */
 void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
 {
-    Q_D(QGeoNavigationInstruction);
-    d->text = instructionText;
+    d_ptr->text = instructionText;
 }
 
 /*!
@@ -155,8 +131,7 @@ void QGeoNavigationInstruction::setInstructionText(const QString &instructionTex
 */
 QString QGeoNavigationInstruction::instructionText() const
 {
-    Q_D(const QGeoNavigationInstruction);
-    return d->text;
+    return d_ptr->text;
 }
 
 /*!
@@ -166,8 +141,7 @@ QString QGeoNavigationInstruction::instructionText() const
 */
 void QGeoNavigationInstruction::setTimeToNextInstruction(int secs)
 {
-    Q_D(QGeoNavigationInstruction);
-    d->timeToNextInstruction = secs;
+    d_ptr->timeToNextInstruction = secs;
 }
 
 /*!
@@ -177,40 +151,36 @@ void QGeoNavigationInstruction::setTimeToNextInstruction(int secs)
 */
 int QGeoNavigationInstruction::timeToNextInstruction() const
 {
-    Q_D(const QGeoNavigationInstruction);
-    return d->timeToNextInstruction;
+    return d_ptr->timeToNextInstruction;
 }
 
 /*!
-    Sets the distance between the point at which this instruction was issued
+    Sets the distance, in metres, between the point at which this instruction was issued
     and the point that the next instruction should be issued to \a distance.
 */
-void QGeoNavigationInstruction::setDistanceToNextInstruction(const QGeoDistance &distance)
+void QGeoNavigationInstruction::setDistanceToNextInstruction(qreal distance)
 {
-    Q_D(QGeoNavigationInstruction);
-    d->distanceToNextInstruction = distance;
+    d_ptr->distanceToNextInstruction = distance;
 }
 
 /*!
-    Returns the distance between the point at which this instruction was issued
+    Returns the distance, in metres, between the point at which this instruction was issued
     and the point that the next instruction should be issued.
 */
-QGeoDistance QGeoNavigationInstruction::distanceToNextInstruction() const
+qreal QGeoNavigationInstruction::distanceToNextInstruction() const
 {
-    Q_D(const QGeoNavigationInstruction);
-    return d->distanceToNextInstruction;
+    return d_ptr->distanceToNextInstruction;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
-{
-    type = QGeoNavigationInstruction::NormalInstruction;
-}
+    : timeToNextInstruction(0),
+    distanceToNextInstruction(0.0) {}
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
-        : type(other.type),
+        : QSharedData(other),
         position(other.position),
         text(other.text),
         timeToNextInstruction(other.timeToNextInstruction),
@@ -218,15 +188,12 @@ QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNav
 
 QGeoNavigationInstructionPrivate::~QGeoNavigationInstructionPrivate() {}
 
-QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (const QGeoNavigationInstructionPrivate & other)
+bool QGeoNavigationInstructionPrivate::operator ==(const QGeoNavigationInstructionPrivate &other) const
 {
-    type = other.type;
-    position = other.position;
-    text = other.text;
-    timeToNextInstruction = other.timeToNextInstruction;
-    distanceToNextInstruction = other.distanceToNextInstruction;
-
-    return *this;
+    return ((position == other.position)
+            && (text == other.text)
+            && (timeToNextInstruction == other.timeToNextInstruction)
+            && (distanceToNextInstruction == other.distanceToNextInstruction));
 }
 
 QTM_END_NAMESPACE

@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qgeodistance.h>
+#include "qmobilityglobal.h"
 
 #include <QList>
 #include <QPair>
@@ -78,7 +78,7 @@ public:
     QGeoRoutingManager* routingManager;
     QGeoRouteReply *routeReply;
 
-    QGeoDistance routeWidth;
+    qreal routeWidth;
 
     QGeoRoute routeTravelled;
     QGeoRoute routeRemaining;

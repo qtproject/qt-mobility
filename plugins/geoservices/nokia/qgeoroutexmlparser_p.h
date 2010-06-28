@@ -72,7 +72,7 @@ QTM_USE_NAMESPACE
 class QGeoNavigationInstructionContainer
 {
 public:
-    QGeoNavigationInstruction* instruction;
+    QGeoNavigationInstruction instruction;
     QString id;
     QString toId;
 };
@@ -80,7 +80,7 @@ public:
 class QGeoRouteSegmentContainer
 {
 public:
-    QGeoRouteSegment* segment;
+    QGeoRouteSegment segment;
     QString id;
     QString nextId;
     QString instructionId;
@@ -99,7 +99,7 @@ public:
 private:
     bool parseRootElement();
     bool parseRoute(QGeoRoute *route);
-    bool parseWaypoint(QGeoRoute *route);
+    //bool parseWaypoint(QGeoRoute *route);
     bool parseCoordinates(QGeoCoordinate &coord);
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);

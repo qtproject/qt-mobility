@@ -54,30 +54,26 @@
 //
 
 #include "qgeocoordinate.h"
-#include "qgeodistance.h"
-#include "qgeonavigationinstruction.h"
 
+#include <QSharedData>
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoNavigationInstructionPrivate
+class QGeoNavigationInstructionPrivate : public QSharedData
 {
 public:
     QGeoNavigationInstructionPrivate();
     QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other);
     ~QGeoNavigationInstructionPrivate();
 
-    QGeoNavigationInstructionPrivate& operator= (const QGeoNavigationInstructionPrivate &other);
+    bool operator== (const QGeoNavigationInstructionPrivate &other) const;
 
-    QGeoNavigationInstruction::InstructionType type;
     QString id;
     QGeoCoordinate position;
     QString text;
     int timeToNextInstruction;
-    QGeoDistance distanceToNextInstruction;
-    QString toSegmentId;
-    QString fromSegmentId;
+    qreal distanceToNextInstruction;
 };
 
 QTM_END_NAMESPACE

@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 
 /*
 
-    DESIGN NOTE FOR API REVIEW:
+    DESIGN NOTE
 
     There are plans to make this extensible by allowing the user to set a
     list of QGeoTransportOptions (or QGeoTransitOptions).  We don't have any
@@ -173,12 +173,6 @@ QTM_BEGIN_NAMESPACE
     \value BasicSegmentData
         Basic segment data will be included with the route.  This will include
         QGeoRouteSegment::path().
-
-    \value DetailedSegmentData
-        Detailed segment data will be included with the route.  This will
-        typcially meant that subclasses of QGeoRouteSegment are used to provide
-        data structures describing the segment.  See QGeoRouteSegment and its
-        subclasses for more details.
 */
 
 /*!
@@ -193,14 +187,6 @@ QTM_BEGIN_NAMESPACE
     \value BasicInstructions
         Basic instructions will be included with the route. This will
         include QGeoNavigationInstruction::instructionText().
-
-    \value DetailedInstructions
-        Detailed instructions will be included with the route. This will
-        typically mean that subclasses of QNavigationInstruction are used to
-        provide data structures describing the instructions. See
-        QGeoNavigationInstruction and its subclasses for more details.
-
-    \sa QGeoNavigationInstruction
 */
 
 /*!
@@ -234,9 +220,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
 /*!
     Destroys the request.
 */
-QGeoRouteRequest::~QGeoRouteRequest()
-{
-}
+QGeoRouteRequest::~QGeoRouteRequest() {}
 
 /*!
     Assigns \a other to this route request object and then returns a reference
@@ -423,25 +407,9 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
         avoidFeatureTypes(other.avoidFeatureTypes),
         routeOptimization(other.routeOptimization),
         segmentDetail(other.segmentDetail),
-        instructionDetail(other.instructionDetail)
-        //transitOptions(other.transitOptions)
-{}
+        instructionDetail(other.instructionDetail) {}
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
-QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequestPrivate & other)
-{
-    waypoints = other.waypoints;
-    excludeAreas = other.excludeAreas;
-    numberAlternativeRoutes = other.numberAlternativeRoutes;
-    travelModes = other.travelModes;
-    avoidFeatureTypes = other.avoidFeatureTypes;
-    routeOptimization = other.routeOptimization;
-    segmentDetail = other.segmentDetail;
-    instructionDetail = other.instructionDetail;
-    //transitOptions = other.transitOptions
-
-    return *this;
-}
 
 QTM_END_NAMESPACE

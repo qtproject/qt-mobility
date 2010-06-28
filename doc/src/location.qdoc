@@ -400,14 +400,6 @@ to follow a route.  These instructions a location, which is typically
 somewhere near the end of the associated QGeoRouteSegment, and 
 instruction text describing how the next QGeoRouteSegment should be reached.
 
-Several QGeoRouteSegment subclasses exist and can be used to provide 
-additional data about the segment, like the route number of a bus or 
-the speed limit of a road.
-
-Similarly, subclasses of QGeoNavigationInstruction can be used to 
-access data structures describing the intruction in more detail than 
-the usual instruction text and location.
-
 \annotatedlist maps-routing
 
 \section2 Places

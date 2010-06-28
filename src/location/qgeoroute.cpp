@@ -42,7 +42,6 @@
 #include "qgeoroute.h"
 #include "qgeoroute_p.h"
 
-#include "qgeodistance.h"
 #include "qgeoboundingbox.h"
 #include "qgeoroutesegment.h"
 
@@ -84,17 +83,16 @@ QGeoRoute::QGeoRoute()
         : d_ptr(new QGeoRoutePrivate()) {}
 
 /*!
-    Construcst a route object from the contents of \a other.
+    Constructs a route object from the contents of \a other.
 */
 QGeoRoute::QGeoRoute(const QGeoRoute &other)
-        : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
-    Destroys a route object.
+    Destroys this route object.
 */
 QGeoRoute::~QGeoRoute()
 {
-    delete d_ptr;
 }
 
 /*!
@@ -103,7 +101,7 @@ QGeoRoute::~QGeoRoute()
 */
 QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
-    *d_ptr = *(other.d_ptr);
+    d_ptr = other.d_ptr;
     return *this;
 }
 
@@ -150,34 +148,7 @@ QGeoRouteRequest QGeoRoute::request() const
 }
 
 /*!
-    Sets the list of coordinates suitable for providing a graphical
-    overview of the route to \a pathSummary.
-
-    Actual routing information may describe the geographic path of the route
-    in much higher detail than is necessary to draw the route at most scales,
-
-    The detailed routing information can be set with QGeoRouteSegment::setPath().
-*/
-void QGeoRoute::setPathSummary(const QList<QGeoCoordinate> &pathSummary)
-{
-    d_ptr->pathSummary = pathSummary;
-}
-
-/*!
-    Returns a list of coordinates suitable for providing a graphical
-    overview of the route.
-
-    The detailed routing information is present in QGeoRouteSegment::path().
-*/
-QList<QGeoCoordinate> QGeoRoute::pathSummary() const
-{
-    return d_ptr->pathSummary;
-}
-
-/*!
     Sets the bounding box which encompasses the entire route to \a bounds.
-
-    \sa QGeoRoute::bounds()
 */
 void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 {
@@ -186,8 +157,6 @@ void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 
 /*!
     Returns a bounding box which encompasses the entire route.
-
-    \sa QGeoRoute::setBounds()
 */
 QGeoBoundingBox QGeoRoute::bounds() const
 {
@@ -201,11 +170,8 @@ QGeoBoundingBox QGeoRoute::bounds() const
     and can be subclasses to provide more specialized information, such as
     for the description of segments of the journey for those who are travelling
     by public transport, or by truck.
-
-    \sa QGeoRouteSegment
-    \sa QGeoRoute::routeSegments()
 */
-void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments)
+void QGeoRoute::setRouteSegments(const QList<QGeoRouteSegment> &routeSegments)
 {
     d_ptr->routeSegments = routeSegments;
 }
@@ -217,11 +183,8 @@ void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSeg
     and can be subclasses to provide more specialized information, such as
     for the description of segments of the journey for those who are travelling
     by public transport, or by truck.
-
-    \sa QGeoRouteSegment
-    \sa QGeoRoute::setRouteSegments()
 */
-QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
+QList<QGeoRouteSegment> QGeoRoute::routeSegments() const
 {
     return d_ptr->routeSegments;
 }
@@ -252,85 +215,39 @@ int QGeoRoute::travelTime() const
 }
 
 /*!
-    Sets the distance covered by this route to \a distance.
+    Sets the distance covered by this route, in metres, to \a distance.
 */
-void QGeoRoute::setDistance(const QGeoDistance &distance)
+void QGeoRoute::setDistance(qreal distance)
 {
     d_ptr->distance = distance;
 }
 
 /*!
-    Returns the distance covered by this route.
+    Returns the distance covered by this route, in metres.
 */
-QGeoDistance QGeoRoute::distance() const
+qreal QGeoRoute::distance() const
 {
     return d_ptr->distance;
 }
 
 /*!
-    API REVIEW NOTE
+    Sets the travel mode for this route.
 
-    This might be moved into QGeoRouteSegment to support mult-mode routes.
+    This should be one of the travel modes returned by request().travelModes().
 */
-void QGeoRoute::setTravelMode(const QGeoRouteRequest::TravelMode mode)
+void QGeoRoute::setTravelMode(QGeoRouteRequest::TravelMode mode)
 {
     d_ptr->travelMode = mode;
 }
 
 /*!
-    API REVIEW NOTE
+    Returns the travel mode for the this route.
 
-    This might be moved into QGeoRouteSegment to support mult-mode routes.
+    This should be one of the travel modes returned by request().travelModes().
 */
 QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 {
     return d_ptr->travelMode;
-}
-
-/*!
-    API REVIEW NOTE
-
-    This may not be in the API, since it's present in request() and hence
-    redundant.  This is being discussed with the people who added it.
-*/
-void QGeoRoute::setOptimization(const QGeoRouteRequest::RouteOptimization optimization)
-{
-    d_ptr->optimization = optimization;
-}
-
-/*!
-    API REVIEW NOTE
-
-    This may not be in the API, since it's present in request() and hence
-    redundant.  This is being discussed with the people who added it.
-*/
-QGeoRouteRequest::RouteOptimization QGeoRoute::optimization() const
-{
-    return d_ptr->optimization;
-}
-
-/*!
-    API REVIEW NOTE
-
-    This may not be in the API, since it's present in request() and hence
-    redundant.  This is being discussed with the people who added it.
-*/
-void QGeoRoute::setAvoidFeatureTypes(const QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    // TODO not handled in private impl copy constructor / assignment operator
-    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
-}
-
-/*!
-    API REVIEW NOTE
-
-    This may not be in the API, since it's present in request() and hence
-    redundant.  This is being discussed with the people who added it.
-*/
-QGeoRouteRequest::AvoidFeatureTypes QGeoRoute::avoidFeatureTypes() const
-{
-    // TODO not handled in private impl copy constructor / assignment operator
-    return d_ptr->avoidFeatureTypes;
 }
 
 //!
@@ -384,37 +301,22 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRoutePrivate::QGeoRoutePrivate() {}
+QGeoRoutePrivate::QGeoRoutePrivate()
+    : travelTime(0),
+    distance(0.0){}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-        : id(other.id),
+        : QSharedData(other),
+        id(other.id),
         request(other.request),
-        pathSummary(other.pathSummary),
         bounds(other.bounds),
         routeSegments(other.routeSegments),
         travelTime(other.travelTime),
         distance(other.distance),
         travelMode(other.travelMode),
-        optimization(other.optimization) {}
+        path(other.path) {}
 
-QGeoRoutePrivate::~QGeoRoutePrivate()
-{
-    //qDeleteAll(routeSegments);
-}
+QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
-QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
-{
-    id = other.id;
-    request = other.request;
-    pathSummary = other.pathSummary;
-    bounds = other.bounds;
-    routeSegments = other.routeSegments;
-    travelTime = other.travelTime;
-    distance = other.distance;
-    optimization = other.optimization;
-    travelMode = other.travelMode;
-
-    return *this;
-}
 
 QTM_END_NAMESPACE

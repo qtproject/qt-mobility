@@ -47,7 +47,6 @@
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoDistance;
 class QGeoMapCircleObjectPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
@@ -59,8 +58,8 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
-    void setRadius(const QGeoDistance &radius);
-    QGeoDistance radius() const;
+    void setRadius(qreal radius);
+    qreal radius() const;
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapCircleObject)

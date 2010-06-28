@@ -84,6 +84,9 @@ QTM_BEGIN_NAMESPACE
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
     : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
 
+/*!
+  \internal
+*/
 QGeoMapObject::QGeoMapObject(QGeoMapObjectPrivate *dd)
     : d_ptr(dd) {}
 

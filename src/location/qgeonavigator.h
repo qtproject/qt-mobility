@@ -50,7 +50,6 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoDistance;
 class QGeoPositionInfo;
 class QGeoRoute;
 class QGeoCoordinate;
@@ -88,14 +87,14 @@ public:
 
     QGeoRoutingManager* routingManager() const;
 
-    void setRouteWidth(const QGeoDistance &routeWidth);
-    QGeoDistance routeWidth() const;
+    void setRouteWidth(qreal routeWidth);
+    qreal routeWidth() const;
 
     QGeoRoute routeTravelled() const;
     QGeoRoute routeRemaining() const;
 
     int timeToNextSegment() const;
-    QGeoDistance distanceToNextSegment(QGeoDistance) const;
+    qreal distanceToNextSegment() const;
 
 
     /*

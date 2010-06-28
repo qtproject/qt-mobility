@@ -15,7 +15,6 @@ PUBLIC_HEADERS += \
                     qgeoareamonitor.h \
                     qgeoboundingbox.h \
                     qgeocoordinate.h \
-                    qgeodistance.h \
                     qgeomapcircleobject.h \
                     qgeomapdata.h \
                     qgeomapmarkerobject.h \
@@ -84,7 +83,6 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
-                    qgeodistance_p.h \
                     qgeomapcircleobject_p.h \
                     qgeomapdata_p.h \
                     qgeomapmarkerobject_p.h \
@@ -214,7 +212,6 @@ SOURCES += \
             qgeoareamonitor.cpp \
             qgeoboundingbox.cpp \
             qgeocoordinate.cpp \
-            qgeodistance.cpp \
             qgeomapcircleobject.cpp \
             qgeomapdata.cpp \
             qgeomapmarkerobject.cpp \

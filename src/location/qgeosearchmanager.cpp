@@ -97,15 +97,23 @@ public:
     {
         QGeoSearchReply *reply = searchManager->placeSearch(searchString);
 
-        connect(searchManager,
-                SIGNAL(finished(QGeoSearchReply*)),
-                this,
-                SLOT(searchResults(QGeoSearchReply*)));
+        if (reply->isFinished()) {
+            if (reply->error() != QGeoSearchReply::NoError) {
+                searchResults(reply);
+            } else {
+                searchError(reply, reply->error(), reply->errorString());
+            }
+        } else {
+            connect(searchManager,
+                    SIGNAL(finished(QGeoSearchReply*)),
+                    this,
+                    SLOT(searchResults(QGeoSearchReply*)));
 
-        connect(searchManager,
-                SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
-                this
-                SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
+            connect(searchManager,
+                    SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
+                    this
+                    SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
+        }
     }
 
 private slots:

@@ -68,8 +68,6 @@ public:
     QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
     ~QGeoRouteRequestPrivate();
 
-    QGeoRouteRequestPrivate& operator= (const QGeoRouteRequestPrivate &other);
-
     QList<QGeoCoordinate> waypoints;
     QList<QGeoBoundingBox> excludeAreas;
     int numberAlternativeRoutes;
@@ -78,10 +76,6 @@ public:
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::InstructionDetail instructionDetail;
-
-    // defaults to empty - no subclass required yet
-    // this is how we handle private / public / truck attributes
-    //QList<const QGeoRouteTransitOptions *> transitOptions;
 };
 
 QTM_END_NAMESPACE

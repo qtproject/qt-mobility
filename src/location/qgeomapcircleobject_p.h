@@ -45,7 +45,6 @@
 #include "qgeomapobject_p.h"
 
 #include "qgeocoordinate.h"
-#include "qgeodistance.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,7 +57,7 @@ public:
     QGeoMapCircleObjectPrivate& operator= (const QGeoMapCircleObjectPrivate &other);
 
     QGeoCoordinate center;
-    QGeoDistance radius;
+    qreal radius;
 };
 
 QTM_END_NAMESPACE

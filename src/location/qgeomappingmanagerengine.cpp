@@ -80,6 +80,9 @@ QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QString> 
         : QObject(parent),
         d_ptr(new QGeoMappingManagerEnginePrivate(parameters)) {}
 
+/*!
+  \internal
+*/
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
         : QObject(parent),
         d_ptr(dd) {}
@@ -150,15 +153,15 @@ int QGeoMappingManagerEngine::managerVersion() const
 /*!
 \fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGeoMapWidget *widget)
 
-    Returns a new QGeoMapData instance for \a widget which will be managed by 
+    Returns a new QGeoMapData instance for \a widget which will be managed by
     this manager.
 
     A QGeoMapData instance contains and manages the information about
     what a map widget is looking at.  A  single manager can be used by several
     widgets since each widget has an associated QGeoMapData instance.
 
-    The QGeoMapData instance can be treated as a kind of session object, or 
-    as a model in a model-view-controller architecture, with QGeoMapWidget 
+    The QGeoMapData instance can be treated as a kind of session object, or
+    as a model in a model-view-controller architecture, with QGeoMapWidget
     as the view and QGeoMappingManagerEngine as the controller.
 
     Subclasses of QGeoMappingManagerEngine are free to create subclasses of
@@ -177,7 +180,7 @@ void QGeoMappingManagerEngine::removeMapData(QGeoMapData *mapData)
 /*!
 \fn void QGeoMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
 
-    Updates the map image stored in \a mapData based on the viewport 
+    Updates the map image stored in \a mapData based on the viewport
     data contained within \a mapData.
 
     The image may be updated incrementally, as will happen with

@@ -87,8 +87,9 @@ amongst the plugins.
 */
 
 /*!
-    Returns a QGeoSearchManagerEngine instance which implements as much of the
-    places searching functionality as the service provider supports.
+    Returns a new QGeoSearchManagerEngine instance, initialized with \a
+    parameters, which implements as much of the places searching functionality
+    as the service provider supports.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
@@ -111,8 +112,9 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(c
 }
 
 /*!
-    Returns a QGeoMappingManagerEngine instance which implements as much of the
-    places searching functionality as the service provider supports.
+    Returns a new QGeoMappingManagerEngine instance, initialized with \a
+    parameters, which implements as much of the places searching functionality
+    as the service provider supports.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
@@ -135,8 +137,9 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine
 }
 
 /*!
-    Returns a QGeoRoutingManagerEngine instance which implements as much of the
-    places searching functionality as the service provider supports.
+    Returns a new QGeoRoutingManagerEngine instance, initialized with \a
+    parameters, which implements as much of the places searching functionality
+    as the service provider supports.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.

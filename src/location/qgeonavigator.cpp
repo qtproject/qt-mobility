@@ -42,7 +42,6 @@
 #include "qgeonavigator.h"
 #include "qgeonavigator_p.h"
 
-#include "qgeodistance.h"
 #include "qgeoroute.h"
 #include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"
@@ -113,12 +112,12 @@ QGeoRoutingManager* QGeoNavigator::routingManager() const
     return d_ptr->routingManager;
 }
 
-void QGeoNavigator::setPositionTolerance(const QGeoDistance &radius)
+void QGeoNavigator::setPositionTolerance(qreal radius)
 {
     d_ptr->radius = radius;
 }
 
-QGeoDistance QGeoNavigator::positionTolerance() const
+qreal QGeoNavigator::positionTolerance() const
 {
     return d_ptr->radius;
 }
@@ -128,7 +127,7 @@ int QGeoNavigator::elapsedTime() const
     return d_ptr->elapsedTime;
 }
 
-QGeoDistance QGeoNavigator::elapsedDistance() const
+qreal QGeoNavigator::elapsedDistance() const
 {
     return d_ptr->elapsedDistance;
 }
@@ -138,7 +137,7 @@ int QGeoNavigator::remainingTime() const
     return d_ptr->remainingTime;
 }
 
-QGeoDistance QGeoNavigator::remainingDistance() const
+qreal QGeoNavigator::remainingDistance() const
 {
     return d_ptr->remainingDistance;
 }
@@ -148,7 +147,7 @@ int QGeoNavigator::timeToNextInstruction() const
     return d_ptr->timeNextInstruction;
 }
 
-QGeoDistance QGeoNavigator::distanceToNextInstruction(QGeoDistance) const
+qreal QGeoNavigator::distanceToNextInstruction() const
 {
     return d_ptr->distanceNextInstruction;
 }

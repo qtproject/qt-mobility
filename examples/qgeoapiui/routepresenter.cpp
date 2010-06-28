@@ -43,7 +43,6 @@
 
 #include <QStringBuilder>
 #include <qgeoboundingbox.h>
-#include <qgeodistance.h>
 #include <qgeonavigationinstruction.h>
 
 RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
@@ -109,19 +108,19 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 
     prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "mode");
-    showModes(prop,route.optimization(),route.travelMode(),route.request().avoidFeatureTypes());
+    showModes(prop,route.request().routeOptimization(),route.travelMode(),route.request().avoidFeatureTypes());
 
     prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "distance");
-    prop->setText(1, QString().setNum(route.distance().convert(QGeoDistance::Metres)));
+    prop->setText(1, QString().setNum(route.distance()));
 
     showBoundingBox(routeItem, route.bounds());
 
     QTreeWidgetItem* wayPointsItem = new QTreeWidgetItem(routeItem);
     wayPointsItem->setText(0, "route overview");
-    showPoints(wayPointsItem, route.pathSummary());
+    showPoints(wayPointsItem, route.path());
 
-    const QList<const QGeoRouteSegment*> segments = route.routeSegments();
+    QList<QGeoRouteSegment> segments = route.routeSegments();
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
     segmentsItem->setText(0, "segments (max 100 shown)");
     segmentsItem->setText(1, QString().setNum(segments.length()));
@@ -130,18 +129,18 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     }
 }
 
-void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment)
+void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment &segment)
 {
     QTreeWidgetItem* maneuverItem = new QTreeWidgetItem(routeItem);
     maneuverItem->setText(0, "segment");
 
     QTreeWidgetItem* propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "duration");
-    propItem->setText(1, QString().setNum(segment->travelTime()));
+    propItem->setText(1, QString().setNum(segment.travelTime()));
 
     propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "distance");
-    propItem->setText(1, QString().setNum(segment->distance().convert(QGeoDistance::Metres)));
+    propItem->setText(1, QString().setNum(segment.distance()));
 
     // add back in when more qgeonavigationinstruction classes are made available
 /*
@@ -191,21 +190,21 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
 */
     QTreeWidgetItem* maneuverPointsItem = new QTreeWidgetItem(maneuverItem);
     maneuverPointsItem->setText(0, "segment points");
-    showPoints(maneuverPointsItem, segment->path());
+    showPoints(maneuverPointsItem, segment.path());
 
-    if(segment->instruction()) {
+    if(!segment.instruction().instructionText().isEmpty()) {
         QTreeWidgetItem* instructionItem = new QTreeWidgetItem(maneuverItem);
         instructionItem->setText(0, "instruction");
 
         QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
         positionItem->setText(0, "position");
         QList<QGeoCoordinate> points;
-        points.append(segment->instruction()->position());
+        points.append(segment.instruction().position());
         showPoints(positionItem, points);
 
         propItem = new QTreeWidgetItem(instructionItem);
         propItem->setText(0, "text");
-        propItem->setText(1, segment->instruction()->instructionText());
+        propItem->setText(1, segment.instruction().instructionText());
     }
 }
 

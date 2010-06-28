@@ -53,31 +53,27 @@
 // We mean it.
 //
 
-#include "qgeoroutesegment.h"
-#include "qgeodistance.h"
+#include "qgeonavigationinstruction.h"
 
+#include <QSharedData>
 #include <QList>
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoNavigationInstruction;
 
-class QGeoRouteSegmentPrivate
+class QGeoRouteSegmentPrivate : public QSharedData
 {
 public:
     QGeoRouteSegmentPrivate();
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
     ~QGeoRouteSegmentPrivate();
 
-    QGeoRouteSegmentPrivate& operator= (const QGeoRouteSegmentPrivate &other);
-
-    QGeoRouteSegment::SegmentType type;
     int travelTime;
-    QGeoDistance distance;
+    qreal distance;
     QList<QGeoCoordinate> path;
-    const QGeoNavigationInstruction* instruction;
+    QGeoNavigationInstruction instruction;
 };
 
 QTM_END_NAMESPACE

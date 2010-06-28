@@ -108,15 +108,23 @@ public:
 
         QGeoRouteReply *reply = routingManager->calculateRoute(request);
 
-        connect(routingManager,
-                SIGNAL(finished(QGeoRouteReply*)),
-                this,
-                SLOT(routeCalculated(QGeoRouteReply*)));
+        if (reply->isFinished()) {
+            if (reply->error() != QGeoRouteReply::NoError) {
+                routeCalculated(reply);
+            } else {
+                routeError(reply, reply->error(), reply->errorString());
+            }
+        } else {
+            connect(routingManager,
+                    SIGNAL(finished(QGeoRouteReply*)),
+                    this,
+                    SLOT(routeCalculated(QGeoRouteReply*)));
 
-        connect(routingManager,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                this,
-                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+            connect(routingManager,
+                    SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                    this,
+                    SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+        }
     }
 
 private slots:

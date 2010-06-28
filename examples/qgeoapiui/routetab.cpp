@@ -128,10 +128,10 @@ void RouteTab::on_btnRequest_clicked()
         QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
 
         QGeoRouteRequest request(src, dst);
-        if((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::DetailedSegmentData) != 0)
-            request.setSegmentDetail(QGeoRouteRequest::DetailedSegmentData);
-        if((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::DetailedInstructions) != 0)
-            request.setInstructionDetail(QGeoRouteRequest::DetailedInstructions);
+        if((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::BasicSegmentData) != 0)
+            request.setSegmentDetail(QGeoRouteRequest::BasicSegmentData);
+        if((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
+            request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
 
         m_resultTree->clear();
 

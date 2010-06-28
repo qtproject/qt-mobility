@@ -45,6 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeorouterequest.h"
 
+#include <QSharedDataPointer>
 #include <QList>
 #include <QHash>
 
@@ -53,7 +54,6 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoBoundingBox;
-class QGeoDistance;
 class QGeoRouteSegment;
 
 class QGeoRoutePrivate;
@@ -73,38 +73,26 @@ public:
     void setRequest(const QGeoRouteRequest &request);
     QGeoRouteRequest request() const;
 
-    // TODO potentially scratch this
-    // Should probably build / cache this per zoom level in
-    // the relevant map object
-    void setPathSummary(const QList<QGeoCoordinate> &pathSummary);
-    QList<QGeoCoordinate> pathSummary() const;
-
     void setBounds(const QGeoBoundingBox &bounds);
     QGeoBoundingBox bounds() const;
 
-    //void appendRouteSegment(const QGeoRouteSegment* routeSegment);
-    void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
-    QList<const QGeoRouteSegment *> routeSegments() const;
+    void setRouteSegments(const QList<QGeoRouteSegment> &routeSegments);
+    QList<QGeoRouteSegment> routeSegments() const;
 
     void setTravelTime(int secs);
     int travelTime() const;
 
-    void setDistance(const QGeoDistance &distance);
-    QGeoDistance distance() const;
+    void setDistance(qreal distance);
+    qreal distance() const;
 
-    void setTravelMode(const QGeoRouteRequest::TravelMode mode);
-    void setOptimization(const QGeoRouteRequest::RouteOptimization optimization);
-    void setAvoidFeatureTypes(const QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
-    
+    void setTravelMode(QGeoRouteRequest::TravelMode mode);
     QGeoRouteRequest::TravelMode travelMode() const;
-    QGeoRouteRequest::RouteOptimization optimization() const;
-    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes() const;
 
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
 private:
-    QGeoRoutePrivate* d_ptr;
+    QSharedDataPointer<QGeoRoutePrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

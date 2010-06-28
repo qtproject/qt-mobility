@@ -88,18 +88,18 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 }
 
 /*!
-    Sets the radius of the circle object to \a radius.
+    Sets the radius of the circle object to \a radius metres.
 */
-void QGeoMapCircleObject::setRadius(const QGeoDistance &radius)
+void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
     d->radius = radius;
 }
 
 /*!
-    Returns the radius of the circle object.
+    Returns the radius of the circle object in metres.
 */
-QGeoDistance QGeoMapCircleObject::radius() const
+qreal QGeoMapCircleObject::radius() const
 {
     Q_D(const QGeoMapCircleObject);
     return d->radius;

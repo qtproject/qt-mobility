@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 
+#include <QSharedDataPointer>
 #include <QList>
 
 QT_BEGIN_HEADER
@@ -51,7 +52,6 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoDistance;
 class QGeoNavigationInstruction;
 class QGeoRouteSegmentPrivate;
 
@@ -59,38 +59,26 @@ class Q_LOCATION_EXPORT QGeoRouteSegment
 {
 
 public:
-
-    enum SegmentType {
-        NormalSegment,
-        PrivateTransportSegment,
-        PublicTransportSegment,
-        TruckSegment
-    };
-
     QGeoRouteSegment();
-    virtual ~QGeoRouteSegment();
+    QGeoRouteSegment(const QGeoRouteSegment &other);
+    ~QGeoRouteSegment();
 
-    virtual SegmentType type() const;
+    QGeoRouteSegment& operator= (const QGeoRouteSegment &other);
 
     void setTravelTime(int secs);
     int travelTime() const;
 
-    void setDistance(const QGeoDistance &distance);
-    QGeoDistance distance() const;
+    void setDistance(qreal distance);
+    qreal distance() const;
 
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
-    void setInstruction(const QGeoNavigationInstruction *instruction);
-    const QGeoNavigationInstruction* instruction() const;
-
-protected:
-    QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr);
-    QGeoRouteSegmentPrivate* d_ptr;
+    void setInstruction(const QGeoNavigationInstruction &instruction);
+    QGeoNavigationInstruction instruction() const;
 
 private:
-    Q_DECLARE_PRIVATE(QGeoRouteSegment)
-    Q_DISABLE_COPY(QGeoRouteSegment)
+    QSharedDataPointer<QGeoRouteSegmentPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

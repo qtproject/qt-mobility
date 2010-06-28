@@ -91,15 +91,13 @@ public:
 
     enum SegmentDetail {
         NoSegmentData = 0x0000,
-        BasicSegmentData = 0x0001,
-        DetailedSegmentData = 0x0002
+        BasicSegmentData = 0x0001
     };
     Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail)
 
     enum InstructionDetail {
         NoInstructions = 0x0000,
-        BasicInstructions = 0x0001,
-        DetailedInstructions = 0x0002
+        BasicInstructions = 0x0001
     };
     Q_DECLARE_FLAGS(InstructionDetails, InstructionDetail)
 
@@ -141,11 +139,6 @@ public:
     // default to BasicInstructions
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
-
-    // defaults to empty - no subclass required yet
-    // this is how we handle private / public / truck attributes
-    //void setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions);
-    //QList<const QGeoRouteTransitOptions *> transitOptions() const;
 
 private:
     QSharedDataPointer<QGeoRouteRequestPrivate> d_ptr;

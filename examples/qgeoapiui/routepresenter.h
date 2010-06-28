@@ -61,7 +61,7 @@ public:
 private:
     QTreeWidgetItem* showRoutes();
     void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
-    void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment);
+    void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment &segment);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
     void showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
                    QGeoRouteRequest::TravelModes travelModes,
