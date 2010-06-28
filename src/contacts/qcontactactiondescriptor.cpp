@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
  * Constructs a new, invalid action descriptor
  */
 QContactActionDescriptor::QContactActionDescriptor()
-        : d(new QContactActionDescriptorPrivate(QString(), QString(), -1, 0))
+        : d(new QContactActionDescriptorPrivate(QString(), QString(), -1, QVariantMap(), 0))
 {
 }
 
@@ -68,8 +68,8 @@ QContactActionDescriptor::QContactActionDescriptor()
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
  * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
  */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, QContactActionFactory* factory)
-        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion, factory))
+QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory)
+        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion, staticMetaData, factory))
 {
 }
 
@@ -124,7 +124,7 @@ int QContactActionDescriptor::implementationVersion() const
 QSet<QContactActionTarget> QContactActionDescriptor::supportedTargets(const QContact& contact) const
 {
     if (d->m_factory) {
-        return d->m_factory->supportedTargets(contact);
+        return d->m_factory->supportedTargets(contact, *this);
     }
 
     return QSet<QContactActionTarget>();
@@ -132,7 +132,7 @@ QSet<QContactActionTarget> QContactActionDescriptor::supportedTargets(const QCon
 QContactFilter QContactActionDescriptor::contactFilter() const
 {
     if (d->m_factory) {
-        return d->m_factory->contactFilter();
+        return d->m_factory->contactFilter(*this);
     }
 
     return QContactInvalidFilter();
@@ -140,7 +140,7 @@ QContactFilter QContactActionDescriptor::contactFilter() const
 QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
 {
     if (d->m_factory) {
-        return d->m_factory->metaData(key, targets, parameters);
+        return d->m_factory->metaData(key, targets, parameters, *this);
     }
 
     return QVariant();
@@ -148,7 +148,7 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
 bool QContactActionDescriptor::supportsContact(const QContact& contact) const
 {
     if (d->m_factory) {
-        return d->m_factory->supportsContact(contact);
+        return d->m_factory->supportsContact(contact, *this);
     }
 
     return false;
@@ -169,6 +169,7 @@ bool QContactActionDescriptor::isValid() const
         return false;
     if (d->m_factory == 0)
         return false;
+    // if (d->m_staticMetaData.isEmpty()) is fine.  there may be none for this action.
     return true;
 }
 
@@ -181,7 +182,7 @@ bool QContactActionDescriptor::isValid() const
  */
 bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other) const
 {
-    return d->m_factory == other.d->m_factory;
+    return (d->m_factory == other.d->m_factory && d->m_staticMetaData == other.d->m_staticMetaData);
 }
 
 /*!
@@ -212,9 +213,19 @@ bool QContactActionDescriptor::operator<(const QContactActionDescriptor& other) 
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactActionDescriptor& key)
 {
-    return QT_PREPEND_NAMESPACE(qHash)(key.serviceName())
+    uint ret = 0;
+    QStringList staticMetaDataKeys = key.d->m_staticMetaData.keys();
+    foreach (const QString& mapkey, staticMetaDataKeys) {
+        ret += QT_PREPEND_NAMESPACE(qHash)(mapkey);
+        ret += QT_PREPEND_NAMESPACE(qHash)(key.d->m_staticMetaData.value(mapkey).toString());
+    }
+
+    ret += QT_PREPEND_NAMESPACE(qHash)(key.serviceName())
             + QT_PREPEND_NAMESPACE(qHash)(key.actionName())
-            + QT_PREPEND_NAMESPACE(qHash)(key.implementationVersion());
+            + QT_PREPEND_NAMESPACE(qHash)(key.implementationVersion())
+            + QT_PREPEND_NAMESPACE(qHash)(key.d->m_factory);
+
+    return ret;
 }
 
 QTM_END_NAMESPACE

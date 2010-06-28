@@ -111,6 +111,7 @@ class QPhoneNumberActionFactory : public QContactActionFactory
 public:
     QPhoneNumberActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
+        m_actionDescriptor = createDescriptor("PhoneNumberAction", "tst_qcontactmanagerfiltering:phonenumberaction", 1, QVariantMap(), this);
     }
 
     ~QPhoneNumberActionFactory()
@@ -118,13 +119,22 @@ public:
 
     }
 
-    QContactAction* create() const
+    QList<QContactActionDescriptor> actionDescriptors() const
     {
+        QList<QContactActionDescriptor> retn;
+        retn << m_actionDescriptor;
+        return retn;
+    }
+
+    QContactAction* create(const QContactActionDescriptor& which) const
+    {
+        Q_UNUSED(which)
         return new QPhoneNumberAction;
     }
 
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
         QSet<QContactActionTarget> retn;
         QList<QContactDetail> pnDets = contact.details(QContactPhoneNumber::DefinitionName);
         foreach (const QContactDetail& det, pnDets) {
@@ -137,26 +147,31 @@ public:
         return retn;
     }
 
-    QContactFilter contactFilter() const
+    QContactFilter contactFilter(const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
         df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
         return df;
     }
 
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const
     {
         Q_UNUSED(key);
         Q_UNUSED(targets);
         Q_UNUSED(parameters);
+        Q_UNUSED(which);
         return QVariant();
     }
 
-    bool supportsContact(const QContact& contact) const
+    bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
     {
-        return supportedTargets(contact).isEmpty();
+        return supportedTargets(contact, which).isEmpty();
     }
+
+private:
+    QContactActionDescriptor m_actionDescriptor;
 };
 
 class QPhoneNumberActionPlugin : public QObject, public QServicePluginInterface

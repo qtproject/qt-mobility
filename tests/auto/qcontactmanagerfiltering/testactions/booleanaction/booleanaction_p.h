@@ -109,6 +109,7 @@ class QBooleanActionFactory : public QContactActionFactory
 public:
     QBooleanActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
+        m_actionDescriptor = createDescriptor("BooleanAction", "tst_qcontactmanagerfiltering:booleanaction", 1, QVariantMap(), this);
     }
 
     ~QBooleanActionFactory()
@@ -116,13 +117,23 @@ public:
 
     }
 
-    QContactAction* create() const
+    QList<QContactActionDescriptor> actionDescriptors() const
     {
+        QList<QContactActionDescriptor> retn;
+        retn << m_actionDescriptor;
+        return retn;
+    }
+
+    QContactAction* create(const QContactActionDescriptor& which) const
+    {
+        Q_UNUSED(which)
         return new QBooleanAction;
     }
 
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
+
         QSet<QContactActionTarget> retn;
         QList<QContactDetail> boolDets = contact.details("BooleanDefinition");
         foreach (const QContactDetail& det, boolDets) {
@@ -135,8 +146,10 @@ public:
         return retn;
     }
 
-    QContactFilter contactFilter() const
+    QContactFilter contactFilter(const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
+
         /* This only likes bools that are true */
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Bool to this function...
@@ -145,18 +158,22 @@ public:
         return df;
     }
 
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const
     {
         Q_UNUSED(key);
         Q_UNUSED(targets);
         Q_UNUSED(parameters);
+        Q_UNUSED(which);
         return QVariant();
     }
 
-    bool supportsContact(const QContact& contact) const
+    bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
     {
-        return supportedTargets(contact).isEmpty();
+        return supportedTargets(contact, which).isEmpty();
     }
+
+private:
+    QContactActionDescriptor m_actionDescriptor;
 };
 
 class QBooleanActionPlugin : public QObject, public QServicePluginInterface

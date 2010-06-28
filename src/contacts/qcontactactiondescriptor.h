@@ -95,12 +95,13 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
 
 protected:
-    QContactActionDescriptor(const QString& actionName, const QString& serviceName, int vendorVersion, QContactActionFactory* factory);
+    QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory);
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
     friend class QContactActionFactory;
     friend class QContactActionServiceManager;
+    friend uint qHash(const QContactActionDescriptor& key);
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);

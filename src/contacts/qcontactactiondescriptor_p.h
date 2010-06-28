@@ -55,6 +55,7 @@
 
 #include <QSharedData>
 #include <QString>
+#include <QVariantMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,11 +63,12 @@ class QContactActionFactory;
 class QContactActionDescriptorPrivate : public QSharedData
 {
 public:
-    QContactActionDescriptorPrivate(const QString& action, const QString& service, int version, QContactActionFactory* factory)
+    QContactActionDescriptorPrivate(const QString& action, const QString& service, int version, const QVariantMap& staticMetaData, QContactActionFactory* factory)
             : QSharedData(),
             m_actionName(action),
             m_serviceName(service),
             m_implementationVersion(version),
+            m_staticMetaData(staticMetaData),
             m_factory(factory)
     {
     }
@@ -76,6 +78,7 @@ public:
             m_actionName(other.m_actionName),
             m_serviceName(other.m_serviceName),
             m_implementationVersion(other.m_implementationVersion),
+            m_staticMetaData(other.m_staticMetaData),
             m_factory(other.m_factory)
     {
     }
@@ -106,6 +109,7 @@ public:
     QString m_actionName;
     QString m_serviceName;
     int m_implementationVersion;
+    QVariantMap m_staticMetaData;
     QContactActionFactory* m_factory;
 };
 

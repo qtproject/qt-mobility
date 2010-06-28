@@ -110,6 +110,7 @@ class QIntegerActionFactory : public QContactActionFactory
 public:
     QIntegerActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
+        m_actionDescriptor = createDescriptor("IntegerAction", "tst_qcontactmanagerfiltering:integeraction", 1, QVariantMap(), this);
     }
 
     ~QIntegerActionFactory()
@@ -117,13 +118,22 @@ public:
 
     }
 
-    QContactAction* create() const
+    QList<QContactActionDescriptor> actionDescriptors() const
     {
+        QList<QContactActionDescriptor> retn;
+        retn << m_actionDescriptor;
+        return retn;
+    }
+
+    QContactAction* create(const QContactActionDescriptor& which) const
+    {
+        Q_UNUSED(which)
         return new QIntegerAction;
     }
 
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
         QSet<QContactActionTarget> retn;
         QList<QContactDetail> intDets = contact.details("IntegerDefinition");
         foreach (const QContactDetail& det, intDets) {
@@ -136,26 +146,31 @@ public:
         return retn;
     }
 
-    QContactFilter contactFilter() const
+    QContactFilter contactFilter(const QContactActionDescriptor& which) const
     {
+        Q_UNUSED(which)
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
         df.setDetailDefinitionName("IntegerDefinition", "IntegerField");
         return df;
     }
 
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const
     {
         Q_UNUSED(key);
         Q_UNUSED(targets);
         Q_UNUSED(parameters);
+        Q_UNUSED(which);
         return QVariant();
     }
 
-    bool supportsContact(const QContact& contact) const
+    bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
     {
-        return supportedTargets(contact).isEmpty();
+        return supportedTargets(contact, which).isEmpty();
     }
+
+private:
+    QContactActionDescriptor m_actionDescriptor;
 };
 
 class QIntegerActionPlugin : public QObject, public QServicePluginInterface

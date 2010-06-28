@@ -66,16 +66,8 @@ QObject* QContactMultiActionPlugin::createInstance(const QServiceInterfaceDescri
             && descriptor.serviceName() == QString(QLatin1String("tst_qcontactactions:multiaction"))
             && descriptor.majorVersion() == 1
             && descriptor.minorVersion() == 1
-            && descriptor.customAttribute("ActionName") == QString(QLatin1String("call"))
-            && descriptor.customAttribute("Provider") == QString(QLatin1String("sip"))) {
-        return new QContactActionOneFactory;
-    } else if (descriptor.interfaceName() == QContactActionFactory::InterfaceName
-               && descriptor.serviceName() == QString(QLatin1String("tst_qcontactactions:multiaction"))
-               && descriptor.majorVersion() == 1
-               && descriptor.minorVersion() == 2
-               && descriptor.customAttribute("ActionName") == QString(QLatin1String("call"))
-               && descriptor.customAttribute("Provider") == QString(QLatin1String("example proprietary protocol"))) {
-        return new QContactActionTwoFactory;
+            && descriptor.customAttribute("ActionName") == QString(QLatin1String("call"))) {
+        return new QContactMultiActionFactory;
     } else {
         return 0;
     }
@@ -84,111 +76,89 @@ QObject* QContactMultiActionPlugin::createInstance(const QServiceInterfaceDescri
 Q_EXPORT_PLUGIN2(contacts_multiaction, QContactMultiActionPlugin);
 
 
-QContactActionOneFactory::QContactActionOneFactory()
+QContactMultiActionFactory::QContactMultiActionFactory()
+    : QContactActionFactory()
+{
+    QVariantMap actionOneStaticMetaData;
+    actionOneStaticMetaData.insert("Provider", QString("sip"));
+    m_actionOneDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", 1, actionOneStaticMetaData, this);
+
+    QVariantMap actionTwoStaticMetaData;
+    actionTwoStaticMetaData.insert("Provider", QString("example proprietary protocol"));
+    m_actionTwoDescriptor = createDescriptor("call", "tst_qcontactactions:multiaction", 1, actionTwoStaticMetaData, this);
+}
+
+QContactMultiActionFactory::~QContactMultiActionFactory()
 {
 }
 
-QContactActionOneFactory::~QContactActionOneFactory()
+QList<QContactActionDescriptor> QContactMultiActionFactory::actionDescriptors() const
 {
+    QList<QContactActionDescriptor> retn;
+    retn << m_actionOneDescriptor << m_actionTwoDescriptor;
+    return retn;
 }
 
-QContactAction* QContactActionOneFactory::create() const
+QContactAction* QContactMultiActionFactory::create(const QContactActionDescriptor& which) const
 {
-    return new QContactActionOne;
+    if (which == m_actionOneDescriptor)
+        return new QContactActionOne;
+    else if (which == m_actionTwoDescriptor)
+        return new QContactActionTwo;
+    else
+        return 0;
 }
 
-QSet<QContactActionTarget> QContactActionOneFactory::supportedTargets(const QContact& contact) const
+QSet<QContactActionTarget> QContactMultiActionFactory::supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const
 {
     QSet<QContactActionTarget> retn;
-    QList<QContactPhoneNumber> pndets = contact.details<QContactPhoneNumber>();
-    for (int i = 0; i < pndets.size(); ++i) {
-        QContactActionTarget curr;
-        curr.setContact(contact);
-        curr.setDetails(QList<QContactDetail>() << pndets.at(i));
-        retn << curr;
+    if (which == m_actionOneDescriptor || which == m_actionTwoDescriptor) {
+        // in this example, they support the same targets.
+        QList<QContactPhoneNumber> pndets = contact.details<QContactPhoneNumber>();
+        for (int i = 0; i < pndets.size(); ++i) {
+            QContactActionTarget curr;
+            curr.setContact(contact);
+            curr.setDetails(QList<QContactDetail>() << pndets.at(i));
+            retn << curr;
+        }
     }
 
     return retn;
 }
 
-QContactFilter QContactActionOneFactory::contactFilter() const
+QContactFilter QContactMultiActionFactory::contactFilter(const QContactActionDescriptor& which) const
 {
-    QContactDetailFilter retn;
-    retn.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    return retn;
-}
-
-QVariant QContactActionOneFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
-{
-    Q_UNUSED(targets)
-    Q_UNUSED(parameters)
-
-    // this is how action one differs from action two
-    if (key == QString(QLatin1String("Provider")))
-        return QVariant(QString("sip"));
-
-    return QVariant();
-}
-
-bool QContactActionOneFactory::supportsContact(const QContact& contact) const
-{
-    return !contact.details<QContactPhoneNumber>().isEmpty();
-}
-
-
-
-QContactActionTwoFactory::QContactActionTwoFactory()
-{
-
-}
-
-QContactActionTwoFactory::~QContactActionTwoFactory()
-{
-
-}
-
-QContactAction* QContactActionTwoFactory::create() const
-{
-    return new QContactActionTwo;
-}
-
-QSet<QContactActionTarget> QContactActionTwoFactory::supportedTargets(const QContact& contact) const
-{
-    QSet<QContactActionTarget> retn;
-    QList<QContactPhoneNumber> pndets = contact.details<QContactPhoneNumber>();
-    for (int i = 0; i < pndets.size(); ++i) {
-        QContactActionTarget curr;
-        curr.setContact(contact);
-        curr.setDetails(QList<QContactDetail>() << pndets.at(i));
-        retn << curr;
+    if (which == m_actionOneDescriptor || which == m_actionTwoDescriptor) {
+        QContactDetailFilter retn;
+        retn.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+        return retn;
     }
 
-    return retn;
+    return QContactFilter();
 }
 
-QContactFilter QContactActionTwoFactory::contactFilter() const
-{
-    QContactDetailFilter retn;
-    retn.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-    return retn;
-}
-
-QVariant QContactActionTwoFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
+QVariant QContactMultiActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const
 {
     Q_UNUSED(targets)
     Q_UNUSED(parameters)
 
-    // this is how action two differs from action one
-    if (key == QString(QLatin1String("Provider")))
-        return QVariant(QString("example proprietary protocol"));
+    // this is how action one differs from action two - the value for the "provider" key in the static meta data is different.
+    if (which == m_actionOneDescriptor) {
+        return staticMetaData(m_actionOneDescriptor).value(key);
+    } else if (which == m_actionTwoDescriptor) {
+        return staticMetaData(m_actionTwoDescriptor).value(key);
+    }
 
     return QVariant();
 }
 
-bool QContactActionTwoFactory::supportsContact(const QContact& contact) const
+bool QContactMultiActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
 {
-    return !contact.details<QContactPhoneNumber>().isEmpty();
+    if (which == m_actionOneDescriptor || which == m_actionTwoDescriptor)
+        return !contact.details<QContactPhoneNumber>().isEmpty();
+    return false;
 }
+
 
 QContactActionOne::QContactActionOne()
 {

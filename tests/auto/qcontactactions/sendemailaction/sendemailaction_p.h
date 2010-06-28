@@ -86,13 +86,17 @@ class QContactSendEmailActionFactory : public QContactActionFactory
 public:
     QContactSendEmailActionFactory();
     ~QContactSendEmailActionFactory();
-    QContactAction* create() const;
+    QList<QContactActionDescriptor> actionDescriptors() const;
+    QContactAction* create(const QContactActionDescriptor& which) const;
 
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
-    QContactFilter contactFilter() const;
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const;
+    QContactFilter contactFilter(const QContactActionDescriptor& which) const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const;
 
-    bool supportsContact(const QContact& contact) const;
+    bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const;
+
+private:
+    QContactActionDescriptor m_sendEmailDescriptor;
 };
 
 class QContactSendEmailAction : public QContactAction

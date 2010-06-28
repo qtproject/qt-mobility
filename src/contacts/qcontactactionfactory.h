@@ -65,15 +65,20 @@ class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
 public:
     QContactActionFactory(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactActionFactory();
-    virtual QContactAction* create() const = 0;
+    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
+    virtual QContactAction* create(const QContactActionDescriptor& which) const = 0;
 
-    virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact) const = 0;
-    virtual QContactFilter contactFilter() const = 0;
-    virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
+    virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const = 0;
+    virtual QContactFilter contactFilter(const QContactActionDescriptor& which) const = 0;
+    virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const = 0;
 
-    virtual bool supportsContact(const QContact& contact) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
+    virtual bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
 
     Q_DECLARE_LATIN1_CONSTANT(InterfaceName, "com.nokia.qt.mobility.contacts.action");
+
+protected:
+    QContactActionDescriptor createDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory) const;
+    QVariantMap staticMetaData(const QContactActionDescriptor& descriptor) const;
 };
 
 QTM_END_NAMESPACE

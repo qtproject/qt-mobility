@@ -96,42 +96,31 @@ class QContactMultiActionPlugin : public QObject, public QServicePluginInterface
     Q_INTERFACES(QtMobility::QServicePluginInterface)
 
 public:
-    // depending on the QSID's custom properties, will produce either an ActionOneFactory or ActionTwoFactory
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
                             QServiceContext* context,
                             QAbstractSecuritySession* session);
 };
 
-class QContactActionTwoFactory : public QContactActionFactory
+class QContactMultiActionFactory : public QContactActionFactory
 {
     Q_OBJECT
 
 public:
-    QContactActionTwoFactory();
-    ~QContactActionTwoFactory();
-    QContactAction* create() const;
+    QContactMultiActionFactory();
+    ~QContactMultiActionFactory();
 
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
-    QContactFilter contactFilter() const;
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+    QList<QContactActionDescriptor> actionDescriptors() const;
+    QContactAction* create(const QContactActionDescriptor& which) const;
 
-    bool supportsContact(const QContact& contact) const;
-};
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact, const QContactActionDescriptor& which) const;
+    QContactFilter contactFilter(const QContactActionDescriptor& which) const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters, const QContactActionDescriptor& which) const;
 
-class QContactActionOneFactory : public QContactActionFactory
-{
-    Q_OBJECT
+    bool supportsContact(const QContact& contact, const QContactActionDescriptor& which) const;
 
-public:
-    QContactActionOneFactory();
-    ~QContactActionOneFactory();
-    QContactAction* create() const;
-
-    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
-    QContactFilter contactFilter() const;
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
-
-    bool supportsContact(const QContact& contact) const;
+private:
+    QContactActionDescriptor m_actionOneDescriptor;
+    QContactActionDescriptor m_actionTwoDescriptor;
 };
 
 class QContactActionOne : public QContactAction

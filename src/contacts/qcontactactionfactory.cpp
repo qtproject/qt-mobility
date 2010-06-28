@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qcontactactionfactory.h"
+#include "qcontactactiondescriptor_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -87,10 +88,20 @@ QContactActionFactory::~QContactActionFactory()
 
 Q_DEFINE_LATIN1_CONSTANT(QContactActionFactory::InterfaceName, "com.nokia.qt.mobility.contacts.action");
 
-bool QContactActionFactory::supportsContact(const QContact& contact) const
+bool QContactActionFactory::supportsContact(const QContact& contact, const QContactActionDescriptor& which) const
 {
     // default implementation is naive.
-    return !supportedTargets(contact).isEmpty();
+    return !supportedTargets(contact, which).isEmpty();
+}
+
+QContactActionDescriptor QContactActionFactory::createDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory) const
+{
+    return QContactActionDescriptor(actionName, serviceName, implementationVersion, staticMetaData, factory);
+}
+
+QVariantMap QContactActionFactory::staticMetaData(const QContactActionDescriptor& descriptor) const
+{
+    return descriptor.d->m_staticMetaData;
 }
 
 #include "moc_qcontactactionfactory.cpp"
