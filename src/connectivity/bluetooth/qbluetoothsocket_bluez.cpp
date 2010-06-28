@@ -290,14 +290,15 @@ void QBluetoothSocket::close()
     setSocketState(UnconnectedState);
 }
 
-bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketState socketState,
-                                           OpenMode openMode)
+bool QBluetoothSocket::setSocketDescriptor(int socketDescriptor, SocketType socketType,
+                                           SocketState socketState, OpenMode openMode)
 {
     Q_D(QBluetoothSocket);
 
     if (d->readNotifier)
         delete d->readNotifier;
 
+    d->socketType = socketType;
     d->socket = socketDescriptor;
 
     // ensure that O_NONBLOCK is set on new connections.

@@ -158,7 +158,7 @@ QBluetoothSocket *QRfcommServer::nextPendingConnection()
                            reinterpret_cast<sockaddr *>(&addr), &length);
     if (pending >= 0) {
         QBluetoothSocket *newSocket = new QBluetoothSocket;
-        newSocket->setSocketDescriptor(pending);
+        newSocket->setSocketDescriptor(pending, QBluetoothSocket::RfcommSocket);
 
         d->socketNotifier->setEnabled(true);
 
