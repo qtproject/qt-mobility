@@ -80,8 +80,7 @@ public:
     virtual ~QLandmarkFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate* other) const {
-        return type == other->type
-                && maxMatches == other->maxMatches;
+        return type == other->type;
     }
 
     /* Helper functions for C++ protection rules */
@@ -90,7 +89,6 @@ public:
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkFilter, QLandmarkFilter::DefaultFilter)
 
     QLandmarkFilter::FilterType type;
-    int maxMatches;
 };
 
 QTM_END_NAMESPACE

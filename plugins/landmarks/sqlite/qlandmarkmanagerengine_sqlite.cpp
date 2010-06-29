@@ -979,7 +979,11 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         }
         result = QLandmarkManagerEngineSqlite::sortLandmarks(landmarks, sortOrders);
     }
-    return result;
+
+    int offset = fetchHint.offset();
+    if (offset < 0 )
+        offset = 0;
+    return result.mid(offset, fetchHint.maxItems());
 }
 
 QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter& filter,

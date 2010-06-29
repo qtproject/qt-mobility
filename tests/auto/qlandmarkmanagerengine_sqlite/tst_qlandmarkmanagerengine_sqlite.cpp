@@ -154,12 +154,26 @@ private:
         return ret;
     }
 
+    bool checkIds(const QList<QLandmark> &lms, const QList<QLandmarkId> &lmIds)
+    {
+        if (lms.count() != lmIds.count())
+            return false;
+        for (int i=0; i < lms.count(); ++i) {
+            if (lms.at(i).landmarkId() != lmIds.at(i)) {
+                return false;
+            }
+        }
+    }
+
     //checks if an id fetch request will return the ids for the same landmarks as in \a lms
-    bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter, const QLandmarkSortOrder &sorting = QLandmarkSortOrder()) {
+    bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter,
+                            const QList<QLandmarkSortOrder> &sorting = QList<QLandmarkSortOrder>(),
+                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) {
         //check that the id request will return the same results
         QLandmarkIdFetchRequest idFetchRequest(m_manager);
         idFetchRequest.setFilter(filter);
         idFetchRequest.setSorting(sorting);
+        idFetchRequest.setFetchHint(fetchHint);
 
         QSignalSpy spyId(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         idFetchRequest.start();
@@ -175,6 +189,12 @@ private:
         }
 
         return true;
+    }
+
+    bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter,
+                            const QLandmarkSortOrder &sorting,
+                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) {
+        return  checkIdFetchRequest(lms, filter, sorting, fetchHint);
     }
 
     bool checkCategoryIdFetchRequest(const QList<QLandmarkCategory> &cats, const QLandmarkNameSort &nameSort)
@@ -2067,22 +2087,144 @@ private slots:
             QVERIFY(m_manager->saveLandmark(&lm));
         }
 
+        QList<QLandmarkId> ids = m_manager->landmarkIds();
+        QCOMPARE(ids.size(), 50);
+
+        //default
         QLandmarkFilter filter;
-        filter.setMaximumMatches(-1);
+        QLandmarkFetchHint fetchHint;
+        QLandmarkSortOrder sortOrder;
 
-        QList<QLandmarkId> ids = m_manager->landmarkIds(filter);
-
-        QCOMPARE(ids.size(), 50);
-
-        filter.setMaximumMatches(100);
-
-        ids = m_manager->landmarkIds(filter);
+        fetchHint.setMaxItems(100);
+        ids = m_manager->landmarkIds(filter, sortOrder, fetchHint);
 
         QCOMPARE(ids.size(), 50);
 
-        filter.setMaximumMatches(25);
+        QLandmarkNameSort nameSort(Qt::DescendingOrder);
+        fetchHint.setMaxItems(25);
+        ids = m_manager->landmarkIds(filter, nameSort, fetchHint);
 
-        ids = m_manager->landmarkIds(filter);
+        QCOMPARE(ids.size(), 25);
+        QCOMPARE(m_manager->landmark(ids.at(0)).name(), QString("LM9"));
+        QCOMPARE(m_manager->landmark(ids.at(24)).name(), QString("LM31"));
+
+        QList<QLandmark> lms = m_manager->landmarks(filter, nameSort, fetchHint);
+        QCOMPARE(lms.size(), 25);
+        QCOMPARE(lms.at(0).name(), QString("LM9"));
+        QCOMPARE(lms.at(24).name(), QString("LM31"));
+
+         //try with an offset and max items
+        fetchHint.setOffset(10);
+        fetchHint.setMaxItems(10);
+        lms = m_manager->landmarks(filter, nameSort, fetchHint);
+        ids = m_manager->landmarkIds(filter, nameSort, fetchHint);
+        QVERIFY(checkIds(lms, ids));
+
+        QCOMPARE(lms.size(), 10);
+        QCOMPARE(lms.at(0).name(), QString("LM44"));
+        QCOMPARE(lms.at(9).name(), QString("LM36"));
+
+        //try with an offset and no max items
+        fetchHint.setMaxItems(-1);
+        fetchHint.setOffset(10);
+        lms = m_manager->landmarks(filter,QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+        ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+        QVERIFY(checkIds(lms, ids));
+
+        QCOMPARE(lms.size(), 40);
+        QCOMPARE(lms.at(0).name(), QString("LM18"));
+        QCOMPARE(lms.at(39).name(), QString("LM9"));
+
+        //try with an offset of -1
+        fetchHint.setMaxItems(-1);
+        fetchHint.setOffset(-1);
+        lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+        ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+        QVERIFY(checkIds(lms, ids));
+
+        QCOMPARE(lms.count(), 50);
+    }
+
+    void filterLandmarksLimitMatchesAsync() {
+        for (int i = 0; i < 50; ++i) {
+            QLandmark lm;
+            lm.setName(QString("LM%1").arg(i));
+            QVERIFY(m_manager->saveLandmark(&lm));
+        }
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmark> lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter()));
+
+        QCOMPARE(lms.size(), 50);
+
+        QLandmarkFetchHint fetchHint;
+        fetchHint.setMaxItems(100);
+        fetchRequest.setFetchHint(fetchHint);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(), fetchRequest.fetchHint()));
+        QCOMPARE(lms.size(), 50);
+
+        //try with a sort order and limit
+        QLandmarkNameSort nameSort(Qt::DescendingOrder);
+        fetchHint.setMaxItems(25);
+        fetchRequest.setFetchHint(fetchHint);
+        fetchRequest.setSorting(nameSort);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(),fetchRequest.sorting(), fetchRequest.fetchHint()));
+        QCOMPARE(lms.size(), 25);
+        QCOMPARE(lms.at(0).name(), QString("LM9"));
+        QCOMPARE(lms.at(24).name(), QString("LM31"));
+
+        //try with an offset and max items
+        fetchHint.setOffset(10);
+        fetchHint.setMaxItems(10);
+        fetchRequest.setFetchHint(fetchHint);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(),
+                                    fetchRequest.fetchHint()));
+        QCOMPARE(lms.size(), 10);
+        QCOMPARE(lms.at(0).name(), QString("LM44"));
+        QCOMPARE(lms.at(9).name(), QString("LM36"));
+
+        //try with an offset and no max items
+        fetchHint.setMaxItems(-1);
+        fetchHint.setOffset(10);
+        fetchRequest.setFetchHint(fetchHint);
+        fetchRequest.setSorting(QLandmarkNameSort(Qt::AscendingOrder));
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QVERIFY(checkIdFetchRequest(lms, fetchRequest.filter(), fetchRequest.sorting(),
+                                    fetchRequest.fetchHint()));
+        QCOMPARE(lms.size(), 40);
+        QCOMPARE(lms.at(0).name(), QString("LM18"));
+        QCOMPARE(lms.at(39).name(), QString("LM9"));
+
+        //try with an offset of -1
+        fetchHint.setMaxItems(-1);
+        fetchHint.setOffset(-1);
+        fetchRequest.setFetchHint(fetchHint);
+        fetchRequest.setSorting(QLandmarkNameSort(Qt::AscendingOrder));
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+        QCOMPARE(lms.count(), 50);
     }
 
     void filterLandmarksDefault() {

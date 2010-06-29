@@ -57,10 +57,10 @@ public:
     QLandmarkFetchHint &operator=(const QLandmarkFetchHint &other);
 
     void setMaxItems(int max);
-    int maxItems();
+    int maxItems() const;
 
     void setOffset(int offset);
-    int offset();
+    int offset() const;
 private:
     QSharedDataPointer<QLandmarkFetchHintPrivate> d;
 };

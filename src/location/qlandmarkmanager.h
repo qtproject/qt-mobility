@@ -49,6 +49,9 @@
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkfetchhint.h"
 #include "qlandmarknamesort.h"
+#include "qlandmarkfilter.h"
+#include "qlandmarkcategory.h"
+#include "qlandmark.h"
 
 #include <QObject>
 #include <QMap>
@@ -56,10 +59,7 @@ class QIODevice;
 class QStringList;
 
 QTM_BEGIN_NAMESPACE
-class QLandmarkCategory;
-class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
-class QLandmark;
 class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
@@ -119,14 +119,14 @@ public:
     QLandmark landmark(const QLandmarkId &landmarkId) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
                                 const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter = QLandmarkFilter(), const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
                             const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                    const QList<QLandmarkSortOrder> &sortOrders,
                                    const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter = QLandmarkFilter(),
                                    const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
                                    const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 

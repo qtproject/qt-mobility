@@ -61,7 +61,10 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkFetchHintPrivate : public QSharedData
 {
 public:
-    QLandmarkFetchHintPrivate(): QSharedData() {}
+    QLandmarkFetchHintPrivate()
+        : QSharedData(),
+        offset(0),
+        maxItems(-1) {}
 
     QLandmarkFetchHintPrivate(const QLandmarkFetchHintPrivate &other)
         : QSharedData(other),

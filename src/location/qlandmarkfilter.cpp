@@ -60,15 +60,13 @@ QTM_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
         : QSharedData(),
-          type(QLandmarkFilter::DefaultFilter),
-          maxMatches(-1)
+          type(QLandmarkFilter::DefaultFilter)
 {
 }
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
         : QSharedData(),
-          type(other.type),
-          maxMatches(other.maxMatches)
+          type(other.type)
 {
 }
 
@@ -164,23 +162,6 @@ QLandmarkFilter::FilterType QLandmarkFilter::type() const
 }
 
 /*!
-    Returns the maximum number of matches this filter will make.
-*/
-int QLandmarkFilter::maximumMatches() const
-{
-    return d_ptr->maxMatches;
-}
-
-/*!
-    Set the maximum number of matches this filter will make
-    to \a maxMatches.
-*/
-void QLandmarkFilter::setMaximumMatches(int maxMatches)
-{
-    d_ptr->maxMatches = maxMatches;
-}
-
-/*!
     \fn QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
     Returns true if this filter is not identical to \a other.
 
@@ -193,9 +174,6 @@ void QLandmarkFilter::setMaximumMatches(int maxMatches)
 */
 bool QLandmarkFilter::operator==(const QLandmarkFilter& other) const
 {
-    if(d_ptr->maxMatches != other.d_ptr->maxMatches)
-        return false;
-
     /* Different types can't be equal */
     if (other.type() != type())
         return false;
