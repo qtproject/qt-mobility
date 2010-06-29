@@ -42,6 +42,4 @@ SOURCES += plugin.cpp \
     qmlcontactdetail.cpp \
     qmlcontactdetailfield.cpp
 
-OTHER_FILES += qmldir
-    
-INSTALLS += target qmldir
+INSTALLS += qmldir
