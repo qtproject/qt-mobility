@@ -378,12 +378,12 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error)
 {
-    // TODO: Add changeset manipulation and signal emissions
     // TODO: Check all the dependencies of the removed item
 
     *error = QOrganizerItemManager::NoError;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
+    QOrganizerItemChangeSet cs;
 
     for (int i = 0; i < itemIds.size(); ++i) {
         QOrganizerItemLocalId currId = itemIds.at(i);
@@ -406,13 +406,21 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
                 if (errorMap)
                     errorMap->insert(i, *error);
             }
-        } else {
+            else {
+                // Success, update the changeset
+                cs.insertRemovedItem(currItem.localId());
+            }
+        }
+        else {
             success = false;
             if (errorMap)
                 errorMap->insert(i, *error);
         }
     }
 
+    d->m_mcInstance->commitAllChanges(); // ensure that changes are committed before emitting signals
+    cs.emitSignals(this);
+    cleanupCal(cal);
     return success;
 }
 
@@ -593,7 +601,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
     QOrganizerItemFetchHint fetchHints;
     fetchHints.setOptimizationHints(optimizationHints);
 
-    // Event occurrence validity checks
+    // Event occurrence validity checks:
     if (eventOccurrence) {
         // Either parent id or GUID (or both) must be set
         if (!eventOccurrence->parentLocalId() && eventOccurrence->guid().isEmpty()) {
@@ -627,7 +635,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
 
     }
 
-    // Todo occurrence validity checks
+    // Todo occurrence validity checks:
     if (todoOccurrence) {
         // Either parent id or GUID (or both) must be set
         if (!todoOccurrence->parentLocalId() && todoOccurrence->guid().isEmpty()) {
