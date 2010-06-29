@@ -73,6 +73,7 @@
 #include "qorganizeritemchangeset.h"
 
 #include "qorganizerrecurrencetransform.h"
+#include "qorganizerguidmapper.h"
 
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
@@ -129,6 +130,9 @@ public:
 
     // recurrence rule converter instance
     OrganizerRecurrenceTransform m_recTransformer;
+
+    // guid mapper instance
+    OrganizerGuidMapper m_guidMapper;
 };
 
 
@@ -171,6 +175,7 @@ public:
 
 private:
     // single item saving implementation
+    void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
     // conversion functions

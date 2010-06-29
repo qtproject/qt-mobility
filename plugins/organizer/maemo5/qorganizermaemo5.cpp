@@ -559,12 +559,118 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
     return retn;
 }
 
+void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error)
+{
+    *error = QOrganizerItemManager::NoError;
+
+    // Check local id
+    if (checkItem->localId()) {
+        // Don't allow saving with local id defined unless the item is from this manager.
+        if (checkItem->id().managerUri() != managerUri()) {
+            *error = QOrganizerItemManager::BadArgumentError;
+            return;
+        }
+    }
+
+    QOrganizerEventOccurrence *eventOccurrence(0);
+    if (checkItem->type() == QOrganizerItemType::TypeEventOccurrence)
+        eventOccurrence = static_cast<QOrganizerEventOccurrence *>(checkItem);
+    QOrganizerTodoOccurrence *todoOccurrence(0);
+    if (checkItem->type() == QOrganizerItemType::TypeTodoOccurrence)
+        todoOccurrence = static_cast<QOrganizerTodoOccurrence *>(checkItem);
+
+    // If the item is not an occurrence, no more checks are needed
+    if (!eventOccurrence && !todoOccurrence)
+        return;
+
+    // Construct a fetch hint for minimal fetch
+    QOrganizerItemFetchHint::OptimizationHints optimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
+    optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
+    QOrganizerItemFetchHint fetchHints;
+    fetchHints.setOptimizationHints(optimizationHints);
+
+    // Event occurrence validity checks
+    if (eventOccurrence) {
+        // Either parent id or GUID (or both) must be set
+        if (!eventOccurrence->parentLocalId() && eventOccurrence->guid().isEmpty()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
+
+        // If the parent ID is set, it must point to an event
+        QOrganizerItem parent;
+        if (eventOccurrence->parentLocalId()) {
+            parent = item(eventOccurrence->parentLocalId(), fetchHints, error);
+            if (*error != QOrganizerItemManager::NoError)
+                return;
+            if (parent.type() != QOrganizerItemType::TypeEvent) {
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return;
+            }
+        }
+
+        // TODO: If GUID is set and parent ID is NOT set:
+        //       - must find at least one event with GUID
+
+        // If both parent ID and GUID are both set, they must be consistent
+        if (eventOccurrence->parentLocalId() && !eventOccurrence->guid().isEmpty()) {
+            // Assumes that the parent item is fetched earlier
+            if (eventOccurrence->guid() != parent.guid()) {
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return;
+            }
+        }
+
+    }
+
+    // Todo occurrence validity checks
+    if (todoOccurrence) {
+        // Either parent id or GUID (or both) must be set
+        if (!todoOccurrence->parentLocalId() && todoOccurrence->guid().isEmpty()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
+
+        // Parent ID must point to a todo
+        QOrganizerItem parent;
+        if (todoOccurrence->parentLocalId()) {
+            parent = item(todoOccurrence->parentLocalId(), fetchHints, error);
+            if (*error != QOrganizerItemManager::NoError)
+                return;
+            if (parent.type() != QOrganizerItemType::TypeTodo) {
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return;
+            }
+        }
+
+        // TODO: If GUID is set and parent ID is NOT set:
+        //       - must find at least one todo with GUID
+
+        // If both parent ID and GUID are set, they must be consistent
+        if (todoOccurrence->parentLocalId() && !todoOccurrence->guid().isEmpty()) {
+            // Assumes that the parent item is fetched earlier
+            if (todoOccurrence->guid() != parent.guid()) {
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return;
+            }
+        }
+    }
+}
+
 int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemManager::Error *error)
 {
     // TODO: Add signal emissions
     // TODO: Or might be better not to implement emissions here?
 
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    *error = QOrganizerItemManager::NoError;
+
+    // Check item validity
+    checkItemIdValidity(item, error);
+    if (*error != QOrganizerItemManager::NoError)
+        return calError; // Item localId or GUID is not valid
+
+    // Return InvalidItemTypeError if type won't be recognized
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     CComponent *component = createCComponent(cal, item);
@@ -604,8 +710,24 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 item->setId(id);
             }
         }
+
+        // Update GUID mapping
+        d->m_guidMapper.setCalendar(cal);
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cevent->getId()));
+
         delete cevent;
         return calError;
+    }
+    else if (item->type() == QOrganizerItemType::TypeEventOccurrence)
+    {
+        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(item);
+        // Check that the occurrence has either parentLocalId or GUID set
+        if (eventOccurrence->guid().isEmpty() && !eventOccurrence->parentLocalId()) {
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return calError;
+        }
+
+
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
         CTodo* ctodo = static_cast<CTodo *>(component);
@@ -637,8 +759,17 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 item->setId(id);
             }
         }
+
+        // Update GUID mapping
+        d->m_guidMapper.setCalendar(cal);
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(ctodo->getId()));
+
         delete ctodo;
         return calError;
+    }
+    else if (item->type() == QOrganizerItemType::TypeTodoOccurrence)
+    {
+        // TODO
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
         CJournal* cjournal = static_cast<CJournal *>(component);
@@ -671,8 +802,16 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             }
 
         }
+
+        // Update GUID mapping
+        d->m_guidMapper.setCalendar(cal);
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cjournal->getId()));
+
         delete cjournal;
         return calError;
+    }
+    else if (item->type() == QOrganizerItemType::TypeNote) {
+        // TODO
     }
 
     return calError;
@@ -901,7 +1040,9 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent(CCalendar *cal, const Q
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *retn = 0; // Return null on errors
 
-    if (item->type() == QOrganizerItemType::TypeEvent) {
+    if (item->type() == QOrganizerItemType::TypeEvent
+        || item->type() == QOrganizerItemType::TypeEventOccurrence) {
+
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -932,15 +1073,20 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent(CCalendar *cal, const Q
         if (!event->endDateTime().isNull())
             cevent->setDateEnd(event->endDateTime().toTime_t());
 
-        // Build and set the recurrence information for the event
-        CRecurrence *recurrence = createCRecurrence(item);
-        cevent->setRecurrence(recurrence);
-        delete recurrence; // setting makes a copy
-        recurrence = 0;
+        if (item->type() == QOrganizerItemType::TypeEvent) {
+            // Build and set the recurrence information for the event
+            CRecurrence *recurrence = createCRecurrence(item);
+            cevent->setRecurrence(recurrence);
+            delete recurrence; // setting makes a copy
+            recurrence = 0;
+        }
+        // (else: QOrganizerItemEventOccurrence, does not have recurrence information)
 
         retn = cevent;
     }
-    else if (item->type() == QOrganizerItemType::TypeTodo) {
+    else if (item->type() == QOrganizerItemType::TypeTodo
+             || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -1009,6 +1155,9 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent(CCalendar *cal, const Q
             cjournal->setDateStart(journal->dateTime().toTime_t());
 
         retn = cjournal;
+    }
+    else if (item->type() == QOrganizerItemType::TypeNote) {
+        // TODO
     }
 
     if (retn) {
