@@ -60,11 +60,11 @@ struct ServiceIdentDescriptor
     }
 
     const QMetaObject* meta;
+    QRemoteServiceClassRegister::CreateServiceFunc create;
     QRemoteServiceClassRegister::InstanceType instanceType;
     QHash<QUuid, QObject*> individualInstances;
     QObject* sharedInstance;
     QUuid sharedId;
-    QRemoteServiceClassRegister::CreateServiceFunc create;
     int sharedRefCount;
 };
 
@@ -74,7 +74,7 @@ public:
     InstanceManager();
     ~InstanceManager();
 
-    bool addType(const QMetaObject* meta, 
+    bool addType(const QMetaObject* meta,
             QRemoteServiceClassRegister::CreateServiceFunc func,
             QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
             QRemoteServiceClassRegister::InstanceType type);

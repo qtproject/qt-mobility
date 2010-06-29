@@ -128,6 +128,11 @@
 <ul>
 <li>Fremantle: Segmentation fault on removing a connected network</li>
 </ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>All platforms: <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> is not thread-safe; using it from other than main-thread off the application will not work properly. Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.</li>
+</ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
 <ul>

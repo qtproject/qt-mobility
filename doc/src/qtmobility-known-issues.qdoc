@@ -136,6 +136,12 @@ Support is present for the following System Info API classes
     \o Fremantle: Segmentation fault on removing a connected network
 \endlist
 
+\section2 Bearer Management API
+\list
+    \o All platforms: QNetworkConfigurationManager is not thread-safe; using it from other than main-thread off the application will not work properly.
+    Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.
+\endlist
+
 \section2 Contacts API
 \list
     \o S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.

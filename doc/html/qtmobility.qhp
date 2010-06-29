@@ -627,7 +627,7 @@
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
                     <section ref="flickrdemo.html" title="Flickr Demo Example"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
-                    <section ref="lightmaps.html" title="LightMap Example"/>
+                    <section ref="lightmaps.html" title="LightMaps Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="player.html" title="Media Player Example"/>
                     <section ref="notesmanagerplugin.html" title="Notes Manager Plugin Example"/>
@@ -724,7 +724,7 @@
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
-            <keyword name="LightMap Example" id="LightMap Example" ref="lightmaps.html"/>
+            <keyword name="LightMaps Example" id="LightMaps Example" ref="lightmaps.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>

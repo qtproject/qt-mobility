@@ -55,7 +55,7 @@ Q_DECLARE_METATYPE(QVariant)
 class SharedTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(SharedTestService, "com.nokia.qt.ipcunittest", "3.4")
+    Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 public:
 
@@ -66,20 +66,20 @@ public:
 
     QString value() const
     {
-        qDebug() << "Reading property";
+        qDebug() << "SharedTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "Writing property";
+        qDebug() << "SharedTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "Resetting property";
+        qDebug() << "SharedTestService: Resetting property";
         m_value = "<empty>";
         emit valueChanged();
     }
@@ -169,7 +169,7 @@ private:
 class UniqueTestService : public QObject 
 {
     Q_OBJECT
-    Q_SERVICE(UniqueTestService, "com.nokia.qt.ipcunittest", "3.5")
+    Q_SERVICE(UniqueTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.5")
     Q_CLASSINFO("UniqueTestService", "First test");
     Q_CLASSINFO("Key", "Value");
 
@@ -205,20 +205,20 @@ public:
 
     QString value() const
     {
-        qDebug() << "Reading property";
+        qDebug() << "UniqueTestService: Reading property";
         return m_value;
     }
 
     void setValue(const QString& value)
     {
-        qDebug() << "Writing property";
+        qDebug() << "UniqueTestService: Writing property";
         m_value = value;
         emit valueChanged();
     }
 
     void resetValue()
     {
-        qDebug() << "Resetting value";
+        qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
         emit valueChanged();
     }
@@ -352,7 +352,7 @@ Q_DECLARE_METATYPE(QMetaType::Type);
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-    
+
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     // QVariant is built in with 4.7

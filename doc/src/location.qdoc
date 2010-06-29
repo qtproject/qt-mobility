@@ -134,7 +134,7 @@ public:
     MyClass(QObject *parent = 0)
         : QObject(parent)
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(this);
         if (source) {
             connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdated(QGeoPositionInfo)));

@@ -9,9 +9,10 @@ contains(mobility_modules,serviceframework) {
             notesmanagerplugin \
             servicebrowser
 
+    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    contains(QT_CONFIG, declarative) {
+    !symbian:contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -94,5 +95,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
+sources.path = $$QT_MOBILITY_EXAMPLES
 INSTALLS += sources
