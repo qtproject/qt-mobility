@@ -113,7 +113,7 @@ void ReverseGeocodingTab::on_btnRequest_clicked()
 
         m_searchManager->geocode(coord);
     } else {
-        QMessageBox::warning(this, tr("Reverse GeoCoding"), tr("No geocoding service available."));
+        QMessageBox::warning(this, tr("Reverse Geocoding"), tr("No search manager available."));
     }
 }
 
