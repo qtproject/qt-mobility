@@ -1070,6 +1070,7 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 #if !defined(QT_NO_DBUS)
     halIface = new QHalInterface();
 #endif
+    logicalDrives();
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
@@ -1079,14 +1080,14 @@ QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
         mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
         connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
     }
 
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
         mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
         connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
@@ -1111,28 +1112,38 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
 {
     Q_UNUSED(path);
-    QMap<QString, QString> mountEntriesMap2 = mountEntriesMap;
+    QMap<QString, QString> oldDrives = mountEntriesMap;
     mountEntries();
 
-    if(mountEntriesMap.count() > mountEntriesMap2.count()) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-        emit logicalDrivesChanged(true);
+    if(mountEntriesMap.count() < oldDrives.count()) {
+        QMapIterator<QString, QString> i(oldDrives);
+        while (i.hasNext()) {
+            i.next();
+            if(!mountEntriesMap.contains(i.key())) {
+                delete mtabWatcherA;
+                mtabWatcherA = 0;
+                mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+                connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                        this,SLOT(deviceChanged(const QString &)));
+                emit logicalDriveChanged(false, i.key());
+            }
+        }
+    } else if(mountEntriesMap.count() > oldDrives.count()) {
+        QMapIterator<QString, QString> i(mountEntriesMap);
+        while (i.hasNext()) {
+            i.next();
 
-    } else if(mountEntriesMap.count() < mountEntriesMap2.count()) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-
-        emit logicalDrivesChanged(false);
+            if(oldDrives.contains(i.key()))
+                continue;
+            delete mtabWatcherB;
+            mtabWatcherB = 0;
+            mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+            connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                    this,SLOT(deviceChanged(false, const QString &)));
+            emit logicalDriveChanged(true,i.key());
+        }
     }
 }
-
 
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
 {
