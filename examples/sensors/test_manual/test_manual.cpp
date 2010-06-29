@@ -55,7 +55,7 @@
 
 QTM_USE_NAMESPACE
 
-static QOrientationReading::Orientation o2;
+        static QOrientationReading::Orientation o2;
 static QOrientationSensor orientationSensor;
 static QAccelerometer accelerometer;
 static QRotationSensor rotationSensor;
@@ -66,6 +66,12 @@ static QMagnetometerReading* maggeReading;
 static QCompass compass;
 static QCompassReading* compassReading;
 
+
+static QString dataRateString;
+static QString dataRangeString;
+static QString resolutionString;
+static int counter;
+
 ///////////////////////////////////////////
 //cpp file
 ///////////////////////////////////////////
@@ -73,21 +79,41 @@ static QCompassReading* compassReading;
 
 SensorSlotClass::SensorSlotClass()
 {
+    int rateMax =0;
     connect(&orientationSensor, SIGNAL(readingChanged()), this, SLOT(slotOrientationData()));
+    if (orientationSensor.availableDataRates().size()>0){
+        rateMax = orientationSensor.availableDataRates().at(0).second;
+        orientationSensor.setDataRate(rateMax);
+    }
     orientationSensor.start();
-
     connect(&accelerometer, SIGNAL(readingChanged()), this, SLOT(slotAccelerationData()));
+    if (accelerometer.availableDataRates().size()>0){
+        rateMax = accelerometer.availableDataRates().at(0).second;
+        accelerometer.setDataRate(rateMax);
+    }
     accelerometer.start();
-
     connect(&rotationSensor, SIGNAL(readingChanged()), this, SLOT(slotRotationData()));
+    if (rotationSensor.availableDataRates().size()>0){
+        rateMax = rotationSensor.availableDataRates().at(0).second;
+        rotationSensor.setDataRate(rateMax);
+    }
     rotationSensor.start();
-
     magnetometer.setProperty("returnGeoValues", true);
     connect(&magnetometer, SIGNAL(readingChanged()), this, SLOT(slotMagnetometerData()));
+    if (magnetometer.availableDataRates().size()>0){
+        rateMax = magnetometer.availableDataRates().at(0).second;
+        magnetometer.setDataRate(rateMax);
+    }
     magnetometer.start();
 
     connect(&compass, SIGNAL(readingChanged()), this, SLOT(slotCompassData()));
+    if (compass.availableDataRates().size()>0){
+        rateMax = compass.availableDataRates().at(0).second;
+        compass.setDataRate(rateMax);
+    }
     compass.start();
+
+    m_x=0; m_y=0; m_z=0;
 }
 
 SensorSlotClass::~SensorSlotClass(){
@@ -111,26 +137,129 @@ SensorSlotClass::~SensorSlotClass(){
 
 void SensorSlotClass::slotOrientationData(){
     o2 = orientationSensor.reading()->orientation();
+    checkRange(&orientationSensor, o2);
+    checkRate(&orientationSensor, m_orientationTimestamp);
 }
 
 
 void SensorSlotClass::slotAccelerationData(){
+
     acceReading = accelerometer.reading();
+    checkRange(&accelerometer, acceReading->x());
+    checkRange(&accelerometer, acceReading->y());
+    checkRange(&accelerometer, acceReading->z());
+
+    checkRate(&accelerometer, m_accelerometerTimestamp);
+
+    if (counter==4) checkResolution(&accelerometer, acceReading);
+
 }
 
 void SensorSlotClass::slotRotationData(){
     rotReading = rotationSensor.reading();
+    checkRange(&rotationSensor, rotReading->x());
+    checkRange(&rotationSensor, rotReading->y());
+    checkRange(&rotationSensor, rotReading->z());
+
+    checkRate(&rotationSensor, m_rotationTimestamp);
 }
 
 void SensorSlotClass::slotMagnetometerData(){
-    maggeReading = magnetometer.reading();
-}
 
+    maggeReading = magnetometer.reading();
+    checkRange(&magnetometer, maggeReading->x());
+    checkRange(&magnetometer, maggeReading->y());
+    checkRange(&magnetometer, maggeReading->z());
+
+    checkRate(&magnetometer, m_magnetometerTimestamp);
+
+}
 
 void SensorSlotClass::slotCompassData(){
     compassReading = compass.reading();
+    checkRange(&compass, (qreal)compassReading->azimuth());
+
+    checkRate(&compass, m_compassTimestamp);
 }
 
+
+void SensorSlotClass::checkRange(QSensor* sensor, qreal value){
+    qreal min = sensor->outputRanges().at(sensor->outputRange()).minimum;
+    qreal max = sensor->outputRanges().at(sensor->outputRange()).maximum;
+
+    if (min>value || value> max){
+        QString num;
+        dataRangeString.append(sensor->type());
+        dataRangeString.append(": range=[");
+        dataRangeString.append(num.setNum(min));
+        dataRangeString.append(",");
+        dataRangeString.append(num.setNum(max));
+        dataRangeString.append("], value =");
+        dataRangeString.append(num.setNum(value));
+        dataRangeString.append("\n");
+    }
+
+}
+
+
+void SensorSlotClass::checkRate(QSensor* sensor, int &exTimestamp){
+    int timestamp = sensor->reading()->timestamp();
+    int diff = timestamp - exTimestamp;
+    int rate = sensor->dataRate();
+    if (rate==0) return;
+    if (diff < (1000/rate)*0.9){
+        dataRateString.append(sensor->type());
+        dataRateString.append(": rate=");
+        dataRateString.append(sensor->dataRate());
+        dataRateString.append(", measured rate=");
+        dataRateString.append(1000/diff);
+        dataRateString.append("\n");
+    }
+
+    exTimestamp = timestamp;
+}
+
+
+void SensorSlotClass::checkResolution(QSensor* sensor, QAccelerometerReading* reading){
+    qreal x = reading->x();
+    qreal y = reading->y();
+    qreal z = reading->z();
+
+
+    qreal resolution = sensor->outputRanges().at(sensor->outputRange()).accuracy;
+
+    if (m_x!=0){
+        qreal diff = qAbs(x-m_x);
+        checkDiff(diff, resolution, ": x resolution=");
+        diff = qAbs(y-m_y);
+        checkDiff(diff, resolution, ": y resolution=");
+        diff = qAbs(z-m_z);
+        checkDiff(diff, resolution, ": z resolution=");
+    }
+    m_x = x;
+    m_y = y;
+    m_z = z;
+
+}
+
+void SensorSlotClass::checkDiff(qreal diff, qreal resolution, QString msg){
+    if (diff==0) return;
+    qreal resolutionMax = 3*resolution;
+
+
+    if (qAbs(diff)<resolution || qAbs(diff)>resolutionMax){
+        QString num;
+        resolutionString.append("accelerometer:");
+        resolutionString.append(msg);
+        num.setNum(resolution);
+        resolutionString.append(num);
+        resolutionString.append("!=");
+        num.setNum(qAbs(diff));
+        resolutionString.append(num);
+        resolutionString.append("\n");
+    }
+
+}
 
 
 
@@ -370,6 +499,9 @@ class test_manual: public QObject{
     Q_OBJECT
     private slots:
     void testOrientation();
+    void testDataRate();
+    void testOutputRange();
+    void testResolution();
 };
 
 
@@ -395,14 +527,16 @@ void test_manual::testOrientation()
 
     QString tmp("\n");
 
-    for (int i=0; i<7; i++){
+
+    for (; counter<7; counter++){
         qDebug()<<"Put the device in following position, try to preserve compass direction:\n";
-        QOrientationReading::Orientation o1 = tests::orientation[i%6];
+        if (counter==4) qDebug()<<"Put the device on the table on stationary position!!!!:\n";
+        QOrientationReading::Orientation o1 = tests::orientation[counter%6];
         tests::drawDevice(o1);
         tests::pressAnyKey();
         QTest::qWait(50);   // DO NOT REMOVE - does not work without this!
 
-        if (i==0) continue;     //prevent from first UNDEFINED VALUE
+        if (counter==0) continue;     //prevent from first UNDEFINED VALUE
 
 
         if (o1!=o2){
@@ -416,9 +550,9 @@ void test_manual::testOrientation()
 
 
         //acceleration
-        qreal tmpX = tests::acce_array[i%6][0];
-        qreal tmpY = tests::acce_array[i%6][1];
-        qreal tmpZ = tests::acce_array[i%6][2];
+        qreal tmpX = tests::acce_array[counter%6][0];
+        qreal tmpY = tests::acce_array[counter%6][1];
+        qreal tmpZ = tests::acce_array[counter%6][2];
         qreal x = acceReading->x();
         qreal y = acceReading->y();
         qreal z = acceReading->z();
@@ -448,14 +582,14 @@ void test_manual::testOrientation()
 
         //rotation
         QString rotTmp;
-        tmpX = tests::rot_array[i%6][0];
-        tmpY = tests::rot_array[i%6][1];
+        tmpX = tests::rot_array[counter%6][0];
+        tmpY = tests::rot_array[counter%6][1];
         x = rotReading->x();
         y = rotReading->y();
         if (hasZ){
-            rot_x[i-1]=rotReading->x();
-            rot_y[i-1]=rotReading->y();
-            rot_z[i-1]=rotReading->z();
+            rot_x[counter-1]=rotReading->x();
+            rot_y[counter-1]=rotReading->y();
+            rot_z[counter-1]=rotReading->z();
         }
         int tmpL = l;
         // not as straight-forward
@@ -477,21 +611,21 @@ void test_manual::testOrientation()
 
 
         //magnetometer
-        magge_x[i-1]=maggeReading->x();
-        magge_y[i-1]=maggeReading->y();
-        magge_z[i-1]=maggeReading->z();
+        magge_x[counter-1]=maggeReading->x();
+        magge_y[counter-1]=maggeReading->y();
+        magge_z[counter-1]=maggeReading->z();
 
-//        qDebug()<<" magge x="<<magge_x[i-1]<<", y="<<magge_y[i-1]<<", z="<<magge_z[i-1];
+        //        qDebug()<<" magge x="<<magge_x[i-1]<<", y="<<magge_y[i-1]<<", z="<<magge_z[i-1];
 
         //compass
-        compass_azimuth[i-1] = compassReading->azimuth();
-        compass_level[i-1] = compassReading->calibrationLevel();
-//        qDebug()<<" compass = "<< compass_azimuth[i-1];
-//        if (hasZ){
-//            qDebug()<<" rotation = x "<<rot_x[i-1];
-//            qDebug()<<" rotation = y "<<rot_y[i-1];
-//            qDebug()<<" rotation = z "<<rot_z[i-1];
-//        }
+        compass_azimuth[counter-1] = compassReading->azimuth();
+        compass_level[counter-1] = compassReading->calibrationLevel();
+        //        qDebug()<<" compass = "<< compass_azimuth[i-1];
+        //        if (hasZ){
+        //            qDebug()<<" rotation = x "<<rot_x[i-1];
+        //            qDebug()<<" rotation = y "<<rot_y[i-1];
+        //            qDebug()<<" rotation = z "<<rot_z[i-1];
+        //        }
     }
 
 
@@ -576,11 +710,11 @@ void test_manual::testOrientation()
         }
     }
 
-    // compass: 1&2, 4&3
+    // compass: 1&2, 3&4
     // azimuth will be projected to horizontal plane
-    // top up & top down (5&0): too much variation
-    // left up & right up: 180 diff
-    // face up & face down: should be the same
+    // top up & top down (5&0): too much variation, NOT tested
+    // left up & right up (1&2): 180 diff
+    // face up & face down (3&4): should be the same
     // take calibration level into account
     int index[6]={1,2,3,4};
 
@@ -590,8 +724,8 @@ void test_manual::testOrientation()
 
         qreal val1 = compass_azimuth[index[i*2]];
         qreal val2 = compass_azimuth[index[i*2+1]];
-//        QString num;
-//        qDebug()<<" Compass testing val1 = "<<num.setNum(val1)<< " val2 = "<<num.setNum(val2);
+        //        QString num;
+        //        qDebug()<<" Compass testing val1 = "<<num.setNum(val1)<< " val2 = "<<num.setNum(val2);
 
         if (i==0){
             val1 = ((int)val1+180)%360;
@@ -628,6 +762,23 @@ void test_manual::testOrientation()
 
     QVERIFY2(tmp.size()<2, tmp.toLatin1().data());
 }
+
+
+void test_manual::testDataRate(){
+    QVERIFY2(dataRateString.size()==0, dataRateString.toLatin1().data());
+    dataRateString.clear();
+}
+
+void test_manual::testOutputRange(){
+    QVERIFY2(dataRangeString.size()==0, dataRangeString.toLatin1().data());
+    dataRangeString.clear();
+}
+
+void test_manual::testResolution(){
+    QVERIFY2(resolutionString.size()==0, resolutionString.toLatin1().data());
+    resolutionString.clear();
+}
+
 
 
 QTEST_MAIN(test_manual)
