@@ -188,31 +188,29 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
     QList<QGeoRouteSegment> routesegments;
 
     for (int i = 0; i < segments.count(); ++i) {
-        QGeoRouteSegment segment = segments[i].segment;
         for (int j = instructions.count() - 1; j >= 0; --j) {
             if (instructions[j].id == segments[i].instructionId || instructions[j].toId == segments[i].id) {
-                if (!segment.instruction().instructionText().isEmpty()) {
-                    if (segment.instruction() != instructions[j].instruction) {
-                        QGeoRouteSegment seg;
-                        seg.setInstruction(instructions[j].instruction);
-                        routesegments.append(seg);
+                if (!segments[i].segment.instruction().instructionText().isEmpty()) {
+                    if (segments[i].segment.instruction() != instructions[j].instruction) {
+                        QGeoRouteSegment segment;
+                        segment.setInstruction(instructions[j].instruction);
+                        routesegments.append(segment);
                         instructions.removeAt(j);
                     }
                 }
                 else {
-                    segment.setInstruction(instructions[j].instruction);
+                    segments[i].segment.setInstruction(instructions[j].instruction);
                     instructions.removeAt(j);
                 }
             }
         }
-        routesegments.append(segment);
+        routesegments.append(segments[i].segment);
     }
 
     for (int i=0;i<instructions.count();++i) {
-        QGeoNavigationInstruction instruction = instructions[i].instruction;
         //Add orphan instruction into new empty segment
         QGeoRouteSegment segment;
-        segment.setInstruction(instruction);
+        segment.setInstruction(instructions[i].instruction);
         routesegments.append(segment);
         instructions.removeAt(i);
     }
