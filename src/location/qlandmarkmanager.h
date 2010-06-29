@@ -103,9 +103,9 @@ public:
     virtual ~QLandmarkManager();
 
     bool saveLandmark(QLandmark *landmark);
-    bool saveLandmarks(QList<QLandmark> *landmarks, QMap<int, QLandmarkManager::Error> *errorMap); //default of 0?
+    bool saveLandmarks(QList<QLandmark> *landmarks, QMap<int, QLandmarkManager::Error> *errorMap = 0);
     bool removeLandmark(const QLandmarkId &landmarkId);
-    bool removeLandmarks(const QList<QLandmarkId> &landmarksIds, QMap<int, QLandmarkManager::Error> *errorMap);
+    bool removeLandmarks(const QList<QLandmarkId> &landmarksIds, QMap<int, QLandmarkManager::Error> *errorMap = 0);
 
     bool saveCategory(QLandmarkCategory *category);
     bool removeCategory(const QLandmarkCategoryId &categoryId);
