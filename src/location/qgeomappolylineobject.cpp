@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
     : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
+QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd)
+    : QGeoMapObject(dd) {}
+
 /*!
 */
 QGeoMapPolylineObject::~QGeoMapPolylineObject()

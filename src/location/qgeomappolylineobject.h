@@ -65,6 +65,9 @@ public:
     void setPen(const QPen &pen);
     QPen pen() const;
 
+protected:
+    QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd);
+
 private:
     Q_DECLARE_PRIVATE(QGeoMapPolylineObject)
     Q_DISABLE_COPY(QGeoMapPolylineObject)

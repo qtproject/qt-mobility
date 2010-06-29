@@ -54,6 +54,7 @@
 #include <qgeomaprectangleobject.h>
 #include <qgeomapmarkerobject.h>
 #include <qgeomappolylineobject.h>
+#include <qgeomappolygonobject.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
@@ -253,6 +254,10 @@ void MainWindow::createMenus()
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolyline(bool)));
 
+    menuItem = new QAction(tr("Polygon"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawPolygon(bool)));
 }
 
 void MainWindow::drawRect(bool /*checked*/)
@@ -289,6 +294,26 @@ void MainWindow::drawPolyline(bool /*checked*/)
     polyline->setPen(pen);
     polyline->setPath(path);
     m_mapWidget->addMapObject(polyline);
+}
+
+void MainWindow::drawPolygon(bool /*checked*/)
+{
+    QList<QGeoCoordinate> path;
+
+    while (markers.count() >= 1) {
+        QPoint p = markers.takeFirst();
+        path.append(m_mapWidget->screenPositionToCoordinate(p));
+    }
+
+    QPen pen(Qt::white);
+    pen.setWidth(2);
+    QGeoMapPolygonObject *polygon = new QGeoMapPolygonObject();
+    polygon->setPen(pen);
+    QColor fill(Qt::black);
+    fill.setAlpha(65);
+    polygon->setBrush(QBrush(fill));
+    polygon->setPath(path);
+    m_mapWidget->addMapObject(polygon);
 }
 
 void MainWindow::drawMarker(bool /*checked*/)

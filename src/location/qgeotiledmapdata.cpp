@@ -49,6 +49,7 @@
 #include "qgeomaprectangleobject.h"
 #include "qgeomapmarkerobject.h"
 #include "qgeomappolylineobject.h"
+#include "qgeomappolygonobject.h"
 
 #include <QDebug>
 
@@ -500,7 +501,8 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *m
         paintMapRectangle(painter, static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         paintMapMarker(painter, static_cast<QGeoMapMarkerObject*>(mapObject));
-    else if (mapObject->type() == QGeoMapObject::PolylineType)
+    else if (mapObject->type() == QGeoMapObject::PolylineType ||
+             mapObject->type() == QGeoMapObject::PolygonType)
         paintMapPolyline(painter, static_cast<QGeoMapPolylineObject*>(mapObject));
 }
 
@@ -532,11 +534,17 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObj
 void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const
 {
     QPen oldPen = painter.pen();
+    QBrush oldBrush = painter.brush();
     painter.setPen(polyline->pen());
+
+    if (polyline->type() == QGeoMapObject::PolygonType)
+        painter.setBrush(static_cast<QGeoMapPolygonObject*>(polyline)->brush());
+
     QGeoTiledMapPolylineInfo* info = static_cast<QGeoTiledMapPolylineInfo*>(objInfo.value(polyline));
     QPainterPath path = info->path.translated(-(screenRect.topLeft()));
     painter.drawPath(path);
     painter.setPen(oldPen);
+    painter.setBrush(oldBrush);
 }
 
 void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
@@ -551,7 +559,7 @@ void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
         calculateMapRectangleInfo(static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         calculateMapMarkerInfo(static_cast<QGeoMapMarkerObject*>(mapObject));
-    else if (mapObject->type() == QGeoMapObject::PolylineType)
+    else if (mapObject->type() == QGeoMapObject::PolylineType || mapObject->type() == QGeoMapObject::PolygonType)
         calculateMapPolylineInfo(static_cast<QGeoMapPolylineObject*>(mapObject));
 }
 
