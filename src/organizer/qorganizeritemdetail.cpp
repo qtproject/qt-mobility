@@ -94,12 +94,12 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   a organizeritem has to have - like a QOrganizerItemType.
 
   It is possible to inherit from QOrganizerItemDetail to provide convenience or
-  standardized access to values.  For example, \l QOrganizerItemRsvpInfo provides
-  a convenient API for manipulating a QOrganizerItemDetail as the best way to contact the sender
-  of an invitation, according to the schema.
+  standardized access to values.  For example, \l QOrganizerEventTimeRange provides
+  a convenient API for manipulating a QOrganizerItemDetail to describe the start and end time
+  of an event, according to the schema.
 
-  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerItemRsvpInfo) provide
-  constants for the names of fields (like \l QOrganizerItemRsvpInfo::FieldRsvpByDateTime).
+  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerEventTimeRange) provide
+  constants for the names of fields (like \l QOrganizerEventTimeRange::FieldStartDateTime).
   Typically the constants for field names start with \c Field, and the constants for predefined values
     of a field start with the name of that field
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
@@ -107,7 +107,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   If you wish to create your own, customized organizeritem detail, you should use
   the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
-  See the predefined detail subclasses (like \l QOrganizerItemRsvpInfo,
+  See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
   \l QOrganizerItemType) for more information.
 
   QOrganizerItemDetail objects act like type checked values.  In general, you can assign them

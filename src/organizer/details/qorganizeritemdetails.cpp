@@ -50,50 +50,6 @@ QTM_BEGIN_NAMESPACE
 
 
 
-/* ==================== QOrganizerItemAttendee ======================= */
-// XXX TODO: attendees can also have participation status / role.
-/*!
-   \class QOrganizerItemAttendee
-   \brief The QOrganizerItemAttendee class contains the information of an attendee of the event to which the organizer item corresponds.
- */
-
-/*!
-   \variable QOrganizerItemAttendee::DefinitionName
-   The constant string which identifies the definition of details which contain the information about an attendee.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeDisplayLabel
-
-   The constant key for which the display label value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeContactUri
-
-   The constant key for which the contact URI value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "AttendeeContactUri");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeParticipationStatus
-
-   The constant key for which the participation status value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.  XXX TODO: detail linking instead?
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
-
-
-
-
-
-
-
-
 /* ==================== QOrganizerItemDescription ======================= */
 /*!
    \class QOrganizerItemDescription
@@ -374,43 +330,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    Returns a string for a comment associated with an organizer item.
  */
 
-
-
-
-
-/* ==================== QOrganizerItemParticipationRole ======================= */
-// XXX TODO: is participation a detail?  or status/role?  Attendees can have a participation role/status
-// so how do we implement that?
-// my personal opinion is that this participation detail should be for the "self" person
-// ie, the owner of the calendar.  other attendee participation should be listed in the attendee detail.
-/*!
-   \class QOrganizerItemParticipation
-   \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the
-        calendar will participate in the event or appointment described by the organizer item.
- */
-
-/*!
-   \variable QOrganizerItemParticipation::DefinitionName
-   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::DefinitionName, "Participation");
-
-/*!
-   \variable QOrganizerItemParticipation::FieldParticipationRole
-
-   The constant key for which the participation role value is stored in details of
-   the QOrganizerItemParticipation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "ParticipationRole");
-
-/*!
-   \variable QOrganizerItemParticipation::FieldParticipationStatus
-
-   The constant key for which the participation status value is stored in details of
-   the QOrganizerItemParticipation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationStatus, "ParticipationStatus");
-
 /* ==================== QOrganizerItemPriority ======================= */
 /*!
    \class QOrganizerItemPriority
@@ -438,41 +357,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
 
 
 
-/* ==================== QOrganizerItemProvenance ======================= */
-/*!
-   \class QOrganizerItemProvenance
-   \brief The QOrganizerItemProvenance class contains information about when and from where or whom the organizer item originated.
- */
-
-/*!
-   \variable QOrganizerItemProvenance::DefinitionName
-   The constant string which identifies the definition of details which contain the provenance of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance");
-
-/*!
-   \variable QOrganizerItemProvenance::FieldReceivedFrom
-
-   The constant key for which the contact URI from whom the item was received from is stored in details of
-   the QOrganizerItemProvenance type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFrom");
-
-/*!
-   \variable QOrganizerItemProvenance::FieldTimestamp
-
-   The constant key for which the receipt timestamp is stored in details of
-   the QOrganizerItemProvenance type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
-
-
-
-
-
-
-
-
 /* ==================== QOrganizerItemRecurrence ======================= */
 /*!
    \class QOrganizerItemRecurrence
@@ -484,52 +368,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceRules, "Recurr
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceDates, "RecurrenceDates");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "ExceptionRules");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
-
-
-
-
-
-
-
-
-
-
-
-/* ==================== QOrganizerItemRsvpInfo ======================= */
-/*!
-   \class QOrganizerItemRsvpInfo
-   \brief The QOrganizerItemRsvpInfo class contains information about when, where and to whom a person should RSVP or has RSVP'ed in order to signify their intention to attend the event or appointment described by the organizer item.
- */
-
-/*!
-   \variable QOrganizerItemRsvpInfo::DefinitionName
-   The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
-
-/*!
-   \variable QOrganizerItemRsvpInfo::FieldDeadline
-
-   The constant key for which the deadline timestamp is stored in details of
-   the QOrganizerItemRsvpInfo type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
-
-/*!
-   \variable QOrganizerItemRsvpInfo::FieldResponseDate
-
-   The constant key for which the response date timestamp is stored in details of
-   the QOrganizerItemRsvpInfo type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate");
-
-/*!
-   \variable QOrganizerItemRsvpInfo::FieldContactUri
-
-   The constant key for which the contact URI to whom the RSVP must be sent is stored in details of
-   the QOrganizerItemRsvpInfo type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
 
 
 

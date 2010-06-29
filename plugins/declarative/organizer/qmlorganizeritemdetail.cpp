@@ -52,9 +52,6 @@ static QString normalizePropertyName(const QString& name)
 
 static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDetail& detail)
 {
-    if (detail.definitionName() == QOrganizerItemAttendee::DefinitionName)
-        return QOrganizerItemAttendee::FieldAttendeeDisplayLabel;
-
     if (detail.definitionName() == QOrganizerItemDescription::DefinitionName)
         return QOrganizerItemDescription::FieldDescription;
 
@@ -79,20 +76,11 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     if (detail.definitionName() == QOrganizerItemComment::DefinitionName)
         return QOrganizerItemComment::FieldComment;
 
-    if (detail.definitionName() == QOrganizerItemParticipation::DefinitionName)
-        return QOrganizerItemParticipation::FieldParticipationRole;
-
     if (detail.definitionName() == QOrganizerItemPriority::DefinitionName)
         return QOrganizerItemPriority::FieldPriority;
 
-    if (detail.definitionName() == QOrganizerItemProvenance::DefinitionName)
-        return QOrganizerItemProvenance::FieldReceivedFrom;
-
     if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName)
         return QOrganizerItemRecurrence::FieldRecurrenceRules;
-
-    if (detail.definitionName() == QOrganizerItemRsvpInfo::DefinitionName)
-        return QOrganizerItemRsvpInfo::FieldContactUri;
 
     if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName)
         return QOrganizerItemTimestamp::FieldModificationTimestamp;

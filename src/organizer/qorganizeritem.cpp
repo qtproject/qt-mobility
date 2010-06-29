@@ -65,10 +65,9 @@ QTM_BEGIN_NAMESPACE
   a QOrganizerItem object.  In addition to the type, a QOrganizerItem consists of information
   that belongs to the organizeritem.
 
-  A QOrganizerItem object has a collection of details (like a start date, location and
-  attendees).  Each detail (which can have multiple fields) is stored
-  in an appropriate subclass of QOrganizerItemDetail, and the QOrganizerItem allows
-  retrieving these details in various ways.
+  A QOrganizerItem object has a collection of details (like a start date and location).  Each detail
+  (which can have multiple fields) is stored in an appropriate subclass of QOrganizerItemDetail, and
+  the QOrganizerItem allows retrieving these details in various ways.
 
   A QOrganizerItem instance represents the in-memory version of a calendar organizeritem,
   and has no tie to a specific QOrganizerItemManager.  It is possible for the contents
