@@ -245,9 +245,9 @@ void GeoPresenter::showBoundingBox(QTreeWidgetItem* routeItem, const QGeoBoundin
 
 QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)
 {
-    return QString().setNum(coord.longitude()) %
+    return QString().setNum(coord.latitude()) %
            ", " %
-           QString().setNum(coord.latitude());
+           QString().setNum(coord.longitude());
 }
 
 void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,

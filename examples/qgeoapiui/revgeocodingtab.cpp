@@ -55,7 +55,7 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
         QWidget(parent),
         m_searchManager(NULL)
 {
-    QLabel *locationlbl = new QLabel(tr("Location:"));
+    QLabel *locationlbl = new QLabel(tr("Location (lat,long):"));
     m_locLong = new QLineEdit("13.377");
     m_locLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_locLat = new QLineEdit("52.51");
@@ -76,8 +76,8 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     firstrow->setSpacing(0);
     firstrow->setContentsMargins(0, 0, 0, 0);
     firstrow->addWidget(locationlbl);
-    firstrow->addWidget(m_locLong);
     firstrow->addWidget(m_locLat);
+    firstrow->addWidget(m_locLong);
     firstrow->addWidget(requestBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
