@@ -134,7 +134,7 @@
 <tr valign="top" class="odd"><td>&quot;</td><td>filepath</td><td>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. <a href="http://qt.nokia.com/doc/4.6/qlibrary.html">QLibrary</a> is used to determine the platform specific parts of the plugin.</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the service.</td></tr>
 <tr valign="top" class="odd"><td>interface</td><td></td><td>The <i>interface</i> describes the properties of the interface.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>capabilities</td><td>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</td></tr>
+<tr valign="top" class="even"><td>&quot;</td><td>capabilities</td><td>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. The list elements are comma-separated and spaces after commas are not permitted. This list can be empty.</td></tr>
 <tr valign="top" class="odd"><td>&quot;</td><td>name</td><td>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</td></tr>
 <tr valign="top" class="even"><td>&quot;</td><td>version</td><td>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
 </td></tr>
@@ -182,7 +182,7 @@
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
 <pre>    QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
+    filter.setInterface(&quot;com.nokia.qt.ILocation&quot;);
     QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
     for(int i = 0; i &lt; list.size(); i++) {
         QObject *serviceObject;
@@ -219,6 +219,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

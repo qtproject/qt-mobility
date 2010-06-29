@@ -44,13 +44,15 @@
 #include "qcontactmanager.h"
 #include "qcontactdetailfilter.h"
 #include "qversitreader.h"
+#include "qversitwriter.h"
 #include "qversitcontactimporter.h"
-
+#include "qversitcontactexporter.h"
 #include <QColor>
 #include <QHash>
 #include <QDebug>
 #include <QPixmap>
 #include <QFile>
+
 
 QMLContactModel::QMLContactModel(QObject *parent) :
     QAbstractListModel(parent),
@@ -60,6 +62,8 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(InterestLabelRole, "interestLabel");
     roleNames.insert(InterestRole, "interest");
+    roleNames.insert(ContactRole, "contact");
+    roleNames.insert(ContactIdRole, "contactId");
     roleNames.insert(AvatarRole, "avatar");
     roleNames.insert(PresenceAvailableRole, "presenceSupported");
     roleNames.insert(PresenceTextRole, "presenceText");
@@ -90,6 +94,8 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     m_contactsRequest.setFilter(d);
 
     setManager(QString());
+
+    connect(&m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
 
 QStringList QMLContactModel::availableManagers() const
@@ -97,24 +103,59 @@ QStringList QMLContactModel::availableManagers() const
     return QContactManager::availableManagers();
 }
 
-QString QMLContactModel::manager()
+QString QMLContactModel::manager() const
 {
     return m_manager->managerName();
 }
-
-void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
+QList<QObject*> QMLContactModel::details(int id) const
 {
-    QVersitReader reader;
-    QFile file(":/contents/example.vcf");
-    bool ok = file.open(QIODevice::ReadOnly);
-    if (ok) {
-       reader.setDevice(&file);
-       if (reader.startReading() && reader.waitForFinished()) {
-           QVersitContactImporter importer;
-           importer.importDocuments(reader.results());
-           QList<QContact> contacts = importer.contacts();
-           manager->saveContacts(&contacts, 0);
-       }
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id)->details();
+    return QList<QObject*>();
+}
+void QMLContactModel::exposeContactsToQML()
+{
+    foreach (const QContact& c, m_contacts) {
+        if (!m_contactMap.contains(c.localId())) {
+            QMLContact* qc = new QMLContact(this);
+            qc->setContact(c);
+            m_contactMap.insert(c.localId(), qc);
+        } else {
+            m_contactMap.value(c.localId())->setContact(c);
+        }
+    }
+}
+
+
+void QMLContactModel::importContacts(const QString& vcard)
+{
+   qWarning() << "importing contacts from:" << vcard;
+   QFile*  file = new QFile(vcard);
+   bool ok = file->open(QIODevice::ReadOnly);
+   if (ok) {
+      m_reader.setDevice(file);
+      m_reader.startReading();
+   }
+}
+
+void QMLContactModel::exportContacts(const QString& vcard)
+{
+   QVersitContactExporter exporter;
+   exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type);
+   QList<QVersitDocument> documents = exporter.documents();
+   QFile* file = new QFile(vcard);
+   bool ok = file->open(QIODevice::ReadWrite);
+   if (ok) {
+      m_writer.setDevice(file);
+      m_writer.startWriting(documents);
+   }
+}
+
+void QMLContactModel::contactsExported(QVersitWriter::State state)
+{
+    if (state == QVersitWriter::FinishedState || state == QVersitWriter::CanceledState) {
+         delete m_writer.device();
+         m_writer.setDevice(0);
     }
 }
 
@@ -126,22 +167,45 @@ int QMLContactModel::rowCount(const QModelIndex &parent) const
 
 void QMLContactModel::setManager(const QString& managerName)
 {
-    delete m_manager;
-    m_manager = new QContactManager(managerName);
+    if (m_manager)
+        delete m_manager;
 
-    if (managerName == "memory" && m_manager->contactIds().isEmpty()) {
-        fillContactsIntoMemoryEngine(m_manager);
+    foreach (const QContactLocalId& id, m_contactMap.keys()) {
+        delete m_contactMap.value(id);
     }
+    m_contactMap.clear();
+
+    m_manager = new QContactManager(managerName);
 
     qWarning() << "Changed backend to: " << managerName;
     m_contactsRequest.setManager(m_manager);
     connect(m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
     fetchAgain();
+    emit managerChanged();
+}
+
+void QMLContactModel::startImport(QVersitReader::State state)
+{
+    if (state == QVersitReader::FinishedState || state == QVersitReader::CanceledState) {
+        QVersitContactImporter importer;
+        importer.importDocuments(m_reader.results());
+        QList<QContact> contacts = importer.contacts();
+
+        delete m_reader.device();
+        m_reader.setDevice(0);
+
+        if (m_manager) {
+            if (m_manager->saveContacts(&contacts, 0))
+                qWarning() << "contacts imported.";
+                fetchAgain();
+        }
+    }
 }
 
 void QMLContactModel::resultsReceived()
 {
     int oldCount = m_contacts.count();
+
     int newCount = m_contactsRequest.contacts().count();
     if (newCount > oldCount) {
         // Assuming the order is the same
@@ -155,6 +219,8 @@ void QMLContactModel::resultsReceived()
         m_contacts =  m_contactsRequest.contacts();
         endInsertRows();
     }
+
+    exposeContactsToQML();
 }
 
 void QMLContactModel::fetchAgain()
@@ -184,6 +250,8 @@ QPair<QString, QString> QMLContactModel::interestingDetail(const QContact&c) con
     return qMakePair(QString(), QString());
 }
 
+
+
 QVariant QMLContactModel::data(const QModelIndex &index, int role) const
 {
     QContact c = m_contacts.value(index.row());
@@ -194,17 +262,15 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             return interestingDetail(c).first;
         case InterestRole:
             return interestingDetail(c).second;
+        case ContactRole:
+            if (m_contactMap.contains(c.localId())) {
+               return m_contactMap.value(c.localId())->contactMap();
+           }
+        case ContactIdRole:
+            return c.localId();
         case AvatarRole:
-            if (c.detail<QContactThumbnail>().isEmpty()) {
-                QContactAvatar a = c.detail<QContactAvatar>();
-                if (!a.imageUrl().isEmpty())
-                    return a.imageUrl();
-                else
-                    return QString("qrc:/default.svg");
-            } else {
-                // We have a thumbnail, so return empty
-                return QString("");
-            }
+            //Just let the imager provider deal with it
+            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
         case Qt::DecorationRole:
             {
                 QContactThumbnail t = c.detail<QContactThumbnail>();

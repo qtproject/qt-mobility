@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,37 +38,81 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+#include "qmlcontactdetail.h"
+#include "qmlcontactdetailfield.h"
+#include <QDebug>
 
-Item {
-    id: scrollBar
-    // The properties that define the scrollbar's state.
-    // position and pageSize are in the range 0.0 - 1.0.  They are relative to the
-    // height of the page, i.e. a pageSize of 0.5 means that you can see 50%
-    // of the height of the view.
-    // orientation can be either 'Vertical' or 'Horizontal'
-    property real position
-    property real pageSize
-    property var orientation : "Vertical"
-    property alias bgColor: background.color
-    property alias fgColor: thumb.color
 
-    // A light, semi-transparent background
-    Rectangle {
-        id: background
-        radius: orientation == 'Vertical' ? (width/2 - 1) : (height/2 - 1)
-        color: "white"; opacity: 0.3
-        anchors.fill: parent
-    }
-    // Size the bar to the required size, depending upon the orientation.
-    Rectangle {
-        id: thumb
-        opacity: 0.7
-        color: "black"
-        radius: orientation == 'Vertical' ? (width/2 - 1) : (height/2 - 1)
-        x: orientation == 'Vertical' ? 1 : (scrollBar.position * (scrollBar.width-2) + 1)
-        y: orientation == 'Vertical' ? (scrollBar.position * (scrollBar.height-2) + 1) : 1
-        width: orientation == 'Vertical' ? (parent.width-2) : (scrollBar.pageSize * (scrollBar.width-2))
-        height: orientation == 'Vertical' ? (scrollBar.pageSize * (scrollBar.height-2)) : (parent.height-2)
+static QString ToContactDetailName(const QString& name)
+{
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toUpper());
+   return QString();
+}
+
+
+QMLContactDetail::QMLContactDetail(QObject* parent)
+    :QObject(parent),
+    m_detailChanged(false)
+{
+
+}
+
+QDeclarativePropertyMap* QMLContactDetail::propertyMap() const
+{
+    return m_map;
+}
+void QMLContactDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
+{
+    m_map = map;
+    qWarning() << "detail:" << m_detailName << " has " << m_map->count() << " fields.";
+    foreach (const QString& key, m_map->keys()) {
+        QMLContactDetailField* field = new QMLContactDetailField(this);
+        field->setDetailPropertyMap(m_map);
+        field->setKey(key);
+        m_fields.append(field);
+        qWarning() << "    detail field:" << key  << "='" << m_map->value(key) << "'";
     }
 }
+
+QList<QObject*> QMLContactDetail::fields() const
+{
+    return m_fields;
+}
+
+QString QMLContactDetail::name() const
+{
+    return m_detailName;
+}
+
+void QMLContactDetail::setName(const QString& name)
+{
+    m_detailName = name;
+}
+
+bool QMLContactDetail::detailChanged() const
+{
+    return m_detailChanged;
+}
+
+QContactDetail QMLContactDetail::detail() const
+{
+    QContactDetail d(ToContactDetailName(name()));
+    foreach (const QString& key, m_map->keys()) {
+        d.setValue(ToContactDetailName(key), m_map->value(key));
+    }
+    return d;
+}
+
+void QMLContactDetail::detailChanged(const QString &key, const QVariant &value)
+{
+    qWarning() << "detailChanged field:"  << key << " value:" << value;
+    m_detailChanged = true;
+}
+
+void QMLContactDetail::setDetailChanged(bool changed)
+{
+    m_detailChanged = changed;
+    emit onDetailChanged();
+}
+

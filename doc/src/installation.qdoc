@@ -102,6 +102,11 @@ these domains have dependencies and these are outlined below:
        While not supported for this release the desktop Windows backend
        requires that a MAPI subsystem is installed. Note that messaging
        functionality will not work if you are using the MinGW compiler.
+       Additionally note that CE MAPI is available on Windows Mobile and
+       does not need to be installed separately.
+
+       For more detailed instructions on installation on Windows Mobile
+       see \l {Messaging Installation On Windows Mobile}
 
        The messaging API SMS/MMS functionality requires that the platform
        provides SMS/MMS facilities. Email functionality requires that an email
@@ -167,6 +172,11 @@ these domains have dependencies and these are outlined below:
        with older SSDKsbut there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       
+       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
+
+       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
     \o N(Y)
     \o N
 \row

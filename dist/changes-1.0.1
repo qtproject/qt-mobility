@@ -59,18 +59,28 @@ QtContacts
 ------
  - Documentation clarifications
  - Several bugs on several platforms fixed
-    * Several signal emission related issues for Symbian
+    * Symbian: Several memory leak fixes
+    * Symbian: SIM backend did not recover from errors when listening for store events
+    * Symbian: Fix for determing additional detail support on SIM backend
+    * Symbian: Phone number match filtering gave contacts that had been deleted
+    * Symbian: SIM backend phonenumber matching
+    * Symbian: Last modified timestamp is now updated during contact update
+    * Symbian: Fixed a bug that caused SIM contact display label to be empty
+    * Symbian: Several signal emission related issues
     * Handling of phone numbers
     * Handling of organization fields on Maemo 5
     * Deleting a request in a resultsAvailable() slot should not crash any more
  - Performance improvements when fallback sorting code is used
- - Performance improvements with Symbian engine in specific common cases
+ - Symbian: Performance improvements in contact fetches and contact id fetches
+ - Symbian: Timestamps are now given in current time-zone time
+ - Symbian: Removed unnecessary capabilities from test modules and examples
+ - Symbian: Display label is now empty for contacts with no names instead of non-localized "Unnamed"
+ - Symbian: Removed timeout from sychronous methods to make batch APIs more reliable with hundreds of SIM contacts. (Asynchronous API provides timeouts if needed.)
  - Performance improvements with Maemo 5 engine when fetching ids
  - Fix compilation errors on Maemo 5 when required libraries are not installed
  - Better thread support for the request class (for multi threaded engines)
  - Use locale aware string comparisons when fallback filtering or sortind code is used
  - Missing QFlag operators for two flags added
- - Symbian capabilities for samplephonebook example should be less restrictive
 
 QtVersit
 ------
@@ -161,8 +171,6 @@ QtMedia/QtMultimediaKit
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
 
 QtSensors
 ------
@@ -197,14 +205,10 @@ QtServiceFramework
 QtSystemInfo
 ------
 
- - foo
-    * bar
 
 Qt Mobility Plugins
 ------
 
- - foo
-    * bar
 
 
 ****************************************************************************
@@ -253,4 +257,3 @@ Qt Mobility for Symbian
 ****************************************************************************
 
  - tool
-    * foo

@@ -28,10 +28,11 @@
 </ul>
 <li><a href="#known-issues">Known Issues</a></li>
 <ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
 <li><a href="#contacts-api">Contacts API</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
 <li><a href="#messaging-api">Messaging API</a></li>
 <li><a href="#multimedia-api">Multimedia API</a></li>
-<li><a href="#sensors-api">Sensors API</a></li>
 <li><a href="#system-info-api">System Info API</a></li>
 </ul>
 </ul>
@@ -115,7 +116,6 @@
 <a name="non-api-specific-issues"></a>
 <h3>Non-API specific issues</h3>
 <ul>
-<li>Qt Mobility does not compile if Qt using a namespace.</li>
 <li>Not all example applications will display(fit) well on small screens.</li>
 <li>Prefixed paths in includes such as<pre>    #include &lt;QtLibrary/MyClass&gt;</pre>
 <p>or</p>
@@ -123,19 +123,31 @@
 <p>do not currently work on Symbian.</p>
 </li>
 </ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>Fremantle: Segmentation fault on removing a connected network</li>
+</ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>All platforms: <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> is not thread-safe; using it from other than main-thread off the application will not work properly. Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.</li>
+</ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
 <ul>
-<li>S60: Async contact operations not supported</li>
 <li>S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.</li>
-<li>S60 3.1: the Symbian contacts plugins are not loaded on a device.</li>
+</ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>Fremantle: Application fail to acquire satellite signal</li>
 </ul>
 <a name="messaging-api"></a>
 <h3>Messaging API</h3>
 <ul>
 <li>Messaging filtering and sorting functions are not fully optimized.</li>
 <li>Fremantle: <tt>modest</tt> process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.</li>
-<li>Fremantle: <tt>SMS</tt> sending is failing when using MessagingEx example. Regression wrt 1.0&#x2e;0 release. serviceactions and writemessage work OK.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
 <li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
 <li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
@@ -156,30 +168,22 @@
 <a name="multimedia-api"></a>
 <h3>Multimedia API</h3>
 <ul>
+<li>Fremantle: Audiorecorder fails to create file</li>
+<li>Fremantle: Slideshow fails to display images</li>
 <li>S60: Audio capture does not support currently any special features like format, encoding etc.</li>
-<li>S60: seeking is not working properly</li>
-<li>S60: video size does not remain constant in repeated plays</li>
-<li>S60: full screen video not working OK</li>
+<li>S60, Fremantle: Full screen video not handled correctly</li>
 <li>S60: 3.2&#x2e;3 (E75 for example) player example don't work.</li>
 <li>Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12</li>
-</ul>
-<a name="sensors-api"></a>
-<h3>Sensors API</h3>
-<ul>
-<li>S60: The S60 sensor backends are under development and may not be complete.</li>
-<li>S60 3.1: src/s60installs/s60installs.pro: the s60_sensor_api plugin for 3.1 devices is not added to the sis file when generating the sis file for multiple SDKs.</li>
 </ul>
 <a name="system-info-api"></a>
 <h3>System Info API</h3>
 <ul>
-<li>S60: Battery status incorrect on test applications startup.</li>
-<li>S60: Phone is still charging but power state shows 100% and &quot;wall power&quot;.</li>
-<li>S60: number of bars for network reporting signal strength is hardcoded.</li>
+<li>S60: Signal strength is not implemented</li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

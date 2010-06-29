@@ -1,6 +1,6 @@
 QT       += network
 
-TARGET = sysinfo
+TARGET = qsysinfo
 TEMPLATE = app
 
 

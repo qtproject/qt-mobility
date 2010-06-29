@@ -42,22 +42,29 @@
 #define QMLCONTACTMODEL_H
 
 #include <QAbstractListModel>
+#include <QDeclarativePropertyMap>
 #include "qcontact.h"
 #include "qcontactmanager.h"
 #include "qcontactfetchrequest.h"
+#include "qmlcontact.h"
+#include "qversitreader.h"
+#include "qversitwriter.h"
 
 QTM_USE_NAMESPACE;
 class QMLContactModel : public QAbstractListModel
 {
 Q_OBJECT
 Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
+Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
 public:
     explicit QMLContactModel(QObject *parent = 0);
 
     enum {
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
+        ContactRole,
+        ContactIdRole,
+        DetailsRole,
         AvatarRole,
         PresenceAvailableRole,
         PresenceTextRole,
@@ -67,29 +74,37 @@ public:
 
     QStringList availableManagers() const;
 
-    QString manager();
+    QString manager() const;
     void setManager(const QString& manager);
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
-signals:
 
+    Q_INVOKABLE QList<QObject*> details(int id) const;
+    Q_INVOKABLE void importContacts(const QString& file);
+    Q_INVOKABLE void exportContacts(const QString& file);
+signals:
+    void managerChanged();
 public slots:
 
 private slots:
     void resultsReceived();
     void fetchAgain();
-
+    void startImport(QVersitReader::State state);
+    void contactsExported(QVersitWriter::State state);
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
+    void exposeContactsToQML();
 
-    void fillContactsIntoMemoryEngine(QContactManager* manager);
 
+    QMap<QContactLocalId, QMLContact*> m_contactMap;
     QList<QContact> m_contacts;
     QContactManager* m_manager;
     QContactFetchHint m_fetchHint;
     QContactSortOrder m_sortOrder;
     QContactFetchRequest m_contactsRequest;
+    QVersitReader m_reader;
+    QVersitWriter m_writer;
 };
 
 #endif // QMLCONTACTMODEL_H

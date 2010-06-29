@@ -386,8 +386,6 @@ QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivat
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
 {
-    connect(d,SIGNAL(currentLanguageChanged(QString)),
-            this,SIGNAL(currentLanguageChanged(QString)));
 }
 
 /*!
@@ -397,6 +395,38 @@ QSystemInfo::~QSystemInfo()
 {
 }
 
+/*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemInfo::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        connect(d,SIGNAL(currentLanguageChanged(QString)),
+                this,SIGNAL(currentLanguageChanged(QString)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        disconnect(d,SIGNAL(currentLanguageChanged(QString)),
+                   this,SIGNAL(currentLanguageChanged(QString)));
+    }
+}
 /*!
   \property QSystemInfo::currentLanguage
   \brief The current Language
@@ -461,23 +491,6 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     : QObject(parent), d(netInfoPrivate())
 {
-    connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
-            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
-
-    connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
-            this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
-
-    connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-            this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-
-    connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-            this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
-
-    connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-            this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
-
-    connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-            this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
 }
 
 /*!
@@ -622,9 +635,38 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
     }
-#else
-Q_UNUSED(signal)
 #endif
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileCountryCodeChanged(QString))))) {
+        connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileNetworkCodeChanged(QString))))) {
+        connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
+        connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
+        connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
+        connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
+        connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
 }
 
 /*!
@@ -644,9 +686,38 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
     }
-#else
-Q_UNUSED(signal)
 #endif
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileCountryCodeChanged(QString))))) {
+        disconnect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileNetworkCodeChanged(QString))))) {
+        disconnect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
+        disconnect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
+        disconnect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
+        disconnect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
+        disconnect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
 }
 
 // display
@@ -754,21 +825,8 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
-    connect(d,SIGNAL(batteryLevelChanged(int)),
-            this,SIGNAL(batteryLevelChanged(int)));
 
-    connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
-
-    connect(d,SIGNAL(bluetoothStateChanged(bool)),
-            this,SIGNAL(bluetoothStateChanged(bool)));
-
-    connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
-
-    connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
-    }
+}
 
 /*!
   Destroys the QSystemDeviceInfo object.
@@ -777,6 +835,78 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 {
 }
 
+/*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemDeviceInfo::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        connect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemDeviceInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        disconnect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        disconnect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        disconnect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        disconnect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        disconnect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+}
 
 /*!
   \property QSystemDeviceInfo::inputMethodType

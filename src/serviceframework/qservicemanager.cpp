@@ -459,7 +459,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If \a interfaceName is not a known interface the returned pointer will be null.
 
     Note that using this function implies that service and client share
-    the implamentation of T which means that service and client become tightly coupled.
+    the implementation of T which means that service and client become tightly coupled.
     This may cause issue during later updates as certain changes may require code changes
     to the service and client.
 
@@ -484,7 +484,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     Note that using this function implies that service and client share
-    the implamentation of T which means that service and client become tightly coupled.
+    the implementation of T which means that service and client become tightly coupled.
     This may cause issue during later updates as certain changes may require code changes
     to the service and client.
 

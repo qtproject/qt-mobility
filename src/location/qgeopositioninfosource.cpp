@@ -77,7 +77,7 @@ QTM_BEGIN_NAMESPACE
 
     \code
         // Emit updates every 10 seconds if available
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(0);
         if (source)
             source->setUpdateInterval(10000);
     \endcode

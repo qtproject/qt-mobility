@@ -294,6 +294,9 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     QContactDetailFieldDefinition gsfd; //Generic string field definition
     gsfd.setDataType(QVariant::String);
+
+    // XXX NOTE: only QContactPhoneNumber, QContactOnlineAccount,
+    // QContactEmailAddress and QContactAddress are currently non-unique.
     
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
@@ -301,6 +304,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.insert(AddressFieldExtension, gsfd);
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
+    defns[contactType][QContactAddress::DefinitionName].setUnique(false);
     
     // No QContactAnniversary
     defns[contactType].remove(QContactAnniversary::DefinitionName);
@@ -308,30 +312,34 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // No QContactAvatar
     defns[contactType].remove(QContactAvatar::DefinitionName);
 
-    // TODO setUnique(true);
     // QContactBirthday
     fields = defns[contactType][QContactBirthday::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactBirthday::DefinitionName].setFields(fields);
+    defns[contactType][QContactBirthday::DefinitionName].setUnique(true);
 
     // QContactDisplayLabel
     fields = defns[contactType][QContactDisplayLabel::DefinitionName].fields();
     defns[contactType][QContactDisplayLabel::DefinitionName].setFields(fields);
+    defns[contactType][QContactDisplayLabel::DefinitionName].setUnique(true);
     
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
+    defns[contactType][QContactEmailAddress::DefinitionName].setUnique(false);
     
     // QContactFamily
     fields = defns[contactType][QContactFamily::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactFamily::DefinitionName].setFields(fields);
+    defns[contactType][QContactFamily::DefinitionName].setUnique(true);
 
     // QContactGender
     fields = defns[contactType][QContactGender::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactGender::DefinitionName].setFields(fields);
+    defns[contactType][QContactGender::DefinitionName].setUnique(true);
 
     // No QContactGeoLocation
     defns[contactType].remove(QContactGeoLocation::DefinitionName);
@@ -340,6 +348,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields = defns[contactType][QContactGuid::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactGuid::DefinitionName].setFields(fields);
+    defns[contactType][QContactGuid::DefinitionName].setUnique(true);
   
     // No QContactGlobalPresence
     defns[contactType].remove(QContactGlobalPresence::DefinitionName);
@@ -352,16 +361,19 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactName::FieldPrefix);
     fields.remove(QContactName::FieldSuffix);
     defns[contactType][QContactName::DefinitionName].setFields(fields);
+    defns[contactType][QContactName::DefinitionName].setUnique(true);
     
     // QContactNickname
     fields = defns[contactType][QContactNickname::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactNickname::DefinitionName].setFields(fields);
+    defns[contactType][QContactNickname::DefinitionName].setUnique(true);
 
     // QContactNote
     fields = defns[contactType][QContactNote::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactNote::DefinitionName].setFields(fields);
+    defns[contactType][QContactNote::DefinitionName].setUnique(true);
 
     // QContactOnlineAccount
     fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
@@ -370,6 +382,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOnlineAccount::FieldSubTypes);
     fields.insert("AccountPath", gsfd);
     defns[contactType][QContactOnlineAccount::DefinitionName].setFields(fields);
+    defns[contactType][QContactOnlineAccount::DefinitionName].setUnique(false);
     
     // QContactOrganization
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
@@ -381,6 +394,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOrganization::FieldTitle);
     fields.remove(QContactOrganization::FieldRole);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
+    defns[contactType][QContactOrganization::DefinitionName].setUnique(true);
     
     // QContactPhoneNumber
     fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
@@ -392,6 +406,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     phoneSubtype.setAllowableValues(allowableValues);
     fields.insert(QContactPhoneNumber::FieldSubTypes, phoneSubtype);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
+    defns[contactType][QContactPhoneNumber::DefinitionName].setUnique(false);
 
     // No QContactPresence
     defns[contactType].remove(QContactPresence::DefinitionName);
@@ -420,6 +435,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
+    defns[contactType][QContactUrl::DefinitionName].setUnique(true);
     
     QCM5_DEBUG << "Contact type" << contactType << "Keys" <<  defns.keys();
     
