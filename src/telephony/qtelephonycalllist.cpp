@@ -47,7 +47,7 @@
 # include "qtelephonycalllist_maemo_p.h"
 #else
 # ifdef Q_OS_LINUX
-#  include "qtelephonycalllist_linux_p.h"
+#  include "linux/qtelephonycalllist_linux_p.h"
 # endif
 # ifdef Q_OS_WIN
 #  include "qtelephonycalllist_win_p.h"

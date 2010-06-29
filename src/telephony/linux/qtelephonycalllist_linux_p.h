@@ -39,58 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef QTELEPHONYCALLLIST_LINUX_P_H
+#define QTELEPHONYCALLLIST_LINUX_P_H
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmobilityglobal.h"
+#include "qtelephonycalllist.h"
+#include <QObject>
 #include <QList>
-#include <QString>
-#include <QVariant>
+#include <QtCore/qshareddata.h>
+#include "dbusinterface.h"
 
 QT_BEGIN_HEADER
+
+class ChannelsArray;
+
 QTM_BEGIN_NAMESPACE
-
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+class TelepathyListener;
+class QTelephonyCallInfoPrivate;
+class QTelephonyCallList;
+class QTelephonyCallListPrivate : public QObject
 {
+    Q_OBJECT
+    friend class QTelephonyCallList;
+
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
+    virtual ~QTelephonyCallListPrivate();
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
-
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
 private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
+
+private slots:
+    void newChannelsSlot(const ChannelsArray& channelsarray);
+
+private:
+    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QTelephonyCallList* p;
+    TelepathyListener* ptelepathyListener;
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif // QTELEPHONYCALLLIST_LINUX_P_H

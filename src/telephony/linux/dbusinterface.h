@@ -39,58 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef INTERFACE_H_1275967729
+#define INTERFACE_H_1275967729
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
+#include "qmobilityglobal.h"
+#include <QtCore/QObject>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
+#include <QtDBus/QtDBus>
+#include "message.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
-
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+/*
+ * Proxy class for interface org.freedesktop.Telepathy.Connection.Interface.Requests
+ */
+class Requests: public QDBusAbstractInterface
 {
+    Q_OBJECT
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+    static inline const char *staticInterfaceName()
+    { return "org.freedesktop.Telepathy.Connection.Interface.Requests"; }
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
+public:
+    Requests(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
 
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
+    ~Requests();
 
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
-private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<> createNewChannels(ChannelsArray channelsarray)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(channelsarray);
+        return asyncCallWithArgumentList(QLatin1String("createNewChannels"), argumentList);
+    }
+
+Q_SIGNALS: // SIGNALS
+    void NewChannels(ChannelsArray channelsarray);
 };
+
+namespace org {
+    namespace freedesktop {
+        namespace Telepathy {
+            namespace Connection {
+                namespace Interface {
+                    typedef QTM_PREPEND_NAMESPACE(Requests) Requests;
+                }
+            }
+        }
+    }
+}
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif //INTERFACE_H_1275967729

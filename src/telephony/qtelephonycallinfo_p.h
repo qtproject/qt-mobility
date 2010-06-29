@@ -67,13 +67,14 @@ struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()
-        : type(QTelephonyCallInfo::Other)
+        : type(QTelephonyCallInfo::Unknown)
         , subTyp("")
-        , status(QTelephonyCallInfo::Idle) { }
+        , status(QTelephonyCallInfo::Undefined) { }
     QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
         : QSharedData(other) { }
 
-    QString remotePartyIdentifier;
+    QString callIdentifier;
+    QList<quint32> contacts;
     QTelephonyCallInfo::CallType type;
     QString subTyp;
     QTelephonyCallInfo::CallStatus status;

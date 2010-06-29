@@ -30,8 +30,19 @@ symbian: {
 } else {
     unix: {
         !maemo* {
-            HEADERS += qtelephonycalllist_linux_p.h
-            SOURCES += qtelephonycalllist_linux.cpp
+            QT += dbus
+            HEADERS += linux/qtelephonycalllist_linux_p.h
+            SOURCES += linux/qtelephonycalllist_linux.cpp
+            SOURCES +=  linux/telepathy.cpp \
+                        linux/telepathylistener.cpp \
+                        linux/message.cpp \
+                        linux/dbusadaptor.cpp \
+                        linux/dbusinterface.cpp
+            HEADERS +=  linux/telepathy.h \
+                        linux/telepathylistener.h \
+                        linux/message.h \
+                        linux/dbusadaptor.h \
+                        linux/dbusinterface.h
         }
         maemo* {
             HEADERS += qtelephonycalllist_maemo_p.h

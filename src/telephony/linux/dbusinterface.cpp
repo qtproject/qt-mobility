@@ -39,50 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLIST_LINUX_P_H
-#define QTELEPHONYCALLLIST_LINUX_P_H
+#include "dbusinterface.h"
+#include <QDebug>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qmobilityglobal.h"
-#include "qtelephonycalllist.h"
-#include <QList>
-#include <QtCore/qshareddata.h>
-
-QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
-class QTelephonyCallList;
+/*
+ * Implementation of interface class Requests
+ */
 
-class QTelephonyCallListPrivate
+Requests::Requests(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
+    : QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)
+
 {
-    friend class QTelephonyCallList;
+    qDebug() << "QtMobility::Requests constructor";
+}
 
-public:
-    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
-    virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+Requests::~Requests()
+{
+    qDebug() << "QtMobility::Requests destructor";
+}
 
-private:
-    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
-    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
-
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
-    QTelephonyCallList* p;
-};
+#include "moc_dbusinterface.cpp"
 
 QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif // QTELEPHONYCALLLIST_LINUX_P_H

@@ -39,57 +39,39 @@
 **
 ****************************************************************************/
 
-#include "qtelephonycalllist_linux_p.h"
-#include "qtelephonycallinfo_p.h"
+#include "dbusadaptor.h"
+#include <QtCore/QMetaObject>
+#include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 QTM_BEGIN_NAMESPACE
 
-////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
-    : p(parent)
+/*
+ * Implementation of adaptor class TelepathyAdaptor
+ */
+
+TelepathyAdaptor::TelepathyAdaptor(QObject *parent)
+    : QDBusAbstractAdaptor(parent)
 {
+    // constructor
+    setAutoRelaySignals(true);
 }
 
-QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
+TelepathyAdaptor::~TelepathyAdaptor()
 {
+    // destructor
 }
 
-void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
+void TelepathyAdaptor::createNewChannels(const ChannelsArray& channelsarray)
 {
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallStatusChanged(callinfo);
+    // handle method call org.freedesktop.Telepathy.Connection.Interface.Requests.createNewChannels
+    QMetaObject::invokeMethod(parent(), "createNewChannels", Q_ARG(ChannelsArray, channelsarray));
 }
 
-void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
-{
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallRemoved(callinfo);
-}
-
-void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
-{
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallAdded(callinfo);
-}
-
-QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
-{
-    QList<QTelephonyCallInfo> ret;
-
-    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
-    for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type == QTelephonyCallInfo::Any
-            || callInfoList.at(i).data()->type == calltype)
-        {
-            QTelephonyCallInfo callinfo;
-            callinfo.d = callInfoList.at(i);
-            ret.push_back(callinfo);
-        }
-    }
-    return ret;
-}
+#include "moc_dbusadaptor.cpp"
 
 QTM_END_NAMESPACE

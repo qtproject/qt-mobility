@@ -39,58 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef TELEPATHYLISTENER_H
+#define TELEPATHYLISTENER_H
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
+#include "qmobilityglobal.h"
+#include <QObject>
+#include "dbusinterface.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+class Telepathy;
+class TelepathyAdaptor;
+class TelepathyListener : public QObject
 {
+    Q_OBJECT
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+    TelepathyListener(QObject* parent = 0);
+    virtual ~TelepathyListener();
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
+private slots:
+    void newChannelsSlot(const ChannelsArray& channelsarray);
+signals:
+    void NewChannels(const ChannelsArray& channelsarray);
 
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
 private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+    Telepathy* ptelepathy;
+    TelepathyAdaptor* ptelepathyAdaptor;
+    org::freedesktop::Telepathy::Connection::Interface::Requests* prequestInterface;
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif // TELEPATHYLISTENER_H

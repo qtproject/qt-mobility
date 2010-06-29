@@ -42,7 +42,6 @@
 #ifndef QTELEPHONYCALLLIST_H
 #define QTELEPHONYCALLLIST_H
 
-#include "qmobilityglobal.h"
 #include <QObject>
 #include <QList>
 #include "qtelephonycallinfo.h"

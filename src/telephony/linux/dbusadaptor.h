@@ -39,58 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef DBUSADAPTOR_H_1275967717
+#define DBUSADAPTOR_H_1275967717
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
+#include "qmobilityglobal.h"
+#include <QtCore/QObject>
+#include <QtDBus/QtDBus>
+#include "message.h"
 
 QT_BEGIN_HEADER
+
+class QByteArray;
+template<class T> class QList;
+template<class Key, class Value> class QMap;
+class QString;
+class QStringList;
+class QVariant;
+
 QTM_BEGIN_NAMESPACE
-
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+/*
+ * Adaptor class for interface org.freedesktop.Telepathy.Connection.Interface.Requests
+ */
+class TelepathyAdaptor: public QDBusAbstractAdaptor
 {
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.Telepathy.Connection.Interface.Requests")
+    Q_CLASSINFO("D-Bus Introspection", ""
+"  <interface name=\"org.freedesktop.Telepathy.Connection.Interface.Requests\" >\n"
+"    <signal name=\"NewChannels\" >\n"
+"      <arg direction=\"out\" type=\"a(i)\" name=\"channelsarray\" />\n"
+"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
+"    </signal>\n"
+"    <method name=\"createNewChannels\" >\n"
+"      <arg direction=\"in\" type=\"a(i)\" name=\"channelsarray\" />\n"
+"      <annotation value=\"ChannelsArray\" name=\"com.trolltech.QtDBus.QtTypeName.In0\" />\n"
+"    </method>\n"
+"  </interface>\n"
+        "")
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+    TelepathyAdaptor(QObject *parent);
+    virtual ~TelepathyAdaptor();
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
-
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
-private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+public Q_SLOTS: // METHODS
+    void createNewChannels(const ChannelsArray& channelsarray);
+   
+Q_SIGNALS: // SIGNALS
+    void NewChannels(const ChannelsArray& channelsarray);
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif //DBUSADAPTOR_H_1275967717

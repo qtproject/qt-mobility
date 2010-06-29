@@ -39,58 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#include "telepathy.h"
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
-
-QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+Telepathy::Telepathy(QObject* parent) :
+        QObject(parent)
 {
-public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+}
+ 
+Telepathy::~Telepathy()
+{
+}
+ 
+void Telepathy::createNewChannels(const ChannelsArray& channelsarray)
+{
+    Q_EMIT NewChannels(channelsarray);
+}
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
-
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
-private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
-};
+#include "moc_telepathy.cpp"
 
 QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-

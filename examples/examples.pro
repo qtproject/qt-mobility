@@ -97,3 +97,7 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+# Telephony API examples
+contains(mobility_modules,telephony) {
+    SUBDIRS += telephony
+}

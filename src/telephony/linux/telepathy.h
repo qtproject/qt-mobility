@@ -39,58 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef TELEPATHY_H
+#define TELEPATHY_H
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
+#include "qmobilityglobal.h"
+#include <QObject>
+#include <QStringList>
 
 QT_BEGIN_HEADER
+
+class ChannelsArray;
+
 QTM_BEGIN_NAMESPACE
 
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+class Telepathy : public QObject
 {
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "demo.Telepathy")
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
+    Telepathy(QObject* parent = 0);
+    virtual ~Telepathy();
 
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
+signals:
+    void NewChannels(const ChannelsArray& channelsarray);
 
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
-private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+public slots:
+    void createNewChannels(const ChannelsArray& channelsarray);
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif // TELEPATHY_H

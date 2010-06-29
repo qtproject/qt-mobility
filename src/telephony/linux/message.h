@@ -39,58 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef MESSAGE_H
+#define MESSAGE_H
+ 
+#include "qmobilityglobal.h"
+#include <QtDBus>
+#include <QDBusObjectPath>
 
-#include <qmobilityglobal.h>
-#include <QtCore/qshareddata.h>
-#include <QList>
-#include <QString>
-#include <QVariant>
+#define INCOMINGCALL_OBJECT_PATH "/org/freedesktop/Telepathy/Connection/ring/tel/ring/incoming"
+
 
 QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
 
-struct QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+class Channels
 {
 public:
-    QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    ~QTelephonyCallInfo();
-
-    enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
-        Voice,
-        Video
-    };
-
-    enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
-
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
-    CallType type() const;
-    QString subTyp() const;
-    CallStatus status() const;
-    QVariant value(const QString& key) const;
+    Channels();
+    Channels(const QString& path, const QString &message);
+    Channels(const Channels &other);
+    Channels& operator=(const Channels &other);
+    ~Channels();
+ 
+    friend QDBusArgument &operator<<(QDBusArgument &argument, const Channels &channels);
+    friend const QDBusArgument &operator>>(const QDBusArgument &argument, Channels &channels);
+ 
+    //register Channels with the Qt type system
+    static void registerMetaType();
 private:
-    QSharedDataPointer<QTelephonyCallInfoPrivate> d;
-    friend class QTelephonyCallListPrivate;
+    void initIncomingCallData();
+public:
+    QDBusObjectPath m_objPath;
+    QVariantMap map;
+    QString initiatorID;
 };
 
-QTM_END_NAMESPACE
+Q_DECLARE_METATYPE(Channels)
+
+class ChannelsArray
+{
+public:
+    ChannelsArray();
+    ChannelsArray(const QString& path, const QString &message);
+    ChannelsArray(const ChannelsArray &other);
+    ChannelsArray& operator=(const ChannelsArray &other);
+    ~ChannelsArray();
+
+    friend QDBusArgument &operator<<(QDBusArgument &argument, const ChannelsArray &channelsarray);
+    friend const QDBusArgument &operator>>(const QDBusArgument &argument, ChannelsArray &channelsarray);
+
+    //register Channels with the Qt type system
+    static void registerMetaType();
+public:
+    QList<Channels> channelslist;
+};
+
+Q_DECLARE_METATYPE(ChannelsArray)
+
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif // MESSAGE_H
