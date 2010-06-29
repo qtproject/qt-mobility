@@ -176,7 +176,7 @@ public:
 private:
     // single item saving implementation
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
-    int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemManager::Error *error);
+    int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
     // conversion functions
     QOrganizerEvent convertCEventToQEvent(CEvent *cevent) const;

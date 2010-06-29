@@ -136,6 +136,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         if (ctodo && *error == QOrganizerItemManager::NoError)
         {
             // TODO
+            // Note that in Maemo5 todos can't have occurrences
         }
     }
     else
@@ -349,10 +350,11 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
     *error = QOrganizerItemManager::NoError;
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
+    QOrganizerItemChangeSet cs;
 
     for (int i = 0; i < items->size(); ++i) {
         QOrganizerItem curr = items->at(i);
-        int calError = doSaveItem(cal, &curr, error);
+        int calError = doSaveItem(cal, &curr, cs, error);
 
         if (calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError) {
             success = false;
@@ -368,6 +370,8 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
         items->replace(i, curr);
     }
 
+    d->m_mcInstance->commitAllChanges(); // ensure that changes are committed before emitting signals
+    cs.emitSignals(this);
     cleanupCal(cal);
     return success;
 }
@@ -657,11 +661,8 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
     }
 }
 
-int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemManager::Error *error)
+int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error)
 {
-    // TODO: Add signal emissions
-    // TODO: Or might be better not to implement emissions here?
-
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::NoError;
 
@@ -687,6 +688,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             // CEvent ID is not empty, the event already exists in calendar
             cal->modifyEvent(cevent, calError);
             *error = calErrorToManagerError(calError);
+            if (*error == QOrganizerItemManager::NoError)
+                cs.insertChangedItem(item->localId());
         }
         else {
             // CEvent ID is empty, the event is new
@@ -699,15 +702,23 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
             {
-                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
-                *error = QOrganizerItemManager::NoError; // reset the error
-
+                // Set id for the event
                 QString newIdString = QString::fromStdString(cevent->getId());
                 QOrganizerItemLocalId newId = newIdString.toUInt();
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
+
+                // Update changeset
+                if (calError == CALENDAR_ENTRY_DUPLICATED)
+                    cs.insertChangedItem(item->localId());
+                else
+                    cs.insertAddedItem(item->localId());
+
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
+
             }
         }
 
@@ -727,6 +738,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             return calError;
         }
 
+        // TODO...
 
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
@@ -736,6 +748,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             // CTodo ID is not empty, the todo already exists in calendar
             cal->modifyTodo(ctodo, calError);
             *error = calErrorToManagerError(calError);
+            if (*error == QOrganizerItemManager::NoError)
+                cs.insertChangedItem(item->localId());
         }
         else {
             // CTodo ID is empty, the todo is new
@@ -748,15 +762,22 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
             {
-                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
-                *error = QOrganizerItemManager::NoError; // reset the error
-
+                // Set id for the todo
                 QString newIdString = QString::fromStdString(ctodo->getId());
                 QOrganizerItemLocalId newId = newIdString.toUInt();
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
+
+                // Update changeset
+                if (calError == CALENDAR_ENTRY_DUPLICATED)
+                    cs.insertChangedItem(item->localId());
+                else
+                    cs.insertAddedItem(item->localId());
+
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
             }
         }
 
@@ -778,6 +799,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             // CJournal ID is not empty, the journal already exists in calendar
             cal->modifyJournal(cjournal, calError);
             *error = calErrorToManagerError(calError);
+            if (*error == QOrganizerItemManager::NoError)
+                cs.insertChangedItem(item->localId());
         }
         else {
             // CJournal ID is empty, the journal is new
@@ -790,17 +813,23 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
             {
-                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
-                *error = QOrganizerItemManager::NoError; // reset the error
-
+                // Set id for the journal
                 QString newIdString = QString::fromStdString(cjournal->getId());
                 QOrganizerItemLocalId newId = newIdString.toUInt();
                 QOrganizerItemId id;
                 id.setLocalId(newId);
                 id.setManagerUri(managerUri());
                 item->setId(id);
-            }
 
+                // Update changeset
+                if (calError == CALENDAR_ENTRY_DUPLICATED)
+                    cs.insertChangedItem(item->localId());
+                else
+                    cs.insertAddedItem(item->localId());
+
+                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
+                *error = QOrganizerItemManager::NoError; // reset the error
+            }
         }
 
         // Update GUID mapping
