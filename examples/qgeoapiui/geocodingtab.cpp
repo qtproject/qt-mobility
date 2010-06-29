@@ -161,7 +161,7 @@ void GeocodingTab::on_btnRequest_clicked()
             m_searchManager->geocode(address);
         }
     } else {
-        QMessageBox::warning(this, tr("Places"), tr("No places manager available."));
+        QMessageBox::warning(this, tr("Geocoding"), tr("No search manager available."));
     }
 }
 
