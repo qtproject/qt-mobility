@@ -53,6 +53,7 @@
 #include <qgeocoordinate.h>
 #include <qgeomaprectangleobject.h>
 #include <qgeomapmarkerobject.h>
+#include <qgeomappolylineobject.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
@@ -246,6 +247,12 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawRect(bool)));
+
+    menuItem = new QAction(tr("Polyline"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawPolyline(bool)));
+
 }
 
 void MainWindow::drawRect(bool /*checked*/)
@@ -265,6 +272,23 @@ void MainWindow::drawRect(bool /*checked*/)
     }
 
     markers.clear();
+}
+
+void MainWindow::drawPolyline(bool /*checked*/)
+{
+    QList<QGeoCoordinate> path;
+
+    while (markers.count() >= 1) {
+        QPoint p = markers.takeFirst();
+        path.append(m_mapWidget->screenPositionToCoordinate(p));
+    }
+
+    QPen pen(Qt::white);
+    pen.setWidth(2);
+    QGeoMapPolylineObject *polyline = new QGeoMapPolylineObject();
+    polyline->setPen(pen);
+    polyline->setPath(path);
+    m_mapWidget->addMapObject(polyline);
 }
 
 void MainWindow::drawMarker(bool /*checked*/)

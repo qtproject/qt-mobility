@@ -60,16 +60,23 @@
 #include <QHash>
 #include <QMultiMap>
 #include <QString>
+#include <QPainterPath>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObject;
 class QGeoMapMarkerObject;
+class QGeoMapPolylineObject;
 class QGeoTiledMapData;
 
 struct QGeoTiledMapObjectInfo
 {
     QRectF boundingBox;
+};
+
+struct QGeoTiledMapPolylineInfo : public QGeoTiledMapObjectInfo
+{
+    QPainterPath path;
 };
 
 class QGeoCompositeZValue
@@ -99,12 +106,14 @@ public:
     void calculateInfo(QGeoMapObject *mapObject);
     void calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle);
     void calculateMapMarkerInfo(QGeoMapMarkerObject *marker);
+    void calculateMapPolylineInfo(QGeoMapPolylineObject *polyline);
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect) const;
 
     void paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const;
     void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const;
     void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const;
+    void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const;
 
     void clearObjInfo();
 
