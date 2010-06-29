@@ -49,7 +49,7 @@ testcase = {
         if (!checkPlatform(testcase.qtuitest_platform)){
             fail("TESTPLATFORM "+ testcase.qtuitest_platform +" not valid");
         }
-        if (testcase.platform == "linux" || testcase.platform == "maemo" || testcase.platform == "mac") {
+        if (testcase.platform == "linux" || testcase.platform == "mac") {
             testcase.platform = "unix";
         }
     },
@@ -76,10 +76,41 @@ testcase = {
 
     interface_priority: function()
     {
-        if (testcase.platform != "symbian") {
+        if (testcase.platform != "symbian" && testcase.platform != "maemo") {
             skip("This test only applies to Symbian platform");
         }
-        prompt(twiki(readLocalFile(baseDataPath() + "testtext/" + testcase.platform + "/" + currentTestFunction())));
+        prompt(twiki('---++++ Interfaces are used in order of priority
+
+    1. Pre: GPRS is available to the device
+    1. Pre: WLAN is available to the device
+
+    1. Press the Menu key
+    1. Select Settings->Connectivity->Destinations
+    1. Select Option->New Destination, enter a name
+    1. Select a picture
+    1. Select the destination
+    1. Select Option->New access point
+    1. Select Yes
+    1. Verify that the WLAN "x networks avail." is greater than 0
+    1. Select Wireless LAN
+    1. Select the test WLAN (and enter a key if necessary)
+    1. Select Option->New access point
+    1. Select Yes
+    1. Select Packet data
+    1. Enter a name and commit
+    1. Press Back
+    1. Select Options->Default connection
+    1. Select the new Destination
+    1. Verify the Destination has a check mark
+    1. Start the bearermonitor example application
+    1. In the list, select the new Destination
+    1. Verify "Roaming" is shown as "Available"
+    1. Move the device into an area not covered by the WLAN or simulate an uncovered environment
+    1. Verify the application indicates loss of WLAN network (may take 1 - 2 minutes)
+    1. Verify the application indicates a change of bearer to the GPRS network - may take 1 - 2 minutes
+    1. Move the device into or simulate the area covered by both networks
+    1. Verify the device connects to the network using the WLAN bearer
+    '));
     }
 
 }
@@ -92,7 +123,9 @@ function checkPlatform(platform)
     if (platform.contains("S60") || platform.contains("Symbian")) {
         testcase.platform = "symbian";
         return true;
-    } else if (platform.contains("maemo") || platform.contains("linux") || platform.contains("mac")) {
+    } else if (platform.contains("maemo")) {
+        testcase.platform = "maemo";
+    } else if (platform.contains("linux") || platform.contains("mac")) {
         testcase.platform = "unix";
         return true;
     } else if (platform.contains("windows")) {
