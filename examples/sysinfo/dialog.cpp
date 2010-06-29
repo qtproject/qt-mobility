@@ -284,8 +284,9 @@ void Dialog::setupStorage()
     if(!sti) {
     sti = new QSystemStorageInfo(this);
     storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
-    connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
-    connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
+
+    connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
+            this,SLOT(storageChanged(bool ,const QString &)));
     }
     updateStorage();
 }
@@ -814,7 +815,7 @@ void Dialog::updateSimStatus()
 }
 
 
-void Dialog::storageChanged()
+void Dialog::storageChanged(bool added,const QString &vol)
 {
     setupStorage();
 }
