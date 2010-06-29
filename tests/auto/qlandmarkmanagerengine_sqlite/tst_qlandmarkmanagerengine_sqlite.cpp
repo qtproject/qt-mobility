@@ -193,8 +193,11 @@ private:
 
     bool checkIdFetchRequest(const QList<QLandmark> &lms, const QLandmarkFilter &filter,
                             const QLandmarkSortOrder &sorting,
-                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) {
-        return  checkIdFetchRequest(lms, filter, sorting, fetchHint);
+                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint())
+    {
+        QList<QLandmarkSortOrder> sortOrders;
+        sortOrders << sorting;
+        return  checkIdFetchRequest(lms, filter, sortOrders, fetchHint);
     }
 
     bool checkCategoryIdFetchRequest(const QList<QLandmarkCategory> &cats, const QLandmarkNameSort &nameSort)
