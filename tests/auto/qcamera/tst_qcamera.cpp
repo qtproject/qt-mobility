@@ -340,31 +340,39 @@ public:
         }
     }
 
-    QVariantList supportedParameterRange(ExposureParameter parameter, bool *continuous) const
+    QVariantList supportedParameterRange(ExposureParameter parameter) const
     {
         QVariantList res;
-        if (continuous)
-            *continuous = true;
-
         switch (parameter) {
         case QCameraExposureControl::ExposureCompensation:
             res << -2.0 << 2.0;
             break;
         case QCameraExposureControl::ISO:
-            if (continuous)
-                *continuous = false;
             res << 100 << 200 << 400 << 800;
             break;
         case QCameraExposureControl::Aperture:
             res << 2.8 << 4.0 << 5.6 << 8.0 << 11.0 << 16.0;
             break;
-
         case QCameraExposureControl::ShutterSpeed:
             res << 0.001 << 0.01 << 0.1 << 1.0;
             break;
         default:
-            if (continuous)
-                *continuous = false;
+            break;
+        }
+
+        return res;
+    }
+
+    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const
+    {
+        ParameterFlags res = 0;
+        switch (parameter) {
+        case QCameraExposureControl::ExposureCompensation:
+        case QCameraExposureControl::Aperture:
+        case QCameraExposureControl::ShutterSpeed:
+            res |= ContinuousRange;
+        default:
+            break;
         }
 
         return res;

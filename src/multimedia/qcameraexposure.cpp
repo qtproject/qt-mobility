@@ -316,21 +316,14 @@ int QCameraExposure::isoSensitivity() const
 */
 QList<int> QCameraExposure::supportedIsoSensitivities(bool *continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<int> res;
+    QCameraExposureControl *control = d_func()->exposureControl;
 
-    if (!d_func()->exposureControl)
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::ISO,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::ISO)) {
         bool ok = false;
         int intValue = value.toInt(&ok);
         if (ok)
@@ -338,6 +331,10 @@ QList<int> QCameraExposure::supportedIsoSensitivities(bool *continuous) const
         else
             qWarning() << "Incompatible ISO value type, int is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::ISO) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
@@ -407,21 +404,14 @@ qreal QCameraExposure::aperture() const
 */
 QList<qreal> QCameraExposure::supportedApertures(bool * continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<qreal> res;
+    QCameraExposureControl *control = d_func()->exposureControl;
 
-    if (!d_func()->exposureControl)
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::Aperture,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::Aperture)) {
         bool ok = false;
         qreal realValue = value.toReal(&ok);
         if (ok)
@@ -429,6 +419,10 @@ QList<qreal> QCameraExposure::supportedApertures(bool * continuous) const
         else
             qWarning() << "Incompatible aperture value type, qreal is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::Aperture) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
@@ -473,21 +467,14 @@ qreal QCameraExposure::shutterSpeed() const
 */
 QList<qreal> QCameraExposure::supportedShutterSpeeds(bool *continuous) const
 {
-    bool localContinuousValue = false;
-
-    if (!continuous)
-        continuous = &localContinuousValue;
-
-    *continuous = false;
-
     QList<qreal> res;
 
-    if (!d_func()->exposureControl)
+    QCameraExposureControl *control = d_func()->exposureControl;
+    if (!control)
         return res;
 
     foreach (const QVariant &value,
-             d_func()->exposureControl->supportedParameterRange(QCameraExposureControl::ShutterSpeed,
-                                                                continuous)) {
+             control->supportedParameterRange(QCameraExposureControl::ShutterSpeed)) {
         bool ok = false;
         qreal realValue = value.toReal(&ok);
         if (ok)
@@ -495,6 +482,10 @@ QList<qreal> QCameraExposure::supportedShutterSpeeds(bool *continuous) const
         else
             qWarning() << "Incompatible shutter speed value type, qreal is expected";
     }
+
+    if (continuous)
+        *continuous = control->exposureParameterFlags(QCameraExposureControl::ShutterSpeed) &
+                      QCameraExposureControl::ContinuousRange;
 
     return res;
 }
