@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,33 +39,43 @@
 **
 ****************************************************************************/
 
+#include "qgstreamerimagecapturecontrol_maemo.h"
+#include <QtCore/QDebug>
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
-
-#include <qmediaserviceproviderplugin.h>
-
-QT_USE_NAMESPACE
-
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+QGstreamerImageCaptureControl::QGstreamerImageCaptureControl(QGstreamerCaptureSession *session)
+    :QCameraImageCaptureControl(session), m_session(session), m_ready(false), requestId(0)
 {
-    Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(imageExposed(int)), this, SIGNAL(imageExposed(int)));
+    connect(m_session, SIGNAL(imageCaptured(int,QImage)), this, SIGNAL(imageCaptured(int,QImage)));
+    connect(m_session, SIGNAL(imageSaved(int,QString)), this, SIGNAL(imageSaved(int,QString)));
+}
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+QGstreamerImageCaptureControl::~QGstreamerImageCaptureControl()
+{
+}
 
-private:
-    void updateDevices() const;
+bool QGstreamerImageCaptureControl::isReadyForCapture() const
+{
+    return m_ready;
+}
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-};
+int QGstreamerImageCaptureControl::capture(const QString &fileName)
+{
+    requestId++;
+    m_session->captureImage(requestId, fileName);
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+    return requestId;
+}
+
+void QGstreamerImageCaptureControl::cancelCapture()
+{
+}
+
+void QGstreamerImageCaptureControl::updateState()
+{
+    bool ready = m_session->state() == QGstreamerCaptureSession::PreviewState;
+    if (m_ready != ready) {
+        emit readyForCaptureChanged(m_ready = ready);
+    }
+}

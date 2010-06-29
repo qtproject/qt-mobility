@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,33 +39,49 @@
 **
 ****************************************************************************/
 
+#include "qgstreamerimageencode.h"
+#include "qgstreamercapturesession.h"
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <QtCore/qdebug.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include <math.h>
 
-QT_USE_NAMESPACE
-
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+QGstreamerImageEncode::QGstreamerImageEncode(QGstreamerCaptureSession *session)
+    :QImageEncoderControl(session), m_session(session)
 {
-    Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+}
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+QGstreamerImageEncode::~QGstreamerImageEncode()
+{
+}
 
-private:
-    void updateDevices() const;
+QList<QSize> QGstreamerImageEncode::supportedResolutions(const QImageEncoderSettings &, bool *continuous) const
+{
+    if (continuous)
+        *continuous = m_session->videoInput() != 0;
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
-};
+    return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
+}
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+QStringList QGstreamerImageEncode::supportedImageCodecs() const
+{
+    return QStringList() << "jpeg";
+}
+
+QString QGstreamerImageEncode::imageCodecDescription(const QString &codecName) const
+{
+    if (codecName == "jpeg")
+        return tr("JPEG image encoder");
+
+    return QString();
+}
+
+QImageEncoderSettings QGstreamerImageEncode::imageSettings() const
+{
+    return m_settings;
+}
+
+void QGstreamerImageEncode::setImageSettings(const QImageEncoderSettings &settings)
+{
+    m_settings = settings;
+}

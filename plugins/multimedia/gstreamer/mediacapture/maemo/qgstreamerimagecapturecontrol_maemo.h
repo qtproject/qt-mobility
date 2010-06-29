@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,32 +40,35 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#ifndef QGSTREAMERIMAGECAPTURECONTROL_H
+#define QGSTREAMERIMAGECAPTURECONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <qcameraimagecapturecontrol.h>
+#include "qgstreamercapturesession_maemo.h"
 
 QT_USE_NAMESPACE
 
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerImageCaptureControl : public QCameraImageCaptureControl
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QGstreamerImageCaptureControl(QGstreamerCaptureSession *session);
+    virtual ~QGstreamerImageCaptureControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
+    void setDriveMode(QCameraImageCapture::DriveMode) {}
+
+    bool isReadyForCapture() const;
+    int capture(const QString &fileName);
+    void cancelCapture();
+
+private slots:
+    void updateState();
 
 private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
+    QGstreamerCaptureSession *m_session;
+    bool m_ready;
+    int requestId;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif // QGSTREAMERCAPTURECORNTROL_H

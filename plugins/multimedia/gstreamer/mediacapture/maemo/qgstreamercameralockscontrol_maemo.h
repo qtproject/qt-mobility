@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,33 +39,41 @@
 **
 ****************************************************************************/
 
+#ifndef QGSTREAMERCAMERALOCKSCONTROL_H
+#define QGSTREAMERCAMERALOCKSCONTROL_H
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <qcamera.h>
+#include <qcameralockscontrol.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include <gst/gst.h>
+#include <glib.h>
+
+class QGstreamerCaptureSession;
 
 QT_USE_NAMESPACE
 
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerCameraLocksControl  : public QCameraLocksControl
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+public:
+    QGstreamerCameraLocksControl(GstElement &camerabin, QGstreamerCaptureSession *session);
+    virtual ~QGstreamerCameraLocksControl();
+
+    QCamera::LockTypes supportedLocks() const;
+
+    QCamera::LockStatus lockStatus(QCamera::LockType lock) const;
+
+    void searchAndLock(QCamera::LockTypes locks);
+    void unlock(QCamera::LockTypes locks);
+
+private slots:
+    void updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason);
 
 private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
+    QGstreamerCaptureSession *m_session;
+    GstElement &m_camerabin;
+    QCamera::LockStatus m_focusStatus;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif
