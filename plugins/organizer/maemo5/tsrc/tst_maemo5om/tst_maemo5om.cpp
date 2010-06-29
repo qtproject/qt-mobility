@@ -159,12 +159,12 @@ void tst_Maemo5Om::addItem_data()
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
-            << detailToQString(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+            << detailToQString(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment, QString("Remember to wear blue jeans")));
     QTest::newRow("Item type Note; details: description, note")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
-            << detailToQString(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+            << detailToQString(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment, QString("Remember to wear blue jeans")));
 
     // TODO: recurrence and exceptions
     // TODO: timestamps
