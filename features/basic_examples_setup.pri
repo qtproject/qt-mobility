@@ -27,13 +27,6 @@ LIBS+= -L$$OUTPUT_DIR/lib
 QMAKE_RPATHDIR+=$$QT_MOBILITY_LIB
 INCLUDEPATH+= $$QT_MOBILITY_SOURCE_TREE/src/global
 
-!plugin {
-    target.path=$$QT_MOBILITY_EXAMPLES
-} else {
-    target.path = $${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
-}
-INSTALLS += target
-
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
     DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
