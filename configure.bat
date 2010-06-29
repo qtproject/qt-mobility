@@ -247,6 +247,13 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
 
+REM reset selected modules
+set CONTACTS_SELECTED=
+set BEARER_SELECTED=
+set SYSTEMINFO_SELECTED=
+set SENSORS_SELECTED=
+set MESSAGING_SELECTED=
+set MULTIMEDIA_SELECTED=
 echo Checking selected modules:
 :modulesTag2
 
@@ -259,24 +266,30 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 : distinguish between false and correct module names being passed
 if %FIRST% == bearer (
     echo     Bearer Management selected
+    set BEARER_SELECTED=yes
 ) else if %FIRST% == contacts (
     echo     Contacts selected
+    set CONTACTS_SELECTED=yes
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
     echo     Messaging selected
+    set MESSAGING_SELECTED=yes
 ) else if %FIRST% == multimedia (
     echo     Multimedia selected
+    set MULTIMEDIA_SELECTED=yes
 ) else if %FIRST% == publishsubscribe (
     echo     PublishSubscribe selected
 ) else if %FIRST% == systeminfo (
     echo     Systeminfo selected
+    set SYSTEMINFO_SELECTED=yes
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+    set SENSORS_SELECTED=yes
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -481,19 +494,32 @@ if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
 goto noTests
 
 :symbianTests
-call :compileTest LBT lbt
-call :compileTest SNAP snap
-call :compileTest OCC occ
-call :compileTest SymbianContactSIM symbiancntsim
-call :compileTest S60_Sensor_API sensors_s60_31
-call :compileTest Symbian_Sensor_Framework sensors_symbian
-call :compileTest Symbian_Hb hb_symbian
-call :compileTest Audiorouting_s60 audiorouting_s60
-call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
-call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-REM call :compileTest OpenMaxAl_support openmaxal_symbian
-call :compileTest Surfaces_s60 surfaces_s60
-call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+
+if "%MULTIMEDIA_SELECTED%" == "yes" (
+    call :compileTest Audiorouting_s60 audiorouting_s60
+    call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
+    call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+    REM call :compileTest OpenMaxAl_support openmaxal_symbian
+    call :compileTest Surfaces_s60 surfaces_s60
+)
+if "%CONTACTS_SELECTED%" == "yes" (
+    call :compileTest LBT lbt
+    call :compileTest SymbianContactSIM symbiancntsim
+)
+if "%BEARER_SELECTED%" == "yes" (
+    call :compileTest SNAP snap
+    call :compileTest OCC occ
+)
+if "%SENSORS_SELECTED%" == "yes" (
+    call :compileTest S60_Sensor_API sensors_s60_31
+    call :compileTest Symbian_Sensor_Framework sensors_symbian
+)
+if "%MESSAGING_SELECTED%" == "yes" (
+    call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+)
+if "%SYSTEMINFO_SELECTED%" == "yes" (
+    call :compileTest Symbian_Hb hb_symbian
+)
 
 :noTests
 
