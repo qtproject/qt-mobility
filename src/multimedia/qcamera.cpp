@@ -80,6 +80,7 @@ public:
     \preliminary
     \brief The QCamera class provides interface for system camera devices.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
     QCamera can be used with QVideoWidget for viewfinder display,

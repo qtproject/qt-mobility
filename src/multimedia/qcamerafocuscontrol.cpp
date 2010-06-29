@@ -51,6 +51,7 @@ QT_BEGIN_NAMESPACE
     \brief The QCameraFocusControl class supplies control for
     focusing related camera parameters.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
     The interface name of QCameraFocusControl is \c com.nokia.Qt.QCameraFocusControl/1.0 as
