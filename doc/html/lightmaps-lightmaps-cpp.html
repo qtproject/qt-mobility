@@ -346,15 +346,18 @@
 
         ~LightMaps() {
             m_session-&gt;close();
-            m_location-&gt;stopUpdates();
+            if (m_location)
+                m_location-&gt;stopUpdates();
         }
 
         void stopPositioning() {
-            m_location-&gt;stopUpdates();
+            if (m_location)
+                m_location-&gt;stopUpdates();
         }
 
         void startPositioning() {
-            m_location-&gt;startUpdates();
+            if (m_location)
+                m_location-&gt;startUpdates();
         }
 
         void setCenter(qreal lat, qreal lng) {
@@ -733,7 +736,7 @@
             connect(nightModeAction, SIGNAL(triggered()), map, SLOT(toggleNightMode()));
             connect(osmAction, SIGNAL(triggered()), SLOT(aboutOsm()));
 
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
             menuBar()-&gt;addAction(gpsAction);
             menuBar()-&gt;addAction(osloAction);
             menuBar()-&gt;addAction(berlinAction);
@@ -797,7 +800,7 @@
 
         MapZoom w;
         w.setWindowTitle(&quot;OpenStreetMap&quot;);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         w.showMaximized();
     #else
         w.resize(600, 450);

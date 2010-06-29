@@ -131,7 +131,8 @@
 <p>A default, empty constructor.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/addSorted"></a>
 <h3 class="fn"><a name="addSorted"></a>void QContactManagerEngine::addSorted ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>sorted</i>, const <a href="qcontact.html">QContact</a> &amp; <i>toAdd</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrders</i> list. The first <a href="qcontactsortorder.html">QContactSortOrder</a> in the list has the highest priority; if the contact <i>toAdd</i> is deemed equal to another in the <i>sorted</i> list, the second <a href="qcontactsortorder.html">QContactSortOrder</a> in the list is used (and so on until either the contact is inserted or there are no more sort order objects in the list).</p>
+<p>Performs insertion sort of the contact <i>toAdd</i> into the <i>sorted</i> list, according to the provided <i>sortOrders</i> list. The first <a href="qcontactsortorder.html">QContactSortOrder</a> in the list has the highest priority: if the contact <i>toAdd</i> is deemed equal to another in the <i>sorted</i> list according to the first <a href="qcontactsortorder.html">QContactSortOrder</a>, the second <a href="qcontactsortorder.html">QContactSortOrder</a> in the list is used (and so on until either the contact is inserted or there are no more sort order objects in the list).</p>
+<p>If a contact is equal to another contact according to all sort orders, it is inserted after the previously-added contact.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/cancelRequest"></a>
 <h3 class="fn"><a name="cancelRequest"></a>bool QContactManagerEngine::cancelRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Asks the manager engine to cancel the given request <i>req</i> which was previously started and is currently in a cancellable state. Returns true if cancellation of the request was started successfully, otherwise returns false.</p>
@@ -157,7 +158,11 @@
 <p>Compares two contacts (<i>a</i> and <i>b</i>) using the given list of <i>sortOrders</i>. Returns a negative number if <i>a</i> should appear before <i>b</i> according to the sort order, a positive number if <i>a</i> should appear after <i>b</i> according to the sort order, and zero if the two are unable to be sorted.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/compareVariant"></a>
 <h3 class="fn"><a name="compareVariant"></a>int QContactManagerEngine::compareVariant ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>first</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>second</i>, <a href="http://qt.nokia.com/doc/4.6/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> <i>sensitivity</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Compares <i>first</i> against <i>second</i>. If the types are strings (<a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::String</a>), the <i>sensitivity</i> argument controls case sensitivity when comparing.</p>
+<p>Compares <i>first</i> against <i>second</i>. If the types are strings (<a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::String</a>), the <i>sensitivity</i> argument controls case sensitivity when comparing. Also, when comparing strings, a locale aware comparison is used, and if the sensitivity is CaseSensitive, strings that are identical under a case insensitive sort are then sorted case sensitively within that context.</p>
+<p>For example:</p>
+<p>aaron Bob Aaron aAron Carol</p>
+<p>would sort as:</p>
+<p>aaron aAron Aaron Bob Carol</p>
 <p>Returns: &lt;0 if <i>first</i> is less than <i>second</i> 0 if <i>first</i> is equal to <i>second</i> &gt;0 if <i>first</i> is greater than <i>second</i>.</p>
 <p>The results are undefined if the variants are different types, or cannot be compared.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/compatibleContact"></a>
@@ -252,7 +257,9 @@
 <h3 class="fn"><a name="removeContacts"></a>bool QContactManagerEngine::removeContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>contactIds</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Remove every contact whose id is contained in the list of contacts ids <i>contactIds</i>. Returns true if all contacts were removed successfully, otherwise false.</p>
 <p>Any contact that was removed successfully will have the relationships in which it was involved removed also.</p>
-<p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contactIds</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be removed, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
+<p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contactIds</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be removed, if it is able.</p>
+<p>The supplied <i>errorMap</i> parameter may be null, if the client does not desire detailed error information. If supplied, it will be empty upon entry to this function.</p>
+<p>The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
 <p>If the list contains ids which do not identify a valid contact in the manager, the function will remove any contacts which are identified by ids in the <i>contactIds</i> list, insert <tt>QContactManager::DoesNotExist</tt> entries into the <i>errorMap</i> for the indices of invalid ids in the <i>contactIds</i> list, return false, and set the overall operation error to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
@@ -269,6 +276,7 @@
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/removeRelationships"></a>
 <h3 class="fn"><a name="removeRelationships"></a>bool QContactManagerEngine::removeRelationships ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Removes the given <i>relationships</i> from the database and returns true if the operation was successful. For any relationship which was unable to be removed, an entry into the <i>errorMap</i> will be created, with the key being the index into the input relationships list, and the value being the error which occurred for that index.</p>
+<p>The supplied <i>errorMap</i> parameter may be null, if the client does not desire detailed error information. If supplied, it will be empty upon entry to this function.</p>
 <p>The overall operation error will be saved in <i>error</i>.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/requestDestroyed"></a>
 <h3 class="fn"><a name="requestDestroyed"></a>void QContactManagerEngine::requestDestroyed ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -282,7 +290,9 @@
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/saveContacts"></a>
 <h3 class="fn"><a name="saveContacts"></a>bool QContactManagerEngine::saveContacts ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Adds the list of contacts given by <i>contacts</i> list to the database. Returns true if the contacts were saved successfully, otherwise false.</p>
-<p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contacts</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be saved, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
+<p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contacts</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be saved, if it is able.</p>
+<p>The supplied <i>errorMap</i> parameter may be null, if the client does not desire detailed error information. If supplied, it will be empty upon entry to this function.</p>
+<p>The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
 <p>For each newly saved contact that was successful, the id of the contact in the <i>contacts</i> list will be updated with the new value. If a failure occurs when saving a new contact, the id will be cleared.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <p>See also <a href="qcontactmanager.html#saveContact">QContactManager::saveContact</a>().</p>
@@ -300,6 +310,7 @@
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/saveRelationships"></a>
 <h3 class="fn"><a name="saveRelationships"></a>bool QContactManagerEngine::saveRelationships ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Saves the given <i>relationships</i> in the database and returns true if the operation was successful. For any relationship which was unable to be saved, an entry into the <i>errorMap</i> will be created, with the key being the index into the input relationships list, and the value being the error which occurred for that index.</p>
+<p>The supplied <i>errorMap</i> parameter may be null, if the client does not desire detailed error information. If supplied, it will be empty upon entry to this function.</p>
 <p>The overall operation error will be saved in <i>error</i>.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/schemaDefinitions"></a>
 <h3 class="fn"><a name="schemaDefinitions"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; &gt; QContactManagerEngine::schemaDefinitions ()&nbsp;&nbsp;<tt> [static]</tt></h3>

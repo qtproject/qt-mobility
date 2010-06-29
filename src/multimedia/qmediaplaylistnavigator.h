@@ -49,7 +49,7 @@
 QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistNavigatorPrivate;
-class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)

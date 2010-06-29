@@ -25,8 +25,9 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#dtor.QMediaService">~QMediaService</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaControl * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#control">control</a></b> ( const char * <i>interface</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#control-2">control</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#releaseControl">releaseControl</a></b> ( QMediaControl * <i>control</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaControl * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#requestControl">requestControl</a></b> ( const char * <i>interface</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qmediaservice.html#requestControl-2">requestControl</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -55,9 +56,9 @@
 <p>The QMediaService class provides a common base class for media service implementations.</p>
 <p>Media services provide implementations of the functionality promised by media objects, and allow multiple providers to implement a <a href="qmediaobject.html">QMediaObject</a>.</p>
 <p>To provide the functionality of a <a href="qmediaobject.html">QMediaObject</a> media services implement <a href="qmediacontrol.html">QMediaControl</a> interfaces. Services typically implement one core media control which provides the core feature of a media object, and some number of additional controls which provide either optional features of the media object, or features of a secondary media object or peripheral object.</p>
-<p>A pointer to media service's <a href="qmediacontrol.html">QMediaControl</a> implementation can be obtained by passing the control's interface name to the <a href="qmediaservice.html#control">control</a>() function.</p>
+<p>A pointer to media service's <a href="qmediacontrol.html">QMediaControl</a> implementation can be obtained by passing the control's interface name to the <a href="qmediaservice.html#requestControl">requestControl</a>() function.</p>
 <pre>    QMediaPlayerControl *control = qobject_cast&lt;QMediaPlayerControl *&gt;(
-            service-&gt;control(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
+            service-&gt;requestControl(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
 <p>Media objects can use services loaded dynamically from plug-ins or implemented statically within an applications. Plug-in based services should also implement the <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a> interface. Static services should implement the <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> interface.</p>
 <p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediacontrol.html">QMediaControl</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, and <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a>.</p>
 <hr />
@@ -68,13 +69,18 @@
 <a name="//apple_ref/cpp/instm/QMediaService/~QMediaService"></a>
 <h3 class="fn"><a name="dtor.QMediaService"></a>QMediaService::~QMediaService ()</h3>
 <p>Destroys a media service.</p>
-<a name="//apple_ref/cpp/instm/QMediaService/control"></a>
-<h3 class="fn"><a name="control"></a><a href="qmediacontrol.html">QMediaControl</a> * QMediaService::control ( const char * <i>interface</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaService/releaseControl"></a>
+<h3 class="fn"><a name="releaseControl"></a>void QMediaService::releaseControl ( <a href="qmediacontrol.html">QMediaControl</a> * <i>control</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Releases a <i>control</i> back to the service.</p>
+<a name="//apple_ref/cpp/instm/QMediaService/requestControl"></a>
+<h3 class="fn"><a name="requestControl"></a><a href="qmediacontrol.html">QMediaControl</a> * QMediaService::requestControl ( const char * <i>interface</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a pointer to the media control implementing <i>interface</i>.</p>
-<p>If the service does not implement the control a null pointer is returned instead.</p>
-<h3 class="fn"><a name="control-2"></a>T QMediaService::control () const</h3>
+<p>If the service does not implement the control, or if it is unavailable a null pointer is returned instead.</p>
+<p>Controls must be returned to the service when no longer needed using the <a href="qmediaservice.html#releaseControl">releaseControl</a>() function.</p>
+<h3 class="fn"><a name="requestControl-2"></a>T QMediaService::requestControl ()</h3>
 <p>Returns a pointer to the media control of type T implemented by a media service.</p>
-<p>If the service does not implment the control a null pointer is returned instead.</p>
+<p>If the service does not implement the control, or if it is unavailable a null pointer is returned instead.</p>
+<p>Controls must be returned to the service when no longer needed using the <a href="qmediaservice.html#releaseControl">releaseControl</a>() function.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

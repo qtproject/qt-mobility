@@ -191,7 +191,7 @@ QSet<QString> GConfLayer::children(Handle handle)
     GConfItem gconfItem(sh->path);
 
     QSet<QString> ret;
-    foreach (const QString child, gconfItem.listEntries() + gconfItem.listDirs()) {
+    foreach (const QString &child, gconfItem.listEntries() + gconfItem.listDirs()) {
         const int index = child.lastIndexOf(QLatin1Char('/'), -1);
         ret += child.mid(index + 1);
     }

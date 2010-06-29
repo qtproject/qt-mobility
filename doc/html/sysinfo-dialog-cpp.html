@@ -59,7 +59,7 @@
 
     Dialog::Dialog() :
         QWidget(),
-        saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
+        saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
     {
         setupUi(this);
         setupGeneral();
@@ -225,6 +225,10 @@
         }
 
         inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
+
+        bluetoothPowerLabel-&gt;setText((di-&gt;currentBluetoothPowerState() ? &quot;On&quot; : &quot;Off&quot;));
+        connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
     }
 
     void Dialog::updateDeviceLockedState()
@@ -241,22 +245,60 @@
     void Dialog::setupDisplay()
     {
         QSystemDisplayInfo di;
-        brightnessLineEdit-&gt;setText(QString::number(di.displayBrightness(0)));
-        colorDepthLineEdit-&gt;setText(QString::number(di.colorDepth((0))));
+        brightnessLabel-&gt;setText(QString::number(di.displayBrightness(0)));
+        colorDepthLabel-&gt;setText(QString::number(di.colorDepth((0))));
 
+        QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+        QString orientStr;
+        switch(orientation) {
+        case QSystemDisplayInfo::Landscape:
+            orientStr=&quot;Landscape&quot;;
+            break;
+        case QSystemDisplayInfo::Portrait:
+            orientStr=&quot;Portrait&quot;;
+            break;
+        case QSystemDisplayInfo::InvertedLandscape:
+            orientStr=&quot;Inverted Landscape&quot;;
+            break;
+        case QSystemDisplayInfo::InvertedPortrait:
+            orientStr=&quot;Inverted Portrait&quot;;
+            break;
+        default:
+            orientStr=&quot;Orientation unknown&quot;;
+            break;
+        }
+
+        orientationLabel-&gt;setText(orientStr);
+
+        contrastLabel-&gt;setText(QString::number(di.contrast((0))));
+
+        dpiWidthLabel-&gt;setText(QString::number(di.getDPIWidth(0)));
+        dpiHeightLabel-&gt;setText(QString::number(di.getDPIHeight((0))));
+
+        physicalHeightLabel-&gt;setText(QString::number(di.physicalHeight(0)));
+        physicalWidthLabel-&gt;setText(QString::number(di.physicalWidth((0))));
     }
 
     void Dialog::setupStorage()
     {
-        QSystemStorageInfo mi;
-        storageTreeWidget-&gt;clear();
+        if(!sti) {
+        sti = new QSystemStorageInfo(this);
         storageTreeWidget-&gt;header()-&gt;setResizeMode(QHeaderView::ResizeToContents);
+        connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
+        connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
+        }
+        updateStorage();
+    }
 
-        QStringList vols = mi.logicalDrives();
+    void Dialog::updateStorage()
+    {
+        storageTreeWidget-&gt;clear();
+
+        QStringList vols = sti-&gt;logicalDrives();
         foreach(QString volName, vols) {
             QString type;
             QSystemStorageInfo::DriveType volType;
-            volType = mi.typeForDrive(volName);
+            volType = sti-&gt;typeForDrive(volName);
             if(volType == QSystemStorageInfo::InternalDrive) {
                 type =  &quot;Internal&quot;;
             }
@@ -273,8 +315,8 @@
             QStringList items;
             items &lt;&lt; volName;
             items &lt;&lt; type;
-            items &lt;&lt; QString::number(mi.totalDiskSpace(volName));
-            items &lt;&lt; QString::number(mi.availableDiskSpace(volName));
+            items &lt;&lt; QString::number(sti-&gt;totalDiskSpace(volName));
+            items &lt;&lt; QString::number(sti-&gt;availableDiskSpace(volName));
             QTreeWidgetItem *item = new QTreeWidgetItem(items);
             storageTreeWidget-&gt;addTopLevelItem(item);
         }
@@ -747,6 +789,16 @@
             };
             simStatusLabel-&gt;setText(simstring);
         }
+    }
+
+    void Dialog::storageChanged()
+    {
+        setupStorage();
+    }
+
+    void Dialog::bluetoothChanged(bool b)
+    {
+        bluetoothPowerLabel-&gt;setText((b ? &quot;On&quot; : &quot;Off&quot;));
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

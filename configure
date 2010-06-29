@@ -62,12 +62,12 @@ absPath() {
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
         else
-            echo "Relative prefix paths are not supported for Maemo"
+            echo >&2 "Relative prefix/bin/lib/header/plugin paths are not supported for Maemo"
             exit 1;
         fi
     else
-        RESULT=`(cd "$1"; /bin/pwd)`
-        echo $RESULT
+        PATH=`$relpath/bin/pathhelper $1`
+        echo $PATH
     fi
 }
 
@@ -86,8 +86,11 @@ QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
 QT_MOBILITY_PLUGINS=
+QT_MOBILITY_EXAMPLES=
+QT_MOBILITY_DEMOS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DEMOS=
 BUILD_DOCS=yes
 BUILD_TOOLS=yes
 RELEASEMODE=
@@ -122,6 +125,10 @@ usage()
     echo "                    (default PREFIX/bin)"
     echo "-plugindir <dir> .. Plug-ins will be installed to <dir>"
     echo "                    (default PREFIX/plugins)"
+    echo "-demosdir <dir> ... Demos will be installed to <dir>"
+    echo "                    (default PREFIX/bin)"
+    echo "-examplesdir <dir>  Examples will be installed to <dir>"
+    echo "                    (default PREFIX/bin)"
     echo "-debug ............ Build with debugging symbols"
     echo "-release .......... Build without debugging symbols"
     echo "-silent ........... Reduces build output"
@@ -129,6 +136,7 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
+    echo "-demos ............ Build demo applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
@@ -141,7 +149,7 @@ usage()
     echo "                    will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
-    echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
+    echo "-sdk <sdk>......... Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
     
@@ -178,8 +186,19 @@ while [ "$#" -gt 0 ]; do
             QT_MOBILITY_PLUGINS="$2"
             shift
             ;;
+        -examplesdir)
+            QT_MOBILITY_EXAMPLES="$2"
+            shift
+            ;;
+        -demosdir)
+            QT_MOBILITY_DEMOS="$2"
+            shift
+            ;;
         -tests)
             BUILD_UNITTESTS="yes"
+            ;;
+        -demos)
+            BUILD_DEMOS="yes"
             ;;
         -examples)
             BUILD_EXAMPLES="yes"
@@ -311,24 +330,20 @@ if [ -n "$LINUX_TARGET" ]; then
 fi
 
 #process PREFIX
-if [ -d "$QT_MOBILITY_PREFIX" ]; then
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-else
-    mkdir -p "$QT_MOBILITY_PREFIX"
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_PREFIX"
+QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
+if [ "$?" -eq "1" ]; then
+    exit 1
 fi
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
 #process include path
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
-elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
-    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_INCLUDE"
     QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_INCLUDE"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
@@ -336,38 +351,57 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 #process library path
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
-elif [ -d "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_LIB"
     QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_LIB"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
 #process bin path
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
-elif [ -d "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_BIN"
     QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_BIN"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
 #process plugin path
 if [ -z "$QT_MOBILITY_PLUGINS" ]; then
     QT_MOBILITY_PLUGINS="$QT_MOBILITY_PREFIX/$PLUGIN_PATH"
-elif [ -d "$QT_MOBILITY_PLUGINS" ]; then
-    QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_PLUGINS"
     QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_PLUGINS"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
+
+#process examples path
+if [ -z "$QT_MOBILITY_EXAMPLES" ]; then
+    QT_MOBILITY_EXAMPLES="$QT_MOBILITY_PREFIX/$BIN_PATH"
+else
+    QT_MOBILITY_EXAMPLES=`absPath $QT_MOBILITY_EXAMPLES $LINUX_TARGET`
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
+fi
+echo "QT_MOBILITY_EXAMPLES = $QT_MOBILITY_EXAMPLES" >> "$CONFIG_IN"
+
+#process demos path
+if [ -z "$QT_MOBILITY_DEMOS" ]; then
+    QT_MOBILITY_DEMOS="$QT_MOBILITY_PREFIX/$BIN_PATH"
+else
+    QT_MOBILITY_DEMOS=`absPath $QT_MOBILITY_DEMOS $LINUX_TARGET`
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
+fi
+echo "QT_MOBILITY_DEMOS = $QT_MOBILITY_DEMOS" >> "$CONFIG_IN"
 
 
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
@@ -388,6 +422,12 @@ if [ -z "$BUILD_EXAMPLES" ]; then
     echo "build_examples = no" >> "$CONFIG_IN"
 else
     echo "build_examples = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$BUILD_DEMOS" ]; then
+    echo "build_demos = no" >> "$CONFIG_IN"
+else
+    echo "build_demos = yes" >> "$CONFIG_IN"
 fi
 
 if [ -z "$BUILD_DOCS" ]; then
@@ -452,7 +492,7 @@ compileTest()
     printf "."
     "$MAKE" >> "$CONFIG_LOG" 2>&1
     printf ". "
-    if ./$2 >> "$CONFIG_LOG" 2>&1; then
+    if [ -e ./$2 ]; then
         echo "OK"
         echo "$2_enabled = yes" >> "$CONFIG_IN"
     else
@@ -469,18 +509,12 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 compileTest "Maemo5 contacts dependencies" maemo5-contacts
+compileTest "Bluez" bluez
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
 fi
-
-# Now module selection
-# using 'expr match ....' should help a bit
-#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
-    # In theory we should do some sanity checking here.
-#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
-#fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
@@ -499,45 +533,47 @@ mkdir $shadowpath/include
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
-            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
+            $relpath/bin/syncheaders $shadowpath/include/QtBearer $relpath/src/bearer
             ;;
         publishsubscribe)
-            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
+            $relpath/bin/syncheaders $shadowpath/include/QtPublishSubscribe $relpath/src/publishsubscribe
             ;;
         location)
-            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location
             ;;
         serviceframework)
-            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             ;;
         systeminfo)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
+            $relpath/bin/syncheaders $shadowpath/include/QtSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include/QtmMedia $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/audio
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/video
             ;;
         messaging)
-            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
+            $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
             ;;
         telephony)
             $relpath/bin/syncheaders $shadowpath/include/QtmTelephony $relpath/src/telephony
             ;;
         versit)
             #versit implies contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         sensors)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"

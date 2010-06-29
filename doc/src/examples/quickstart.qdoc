@@ -122,7 +122,7 @@ When developing on Symbian we will also need to add the required capabilites to 
 This can be achieved with a line such as the following:
 
 \code
-    TARGET.CAPABILITIES = CAPABILITY_A CABAPILITY_B
+    TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B
 \endcode
 
 CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
@@ -142,7 +142,7 @@ on which parts of an API is utilized by an application.
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
 \row
     \o \l {Contacts}
-    \o ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData
+    \o ReadUserData WriteUserData
 \row
     \o \l {Location}
     \o Location
@@ -154,7 +154,7 @@ on which parts of an API is utilized by an application.
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
 \row
     \o \l {Publish And Subscribe}
-    \o ReadDeviceData WriteDeviceData
+    \o Capability depends on P&S value being read/written. API itself doesn't require any capability.
 \row
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.
@@ -163,7 +163,7 @@ on which parts of an API is utilized by an application.
     \o ReadDeviceData
 \row
     \o \l {System Information}
-    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
 \row
     \o \l {Versit API}
     \o No additional capabilities required.

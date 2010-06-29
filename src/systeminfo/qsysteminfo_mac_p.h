@@ -57,9 +57,17 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include "qsysteminfocommon.h"
+
+//#include "qmobilityglobal.h"
 
 #include "qsysteminfo.h"
-#include <qmobilityglobal.h>
+
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
 
 #include <QTimer>
 #include <QtCore/qthread.h>
@@ -68,6 +76,7 @@
 
 #include <SystemConfiguration/SystemConfiguration.h>
 //#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DiskArbitration.h>
 
 QT_BEGIN_HEADER
 
@@ -108,9 +117,9 @@ private:
     QString langCached;
     QLangLoopThread * langloopThread;
     static QSystemInfoPrivate *self;
+    bool langThreadOk;
 
-private Q_SLOTS:
- protected:
+protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
@@ -176,6 +185,7 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     bool hasWifi;
+    bool networkThreadOk;
 
 };
 
@@ -190,8 +200,16 @@ public:
 
     int displayBrightness(int screen);
     int colorDepth(int screen);
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
+class QDASessionThread;
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -206,13 +224,25 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+public Q_SLOTS:
+    void storageChanged( bool added);
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
+
 private:
     QHash<QString, QString> mountEntriesHash;
     bool updateVolumesMap();
     void mountEntries();
+    bool sessionThread();
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    QDASessionThread *daSessionThread;
 };
 
+class QBluetoothListenerThread;
 class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -238,7 +268,10 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-    static QSystemDeviceInfoPrivate *instance() {return self;}
+    static QSystemDeviceInfoPrivate *instance();
+
+    bool currentBluetoothPowerState();
+    bool btThreadOk;
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -253,6 +286,12 @@ private:
     QSystemDeviceInfo::PowerState currentPowerStateCache;
     QSystemDeviceInfo::BatteryStatus batteryStatusCache;
     static QSystemDeviceInfoPrivate *self;
+    QBluetoothListenerThread *btThread;
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 };
 
 
@@ -287,7 +326,7 @@ public:
     QRunLoopThread(QObject *parent = 0);
     ~QRunLoopThread();
     bool keepRunning;
-    void quit();
+    void stop();
 
 protected:
     void run();
@@ -309,10 +348,59 @@ public:
     QLangLoopThread(QObject *parent = 0);
     ~QLangLoopThread();
     bool keepRunning;
-    void quit();
+    void stop();
 
 protected:
     void run();
+
+private:
+    QMutex mutex;
+private Q_SLOTS:
+};
+
+class QDASessionThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QDASessionThread(QObject *parent = 0);
+    ~QDASessionThread();
+    bool keepRunning;
+    void stop();
+    DASessionRef session;
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
+};
+
+class QBluetoothListenerThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QBluetoothListenerThread(QObject *parent = 0);
+    ~QBluetoothListenerThread();
+    bool keepRunning;
+
+public Q_SLOTS:
+    void emitBtPower(bool);
+    void stop();
+
+Q_SIGNALS:
+    void bluetoothPower(bool);
+
+protected:
+    void run();
+    IONotificationPortRef port;
+    CFRunLoopRef rl;
+    CFRunLoopSourceRef rls;
 
 private:
     QMutex mutex;

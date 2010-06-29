@@ -58,6 +58,7 @@
 
 #include <QMutex>
 #include <QMutexLocker>
+#include <QWeakPointer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -326,6 +327,9 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
 
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The overall operation error will be saved in \a error.
  */
 bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
@@ -400,6 +404,9 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
   For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
 
   The overall operation error will be saved in \a error.
  */
@@ -1419,6 +1426,10 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
   The manager might populate \a errorMap (the map of indices of the \a contacts list to
   the error which occurred when saving the contact at that index) for
   every index for which the contact could not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will only return \c QContactManager::NoError
   if all contacts were saved successfully.
 
@@ -1450,6 +1461,10 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
   The manager might populate \a errorMap (the map of indices of the \a contactIds list to
   the error which occurred when saving the contact at that index) for every
   index for which the contact could not be removed, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
@@ -1568,10 +1583,41 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
     return conforming;
 }
 
+
+/* This implements the string comparison behaviour required for compareVariant, amongst others */
+static inline int compareStrings(const QString& left, const QString& right, Qt::CaseSensitivity sensitivity)
+{
+    if (sensitivity == Qt::CaseSensitive) {
+        return left.localeAwareCompare(right);
+    } else {
+        return left.toCaseFolded().localeAwareCompare(right.toCaseFolded());
+    }
+}
+
 /*!
   Compares \a first against \a second.  If the types are
   strings (QVariant::String), the \a sensitivity argument controls
-  case sensitivity when comparing.
+  case sensitivity when comparing.  Also, when comparing strings,
+  a locale aware comparison is used, and if the sensitivity is
+  CaseSensitive, strings that are identical under a case insensitive
+  sort are then sorted case sensitively within that context.
+
+
+  For example:
+
+  aaron
+  Bob
+  Aaron
+  aAron
+  Carol
+
+  would sort as:
+
+  aaron
+  aAron
+  Aaron
+  Bob
+  Carol
 
   Returns:
   <0 if \a first is less than \a second
@@ -1599,7 +1645,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             return first.toULongLong() - second.toULongLong();
 
        case QVariant::String:
-            return first.toString().compare(second.toString(), sensitivity);
+            return compareStrings(first.toString(), second.toString(), sensitivity);
 
         case QVariant::Double:
             {
@@ -1792,7 +1838,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                             return true;
                         if (matchContains && var.contains(needle, cs))
                             return true;
-                        if (QString::compare(var, needle, cs) == 0)
+                        if (compareStrings(var, needle, cs) == 0)
                             return true;
                     }
                     return false;
@@ -1811,6 +1857,8 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::ContactDetailRangeFilter:
             {
+                /* The only supported flags are: MatchExactly, MatchFixedString, MatchCaseSensitive */
+
                 const QContactDetailRangeFilter cdf(filter);
                 if (cdf.detailDefinitionName().isEmpty())
                     return false; /* we do not know which field to check */
@@ -1839,55 +1887,44 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
                 const int maxComp = cdf.rangeFlags() & QContactDetailRangeFilter::IncludeUpper ? 1 : 0;
 
-                const bool testMin = cdf.minValue().isValid();
-                const bool testMax = cdf.maxValue().isValid();
-
-                /* At this point we know that at least of testMin & testMax is true */
-
                 /* Case sensitivity, for those parts that use it */
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & QContactFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
+                if (cdf.matchFlags() & QContactFilter::MatchFixedString) {
                     /* We're strictly doing string comparisons here */
-                    //bool matchStarts = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
-                    bool matchEnds = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
-                    bool matchContains = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
-
-                    /* Min/Max and contains do not make sense */
-                    if (matchContains)
-                        return false;
-
                     QString minVal = cdf.minValue().toString();
                     QString maxVal = cdf.maxValue().toString();
 
-                    /* Starts with is the normal compare case, endsWith is a bit trickier */
+                    const bool testMin = !minVal.isEmpty();
+                    const bool testMax = !maxVal.isEmpty();
+
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
+
+                        // The detail has to have a field of this type in order to be compared.
+                        if (!detail.variantValue(cdf.detailFieldName()).isValid())
+                            continue;
                         const QString& var = detail.value(cdf.detailFieldName());
-                        if (!matchEnds) {
-                            // MatchStarts or MatchFixedString
-                            if (testMin && QString::compare(var, minVal, cs) < minComp)
-                                continue;
-                            if (testMax && QString::compare(var, maxVal, cs) >= maxComp)
-                                continue;
-                            return true;
-                        } else {
-                            /* Have to test the length of min & max */
-                            // using refs means the parameter order is backwards, so negate the result of compare
-                            if (testMin && -QString::compare(minVal, var.rightRef(minVal.length()), cs) < minComp)
-                                continue;
-                            if (testMax && -QString::compare(maxVal, var.rightRef(maxVal.length()), cs) >= maxComp)
-                                continue;
-                            return true;
-                        }
+                        if (testMin && compareStrings(var, minVal, cs) < minComp)
+                            continue;
+                        if (testMax && compareStrings(var, maxVal, cs) >= maxComp)
+                            continue;
+                        return true;
                     }
                     // Fall through to end
                 } else {
+                    const bool testMin = cdf.minValue().isValid();
+                    const bool testMax = cdf.maxValue().isValid();
+
                     /* Nope, testing the values as a variant */
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
                         const QVariant& var = detail.variantValue(cdf.detailFieldName());
+
+                        // The detail has to have a field of this type in order to be compared.
+                        if (!var.isValid())
+                            continue;
 
                         if (testMin && compareVariant(var, cdf.minValue(), cs) < minComp)
                             continue;
@@ -2021,10 +2058,7 @@ void QContactManagerEngine::setContactRelationships(QContact* contact, const QLi
  */
 int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, const QList<QContactSortOrder>& sortOrders)
 {
-    QList<QContactSortOrder> copy = sortOrders;
-    while (copy.size()) {
-        // retrieve the next sort order in the list
-        QContactSortOrder sortOrder = copy.takeFirst();
+    foreach(const QContactSortOrder& sortOrder, sortOrders) {
         if (!sortOrder.isValid())
             break;
 
@@ -2061,47 +2095,51 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
     return 0; // or according to id? return (a.id() < b.id() ? -1 : 1);
 }
 
+/* A functor that returns true iff a is less than b, according to the sortOrders passed in to the
+ * ctor.  The sortOrders pointer passed in must remain valid for the lifetime of the functor. */
+class ContactLessThan {
+    public:
+        ContactLessThan(const QList<QContactSortOrder>* sortOrders) : mSortOrders(sortOrders) {}
+        bool operator()(const QContact& a, const QContact& b) const
+        {
+            return QContactManagerEngine::compareContact(a, b, *mSortOrders) < 0;
+        }
+    private:
+        const QList<QContactSortOrder>* mSortOrders;
+};
 
 /*!
   Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
-  The first QContactSortOrder in the list has the highest priority; if the contact \a toAdd is deemed equal to another
-  in the \a sorted list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted
-  or there are no more sort order objects in the list).
+  The first QContactSortOrder in the list has the highest priority: if the contact \a toAdd is deemed equal to another
+  in the \a sorted list according to the first QContactSortOrder, the second QContactSortOrder in the list is used (and
+  so on until either the contact is inserted or there are no more sort order objects in the list).
+
+  If a contact is equal to another contact according to all sort orders, it is inserted after the previously-added contact.
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders)
 {
     if (sortOrders.count() > 0) {
-        for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new contact should be inserted here
-            int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
-            if (comparison > 0) {
-                sorted->insert(i, toAdd);
-                return;
-            }
-        }
+        ContactLessThan lessThan(&sortOrders);
+        QList<QContact>::iterator it(qUpperBound(sorted->begin(), sorted->end(), toAdd, lessThan));
+        sorted->insert(it, toAdd);
+    } else {
+        // no sort order? just add it to the end
+        sorted->append(toAdd);
     }
-
-    // hasn't been inserted yet?  append to the list.
-    sorted->append(toAdd);
 }
 
 /*! Sorts the given list of contacts \a cs according to the provided \a sortOrders */
 QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QContactLocalId> sortedIds;
-    QList<QContact> sortedContacts;
+    QList<QContact> sortedContacts = cs;
     if (!sortOrders.isEmpty()) {
-        foreach (const QContact& c, cs) {
-            QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
-        }
+        ContactLessThan lessThan(&sortOrders);
+        qStableSort(sortedContacts.begin(), sortedContacts.end(), lessThan);
+    }
 
-        foreach(const QContact& c, sortedContacts) {
-            sortedIds.append(c.localId());
-        }
-    } else {
-        foreach(const QContact& c, cs) {
-            sortedIds.append(c.localId());
-        }
+    foreach(const QContact& c, sortedContacts) {
+        sortedIds.append(c.localId());
     }
     return sortedIds;
 }
@@ -2184,17 +2222,17 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
 void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactLocalIdFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_ids = result;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2209,17 +2247,17 @@ void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetc
 void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactFetchRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_contacts = result;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2234,17 +2272,17 @@ void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req,
 void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRemoveRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_errors = errorMap;
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2259,8 +2297,8 @@ void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* re
 void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactSaveRequest> ireq(req); // Take this in case the first emit deletes us
-        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(ireq->d_ptr);
+        QWeakPointer<QContactSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(ireq.data()->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
         rd->m_contacts = result;
@@ -2268,9 +2306,9 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2285,7 +2323,7 @@ void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, c
 void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionSaveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2294,9 +2332,9 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2311,7 +2349,7 @@ void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinition
 void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionRemoveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionRemoveRequestPrivate* rd = static_cast<QContactDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2319,9 +2357,9 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2336,7 +2374,7 @@ void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefiniti
 void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactDetailDefinitionFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactDetailDefinitionFetchRequest> ireq(req); // Take this in case the first emit deletes us
         QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2345,9 +2383,9 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2362,7 +2400,7 @@ void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitio
 void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSaveRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipSaveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipSaveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2371,9 +2409,9 @@ void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSa
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2388,7 +2426,7 @@ void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSa
 void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipRemoveRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipRemoveRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipRemoveRequestPrivate* rd = static_cast<QContactRelationshipRemoveRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2396,9 +2434,9 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 
@@ -2413,7 +2451,7 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
 void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipFetchRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, QContactAbstractRequest::State newState)
 {
     if (req) {
-        QPointer<QContactRelationshipFetchRequest> ireq(req); // Take this in case the first emit deletes us
+        QWeakPointer<QContactRelationshipFetchRequest> ireq(req); // Take this in case the first emit deletes us
         QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
         QMutexLocker ml(&rd->m_mutex);
         bool emitState = rd->m_state != newState;
@@ -2421,9 +2459,9 @@ void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipF
         rd->m_error = error;
         rd->m_state = newState;
         ml.unlock();
-        emit ireq->resultsAvailable();
+        emit ireq.data()->resultsAvailable();
         if (emitState && ireq)
-            emit ireq->stateChanged(newState);
+            emit ireq.data()->stateChanged(newState);
     }
 }
 

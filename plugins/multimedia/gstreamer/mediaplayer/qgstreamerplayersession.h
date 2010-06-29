@@ -91,14 +91,14 @@ public:
     void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
-    QMap<QtMediaServices::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
+    QMap<QtMultimediaKit::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
     QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes.value(streamNumber, QMediaStreamsControl::UnknownStream); }
 
     int activeStream(QMediaStreamsControl::StreamType streamType) const;
     void setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber);
 
-    bool processSyncMessage(const QGstreamerMessage &message);
+    bool processSyncMessage(const QGstreamerMessage &message);    
 
 public slots:
     void load(const QUrl &url);
@@ -132,18 +132,29 @@ private slots:
     void busMessage(const QGstreamerMessage &message);
     void getStreamsInfo();
     void setSeekable(bool);
+    void finishVideoOutputChange();
+    void updateVideoRenderer();
 
 private:
     QUrl m_url;
     QMediaPlayer::State m_state;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
-    GstElement* m_nullVideoOutput;
+
+    GstElement* m_videoOutputBin;
+    GstElement* m_videoIdentity;
+    GstElement* m_colorSpace;
+    GstElement* m_videoScale;
+    GstElement* m_videoSink;
+    GstElement* m_pendingVideoSink;
+    GstElement* m_nullVideoSink;
+
     GstBus* m_bus;
+    QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QtMediaServices::MetaData,QVariant> > m_streamProperties;
+    QList< QMap<QtMultimediaKit::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
     QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 

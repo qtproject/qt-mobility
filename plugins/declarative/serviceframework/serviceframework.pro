@@ -1,9 +1,11 @@
 INCLUDEPATH += ../../../src/serviceframework
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_serviceframework
+TARGET  = $$qtLibraryTarget(declarative_serviceframework)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = QtMobility/serviceframework
-include(../../qimportbase.pri)
+PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
@@ -11,16 +13,15 @@ QT += declarative
 HEADERS += qdeclarativeservice.h
 
 SOURCES += qdeclarativeservice.cpp \
-           serviceframework.cpp \
+           serviceframework.cpp 
 
 CONFIG += mobility
 MOBILITY += serviceframework
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 

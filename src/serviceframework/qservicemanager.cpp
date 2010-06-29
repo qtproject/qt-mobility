@@ -42,8 +42,19 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
+#include "qserviceinterfacedescriptor_p.h"
 #ifdef Q_OS_SYMBIAN
-    #include "databasemanager_s60_p.h"
+    #include "qremoteservicecontrol_s60_p.h"
+#else
+    #include "qremoteservicecontrol_p.h"
+/*#elif QT_NO_DBUS
+    #include "qremoteservicecontrol_p.h"
+#else
+    #include "qremoteservicecontrol_dbus_p.h"*/
+#endif
+
+#ifdef Q_OS_SYMBIAN
+    #include "databasemanager_symbian_p.h"
 #else
     #include "databasemanager_p.h"
 #endif
@@ -53,6 +64,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QDir>
+#include <QSystemSemaphore>
 
 QTM_BEGIN_NAMESPACE
 
@@ -82,15 +94,32 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             lib.unload();
             return libPath;
         }
-#else       
+#else
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
             return lib.fileName();
         }
-#endif        
+#endif
     }
     return QString();
+}
+
+/*!
+    For now we assume that localsocket means IPC via QLocalSocket and
+    dbus means IPC via QDBusConnection on the system bus.
+    This needs to be extended as new IPC mechanisms are incorporated.
+*/
+static bool qservicemanager_isIpcBasedService(const QString& location)
+{
+    // Shall be generalized later on
+    // TODO: we don't actually have to specify the specific ipc mechanism
+    // a simple flag would do.
+    if (location.startsWith("localsocket:") ||
+        location.startsWith("symbianclientserver:") ||
+        location.startsWith("dbus:"))
+        return true;
+    return false;
 }
 
 
@@ -232,7 +261,7 @@ private slots:
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
     \value ComponentNotFound The service or interface implementation has not been registered.
-    \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
+    \value ServiceCapabilityDenied The security session does not permit service access based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
 
@@ -393,8 +422,20 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;
     }
 
-    QString serviceFilePath = qservicemanager_resolveLibraryPath(
-            descriptor.attribute(QServiceInterfaceDescriptor::Location).toString());
+    const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
+    if (qservicemanager_isIpcBasedService(location)) {
+        const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
+                .arg(descriptor.minorVersion()).toLatin1();
+        const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
+        QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
+        if (!service)
+            d->setError(InvalidServiceLocation);
+
+        //client owns proxy object
+        return service;
+    }
+
+    const QString serviceFilePath = qservicemanager_resolveLibraryPath(location);
     if (serviceFilePath.isEmpty()) {
         d->setError(InvalidServiceLocation);
         return 0;
@@ -406,11 +447,36 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
-        QObject *obj = pluginIFace->createInstance(descriptor, context, session);
-        if (obj) {
-            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
-            QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
-            return obj;
+
+        //check initialization first as the service may be a pre-registered one
+        bool doLoading = true;
+        QString serviceInitialized = descriptor.customAttribute(SERVICE_INITIALIZED_ATTR);
+        if (!serviceInitialized.isEmpty() && (serviceInitialized == QLatin1String("NO"))) {
+            // open/create the semaphore using the service's name as identifier
+            QSystemSemaphore semaphore(descriptor.serviceName(), 1);
+            if (semaphore.error() != QSystemSemaphore::NoError) {
+                //try to create it
+                semaphore.setKey(descriptor.serviceName(), 1, QSystemSemaphore::Create);
+            }
+            if (semaphore.error() == QSystemSemaphore::NoError && semaphore.acquire()) {
+                pluginIFace->installService();
+                DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
+                        DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
+                d->dbManager->serviceInitialized(descriptor.serviceName(), scope);
+                // release semaphore
+                semaphore.release();
+            }
+            else
+                doLoading = false;
+        }
+
+        if (doLoading) {
+            QObject *obj = pluginIFace->createInstance(descriptor, context, session);
+            if (obj) {
+                QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
+                QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
+                return obj;
+            }
         }
     }
 
@@ -432,7 +498,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If \a interfaceName is not a known interface the returned pointer will be null.
 
     Note that using this function implies that service and client share
-    the implamentation of T which means that service and client become tightly coupled.
+    the implementation of T which means that service and client become tightly coupled.
     This may cause issue during later updates as certain changes may require code changes
     to the service and client.
 
@@ -457,7 +523,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     If the \a serviceDescriptor is not valid the returned pointer will be null.
 
     Note that using this function implies that service and client share
-    the implamentation of T which means that service and client become tightly coupled.
+    the implementation of T which means that service and client become tightly coupled.
     This may cause issue during later updates as certain changes may require code changes
     to the service and client.
 
@@ -527,7 +593,14 @@ bool QServiceManager::addService(QIODevice *device)
     DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
+
     bool result = d->dbManager->registerService(results, scope);
+
+    //ipc services cannot be test loaded
+    if (qservicemanager_isIpcBasedService(results.location))
+        return result;
+
+    //test the new plug-in
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
@@ -543,6 +616,7 @@ bool QServiceManager::addService(QIODevice *device)
     } else {
         d->setError();
     }
+
     return result;
 }
 
@@ -577,8 +651,12 @@ bool QServiceManager::removeService(const QString& serviceName)
 
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
-    for (int i=0; i<descriptors.count(); i++)
-        pluginPathsSet << descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
+    for (int i=0; i<descriptors.count(); i++) {
+        const QString loc = descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
+        //exclude ipc services
+        if (!qservicemanager_isIpcBasedService(loc))
+            pluginPathsSet << loc;
+    }
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {

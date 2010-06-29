@@ -13,10 +13,12 @@ headerdirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/telephony \
              ../../src/sensors \
+             ../../src/camera \
              .
 
 sourcedirs = ../../src/bearer \
@@ -26,16 +28,19 @@ sourcedirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/telephony \
              ../../src/sensors \
+             ../../src/camera \
              .
 
 excludedirs = ../../src/messaging/win32wce \
               ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
+              ../../demos \
               ../.. \
               .
 
