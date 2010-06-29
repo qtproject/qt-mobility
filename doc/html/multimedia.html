@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- multimedia.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Multimedia</title>
+  <title>Qt Mobility Project 1.1: Multimedia</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -111,6 +111,15 @@
 <p><a href="qradiotunercontrol.html">QRadioTunerControl</a> is a pure virtual base class that will be the basis for any platform specific radio device control. When the functions are implemented the developer will be able to quickly produce an application that supports the typical uses of an FM radio including tuning, volume, start, stop and various other controls.</p>
 <a name="extending-the-api-for-symbian-and-maemo"></a>
 <h3>Extending the API for Symbian and Maemo</h3>
+<p>For the developer who wishes to extend the functionality of the Multimedia classes there are several classes of particular importance. The default classes are <a href="qmediaservice.html">QMediaService</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
+<p>Basically, the idea is that to use the Multimedia API you would use these three classes or classes derived from them as follows</p>
+<ul>
+<li><a href="qmediaserviceprovider.html">QMediaServiceProvider</a> is used by the top level client class to request a service. The top level class knowing what kind of service it needs.</li>
+<li><a href="qmediaservice.html">QMediaService</a> provides a service and when asked by the top level object, say a component, will return a <a href="qmediacontrol.html">QMediaControl</a> object.</li>
+<li><a href="qmediacontrol.html">QMediaControl</a> allows the control of the service using a known interface.</li>
+</ul>
+<p>Consider a developer creating, for example, a media player class called MyPlayer. It may have special requirements beyond ordinary media players and so may need a custom service and a custom control. We can subclass <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> to create out MyServiceProvider class. Also we will create a MyMediaService, and the MyMediaControl to manipulate the media service.</p>
+<p>The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling control() it will receive the control object derived from <a href="qmediacontrol.html">QMediaControl</a>. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to control() is a c-type string, <i>const char *</i>, for the interface.</p>
 <a name="adding-a-media-service-provider"></a>
 <h4>Adding a Media Service Provider</h4>
 <p>The base class for creating new service providers is <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>. The user must implement the <a href="qmediaserviceprovider.html#requestService">requestService()</a> function</p>
@@ -203,6 +212,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

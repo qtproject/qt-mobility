@@ -5,13 +5,14 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-               bluetoothtransferplugin \
-               notesmanagerplugin \
-               servicebrowser
+            bluetoothtransferplugin \
+            notesmanagerplugin \
+            servicebrowser
 
+    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    contains(QT_CONFIG, declarative) {
+    !symbian:contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -30,21 +31,16 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
 		satellitedialog
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo \
-		    weatherinfo \
-		    lightmaps
+    	SUBDIRS += flickrdemo
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
-    }		
+    }
 }
 
 #Contacts examples
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
-    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        sources.files += qmlcontacts
-    }
 }
 
 #Publish and Subscribe examples
@@ -64,10 +60,8 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
-    #disabled on Symbian due to missing backend
     SUBDIRS += \
         radio \
-        player \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -84,8 +78,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
         !win32-g++ {
 	    SUBDIRS += \
                 querymessages \
-                writemessage \
-                serviceactions
+                writemessage
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
@@ -102,5 +95,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
+sources.path = $$QT_MOBILITY_EXAMPLES
 INSTALLS += sources

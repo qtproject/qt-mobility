@@ -55,6 +55,7 @@ set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
+set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework multimedia
@@ -81,8 +82,11 @@ if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
 if "%1" == "-plugindir"         goto pluginTag
+if "%1" == "-examplesdir"       goto examplesDirTag
+if "%1" == "-demosdir"          goto demosDirTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
+if "%1" == "-demos"             goto demosTag
 if "%1" == "-qt"                goto qtTag
 if "%1" == "-vc"                goto vcTag
 if "%1" == "-no-docs"           goto nodocsTag
@@ -115,6 +119,10 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/bin)
     echo -plugindir (dir) .. Plug-ins will be installed to dir
     echo                     (default PREFIX/plugins)
+    echo -examplesdir (dir)  Examples will be installed to dir
+    echo                     (default PREFIX/bin)
+    echo -demosdir (dir) ... Demos will be installed to dir
+    echo                     (default PREFIX/bin)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -122,6 +130,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     Note, this adds test symbols to all libraries
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
+    echo -demos ............ Build demo applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
@@ -191,6 +200,20 @@ shift
 echo
 goto cmdline_parsing
 
+:examplesDirTag
+shift
+echo QT_MOBILITY_EXAMPLES = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
+:demosDirTag
+shift
+echo QT_MOBILITY_DEMOS =%1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
 :unfrozenTag
 REM Should never be used in release builds
 REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the
@@ -210,6 +233,11 @@ goto cmdline_parsing
 
 :exampleTag
 set BUILD_EXAMPLES=yes
+shift
+goto cmdline_parsing
+
+:demosTag
+set BUILD_DEMOS=yes
 shift
 goto cmdline_parsing
 
@@ -331,6 +359,9 @@ set BUILD_UNITTESTS=
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
 
+echo build_demos = %BUILD_DEMOS% >> %PROJECT_CONFIG%
+set BUILD_DEMOS=
+
 echo build_docs = %BUILD_DOCS% >> %PROJECT_CONFIG%
 set BUILD_DOCS=
 
@@ -339,14 +370,14 @@ set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
-echo !symbian:isEmpty(QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
-echo isEmpty(QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
-echo isEmpty(QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
-echo isEmpty(QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
+echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-REM no Sysinfo support on Maemo yet
-echo maemo5^|maemo6:mobility_modules -= systeminfo >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
@@ -589,9 +620,11 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-SET REMAINING=
-SET FIRST=
-SET MODULES_TEMP=
+set REMAINING=
+set FIRST=
+set MODULES_TEMP=
+set QT_MOBILITY_EXAMPLES=
+set QT_MOBILITY_DEMOS=
 exit /b 1
 
 :exitTag
@@ -606,7 +639,9 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-SET REMAINING=
-SET FIRST=
-SET MODULES_TEMP=
+set REMAINING=
+set FIRST=
+set MODULES_TEMP=
+set QT_MOBILITY_EXAMPLES=
+set QT_MOBILITY_DEMOS=
 exit /b 0

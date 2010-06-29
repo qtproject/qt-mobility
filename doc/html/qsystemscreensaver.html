@@ -2,9 +2,9 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qsysteminfo.cpp -->
+<!-- qsystemgeneralinfo.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QSystemScreenSaver Class Reference</title>
+  <title>Qt Mobility Project 1.1: QSystemScreenSaver Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -68,20 +68,19 @@
 <a name="//apple_ref/cpp/instm/QSystemScreenSaver/QSystemScreenSaver"></a>
 <h3 class="fn"><a name="QSystemScreenSaver"></a>QSystemScreenSaver::QSystemScreenSaver ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object with the given <i>parent</i>.</p>
-<p>On platforms where there is no default screensaver mechanism, such as Linux, this class may not be available.</p>
+<p>On platforms where there is no one default screensaver mechanism, such as Linux, this class may not be available.</p>
 <a name="//apple_ref/cpp/instm/QSystemScreenSaver/~QSystemScreenSaver"></a>
 <h3 class="fn"><a name="dtor.QSystemScreenSaver"></a>QSystemScreenSaver::~QSystemScreenSaver ()</h3>
 <p>Destroys the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object.</p>
 <a name="//apple_ref/cpp/instm/QSystemScreenSaver/setScreenSaverInhibit"></a>
 <h3 class="fn"><a name="setScreenSaverInhibit"></a>bool QSystemScreenSaver::setScreenSaverInhibit ()</h3>
 <p>Temporarily inhibits the screensaver.</p>
-<p>The screensaver will be set to a non inhibited state only when this <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object gets destroyed.</p>
-<p>This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.</p>
+<p>Will be reverted upon destruction of the <a href="qsystemscreensaver.html">QSystemScreenSaver</a> object. Returns true on success, otherwise false.</p>
 <p>On platforms that support it, if screensaver is secure by policy, the policy will be honored and this will fail.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

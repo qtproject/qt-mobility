@@ -6,8 +6,22 @@ QT+= network
 include(../../common.pri)
 
 # Input
-PUBLIC_HEADERS +=   qsysteminfo.h
-SOURCES += qsysteminfo.cpp
+PUBLIC_HEADERS +=   qsysteminfo.h \
+    qsystemgeneralinfo.h \
+    qsystemdeviceinfo.h \
+    qsystemdisplayinfo.h \
+    qsystemnetworkinfo.h \
+    qsystemscreensaver.h \
+    qsystemstorageinfo.h \
+    qsysteminfocommon.h
+
+SOURCES += qsystemgeneralinfo.cpp \
+    qsystemdeviceinfo.cpp \
+    qsystemdisplayinfo.cpp \
+    qsystemnetworkinfo.cpp \
+    qsystemscreensaver.cpp \
+    qsystemstorageinfo.cpp
+
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
@@ -43,10 +57,12 @@ win32:!simulator {
 unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
+        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
     !maemo5:!maemo6:linux-*: {
+LIBS+=-lX11 -lXrandr
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): {
@@ -87,7 +103,7 @@ unix:!simulator {
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
          -framework CoreServices -framework ScreenSaver -framework QTKit \
-         -framework IOBluetooth
+         -framework DiskArbitration -framework IOBluetooth
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {

@@ -76,7 +76,7 @@
 #include <QDesktopWidget>
 #include <QDebug>
 
-
+#include <QMetaType>
 #include <locale.h>
 
 QTM_BEGIN_NAMESPACE
@@ -491,6 +491,18 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     : QObject(parent), d(netInfoPrivate())
 {
+    qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
+
+    connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+
 }
 
 /*!
@@ -599,7 +611,7 @@ QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 /*!
   Returns the MAC address for the interface servicing the network \a mode.
   */
-QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
+void QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     return netInfoPrivate()->macAddress(mode);
 }
@@ -770,6 +782,7 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     : QObject(parent)
 {
+    qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
 }
 
 /*!
@@ -825,7 +838,12 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
-
+            connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+       connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+            connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
 }
 
 /*!

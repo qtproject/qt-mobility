@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
-#include "qsysteminfo_maemo_p.h"
-
+#include "qsysteminfocommon.h"
+#include <qsysteminfo_maemo_p.h>
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -1209,7 +1208,6 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
     if (active) {
-        const QSystemDeviceInfo::Profile previousProfile = currentProfile();
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             if (value.key == "ringing.alert.type")
@@ -1219,9 +1217,8 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
         }
-        QSystemDeviceInfo::Profile newProfile = currentProfile();
-        if (previousProfile != newProfile)
-           emit currentProfileChanged(newProfile);
+        if (changed)
+            emit currentProfileChanged(currentProfile());
     }
 }
 

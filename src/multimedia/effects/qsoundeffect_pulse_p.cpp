@@ -47,7 +47,7 @@
 // implementation detail. This header file may change from version to
 // version without notice, or even be removed.
 //
-// We mean it.
+// Do not use this file directly.
 //
 
 #include <QtCore/qcoreapplication.h>
