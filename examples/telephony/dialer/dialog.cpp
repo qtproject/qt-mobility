@@ -41,7 +41,20 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-#include "linux/dialer.h"
+#if defined(Q_WS_MAEMO5)
+# include "dialer_maemo.h"
+#else
+# ifdef Q_OS_LINUX
+#  include "linux/dialer.h"
+# endif
+# ifdef Q_OS_WIN
+#  include "dialer_win.h"
+# endif
+# ifdef Q_OS_SYMBIAN
+#  include "dialer_symbian.h"
+# endif
+#endif
+
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
