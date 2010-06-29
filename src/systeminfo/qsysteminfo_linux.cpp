@@ -41,6 +41,8 @@
 #include "qsysteminfocommon.h"
 #include <qsysteminfo_linux_p.h>
 
+#include <unistd.h> // for getppid
+
 #include <QStringList>
 #include <QSize>
 #include <QFile>

@@ -15,7 +15,7 @@ INCLUDEPATH += ../../src/global \
                 ../../examples/satellitedialog \
                 ../../examples/flickrdemo
 
-include(../../examples/examples.pri)
+include(../demos.pri)
 
 CONFIG += mobility
 MOBILITY = location bearer

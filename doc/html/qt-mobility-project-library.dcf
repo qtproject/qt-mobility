@@ -2615,6 +2615,22 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+        <keyword ref="qremoteserviceclassregister.html">QRemoteServiceClassRegister</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">InstanceType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::SharedInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::UniqueInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#registerType">registerType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#types">types</keyword>
+        <keyword ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</keyword>
+        <keyword ref="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</keyword>
+        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+    </section>
+    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+        <keyword ref="qremoteservicecontrol.html">QRemoteServiceControl</keyword>
+        <keyword ref="qremoteservicecontrol.html#publishServices">publishServices</keyword>
+        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+    </section>
     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
         <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
         <keyword ref="qrotationfilter.html#filter">filter</keyword>
@@ -2978,8 +2994,7 @@
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemoteDrive</keyword>
         <keyword ref="qsystemstorageinfo.html#logicalDrives-prop">logicalDrives</keyword>
         <keyword ref="qsystemstorageinfo.html#availableDiskSpace">availableDiskSpace</keyword>
-        <keyword ref="qsystemstorageinfo.html#storageAdded">storageAdded</keyword>
-        <keyword ref="qsystemstorageinfo.html#storageRemoved">storageRemoved</keyword>
+        <keyword ref="qsystemstorageinfo.html#logicalDrivesChanged">logicalDrivesChanged</keyword>
         <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
@@ -3564,6 +3579,9 @@
     </section>
     <section ref="bearer-management.html" title="Bearer Management">
         <keyword ref="bearer-management.html">Bearer Management</keyword>
+    </section>
+    <section ref="camera.html" title="Camera">
+        <keyword ref="camera.html">Camera</keyword>
     </section>
     <section ref="classlists.html" title="Class and Function Documentation">
         <keyword ref="classlists.html">Class and Function Documentation</keyword>

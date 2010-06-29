@@ -86,6 +86,8 @@ QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
 QT_MOBILITY_PLUGINS=
+QT_MOBILITY_EXAMPLES=
+QT_MOBILITY_DEMOS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DEMOS=
@@ -123,6 +125,10 @@ usage()
     echo "                    (default PREFIX/bin)"
     echo "-plugindir <dir> .. Plug-ins will be installed to <dir>"
     echo "                    (default PREFIX/plugins)"
+    echo "-demosdir <dir> ... Demos will be installed to <dir>"
+    echo "                    (default PREFIX/bin)"
+    echo "-examplesdir <dir>  Examples will be installed to <dir>"
+    echo "                    (default PREFIX/bin)"
     echo "-debug ............ Build with debugging symbols"
     echo "-release .......... Build without debugging symbols"
     echo "-silent ........... Reduces build output"
@@ -143,7 +149,7 @@ usage()
     echo "                    will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
     echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
-    echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
+    echo "-sdk <sdk>......... Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
     
@@ -178,6 +184,14 @@ while [ "$#" -gt 0 ]; do
             ;;
         -plugindir)
             QT_MOBILITY_PLUGINS="$2"
+            shift
+            ;;
+        -examplesdir)
+            QT_MOBILITY_EXAMPLES="$2"
+            shift
+            ;;
+        -demosdir)
+            QT_MOBILITY_DEMOS="$2"
             shift
             ;;
         -tests)
@@ -367,6 +381,28 @@ else
 fi
 echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
 
+#process examples path
+if [ -z "$QT_MOBILITY_EXAMPLES" ]; then
+    QT_MOBILITY_EXAMPLES="$QT_MOBILITY_PREFIX/$BIN_PATH"
+else
+    QT_MOBILITY_EXAMPLES=`absPath $QT_MOBILITY_EXAMPLES $LINUX_TARGET`
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
+fi
+echo "QT_MOBILITY_EXAMPLES = $QT_MOBILITY_EXAMPLES" >> "$CONFIG_IN"
+
+#process demos path
+if [ -z "$QT_MOBILITY_DEMOS" ]; then
+    QT_MOBILITY_DEMOS="$QT_MOBILITY_PREFIX/$BIN_PATH"
+else
+    QT_MOBILITY_DEMOS=`absPath $QT_MOBILITY_DEMOS $LINUX_TARGET`
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
+fi
+echo "QT_MOBILITY_DEMOS = $QT_MOBILITY_DEMOS" >> "$CONFIG_IN"
+
 
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
 echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"
@@ -473,6 +509,7 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 compileTest "Maemo5 contacts dependencies" maemo5-contacts
+compileTest "Bluez" bluez
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else

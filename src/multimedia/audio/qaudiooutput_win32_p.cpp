@@ -95,7 +95,9 @@
 
 #endif
 
-#define _KSDATAFORMAT_SUBTYPE_PCM (GUID) {0x00000001,0x0000,0x0010,{0x80,0x00,0x00,0xaa,0x00,0x38,0x9b,0x71}}
+#if !defined(WAVE_FORMAT_EXTENSIBLE)
+#define WAVE_FORMAT_EXTENSIBLE 0xFFFE
+#endif
 
 //#define DEBUG_AUDIO 1
 
@@ -344,6 +346,8 @@ bool QAudioOutputPrivate::open()
         wfex.Format.nBlockAlign = wfex.Format.nChannels*wfex.Format.wBitsPerSample/8;
         wfex.Format.nAvgBytesPerSec=wfex.Format.nSamplesPerSec*wfex.Format.nBlockAlign;
         wfex.Samples.wValidBitsPerSample=wfex.Format.wBitsPerSample;
+        static const GUID _KSDATAFORMAT_SUBTYPE_PCM = {
+             0x00000001, 0x0000, 0x0010, {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}};
         wfex.SubFormat=_KSDATAFORMAT_SUBTYPE_PCM;
         wfex.Format.cbSize=22;
 

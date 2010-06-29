@@ -2107,6 +2107,15 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageId::isValid" href="qmessageid.html#isValid" location="qmessageid_stub.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageIdList" href="#QMessageIdList-typedef" location="qmessageid.h"/>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRemoteServiceControl" href="qremoteservicecontrol.html" location="qremoteservicecontrol.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QRemoteServiceControl" fullname="QRemoteServiceControl::QRemoteServiceControl" href="qremoteservicecontrol.html#QRemoteServiceControl" location="qremoteservicecontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRemoteServiceControl(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QRemoteServiceControl" fullname="QRemoteServiceControl::~QRemoteServiceControl" href="qremoteservicecontrol.html#dtor.QRemoteServiceControl" location="qremoteservicecontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRemoteServiceControl()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="publishServices" fullname="QRemoteServiceControl::publishServices" href="qremoteservicecontrol.html#publishServices" location="qremoteservicecontrol.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="publishServices(const QString &amp; ident)">
+                <parameter left="const QString &amp;" right="" name="ident" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="EventType" fullname="QContactChangeLogFilter::EventType" href="qcontactchangelogfilter.html#EventType-enum" location="qcontactchangelogfilter.h">
                 <value name="EventAdded" value="0"/>
@@ -4560,6 +4569,17 @@
                 <parameter left="const QContactLocalId &amp;" right="" name="id" default=""/>
             </function>
         </class>
+        <typedef access="public" threadsafety="unspecified" status="commendable" name="QRemoteServiceIdentifier" href="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef" location="qremoteserviceclassregister.h"/>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRemoteServiceClassRegister" href="qremoteserviceclassregister.html" location="qremoteserviceclassregister.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="InstanceType" fullname="QRemoteServiceClassRegister::InstanceType" href="qremoteserviceclassregister.html#InstanceType-enum" location="qremoteserviceclassregister.h">
+                <value name="SharedInstance" value="0"/>
+                <value name="UniqueInstance" value="1"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="types" fullname="QRemoteServiceClassRegister::types" href="qremoteserviceclassregister.html#types" location="qremoteserviceclassregister.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QRemoteServiceIdentifier&gt;" signature="types() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="registerType" fullname="QRemoteServiceClassRegister::registerType" href="qremoteserviceclassregister.html#registerType" location="qremoteserviceclassregister.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="registerType(QRemoteServiceClassRegister::InstanceType type)">
+                <parameter left="QRemoteServiceClassRegister::InstanceType" right="" name="type" default="UniqueInstance"/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" href="qmessagefolderid.html" location="qmessagefolderid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId-2" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolderId(const QMessageFolderId &amp; other)">
@@ -6101,11 +6121,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilityMatchRule" fullname="QServiceFilter::capabilityMatchRule" href="qservicefilter.html#capabilityMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CapabilityMatchRule" signature="capabilityMatchRule() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-90" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="90" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-92" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="92" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-77" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="77" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-78" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="78" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
@@ -6296,8 +6316,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="typeForDrive" fullname="QSystemStorageInfo::typeForDrive" href="qsystemstorageinfo.html#typeForDrive" location="qsystemstorageinfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QSystemStorageInfo::DriveType" signature="typeForDrive(const QString &amp; driveVolume)">
                 <parameter left="const QString &amp;" right="" name="driveVolume" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageAdded" fullname="QSystemStorageInfo::storageAdded" href="qsystemstorageinfo.html#storageAdded" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageAdded()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="storageRemoved" fullname="QSystemStorageInfo::storageRemoved" href="qsystemstorageinfo.html#storageRemoved" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="storageRemoved()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="logicalDrivesChanged" fullname="QSystemStorageInfo::logicalDrivesChanged" href="qsystemstorageinfo.html#logicalDrivesChanged" location="qsystemstorageinfo.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="logicalDrivesChanged(bool added)">
+                <parameter left="bool" right="" name="added" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpaceSubscriber" href="qvaluespacesubscriber.html" location="qvaluespacesubscriber.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QValueSpaceSubscriber::path" href="qvaluespacesubscriber.html#path-prop" location="qvaluespacesubscriber.h" type="QString">
@@ -7090,11 +7111,11 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="customAttributes" fullname="QServiceInterfaceDescriptor::customAttributes" href="qserviceinterfacedescriptor.html#customAttributes" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributes() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-92" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="92" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-94" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="94" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-78" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="78" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-79" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="79" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
@@ -7288,6 +7309,15 @@
             <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.h" href="filemanagerplugin-filemanagertransfer-h.html" subtype="file" title="" fulltitle="filemanagertransfer.h Example File" subtitle="filemanagerplugin/filemanagertransfer.h" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.pro" href="filemanagerplugin-filemanagerplugin-pro.html" subtype="file" title="" fulltitle="filemanagerplugin.pro Example File" subtitle="filemanagerplugin/filemanagerplugin.pro" location=""/>
         </page>
+        <page access="public" status="commendable" name="camera.html" href="camera.html" subtype="page" title="Camera" fulltitle="Camera" subtitle="" location="camera.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="still-images" title="Still Images" level="1"/>
+            <contents name="video-clips" title="Video Clips" level="1"/>
+            <contents name="focus" title="Focus" level="1"/>
+            <contents name="cancelling-asynchronous-operations" title="Cancelling Asynchronous Operations" level="1"/>
+            <contents name="camera-controls" title="Camera Controls" level="1"/>
+            <contents name="classes" title="Classes" level="1"/>
+        </page>
         <page access="public" status="commendable" name="quickstart" href="quickstart.html" subtype="example" title="Quickstart Example" fulltitle="Quickstart Example" subtitle="" location="quickstart.qdoc">
             <page access="public" status="commendable" name="quickstart/main.cpp" href="quickstart-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="quickstart/main.cpp" location=""/>
             <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>
@@ -7330,6 +7360,11 @@
             <page access="public" status="commendable" name="slideshow/main.cpp" href="slideshow-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="slideshow/main.cpp" location=""/>
             <page access="public" status="commendable" name="slideshow/slideshow.pro" href="slideshow-slideshow-pro.html" subtype="file" title="" fulltitle="slideshow.pro Example File" subtitle="slideshow/slideshow.pro" location=""/>
         </page>
+        <function access="public" threadsafety="unspecified" status="commendable" name="Q_SERVICE" href="qremoteserviceclassregister.html#Q_SERVICE" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QRemoteServiceClassRegister" type="" signature="Q_SERVICE( T,  interface,  version)">
+            <parameter left="" right="" name="T" default=""/>
+            <parameter left="" right="" name="interface" default=""/>
+            <parameter left="" right="" name="version" default=""/>
+        </function>
         <function access="public" threadsafety="unspecified" status="commendable" name="QImageEncoderControl_iid" href="qimageencodercontrol.html#QImageEncoderControl_iid" location="qimageencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QImageEncoderControl" type="" signature="QImageEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVALUESPACE_AUTO_INSTALL_LAYER" href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER" location="settingslayer_symbian.cpp" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QAbstractValueSpaceLayer" type="" signature="QVALUESPACE_AUTO_INSTALL_LAYER( className)">
             <parameter left="" right="" name="className" default=""/>
