@@ -56,6 +56,7 @@ QT_BEGIN_NAMESPACE
     \preliminary
     \brief The QCameraExposure class provides interface for exposure related camera settings.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
 The Camera API of Qt Mobility is still in \bold Technology Preview. It has

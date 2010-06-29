@@ -50,6 +50,7 @@ QT_BEGIN_NAMESPACE
     \brief The QCameraImageCaptureControl class provides a control interface
     for image capture services.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
     \preliminary

@@ -63,6 +63,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaPlayer
     \brief The QMediaPlayer class allows the playing of a media source.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

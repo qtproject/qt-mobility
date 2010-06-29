@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QImageEncoderControl
     \preliminary
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \brief The QImageEncoderControl class provides access to the settings of a media service that
