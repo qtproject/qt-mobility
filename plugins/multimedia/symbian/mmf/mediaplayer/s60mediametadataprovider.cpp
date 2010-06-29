@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,7 @@
 #include <QtCore/qdebug.h>
 
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_mediaPlayerResolver(mediaPlayerResolver)
     , m_session(NULL)
 {
@@ -67,7 +67,7 @@ bool S60MediaMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant S60MediaMetaDataProvider::metaData(QtMediaServices::MetaData key) const
+QVariant S60MediaMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
     if (m_session && m_session->isMetadataAvailable())
@@ -75,21 +75,16 @@ QVariant S60MediaMetaDataProvider::metaData(QtMediaServices::MetaData key) const
     return QVariant();
 }
 
-void S60MediaMetaDataProvider::setMetaData(QtMediaServices::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-QList<QtMediaServices::MetaData> S60MediaMetaDataProvider::availableMetaData() const
+QList<QtMultimediaKit::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
-    QList<QtMediaServices::MetaData> metaDataTags;
+    QList<QtMultimediaKit::MetaData> metaDataTags;
     if (m_session && m_session->isMetadataAvailable()) {
-        for (int i = QtMediaServices::Title; i <= QtMediaServices::DeviceSettingDescription; i++) {
-            QString metaData = metaDataKeyAsString((QtMediaServices::MetaData)i);
+        for (int i = QtMultimediaKit::Title; i <= QtMultimediaKit::DeviceSettingDescription; i++) {
+            QString metaData = metaDataKeyAsString((QtMultimediaKit::MetaData)i);
             if (!metaData.isEmpty()) {
                 if (!m_session->metaData(metaData).toString().isEmpty()) {
-                    metaDataTags.append((QtMediaServices::MetaData)i);               
+                    metaDataTags.append((QtMultimediaKit::MetaData)i);
                 }
             }
         }
@@ -105,12 +100,6 @@ QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
     return QVariant();
 }
 
-void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
@@ -119,60 +108,60 @@ QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
     return QStringList();
 }
 
-QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMediaServices::MetaData key) const
+QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMultimediaKit::MetaData key) const
 {
     switch(key) {
-        case QtMediaServices::Title: return "title";
-        case QtMediaServices::AlbumArtist: return "artist";
-        case QtMediaServices::Comment: return "comment";
-        case QtMediaServices::Genre: return "genre";
-        case QtMediaServices::Year: return "year";
-        case QtMediaServices::Copyright: return "copyright";
-        case QtMediaServices::AlbumTitle: return "album";
-        case QtMediaServices::Composer: return "composer";
-        case QtMediaServices::TrackNumber: return "albumtrack";
-        case QtMediaServices::AudioBitRate: return "audiobitrate";
-        case QtMediaServices::VideoBitRate: return "videobitrate";
-        case QtMediaServices::Duration: return "duration";
-        case QtMediaServices::MediaType: return "contenttype";
-        case QtMediaServices::CoverArtImage: return "attachedpicture";
-        case QtMediaServices::SubTitle: // TODO: Find the matching metadata keys
-        case QtMediaServices::Description:
-        case QtMediaServices::Category:
-        case QtMediaServices::Date:
-        case QtMediaServices::UserRating:
-        case QtMediaServices::Keywords:
-        case QtMediaServices::Language:
-        case QtMediaServices::Publisher:
-        case QtMediaServices::ParentalRating:
-        case QtMediaServices::RatingOrganisation:
-        case QtMediaServices::Size:
-        case QtMediaServices::AudioCodec:
-        case QtMediaServices::AverageLevel:
-        case QtMediaServices::ChannelCount:
-        case QtMediaServices::PeakValue:
-        case QtMediaServices::SampleRate:
-        case QtMediaServices::Author:
-        case QtMediaServices::ContributingArtist:
-        case QtMediaServices::Conductor:
-        case QtMediaServices::Lyrics:
-        case QtMediaServices::Mood:
-        case QtMediaServices::TrackCount:
-        case QtMediaServices::CoverArtUrlSmall:
-        case QtMediaServices::CoverArtUrlLarge:        
-        case QtMediaServices::Resolution:
-        case QtMediaServices::PixelAspectRatio:
-        case QtMediaServices::VideoFrameRate:
-        case QtMediaServices::VideoCodec:
-        case QtMediaServices::PosterUrl:
-        case QtMediaServices::ChapterNumber:
-        case QtMediaServices::Director:
-        case QtMediaServices::LeadPerformer:
-        case QtMediaServices::Writer:
-        case QtMediaServices::CameraManufacturer:
-        case QtMediaServices::CameraModel:
-        case QtMediaServices::Event:
-        case QtMediaServices::Subject:
+        case QtMultimediaKit::Title: return "title";
+        case QtMultimediaKit::AlbumArtist: return "artist";
+        case QtMultimediaKit::Comment: return "comment";
+        case QtMultimediaKit::Genre: return "genre";
+        case QtMultimediaKit::Year: return "year";
+        case QtMultimediaKit::Copyright: return "copyright";
+        case QtMultimediaKit::AlbumTitle: return "album";
+        case QtMultimediaKit::Composer: return "composer";
+        case QtMultimediaKit::TrackNumber: return "albumtrack";
+        case QtMultimediaKit::AudioBitRate: return "audiobitrate";
+        case QtMultimediaKit::VideoBitRate: return "videobitrate";
+        case QtMultimediaKit::Duration: return "duration";
+        case QtMultimediaKit::MediaType: return "contenttype";
+        case QtMultimediaKit::CoverArtImage: return "attachedpicture";
+        case QtMultimediaKit::SubTitle: // TODO: Find the matching metadata keys
+        case QtMultimediaKit::Description:
+        case QtMultimediaKit::Category:
+        case QtMultimediaKit::Date:
+        case QtMultimediaKit::UserRating:
+        case QtMultimediaKit::Keywords:
+        case QtMultimediaKit::Language:
+        case QtMultimediaKit::Publisher:
+        case QtMultimediaKit::ParentalRating:
+        case QtMultimediaKit::RatingOrganisation:
+        case QtMultimediaKit::Size:
+        case QtMultimediaKit::AudioCodec:
+        case QtMultimediaKit::AverageLevel:
+        case QtMultimediaKit::ChannelCount:
+        case QtMultimediaKit::PeakValue:
+        case QtMultimediaKit::SampleRate:
+        case QtMultimediaKit::Author:
+        case QtMultimediaKit::ContributingArtist:
+        case QtMultimediaKit::Conductor:
+        case QtMultimediaKit::Lyrics:
+        case QtMultimediaKit::Mood:
+        case QtMultimediaKit::TrackCount:
+        case QtMultimediaKit::CoverArtUrlSmall:
+        case QtMultimediaKit::CoverArtUrlLarge:
+        case QtMultimediaKit::Resolution:
+        case QtMultimediaKit::PixelAspectRatio:
+        case QtMultimediaKit::VideoFrameRate:
+        case QtMultimediaKit::VideoCodec:
+        case QtMultimediaKit::PosterUrl:
+        case QtMultimediaKit::ChapterNumber:
+        case QtMultimediaKit::Director:
+        case QtMultimediaKit::LeadPerformer:
+        case QtMultimediaKit::Writer:
+        case QtMultimediaKit::CameraManufacturer:
+        case QtMultimediaKit::CameraModel:
+        case QtMultimediaKit::Event:
+        case QtMultimediaKit::Subject:
         default:
             break;
     }

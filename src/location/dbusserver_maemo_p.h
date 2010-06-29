@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,30 +43,38 @@
 #define DBUSSERVER_MAEMO_H
 
 #include <QtDBus/QDBusAbstractAdaptor>
-#include "dbuscomm_maemo_p.h"
-
 #include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"
+#include "qgeosatelliteinfo.h"
 
 QTM_BEGIN_NAMESPACE
 
-class DBusComm;
+class DBusServerIF {
+public:
+    virtual void receivePositionUpdate(const QGeoPositionInfo &update) = 0;
+    virtual void receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval) = 0;
+    virtual void receiveSatellitesInView(const QList<QGeoSatelliteInfo> &update) = 0;
+    virtual void receiveSatellitesInUse(const QList<QGeoSatelliteInfo> &update) = 0;
+};
+
+
 class DBusServer: public QDBusAbstractAdaptor
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.nokia.qlocation.updates")
 
 public:
-    DBusServer(QObject *obj);
-    void setHandlerObject(DBusComm* p);
+    DBusServer(QObject *obj, DBusServerIF *interface);
+
+public Q_SLOTS:
+    Q_NOREPLY void positionUpdate(const QByteArray &update);
+    Q_NOREPLY void satellitesInViewUpdate(const QByteArray &update);
+    Q_NOREPLY void satellitesInUseUpdate(const QByteArray &update);
+    Q_NOREPLY void currentSettings(quint32 methods, quint32 interval);
 
 private:
-    DBusComm* handler;
-
-public slots:
-    Q_NOREPLY void positionUpdate(const QByteArray &update);
-    Q_NOREPLY void currentSettings(const QGeoPositionInfoSource::PositioningMethod methods,
-                                   const int interval);
+    Q_DISABLE_COPY(DBusServer)
+    DBusServerIF *interface;
 };
 
 QTM_END_NAMESPACE

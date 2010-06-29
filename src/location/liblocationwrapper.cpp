@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -155,7 +155,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
                 coordinate.setLatitude(device->fix->latitude);
                 coordinate.setLongitude(device->fix->longitude);
                 posInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy,
-                                     device->fix->eph);
+                                     device->fix->eph / 100.0);
                 posInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy,
                                      device->fix->epv);
             }

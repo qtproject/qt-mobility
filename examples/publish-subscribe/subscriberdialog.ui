@@ -57,6 +57,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>basePath</tabstop>
+  <tabstop>connectButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

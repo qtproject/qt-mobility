@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@
 #include "cnttransformaddress.h"
 #include "cnttransformbirthday.h"
 #include "cnttransformonlineaccount.h"
+#include "cnttransformonlineaccountsimple.h"
 #include "cnttransformorganisation.h"
 #include "cnttransformavatar.h"
 #include "cnttransformringtone.h"
@@ -72,13 +73,19 @@
 
 #include <QDebug>
 
-CntTransformContact::CntTransformContact()
+CntTransformContact::CntTransformContact() :
+    m_tzConverter(0)
 {
 	initializeCntTransformContactData();
 }
 
 CntTransformContact::~CntTransformContact()
 {
+    delete m_tzConverter;
+    m_tzoneServer.Close();
+
+    m_fieldTypeToTransformContact.clear();
+
     QMap<ContactData, CntTransformContactData*>::iterator itr;
 
     for (itr = m_transformContactData.begin(); itr != m_transformContactData.end(); ++itr)
@@ -128,6 +135,7 @@ void CntTransformContact::initializeCntTransformContactData()
 
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 #endif
 }
 
@@ -139,7 +147,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
+QContact CntTransformContact::transformContactL(CContactItem &contact)
 {
     // Create a new QContact
     QContact newQtContact;
@@ -166,11 +174,7 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, const QSt
 
         if(detail)
         {
-            // add detail if user requested it.
-            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
-            {
-                newQtContact.saveDetail(detail);
-            }
+            newQtContact.saveDetail(detail);
             delete detail;
             detail = 0;
         }
@@ -187,7 +191,7 @@ void CntTransformContact::transformPostSaveDetailsL(
         const CContactItem& contactItem,
         QContact& contact,
         const CContactDatabase &contactDatabase,
-        QString managerUri) const
+        QString managerUri)
 {
     // Id
     QContactId contactId;
@@ -284,6 +288,25 @@ QList<TUid> CntTransformContact::supportedSortingFieldTypes( QString detailDefin
     return uids;
 }
 
+QList<TUid> CntTransformContact::itemFieldUidsL(const QString detailDefinitionName) const
+{
+    QList<TUid> fieldUids;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailDefinitionName)) {
+            // The leaf class supports this detail, so check which field type
+            // uids it supports, use empty field name to get all the supported uids
+            fieldUids << i.value()->supportedFields();
+
+            // Assume there are no more leaf classes for this detail
+            break;
+        }
+        i++;
+    }
+    return fieldUids;
+}
+
 TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
     {
     isSubtype = false;
@@ -355,24 +378,34 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 	return itemFieldList;
 }
 
-QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactDetail *detail(0);
 
-	if(field.ContentType().FieldTypeCount()) {
-	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+    if(field.ContentType().FieldTypeCount()) {
+        TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	    while (i != m_transformContactData.constEnd()) {
-	        if (i.value()->supportsField(fieldType)) {
-	            detail = i.value()->transformItemField(field, contact);
-	            break;
-	        }
-	        ++i;
-	     }
-	}
+        // Check if the mapping from field type to transform class pointer is available
+        // (this is faster than iterating through all the transform classes)
+        if (m_fieldTypeToTransformContact.contains(fieldType)) {
+            detail = m_fieldTypeToTransformContact[fieldType]->transformItemField(field, contact);
+        } else {
+            // Mapping from field type to transform class pointer not found,
+            // find the correct transform class by iterating through all the
+            // transform classes
+            QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+            while (i != m_transformContactData.constEnd()) {
+                if (i.value()->supportsField(fieldType)) {
+                    detail = i.value()->transformItemField(field, contact);
+                    m_fieldTypeToTransformContact.insert(fieldType, i.value());
+                    break;
+                }
+                i++;
+            }
+        }
+    }
 
-	return detail;
+    return detail;
 }
 
 QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
@@ -388,9 +421,16 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem 
     return guidDetail;
 }
 
-QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase)
 {
 #ifdef SYMBIAN_CNTMODEL_V2
+
+    // Time zone conversion is needed because contact model uses GMT time stamps
+    if (!m_tzConverter) {
+        User::LeaveIfError(m_tzoneServer.Connect()); 
+        m_tzConverter = CTzConverter::NewL(m_tzoneServer);
+    }
+
     QContactTimestamp *timestampDetail = 0;
     HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
     TPtr ptr = guidBuf->Des();
@@ -403,22 +443,25 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
             if (lex.Val(timeValue, EHex) == 0)
             {
                 timestampDetail = new QContactTimestamp();
+                const TInt formattedDateLength(14);
+                _LIT(KDateFormat, "%F%Y%M%D%H%T%S");
+                QString DateFormatQt = QString("yyyyMMddHHmmss");
 
-                //creation date
+                // creation date
                 TTime timeCreation(timeValue);
-                TDateTime dateCreation = timeCreation.DateTime();
-                QDate qDateCreation(dateCreation.Year(), dateCreation.Month() + 1, dateCreation.Day() + 1);
-                QTime qTimeCreation(dateCreation.Hour(), dateCreation.Minute(), dateCreation.Second(), dateCreation.MicroSecond()/1000);
-                QDateTime qDateTimeCreation(qDateCreation, qTimeCreation);
-                timestampDetail->setCreated(qDateTimeCreation);
+                User::LeaveIfError(m_tzConverter->ConvertToLocalTime(timeCreation));
+                TBuf<formattedDateLength> createdBuf;
+                timeCreation.FormatL(createdBuf, KDateFormat);
+                QString createdString = QString::fromUtf16(createdBuf.Ptr(), createdBuf.Length());
+                timestampDetail->setCreated(QDateTime::fromString(createdString, DateFormatQt));
 
-                //last modified date
+                // last modified date
                 TTime timeModified = contactItem.LastModified();
-                TDateTime dateModified = timeModified.DateTime();
-                QDate qDateModified(dateModified.Year(), dateModified.Month() + 1, dateModified.Day() + 1);
-                QTime qTimeModified(dateModified.Hour(), dateModified.Minute(), dateModified.Second(), dateModified.MicroSecond()/1000);
-                QDateTime qDateTimeModified(qDateModified, qTimeModified);
-                timestampDetail->setLastModified(qDateTimeModified);
+                User::LeaveIfError(m_tzConverter->ConvertToLocalTime(timeModified));
+                TBuf<formattedDateLength> modifiedBuf;
+                timeModified.FormatL(modifiedBuf, KDateFormat);
+                QString modifiedString = QString::fromUtf16(modifiedBuf.Ptr(), modifiedBuf.Length());
+                timestampDetail->setLastModified(QDateTime::fromString(modifiedString, DateFormatQt));
             }
         }
     }

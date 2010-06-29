@@ -44,7 +44,11 @@
 
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+#include <videoplayer2.h>
+#else
 #include <videoplayer.h>
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
 #include <QtGui/qwidget.h>
 #include <qvideowidget.h>
 
@@ -61,6 +65,7 @@ class S60VideoPlayerSession : public S60MediaPlayerSession,
                               , public MAudioOutputObserver
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
 {
+    Q_OBJECT
 public:
     S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();
@@ -85,6 +90,7 @@ public:
     QString defaultEndpoint() const;
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
+    void resizeVideoWindow();
 
 protected:
     //From S60MediaPlayerSession
@@ -124,9 +130,14 @@ private:
 
 private:
     // Qwn
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    CVideoPlayerUtility2 *m_player;
+#else
     CVideoPlayerUtility *m_player;
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
     TRect m_rect;
-    QVideoOutputControl::Output m_output;
+    //QVideoOutputControl::Output m_output;
+    QObject *m_videoOutput;
     WId m_windowId;
     bool m_dsaActive;
     bool m_dsaStopped;
@@ -135,6 +146,7 @@ private:
     RWsSession &m_wsSession;
     CWsScreenDevice &m_screenDevice;
     RWindowBase *m_window;
+    RWindow *m_displayWindow;
     QMediaService &m_service;
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;

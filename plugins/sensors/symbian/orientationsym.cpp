@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
  ** Contact: Nokia Corporation (qt-info@nokia.com)
  **
@@ -45,7 +45,7 @@
 /**
  * set the id of the orientation sensor
  */
-const char *COrientationSensorSym::id("sym.orientation");
+char const * const COrientationSensorSym::id("sym.orientation");
 
 /**
  * Factory function, this is used to create the orientation sensor object

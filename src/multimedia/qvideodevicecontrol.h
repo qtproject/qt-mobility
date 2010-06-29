@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QVideoDeviceControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QVideoDeviceControl : public QMediaControl
 {
     Q_OBJECT
 

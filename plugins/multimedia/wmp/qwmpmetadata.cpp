@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,79 +57,79 @@
 
 struct QWmpMetaDataKeyLookup
 {
-    QtMediaServices::MetaData key;
+    QtMultimediaKit::MetaData key;
     const wchar_t *token;
 };
 
 static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
 {
-    { QtMediaServices::Title, L"Title" },
-    { QtMediaServices::SubTitle, L"WM/SubTitle" },
-    { QtMediaServices::Author, L"Author" },
-    { QtMediaServices::Comment, L"Comment" },
-    { QtMediaServices::Description, L"Description" },
-    { QtMediaServices::Category, L"WM/Category" },
-    { QtMediaServices::Genre, L"WM/Genre" },
-    //{ QtMediaServices::Date, 0 },
-    { QtMediaServices::Year, L"WM/Year" },
-    { QtMediaServices::UserRating, L"UserRating" },
-    //{ QtMediaServices::MetaDatawords, 0 },
-    { QtMediaServices::Language, L"Language" },
-    { QtMediaServices::Publisher, L"WM/Publisher" },
-    { QtMediaServices::Copyright, L"Copyright" },
-    { QtMediaServices::ParentalRating, L"ParentalRating" },
-    { QtMediaServices::RatingOrganisation, L"RatingOrganisation" },
+    { QtMultimediaKit::Title, L"Title" },
+    { QtMultimediaKit::SubTitle, L"WM/SubTitle" },
+    { QtMultimediaKit::Author, L"Author" },
+    { QtMultimediaKit::Comment, L"Comment" },
+    { QtMultimediaKit::Description, L"Description" },
+    { QtMultimediaKit::Category, L"WM/Category" },
+    { QtMultimediaKit::Genre, L"WM/Genre" },
+    //{ QtMultimediaKit::Date, 0 },
+    { QtMultimediaKit::Year, L"WM/Year" },
+    { QtMultimediaKit::UserRating, L"UserRating" },
+    //{ QtMultimediaKit::MetaDatawords, 0 },
+    { QtMultimediaKit::Language, L"Language" },
+    { QtMultimediaKit::Publisher, L"WM/Publisher" },
+    { QtMultimediaKit::Copyright, L"Copyright" },
+    { QtMultimediaKit::ParentalRating, L"ParentalRating" },
+    { QtMultimediaKit::RatingOrganisation, L"RatingOrganisation" },
 
     // Media
-    { QtMediaServices::Size, L"FileSize" },
-    { QtMediaServices::MediaType, L"MediaType" },
-    { QtMediaServices::Duration, L"Duration" },
+    { QtMultimediaKit::Size, L"FileSize" },
+    { QtMultimediaKit::MediaType, L"MediaType" },
+    { QtMultimediaKit::Duration, L"Duration" },
 
     // Audio
-    { QtMediaServices::AudioBitRate, L"AudioBitrate" },
-    { QtMediaServices::AudioCodec, L"AudioCodec" },
-    { QtMediaServices::ChannelCount, L"Channels" },
-    { QtMediaServices::SampleRate, L"Frequency" },
+    { QtMultimediaKit::AudioBitRate, L"AudioBitrate" },
+    { QtMultimediaKit::AudioCodec, L"AudioCodec" },
+    { QtMultimediaKit::ChannelCount, L"Channels" },
+    { QtMultimediaKit::SampleRate, L"Frequency" },
 
     // Music
-    { QtMediaServices::AlbumTitle, L"WM/AlbumTitle" },
-    { QtMediaServices::AlbumArtist, L"WM/AlbumArtist" },
-    { QtMediaServices::ContributingArtist, L"Author" },
-    { QtMediaServices::Composer, L"WM/Composer" },
-    { QtMediaServices::Conductor, L"WM/Conductor" },
-    { QtMediaServices::Lyrics, L"WM/Lyrics" },
-    { QtMediaServices::Mood, L"WM/Mood" },
-    { QtMediaServices::TrackNumber, L"WM/TrackNumber" },
-    //{ QtMediaServices::TrackCount, 0 },
-    //{ QtMediaServices::CoverArtUrlSmall, 0 },
-    //{ QtMediaServices::CoverArtUrlLarge, 0 },
+    { QtMultimediaKit::AlbumTitle, L"WM/AlbumTitle" },
+    { QtMultimediaKit::AlbumArtist, L"WM/AlbumArtist" },
+    { QtMultimediaKit::ContributingArtist, L"Author" },
+    { QtMultimediaKit::Composer, L"WM/Composer" },
+    { QtMultimediaKit::Conductor, L"WM/Conductor" },
+    { QtMultimediaKit::Lyrics, L"WM/Lyrics" },
+    { QtMultimediaKit::Mood, L"WM/Mood" },
+    { QtMultimediaKit::TrackNumber, L"WM/TrackNumber" },
+    //{ QtMultimediaKit::TrackCount, 0 },
+    //{ QtMultimediaKit::CoverArtUrlSmall, 0 },
+    //{ QtMultimediaKit::CoverArtUrlLarge, 0 },
 
     // Image/Video
-    //{ QtMediaServices::Resolution, 0 },
-    //{ QtMediaServices::PixelAspectRatio, 0 },
+    //{ QtMultimediaKit::Resolution, 0 },
+    //{ QtMultimediaKit::PixelAspectRatio, 0 },
 
     // Video
-    //{ QtMediaServices::FrameRate, 0 },
-    { QtMediaServices::VideoBitRate, L"VideoBitRate" },
-    { QtMediaServices::VideoCodec, L"VideoCodec" },
+    //{ QtMultimediaKit::FrameRate, 0 },
+    { QtMultimediaKit::VideoBitRate, L"VideoBitRate" },
+    { QtMultimediaKit::VideoCodec, L"VideoCodec" },
 
-    //{ QtMediaServices::PosterUrl, 0 },
+    //{ QtMultimediaKit::PosterUrl, 0 },
 
     // Movie
-    { QtMediaServices::ChapterNumber, L"ChapterNumber" },
-    { QtMediaServices::Director, L"WM/Director" },
-    { QtMediaServices::LeadPerformer, L"LeadPerformer" },
-    { QtMediaServices::Writer, L"WM/Writer" },
+    { QtMultimediaKit::ChapterNumber, L"ChapterNumber" },
+    { QtMultimediaKit::Director, L"WM/Director" },
+    { QtMultimediaKit::LeadPerformer, L"LeadPerformer" },
+    { QtMultimediaKit::Writer, L"WM/Writer" },
 
     // Photos
-    { QtMediaServices::CameraManufacturer, L"CameraManufacturer" },
-    { QtMediaServices::CameraModel, L"CameraModel" },
-    { QtMediaServices::Event, L"Event" },
-    { QtMediaServices::Subject, L"Subject" }
+    { QtMultimediaKit::CameraManufacturer, L"CameraManufacturer" },
+    { QtMultimediaKit::CameraModel, L"CameraModel" },
+    { QtMultimediaKit::Event, L"Event" },
+    { QtMultimediaKit::Subject, L"Subject" }
 };
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_media(0)
 {
     player->get_currentMedia(&m_media);
@@ -155,12 +155,12 @@ bool QWmpMetaData::isWritable() const
     return m_media != 0;
 }
 
-QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
+QVariant QWmpMetaData::metaData(QtMultimediaKit::MetaData key) const
 {
     static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
 
     switch (key) {
-    case QtMediaServices::Date:
+    case QtMultimediaKit::Date:
         {
             QVariant day = value(m_media, QAutoBStr(L"ReleaseDateDay"));
             QVariant month = value(m_media, QAutoBStr(L"ReleaseDateMonth"));
@@ -170,11 +170,11 @@ QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
                 return QDate(year.toInt(), month.toInt(), day.toInt());
         }
         break;
-    case QtMediaServices::CoverArtUrlSmall:
+    case QtMultimediaKit::CoverArtUrlSmall:
         return albumArtUrl(m_media, "_Small.jpg");
-    case QtMediaServices::CoverArtUrlLarge:
+    case QtMultimediaKit::CoverArtUrlLarge:
         return albumArtUrl(m_media, "_Large.jpg");
-    case QtMediaServices::Resolution:
+    case QtMultimediaKit::Resolution:
         {
             QVariant width = value(m_media, QAutoBStr(L"WM/VideoWidth"));
             QVariant height = value(m_media, QAutoBStr(L"WM/VideoHeight"));
@@ -183,7 +183,7 @@ QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
                 return QSize(width.toInt(), height.toInt());
         }
         break;
-    case QtMediaServices::PixelAspectRatio:
+    case QtMultimediaKit::PixelAspectRatio:
         {
             QVariant x = value(m_media, QAutoBStr(L"PixelAspectRatioX"));
             QVariant y = value(m_media, QAutoBStr(L"PixelAspectRatioY"));
@@ -192,7 +192,7 @@ QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
                 return QSize(x.toInt(), y.toInt());
         }
         break;
-    case QtMediaServices::VideoFrameRate:
+    case QtMultimediaKit::VideoFrameRate:
         break;
     default:
         for (int i = 0; i < count; ++i) {
@@ -204,21 +204,9 @@ QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
     return QVariant();
 }
 
-void QWmpMetaData::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
+QList<QtMultimediaKit::MetaData> QWmpMetaData::availableMetaData() const
 {
-    static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_wmpMetaDataKeys[i].key == key) {
-            setValue(m_media, QAutoBStr(qt_wmpMetaDataKeys[i].token), value);
-            return;
-        }
-    }
-}
-
-QList<QtMediaServices::MetaData> QWmpMetaData::availableMetaData() const
-{
-    QList<QtMediaServices::MetaData> keys;
+    QList<QtMultimediaKit::MetaData> keys;
 
     if (m_media) {
         // WMP will return a list of all possible keys so there's no point in filtering the keys
@@ -242,9 +230,9 @@ QList<QtMediaServices::MetaData> QWmpMetaData::availableMetaData() const
                 QDir dir = QFileInfo(url).absoluteDir();
 
                 if (dir.exists(albumArtLarge))
-                    keys.append(QtMediaServices::CoverArtUrlLarge);
+                    keys.append(QtMultimediaKit::CoverArtUrlLarge);
                 if (dir.exists(albumArtSmall))
-                    keys.append(QtMediaServices::CoverArtUrlSmall);
+                    keys.append(QtMultimediaKit::CoverArtUrlSmall);
             }
         }
     }
@@ -255,12 +243,6 @@ QVariant QWmpMetaData::extendedMetaData(const QString &key) const
 {
     return value(m_media, QAutoBStr(key));
 }
-
-void QWmpMetaData::setExtendedMetaData(const QString &key, const QVariant &value)
-{
-    setValue(m_media, QAutoBStr(key), value);
-}
-
 
 QStringList QWmpMetaData::availableExtendedMetaData() const
 {
@@ -357,12 +339,6 @@ QVariant QWmpMetaData::value(IWMPMedia *media, BSTR key)
     default:
         return values;
     }
-}
-
-void QWmpMetaData::setValue(IWMPMedia *media, BSTR key, const QVariant &value)
-{
-    if (qVariantCanConvert<QString>(value))
-        media->setItemInfo(key, QAutoBStr(value.toString()));
 }
 
 QMediaContent QWmpMetaData::resources(IWMPMedia *media)

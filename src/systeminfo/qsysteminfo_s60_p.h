@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,6 +63,7 @@
 #include <f32file.h>
 #include "telephonyinfo_s60.h"
 #include "chargingstatus_s60.h"
+#include "wlaninfo_s60.h"
 
 QT_BEGIN_HEADER
 
@@ -89,6 +90,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
+    QString QLocaleToISO639_1(QLocale::Language language) const;  
     QString TLanguageToISO639_1(TLanguage language) const;
     QString S60Version() const;
 };
@@ -138,6 +140,11 @@ protected:  //from MTelephonyInfoObserver
 
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
+
+public slots:
+    void wlanNetworkNameChanged();
+    void wlanNetworkSignalStrengthChanged();
+    void wlanNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -178,7 +185,7 @@ private:
 class DeviceInfo;
 QTM_END_NAMESPACE
 
-#include <MProEngProfileActivationObserver.h>
+#include <mproengprofileactivationobserver.h>
 #include <cenrepnotifyhandler.h>
 
 class MProEngEngine;
@@ -212,7 +219,7 @@ public:
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
-    QSystemDeviceInfo::SimStatus simStatus();
+    static QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
@@ -238,7 +245,7 @@ private:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
-    
+
     void countryCodeChanged(){};
     void networkCodeChanged(){};
     void networkNameChanged(){};
@@ -249,7 +256,7 @@ protected:  //from MTelephonyInfoObserver
 
 protected:  //from MChargingStatusObserver
     void chargingStatusChanged();
-    
+
 private:    //data
     MProEngEngine *m_profileEngine;
     MProEngNotifyHandler* m_proEngNotifyHandler;
@@ -279,7 +286,6 @@ private:    //data
 //////// DeviceInfo (singleton)
 class DeviceInfo
 {
-
 public:
     static DeviceInfo *instance()
     {
@@ -321,7 +327,7 @@ public:
         }
         return m_batteryInfo;
     }
-    
+
     CCellNetworkInfo *cellNetworkInfo()
     {
         if (!m_cellNetworkInfo) {
@@ -329,7 +335,7 @@ public:
         }
         return m_cellNetworkInfo;
     }
-    
+
     CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
     {
         if (!m_cellNetworkRegistrationInfo) {
@@ -337,7 +343,7 @@ public:
         }
         return m_cellNetworkRegistrationInfo;
     }
-    
+
     CCellSignalStrengthInfo *cellSignalStrenghtInfo()
     {
         if (!m_cellSignalStrengthInfo) {
@@ -346,10 +352,18 @@ public:
         return m_cellSignalStrengthInfo;
     }
 
+    CWlanInfo *wlanInfo()
+    {
+        if (!m_wlanInfo) {
+            m_wlanInfo = new CWlanInfo;
+        }
+        return m_wlanInfo;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
@@ -364,6 +378,7 @@ private:
         delete m_subscriberInfo;
         delete m_phoneInfo;
         delete m_telephony;
+        delete m_wlanInfo;
     }
 
     static DeviceInfo *m_instance;
@@ -376,6 +391,7 @@ private:
     CCellNetworkInfo *m_cellNetworkInfo;
     CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
+    CWlanInfo* m_wlanInfo;
 };
 
 QTM_END_NAMESPACE

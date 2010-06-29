@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>example.qml</file>
-        <file>contents/MediaButton.qml</file>
-        <file>ScrollBar.qml</file>
-        <file>contents/example.vcf</file>
-        <file alias="default.svg">contents/default.svg</file>
-    </qresource>
-</RCC>

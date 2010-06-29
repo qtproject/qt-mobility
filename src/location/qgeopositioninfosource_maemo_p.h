@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,43 +45,52 @@
 #include "qgeopositioninfosource.h"
 #include "dbuscomm_maemo_p.h"
 
+#ifdef Q_WS_MAEMO_5
+#include "qgeocoordinate.h"
+
+extern "C" {
+   #include <glib.h>
+   #include <location/location-gpsd-control.h>
+   #include <location/location-gps-device.h>
+   #include <location/location-misc.h>
+   #include <location/location-distance-utils.h>
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class DBusComm;
 class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
 {
     Q_OBJECT
-public:
 
+public:
     QGeoPositionInfoSourceMaemo(QObject *parent = 0);
     int init();
 
     virtual void setUpdateInterval(int interval);
     virtual void setPreferredPositioningMethods(PositioningMethods sources);
-    //virtual QPositioninfo QGeoPositionInfoSource::lastUpdate(QFlags<QGeoPositionInfoSource::PositionSourceType>) const;
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;
 
-private:
-    void dumpNMEA(const char *msg);
-    DBusComm* dbusComm;
-    QGeoPositionInfo lastUpdate;
-    QGeoPositionInfo lastSatUpdate;
-    bool validLastUpdate;
-    bool validLastSatUpdate;
-    static const int MinimumUpdateInterval = 1000;
-    int time_interval_;
-    int distance_interval_;
-    bool registered_;
-    PositioningMethods availableMethods;
-
-public slots:
+public Q_SLOTS:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = 5000);
-    void dbusMessages(const QByteArray &msg);
+
+private:
+    DBusComm* dbusComm;
+    QTimer* requestTimer;
+    bool locationOngoing;
+    
+    void shutdownRequestSession();
+
+private Q_SLOTS:
     void newPositionUpdate(const QGeoPositionInfo &update);
+    void onServiceConnect();
+    void onServiceDisconnect();
+    void requestTimerExpired();
 };
 
 QTM_END_NAMESPACE

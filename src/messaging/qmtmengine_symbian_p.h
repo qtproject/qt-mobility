@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,8 +57,6 @@
 #include "qmessageservice.h"
 
 
-
-
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -73,9 +71,11 @@ class CMsvFindOperation;
 
 
 QTM_BEGIN_NAMESPACE
+
 class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
+class CAsynchronousMTMOperation;
 
 struct MessageEvent
 {
@@ -102,8 +102,10 @@ struct MessageQueryInfo
     int count;
 };
 
-class CMTMEngine : public CActive, public MMsvSessionObserver
+class CMTMEngine : public QObject, public CActive, public MMsvSessionObserver
 {
+    Q_OBJECT
+
 public:
     enum MTMType
     {
@@ -146,10 +148,10 @@ public:
     bool sendEmail(QMessage &message);
     bool storeSMS(QMessage &message);
     bool sendSMS(QMessage &message);
-    bool retrieve(const QMessageId &messageId, const QMessageContentContainerId& id);
-    bool retrieveBody(const QMessageId& id);
-    bool retrieveHeader(const QMessageId& id);
-    bool exportUpdates(const QMessageAccountId &id);
+    bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
+    bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
+    bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
+    bool exportUpdates(QMessageServicePrivate& privateService, const QMessageAccountId &id);
     
     QByteArray attachmentContent(long int messageId, unsigned int attachmentId);
     QString attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset);
@@ -163,6 +165,10 @@ public:
                                      bool resultSetOrdered);
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
+
+public slots:
+    void cleanupMTMBackend();
+    
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
@@ -226,11 +232,12 @@ private:
     void storeEmailL(QMessage &message);
     void sendEmailL(QMessage &message);
     void storeSMSL(QMessage &message);
+    bool validateSMS();
     void sendSMSL(QMessage &message);
-    void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
-    void retrieveBodyL(const QMessageId& id) const;
-    void retrieveHeaderL(const QMessageId& id) const;
-    void exportUpdatesL(const QMessageAccountId &id) const;
+    void retrieveL(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
+    void retrieveBodyL(QMessageServicePrivate& privateService, const QMessageId& id);
+    void retrieveHeaderL(QMessageServicePrivate& privateService, const QMessageId& id);
+    void exportUpdatesL(QMessageServicePrivate& privateService, const QMessageAccountId &id);
     void appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
     QByteArray attachmentContentL(long int messageId, unsigned int attachmentId);
     
@@ -242,6 +249,11 @@ private:
     static void cmsvEntryCleanup(TAny* aCMsvEntry);    
     CMsvEntry* retrieveCMsvEntryAndPushToCleanupStack(TMsvId id = 0) const;
     void releaseCMsvEntryAndPopFromCleanupStack(CMsvEntry* pEntry) const;
+    
+    CAsynchronousMTMOperation* createAsynchronousMTMOperation(QMessageServicePrivate& privateService,
+                                                              CBaseMtm* mtm,
+                                                              TMsvId serviceId);
+    void deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation);
 
 private: // from CActive
     void RunL();
@@ -301,6 +313,7 @@ private:
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
+    friend class CAsynchronousMTMOperation;
 };
 
 class CMessagesFindOperation : public CActive
@@ -345,6 +358,74 @@ private: // Data
     mutable RTimer iTimer;
 };
 
+class QMTMWait : public CActive
+{
+public:
+    QMTMWait(TInt aPriority = EPriorityStandard);
+    ~QMTMWait();
+
+    void start();
+
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+    
+private: // Data
+    QEventLoop m_eventLoop;
+};
+
+class CAsynchronousMTMOperation : public CActive
+{
+public:
+    enum MTMOperation
+    {
+        MTMOperationRetrieveMessageHeader,
+        MTMOperationRetrieveMessageBody,
+        MTMOperationRetrieveMessageAttachments,
+        MTMOperationFullSync,
+    };    
+
+    enum MTMOperationStep
+    {
+        MTMOperationStepConnect,
+        MTMOperationStepDoOperation,
+        MTMOperationStepDisconnect,
+        MTMOperationStepFinished
+    };    
+    
+    CAsynchronousMTMOperation(CMTMEngine& aParent,
+                              QMessageServicePrivate& privateService,
+                              CBaseMtm* mtm,
+                              TMsvId serviceId,
+                              TInt aOperationId);
+    ~CAsynchronousMTMOperation();
+
+    bool retrieveMessageHeader(TMsvId aMessageId);
+    bool retrieveMessageBody(TMsvId aMessageId);
+    bool retrieveMessageAttachments(TMsvId aMessageId);
+    bool doFullSync();
+
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+    
+private: // Data
+    CMTMEngine* ipParent;
+
+    TInt iOperationId;
+    TMsvId iServiceId;
+    TMsvId iMessageId;
+    QMessageServicePrivate* ipPrivateService;
+    
+    CBaseMtm*           ipMTM;
+    MTMOperation        iOperation;
+    MTMOperationStep    iOperationStep;
+    
+    CMsvEntrySelection* ipMsvEntrySelection;
+    CMsvOperation*      ipMsvOperation;
+    
+    bool                isActive;
+};
 
 QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

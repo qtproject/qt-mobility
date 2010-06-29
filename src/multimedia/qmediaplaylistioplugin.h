@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ class QByteArray;
 class QIODevice;
 class QStringList;
 
-class Q_MEDIA_EXPORT QMediaPlaylistReader
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistReader
 {
 public:
     virtual ~QMediaPlaylistReader();
@@ -67,7 +67,7 @@ public:
     virtual void close() = 0;
 };
 
-class Q_MEDIA_EXPORT QMediaPlaylistWriter
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistWriter
 {
 public:
     virtual ~QMediaPlaylistWriter();
@@ -76,7 +76,7 @@ public:
     virtual void close() = 0;
 };
 
-struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
+struct Q_MULTIMEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
 {
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const = 0;
     virtual bool canRead(const QUrl& location, const QByteArray &format = QByteArray()) const = 0;
@@ -92,7 +92,7 @@ struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
 Q_DECLARE_INTERFACE(QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
 
-class Q_MEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
 {
 Q_OBJECT
 Q_INTERFACES(QMediaPlaylistIOInterface:QFactoryInterface)

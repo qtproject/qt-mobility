@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -128,7 +128,6 @@ QTextStream& operator<< (QTextStream& s, const MailId &id)
     \class QMailAccountId
     \ingroup messaginglibrary
 
-    \preliminary
     \brief The QMailAccountId class is used to identify accounts stored by QMailStore.
 
     QMailAccountId is a class used to represent accounts stored by the QMailStore, identified
@@ -266,7 +265,6 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailAccountIdList, QMailAccountIdList)
     \class QMailFolderId
     \ingroup messaginglibrary
 
-    \preliminary
     \brief The QMailFolderId class is used to identify folders stored by QMailStore.
 
     QMailFolderId is a class used to represent folders stored by the QMailStore, identified
@@ -412,7 +410,6 @@ Q_IMPLEMENT_USER_METATYPE_TYPEDEF(QMailFolderIdList, QMailFolderIdList)
     \class QMailMessageId
     \ingroup messaginglibrary
 
-    \preliminary
     \brief The QMailMessageId class is used to identify messages stored by QMailStore.
 
     QMailMessageId is a class used to represent messages stored by the QMailStore, identified

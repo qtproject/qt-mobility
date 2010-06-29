@@ -1,6 +1,6 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -66,7 +66,7 @@ set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
-   
+
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
@@ -80,6 +80,7 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
@@ -112,11 +113,13 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
     echo -tests ............ Build unit tests (not build by default)
-    echo                     Note, this adds test symbols to all libraries 
+    echo                     Note, this adds test symbols to all libraries
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
@@ -181,12 +184,19 @@ echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
 :unfrozenTag
 REM Should never be used in release builds
-REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the 
+REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the
 REM libraries are frozen. This breaks unit tests relying on the auto test exports
 REM This flag unfreezes the SYMBIAN libraries for the purpose of unit test building.
-REM Ideally this should be connected to '-tests' option but that would prevent 
+REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
@@ -237,11 +247,18 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
 
+REM reset selected modules
+set CONTACTS_SELECTED=
+set BEARER_SELECTED=
+set SYSTEMINFO_SELECTED=
+set SENSORS_SELECTED=
+set MESSAGING_SELECTED=
+set MULTIMEDIA_SELECTED=
 echo Checking selected modules:
 :modulesTag2
 
-for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do ( 
-    set FIRST=%%a 
+for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
+    set FIRST=%%a
     set REMAINING=%%b
 )
 
@@ -249,30 +266,37 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 : distinguish between false and correct module names being passed
 if %FIRST% == bearer (
     echo     Bearer Management selected
+    set BEARER_SELECTED=yes
 ) else if %FIRST% == contacts (
     echo     Contacts selected
+    set CONTACTS_SELECTED=yes
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
     echo     Messaging selected
+    set MESSAGING_SELECTED=yes
 ) else if %FIRST% == multimedia (
     echo     Multimedia selected
+    set MULTIMEDIA_SELECTED=yes
 ) else if %FIRST% == publishsubscribe (
     echo     PublishSubscribe selected
 ) else if %FIRST% == systeminfo (
     echo     Systeminfo selected
+    set SYSTEMINFO_SELECTED=yes
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+    set SENSORS_SELECTED=yes
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
 )
 
 set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+
 if "%REMAINING%" == "" (
     shift
 ) else (
@@ -328,9 +352,10 @@ set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
-echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
-echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
-echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo !symbian:isEmpty(QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
+echo isEmpty(QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
+echo isEmpty(QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty(QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
@@ -375,25 +400,25 @@ setlocal
             set BUILDSYSTEM=%%b)
     )
 
-    if %BUILDSYSTEM% == symbian-abld (
+    if "%BUILDSYSTEM%" == "symbian-abld" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian abld make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == symbian-sbsv2 (
+    ) else if "%BUILDSYSTEM%" == "symbian-sbsv2" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian sbsv2 make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == win32-nmake (
+    ) else if "%BUILDSYSTEM%" == "win32-nmake" (
         call nmake /? >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... nmake found.
             set MAKE=nmake
         )
-    ) else if %BUILDSYSTEM% == win32-mingw (
+    ) else if "%BUILDSYSTEM%" == "win32-mingw" (
         call mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
@@ -416,6 +441,7 @@ goto errorTag
 
 :compileTest
 setlocal
+    @echo off
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -429,15 +455,15 @@ setlocal
     )
 
     call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    
+
     set FAILED=0
-    if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
+    if "%MOBILITY_BUILDSYSTEM%" == "symbian-sbsv2" (
         call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
-    ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
+    ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else { 
+    ) else {
         REM Make for other builds
         call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
         REM have to check error level for windows / other builds to be sure.
@@ -445,7 +471,7 @@ setlocal
            set FAILED=1
         )
     )
-    
+
     if %FAILED% == 0 (
         echo ... OK
         echo %2_enabled = yes >> %PROJECT_CONFIG%
@@ -462,16 +488,40 @@ endlocal&goto :EOF
 echo.
 echo Start of compile tests
 REM compile tests go here.
-call :compileTest LBT lbt
-call :compileTest SNAP snap
-call :compileTest OCC occ
-call :compileTest SymbianContactSIM symbiancntsim
-call :compileTest S60_Sensor_API sensors_s60_31
-call :compileTest Symbian_Sensor_Framework sensors_symbian
-call :compileTest Audiorouting_s60 audiorouting_s60
-call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
-call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-call :compileTest OpenMaxAl_support openmaxal_symbian
+for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
+if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
+goto noTests
+
+:symbianTests
+
+if "%MULTIMEDIA_SELECTED%" == "yes" (
+    call :compileTest Audiorouting_s60 audiorouting_s60
+    call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
+    call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+    REM call :compileTest OpenMaxAl_support openmaxal_symbian
+    call :compileTest Surfaces_s60 surfaces_s60
+)
+if "%CONTACTS_SELECTED%" == "yes" (
+    call :compileTest LBT lbt
+    call :compileTest SymbianContactSIM symbiancntsim
+)
+if "%BEARER_SELECTED%" == "yes" (
+    call :compileTest SNAP snap
+    call :compileTest OCC occ
+)
+if "%SENSORS_SELECTED%" == "yes" (
+    call :compileTest S60_Sensor_API sensors_s60_31
+    call :compileTest Symbian_Sensor_Framework sensors_symbian
+)
+if "%MESSAGING_SELECTED%" == "yes" (
+    call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+)
+if "%SYSTEMINFO_SELECTED%" == "yes" (
+    call :compileTest Symbian_Hb hb_symbian
+)
+
+:noTests
 
 echo End of compile tests
 echo.
@@ -489,40 +539,41 @@ set MODULES_TEMP=%MOBILITY_MODULES%
 
 :generateHeaders
 
-for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do ( 
-    set FIRST=%%a 
+for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
+    set FIRST=%%a
     set REMAINING=%%b
 )
 
 if %FIRST% == bearer (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\experimental
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
 ) else if %FIRST% == publishsubscribe (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtPublishSubscribe %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
     REM versit implies contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 )
 
 if "%REMAINING%" == "" (

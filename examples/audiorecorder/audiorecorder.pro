@@ -1,9 +1,7 @@
 TEMPLATE = app
 CONFIG += example
 
-contains(QT_CONFIG, multimedia): QT += multimedia
-
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 include(../examples.pri)
 
 CONFIG += mobility
