@@ -34,3 +34,5 @@ qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += qmldir
+
+symbian:TARGET.EPOCALLOWDLLDATA=1
