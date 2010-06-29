@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplayer.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlayer Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaPlayer Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -161,7 +161,7 @@
     player-&gt;setPlaylist(playlist);
 
     widget = new QVideoWidget;
-    player-&gt;addVideoOutput(widget);
+    player-&gt;setVideoOutput(widget);
     widget-&gt;show();
 
     player-&gt;play();</pre>
@@ -494,11 +494,9 @@
 <h3 class="fn"><a name="setVideoOutput"></a>void QMediaPlayer::setVideoOutput ( <a href="qvideowidget.html">QVideoWidget</a> * <i>output</i> )</h3>
 <p>Attach a <a href="qvideowidget.html">QVideoWidget</a> video <i>output</i> to the media player.</p>
 <p>If the media player has already video output attached, it will be replaced with a new one.</p>
-<p>See also setVideoOutput(QGraphicsVideoItem*).</p>
 <h3 class="fn"><a name="setVideoOutput-2"></a>void QMediaPlayer::setVideoOutput ( <a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a> * <i>output</i> )</h3>
 <p>Attach a <a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a> video <i>output</i> to the media player.</p>
 <p>If the media player has already video output attached, it will be replaced with a new one.</p>
-<p>See also setVideoOutput(QVideoWidget*).</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayer/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaPlayer::stateChanged ( <a href="qmediaplayer.html#State-enum">QMediaPlayer::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal the <i>state</i> of the Player object has changed.</p>
@@ -519,6 +517,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

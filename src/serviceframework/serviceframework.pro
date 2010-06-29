@@ -6,6 +6,11 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 
+#include ipc extension
+include(ipc/ipc.pri)
+
+INCLUDEPATH += .
+
 PUBLIC_HEADERS += \
             qservice.h \
             qservicemanager.h \
@@ -13,7 +18,9 @@ PUBLIC_HEADERS += \
             qservicecontext.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
-            qservicefilter.h
+            qservicefilter.h \
+            qremoteservicecontrol.h \
+            qremoteserviceclassregister.h
 
 PRIVATE_HEADERS += servicedatabase_p.h \
             databasemanager_p.h \
@@ -28,7 +35,9 @@ SOURCES +=  servicemetadata.cpp \
             qabstractsecuritysession.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp \
-            dberror.cpp
+            dberror.cpp \
+            qremoteservicecontrol.cpp \
+            qremoteserviceclassregister.cpp
 
 symbian {
     INCLUDEPATH +=  ./databasemanagerserver_symbian

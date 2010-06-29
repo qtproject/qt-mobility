@@ -88,7 +88,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
-            VERSION = 1.0.1
+            VERSION = 1.1.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
@@ -175,6 +175,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

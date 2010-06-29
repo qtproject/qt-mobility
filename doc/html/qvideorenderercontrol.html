@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvideorenderercontrol.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QVideoRendererControl Class Reference</title>
+  <title>Qt Mobility Project 1.1: QVideoRendererControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -62,11 +62,9 @@
 <p>Using the <a href="qvideorenderercontrol.html#surface">surface</a>() property of QVideoRendererControl a <a href="qabstractvideosurface.html">QAbstractVideoSurface</a> may be set as the video render target of a <a href="qmediaservice.html">QMediaService</a>.</p>
 <pre>    QVideoRendererControl *rendererControl = mediaService-&gt;control&lt;QVideoRendererControl *&gt;();
     rendererControl-&gt;setSurface(myVideoSurface);</pre>
-<p>QVideoRendererControl is one of number of possible video output controls, in order to receive video it must be made the active video output control by setting the output property of QVideoOutputControl to RendererOutput. Consequently any <a href="qmediaservice.html">QMediaService</a> that implements QVideoRendererControl must also implement QVideoOutputControl.</p>
-<pre>    QVideoOutputControl *outputControl = mediaService-&gt;control&lt;QVideoOutputControl *&gt;();
-    outputControl-&gt;setOutput(QVideoOutputControl::RendererOutput);</pre>
+<p>QVideoRendererControl is one of number of possible video output controls.</p>
 <p>The interface name of QVideoRendererControl is <tt>com.nokia.Qt.QVideoRendererControl/1.0</tt> as defined in <a href="qvideorenderercontrol.html#QVideoRendererControl_iid">QVideoRendererControl_iid</a>.</p>
-<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>(), QVideoOutputControl, and <a href="qvideowidget.html">QVideoWidget</a>.</p>
+<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qvideowidget.html">QVideoWidget</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVideoRendererControl/QVideoRendererControl"></a>
@@ -93,6 +91,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

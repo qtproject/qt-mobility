@@ -44,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -224,6 +224,10 @@ void Dialog::setupDevice()
     }
 
     inputMethodLabel->setText(inputs.join(" "));
+
+    bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
+    connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
 }
 
 void Dialog::updateDeviceLockedState()
@@ -241,22 +245,60 @@ void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 void Dialog::setupDisplay()
 {
     QSystemDisplayInfo di;
-    brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
-    colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
+    brightnessLabel->setText(QString::number(di.displayBrightness(0)));
+    colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
+    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
+
+    orientationLabel->setText(orientStr);
+
+    contrastLabel->setText(QString::number(di.contrast((0))));
+
+    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+
+    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
 {
-    QSystemStorageInfo mi;
-    storageTreeWidget->clear();
+    if(!sti) {
+    sti = new QSystemStorageInfo(this);
     storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+    connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
+    connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
+    }
+    updateStorage();
+}
 
-    QStringList vols = mi.logicalDrives();
+void Dialog::updateStorage()
+{
+    storageTreeWidget->clear();
+
+    QStringList vols = sti->logicalDrives();
     foreach(QString volName, vols) {
         QString type;
         QSystemStorageInfo::DriveType volType;
-        volType = mi.typeForDrive(volName);
+        volType = sti->typeForDrive(volName);
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
@@ -273,12 +315,13 @@ void Dialog::setupStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(mi.totalDiskSpace(volName));
-        items << QString::number(mi.availableDiskSpace(volName));
+        items << QString::number(sti->totalDiskSpace(volName));
+        items << QString::number(sti->availableDiskSpace(volName));
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
 }
+
 
 void Dialog::setupNetwork()
 {
@@ -770,4 +813,14 @@ void Dialog::updateSimStatus()
     }
 }
 
+
+void Dialog::storageChanged()
+{
+    setupStorage();
+}
+
+void Dialog::bluetoothChanged(bool b)
+{
+    bluetoothPowerLabel->setText((b ? "On" : "Off"));
+}
 

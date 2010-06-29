@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: flickrdemo.cpp Example File (flickrdemo/flickrdemo.cpp)</title>
+  <title>Qt Mobility Project 1.1: flickrdemo.cpp Example File (flickrdemo/flickrdemo.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -227,13 +227,13 @@
     void FlickrDemo::createMenus()
     {
         m_downloadAct = new QAction(tr(&quot;Download Picture List&quot;), this);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         menuBar()-&gt;addAction(m_downloadAct);
     #endif
         connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(downloadButtonClicked()));
 
         QAction* exitAct = new QAction(tr(&quot;Exit&quot;), this);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         menuBar()-&gt;addAction(exitAct);
     #endif
         connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -579,7 +579,7 @@
     void FlickrDemo::displayImage(const QPixmap &amp;pixmap)
     {
         PictureDialog dialog(pixmap, listWidget-&gt;currentItem()-&gt;text(), this);
-    #if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         dialog.showMaximized();
     #endif
         dialog.exec();
@@ -646,6 +646,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: qmlcontactmodel.cpp Example File (qmlcontacts/qmlcontactmodel.cpp)</title>
+  <title>Qt Mobility Project 1.1: qmlcontactmodel.cpp Example File (qmlcontacts/qmlcontactmodel.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -60,7 +60,6 @@
     #include &quot;qcontactdetailfilter.h&quot;
     #include &quot;qversitreader.h&quot;
     #include &quot;qversitcontactimporter.h&quot;
-
     #include &lt;QColor&gt;
     #include &lt;QHash&gt;
     #include &lt;QDebug&gt;
@@ -75,6 +74,8 @@
         roleNames = QAbstractItemModel::roleNames();
         roleNames.insert(InterestLabelRole, &quot;interestLabel&quot;);
         roleNames.insert(InterestRole, &quot;interest&quot;);
+        roleNames.insert(ContactRole, &quot;contact&quot;);
+        roleNames.insert(ContactIdRole, &quot;contactId&quot;);
         roleNames.insert(AvatarRole, &quot;avatar&quot;);
         roleNames.insert(PresenceAvailableRole, &quot;presenceSupported&quot;);
         roleNames.insert(PresenceTextRole, &quot;presenceText&quot;);
@@ -112,15 +113,33 @@
         return QContactManager::availableManagers();
     }
 
-    QString QMLContactModel::manager()
+    QString QMLContactModel::manager() const
     {
         return m_manager-&gt;managerName();
+    }
+    QList&lt;QObject*&gt; QMLContactModel::details(int id) const
+    {
+        if (m_contactMap.contains(id))
+            return m_contactMap.value(id)-&gt;details();
+        return QList&lt;QObject*&gt;();
+    }
+    void QMLContactModel::exposeContactsToQML()
+    {
+        foreach (const QContact&amp; c, m_contacts) {
+            if (!m_contactMap.contains(c.localId())) {
+                QMLContact* qc = new QMLContact(this);
+                qc-&gt;setContact(c);
+                m_contactMap.insert(c.localId(), qc);
+            } else {
+                m_contactMap.value(c.localId())-&gt;setContact(c);
+            }
+        }
     }
 
     void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
     {
         QVersitReader reader;
-        QFile file(&quot;:/contents/example.vcf&quot;);
+        QFile file(&quot;contents/example.vcf&quot;);
         bool ok = file.open(QIODevice::ReadOnly);
         if (ok) {
            reader.setDevice(&amp;file);
@@ -141,7 +160,14 @@
 
     void QMLContactModel::setManager(const QString&amp; managerName)
     {
-        delete m_manager;
+        if (m_manager)
+            delete m_manager;
+
+        foreach (const QContactLocalId&amp; id, m_contactMap.keys()) {
+            delete m_contactMap.value(id);
+        }
+        m_contactMap.clear();
+
         m_manager = new QContactManager(managerName);
 
         if (managerName == &quot;memory&quot; &amp;&amp; m_manager-&gt;contactIds().isEmpty()) {
@@ -157,6 +183,7 @@
     void QMLContactModel::resultsReceived()
     {
         int oldCount = m_contacts.count();
+
         int newCount = m_contactsRequest.contacts().count();
         if (newCount &gt; oldCount) {
             <span class="comment">// Assuming the order is the same</span>
@@ -170,6 +197,8 @@
             m_contacts =  m_contactsRequest.contacts();
             endInsertRows();
         }
+
+        exposeContactsToQML();
     }
 
     void QMLContactModel::fetchAgain()
@@ -209,17 +238,15 @@
                 return interestingDetail(c).first;
             case InterestRole:
                 return interestingDetail(c).second;
+            case ContactRole:
+                if (m_contactMap.contains(c.localId())) {
+                   return m_contactMap.value(c.localId())-&gt;contactMap();
+               }
+            case ContactIdRole:
+                return c.localId();
             case AvatarRole:
-                if (c.detail&lt;QContactThumbnail&gt;().isEmpty()) {
-                    QContactAvatar a = c.detail&lt;QContactAvatar&gt;();
-                    if (!a.imageUrl().isEmpty())
-                        return a.imageUrl();
-                    else
-                        return QString(&quot;qrc:/default.svg&quot;);
-                } else {
-                    <span class="comment">// We have a thumbnail, so return empty</span>
-                    return QString(&quot;&quot;);
-                }
+                <span class="comment">//Just let the imager provider deal with it</span>
+                return QString(&quot;image:<span class="comment">//thumbnail/%1.%2&quot;).arg(manager()).arg(c.localId());</span>
             case Qt::DecorationRole:
                 {
                     QContactThumbnail t = c.detail&lt;QContactThumbnail&gt;();
@@ -242,6 +269,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
