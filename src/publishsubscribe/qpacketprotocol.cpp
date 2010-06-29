@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QPacketProtocol
   \internal
+  \inmodule QtPublishSubscribe
   \ingroup publishsubscribe
 
   \brief The QPacketProtocol class encapsulates communicating discrete packets

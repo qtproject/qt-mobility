@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QValueSpacePublisher class allows applications to publish values in the Value Space.
 
+    \inmodule QtPublishSubscribe
     \ingroup publishsubscribe
 
     When multiple Value Space layers are available QValueSpacePublisher only publishes values to

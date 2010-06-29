@@ -148,6 +148,7 @@ struct QMallocPtr
 /*!
   \class QMallocPool
   \internal
+  \inmodule QtPublishSubscribe
   \ingroup publishsubscribe
 
   \brief The QMallocPool class allows management of allocations within a
