@@ -112,6 +112,7 @@ public:
 
     State state() const;
     qint64 duration() const;
+    bool isMuted() const { return m_muted; }
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
@@ -119,6 +120,7 @@ signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
+    void mutedChanged(bool);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
@@ -127,6 +129,7 @@ public slots:
     void dumpGraph(const QString &fileName);
 
     void setMetaData(const QMap<QByteArray, QVariant>&);
+    void setMuted(bool);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -170,6 +173,8 @@ private:
     GstElement *m_audioTee;
     GstElement *m_audioPreviewQueue;
     GstElement *m_audioPreview;
+    GstElement *m_audioVolume;
+    bool m_muted;
 
     GstElement *m_videoSrc;
     GstElement *m_videoTee;

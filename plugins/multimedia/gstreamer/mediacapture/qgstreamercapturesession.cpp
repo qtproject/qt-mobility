@@ -77,6 +77,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_audioTee(0),
      m_audioPreviewQueue(0),
      m_audioPreview(0),
+     m_audioVolume(0),
+     m_muted(false),
      m_videoSrc(0),
      m_videoTee(0),
      m_videoPreviewQueue(0),
@@ -127,15 +129,15 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
     if (m_captureMode & Audio) {
         GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
         GstElement *audioQueue = gst_element_factory_make("queue", "audio-encode-queue");
-        GstElement *volume = gst_element_factory_make("volume", "volume");
+        m_audioVolume = gst_element_factory_make("volume", "volume");
         GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
 
         ok &= audioEncoder != 0;
 
-        gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, volume, audioEncoder,  NULL);
+        gst_bin_add_many(GST_BIN(encodeBin), audioConvert, audioQueue, m_audioVolume, audioEncoder,  NULL);
 
-        ok &= gst_element_link_many(audioConvert, audioQueue, volume, audioEncoder, muxer, NULL);
-        //g_object_set(G_OBJECT(volume), "volume", 10.0, NULL);
+        ok &= gst_element_link_many(audioConvert, audioQueue, m_audioVolume, audioEncoder, muxer, NULL);
+        g_object_set(G_OBJECT(m_audioVolume), "volume", (m_muted ? 0.0 : 1.0), NULL);
 
         // add ghostpads
         GstPad *pad = gst_element_get_static_pad(audioConvert, "sink");
@@ -342,6 +344,7 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
     REMOVE_ELEMENT(m_videoPreviewQueue);
     REMOVE_ELEMENT(m_videoTee);
     REMOVE_ELEMENT(m_encodeBin);
+    m_audioVolume = 0;
 
     bool ok = true;
 
@@ -779,3 +782,12 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
     }
 }
 
+void QGstreamerCaptureSession::setMuted(bool muted)
+{
+    if (m_muted != muted) {
+        m_muted = muted;
+        if (m_audioVolume)
+            g_object_set(G_OBJECT(m_audioVolume), "volume", (m_muted ? 0.0 : 1.0), NULL);
+        emit mutedChanged(muted);
+    }
+}
