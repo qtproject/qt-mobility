@@ -7,7 +7,7 @@ INCLUDEPATH += . \
     ../../../src/organizer/filters \
     ../../../src/versit
 
-TARGET = $$qtLibraryTarget(declarative_contacts)
+TARGET = $$qtLibraryTarget(declarative_organizer)
 TARGETPATH = QtMobility/organizer
 
 TEMPLATE = lib
