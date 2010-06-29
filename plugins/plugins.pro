@@ -7,4 +7,5 @@ contains(mobility_modules,multimedia): SUBDIRS += multimedia
 contains(mobility_modules,sensors): SUBDIRS += sensors
 contains(mobility_modules,organizer): SUBDIRS += organizer
 
-contains(QT_CONFIG,declarative): SUBDIRS += declarative
+#disable declarative plugins on Symbian, do not compile yet                                    
+!symbian:contains(QT_CONFIG,declarative): SUBDIRS += declarative

@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaTimeInterval
     \brief The QMediaTimeInterval class represents a time interval with integer precision.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     An interval is specified by an inclusive start() and end() time.  These

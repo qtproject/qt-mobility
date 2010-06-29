@@ -45,6 +45,10 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.0.2 >> $$PRF_CONFIG)
+    system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
+    system(echo MOBILITY_MINOR_VERSION = 0 >> $$PRF_CONFIG)
+    system(echo MOBILITY_PATCH_VERSION = 2 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
@@ -85,6 +89,7 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
+contains(build_docs, yes):SUBDIRS+=demos
 
 #updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
@@ -138,12 +143,6 @@ contains(build_examples, yes):SUBDIRS+=examples
         qtmheadersversit.path = $${QT_MOBILITY_INCLUDE}/QtVersit
         qtmheadersversit.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersit/*
         INSTALLS += qtmheadersversit
-    }
-
-    contains(mobility_modules,systeminfo) {
-        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
-        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
-        INSTALLS += qtmheaderssysteminfo
     }
 
     contains(mobility_modules,systeminfo) {

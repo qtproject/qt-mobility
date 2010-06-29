@@ -2,9 +2,9 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qsysteminfo.cpp -->
+<!-- qsystemgeneralinfo.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: List of All Members for QSystemDisplayInfo</title>
+  <title>Qt Mobility Project 1.1: List of All Members for QSystemDisplayInfo</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -16,6 +16,7 @@
 <p>This is the complete list of members for <a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
+<li><div class="fn">enum <b><a href="qsystemdisplayinfo.html#DisplayOrientation-enum">DisplayOrientation</a></b></div></li>
 <li><div class="fn"><b><a href="qsystemdisplayinfo.html#QSystemDisplayInfo">QSystemDisplayInfo</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qsystemdisplayinfo.html#dtor.QSystemDisplayInfo">~QSystemDisplayInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
@@ -25,6 +26,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#contrast">contrast</a></b> ( int ) : float</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
@@ -41,8 +43,11 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#getDPIHeight">getDPIHeight</a></b> ( int ) : int</div></li>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#getDPIWidth">getDPIWidth</a></b> ( int ) : int</div></li>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#getOrientation">getOrientation</a></b> ( int ) : QSystemDisplayInfo::DisplayOrientation</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
@@ -51,6 +56,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#parent">parent</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#physicalHeight">physicalHeight</a></b> ( int ) : int</div></li>
+<li><div class="fn"><b><a href="qsystemdisplayinfo.html#physicalWidth">physicalWidth</a></b> ( int ) : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
@@ -73,6 +80,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

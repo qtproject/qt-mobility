@@ -10,7 +10,10 @@ contains(mobility_modules,serviceframework) {
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext \
+           qmetaobjectbuilder \
            icheck \
+           qservicemanager_ipc \
+           qremoteserviceclassregister \
            servicedatabase
 }
 

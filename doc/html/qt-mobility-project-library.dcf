@@ -1430,8 +1430,6 @@
         <keyword ref="qgraphicsvideoitem.html#boundingRect">boundingRect</keyword>
         <keyword ref="qgraphicsvideoitem.html#nativeSizeChanged">nativeSizeChanged</keyword>
         <keyword ref="qgraphicsvideoitem.html#paint">paint</keyword>
-        <keyword ref="qgraphicsvideoitem.html#setMediaObject">setMediaObject</keyword>
-        <keyword ref="qgraphicsvideoitem.html#timerEvent">timerEvent</keyword>
         <section ref="qgraphicsvideoitem-members.html" title="List of all members"/>
     </section>
     <section ref="qimageencodercontrol.html" title="QImageEncoderControl Class Reference">
@@ -1734,7 +1732,6 @@
         <keyword ref="qmediaplaylist.html#previousIndex">previousIndex</keyword>
         <keyword ref="qmediaplaylist.html#removeMedia">removeMedia</keyword>
         <keyword ref="qmediaplaylist.html#save">save</keyword>
-        <keyword ref="qmediaplaylist.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediaplaylist.html#shuffle">shuffle</keyword>
         <section ref="qmediaplaylist-members.html" title="List of all members"/>
     </section>
@@ -1872,7 +1869,6 @@
         <keyword ref="qmediarecorder.html#record">record</keyword>
         <keyword ref="qmediarecorder.html#setEncodingSettings">setEncodingSettings</keyword>
         <keyword ref="qmediarecorder.html#setExtendedMetaData">setExtendedMetaData</keyword>
-        <keyword ref="qmediarecorder.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediarecorder.html#setMetaData">setMetaData</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>
         <keyword ref="qmediarecorder.html#stateChanged">stateChanged</keyword>
@@ -2649,6 +2645,22 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+        <keyword ref="qremoteserviceclassregister.html">QRemoteServiceClassRegister</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">InstanceType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::SharedInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::UniqueInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#registerType">registerType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#types">types</keyword>
+        <keyword ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</keyword>
+        <keyword ref="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</keyword>
+        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+    </section>
+    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+        <keyword ref="qremoteservicecontrol.html">QRemoteServiceControl</keyword>
+        <keyword ref="qremoteservicecontrol.html#publishServices">publishServices</keyword>
+        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+    </section>
     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
         <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
         <keyword ref="qrotationfilter.html#filter">filter</keyword>
@@ -2891,6 +2903,7 @@
         <keyword ref="qsystemdeviceinfo.html#SimStatus-enum">QSystemDeviceInfo::SingleSimAvailable</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryLevel-prop">batteryLevel</keyword>
         <keyword ref="qsystemdeviceinfo.html#batteryStatus-prop">batteryStatus</keyword>
+        <keyword ref="qsystemdeviceinfo.html#currentBluetoothPowerState-prop">currentBluetoothPowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</keyword>
         <keyword ref="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</keyword>
         <keyword ref="qsystemdeviceinfo.html#imei-prop">imei</keyword>
@@ -2910,8 +2923,20 @@
     </section>
     <section ref="qsystemdisplayinfo.html" title="QSystemDisplayInfo Class Reference">
         <keyword ref="qsystemdisplayinfo.html">QSystemDisplayInfo</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">DisplayOrientation</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">QSystemDisplayInfo::Unknown</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">QSystemDisplayInfo::InvertedLandscape</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">QSystemDisplayInfo::Portrait</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">QSystemDisplayInfo::Landscape</keyword>
+        <keyword ref="qsystemdisplayinfo.html#DisplayOrientation-enum">QSystemDisplayInfo::InvertedPortrait</keyword>
         <keyword ref="qsystemdisplayinfo.html#colorDepth">colorDepth</keyword>
+        <keyword ref="qsystemdisplayinfo.html#contrast">contrast</keyword>
         <keyword ref="qsystemdisplayinfo.html#displayBrightness">displayBrightness</keyword>
+        <keyword ref="qsystemdisplayinfo.html#getDPIHeight">getDPIHeight</keyword>
+        <keyword ref="qsystemdisplayinfo.html#getDPIWidth">getDPIWidth</keyword>
+        <keyword ref="qsystemdisplayinfo.html#getOrientation">getOrientation</keyword>
+        <keyword ref="qsystemdisplayinfo.html#physicalHeight">physicalHeight</keyword>
+        <keyword ref="qsystemdisplayinfo.html#physicalWidth">physicalWidth</keyword>
         <section ref="qsystemdisplayinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qsysteminfo.html" title="QSystemInfo Class Reference">
@@ -2945,7 +2970,6 @@
     <section ref="qsystemnetworkinfo.html" title="QSystemNetworkInfo Class Reference">
         <keyword ref="qsystemnetworkinfo.html">QSystemNetworkInfo</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</keyword>
-        <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::WimaxMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::CdmaMode</keyword>
         <keyword ref="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::UnknownMode</keyword>
@@ -3000,6 +3024,7 @@
         <keyword ref="qsystemstorageinfo.html#DriveType-enum">QSystemStorageInfo::RemoteDrive</keyword>
         <keyword ref="qsystemstorageinfo.html#logicalDrives-prop">logicalDrives</keyword>
         <keyword ref="qsystemstorageinfo.html#availableDiskSpace">availableDiskSpace</keyword>
+        <keyword ref="qsystemstorageinfo.html#logicalDrivesChanged">logicalDrivesChanged</keyword>
         <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
@@ -3515,7 +3540,6 @@
         <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
         <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
-        <keyword ref="qvideowidget.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
         <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
@@ -3585,6 +3609,9 @@
     </section>
     <section ref="bearer-management.html" title="Bearer Management">
         <keyword ref="bearer-management.html">Bearer Management</keyword>
+    </section>
+    <section ref="camera.html" title="Camera">
+        <keyword ref="camera.html">Camera</keyword>
     </section>
     <section ref="classlists.html" title="Class and Function Documentation">
         <keyword ref="classlists.html">Class and Function Documentation</keyword>
@@ -3729,6 +3756,9 @@
     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
         <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
     </section>
+    <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
+        <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
+    </section>
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
@@ -3738,8 +3768,11 @@
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
     </section>
-    <section ref="lightmaps.html" title="LightMap Example">
-        <keyword ref="lightmaps.html">LightMap Example</keyword>
+    <section ref="lightmaps.html" title="LightMaps Example">
+        <keyword ref="lightmaps.html">LightMaps Example</keyword>
+    </section>
+    <section ref="logfilepositionsource.html" title="Log File Position Source Example">
+        <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
