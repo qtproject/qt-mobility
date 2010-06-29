@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeoroutereply_nokia_p.h"
-#include "qgeoroutexmlparser_p.h"
+#include "qgeoroutereply_nokia.h"
+#include "qgeoroutexmlparser.h"
 
 #include <qgeorouterequest.h>
 

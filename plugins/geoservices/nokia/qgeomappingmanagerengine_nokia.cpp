@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanagerengine_nokia_p.h"
-#include "qgeomapreply_nokia_p.h"
+#include "qgeomappingmanagerengine_nokia.h"
+#include "qgeomapreply_nokia.h"
 
 #include <qgeotiledmaprequest.h>
 

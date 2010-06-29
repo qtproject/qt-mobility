@@ -179,13 +179,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle(tr("Map Viewer Demo"));
 
-    //QTimer::singleShot(0, this, SLOT(delayedInit()));
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 MainWindow::~MainWindow()
 {
     delete m_serviceProvider;
     delete ui;
+}
+
+void MainWindow::delayedInit()
+{
+    // TODO: remove this dirty, dirty hack
+    m_mapWidget->setZoomLevel(m_mapWidget->zoomLevel());
+    m_mapWidget->update();
 }
 
 void MainWindow::setProvider(QString providerId)

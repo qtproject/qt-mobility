@@ -56,13 +56,13 @@ RouteTab::RouteTab(QWidget *parent) :
         QWidget(parent),
         m_routingManager(0)
 {
-    QLabel *source = new QLabel(tr("Source:"));
+    QLabel *source = new QLabel(tr("Source (lat,long):"));
     m_srcLong = new QLineEdit("10");
     m_srcLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_srcLat = new QLineEdit("50");
     m_srcLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    QLabel *destination = new QLabel(tr("Destination:"));
+    QLabel *destination = new QLabel(tr("Destination (lat,long):"));
     m_destLong = new QLineEdit("1");
     m_destLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_destLat = new QLineEdit("48");
@@ -71,8 +71,9 @@ RouteTab::RouteTab(QWidget *parent) :
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
-    QPushButton *updateBtn = new QPushButton(tr("Update Route"));
+    updateBtn = new QPushButton(tr("Update Route"));
     updateBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    updateBtn->setDisabled(true);
     QObject::connect(updateBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnUpdate_clicked()));
     m_resultTree = new QTreeWidget();
@@ -84,16 +85,16 @@ RouteTab::RouteTab(QWidget *parent) :
     firstrow->setSpacing(0);
     firstrow->setContentsMargins(0, 0, 0, 0);
     firstrow->addWidget(source);
-    firstrow->addWidget(m_srcLong);
     firstrow->addWidget(m_srcLat);
+    firstrow->addWidget(m_srcLong);
     firstrow->addWidget(requestBtn);
 
     QHBoxLayout *secondrow = new QHBoxLayout;
     secondrow->setSpacing(0);
     secondrow->setContentsMargins(0, 0, 0, 0);
     secondrow->addWidget(destination);
-    secondrow->addWidget(m_destLong);
     secondrow->addWidget(m_destLat);
+    secondrow->addWidget(m_destLong);
     secondrow->addWidget(updateBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -134,8 +135,8 @@ void RouteTab::on_btnRequest_clicked()
             request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
 
         m_resultTree->clear();
-
         m_routingManager->calculateRoute(request);
+        updateBtn->setDisabled(true);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));
     }
@@ -146,8 +147,8 @@ void RouteTab::on_btnUpdate_clicked()
     if (m_routingManager && routes.count()>0) {
         QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
         m_resultTree->clear();
-
         m_routingManager->updateRoute(routes[0],src);
+        updateBtn->setDisabled(true);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("Route update not available."));
     }
@@ -160,6 +161,8 @@ void RouteTab::replyFinished(QGeoRouteReply* reply)
         RoutePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
+        if(routes.count()>0 && m_routingManager->supportsRouteUpdates())
+            updateBtn->setDisabled(false);
         }
 }
 

@@ -11,16 +11,16 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
-            qgeocodexmlparser_p.h \
-            qgeomappingmanagerengine_nokia_p.h \
-            qgeomapreply_nokia_p.h \
-            #qgeomapviewport_nokia_p.h \
-            qgeoroutereply_nokia_p.h \
-            qgeoroutexmlparser_p.h \
-            qgeoroutingmanagerengine_nokia_p.h \
-            qgeosearchmanagerengine_nokia_p.h \
-            qgeosearchreply_nokia_p.h \
-            qgeoserviceproviderplugin_nokia_p.h
+            qgeocodexmlparser.h \
+            qgeomappingmanagerengine_nokia.h \
+            qgeomapreply_nokia.h \
+            #qgeomapviewport_nokia.h \
+            qgeoroutereply_nokia.h \
+            qgeoroutexmlparser.h \
+            qgeoroutingmanagerengine_nokia.h \
+            qgeosearchmanagerengine_nokia.h \
+            qgeosearchreply_nokia.h \
+            qgeoserviceproviderplugin_nokia.h
 
 SOURCES += \
             qgeocodexmlparser.cpp \

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeocodexmlparser_p.h"
+#include "qgeocodexmlparser.h"
 
 #include <QXmlStreamReader>
 #include <QIODevice>

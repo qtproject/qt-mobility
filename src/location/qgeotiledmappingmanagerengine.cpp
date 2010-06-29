@@ -152,6 +152,20 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
         return;
     }
 
+    QPixmap tile;
+
+    if (!tile.loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+        //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
+    }
+
+    if (tile.isNull() || tile.size().isEmpty()) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+        //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
+    }
+
     int tileHeight = tileSize().height();
     int tileWidth = tileSize().width();
     int numCols = 1 << static_cast<int>(mapData->zoomLevel());
@@ -171,7 +185,7 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
         {
             QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
             QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 * screenRect.y());
-            painter->drawPixmap(dest, reply->mapImage(), source);
+            painter->drawPixmap(dest, tile, source);
         }
 
         tileRect.translate(totalPixelWidth, 0);

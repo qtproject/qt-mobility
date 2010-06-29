@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeoroutingmanagerengine_nokia_p.h"
-#include "qgeoroutereply_nokia_p.h"
+#include "qgeoroutingmanagerengine_nokia.h"
+#include "qgeoroutereply_nokia.h"
 
 #include <QStringList>
 #include <QNetworkProxy>
@@ -66,7 +66,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
             m_host = host;
     }
 
-    setSupportsRouteUpdates(true);
+    setSupportsRouteUpdates(false);
     setSupportsAlternativeRoutes(true);
     setSupportsExcludeAreas(true);
 
@@ -112,7 +112,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
     QString reqString = calculateRouteRequestString(request);
 
     if (reqString.isEmpty()) {
-        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The give route request options are not supported by this service provider.", this);
+        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -135,16 +135,20 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
 QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
+    QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
+    emit error(reply, reply->error(), reply->errorString());
+
+    return reply;
+/*
     QString reqString = updateRouteRequestString(route,position);
 
     if (reqString.isEmpty()) {
-        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The give route request options are not supported by this service provider.", this);
+        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(reqString)));
-    //TODO: request for the reply
     QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(QGeoRouteRequest(), networkReply, this);
 
     connect(reply,
@@ -158,6 +162,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
             SLOT(routeError(QGeoRouteReply::Error, QString)));
 
     return reply;
+*/
 }
 
 QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)

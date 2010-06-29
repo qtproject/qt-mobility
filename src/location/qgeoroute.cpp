@@ -250,23 +250,11 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
     return d_ptr->travelMode;
 }
 
-//!
-//    Sets the geometric shape of the route to \a path.
-
-//    The coordinates in \a path should be listed in the order in which they
-//    would be traversed by someone travelling along this segment of the route.
-
 /*!
-    API REVIEW NOTE
+    Sets the geometric shape of the route to \a path.
 
-    This may not be in the API, or it may replace setPathSummary().
-
-    It's possible that both will be removed, provided that its acceptable to
-    only expose the detailed route geometry via QGeoRouteSegment, since the
-    "summary" path should probably be recomputed based on how the route is
-    being viewed (mostly based on the zoom level).
-
-    This is being discussed with the people who added it.
+    The coordinates in \a path should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -274,23 +262,11 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
     d_ptr->path = path;
 }
 
-//!
-//    Returns the geometric shape of the route.
-
-//    The coordinates should be listed in the order in which they
-//    would be traversed by someone travelling along this segment of the route.
-
 /*!
-    API REVIEW NOTE
+    Returns the geometric shape of the route.
 
-    This may not be in the API, or it may replace pathSummary().
-
-    It's possible that both will be removed, provided that its acceptable to
-    only expose the detailed route geometry via QGeoRouteSegment, since the
-    "summary" path should probably be recomputed based on how the route is
-    being viewed (mostly based on the zoom level).
-
-    This is being discussed with the people who added it.
+    The coordinates should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {

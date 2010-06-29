@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeomapreply_nokia_p.h"
+#include "qgeomapreply_nokia.h"
 
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
@@ -73,7 +73,7 @@ QNetworkReply* QGeoMapReplyNokia::networkReply() const
 
 void QGeoMapReplyNokia::abort()
 {
-    m_reply->abort();
+    m_reply->close();
     m_reply->deleteLater();
     cleanedUp = true;
 }
@@ -84,6 +84,11 @@ void QGeoMapReplyNokia::networkFinished()
         return;
     }
 
+    setMapImageData(m_reply->readAll());
+    setMapImageFormat("PNG");
+    setFinished(true);
+
+    /*
     QPixmap tile;
 
     if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
@@ -98,6 +103,7 @@ void QGeoMapReplyNokia::networkFinished()
         // add a qWarning with the actual parser.errorString()
         setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
     }
+    */
 
     m_reply->deleteLater();
     cleanedUp = true;

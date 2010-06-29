@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_nokia_p.h"
+#include "qgeoserviceproviderplugin_nokia.h"
 
-#include "qgeosearchmanagerengine_nokia_p.h"
-#include "qgeoroutingmanagerengine_nokia_p.h"
-#include "qgeomappingmanagerengine_nokia_p.h"
+#include "qgeosearchmanagerengine_nokia.h"
+#include "qgeoroutingmanagerengine_nokia.h"
+#include "qgeomappingmanagerengine_nokia.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>

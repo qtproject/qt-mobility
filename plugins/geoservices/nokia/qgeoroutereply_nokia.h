@@ -39,45 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_NOKIA_P_H
-#define QGEOSERVICEPROVIDER_NOKIA_P_H
+#ifndef QGEOROUTEREPLY_NOKIA_H
+#define QGEOROUTEREPLY_NOKIA_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <qgeoserviceproviderfactory.h>
-#include <QObject>
+#include <qgeoroutereply.h>
+#include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
+class QGeoRouteReplyNokia : public QGeoRouteReply
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
+    QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoRouteReplyNokia();
 
-    QString providerName() const;
-    int providerVersion() const;
+    void abort();
 
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+private slots:
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
+
+private:
+    QNetworkReply *m_reply;
 };
 
 #endif

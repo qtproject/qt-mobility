@@ -73,7 +73,8 @@ public:
     bool isFinished;
 
     QGeoTiledMapRequest request;
-    QPixmap mapImage;
+    QByteArray mapImageData;
+    QString mapImageFormat;
 };
 
 QTM_END_NAMESPACE

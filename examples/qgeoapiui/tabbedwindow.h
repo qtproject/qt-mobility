@@ -45,7 +45,6 @@
 #include "routetab.h"
 #include "geocodingtab.h"
 #include "revgeocodingtab.h"
-#include "maptiletab.h"
 
 #include <QMainWindow>
 #include <QTabWidget>
@@ -79,7 +78,6 @@ private:
     GeocodingTab* m_geocodingTab;
     ReverseGeocodingTab* m_reverseTab;
     RouteTab* m_routingTab;
-    MapTileTab* m_mappingTab;
 };
 
 #endif /* TABBEDWINDOW_H_ */
