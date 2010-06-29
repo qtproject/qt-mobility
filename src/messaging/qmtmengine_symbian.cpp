@@ -2304,7 +2304,7 @@ void CMTMEngine::storeSMSL(QMessage &message)
 
     // Get message id from new SMS message index entry 
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id())));
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()), SymbianHelpers::EngineTypeMTM));
 }
 
 bool CMTMEngine::sendSMS(QMessage &message)
