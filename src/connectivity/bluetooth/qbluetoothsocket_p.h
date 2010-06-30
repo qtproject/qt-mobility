@@ -109,6 +109,7 @@ public:
     int socket;
     QSocketNotifier *readNotifier;
 
+    mutable QString localName;
     mutable QString peerName;
 #endif
 };

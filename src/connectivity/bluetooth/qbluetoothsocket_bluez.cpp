@@ -91,8 +91,34 @@ void QBluetoothSocket::disconnectFromService()
 
 QString QBluetoothSocket::localName() const
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    return QString();
+    Q_D(const QBluetoothSocket);
+
+    if (!d->localName.isEmpty())
+        return d->localName;
+
+    const QBluetoothAddress address = localAddress();
+    if (address.isNull())
+        return QString();
+
+    OrgBluezManagerInterface manager(QLatin1String("org.bluez"), QLatin1String("/"),
+                                     QDBusConnection::systemBus());
+
+    QDBusPendingReply<QDBusObjectPath> reply = manager.FindAdapter(address.toString());
+    reply.waitForFinished();
+    if (reply.isError())
+        return QString();
+
+    OrgBluezAdapterInterface adapter(QLatin1String("org.bluez"), reply.value().path(),
+                                     QDBusConnection::systemBus());
+
+    QDBusPendingReply<QVariantMap> properties = adapter.GetProperties();
+    properties.waitForFinished();
+    if (properties.isError())
+        return QString();
+
+    d->localName = properties.value().value(QLatin1String("Name")).toString();
+
+    return d->localName;
 }
 
 QBluetoothAddress QBluetoothSocket::localAddress() const
