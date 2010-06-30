@@ -147,7 +147,7 @@ usage()
     echo "                    by double quotation. If a selected module depends on other modules"
     echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
-    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
+    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
     echo "-sdk <sdk>......... Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
@@ -578,6 +578,7 @@ for module in $MOBILITY_MODULES; do
             ;;
         feedback)
             $relpath/bin/syncheaders $shadowpath/include/QtFeedback $relpath/src/feedback
+            ;;
         organizer)
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;

@@ -137,9 +137,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     messaging multimedia systeminfo serviceframework telephony
     echo                     sensors versit organizer feedback
     echo                     Modules should be separated by a space and surrounded
-    echo                     by double quotation. If a
-    echo                     selected module depends on other modules dependencies
-    echo                     will automatically be enabled.
+    echo                     by double quotation. If a selected module depends on other modules
+    echo                     those modules (and their dependencies) will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
 
 
@@ -531,7 +530,7 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
-
+call :compileTest IMMERSION immersion
 :noTests
 
 echo End of compile tests
