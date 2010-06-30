@@ -46,6 +46,8 @@
 #include "qcontactdetails.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
+#include "qcontactaction.h"
+#include "qcontactactiondescriptor.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
@@ -66,6 +68,8 @@ QTM_BEGIN_NAMESPACE
   \class QContactManagerEngine
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+  
   \ingroup contacts-backends
 
   Instances of this class are usually provided by a
@@ -230,7 +234,7 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -256,7 +260,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -490,8 +494,6 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
 
 /*!
   Sets the contact display label of \a contact to the supplied \a displayLabel.
-
-  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
  */
 void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QString& displayLabel)
 {
@@ -499,6 +501,22 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
     setDetailAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
     contact->d->m_details.replace(0, dl);
+}
+
+/*!  
+  \deprecated
+
+  Returns a copy of \a contact with the contact display label set to the supplied \a displayLabel.
+
+  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
+
+  This function has been deprecated - use the function with the same name that accepts different parameters.
+*/
+QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
+{
+    QContact newContact = contact;
+    setContactDisplayLabel(&newContact, displayLabel);
+    return newContact;
 }
 
 /*!
@@ -517,6 +535,8 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 
   Some of the following transformations may be applied:
   \list
+   \o Any QContactActionFilters are transformed into the corresponding
+     QContactFilters returned by matching actions
    \o Any QContactInvalidFilters contained in a union filter will be removed
    \o Any default QContactFilters contained in an intersection filter will be removed
    \o Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
@@ -534,6 +554,40 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
 {
     switch(filter.type()) {
+        case QContactFilter::ActionFilter:
+        {
+            // Find any matching actions, and do a union filter on their filter objects
+            QContactActionFilter af(filter);
+            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+
+            QList<QContactFilter> filters;
+            // There's a small wrinkle if there's a value specified in the action filter
+            // we have to adjust any contained QContactDetailFilters to have that value
+            // or test if a QContactDetailRangeFilter contains this value already
+            for (int j = 0; j < descriptors.count(); j++) {
+                QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                // Action filters are not allowed to return action filters, at all
+                // it's too annoying to check for recursion
+                QContactFilter d = action->contactFilter(af.value());
+                delete action; // clean up.
+                if (!validateActionFilter(d))
+                    continue;
+
+                filters.append(d);
+            }
+
+            if (filters.count() == 0)
+                return QContactInvalidFilter();
+            if (filters.count() == 1)
+                return filters.first();
+
+            QContactUnionFilter f;
+            f.setFilters(filters);
+            return canonicalizedFilter(f);
+        }
+        // unreachable
+
         case QContactFilter::IntersectionFilter:
         {
             QContactIntersectionFilter f(filter);
@@ -1685,7 +1739,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 {
     switch(filter.type()) {
         case QContactFilter::InvalidFilter:
-        case QContactFilter::ActionFilter:
             return false;
 
         case QContactFilter::DefaultFilter:
@@ -2005,6 +2058,33 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
+        case QContactFilter::ActionFilter:
+            {
+                // Find any matching actions, and do a union filter on their filter objects
+                QContactActionFilter af(filter);
+                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+
+                // There's a small wrinkle if there's a value specified in the action filter
+                // we have to adjust any contained QContactDetailFilters to have that value
+                // or test if a QContactDetailRangeFilter contains this value already
+                for (int j = 0; j < descriptors.count(); j++) {
+                    QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                    // Action filters are not allowed to return action filters, at all
+                    // it's too annoying to check for recursion
+                    QContactFilter d = action->contactFilter(af.value());
+                    delete action; // clean up.
+                    if (!validateActionFilter(d))
+                        return false;
+
+                    // Check for values etc...
+                    if (testFilter(d, contact))
+                        return true;
+                }
+                // Fall through to end
+            }
+            break;
+
         case QContactFilter::IntersectionFilter:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
@@ -2043,11 +2123,40 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 }
 
 /*!
+  Given a QContactFilter \a filter retrieved from a QContactAction,
+  check that it is valid and cannot cause infinite recursion.
+
+  In particular, a filter from a QContactAction cannot contain
+  any instances of a QContactActionFilter.
+
+  Returns true if \a filter seems ok, or false otherwise.
+ */
+
+bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
+{
+    QList<QContactFilter> toVerify;
+    toVerify << filter;
+
+    while(toVerify.count() > 0) {
+        QContactFilter f = toVerify.takeFirst();
+        if (f.type() == QContactFilter::ActionFilter)
+            return false;
+        if (f.type() == QContactFilter::IntersectionFilter)
+            toVerify.append(QContactIntersectionFilter(f).filters());
+        if (f.type() == QContactFilter::UnionFilter)
+            toVerify.append(QContactUnionFilter(f).filters());
+    }
+
+    return true;
+}
+
+/*!
   Sets the cached relationships in the given \a contact to \a relationships
  */
 void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
 {
     contact->d->m_relationshipsCache = relationships;
+    contact->d->m_reorderedRelationshipsCache = relationships;
 }
 
 
@@ -2209,6 +2318,170 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
             emit req->stateChanged(state);
         }
     }
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error)
+{
+    QContactLocalIdFetchRequestPrivate* rd = static_cast<QContactLocalIdFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_ids = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactFetchRequest \a req with the latest results \a result, and operation error \a error.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error)
+{
+    QContactFetchRequestPrivate* rd = static_cast<QContactFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_contacts = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateContactRemoveRequest(QContactRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactRemoveRequestPrivate* rd = static_cast<QContactRemoveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateContactSaveRequest(QContactSaveRequest* req, const QList<QContact>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactSaveRequestPrivate* rd = static_cast<QContactSaveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    rd->m_contacts = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactDetailDefinitionSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateDefinitionSaveRequest(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactDetailDefinitionSaveRequestPrivate* rd = static_cast<QContactDetailDefinitionSaveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    rd->m_definitions = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactDetailDefinitionRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateDefinitionRemoveRequest(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactDetailDefinitionRemoveRequestPrivate* rd = static_cast<QContactDetailDefinitionRemoveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactDetailDefinitionFetchRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateDefinitionFetchRequest(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactDetailDefinitionFetchRequestPrivate* rd = static_cast<QContactDetailDefinitionFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    rd->m_definitions = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactRelationshipSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateRelationshipSaveRequest(QContactRelationshipSaveRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactRelationshipSaveRequestPrivate* rd = static_cast<QContactRelationshipSaveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    rd->m_relationships = result;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactRelationshipRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationshipRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap)
+{
+    QContactRelationshipRemoveRequestPrivate* rd = static_cast<QContactRelationshipRemoveRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_errors = errorMap;
+    emit req->resultsAvailable();
+}
+
+/*!
+  \deprecated
+
+  Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  This function has been deprecated - use the function with the same name that accepts the new state of the request.
+ */
+void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipFetchRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error)
+{
+    QContactRelationshipFetchRequestPrivate* rd = static_cast<QContactRelationshipFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_relationships = result;
+    emit req->resultsAvailable();
 }
 
 /*!

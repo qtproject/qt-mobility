@@ -348,7 +348,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
 
-                if  (mRegUpdateAO)
+                if (mRegUpdateAO)
                     delete mRegUpdateAO;
                 mRegUpdateAO = temp;
 

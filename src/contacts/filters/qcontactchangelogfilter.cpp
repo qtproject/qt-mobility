@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactChangeLogFilter
   \brief The QContactChangeLogFilter class provides a filter based around a
   contact timestamp criterion.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-filters
  
   It may be used to select contacts which have been updated or created

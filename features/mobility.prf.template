@@ -3,11 +3,11 @@
     INCLUDEPATH += $${MOBILITY_INCLUDE}
 } else {
     load(data_caging_paths)
-    contains(MOBILITY, contacts|versit) {
+    contains(MOBILITY, contacts|versit|organizer) {
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors) {
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors|telephony) {
         INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }
@@ -33,6 +33,10 @@ contains(MOBILITY, publishsubscribe) {
 contains(MOBILITY, location) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtLocation
     qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, landmarks) {
+    qtAddLibrary(QtLandmarks)
 }
 
 contains(MOBILITY, serviceframework) {
@@ -69,13 +73,23 @@ contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
 
+contains(MOBILITY, telephony) {
+    qtAddLibrary(QtTelephony)
+}
+
 contains(MOBILITY, sensors) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)
 }
 
 contains(MOBILITY, feedback) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtFeedback
     qtAddLibrary(QtFeedback)
+}
+
+contains(MOBILITY, organizer) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtOrganizer
+    qtAddLibrary(QtOrganizer)
 }
 
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.

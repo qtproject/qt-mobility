@@ -42,6 +42,17 @@
 #ifndef DBUSCOMM_MAEMO_H
 #define DBUSCOMM_MAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 #include <QtDBus/QtDBus>
@@ -64,21 +75,22 @@ public:
                   CommandSetMethods = 4, CommandSetInterval = 8, 
                   CommandSatStart = 16,  CommandSatStop = 32, CommandSatOneShot = 48};
 
-    DBusComm();
+    DBusComm(QObject *parent = 0);
     int  init();
     bool sendDBusRegister();
     bool sendConfigRequest(Command command, QGeoPositionInfoSource::PositioningMethods method, 
                            int interval) const;
     QGeoPositionInfo& requestLastKnownPosition(bool satelliteMethodOnly);
-
+    QGeoPositionInfoSource::PositioningMethods availableMethods() const;
+    int minimumInterval() const;
 
 Q_SIGNALS:
     void receivedPositionUpdate(const QGeoPositionInfo &update);
     void receivedSatellitesInView(const QList<QGeoSatelliteInfo> &update);
     void receivedSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
 
-private Q_SLOTS:
-    void registerDone(QDBusPendingCallWatcher *call);
+    void serviceDisconnected();
+    void serviceConnected();
 
 private:
     static const QString positioningdService;
@@ -89,19 +101,26 @@ private:
     void receivePositionUpdate(const QGeoPositionInfo &update);
     void receiveSatellitesInView(const QList<QGeoSatelliteInfo> &info);
     void receiveSatellitesInUse(const QList<QGeoSatelliteInfo> &info);
-    void receiveSettings(const QGeoPositionInfoSource::PositioningMethod methods, 
-                         const int interval);
+    void receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval);
 
     QDBusInterface *positioningdProxy;
     DBusServer* dbusServer;
     QObject serverObj;
     QString myService;
     QString myPath;
-    int  clientId;
-
+    int clientId;
+    int minimumUpdateInterval;
+    QGeoPositionInfoSource::PositioningMethods availablePositioningMethods;
+    QDBusServiceWatcher *serviceDisconnectWatcher;
+    QDBusServiceWatcher *serviceConnectWatcher;
     bool createUniqueName();
 
     Q_DISABLE_COPY(DBusComm)
+
+private Q_SLOTS:
+    void onServiceDisconnect(const QString &name);
+    void onServiceConnect(const QString &name);
+
 };
 
 QTM_END_NAMESPACE

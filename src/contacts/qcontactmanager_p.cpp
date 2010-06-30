@@ -46,6 +46,10 @@
 
 #include "qcontact_p.h"
 
+#include "qcontactaction.h"
+#include "qcontactactiondescriptor.h"
+#include "qcontactactionfactory.h"
+
 #include <QSharedData>
 #include <QtPlugin>
 #include <QPluginLoader>
@@ -67,7 +71,12 @@
 QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
+QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
+QList<QContactActionDescriptor> QContactManagerData::m_descriptors;
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
+QContactManagerData::DescriptorHash QContactManagerData::m_descriptormap;
+QHash<QString, int> QContactManagerData::m_vendormap;
+QHash<QString, int> QContactManagerData::m_actionmap;
 
 bool QContactManagerData::m_discovered;
 bool QContactManagerData::m_discoveredStatic;
@@ -77,10 +86,20 @@ static void qContactsCleanEngines()
 {
     QContactManagerData::m_discovered = false;
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
+    QList<QContactActionFactory*> actionfactories = QContactManagerData::m_actionfactories;
+
     for (int i=0; i < factories.count(); i++) {
         delete factories.at(i);
     }
+    for(int i=0; i < actionfactories.count(); i++) {
+        delete actionfactories.at(i);
+    }
     QContactManagerData::m_engines.clear();
+    QContactManagerData::m_actionfactories.clear();
+    QContactManagerData::m_descriptors.clear();
+    QContactManagerData::m_descriptormap.clear();
+    QContactManagerData::m_actionmap.clear();
+    QContactManagerData::m_vendormap.clear();
 }
 
 
@@ -170,6 +189,7 @@ void QContactManagerData::loadStaticFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
+            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -185,6 +205,29 @@ void QContactManagerData::loadStaticFactories()
                     }
                 } else {
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
+                }
+            }
+
+            if (g) {
+                QString name = g->name();
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Static: found an action factory" << g << "with name" << name;
+#endif
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Static contacts plugin" << name << "has the same name as currently loaded plugin; ignored";
+                } else {
+                    m_actionfactories.append(g);
+
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        QContactActionDescriptor desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
                 }
             }
         }
@@ -213,6 +256,8 @@ void QContactManagerData::loadFactories()
         for (int i=0; i < m_pluginPaths.count(); i++) {
             QPluginLoader qpl(m_pluginPaths.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
+            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
+
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -231,9 +276,33 @@ void QContactManagerData::loadFactories()
                 }
             }
 
+            if (g) {
+                QString name = g->name();
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Dynamic: found a contact action factory" << g << "with name" << name;
+#endif
+                // we also need to ensure that we haven't already loaded this factory.
+                if (m_actionfactories.contains(g)) {
+                    qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                } else {
+                    m_actionfactories.append(g);
+
+                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
+                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
+                    for (int j = 0; j < actions.size(); j++) {
+                        const QContactActionDescriptor& desc = actions.at(j);
+                        m_descriptormap.insert(desc, g);
+                        m_descriptors.append(desc);
+                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
+                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
+                    }
+                }
+            }
+
             /* Debugging */
 #if !defined QT_NO_DEBUG
-            if (showDebug && !f) {
+            if (showDebug && !f && !g) {
                 qDebug() << "Unknown plugin:" << qpl.errorString();
                 if (qpl.instance()) {
                     qDebug() << "[qobject:" << qpl.instance() << "]";
@@ -253,9 +322,63 @@ void QContactManagerData::loadFactories()
 #if !defined QT_NO_DEBUG
         if (showDebug) {
             qDebug() << "Found engines:" << engineNames;
+            qDebug() << "Found actions:" << m_actionmap.keys();
         }
 #endif
     }
+}
+
+QList<QContactActionDescriptor> QContactManagerData::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
+{
+    loadFactories();
+
+    bool restrict = false;
+    QSet<int> subset;
+    QList<QContactActionDescriptor> descriptors;
+
+    // Go through our list of descriptors, looking for a match
+    if (!actionName.isEmpty()) {
+        subset = m_actionmap.values(actionName).toSet();
+        restrict = true;
+    }
+
+    if (!vendorName.isEmpty()) {
+        if (restrict)
+            subset &= m_vendormap.values(vendorName).toSet();
+        else
+            subset = m_vendormap.values(vendorName).toSet();
+        restrict = true;
+
+        /* We still have to check versions, since we don't hash that */
+        if (implementationVersion != -1) {
+            QMutableSetIterator<int> it(subset);
+            while(it.hasNext()) {
+                if (m_descriptors.at(it.next()).implementationVersion() != implementationVersion)
+                    it.remove();
+            }
+        }
+    }
+
+    if (restrict) {
+        QSetIterator<int> it(subset);
+        while(it.hasNext()) {
+            descriptors << m_descriptors.at(it.next());
+        }
+    } else {
+        /* No restrictions, just iterate over all descriptors and return all actions (!) */
+        descriptors = m_descriptors;
+    }
+
+    return descriptors;
+}
+
+QContactAction* QContactManagerData::action(const QContactActionDescriptor& actionDescriptor)
+{
+    loadFactories();
+    QContactActionFactory* actionFactory = m_descriptormap.value(actionDescriptor, 0);
+    if (actionFactory)
+        return actionFactory->instance(actionDescriptor);
+    return 0;
 }
 
 // trampoline for private classes

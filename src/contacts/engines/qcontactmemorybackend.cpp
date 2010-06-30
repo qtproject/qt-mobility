@@ -59,6 +59,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactMemoryEngine
+  
+  \inmodule QtContacts
+  
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
  
@@ -912,6 +915,7 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
         case QContactManager::ArbitraryRelationshipTypes:
+        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:
@@ -963,6 +967,7 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 }
 
 /*!
+ * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QContactMemoryEngine::isFilterSupported(const QContactFilter& filter) const
