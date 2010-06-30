@@ -169,6 +169,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a QMediaObject.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display

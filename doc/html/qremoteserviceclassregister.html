@@ -37,16 +37,10 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qremoteserviceclassregister.html#registerType">registerType</a></b> ( QRemoteServiceClassRegister::InstanceType <i>type</i> = UniqueInstance )</td></tr>
 </table>
 <hr />
-<a name="related-non-members"></a>
-<h2>Related Non-Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</a></b></td></tr>
-</table>
-<hr />
 <a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</a></b> (  <i>T</i>,  <i>interface</i>,  <i>version</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</a></b> (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -72,22 +66,17 @@
 <pre>    QRemoteServiceClassRegister::registerType&lt;ServiceClass&gt;();</pre>
 <p>Every service class must be marked via the <a href="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</a>() macro.</p>
 <a name="//apple_ref/cpp/instm/QRemoteServiceClassRegister/types"></a>
-<h3 class="fn"><a name="types"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</a>&gt; QRemoteServiceClassRegister::types () const</h3>
+<h3 class="fn"><a name="types"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QRemoteServiceIdentifier&gt; QRemoteServiceClassRegister::types () const</h3>
 <p>Returns the list of all registered service types.</p>
-<hr />
-<h2>Related Non-Members</h2>
-<a name="//apple_ref/cpp/tdef//QRemoteServiceIdentifier"></a>
-<h3 class="fn"><a name="QRemoteServiceIdentifier-typedef"></a>typedef QRemoteServiceIdentifier</h3>
-<p>Qt-style synonym for <a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt;.</p>
 <hr />
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//Q_SERVICE"></a>
-<h3 class="fn"><a name="Q_SERVICE"></a>Q_SERVICE (  <i>T</i>,  <i>interface</i>,  <i>version</i> )</h3>
-<p>This macro marks a class as remote service and should be placed next to the <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_OBJECT">Q_OBJECT</a> macro. <i>T</i> represents the name of the class implementing the service, <i>interface</i> specifies the service framework interface name and <i>version</i> represents the interface version. Version and interface parameter must match the interface information provided by the associated service XML file.</p>
+<h3 class="fn"><a name="Q_SERVICE"></a>Q_SERVICE (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</h3>
+<p>This macro marks a class as remote service and should be placed next to the <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_OBJECT">Q_OBJECT</a> macro. <i>T</i> represents the name of the class implementing the service, <i>interface</i> specifies the service framework service name, interface name and <i>version</i> represents the interface version. All parameters must match the interface information provided by the associated service XML file.</p>
 <pre>    class ServiceClass : public QObject
     {
         Q_OBJECT
-        Q_SERVICE(ServiceClass, &quot;com.nokia.qt.interfacename&quot;, &quot;1.2&quot;);
+        Q_SERVICE(ServiceClass, &quot;ServiceName&quot;, &quot;com.nokia.qt.interfacename&quot;, &quot;1.2&quot;);
     public:
         ServiceClass(QObject* parent) : QObject(parent) {};
     public slots:

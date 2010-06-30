@@ -58,6 +58,7 @@ qhp.Mobility.namespace          = com.nokia.qtmobility
 qhp.Mobility.virtualFolder      = mobility
 qhp.Mobility.indexTitle         = Qt Mobility Project Reference Documentation
 qhp.Mobility.indexRoot          =
+
 qhp.Mobility.customFilters.QtMobility.name = Qt Mobility
 qhp.Mobility.customFilters.QtMobility.filterAttributes = qtmobility
 
@@ -75,40 +76,50 @@ qhp.Mobility.subprojects.examples.indexTitle = Qt Mobility Project Examples
 qhp.Mobility.subprojects.examples.selectors = fake:example
 qhp.Mobility.subprojects.examples.sortPages = true
 
-
+defines                 = Q_QDOC \
+                          __cplusplus \
 
 language                = Cpp
 
-headerdirs              = ../../src/bearer \
-                        ../../src/serviceframework \
-                        ../../src/location \
-                        ../../src/publishsubscribe \
-                        ../../src/systeminfo \
-                        ../../src/contacts \
-                        ../../src/multimedia \
-                        ../../src/messaging \
-                        ../../src/versit \
-                        ../../src/sensors \
-                        .
+imagedirs = images
 
-sourcedirs              = ../../src/bearer \
-                        ../../src/serviceframework \
-                        ../../src/location \
-                        ../../src/publishsubscribe \
-                        ../../src/systeminfo \
-                        ../../src/contacts \
-                        ../../src/multimedia \
-                        ../../src/messaging \
-                        ../../src/versit \
-                        ../../src/sensors \
-                        .
+headerdirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
+             ../../src/messaging \
+             ../../src/versit \
+             ../../src/telephony \
+             ../../src/sensors \
+             ../../src/camera \
+             .
 
-excludedirs             = ../../src/messaging/win32wce \
-                        ../../src/publishsubscribe/symbian
+sourcedirs = ../../src/bearer \
+             ../../src/serviceframework \
+             ../../src/location \
+             ../../src/publishsubscribe \
+             ../../src/systeminfo \
+             ../../src/contacts \
+             ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
+             ../../src/messaging \
+             ../../src/versit \
+             ../../src/telephony \
+             ../../src/sensors \
+             ../../src/camera \
+             .
 
-exampledirs             = ../../examples \
-                        ../.. \
-                        .
+excludedirs = ../../src/messaging/win32wce \
+              ../../src/publishsubscribe/symbian
+
+exampledirs = ../../examples \
+              ../../demos \
+              ../.. \
+              .
 
 
 
