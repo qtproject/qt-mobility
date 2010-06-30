@@ -465,6 +465,7 @@ call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest Symbian_Messaging_FreestyleNmail messaging_freestylenm
+call :compileTest Symbian_Messaging_NcnList messaging_ncnlist
 echo End of compile tests
 echo.
 echo.

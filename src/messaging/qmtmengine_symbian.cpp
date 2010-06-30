@@ -4330,6 +4330,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         return;
     }
 
+#ifdef NCNLISTREMOVED
     if (aMsgType == KUidMsgTypeSMS) { // we need to check if sms message is 'indicator clear message' (for voice messages)
         if (aEvent == EMsvEntriesCreated) {
             iNewMessage = true;
@@ -4337,7 +4338,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             // cannot be sure if sms is indicator clear message, we have to wait changed event
             return;
         }
-        if (aEvent == EMsvEntriesChanged && iNewMessage && iMessageId == aMessageId) {
+        else if (aEvent == EMsvEntriesChanged && iNewMessage && iMessageId == aMessageId) {
             iNewMessage = false;
             aEvent = EMsvEntriesCreated;
             bool clearMessage = checkIfWaitingDiscardClearMessage(aMessageId);
@@ -4345,8 +4346,13 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 return;
             }
         }
+        else {
+            iNewMessage = false;
+            iMessageId = 0;
+        }
     }
-
+#endif // NCNLISTREMOVED
+    
     QMessageManager::NotificationFilterIdSet matchingFilters;
 
     // Copy the filter map to protect against modification during traversal

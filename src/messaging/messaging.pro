@@ -143,7 +143,8 @@ symbian|win32|maemo6|maemo5|mac {
 			DEFINES += FREESTYLEMAILUSED
 			DEFINES += FREESTYLEMAILBOXOBSERVERUSED
 		}
-		contains(messaging_freestylenm_enabled, yes) {
+	contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
+	contains(messaging_freestylenm_enabled, yes) {
             CONFIG += FREESTYLENMAIL
             DEFINES += FREESTYLENMAILUSED
         }
