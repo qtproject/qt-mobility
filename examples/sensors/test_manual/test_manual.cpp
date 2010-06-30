@@ -71,6 +71,7 @@ static QString dataRateString;
 static QString dataRangeString;
 static QString resolutionString;
 static int counter;
+static bool isStationary = false;
 
 ///////////////////////////////////////////
 //cpp file
@@ -151,7 +152,7 @@ void SensorSlotClass::slotAccelerationData(){
 
     checkRate(&accelerometer, m_accelerometerTimestamp);
 
-    if (counter==4) checkResolution(&accelerometer, acceReading);
+    if (isStationary) checkResolution(&accelerometer, acceReading);
 
 }
 
@@ -249,6 +250,7 @@ void SensorSlotClass::checkDiff(qreal diff, qreal resolution, QString msg){
 
     if (qAbs(diff)<resolution || qAbs(diff)>resolutionMax){
         QString num;
+        resolutionString.append("\n");
         resolutionString.append("accelerometer:");
         resolutionString.append(msg);
         num.setNum(resolution);
@@ -256,7 +258,6 @@ void SensorSlotClass::checkDiff(qreal diff, qreal resolution, QString msg){
         resolutionString.append("!=");
         num.setNum(qAbs(diff));
         resolutionString.append(num);
-        resolutionString.append("\n");
     }
 
 }
@@ -530,7 +531,7 @@ void test_manual::testOrientation()
 
     for (; counter<7; counter++){
         qDebug()<<"Put the device in following position, try to preserve compass direction:\n";
-        if (counter==4) qDebug()<<"Put the device on the table on stationary position!!!!:\n";
+        if (counter==4) qDebug()<<"Put the device on the table on stationary position!:\n";
         QOrientationReading::Orientation o1 = tests::orientation[counter%6];
         tests::drawDevice(o1);
         tests::pressAnyKey();
@@ -626,6 +627,15 @@ void test_manual::testOrientation()
         //            qDebug()<<" rotation = y "<<rot_y[i-1];
         //            qDebug()<<" rotation = z "<<rot_z[i-1];
         //        }
+
+
+        if (counter==4){
+            isStationary = true;
+            qDebug()<<"Keep the device on the table on stationary position!:\n";
+            qDebug()<<"Test continues after a while";            
+            QTest::qWait(2000);   // DO NOT REMOVE - does not work without this!
+            isStationary = false;
+        }
     }
 
 
