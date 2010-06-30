@@ -29,7 +29,7 @@
 <p>The Camera API allows high level control of various aspects of still images and video. Camera is a part of the Multimedia API and this relationship is apparent when you notice that certain core classes are subclassed from some Multimedia base classes including <a href="qmediaobject.html">QMediaObject</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <a name="still-images"></a>
 <h3>Still Images</h3>
-<p>In order to capture an image we need to create a QCamera object and use it to initialize a <a href="qvideowidget.html">QVideoWidget</a>, so we can see where the camera is pointing - a viewfinder. The camera object is also used to initialize a new QStillImageCapture object, imageCapture. All that is then needed is to start the camera, lock it so that the settings are not changed while the image capture occurs, capture the image, and finally unlock the camera ready for the next photo.</p>
+<p>In order to capture an image we need to create a <a href="qcamera.html">QCamera</a> object and use it to initialize a <a href="qvideowidget.html">QVideoWidget</a>, so we can see where the camera is pointing - a viewfinder. The camera object is also used to initialize a new QStillImageCapture object, imageCapture. All that is then needed is to start the camera, lock it so that the settings are not changed while the image capture occurs, capture the image, and finally unlock the camera ready for the next photo.</p>
 <pre>    camera = new QCamera;
     viewFinder = new QCameraViewfinder();
     viewFinder-&gt;show();
@@ -62,10 +62,10 @@
 <p>When the camera is in video mode, as decided by the application, then as the shutter button is pressed the camera is locked as before but instead the <a href="qmediarecorder.html#record">record()</a> function in <a href="qmediarecorder.html">QMediaRecorder</a> is used.</p>
 <a name="focus"></a>
 <h3>Focus</h3>
-<p>Focusing is managed by the classes QCameraFocus and QCameraFocusControl. QCameraFocus allows the developer to set the general policy by means of the enums for the FocusMode and the FocusPointMode. FocusMode deals with settings such as AutoFocus, ContinuousFocus and InfinityFocus, whereas FocusPointMode deals with the various focus zones within the view. FocusPointMode has support for face recognition, center focus and a custom focus where the focus point can be specified.</p>
+<p>Focusing is managed by the classes <a href="qcamerafocus.html">QCameraFocus</a> and <a href="qcamerafocuscontrol.html">QCameraFocusControl</a>. <a href="qcamerafocus.html">QCameraFocus</a> allows the developer to set the general policy by means of the enums for the <a href="qcamerafocus.html#FocusMode-enum">FocusMode</a> and the <a href="qcamerafocus.html#FocusPointMode-enum">FocusPointMode</a>. FocusMode deals with settings such as AutoFocus, ContinuousFocus and InfinityFocus, whereas FocusPointMode deals with the various focus zones within the view. FocusPointMode has support for face recognition, center focus and a custom focus where the focus point can be specified.</p>
 <a name="cancelling-asynchronous-operations"></a>
 <h3>Cancelling Asynchronous Operations</h3>
-<p>Various operations such as image capture and auto focusing occur asynchrously. These operations can often be cancelled by the start of a new operation as long as this is supported by the backend. For image capture, the operation can be cancelled by calling cancelCapture(). For AutoFocus, autoexposure or white balance cancellation can be done by calling <i>QCamera::unlock(QCamera::LockFocus)</i>.</p>
+<p>Various operations such as image capture and auto focusing occur asynchrously. These operations can often be cancelled by the start of a new operation as long as this is supported by the backend. For image capture, the operation can be cancelled by calling cancelCapture(). For AutoFocus, autoexposure or white balance cancellation can be done by calling <i>QCamera::unlock(<a href="qcamera.html#LockType-enum">QCamera::LockFocus</a>)</i>.</p>
 <a name="camera-controls"></a>
 <h3>Camera Controls</h3>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
@@ -82,6 +82,16 @@
 <a name="classes"></a>
 <h3>Classes</h3>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qcamera.html">QCamera</a></th><td>Interface for system camera devices</td></tr>
+<tr valign="top" class="even"><th><a href="qcameracontrol.html">QCameraControl</a></th><td>Abstract base class for classes that control still cameras or video cameras</td></tr>
+<tr valign="top" class="odd"><th><a href="qcameraexposure.html">QCameraExposure</a></th><td>Interface for exposure related camera settings</td></tr>
+<tr valign="top" class="even"><th><a href="qcameraexposurecontrol.html">QCameraExposureControl</a></th><td>Supplies control for exposure related camera parameters</td></tr>
+<tr valign="top" class="odd"><th><a href="qcamerafocus.html">QCameraFocus</a></th><td>Interface for focus and zoom related camera settings</td></tr>
+<tr valign="top" class="even"><th><a href="qcamerafocuscontrol.html">QCameraFocusControl</a></th><td>Supplies control for focusing related camera parameters</td></tr>
+<tr valign="top" class="odd"><th><a href="qcameraimagecapturecontrol.html">QCameraImageCaptureControl</a></th><td>Control interface for image capture services</td></tr>
+<tr valign="top" class="even"><th><a href="qcameraimageprocessing.html">QCameraImageProcessing</a></th><td>Interface for focus and zoom related camera settings</td></tr>
+<tr valign="top" class="odd"><th><a href="qcameralockscontrol.html">QCameraLocksControl</a></th><td>Abstract base class for classes that control still cameras or video cameras</td></tr>
+<tr valign="top" class="even"><th><a href="qcameraviewfinder.html">QCameraViewfinder</a></th><td>Camera viewfinder widget</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

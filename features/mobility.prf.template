@@ -7,7 +7,7 @@
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors) {
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors|telephony) {
         INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }
@@ -38,6 +38,10 @@ contains(MOBILITY, publishsubscribe) {
 contains(MOBILITY, location) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtLocation
     qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, landmarks) {
+    qtAddLibrary(QtLandmarks)
 }
 
 contains(MOBILITY, serviceframework) {
@@ -74,6 +78,10 @@ contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
 
+contains(MOBILITY, telephony) {
+    qtAddLibrary(QtTelephony)
+}
+
 contains(MOBILITY, sensors) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)
@@ -93,4 +101,3 @@ symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(
         "(0x2002AC89), 1, 1, 0, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }
-
