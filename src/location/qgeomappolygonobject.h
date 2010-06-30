@@ -42,24 +42,22 @@
 #ifndef QGEOMAPPOLYGONOBJECT_H
 #define QGEOMAPPOLYGONOBJECT_H
 
-#include "qgeomapobject.h"
+#include "qgeomappolylineobject.h"
 
-#include <QList>
+#include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
 class QGeoMapPolygonObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapObject
+class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapPolylineObject
 {
 public:
     QGeoMapPolygonObject(QGeoMapObject *parent = 0);
     ~QGeoMapPolygonObject();
 
-    void setPoints(const QList<QGeoCoordinate> &points);
-    QList<QGeoCoordinate> points() const;
+    void setBrush(const QBrush &brush);
+    QBrush brush() const;
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapPolygonObject)

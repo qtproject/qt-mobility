@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
     : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
+QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd)
+    : QGeoMapObject(dd) {}
+
 /*!
 */
 QGeoMapPolylineObject::~QGeoMapPolylineObject()
@@ -59,18 +62,55 @@ QGeoMapPolylineObject::~QGeoMapPolylineObject()
 
 /*!
 */
-void QGeoMapPolylineObject::setPoints(const QList<QGeoCoordinate> &points)
+void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoMapPolylineObject);
-    d->points = points;
+    d->path = path;
+    //compute geo bounding box
+    double maxLong = -180.0;
+    double minLong = 180.0;
+    double maxLat = -90.0;
+    double minLat = 90.0;
+
+    QListIterator<QGeoCoordinate> it(path);
+
+    while (it.hasNext()) {
+        const QGeoCoordinate &coord = it.next();
+
+        if (!coord.isValid())
+            continue;
+
+        if (coord.latitude() < minLat)
+            minLat = coord.latitude();
+        if (coord.latitude() > maxLat)
+            maxLat = coord.latitude();
+        if (coord.longitude() < minLong)
+            minLong = coord.longitude();
+        if (coord.longitude() > maxLong)
+            maxLong = coord.longitude();
+    }
+
+    d->boundingBox = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
 }
 
 /*!
 */
-QList<QGeoCoordinate> QGeoMapPolylineObject::points() const
+QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 {
     Q_D(const QGeoMapPolylineObject);
-    return d->points;
+    return d->path;
+}
+
+void QGeoMapPolylineObject::setPen(const QPen &pen)
+{
+    Q_D(QGeoMapPolylineObject);
+    d->pen = pen;
+}
+
+QPen QGeoMapPolylineObject::pen() const
+{
+    Q_D(const QGeoMapPolylineObject);
+    return d->pen;
 }
 
 /*******************************************************************************
@@ -84,7 +124,7 @@ QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, 
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other)
     : QGeoMapObjectPrivate(other),
-    points(other.points) {}
+    path(other.path) {}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 
@@ -92,7 +132,7 @@ QGeoMapPolylineObjectPrivate& QGeoMapPolylineObjectPrivate::operator= (const QGe
 {
     QGeoMapObjectPrivate::operator=(other);
 
-    points = other.points;
+    path = other.path;
 
     return *this;
 }
