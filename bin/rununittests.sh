@@ -88,6 +88,10 @@ cd $shell_path/../build/tests/bin
 ./tst_qnmeapositioninfosource_simulation
 ./tst_qnmeapositioninfosource_simulation_generic
 
+#Landmarks
+./tst_qlandmark
+./tst_qlandmarkcategory
+
 #Publish and Subscribe
 ./tst_qmallocpool
 ./tst_qpacket

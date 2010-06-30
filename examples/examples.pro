@@ -29,9 +29,23 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog
+               satellitedialog 
+
+    !symbian:!wince* {
+        SUBDIRS += landmarkbrowser
+    }
+
+    !symbian|contains(mobility_modules,bearer) {
+    	SUBDIRS += qgeoapiui \
+                   mapviewer
+
+    }
+
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
+                   #mapviewer (disable for now) 
+                   #qgeoapiui
+        
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }

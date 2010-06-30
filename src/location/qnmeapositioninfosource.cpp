@@ -426,6 +426,9 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 /*!
     \class QNmeaPositionInfoSource
     \brief The QNmeaPositionInfoSource class provides positional information using a NMEA data source.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     NMEA is a commonly used protocol for the specification of one's global
