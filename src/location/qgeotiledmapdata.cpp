@@ -236,7 +236,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
 {
-    //d_ptr->protectRegion = d_ptr->screenRect;
+    d_ptr->protectRegion = d_ptr->screenRect;
     d_ptr->screenRect.setSize(size);
     QGeoMapData::setViewportSize(size);
 
@@ -264,6 +264,15 @@ void QGeoTiledMapData::pan(int dx, int dy)
 
     qreal deltaX = oldScreenRect.left() - d_ptr->screenRect.left();
     qreal deltaY = oldScreenRect.top() - d_ptr->screenRect.top();
+
+    int width = QGeoMapData::mapImage().width() - qAbs(deltaX);
+    int height = QGeoMapData::mapImage().height() - qAbs(deltaY);
+
+    if ((width <= 0) || (height <= 0)) {
+        d_ptr->protectRegion = QRectF();
+        return;
+    }
+
     qreal sx;
     qreal sy;
     qreal tx;
@@ -286,14 +295,23 @@ void QGeoTiledMapData::pan(int dx, int dy)
         ty = 0.0;
     }
 
-    QRectF source = QRectF(sx, sy, QGeoMapData::mapImage().width(), QGeoMapData::mapImage().height());
-    QRectF target = QRectF(tx, ty, QGeoMapData::mapImage().width(), QGeoMapData::mapImage().height());
+    QRectF source = QRectF(sx, sy, width, height);
+    QRectF target = QRectF(tx, ty, width, height);
 
     QPixmap pm(QGeoMapData::mapImage().size());
     QPainter p(&pm);
     if (!QGeoMapData::mapImage().isNull()) {
         p.drawPixmap(target, QGeoMapData::mapImage(), source);
-        d_ptr->protectRegion = oldScreenRect;
+        qreal prX = d_ptr->screenRect.x() + target.x();
+        // TODO dateline fun, will probably also involve updateMapImage
+//        if (prX < 0)
+//            prX += d_ptr->width;
+//        if (prX >= d_ptr->width)
+//            prX -= d_ptr->width;
+        qreal prY = d_ptr->screenRect.y() + target.y();
+
+        d_ptr->protectRegion = QRectF(prX, prY, width, height);
+
         setMapImage(pm);
     }
 }

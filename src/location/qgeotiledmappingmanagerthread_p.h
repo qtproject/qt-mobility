@@ -56,6 +56,9 @@
 #include "qgeotiledmapreply.h"
 #include "qgeomapwidget.h"
 
+#include <QList>
+#include <QSet>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapRequest;
@@ -74,6 +77,7 @@ public slots:
     void setRequests(const QList<QGeoTiledMapRequest> &requests);
 
 private slots:
+    void processRequests();
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error, const QString &errorString);
 
@@ -85,9 +89,14 @@ private:
     QGeoTiledMappingManagerThread *thread;
     QGeoTiledMapData *mapData;
 
+    QRectF lastScreenRect;
     qreal lastZoomLevel;
     QGeoMapWidget::MapType lastMapType;
 
+    QSet<QRectF> requestRects;
+    QSet<QRectF> replyRects;
+
+    QList<QGeoTiledMapRequest> requestQueue;
     QSet<QGeoTiledMapReply*> replies;
 };
 
