@@ -743,7 +743,7 @@ QDocumentGallery::~QDocumentGallery()
 
 }
 
-bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type) const
 {
     return false;
 }
@@ -758,7 +758,7 @@ QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(const QString 
     return QGalleryProperty::Attributes();
 }
 
-QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)
+QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *)
 {
     return 0;
 }

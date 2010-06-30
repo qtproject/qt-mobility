@@ -66,7 +66,7 @@ bool Q_GALLERY_EXPORT operator ==(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
 
-bool Q_GALLERY_EXPORT Q_GALLERY_EXPORT operator !=(
+bool Q_GALLERY_EXPORT operator !=(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
 #else
@@ -125,11 +125,13 @@ public:
 private:
     QSharedDataPointer<QGalleryFilterPrivate> d;
 
-    friend bool ::operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-    friend bool ::operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+    friend Q_GALLERY_EXPORT bool ::operator ==(
+            const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+    friend Q_GALLERY_EXPORT bool ::operator !=(
+            const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 #ifndef QT_NO_DEBUG_STREAM
-    friend QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
+    friend Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
 #endif
 };
 
