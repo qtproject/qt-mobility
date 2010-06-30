@@ -70,6 +70,7 @@ contains(MOBILITY, versit) {
 }
 
 contains(MOBILITY, telephony) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtTelephony
     qtAddLibrary(QtTelephony)
 }
 
