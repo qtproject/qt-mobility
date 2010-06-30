@@ -131,6 +131,7 @@
 #      define Q_FEEDBACK_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
+#    endif
 #    if defined(QT_BUILD_ORGANIZER_LIB)
 #      define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #    else
