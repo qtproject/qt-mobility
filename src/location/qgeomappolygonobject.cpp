@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
+    : QGeoMapPolylineObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -57,34 +57,30 @@ QGeoMapPolygonObject::~QGeoMapPolygonObject()
 {
 }
 
-/*!
-*/
-void QGeoMapPolygonObject::setPoints(const QList<QGeoCoordinate> &points)
+void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapPolygonObject);
-    d->points = points;
+    d->brush = brush;
 }
 
-/*!
-*/
-QList<QGeoCoordinate> QGeoMapPolygonObject::points() const
+QBrush QGeoMapPolygonObject::brush() const
 {
     Q_D(const QGeoMapPolygonObject);
-    return d->points;
+    return d->brush;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
+    : QGeoMapPolylineObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::PolygonType;
 }
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(const QGeoMapPolygonObjectPrivate &other)
-    : QGeoMapObjectPrivate(other),
-    points(other.points) {}
+    : QGeoMapPolylineObjectPrivate(other),
+    brush(other.brush) {}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
 
@@ -92,7 +88,7 @@ QGeoMapPolygonObjectPrivate& QGeoMapPolygonObjectPrivate::operator= (const QGeoM
 {
     QGeoMapObjectPrivate::operator=(other);
 
-    points = other.points;
+    brush = other.brush;
 
     return *this;
 }

@@ -48,6 +48,8 @@
 #include "qgeoboundingbox.h"
 #include "qgeomaprectangleobject.h"
 #include "qgeomapmarkerobject.h"
+#include "qgeomappolylineobject.h"
+#include "qgeomappolygonobject.h"
 
 #include <QDebug>
 
@@ -492,19 +494,20 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *m
 {
     if (!mapObject)
         return;
+    if (!objInfo.contains(mapObject))
+        return;
 
     if (mapObject->type() == QGeoMapObject::RectangleType)
         paintMapRectangle(painter, static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         paintMapMarker(painter, static_cast<QGeoMapMarkerObject*>(mapObject));
-
+    else if (mapObject->type() == QGeoMapObject::PolylineType ||
+             mapObject->type() == QGeoMapObject::PolygonType)
+        paintMapPolyline(painter, static_cast<QGeoMapPolylineObject*>(mapObject));
 }
 
 void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const
 {
-    if (!objInfo.contains(rectangle))
-        return;
-
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
     painter.setPen(rectangle->pen());
@@ -518,9 +521,6 @@ void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectan
 
 void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const
 {
-    if (!objInfo.contains(marker))
-        return;
-
     QPixmap icon = marker->icon();
 
     if (icon.isNull())
@@ -529,6 +529,22 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObj
     QGeoTiledMapObjectInfo* info = objInfo.value(marker);
     QRectF rect = info->boundingBox.translated(-(screenRect.topLeft()));
     painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
+}
+
+void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const
+{
+    QPen oldPen = painter.pen();
+    QBrush oldBrush = painter.brush();
+    painter.setPen(polyline->pen());
+
+    if (polyline->type() == QGeoMapObject::PolygonType)
+        painter.setBrush(static_cast<QGeoMapPolygonObject*>(polyline)->brush());
+
+    QGeoTiledMapPolylineInfo* info = static_cast<QGeoTiledMapPolylineInfo*>(objInfo.value(polyline));
+    QPainterPath path = info->path.translated(-(screenRect.topLeft()));
+    painter.drawPath(path);
+    painter.setPen(oldPen);
+    painter.setBrush(oldBrush);
 }
 
 void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
@@ -543,6 +559,8 @@ void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
         calculateMapRectangleInfo(static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         calculateMapMarkerInfo(static_cast<QGeoMapMarkerObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::PolylineType || mapObject->type() == QGeoMapObject::PolygonType)
+        calculateMapPolylineInfo(static_cast<QGeoMapPolylineObject*>(mapObject));
 }
 
 void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle)
@@ -572,6 +590,46 @@ void QGeoTiledMapDataPrivate::calculateMapMarkerInfo(QGeoMapMarkerObject *marker
     QGeoTiledMapObjectInfo* info = new QGeoTiledMapObjectInfo;
     info->boundingBox = QRectF(topLeft, marker->icon().size());
     objInfo[marker] = info;
+}
+
+void QGeoTiledMapDataPrivate::calculateMapPolylineInfo(QGeoMapPolylineObject *polyline)
+{
+    qulonglong topLeftX;
+    qulonglong topLeftY;
+    qulonglong bottomRightX;
+    qulonglong bottomRightY;
+    
+    q_ptr->coordinateToWorldPixel(polyline->boundingBox().topLeft(), &topLeftX, &topLeftY);
+    q_ptr->coordinateToWorldPixel(polyline->boundingBox().bottomRight(), &bottomRightX, &bottomRightY);
+
+    QGeoTiledMapPolylineInfo* info = new QGeoTiledMapPolylineInfo;
+    info->boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
+    objInfo[polyline] = info;
+
+    QPointF startPoint;
+    QList<QGeoCoordinate> points = polyline->path();
+    int sz = points.size();
+
+    for (int i = 0; i < sz; i++) {
+        const QGeoCoordinate &coord = points.at(i);
+
+        if (!coord.isValid())
+            continue;
+
+        qulonglong x;
+        qulonglong y;
+        q_ptr->coordinateToWorldPixel(coord, &x, &y);
+
+        if (i > 0)
+            info->path.lineTo(x, y);
+        else {
+            startPoint = QPointF(x, y);
+            info->path = QPainterPath(startPoint);
+        }
+    }
+
+    if (!startPoint.isNull())
+        info->path.lineTo(startPoint);
 }
 
 QTM_END_NAMESPACE

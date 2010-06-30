@@ -45,6 +45,7 @@
 #include "qgeomapobject.h"
 
 #include <QList>
+#include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,8 +59,14 @@ public:
     QGeoMapPolylineObject(QGeoMapObject *parent = 0);
     ~QGeoMapPolylineObject();
 
-    void setPoints(const QList<QGeoCoordinate> &points);
-    QList<QGeoCoordinate> points() const;
+    void setPath(const QList<QGeoCoordinate> &path);
+    QList<QGeoCoordinate> path() const;
+
+    void setPen(const QPen &pen);
+    QPen pen() const;
+
+protected:
+    QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapPolylineObject)

@@ -140,7 +140,7 @@ void ServicesTab::listServiceProviders()
         QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(providerId);
 
         QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-        prop->setText(0, "Places");
+        prop->setText(0, "Search");
         QGeoSearchManager* searchManager = serviceProvider->searchManager();
         if (searchManager)
             prop->setText(1, tr("true"));

@@ -107,6 +107,8 @@ private slots:
     void delayedInit();
     void drawRect(bool checked);
     void drawMarker(bool checked);
+    void drawPolyline(bool checked);
+    void drawPolygon(bool checked);
     void customContextMenuRequest(const QPoint&);
 
 private:
