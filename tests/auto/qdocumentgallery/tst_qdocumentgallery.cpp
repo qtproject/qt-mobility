@@ -88,10 +88,15 @@ void tst_QDocumentGallery::itemTypeProperties_data()
 #if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
             << QDocumentGallery::copyright
             << QDocumentGallery::fileName
+            << QDocumentGallery::fileSize
             << QDocumentGallery::language
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
             << QDocumentGallery::mimeType
+#ifndef Q_WS_MAEMO_5
+            << QDocumentGallery::previewImage
+            << QDocumentGallery::previewPixmap
+#endif
             << QDocumentGallery::thumbnailImage
             << QDocumentGallery::thumbnailPixmap
 #endif
