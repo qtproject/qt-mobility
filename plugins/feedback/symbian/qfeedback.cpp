@@ -400,7 +400,7 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
             QTouchFeedback::Instance()->StartFeedback(defaultWidget(),
-                                         ETouchFeedbackBasic, // XXX what effect
+                                         0, // XXX TODO FIXME: ETouchContinuousSmooth,
                                          0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000));
             m_elapsed[effect].start();
             break;
