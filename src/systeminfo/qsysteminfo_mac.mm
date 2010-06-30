@@ -748,6 +748,7 @@ void QDASessionThread::stop()
 void QDASessionThread::run()
 {
 #ifdef MAC_SDK_10_6
+
     mutex.lock();
     keepRunning = true;
     mutex.unlock();
@@ -1144,7 +1145,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << Q_FUNC_INFO << mode;
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -1579,19 +1579,22 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 
 DAApprovalSessionRef session = NULL;
 
-void mountCallback(DADiskRef /*disk*/, void *context)
+void mountCallback(DADiskRef disk, void *context)
 {
-    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true);
+    QString name = DADiskGetBSDName(disk);
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
 }
 
-void unmountCallback(DADiskRef /*disk*/, void *context)
+void unmountCallback(DADiskRef disk, void *context)
 {
-    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false);
+    QString name = DADiskGetBSDName(disk);
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false,name);
 }
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent), daSessionThread(0)
 {
+    updateVolumesMap();
 }
 
 
@@ -1605,9 +1608,15 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
     }
 }
 
-void QSystemStorageInfoPrivate::storageChanged( bool added)
+void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
-    Q_EMIT logicalDrivesChanged(added);
+    if(mountEntriesHash.contains("/dev/"+vol)) {
+        // removing
+    } else {
+        //adding
+        updateVolumesMap();
+    }
+    Q_EMIT logicalDriveChanged(added, mountEntriesHash["/dev/"+vol]);
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1615,9 +1624,12 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
 
+    mountEntriesHash.clear();
+
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
+
         mountEntriesHash.insert(buf[i].f_mntfromname,volName);
     }
     return true;
@@ -1648,7 +1660,6 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    updateVolumesMap();
     OSStatus osstatusResult = noErr;
     ItemCount volumeIndex;
 
@@ -1737,13 +1748,13 @@ bool QSystemStorageInfoPrivate::sessionThread()
 void QSystemStorageInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString&))))) {
         sessionThread();
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
-        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
-        connect(daSessionThread,SIGNAL(logicalDrivesChanged(bool)),this,SIGNAL(logicalDrivesChanged(bool)));
+        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
+//        connect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
+//                 this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
-
 }
 
 
@@ -1751,15 +1762,15 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 {
 
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString &))))) {
 #ifdef MAC_SDK_10_6
         DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
 #else
-        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)mountCallback,NULL);
+        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
 #endif
-        disconnect(daSessionThread,SIGNAL(logicalDrivesChanged(bool)),this,SIGNAL(logicalDrivesChanged(bool)));
+//        disconnect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
+//                   this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
-
 }
 
 

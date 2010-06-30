@@ -9,9 +9,10 @@ contains(mobility_modules,serviceframework) {
             notesmanagerplugin \
             servicebrowser
 
+    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    contains(QT_CONFIG, declarative) {
+    !symbian:contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -28,9 +29,23 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog
+               satellitedialog 
+
+    !symbian:!wince* {
+        SUBDIRS += landmarkbrowser
+    }
+
+    !symbian|contains(mobility_modules,bearer) {
+    	SUBDIRS += qgeoapiui \
+                   mapviewer
+
+    }
+
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
+                   #mapviewer (disable for now) 
+                   #qgeoapiui
+        
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
@@ -95,5 +110,24 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        mediabrowser
+
+    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
+}
+
+# Organizer API examples
+contains(mobility_modules, organizer) {
+    SUBDIRS += calendardemo
+}
+
+# Telephony API examples
+contains(mobility_modules,telephony) {
+    SUBDIRS += telephony
+}
+
+sources.path = $$QT_MOBILITY_EXAMPLES
+
 INSTALLS += sources
+

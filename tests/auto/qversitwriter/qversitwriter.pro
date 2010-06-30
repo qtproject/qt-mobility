@@ -20,7 +20,7 @@ HEADERS += tst_qversitwriter.h
 SOURCES += tst_qversitwriter.cpp
 
 CONFIG += mobility
-MOBILITY = contacts versit
+MOBILITY += contacts versit organizer
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

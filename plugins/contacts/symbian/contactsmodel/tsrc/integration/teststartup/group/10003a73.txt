@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+# All rights reserved.
+# This component and the accompanying materials are made available
+# under the terms of "Eclipse Public License v1.0"
+# which accompanies this distribution, and is available
+# at the URL "http://www.eclipse.org/legal/epl-v10.html".
+#
+# Initial Contributors:
+# Nokia Corporation - initial contribution.
+#
+# Contributors:
+#
+# Description:
+#
+#
+
+cenrep
+version 1
+
+[PlatSec]
+# default policies per repository
+cap_rd=ReadUserData cap_wr=WriteUserData
+
+
+[Main]
+
+# Overview of data format
+# Default view definitions are stored in two 'tables', each of which occupies
+# a range of key values to allow room for extra entries in the future.
+#
+# The lower 8 bits (0x000000FF) represent the column number (max. 256).
+# The next 8 bits (0x0000FF00) represent the row number (max. 256).
+# The next 8 bits (0x00FF0000) represent the table number (max.256).
+#
+# The view definition table uses the range 0x00010000-0x0001FFFF.
+# It consists of five columns: 
+# Name			C++ Type		Key Type	Notes
+# View Type		TViewType		int		Either 0 (anonymous remote view) or 1 (named remote view)
+# View Name		TDesC			string		The remote view name.
+# Sort Plugin Name	TDesC8			string8		Name of the sort plugin for the view.
+# View Preferences	TContactViewPreferences	int		See description of data type in the SDK.
+# Sort Order Index	-			int		Index in the sort order table of the
+#								row which is the sort order for this
+#								view definition.
+#
+# The sort order table uses the range 0x00020000-0x0002FFFF.
+# Each row of the table consists of the contact field Uids from
+# the RContactViewSortOrder of the view definition. Each Uid is
+# stored unchanged from the values defined in cntdef.hrh.
+#
+
+# Default view definition - settings used by TechView Contacts application
+
+# View Definition Table
+0x00010000 int 1 0
+0x00010001 string "KMainContactsAppView" 0
+0x00010002 string8 "abc" 0
+0x00010003 int 0 0
+0x00010004 int 0 0
+
+# Sort Order Table
+0x00020000 int 0x1000137D 0
+0x00020001 int 0x1000137C 0
+0x00020002 int 0x1000130D 0 

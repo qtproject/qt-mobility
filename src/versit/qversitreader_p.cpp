@@ -53,6 +53,9 @@ QTM_USE_NAMESPACE
 // Some big enough value for nested versit documents to prevent infinite recursion
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
 
+QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+    QVersitReaderPrivate::mValueTypeMap = 0;
+
 /*!
   \class LineReader
   \brief The LineReader class is a wrapper around a QIODevice that allows line-by-line reading.
@@ -72,25 +75,28 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
     mCodec(codec),
     mChunkSize(chunkSize),
     mCrlfList(*VersitUtils::newlineList(mCodec)),
-    mBuffer(VersitCursor(QByteArray())),
+    mBuffer(LByteArray(QByteArray())),
     mOdometer(0)
 {
 }
 
 /*!
-  Attempts to read a line and returns a VersitCursor describing the line.  The cursor returned
-  includes the data, as well as the position and selection index bounds.  Data within those bounds
-  represents the line.  Data outside those bounds should not be used.
- */
-VersitCursor LineReader::readLine()
+  Attempts to read a line and returns an LByteArray containing the line.
+  */
+LByteArray LineReader::readLine()
 {
-    mBuffer.position = mBuffer.selection;
-    mSearchFrom = mBuffer.position;
+    if (!mFirstLine.isEmpty()) {
+        LByteArray retval(mFirstLine);
+        mFirstLine.clear();
+        return retval;
+    }
+    mBuffer.mStart = mBuffer.mEnd;
+    mSearchFrom = mBuffer.mStart;
 
     // First, look for a newline in the already-existing buffer.  If found, return the line.
     if (tryReadLine(mBuffer, false)) {
         mBuffer.dropOldData();
-        mOdometer += mBuffer.selection - mBuffer.position;
+        mOdometer += mBuffer.size();
         return mBuffer;
     }
 
@@ -98,10 +104,10 @@ VersitCursor LineReader::readLine()
     while (!mDevice->atEnd()) {
         QByteArray temp = mDevice->read(mChunkSize);
         if (!temp.isEmpty()) {
-            mBuffer.data.append(temp);
+            mBuffer.mData.append(temp);
             if (tryReadLine(mBuffer, false)) {
                 mBuffer.dropOldData();
-                mOdometer += mBuffer.selection - mBuffer.position;
+                mOdometer += mBuffer.size();
                 return mBuffer;
             }
         } else {
@@ -112,12 +118,20 @@ VersitCursor LineReader::readLine()
     // We've reached the end of the stream.  Find a newline from the buffer (or return what's left).
     tryReadLine(mBuffer, true);
     mBuffer.dropOldData();
-    mOdometer += mBuffer.selection - mBuffer.position;
+    mOdometer += mBuffer.size();
     return mBuffer;
 }
 
 /*!
-  How many bytes have been returned in the VersitCursor in the lifetime of the LineReader.
+  Push a line onto the front of the line reader so it will be returned on the next call to readLine().
+  */
+void LineReader::pushLine(const QByteArray& line)
+{
+    mFirstLine = line;
+}
+
+/*!
+  How many bytes have been returned in the LByteArray in the lifetime of the LineReader.
  */
 int LineReader::odometer()
 {
@@ -127,11 +141,11 @@ int LineReader::odometer()
 /*!
   Returns true if there are no more lines left for readLine() to return.  It is possible for atEnd()
   to return false and for there to be no more data left (eg. if there are trailing newlines at the
-  end of the input.  In this case, readLine() will return an empty line (ie. position == selection).
+  end of the input.  In this case, readLine() will return an empty line.
  */
 bool LineReader::atEnd()
 {
-    return mDevice->atEnd() && mBuffer.selection == mBuffer.data.size();
+    return mFirstLine.isEmpty() && mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
 }
 
 /*!
@@ -147,9 +161,9 @@ QTextCodec* LineReader::codec()
  * sequences of newline-space from the retrieved line.  Skips over any newlines at the start of the
  * input.
  *
- * Returns a VersitCursor containing and selecting the line.
+ * Returns an LByteArray containing the line.
  */
-bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
+bool LineReader::tryReadLine(LByteArray &cursor, bool atEnd)
 {
     int crlfPos = -1;
 
@@ -160,21 +174,21 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
     forever {
         foreach(const QByteArrayMatcher& crlf, mCrlfList) {
             int crlfLength = crlf.pattern().length();
-            crlfPos = crlf.indexIn(cursor.data, mSearchFrom);
-            if (crlfPos == cursor.position) {
-                // Newline at start of line.  Set position to directly after it.
-                cursor.position += crlfLength;
-                mSearchFrom = cursor.position;
+            crlfPos = crlf.indexIn(cursor.mData, mSearchFrom);
+            if (crlfPos == cursor.mStart) {
+                // Newline at start of line.  Set mStart to directly after it.
+                cursor.mStart += crlfLength;
+                mSearchFrom = cursor.mStart;
                 break;
-            } else if (crlfPos > cursor.position) {
+            } else if (crlfPos > cursor.mStart) {
                 // Found the CRLF.
-                if (QVersitReaderPrivate::containsAt(cursor.data, space, crlfPos + crlfLength)
-                    || QVersitReaderPrivate::containsAt(cursor.data, tab, crlfPos + crlfLength)) {
+                if (QVersitReaderPrivate::containsAt(cursor.mData, space, crlfPos + crlfLength)
+                    || QVersitReaderPrivate::containsAt(cursor.mData, tab, crlfPos + crlfLength)) {
                     // If it's followed by whitespace, collapse it.
-                    cursor.data.remove(crlfPos, crlfLength + spaceLength);
+                    cursor.mData.remove(crlfPos, crlfLength + spaceLength);
                     mSearchFrom = crlfPos;
                     break;
-                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor.data.size()) {
+                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor.mData.size()) {
                     // If our CRLF is at the end of the current buffer but there's more to read,
                     // it's possible that a space could be hiding on the next read from the device.
                     // Just pretend we didn't see the CRLF and pick it up the next time round.
@@ -182,14 +196,14 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
                     return false;
                 } else {
                     // Found the CRLF.
-                    cursor.selection = crlfPos;
+                    cursor.mEnd = crlfPos;
                     return true;
                 }
             }
         }
         if (crlfPos == -1) {
             // No CRLF found.
-            cursor.selection = cursor.data.size();
+            cursor.mEnd = cursor.mData.size();
             return false;
         }
     }
@@ -214,47 +228,55 @@ QVersitReaderPrivate::QVersitReaderPrivate()
     mError(QVersitReader::NoError),
     mIsCanceling(false)
 {
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("AGENT")),
-                         QVersitProperty::VersitDocumentType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("AGENT")),
-                         QVersitProperty::VersitDocumentType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("N")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("N")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ADR")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ADR")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("GEO")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("GEO")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ORG")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
-                         QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
-                         QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
-                         QVersitProperty::ListType);
 }
 
 /*! Destroy a reader. */
 QVersitReaderPrivate::~QVersitReaderPrivate()
 {
+}
+
+QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+QVersitReaderPrivate::valueTypeMap() {
+    if (mValueTypeMap == 0) {
+        mValueTypeMap = new QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>();
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("AGENT")),
+                             QVersitProperty::VersitDocumentType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("AGENT")),
+                             QVersitProperty::VersitDocumentType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("N")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("N")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ADR")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ADR")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("GEO")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("GEO")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ORG")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
+                             QVersitProperty::CompoundType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
+                             QVersitProperty::ListType);
+        mValueTypeMap->insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
+                             QVersitProperty::ListType);
+    }
+    return mValueTypeMap;
 }
 
 /*!
@@ -347,67 +369,80 @@ bool QVersitReaderPrivate::isCanceling()
 /*!
  * Parses a versit document. Returns true if the parsing was successful.
  */
-bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDocument& document,
-                                               bool foundBegin)
+bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDocument& document)
 {
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
 
-    bool parsingOk = true;
-    mDocumentNestingLevel++;
-
-    // TODO: Various readers should be made subclasses and eliminate assumptions like this.
-    // We don't know what type it is: just assume it's a vCard 3.0
-    document.setType(QVersitDocument::VCard30Type);
+    // If we don't know what type it is, just assume it's a vCard 3.0
+    if (document.type() == QVersitDocument::InvalidType)
+        document.setType(QVersitDocument::VCard30Type);
 
     QVersitProperty property;
 
-    if (!foundBegin) {
-        property = parseNextVersitProperty(document.type(), lineReader);
-        if (property.name() == QLatin1String("BEGIN")
-            && property.value().trimmed().toUpper() == QLatin1String("VCARD")) {
-            foundBegin = true;
-        } else if (property.isEmpty()) {
-            // A blank document (or end of file) was found.
-            document = QVersitDocument();
+    property = parseNextVersitProperty(document.type(), lineReader);
+    QString propertyValue = property.value().trimmed().toUpper();
+    if (property.isEmpty()) {
+        // A blank document (or end of file) was found.
+        document = QVersitDocument();
+        return true;
+    } else if (property.name() == QLatin1String("BEGIN")) {
+        if (propertyValue == QLatin1String("VCARD")) {
+            document.setComponentType(propertyValue);
+        } else if (propertyValue == QLatin1String("VCALENDAR")) {
+            document.setType(QVersitDocument::ICalendar20Type);
+            document.setComponentType(propertyValue);
         } else {
-            // Some property other than BEGIN was found.
-            parsingOk = false;
+            // Unknown document type
+            document = QVersitDocument();
+            return false;
         }
+    } else {
+        // Some property other than BEGIN was found.
+        document = QVersitDocument();
+        return false;
     }
 
-    if (foundBegin) {
-        do {
-            /* Grab it */
-            property = parseNextVersitProperty(document.type(), lineReader);
+    return parseVersitDocumentBody(lineReader, document);
+}
 
-            /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
-            if (property.name() == QLatin1String("BEGIN") &&
-                QString::compare(property.value().trimmed(),
-                                 QLatin1String("VCARD"), Qt::CaseInsensitive) == 0) {
-                parsingOk = false;
-                QVersitDocument nestedDocument;
-                if (!parseVersitDocument(lineReader, nestedDocument, true))
-                    break;
-            }
+bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader& lineReader, QVersitDocument& document)
+{
+    mDocumentNestingLevel++;
+    bool parsingOk = true;
+    while (true) {
+        /* Grab it */
+        QVersitProperty property = parseNextVersitProperty(document.type(), lineReader);
 
-            // See if this is a version property and continue parsing under that version
+        if (property.name() == QLatin1String("BEGIN")) {
+            // Nested Versit document
+            QVersitDocument subDocument;
+            subDocument.setType(document.type());
+            subDocument.setComponentType(property.value().trimmed().toUpper());
+            if (!parseVersitDocumentBody(lineReader, subDocument))
+                break;
+            document.addSubDocument(subDocument);
+        } else if (property.name() == QLatin1String("VERSION")) {
+            // A version property
             if (!setVersionFromProperty(document, property)) {
                 parsingOk = false;
                 break;
             }
-
-            /* Nope, something else.. just add it */
-            if (property.name() != QLatin1String("VERSION") &&
-                property.name() != QLatin1String("END"))
-                document.addProperty(property);
-        } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
-        if (property.name() != QLatin1String("END"))
+        } else if (property.name() == QLatin1String("END")) {
+            // End of document
+            break;
+        } else if (property.name().isEmpty()) {
+            // End of input or some other error
             parsingOk = false;
+            break;
+        } else {
+            // A normal property - just add it.
+            document.addProperty(property);
+        }
     }
-    mDocumentNestingLevel--;
     if (!parsingOk)
         document = QVersitDocument();
+    mDocumentNestingLevel--;
 
     return parsingOk;
 }
@@ -419,8 +454,8 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
         LineReader& lineReader)
 {
-    VersitCursor cursor = lineReader.readLine();
-    if (cursor.position >= cursor.selection)
+    LByteArray cursor = lineReader.readLine();
+    if (cursor.isEmpty())
         return QVersitProperty();
 
     // Otherwise, do stuff.
@@ -433,13 +468,14 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
     // set the propertyValueType
     QPair<QVersitDocument::VersitType, QString> key =
         qMakePair(versitType, property.name());
-    if (mValueTypeMap.contains(key))
-        property.setValueType(mValueTypeMap.value(key));
+    if (valueTypeMap()->contains(key))
+        property.setValueType(valueTypeMap()->value(key));
 
     if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property, lineReader);
-    else if (versitType == QVersitDocument::VCard30Type)
-        parseVCard30Property(cursor, property, lineReader);
+    else if (versitType == QVersitDocument::VCard30Type
+            || versitType == QVersitDocument::ICalendar20Type)
+        parseVCard30Property(versitType, cursor, property, lineReader);
 
     return property;
 }
@@ -447,31 +483,30 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
 /*!
  * Parses the property according to vCard 2.1 syntax.
  */
-void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
     property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
 
-    QByteArray value = extractPropertyValue(cursor);
+    QByteArray value = cursor.toByteArray();
     if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
-        bool foundBegin = false;
         if (value == "BEGIN:VCARD") {
-            foundBegin = true;
+            lineReader.pushLine(value);
         } else if (value.isEmpty()) {
         } else {
             property = QVersitProperty();
             return;
         }
-        QVersitDocument subDocument;
-        if (!parseVersitDocument(lineReader, subDocument, foundBegin)) {
+        QVersitDocument subDocument(QVersitDocument::VCard21Type);
+        if (!parseVersitDocument(lineReader, subDocument)) {
             property = QVersitProperty();
         } else {
             property.setValue(QVariant::fromValue(subDocument));
         }
     } else {
         QTextCodec* codec;
-        bool isBinary = unencode(value, cursor, property, lineReader);
+        bool isBinary = unencode(value, property, lineReader);
         if (isBinary) {
             property.setValue(value);
             property.setValueType(QVersitProperty::BinaryType);
@@ -484,14 +519,16 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
 }
 
 /*!
- * Parses the property according to vCard 3.0 syntax.
+ * Parses the property according to vCard 3.0 syntax.  This function is called for both vCard 3.0
+ * and iCalendar properties.
  */
-void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType versitType,
+                                                LByteArray& cursor, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
     property.setParameters(extractVCard30PropertyParams(cursor, lineReader.codec()));
 
-    QByteArray value = extractPropertyValue(cursor);
+    QByteArray value = cursor.toByteArray();
 
     QTextCodec* codec;
 
@@ -505,14 +542,14 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
         subDocumentData.seek(0);
         LineReader subDocumentLineReader(&subDocumentData, codec);
 
-        QVersitDocument subDocument;
+        QVersitDocument subDocument(versitType);
         if (!parseVersitDocument(subDocumentLineReader, subDocument)) {
             property = QVersitProperty();
         } else {
             property.setValue(QVariant::fromValue(subDocument));
         }
     } else {
-        bool isBinary = unencode(value, cursor, property, lineReader);
+        bool isBinary = unencode(value, property, lineReader);
         if (isBinary) {
             property.setValue(value);
             property.setValueType(QVersitProperty::BinaryType);
@@ -540,32 +577,30 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
  */
 bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, const QVersitProperty& property) const
 {
-    bool valid = true;
-    if (property.name() == QLatin1String("VERSION")) {
-        QString value = property.value().trimmed();
-        QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
-        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
-        if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
-            || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive))
-            value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
-        if (value == QLatin1String("2.1")) {
-            document.setType(QVersitDocument::VCard21Type);
-        } else if (value == QLatin1String("3.0")) {
-            document.setType(QVersitDocument::VCard30Type);
-        } else {
-            valid = false;
-        }
+    QString value = property.value().trimmed();
+    if (document.componentType() == QLatin1String("VCARD")
+            && value == QLatin1String("2.1")) {
+        document.setType(QVersitDocument::VCard21Type);
+    } else if (document.componentType() == QLatin1String("VCARD")
+            && value == QLatin1String("3.0")) {
+        document.setType(QVersitDocument::VCard30Type);
+    } else if ((document.componentType() == QLatin1String("VCALENDAR")
+                || document.type() == QVersitDocument::ICalendar20Type) // covers VEVENT, etc. when nested inside a VCALENDAR
+            && value == QLatin1String("2.0")) {
+        document.setType(QVersitDocument::ICalendar20Type);
+    } else {
+        return false;
     }
-    return valid;
+    return true;
 }
 
 /*!
  * On entry, \a value should be the byte array to unencode.  It is modified to be the unencoded
- * version.  Returns true if and only if the value was base-64 encoded.  \a cursor and
- * \a lineReader are supplied in case more lines need to be read (for quoted-printable).  The
+ * version.  Returns true if and only if the value was base-64 encoded.
+ * \a lineReader is supplied in case more lines need to be read (for quoted-printable).  The
  * \a property is supplied so we know what kind of encoding was used.
  */
-bool QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor,
+bool QVersitReaderPrivate::unencode(QByteArray& value,
                                     QVersitProperty& property,
                                     LineReader& lineReader) const
 {
@@ -577,9 +612,7 @@ bool QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor,
         while (value.endsWith('=')) {
             value.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
-            cursor = lineReader.readLine();
-            QByteArray line = cursor.data.mid(cursor.position, cursor.selection-cursor.position);
-            value.append(line);
+            value.append(lineReader.readLine().toByteArray());
         }
         decodeQuotedPrintable(value);
         // Remove the encoding parameter as the value is now decoded
@@ -655,31 +688,28 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QByteArray& text) const
 /*!
  * Extracts the groups and the name of the property using \a codec to determine the delimiters
  *
- * On entry, \a line should select a whole line.
- * On exit, \a line will be updated to point after the groups and name.
+ * On entry, \a line should contain a whole line
+ * On exit, \a line will be updated to remove the groups and name
  */
 QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     const QByteArray semicolon = VersitUtils::encode(';', codec);
     const QByteArray colon = VersitUtils::encode(':', codec);
     const QByteArray backslash = VersitUtils::encode('\\', codec);
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    Q_ASSERT(line.data.size() >= line.position);
 
     int separatorLength = semicolon.length();
-    for (int i = line.position; i < line.selection - separatorLength + 1; i++) {
-        if ((containsAt(line.data, semicolon, i)
-                && !containsAt(line.data, backslash, i-separatorLength))
-            || containsAt(line.data, colon, i)) {
-            length = i - line.position;
+    for (int i = 0; i < line.size() - separatorLength + 1; i++) {
+        if ((containsAt(line, semicolon, i) && !containsAt(line, backslash, i-separatorLength))
+            || containsAt(line, colon, i)) {
+            length = i;
             break;
         }
     }
     if (length > 0) {
-        QString trimmedGroupsAndName =
-                codec->toUnicode(line.data.mid(line.position, length)).trimmed();
+        QString trimmedGroupsAndName = codec->toUnicode(line.left(length)).trimmed();
         QStringList parts = trimmedGroupsAndName.split(QLatin1Char('.'));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
@@ -687,37 +717,21 @@ QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
         } else {
             groupsAndName.second = trimmedGroupsAndName;
         }
-        line.setPosition(length + line.position);
+        line.chopLeft(length);
     }
 
     return groupsAndName;
 }
 
 /*!
- * Extracts the value of the property.
- * Returns an empty string if the value was not found.
- *
- * On entry \a line should point to the value anyway.
- * On exit \a line should point to newline after the value
- */
-QByteArray QVersitReaderPrivate::extractPropertyValue(VersitCursor& line) const
-{
-    QByteArray value = line.data.mid(line.position, line.selection - line.position);
-
-    /* Now advance the cursor in all cases. */
-    line.position = line.selection;
-    return value;
-}
-
-/*!
  * Extracts the property parameters as a QMultiHash using \a codec to determine the delimiters.
  * The parameters without names are added as "TYPE" parameters.
  *
- * On entry \a line should contain the entire line.
- * On exit, line will be updated to point to the start of the value.
+ * On entry \a line should contain the line sans the group and name
+ * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     QMultiHash<QString,QString> result;
     QList<QByteArray> paramList = extractParams(line, codec);
@@ -734,9 +748,12 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
 /*!
  * Extracts the property parameters as a QMultiHash using \a codec to determine the delimiters.
  * The parameters without names are added as "TYPE" parameters.
+ *
+ * On entry \a line should contain the line sans the group and name
+ * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     QMultiHash<QString,QString> result;
     QList<QByteArray> paramList = extractParams(line, codec);
@@ -758,25 +775,25 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
 /*!
  * Extracts the parameters as delimited by semicolons using \a codec to determine the delimiters.
  *
- * On entry \a line should point to the start of the parameter section (past the name).
- * On exit, \a line will be updated to point to the start of the value.
+ * On entry \a line should contain the content line sans the group and name
+ * On exit, \a line will be updated to only have the value remain
  */
-QList<QByteArray> QVersitReaderPrivate::extractParams(VersitCursor& line, QTextCodec *codec) const
+QList<QByteArray> QVersitReaderPrivate::extractParams(LByteArray& line, QTextCodec *codec) const
 {
     const QByteArray colon = VersitUtils::encode(':', codec);
     QList<QByteArray> params;
 
     /* find the end of the name&params */
-    int colonIndex = line.data.indexOf(colon, line.position);
-    if (colonIndex > line.position && colonIndex < line.selection) {
-        QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
+    int colonIndex = line.indexOf(colon);
+    if (colonIndex > 0) {
+        QByteArray nameAndParamsString = line.left(colonIndex);
         params = extractParts(nameAndParamsString, VersitUtils::encode(';', codec), codec);
 
         /* Update line */
-        line.setPosition(colonIndex + colon.length());
-    } else if (colonIndex == line.position) {
+        line.chopLeft(colonIndex + colon.length());
+    } else if (colonIndex == 0) {
         // No parameters.. advance past it
-        line.setPosition(line.position + colon.length());
+        line.chopLeft(colon.length());
     }
 
     return params;
@@ -860,15 +877,17 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
     return codec->toUnicode(value);
 }
 
-/*!
+/*
  * Returns true if and only if \a text contains \a ba at \a index
  *
  * On entry, index must be >= 0
+ *
+ * T is either a QByteArray or LByteArray
  */
-bool QVersitReaderPrivate::containsAt(const QByteArray& text, const QByteArray& match, int index)
+template <class T> bool QVersitReaderPrivate::containsAt(const T& text, const QByteArray& match, int index)
 {
     int n = match.length();
-    if (text.length() - index < n)
+    if (text.size() - index < n)
         return false;
     const char* textData = text.constData();
     const char* matchData = match.constData();

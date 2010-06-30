@@ -55,7 +55,7 @@ isAbsPath() {
 # Returns the absolute path for $1 for target $2
 # as an example $2 might have value "maemo5".
 # This is required because when building in scratchbox for
-# maemo we do not want to follow symbolic links that are 
+# maemo we do not want to follow symbolic links that are
 # introduced by scratchbox
 absPath() {
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
@@ -101,7 +101,7 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer telephony"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
@@ -140,9 +140,9 @@ usage()
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer contacts location publishsubscribe"
-    echo "                    messaging multimedia systeminfo serviceframework versit"
-    echo "                    sensors"
+    echo "                    Choose from: bearer contacts gallery location publishsubscribe"
+    echo "                    messaging multimedia systeminfo serviceframework telephony"
+    echo "                    sensors versit organizer"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a"
     echo "                    selected module depends on other modules dependencies"
@@ -234,7 +234,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|organizer)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -262,7 +262,7 @@ done
 
 checkostype()
 {
-    match="darwin" 
+    match="darwin"
     if [ "$OSTYPE" = "${match}"* ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
@@ -287,7 +287,7 @@ findframeworks()
 
 findUniversal()
 {
-    if [ -e "mac.inc" ]; then 
+    if [ -e "mac.inc" ]; then
         rm mac.inc
     fi
     echo "contains(QT_CONFIG,x86): system(echo CONFIG+=x86 >> mac.inc)" > 2.pro
@@ -296,7 +296,7 @@ findUniversal()
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
     SOMETIME=`qmake -spec macx-g++ 2.pro 2>&1`
     rm 2.pro
-    if [ -e "mac.inc" ]; then 
+    if [ -e "mac.inc" ]; then
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
     fi
 }
@@ -518,7 +518,7 @@ fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts organizer" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
@@ -561,16 +561,26 @@ for module in $MOBILITY_MODULES; do
         messaging)
             $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
             ;;
+        telephony)
+            $relpath/bin/syncheaders $shadowpath/include/QtmTelephony $relpath/src/telephony
+            ;;
         versit)
-            #versit implies contacts
+            #versit implies contacts & organizer
             $relpath/bin/syncheaders $shadowpath/include/QtVersit $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
+            ;;
+        gallery)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/gallery
+            ;;
+        organizer)
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;
         *)
             echo "Cannot generate headers for $module"
@@ -580,7 +590,7 @@ done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
-if [ "$shadowpath" != "$relpath" ]; then 
+if [ "$shadowpath" != "$relpath" ]; then
     cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
 fi
 
@@ -592,4 +602,3 @@ else
     echo ""
     echo "configure failed."
 fi
-

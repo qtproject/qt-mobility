@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgalleryfilter.cpp -->
+  <title>Qt Mobility Project 1.1: QGalleryMetaDataFilter Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QGalleryMetaDataFilter</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGalleryMetaDataFilter Class Reference</h1>
+<p>The QGalleryMetaDataFilter class provides a filter which accepts items with meta-data properties matching a specific value. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QGalleryMetaDataFilter&gt;</pre><ul>
+<li><a href="qgallerymetadatafilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#QGalleryMetaDataFilter">QGalleryMetaDataFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#QGalleryMetaDataFilter-2">QGalleryMetaDataFilter</a></b> ( const QString &amp; <i>property</i>, const QVariant &amp; <i>value</i>, Qt::MatchFlags <i>flags</i> = Qt::MatchExactly )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#QGalleryMetaDataFilter-3">QGalleryMetaDataFilter</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#dtor.QGalleryMetaDataFilter">~QGalleryMetaDataFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Qt::MatchFlags </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#propertyName">propertyName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#setMatchFlags">setMatchFlags</a></b> ( Qt::MatchFlags <i>flags</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#setPropertyName">setPropertyName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#setValue">setValue</a></b> ( const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#value">value</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#operator-eq">operator=</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<div class="descr"/>
+<h2>Detailed Description</h2>
+<p>The QGalleryMetaDataFilter class provides a filter which accepts items with meta-data properties matching a specific value.</p>
+</div>
+<hr />
+<div class="func"/>
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ()</h3>
+<p>Constructs an empty meta-data filter.</p>
+<h3 class="fn"><a name="QGalleryMetaDataFilter-2"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>property</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i>, <a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> = Qt::MatchExactly )</h3>
+<p>Constructs a meta-data filter which matches items with a <i>property</i> value which matches <i>value</i>.</p>
+<p>The type of comparison made is determined by the match <i>flags</i>.</p>
+<h3 class="fn"><a name="QGalleryMetaDataFilter-3"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a meta-data <i>filter</i>.</p>
+<h3 class="fn"><a name="dtor.QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::~QGalleryMetaDataFilter ()</h3>
+<p>Destroys a meta-data filter.</p>
+<h3 class="fn"><a name="isValid"></a>bool QGalleryMetaDataFilter::isValid () const</h3>
+<p>Returns true if the filter is a valid meta-data filter.</p>
+<p>An invalid filter can be obtained by casting a non <a href="qgalleryfilter.html#Type-enum">QGalleryFilter::MetaData</a> type <a href="qgalleryfilter.html">QGalleryFilter</a> to <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>.</p>
+<h3 class="fn"><a name="matchFlags"></a><a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> QGalleryMetaDataFilter::matchFlags () const</h3>
+<p>Returns the type of comparison made by a meta-data filter.</p>
+<p>See also <a href="qgallerymetadatafilter.html#setMatchFlags">setMatchFlags</a>().</p>
+<h3 class="fn"><a name="propertyName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryMetaDataFilter::propertyName () const</h3>
+<p>Returns the name of the property the value of a meta-data filter is compared against.</p>
+<p>See also <a href="qgallerymetadatafilter.html#setPropertyName">setPropertyName</a>().</p>
+<h3 class="fn"><a name="setMatchFlags"></a>void QGalleryMetaDataFilter::setMatchFlags ( <a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> )</h3>
+<p>Sets <i>flags</i> identifying the type of comparsion made by a meta-data filter.</p>
+<p>See also <a href="qgallerymetadatafilter.html#matchFlags">matchFlags</a>().</p>
+<h3 class="fn"><a name="setPropertyName"></a>void QGalleryMetaDataFilter::setPropertyName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )</h3>
+<p>Sets the <i>name</i> of the property the value of meta-data filter is compared against.</p>
+<p>See also <a href="qgallerymetadatafilter.html#propertyName">propertyName</a>().</p>
+<h3 class="fn"><a name="setValue"></a>void QGalleryMetaDataFilter::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<p>Sets the <i>value</i> a property is expected to match for a meta-data filter to pass.</p>
+<p>See also <a href="qgallerymetadatafilter.html#value">value</a>().</p>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QGalleryMetaDataFilter::value () const</h3>
+<p>Returns the value a property is expected to match for a meta-data filter to pass.</p>
+<p>See also <a href="qgallerymetadatafilter.html#setValue">setValue</a>().</p>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryMetaDataFilter &amp; QGalleryMetaDataFilter::operator= ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3>
+<p>Assigns the value of <i>filter</i> to another meta-data filter.</p>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

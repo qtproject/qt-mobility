@@ -1,289 +1,275 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qvideowidget.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qvideowidget.cpp -->
   <title>Qt Mobility Project 1.1: QVideoWidget Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QVideoWidget"></a>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVideoWidget Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QVideoWidget</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QVideoWidget Class Reference</h1>
 <p>The QVideoWidget class provides a widget which presents video produced by a media object. <a href="#details">More...</a></p>
-<pre>    #include &lt;QVideoWidget&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QVideoWidget&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> and <a href="qmediabindableinterface.html">QMediaBindableInterface</a>.</p>
+<p>Inherited by <a href="qcameraviewfinder.html">QCameraViewfinder</a>.</p>
 <ul>
 <li><a href="qvideowidget-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> : Qt::AspectRatioMode</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#fullScreen-prop">fullScreen</a></b> : bool</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qvideowidget.html#hue-prop">hue</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> : QMediaObject * const</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> : int</div></li>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> : Qt::AspectRatioMode</li>
+<li class="fn"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> : int</li>
+<li class="fn"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> : int</li>
+<li class="fn"><b><a href="qvideowidget.html#fullScreen-prop">fullScreen</a></b> : bool</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qvideowidget.html#hue-prop">hue</a></b> : int</li>
+<li class="fn"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> : QMediaObject * const</li>
+<li class="fn"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> : int</li>
 </ul>
 </td></tr>
-</table></p>
+</table>
 <ul>
-<li><div bar="2" class="fn"></div>57 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#properties">QWidget</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">57 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#properties">QWidget</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#QVideoWidget">QVideoWidget</a></b> ( QWidget * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#dtor.QVideoWidget">~QVideoWidget</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Qt::AspectRatioMode </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">hue</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreen-prop">isFullScreen</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#QVideoWidget">QVideoWidget</a></b> ( QWidget * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#dtor.QVideoWidget">~QVideoWidget</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Qt::AspectRatioMode </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#hue-prop">hue</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#fullScreen-prop">isFullScreen</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> () const</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaObject * </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#sizeHint">sizeHint</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaObject * </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QSize </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#sizeHint">sizeHint</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>208 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#public-functions">QWidget</a></li>
-<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
-<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#public-functions">QPaintDevice</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">208 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#public-functions">QWidget</a></li>
+<li class="fn">1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
+<li class="fn">12 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#public-functions">QPaintDevice</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#aspectRatioMode-prop">setAspectRatioMode</a></b> ( Qt::AspectRatioMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightness-prop">setBrightness</a></b> ( int <i>brightness</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">setContrast</a></b> ( int <i>contrast</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreen-prop">setFullScreen</a></b> ( bool <i>fullScreen</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">setHue</a></b> ( int <i>hue</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">setSaturation</a></b> ( int <i>saturation</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#aspectRatioMode-prop">setAspectRatioMode</a></b> ( Qt::AspectRatioMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#brightness-prop">setBrightness</a></b> ( int <i>brightness</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#contrast-prop">setContrast</a></b> ( int <i>contrast</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#fullScreen-prop">setFullScreen</a></b> ( bool <i>fullScreen</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#hue-prop">setHue</a></b> ( int <i>hue</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#saturation-prop">setSaturation</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>19 public slots inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#public-slots">QWidget</a></li>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">19 public slots inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#public-slots">QWidget</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrastChanged">contrastChanged</a></b> ( int <i>contrast</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#contrastChanged">contrastChanged</a></b> ( int <i>contrast</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#signals">QWidget</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#signals">QWidget</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="reimplemented-protected-functions"></a>
 <h2>Reimplemented Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hideEvent">hideEvent</a></b> ( QHideEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#moveEvent">moveEvent</a></b> ( QMoveEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#paintEvent">paintEvent</a></b> ( QPaintEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#resizeEvent">resizeEvent</a></b> ( QResizeEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#showEvent">showEvent</a></b> ( QShowEvent * <i>event</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#hideEvent">hideEvent</a></b> ( QHideEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#moveEvent">moveEvent</a></b> ( QMoveEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#paintEvent">paintEvent</a></b> ( QPaintEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#resizeEvent">resizeEvent</a></b> ( QResizeEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#showEvent">showEvent</a></b> ( QShowEvent * <i>event</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
-<li><div bar="2" class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
-<li><div bar="2" class="fn"></div>1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
+<li class="fn">1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
+<li class="fn">1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#static-public-members">QWidget</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
-<li><div class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
-<li><div class="fn"></div>1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>1 protected slot inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-slots">QWidget</a></li>
-<li><div class="fn"></div>1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-variables">QPaintDevice</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#static-public-members">QWidget</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
+<li class="fn">1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
+<li class="fn">1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">1 protected slot inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-slots">QWidget</a></li>
+<li class="fn">1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-variables">QPaintDevice</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoWidget class provides a widget which presents video produced by a media object.</p>
 <p>Attaching a QVideoWidget to a <a href="qmediaobject.html">QMediaObject</a> allows it to display the video or image output of that media object. A QVideoWidget is attached to media object by passing a pointer to the <a href="qmediaobject.html">QMediaObject</a> in its constructor, and detached by destroying the QVideoWidget.</p>
-<pre>    player = new QMediaPlayer;
+<pre class="highlightedCode brush: cpp">    player = new QMediaPlayer;
 
     widget = new QVideoWidget;
     widget-&gt;show();
 
     player-&gt;setVideoOutput(widget);
-    player-&gt;setMedia(QUrl(&quot;http:<span class="comment">//example.com/movie.mp4&quot;));</span>
+    player-&gt;setMedia(QUrl(&quot;http://example.com/movie.mp4&quot;));
     player-&gt;play();</pre>
 <p><b>Note</b>: Only a single display output can be attached to a media object at one time.</p>
+</div>
 <p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediaplayer.html">QMediaPlayer</a>, and <a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a>.</p>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QVideoWidget/aspectRatioMode"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setAspectRatioMode"></a>
 <h3 class="fn"><a name="aspectRatioMode-prop"></a>aspectRatioMode : <a href="http://qt.nokia.com/doc/4.6/qt.html#AspectRatioMode-enum">Qt::AspectRatioMode</a></h3>
 <p>This property holds how video is scaled with respect to its aspect ratio.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">Qt::AspectRatioMode </td><td class="memItemRight" valign="bottom"><b>aspectRatioMode</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setAspectRatioMode</b> ( Qt::AspectRatioMode <i>mode</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> Qt::AspectRatioMode </td><td class="memItemRight bottomAlign"><b>aspectRatioMode</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setAspectRatioMode</b> ( Qt::AspectRatioMode <i>mode</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/brightness"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setBrightness"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/brightnessChanged"></a>
 <h3 class="fn"><a name="brightness-prop"></a>brightness : int</h3>
 <p>This property holds an adjustment to the brightness of displayed video.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>brightness</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setBrightness</b> ( int <i>brightness</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>brightness</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setBrightness</b> ( int <i>brightness</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/contrast"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setContrast"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/contrastChanged"></a>
 <h3 class="fn"><a name="contrast-prop"></a>contrast : int</h3>
 <p>This property holds an adjustment to the contrast of displayed video.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>contrast</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContrast</b> ( int <i>contrast</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>contrast</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setContrast</b> ( int <i>contrast</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrastChanged">contrastChanged</a></b> ( int <i>contrast</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#contrastChanged">contrastChanged</a></b> ( int <i>contrast</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/isFullScreen"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setFullScreen"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/fullScreenChanged"></a>
 <h3 class="fn"><a name="fullScreen-prop"></a>fullScreen : bool</h3>
 <p>This property holds whether video display is confined to a window or is fullScreen.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isFullScreen</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFullScreen</b> ( bool <i>fullScreen</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isFullScreen</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setFullScreen</b> ( bool <i>fullScreen</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#fullScreenChanged">fullScreenChanged</a></b> ( bool <i>fullScreen</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/hue"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setHue"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/hueChanged"></a>
 <h3 class="fn"><a name="hue-prop"></a>hue : int</h3>
 <p>This property holds an adjustment to the hue of displayed video.</p>
 <p>Valid hue values range between -100 and 100, the default is 0.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>hue</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setHue</b> ( int <i>hue</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>hue</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setHue</b> ( int <i>hue</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/mediaObject"></a>
 <h3 class="fn"><a name="mediaObject-prop"></a>mediaObject : <a href="qmediaobject.html">QMediaObject</a> * const</h3>
 <p>This property holds the media object which provides the video displayed by a widget.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaObject * </td><td class="memItemRight" valign="bottom"><b>mediaObject</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> virtual QMediaObject * </td><td class="memItemRight bottomAlign"><b>mediaObject</b> () const</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QVideoWidget/saturation"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setSaturation"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/saturationChanged"></a>
 <h3 class="fn"><a name="saturation-prop"></a>saturation : int</h3>
 <p>This property holds an adjustment to the saturation of displayed video.</p>
 <p>Valid saturation values range between -100 and 100, the default is 0.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>saturation</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setSaturation</b> ( int <i>saturation</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>saturation</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setSaturation</b> ( int <i>saturation</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidget.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QVideoWidget/QVideoWidget"></a>
 <h3 class="fn"><a name="QVideoWidget"></a>QVideoWidget::QVideoWidget ( <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a new video widget.</p>
 <p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/~QVideoWidget"></a>
 <h3 class="fn"><a name="dtor.QVideoWidget"></a>QVideoWidget::~QVideoWidget ()</h3>
 <p>Destroys a video widget.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/brightnessChanged"></a>
-<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWidget::brightnessChanged ( int <i>brightness</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWidget::brightnessChanged ( int <i>brightness</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>brightness</i> adjustment has changed.</p>
 <p>See also <a href="qvideowidget.html#brightness-prop">brightness</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/contrastChanged"></a>
-<h3 class="fn"><a name="contrastChanged"></a>void QVideoWidget::contrastChanged ( int <i>contrast</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="contrastChanged"></a>void QVideoWidget::contrastChanged ( int <i>contrast</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>contrast</i> adjustment has changed.</p>
 <p>See also <a href="qvideowidget.html#contrast-prop">contrast</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/fullScreenChanged"></a>
-<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidget::fullScreenChanged ( bool <i>fullScreen</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidget::fullScreenChanged ( bool <i>fullScreen</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>fullScreen</i> mode of a video widget has changed.</p>
 <p>See also <a href="qvideowidget.html#fullScreen-prop">fullScreen</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/hideEvent"></a>
-<h3 class="fn"><a name="hideEvent"></a>void QVideoWidget::hideEvent ( <a href="http://qt.nokia.com/doc/4.6/qhideevent.html">QHideEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<h3 class="fn"><a name="hideEvent"></a>void QVideoWidget::hideEvent ( <a href="http://qt.nokia.com/doc/4.6/qhideevent.html">QHideEvent</a> * <i>event</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#hideEvent">QWidget::hideEvent</a>().</p>
 <p>Handles the hide <i>event</i>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/hueChanged"></a>
-<h3 class="fn"><a name="hueChanged"></a>void QVideoWidget::hueChanged ( int <i>hue</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="hueChanged"></a>void QVideoWidget::hueChanged ( int <i>hue</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>hue</i> has changed.</p>
 <p>See also <a href="qvideowidget.html#hue-prop">hue</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/moveEvent"></a>
-<h3 class="fn"><a name="moveEvent"></a>void QVideoWidget::moveEvent ( <a href="http://qt.nokia.com/doc/4.6/qmoveevent.html">QMoveEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<h3 class="fn"><a name="moveEvent"></a>void QVideoWidget::moveEvent ( <a href="http://qt.nokia.com/doc/4.6/qmoveevent.html">QMoveEvent</a> * <i>event</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#moveEvent">QWidget::moveEvent</a>().</p>
 <p>Handles the move <i>event</i>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/paintEvent"></a>
-<h3 class="fn"><a name="paintEvent"></a>void QVideoWidget::paintEvent ( <a href="http://qt.nokia.com/doc/4.6/qpaintevent.html">QPaintEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<h3 class="fn"><a name="paintEvent"></a>void QVideoWidget::paintEvent ( <a href="http://qt.nokia.com/doc/4.6/qpaintevent.html">QPaintEvent</a> * <i>event</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#paintEvent">QWidget::paintEvent</a>().</p>
 <p>Handles the paint <i>event</i>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/resizeEvent"></a>
-<h3 class="fn"><a name="resizeEvent"></a>void QVideoWidget::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qresizeevent.html">QResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<h3 class="fn"><a name="resizeEvent"></a>void QVideoWidget::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qresizeevent.html">QResizeEvent</a> * <i>event</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#resizeEvent">QWidget::resizeEvent</a>().</p>
 <p>Handles the resize <i>event</i>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/saturationChanged"></a>
-<h3 class="fn"><a name="saturationChanged"></a>void QVideoWidget::saturationChanged ( int <i>saturation</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="saturationChanged"></a>void QVideoWidget::saturationChanged ( int <i>saturation</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>saturation</i> has changed.</p>
 <p>See also <a href="qvideowidget.html#saturation-prop">saturation</a>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/showEvent"></a>
-<h3 class="fn"><a name="showEvent"></a>void QVideoWidget::showEvent ( <a href="http://qt.nokia.com/doc/4.6/qshowevent.html">QShowEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<h3 class="fn"><a name="showEvent"></a>void QVideoWidget::showEvent ( <a href="http://qt.nokia.com/doc/4.6/qshowevent.html">QShowEvent</a> * <i>event</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#showEvent">QWidget::showEvent</a>().</p>
 <p>Handles the show <i>event</i>.</p>
-<a name="//apple_ref/cpp/instm/QVideoWidget/sizeHint"></a>
-<h3 class="fn"><a name="sizeHint"></a><a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> QVideoWidget::sizeHint () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="sizeHint"></a><a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> QVideoWidget::sizeHint () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#sizeHint-prop">QWidget::sizeHint</a>().</p>
 <p>Returns the size hint for the current back end, if there is one, or else the size hint from <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

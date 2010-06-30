@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgalleryitemrequest.cpp -->
+  <title>Qt Mobility Project 1.1: QGalleryItemRequest Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QGalleryItemRequest</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGalleryItemRequest Class Reference</h1>
+<p>The QGalleryItemRequest class provides a request for an item from a gallery. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QGalleryItemRequest&gt;</pre><p>Inherits <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>.</p>
+<ul>
+<li><a href="qgalleryitemrequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li class="fn"><b><a href="qgalleryitemrequest.html#item-prop">item</a></b> : QGalleryItemList * const</li>
+<li class="fn"><b><a href="qgalleryitemrequest.html#itemId-prop">itemId</a></b> : QVariant</li>
+<li class="fn"><b><a href="qgalleryitemrequest.html#live-prop">live</a></b> : bool</li>
+<li class="fn"><b><a href="qgalleryitemrequest.html#propertyNames-prop">propertyNames</a></b> : QStringList</li>
+</ul>
+<ul>
+<li class="fn">6 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#QGalleryItemRequest">QGalleryItemRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#QGalleryItemRequest-2">QGalleryItemRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#dtor.QGalleryItemRequest">~QGalleryItemRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#live-prop">isLive</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryItemList * </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#item-prop">item</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemId-prop">itemId</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#propertyNames-prop">propertyNames</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemId-prop">setItemId</a></b> ( const QVariant &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#live-prop">setLive</a></b> ( bool <i>live</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#propertyNames-prop">setPropertyNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
+</table>
+<ul>
+<li class="fn">9 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ( QGalleryItemList * <i>item</i> )</td></tr>
+</table>
+<ul>
+<li class="fn">8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#setResponse">setResponse</a></b> ( QGalleryAbstractResponse * <i>response</i> )</td></tr>
+</table>
+<ul>
+<li class="fn">1 protected function inherited from <a href="qgalleryabstractrequest.html#protected-functions">QGalleryAbstractRequest</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li class="fn">3 public slots inherited from <a href="qgalleryabstractrequest.html#public-slots">QGalleryAbstractRequest</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">1 protected function inherited from <a href="qgalleryabstractrequest.html#protected-functions">QGalleryAbstractRequest</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<div class="descr"/>
+<h2>Detailed Description</h2>
+<p>The QGalleryItemRequest class provides a request for an item from a gallery.</p>
+</div>
+<hr />
+<div class="prop"/>
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="item-prop"></a>item : <a href="qgalleryitemlist.html">QGalleryItemList</a> * const</h3>
+<p>This property holds the item returned by a request.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QGalleryItemList * </td><td class="memItemRight bottomAlign"><b>item</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ( QGalleryItemList * <i>item</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="itemId-prop"></a>itemId : <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a></h3>
+<p>This property holds the ID of a item a item request should return.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QVariant </td><td class="memItemRight bottomAlign"><b>itemId</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setItemId</b> ( const QVariant &amp; <i>id</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="live-prop"></a>live : bool</h3>
+<p>This property holds whether a the results of a request should be updated after a request has finished.</p>
+<p>If this is true the request will go into the Idle state when the request has finished rather than returning to Inactive.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isLive</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setLive</b> ( bool <i>live</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="propertyNames-prop"></a>propertyNames : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of names of meta-data properties a request should return values for.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QStringList </td><td class="memItemRight bottomAlign"><b>propertyNames</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPropertyNames</b> ( const QStringList &amp; <i>names</i> )</td></tr>
+</table>
+</div>
+<hr />
+<div class="func"/>
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QGalleryItemRequest"></a>QGalleryItemRequest::QGalleryItemRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new gallery item request.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<h3 class="fn"><a name="QGalleryItemRequest-2"></a>QGalleryItemRequest::QGalleryItemRequest ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Contructs a new item request for the given <i>gallery</i>.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<h3 class="fn"><a name="dtor.QGalleryItemRequest"></a>QGalleryItemRequest::~QGalleryItemRequest ()</h3>
+<p>Destroys a gallery item request.</p>
+<h3 class="fn"><a name="itemChanged"></a>void QGalleryItemRequest::itemChanged ( <a href="qgalleryitemlist.html">QGalleryItemList</a> * <i>item</i> )<tt> [signal]</tt></h3>
+<p>Signals that the <i>item</i> list returned by a request has changed.</p>
+<h3 class="fn"><a name="setResponse"></a>void QGalleryItemRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Qt Mobility Location API" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    <trk>
+        <trkseg>
+            <trkpt lat="13" lon="14"/>
+        </trkseg>
+        <trkseg>
+            <trkpt lat="15" lon="16"/>
+            <trkpt lat="17" lon="18"/>
+            <trkpt lat="19" lon="20"/>
+        </trkseg>
+    </trk>
+    <trk>
+        <trkseg>
+            <trkpt lat="21" lon="22"/>
+            <trkpt lat="23" lon="24"/>
+        </trkseg>
+        <trkseg>
+            <trkpt lat="25" lon="26"/>
+            <trkpt lat="27" lon="28"/>
+        </trkseg>
+    </trk>
+</gpx>

@@ -58,7 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -133,9 +133,9 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -demos ............ Build demo applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework versit
-    echo                     sensors
+    echo                     Choose from: bearer contacts gallery location publishsubscribe
+    echo                     messaging multimedia systeminfo serviceframework telephony
+    echo                     sensors versit organizer
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -301,10 +301,16 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
+) else if %FIRST% == telephony (
+    echo     Telephony selected
 ) else if %FIRST% == versit (
-    echo     Versit selected ^(implies Contacts^)
+    echo     Versit selected ^(implies Contacts and Organizer^)
+) else if %FIRST% == organizer (
+    echo     Organizer selected
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == gallery (
+    echo     Gallery selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -378,7 +384,7 @@ echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/b
 echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -570,15 +576,30 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
+) else if %FIRST% == telephony (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts
+    REM versit implies contacts and organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == gallery (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtGallery %SOURCE_PATH%\src\gallery
+) else if %FIRST% == organizer (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 )
 
 if "%REMAINING%" == "" (
