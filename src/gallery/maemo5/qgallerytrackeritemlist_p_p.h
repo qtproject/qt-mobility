@@ -197,10 +197,10 @@ public:
 
     struct Cache
     {
-        Cache() : index(0), count(0), cutoff(0) {}
+        Cache() : index(0), limit(0), cutoff(0) {}
 
         int index;
-        int count;
+        int limit;
         union
         {
             int offset;
@@ -242,7 +242,7 @@ public:
         , queryLimit(qMax(256, (4 * minimumPagedItems + 63) & ~63))
         , rowCount(0)
         , imageCacheIndex(0)
-        , imageCacheCount(0)
+        , imageCacheLimit(0)
         , queryInterface(arguments.queryInterface)
         , queryMethod(arguments.queryMethod)
         , queryArguments(arguments.queryArguments)
@@ -289,7 +289,7 @@ public:
     const int queryLimit;
     int rowCount;
     int imageCacheIndex;
-    int imageCacheCount;
+    int imageCacheLimit;
     const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;

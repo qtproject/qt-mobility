@@ -77,23 +77,23 @@ void QGalleryTrackerItemListPrivate::update()
         const int minimumIndex = qMax(iCache.index, qMax(0, cursorPosition) & ~7) ;
         const int maximumIndex = qMin(iCache.cutoff, minimumIndex + minimumPagedItems + 8);
 
-        if (imageCacheCount > imageCacheIndex) {
+        if (imageCacheLimit > imageCacheIndex) {
             if (minimumIndex > imageCacheIndex) {
-                removeHeadImages(minimumIndex < imageCacheCount
+                removeHeadImages(minimumIndex < imageCacheLimit
                         ? minimumIndex - imageCacheIndex
-                        : imageCacheCount - imageCacheIndex);
-            } else if (maximumIndex < imageCacheCount) {
+                        : imageCacheLimit - imageCacheIndex);
+            } else if (maximumIndex < imageCacheLimit) {
                 removeTailImages(maximumIndex > imageCacheIndex
-                        ? imageCacheCount - maximumIndex
-                        : imageCacheCount - imageCacheIndex);
+                        ? imageCacheLimit - maximumIndex
+                        : imageCacheLimit - imageCacheIndex);
             }
         }
 
         if (iCache.cutoff > iCache.index) {
             if (minimumIndex < imageCacheIndex) {
                 insertHeadImages(minimumIndex, qMin(imageCacheIndex - minimumIndex, minimumPagedItems));
-            } else if (maximumIndex > imageCacheCount) {
-                const int count = qMin(maximumIndex - imageCacheCount, minimumPagedItems);
+            } else if (maximumIndex > imageCacheLimit) {
+                const int count = qMin(maximumIndex - imageCacheLimit, minimumPagedItems);
 
                 insertTailImages(maximumIndex - count, count);
             }
@@ -114,9 +114,9 @@ void QGalleryTrackerItemListPrivate::removeHeadImages(int count)
 
 void QGalleryTrackerItemListPrivate::removeTailImages(int count)
 {
-    imageCacheCount -= count;
+    imageCacheLimit -= count;
 
-    const int index = imageCacheCount - imageCacheIndex;
+    const int index = imageCacheLimit - imageCacheIndex;
 
     typedef QVector<QGalleryTrackerImageColumn *>::const_iterator iterator;
     for (iterator it = imageColumns.constBegin(), end = imageColumns.constEnd(); it != end; ++it)
@@ -125,7 +125,7 @@ void QGalleryTrackerItemListPrivate::removeTailImages(int count)
 
 void QGalleryTrackerItemListPrivate::insertHeadImages(int index, int count)
 {
-    imageCacheCount += index - imageCacheIndex + count;
+    imageCacheLimit += index - imageCacheIndex + count;
     imageCacheIndex = index;
 
     QVector<QVariant>::const_iterator row
@@ -140,10 +140,10 @@ void QGalleryTrackerItemListPrivate::insertHeadImages(int index, int count)
 
 void QGalleryTrackerItemListPrivate::insertTailImages(int index, int count)
 {
-    const int relativeIndex = imageCacheCount - imageCacheIndex;
+    const int relativeIndex = imageCacheLimit - imageCacheIndex;
 
     imageCacheIndex = index - relativeIndex;
-    imageCacheCount = index + count;
+    imageCacheLimit = index + count;
 
     QVector<QVariant>::const_iterator row
             = iCache.values.constBegin() + ((index - iCache.index) * tableWidth);
@@ -163,11 +163,11 @@ void QGalleryTrackerItemListPrivate::query(int index)
     updateTimer.stop();
 
     rCache.index = iCache.index;
-    rCache.count = iCache.count;
+    rCache.limit = iCache.limit;
     rCache.offset = iCache.index;
 
     iCache.index = index;
-    iCache.count = index + queryLimit;
+    iCache.limit = index + queryLimit;
     iCache.cutoff = index;
 
     qSwap(rCache.values, iCache.values);
@@ -187,10 +187,10 @@ void QGalleryTrackerItemListPrivate::query(int index)
         emit q_func()->progressChanged(0, 2);
     }
 
-    const int statusCount = qMin(rowCount, iCache.count);
+    const int statusLimit = qMin(rowCount, iCache.limit);
 
-    if (statusCount > iCache.index)
-        emit q_func()->statusChanged(iCache.index, statusCount - iCache.index);
+    if (statusLimit > iCache.index)
+        emit q_func()->statusChanged(iCache.index, statusLimit - iCache.index);
 }
 
 void QGalleryTrackerItemListPrivate::_q_queryFinished(QDBusPendingCallWatcher *watcher)
@@ -213,7 +213,7 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     } else if (flags & Cancelled) {
-        iCache.count = 0;
+        iCache.limit = 0;
 
         flags &= ~Active;
 
@@ -234,7 +234,7 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
 
     const QVector<QStringList> resultSet = reply.value();
 
-    iCache.count = iCache.index + resultSet.count();
+    iCache.limit = iCache.index + resultSet.count();
 
     QVector<QVariant> &values = iCache.values;
     values.clear();
@@ -329,7 +329,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
 
     bool equal = false;
 
-    if (iCache.index > rCache.index && iCache.index < rCache.count) {
+    if (iCache.index > rCache.index && iCache.index < rCache.limit) {
         const int offset = iCache.index - rCache.index;
 
         if ((equal = iBegin.isEqual(rBegin + offset, identityWidth))) {
@@ -339,7 +339,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
         } else {
             rIt = rBegin + qMax(0, offset - 8);
         }
-    } else if (rCache.index > iCache.index && rCache.index < iCache.count) {
+    } else if (rCache.index > iCache.index && rCache.index < iCache.limit) {
         const int offset = rCache.index - iCache.index;
 
         if ((equal = rBegin.isEqual(iBegin + offset, identityWidth))) {
@@ -553,7 +553,7 @@ void QGalleryTrackerItemListPrivate::syncStart(
         const int rIndex, const int rCount, const int iIndex, const int iCount)
 {
     if (iIndex > rCache.index) {
-        const int statusCount = qMin(iIndex, rCache.count) - rCache.index;
+        const int statusCount = qMin(iIndex, rCache.limit) - rCache.index;
 
         iCache.cutoff = iIndex;
 
@@ -631,12 +631,12 @@ void QGalleryTrackerItemListPrivate::syncReplace(
 void QGalleryTrackerItemListPrivate::syncFinish(
         const int rIndex, const int iIndex)
 {
-    const int rCount = rCache.count - rIndex;
-    const int iCount = iCache.count - iIndex;
+    const int rCount = rCache.limit - rIndex;
+    const int iCount = iCache.limit - iIndex;
 
     if (rCount > 0) {
-        if (iCache.count - iCache.index < queryLimit) {
-            rCache.offset = rCache.count;
+        if (iCache.limit - iCache.index < queryLimit) {
+            rCache.offset = rCache.limit;
 
             rowCount -= rCount;
 
@@ -644,13 +644,13 @@ void QGalleryTrackerItemListPrivate::syncFinish(
         } else {
             const int statusIndex = rCache.offset;
 
-            rCache.offset = rCache.count;
+            rCache.offset = rCache.limit;
             iCache.cutoff = iIndex;
 
-            emit q_func()->statusChanged(statusIndex, rCache.count - statusIndex);
+            emit q_func()->statusChanged(statusIndex, rCache.limit - statusIndex);
         }
     } else {
-        rCache.offset = rCache.count;
+        rCache.offset = rCache.limit;
     }
 
     if (iCache.cutoff < iIndex) {
@@ -663,7 +663,7 @@ void QGalleryTrackerItemListPrivate::syncFinish(
 
     if (iCount > 0) {
         if (iIndex < rowCount) {
-            iCache.cutoff = qMin(rowCount, iCache.count);
+            iCache.cutoff = qMin(rowCount, iCache.limit);
 
             emit q_func()->metaDataChanged(iIndex, iCache.cutoff - iIndex);
             emit q_func()->statusChanged(iIndex, iCache.cutoff - iIndex);
@@ -671,19 +671,19 @@ void QGalleryTrackerItemListPrivate::syncFinish(
             iCache.cutoff = iIndex;
         }
 
-        if (iCache.cutoff < iCache.count) {
+        if (iCache.cutoff < iCache.limit) {
             const int index = rowCount;
 
-            iCache.cutoff = iCache.count;
-            rowCount = iCache.count;
+            iCache.cutoff = iCache.limit;
+            rowCount = iCache.limit;
 
             q_func()->inserted(index, rowCount - index);
         }
-    } else if (iCache.cutoff < iCache.count) {
+    } else if (iCache.cutoff < iCache.limit) {
         const int statusIndex = iCache.cutoff;
-        const int statusCount = iCache.count - iCache.cutoff;
+        const int statusCount = iCache.limit - iCache.cutoff;
 
-        iCache.cutoff = iCache.count;
+        iCache.cutoff = iCache.limit;
 
         emit q_func()->statusChanged(statusIndex, statusCount);
     }
@@ -715,7 +715,7 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
     processSyncEvents();
 
     rCache.values.clear();
-    rCache.count = 0;
+    rCache.limit = 0;
 
     flags &= ~Active;
 
@@ -835,7 +835,7 @@ QVariant QGalleryTrackerItemList::id(int index) const
     if (index < d->iCache.cutoff) {
         if ((index -= d->iCache.index) >= 0)
             return d->idColumn->value(d->iCache.values.begin() + (index * d->tableWidth));
-    } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+    } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
         return d->idColumn->value(d->rCache.values.begin() + (index * d->tableWidth));
     }
 
@@ -849,7 +849,7 @@ QUrl QGalleryTrackerItemList::url(int index) const
     if (index < d->iCache.cutoff) {
         if ((index -= d->iCache.index) >= 0)
             return d->urlColumn->value(d->iCache.values.begin() + (index * d->tableWidth)).toUrl();
-    } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+    } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
         return d->urlColumn->value(d->rCache.values.begin() + (index * d->tableWidth)).toUrl();
     }
 
@@ -865,7 +865,7 @@ QString QGalleryTrackerItemList::type(int index) const
             return d->typeColumn->value(
                     d->iCache.values.begin() + (index * d->tableWidth)).toString();
         }
-    } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+    } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
         return d->typeColumn->value(d->rCache.values.begin() + (index * d->tableWidth)).toString();
     }
 
@@ -915,10 +915,10 @@ QGalleryItemList::ItemStatus QGalleryTrackerItemList::status(int index) const
         if (index >= d->iCache.index)
             return status;
     } else {
-        if (index >= d->iCache.index && index < d->iCache.count)
+        if (index >= d->iCache.index && index < d->iCache.limit)
             status |= Reading;
 
-        if (index < d->rCache.count && index >= d->rCache.offset)
+        if (index < d->rCache.limit && index >= d->rCache.offset)
             return status;
     }
 
@@ -936,7 +936,7 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
             if (index < d->iCache.cutoff) {
                 if ((index -= d->iCache.index) >= 0)
                     return d->iCache.values.at(index * d->tableWidth + key);
-            } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+            } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
                 return d->rCache.values.at(index * d->tableWidth + key);
             }
         } else if (key < d->aliasOffset) {      // Composite column.
@@ -947,7 +947,7 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
                     return d->compositeColumns.at(key)->value(
                             d->iCache.values.begin() + (index * d->tableWidth));
                 }
-            } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+            } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
                 return d->compositeColumns.at(key)->value(
                         d->rCache.values.begin() + (index * d->tableWidth));
             }
@@ -957,11 +957,11 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
             if (index < d->iCache.cutoff) {
                 if ((index -= d->iCache.index) >= 0)
                     return d->iCache.values.at(index * d->tableWidth + key);
-            } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+            } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
                 return d->rCache.values.at(index * d->tableWidth + key);
             }
         } else if (key < d->columnCount
-                && index < d->imageCacheCount
+                && index < d->imageCacheLimit
                 && (index -= d->imageCacheIndex) >= 0) {
             return d->imageColumns.at(key - d->imageOffset)->image(index);
         }

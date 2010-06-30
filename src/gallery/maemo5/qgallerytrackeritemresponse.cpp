@@ -108,7 +108,7 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
             } else {
                 return;
             }
-        } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+        } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
             row = d->rCache.values.begin() + (index * d->tableWidth);
         } else {
             return;
