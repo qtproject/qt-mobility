@@ -79,18 +79,13 @@ class QSystemInfoPrivate : public QObject
 public:
     explicit QSystemInfoPrivate(QObject *parent = 0);
 
-    Q_PROPERTY(QString currentLanguage READ currentLanguage WRITE setCurrentLanguage)
-    Q_PROPERTY(QString currentCountryCode READ currentCountryCode WRITE setCurrentCountryCode)
-    Q_PROPERTY(QStringList availableLanguages READ availableLanguages WRITE setAvailableLanguages)
-
     QString currentLanguage() const { return data.currentLanguage; }
     QString currentCountryCode() const { return data.currentCountryCode; }
     QStringList availableLanguages() const { return data.availableLanguages; }
-    Q_INVOKABLE bool hasFeature(QSystemInfo::Feature f) const { return data.features[f]; }
-    Q_INVOKABLE bool hasFeatureSupported(QSystemInfo::Feature f) const { return data.features[f]; }
-    Q_INVOKABLE QString version(QSystemInfo::Version v, const QString &param = "") const { Q_UNUSED(param); return data.versions[v]; }
+    bool hasFeature(QSystemInfo::Feature f) const { return data.features[f]; }
+    bool hasFeatureSupported(QSystemInfo::Feature f) const { return data.features[f]; }
+    QString version(QSystemInfo::Version v, const QString &param = "") const { Q_UNUSED(param); return data.versions[v]; }
 
-public slots:
     void setCurrentLanguage(const QString &v);
     void setCurrentCountryCode(const QString &v);
     void setAvailableLanguages(const QStringList &v);
@@ -100,18 +95,10 @@ public slots:
     void setFeature(QSystemInfo::Feature f, bool enabled);
     void setVersion(QSystemInfo::Version v, const QString &to);
 
-public slots:
-    void publish() const;
     void setInitialData();
 
 signals:
-    void genericSystemInfoChanged(const QSystemInfoData &) const;
-
     void currentLanguageChanged(const QString &) const;
-    void currentCountryCodeChanged(const QString &) const;
-    void availableLanguagesChanged(const QStringList &) const;
-    void featureChanged(QSystemInfo::Feature, bool) const;
-    void versionChanged(QSystemInfo::Version, const QString &) const;
 
 private:
     QSystemInfoData data;
@@ -132,21 +119,12 @@ public:
     QString homeMobileNetworkCode() const { return data.homeMobileNetworkCode; }
     QSystemNetworkInfo::NetworkMode currentMode() const { return data.currentMode; }
 
-    Q_PROPERTY(int cellId READ cellId WRITE setCellId)
-    Q_PROPERTY(int locationAreaCode READ locationAreaCode WRITE setLocationAreaCode)
-    Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode WRITE setCurrentMobileCountryCode)
-    Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode WRITE setCurrentMobileNetworkCode)
-    Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode WRITE setHomeMobileCountryCode)
-    Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode WRITE setHomeMobileNetworkCode)
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode WRITE setCurrentMode)
+    QString networkName(QSystemNetworkInfo::NetworkMode m) const;
+    QString macAddress(QSystemNetworkInfo::NetworkMode m) const;
+    qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode m) const;
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode m) const;
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode) const;
 
-    Q_INVOKABLE QString networkName(QSystemNetworkInfo::NetworkMode m) const;
-    Q_INVOKABLE QString macAddress(QSystemNetworkInfo::NetworkMode m) const;
-    Q_INVOKABLE qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode m) const;
-    Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode m) const;
-    Q_INVOKABLE QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode) const;
-
-public slots:
     void setCellId(int id);
     void setLocationAreaCode(int code);
     void setCurrentMobileCountryCode(const QString &code);
@@ -160,26 +138,15 @@ public slots:
     void setNetworkSignalStrength(QSystemNetworkInfo::NetworkMode m, qint32 strength);
     void setNetworkStatus(QSystemNetworkInfo::NetworkMode m, QSystemNetworkInfo::NetworkStatus status);
 
-public slots:
-    void publish() const;
     void setInitialData();
 
 signals:
-    void systemNetworkInfoChanged(const QSystemNetworkInfoData &) const;
-
-    void cellIdChanged(int) const;
-    void locationAreaCodeChanged(int) const;
+    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus) const;
+    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int) const;
     void currentMobileCountryCodeChanged(const QString &) const;
     void currentMobileNetworkCodeChanged(const QString &) const;
-    void homeMobileCountryCodeChanged(const QString &) const;
-    void homeMobileNetworkCodeChanged(const QString &) const;
-    void currentModeChanged(QSystemNetworkInfo::NetworkMode) const;
-
-    void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
     void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
-    void networkMacAddressChanged(QSystemNetworkInfo::NetworkMode, const QString &) const;
-    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int) const;
-    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus) const;
+    void networkModeChanged(QSystemNetworkInfo::NetworkMode) const;
 
 private:
     QSystemNetworkInfoData data;
@@ -195,9 +162,6 @@ public:
     int displayBrightness(int screen = 0) const { Q_UNUSED(screen); return data.displayBrightness; }
     int colorDepth(int screen = 0) const { Q_UNUSED(screen); return data.colorDepth; }
 
-    Q_PROPERTY(int displayBrightness READ displayBrightness WRITE setDisplayBrightness)
-    Q_PROPERTY(int colorDepth READ colorDepth WRITE setColorDepth)
-
     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_ASSERT(false); }
     float contrast(int screen) const { Q_ASSERT(false); }
     int getDPIWidth(int screen) const { Q_ASSERT(false); }
@@ -205,19 +169,10 @@ public:
     int physicalHeight(int screen) const { Q_ASSERT(false); }
     int physicalWidth(int screen) const { Q_ASSERT(false); }
 
-public slots:
     void setDisplayBrightness(int brightness);
     void setColorDepth(int depth);
 
-public slots:
-    void publish() const;
     void setInitialData();
-
-signals:
-    void systemDisplayInfoChanged(const QSystemDisplayInfoData &) const;
-
-    void displayBrightnessChanged(int) const;
-    void colorDepthChanged(int) const;
 
 private:
     QSystemDisplayInfoData data;
@@ -229,20 +184,6 @@ class QSystemDeviceInfoPrivate : public QObject
     Q_OBJECT
 public:
     explicit QSystemDeviceInfoPrivate(QObject *parent = 0);
-
-    Q_PROPERTY(QSystemDeviceInfo::Profile currentProfile READ currentProfile WRITE setCurrentProfile)
-    Q_PROPERTY(QSystemDeviceInfo::PowerState currentPowerState READ currentPowerState WRITE setCurrentPowerState)
-    Q_PROPERTY(QSystemDeviceInfo::SimStatus simStatus READ simStatus WRITE setSimStatus)
-    Q_PROPERTY(QSystemDeviceInfo::InputMethodFlags inputMethodType READ inputMethodType WRITE setInputMethodType)
-
-    Q_PROPERTY(QString imei READ imei WRITE setImei)
-    Q_PROPERTY(QString imsi READ imsi WRITE setImsi)
-    Q_PROPERTY(QString manufacturer READ manufacturer WRITE setManufacturer)
-    Q_PROPERTY(QString model READ model WRITE setModel)
-    Q_PROPERTY(QString productName READ productName WRITE setProductName)
-
-    Q_PROPERTY(int batteryLevel READ batteryLevel WRITE setBatteryLevel)
-    Q_PROPERTY(bool deviceLocked READ isDeviceLocked WRITE setDeviceLocked)
 
     QSystemDeviceInfo::Profile currentProfile() const { return data.currentProfile; }
     QSystemDeviceInfo::PowerState currentPowerState() const { return data.currentPowerState; }
@@ -260,9 +201,8 @@ public:
 
     bool currentBluetoothPowerState() const { Q_ASSERT(false); }
 
-    Q_INVOKABLE QSystemDeviceInfo::BatteryStatus batteryStatus() const;
+    QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 
-public slots:
     void setCurrentProfile(QSystemDeviceInfo::Profile v);
     void setCurrentPowerState(QSystemDeviceInfo::PowerState v);
     void setSimStatus(QSystemDeviceInfo::SimStatus v);
@@ -277,28 +217,13 @@ public slots:
     void setBatteryLevel(int v);
     void setDeviceLocked(bool v);
 
-public slots:
-    void publish() const;
     void setInitialData();
 
 signals:
-    void systemDeviceInfoChanged(const QSystemDeviceInfoData &) const;
-
-    void currentProfileChanged(QSystemDeviceInfo::Profile) const;
-    void powerStateChanged(QSystemDeviceInfo::PowerState) const;
-    void simStatusChanged(QSystemDeviceInfo::SimStatus) const;
-    void inputMethodTypeChanged(QSystemDeviceInfo::InputMethodFlags) const;
-
-    void imeiChanged(const QString &) const;
-    void imsiChanged(const QString &) const;
-    void manufacturerChanged(const QString &) const;
-    void modelChanged(const QString &) const;
-    void productNameChanged(const QString &) const;
-
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
     void batteryLevelChanged(int) const;
-    void deviceLockChanged(bool) const;
-
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus) const;
+    void powerStateChanged(QSystemDeviceInfo::PowerState) const;
+    void currentProfileChanged(QSystemDeviceInfo::Profile) const;
     void bluetoothStateChanged(bool) const;
 
 private:
@@ -312,12 +237,11 @@ class QSystemStorageInfoPrivate : public QObject
 public:
     explicit QSystemStorageInfoPrivate(QObject *parent = 0);
 
-    Q_INVOKABLE QStringList logicalDrives() const;
-    Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &name) const;
-    Q_INVOKABLE qint64 totalDiskSpace(const QString &name) const;
-    Q_INVOKABLE qint64 availableDiskSpace(const QString &name) const;
+    QStringList logicalDrives() const;
+    QSystemStorageInfo::DriveType typeForDrive(const QString &name) const;
+    qint64 totalDiskSpace(const QString &name) const;
+    qint64 availableDiskSpace(const QString &name) const;
 
-public slots:
     bool addDrive(const QString &name);
     bool addDrive(const QString &name, QSystemStorageInfo::DriveType type,
                   qint64 totalSpace, qint64 availableSpace);
@@ -327,20 +251,10 @@ public slots:
     bool setTotalSpace(const QString &name, qint64 space);
     bool setAvailableSpace(const QString &name, qint64 space);
 
-public slots:
-    void publish() const;
     void setInitialData();
 
 signals:
-    void systemStorageInfoChanged(const QSystemStorageInfoData &) const;
-
-    void driveAdded(const QString &name, QSystemStorageInfo::DriveType type,
-                    qint64 totalSpace, qint64 availableSpace) const;
-    void driveRemoved(const QString &name) const;
-    void nameChanged(const QString &oldname, const QString &newname) const;
-    void typeChanged(const QString &name, QSystemStorageInfo::DriveType type) const;
-    void totalSpaceChanged(const QString &name, qint64 space) const;
-    void availableSpaceChanged(const QString &name, qint64 space) const;
+    void logicalDrivesChanged(bool added);
 
 private:
     QSystemStorageInfoData data;

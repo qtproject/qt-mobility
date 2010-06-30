@@ -241,11 +241,6 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     data.versions.fill("unknown", versionMeta.keyCount() + 1);
 }
 
-void QSystemInfoPrivate::publish() const
-{
-    emit genericSystemInfoChanged(data);
-}
-
 void QSystemInfoPrivate::setInitialData()
 {
     setCurrentLanguage("en");
@@ -272,7 +267,6 @@ void QSystemInfoPrivate::setCurrentCountryCode(const QString &v)
     QString code = v.toUpper();
     if (data.currentCountryCode.toUpper() != code) {
         data.currentCountryCode = code;
-        emit currentCountryCodeChanged(code);
     }
 }
 
@@ -282,7 +276,6 @@ void QSystemInfoPrivate::setAvailableLanguages(const QStringList &v)
         data.availableLanguages.clear();
         foreach (QString language, v)
             data.availableLanguages.append(language.toLower());
-        emit availableLanguagesChanged(data.availableLanguages);
     }
 }
 
@@ -291,7 +284,6 @@ void QSystemInfoPrivate::addAvailableLanguage(const QString &v)
     QString language = v.toLower();
     if (!data.availableLanguages.contains(language)) {
         data.availableLanguages.append(language);
-        emit availableLanguagesChanged(data.availableLanguages);
     }
 }
 
@@ -302,7 +294,6 @@ bool QSystemInfoPrivate::removeAvailableLanguage(const QString &v)
     if (count == 0)
         return false;
 
-    emit availableLanguagesChanged(data.availableLanguages);
     return true;
 }
 
@@ -310,7 +301,6 @@ void QSystemInfoPrivate::removeAllAvailableLanguages()
 {
     if (data.availableLanguages.count() > 0) {
         data.availableLanguages.clear();
-        emit availableLanguagesChanged(data.availableLanguages);
     }
 }
 
@@ -320,14 +310,12 @@ void QSystemInfoPrivate::setFeature(QSystemInfo::Feature f, bool enabled)
         return;
 
     data.features[f] = enabled;
-    emit featureChanged(f, enabled);
 }
 
 void QSystemInfoPrivate::setVersion(QSystemInfo::Version v, const QString &to)
 {
     if (data.versions[v] != to) {
         data.versions[v] = to;
-        emit versionChanged(v, to);
     }
 }
 
@@ -345,11 +333,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     init.status = QSystemNetworkInfo::UndefinedStatus;
     QMetaEnum modeMeta = QSystemNetworkInfo::staticMetaObject.enumerator(QSystemNetworkInfo::staticMetaObject.indexOfEnumerator("NetworkMode"));
     data.networkInfo.fill(init, modeMeta.keyCount());
-}
-
-void QSystemNetworkInfoPrivate::publish() const
-{
-    emit systemNetworkInfoChanged(data);
 }
 
 void QSystemNetworkInfoPrivate::setInitialData()
@@ -392,7 +375,6 @@ void QSystemNetworkInfoPrivate::setCellId(int id)
 {
     if (data.cellId != id) {
         data.cellId = id;
-        emit cellIdChanged(id);
     }
 }
 
@@ -400,7 +382,6 @@ void QSystemNetworkInfoPrivate::setLocationAreaCode(int code)
 {
     if (data.locationAreaCode != code) {
         data.locationAreaCode = code;
-        emit locationAreaCodeChanged(code);
     }
 }
 
@@ -424,7 +405,6 @@ void QSystemNetworkInfoPrivate::setHomeMobileCountryCode(const QString &code)
 {
     if (data.homeMobileCountryCode != code) {
         data.homeMobileCountryCode = code;
-        emit homeMobileCountryCodeChanged(code);
     }
 }
 
@@ -432,7 +412,6 @@ void QSystemNetworkInfoPrivate::setHomeMobileNetworkCode(const QString &code)
 {
     if (data.homeMobileNetworkCode != code) {
         data.homeMobileNetworkCode = code;
-        emit homeMobileNetworkCodeChanged(code);
     }
 }
 
@@ -440,7 +419,6 @@ void QSystemNetworkInfoPrivate::setCurrentMode(QSystemNetworkInfo::NetworkMode m
 {
     if (data.currentMode != m) {
         data.currentMode = m;
-        emit currentModeChanged(m);
     }
 }
 
@@ -458,7 +436,6 @@ void QSystemNetworkInfoPrivate::setNetworkMacAddress(QSystemNetworkInfo::Network
     QSystemNetworkInfoData::NetworkInfo &info = data.networkInfo[static_cast<int>(m)];
     if (info.macAddress != mac) {
         info.macAddress = mac;
-        emit networkMacAddressChanged(m, mac);
     }
 }
 
@@ -488,11 +465,6 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     ensureSimulatorConnection();
 }
 
-void QSystemDisplayInfoPrivate::publish() const
-{
-    emit systemDisplayInfoChanged(data);
-}
-
 void QSystemDisplayInfoPrivate::setInitialData()
 {
     setDisplayBrightness(100);
@@ -503,7 +475,6 @@ void QSystemDisplayInfoPrivate::setColorDepth(int depth)
 {
     if (data.colorDepth != depth) {
         data.colorDepth = depth;
-        emit colorDepthChanged(depth);
     }
 }
 
@@ -511,7 +482,6 @@ void QSystemDisplayInfoPrivate::setDisplayBrightness(int brightness)
 {
     if (data.displayBrightness != brightness) {
         data.displayBrightness = brightness;
-        emit displayBrightnessChanged(brightness);
     }
 }
 
@@ -520,11 +490,6 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
-}
-
-void QSystemDeviceInfoPrivate::publish() const
-{
-    emit systemDeviceInfoChanged(data);
 }
 
 void QSystemDeviceInfoPrivate::setInitialData()
@@ -580,7 +545,6 @@ void QSystemDeviceInfoPrivate::setSimStatus(QSystemDeviceInfo::SimStatus v)
 {
     if (data.simStatus != v) {
         data.simStatus = v;
-        emit simStatusChanged(v);
     }
 }
 
@@ -588,7 +552,6 @@ void QSystemDeviceInfoPrivate::setInputMethodType(QSystemDeviceInfo::InputMethod
 {
     if (data.inputMethodType != v) {
         data.inputMethodType= v;
-        emit inputMethodTypeChanged(v);
     }
 }
 
@@ -596,7 +559,6 @@ void QSystemDeviceInfoPrivate::setImei(const QString &v)
 {
     if (data.imei != v) {
         data.imei = v;
-        emit imeiChanged(v);
     }
 }
 
@@ -604,7 +566,6 @@ void QSystemDeviceInfoPrivate::setImsi(const QString &v)
 {
     if (data.imsi != v) {
         data.imsi = v;
-        emit imsiChanged(v);
     }
 }
 
@@ -612,7 +573,6 @@ void QSystemDeviceInfoPrivate::setManufacturer(const QString &v)
 {
     if (data.manufacturer != v) {
         data.manufacturer = v;
-        emit manufacturerChanged(v);
     }
 }
 
@@ -620,7 +580,6 @@ void QSystemDeviceInfoPrivate::setModel(const QString &v)
 {
     if (data.model != v) {
         data.model = v;
-        emit modelChanged(v);
     }
 }
 
@@ -628,7 +587,6 @@ void QSystemDeviceInfoPrivate::setProductName(const QString &v)
 {
     if (data.productName != v) {
         data.productName = v;
-        emit productNameChanged(v);
     }
 }
 
@@ -649,7 +607,6 @@ void QSystemDeviceInfoPrivate::setDeviceLocked(bool v)
 {
     if (data.deviceLocked != v) {
         data.deviceLocked = v;
-        emit deviceLockChanged(v);
     }
 }
 
@@ -658,11 +615,6 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     ensureSimulatorConnection();
-}
-
-void QSystemStorageInfoPrivate::publish() const
-{
-    emit systemStorageInfoChanged(data);
 }
 
 void QSystemStorageInfoPrivate::setInitialData()
@@ -717,14 +669,14 @@ bool QSystemStorageInfoPrivate::addDrive(const QString &name, QSystemStorageInfo
     d.availableSpace = availableSpace;
     data.drives[name] = d;
 
-    emit driveAdded(name, type, d.totalSpace, d.availableSpace);
+    emit logicalDrivesChanged(true);
     return true;
 }
 
 bool QSystemStorageInfoPrivate::removeDrive(const QString &name)
 {
     if (data.drives.remove(name) > 0) {
-        emit driveRemoved(name);
+        emit logicalDrivesChanged(false);
         return true;
     }
     return false;
@@ -741,7 +693,7 @@ bool QSystemStorageInfoPrivate::setName(const QString &oldname, const QString &n
     data.drives.remove(oldname);
     data.drives[newname] = copy;
 
-    emit nameChanged(oldname, newname);
+    emit logicalDrivesChanged(false);
     return true;
 }
 
@@ -752,7 +704,7 @@ bool QSystemStorageInfoPrivate::setType(const QString &name, QSystemStorageInfo:
         return false;
 
     it.value().type = static_cast<QSystemStorageInfo::DriveType>(type);
-    emit typeChanged(name, type);
+    emit logicalDrivesChanged(false);
     return true;
 }
 
@@ -763,7 +715,7 @@ bool QSystemStorageInfoPrivate::setTotalSpace(const QString &name, qint64 space)
         return false;
 
     it.value().totalSpace = space;
-    emit totalSpaceChanged(name, space);
+    emit logicalDrivesChanged(false);
     return true;
 }
 
@@ -774,7 +726,7 @@ bool QSystemStorageInfoPrivate::setAvailableSpace(const QString &name, qint64 sp
         return false;
 
     it.value().availableSpace = space;
-    emit availableSpaceChanged(name, space);
+    emit logicalDrivesChanged(false);
     return true;
 }
 
