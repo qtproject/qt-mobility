@@ -211,16 +211,29 @@ QVariant QGstreamerCameraExposureControl::exposureParameter(ExposureParameter pa
     }
 }
 
-QVariantList QGstreamerCameraExposureControl::supportedParameterRange(ExposureParameter parameter, bool *continuous) const
+QCameraExposureControl::ParameterFlags QGstreamerCameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
 {
-    QVariantList res;
-    if (continuous)
-        *continuous = false;
+    QCameraExposureControl::ParameterFlags flags = 0;
 
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
-        if (continuous)
-            *continuous = true;
+        flags |= ContinuousRange;
+        break;
+    case QCameraExposureControl::Aperture:
+        flags |= ReadOnly;
+        break;
+    default:
+        break;
+    }
+
+    return flags;
+}
+
+QVariantList QGstreamerCameraExposureControl::supportedParameterRange(ExposureParameter parameter) const
+{
+    QVariantList res;
+    switch (parameter) {
+    case QCameraExposureControl::ExposureCompensation:
         res << -2.0 << 2.0;
         break;
     case QCameraExposureControl::ISO:
