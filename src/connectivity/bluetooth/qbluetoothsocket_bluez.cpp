@@ -202,7 +202,7 @@ QString QBluetoothSocket::peerName() const
 
     QDBusPendingReply<QVariantMap> properties = device.GetProperties();
     properties.waitForFinished();
-    if (reply.isError())
+    if (properties.isError())
         return QString();
 
     d->peerName = properties.value().value(QLatin1String("Alias")).toString();
