@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "galleryitemrequest.h"
+#include "qdeclarativegalleryitem.h"
 
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryItem GalleryItemRequest
+    \qmlclass GalleryItem QDeclarativeGalleryItem
     \brief The GalleryItem element allows you to request information about a
     single item from a gallery
 
@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     \sa GalleryQueryModel, GalleryQueryCount
 */
 
-GalleryItemRequest::GalleryItemRequest(QObject *parent)
+QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
     : QObject(parent)
     , m_itemList(0)
     , m_metaData(0)
@@ -80,7 +80,7 @@ GalleryItemRequest::GalleryItemRequest(QObject *parent)
             this, SLOT(_q_valueChanged(QString,QVariant)));
 }
 
-GalleryItemRequest::~GalleryItemRequest()
+QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 {
 }
 
@@ -233,11 +233,11 @@ GalleryItemRequest::~GalleryItemRequest()
     Signals that a request finished with the given \a result.
 */
 
-void GalleryItemRequest::classBegin()
+void QDeclarativeGalleryItem::classBegin()
 {
 }
 
-void GalleryItemRequest::componentComplete()
+void QDeclarativeGalleryItem::componentComplete()
 {
     m_complete = true;
 
@@ -245,7 +245,7 @@ void GalleryItemRequest::componentComplete()
         m_request.execute();
 }
 
-void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
+void QDeclarativeGalleryItem::_q_itemListChanged(QGalleryItemList *items)
 {
     if (m_itemList && m_itemList->count() > 0) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -290,7 +290,7 @@ void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
     emit availableChanged();
 }
 
-void GalleryItemRequest::_q_itemsInserted(int index, int)
+void QDeclarativeGalleryItem::_q_itemsInserted(int index, int)
 {
     if (index == 0) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -306,7 +306,7 @@ void GalleryItemRequest::_q_itemsInserted(int index, int)
     }
 }
 
-void GalleryItemRequest::_q_itemsRemoved(int index, int)
+void QDeclarativeGalleryItem::_q_itemsRemoved(int index, int)
 {
     if (index == 0) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -318,13 +318,13 @@ void GalleryItemRequest::_q_itemsRemoved(int index, int)
     }
 }
 
-void GalleryItemRequest::_q_statusChanged(int index, int)
+void QDeclarativeGalleryItem::_q_statusChanged(int index, int)
 {
     if (index == 0)
         emit statusChanged();
 }
 
-void GalleryItemRequest::_q_metaDataChanged(int index, int, const QList<int> &keys)
+void QDeclarativeGalleryItem::_q_metaDataChanged(int index, int, const QList<int> &keys)
 {
     if (index == 0 && keys.isEmpty()) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -345,12 +345,12 @@ void GalleryItemRequest::_q_metaDataChanged(int index, int, const QList<int> &ke
     }
 }
 
-void GalleryItemRequest::_q_valueChanged(const QString &key, const QVariant &value)
+void QDeclarativeGalleryItem::_q_valueChanged(const QString &key, const QVariant &value)
 {
     if (m_itemList)
         m_itemList->setMetaData(0, key, value);
 }
 
-#include "moc_galleryitemrequest.cpp"
+#include "moc_qdeclarativegalleryitem.cpp"
 
 QTM_END_NAMESPACE

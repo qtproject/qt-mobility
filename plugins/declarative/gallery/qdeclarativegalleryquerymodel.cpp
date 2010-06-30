@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "galleryqueryrequest.h"
+#include "qdeclarativegalleryquerymodel.h"
 
-#include "galleryfilter.h"
+#include "qdeclarativegalleryfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -103,7 +103,7 @@ QTM_BEGIN_NAMESPACE
     \sa GalleryItem, GalleryQueryCount
 */
 
-GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
+QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_itemList(0)
     , m_lowerOffset(0)
@@ -125,15 +125,15 @@ GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
             this, SLOT(_q_setItemList(QGalleryItemList*)));
 }
 
-GalleryQueryRequest::~GalleryQueryRequest()
+QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
 {
 }
 
-void GalleryQueryRequest::classBegin()
+void QDeclarativeGalleryQueryModel::classBegin()
 {
 }
 
-void GalleryQueryRequest::componentComplete()
+void QDeclarativeGalleryQueryModel::componentComplete()
 {
     m_complete = true;
 
@@ -303,7 +303,7 @@ void GalleryQueryRequest::componentComplete()
     Signals that a query finished with the given \a result.
 */
 
-void GalleryQueryRequest::reload()
+void QDeclarativeGalleryQueryModel::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
     if (m_itemList)
@@ -312,12 +312,12 @@ void GalleryQueryRequest::reload()
 }
 
 
-int GalleryQueryRequest::rowCount(const QModelIndex &parent) const
+int QDeclarativeGalleryQueryModel::rowCount(const QModelIndex &parent) const
 {
     return !parent.isValid() ? m_rowCount : 0;
 }
 
-QVariant GalleryQueryRequest::data(const QModelIndex &index, int role) const
+QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
         switch (role) {
@@ -347,7 +347,7 @@ QVariant GalleryQueryRequest::data(const QModelIndex &index, int role) const
     }
 }
 
-bool GalleryQueryRequest::setData(const QModelIndex &index, const QVariant &value, int role)
+bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid()
             && (role -= MetaDataOffset) > 0
@@ -361,7 +361,7 @@ bool GalleryQueryRequest::setData(const QModelIndex &index, const QVariant &valu
 
 }
 
-QModelIndex GalleryQueryRequest::index(int row, int column, const QModelIndex &parent) const
+QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (!parent.isValid() && row >= 0 && row < m_rowCount && column == 0) {
         if (m_updateCursor && m_lowerOffset != m_upperOffset) {
@@ -370,11 +370,11 @@ QModelIndex GalleryQueryRequest::index(int row, int column, const QModelIndex &p
             if (row - m_lowerOffset < position && position > 0) {
                 m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
 
-                emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
+                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
             } else if (row + m_upperOffset > position) {
                 m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
 
-                emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
+                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
             }
         }
 
@@ -384,7 +384,7 @@ QModelIndex GalleryQueryRequest::index(int row, int column, const QModelIndex &p
     }
 }
 
-void GalleryQueryRequest::_q_setItemList(QGalleryItemList *list)
+void QDeclarativeGalleryQueryModel::_q_setItemList(QGalleryItemList *list)
 {
     m_itemList = list;
 
@@ -423,31 +423,31 @@ void GalleryQueryRequest::_q_setItemList(QGalleryItemList *list)
     reset();
 }
 
-void GalleryQueryRequest::_q_itemsInserted(int index, int count)
+void QDeclarativeGalleryQueryModel::_q_itemsInserted(int index, int count)
 {
     beginInsertRows(QModelIndex(), index, index + count - 1);
     m_rowCount += count;
     endInsertRows();
 }
 
-void GalleryQueryRequest::_q_itemsRemoved(int index, int count)
+void QDeclarativeGalleryQueryModel::_q_itemsRemoved(int index, int count)
 {
     beginRemoveRows(QModelIndex(), index, index + count - 1);
     m_rowCount -= count;
     endRemoveRows();
 }
 
-void GalleryQueryRequest::_q_itemsMoved(int from, int to, int count)
+void QDeclarativeGalleryQueryModel::_q_itemsMoved(int from, int to, int count)
 {
     beginMoveRows(QModelIndex(), from, from + count - 1, QModelIndex(), to);
     endMoveRows();
 }
 
-void GalleryQueryRequest::_q_itemsChanged(int index, int count)
+void QDeclarativeGalleryQueryModel::_q_itemsChanged(int index, int count)
 {
     emit dataChanged(createIndex(index, 0), createIndex(index + count - 1, 0));
 }
 
-#include "moc_galleryqueryrequest.cpp"
+#include "moc_qdeclarativegalleryquerymodel.cpp"
 
 QTM_END_NAMESPACE

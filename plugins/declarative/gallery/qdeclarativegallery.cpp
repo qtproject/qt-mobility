@@ -44,10 +44,10 @@
 
 #include <qdocumentgallery.h>
 
-#include "gallerycountrequest.h"
-#include "galleryfilter.h"
-#include "galleryitemrequest.h"
-#include "galleryqueryrequest.h"
+#include "qdeclarativegalleryfilter.h"
+#include "qdeclarativegalleryitem.h"
+#include "qdeclarativegalleryquerycount.h"
+#include "qdeclarativegalleryquerymodel.h"
 
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QAbstractGallery))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDocumentGallery))
@@ -62,27 +62,27 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
-        qmlRegisterType<GalleryFilterBase>();
-        qmlRegisterType<GalleryFilterUnionItem>();
-        qmlRegisterType<GalleryFilterIntersectionItem>();
-        qmlRegisterType<GalleryFilter>(uri, 1, 0, "GalleryFilter");
-        qmlRegisterType<GalleryFilterLessThan>(uri, 1, 0, "GalleryPropertyLessThan");
-        qmlRegisterType<GalleryFilterLessThanEquals>(uri, 1, 0, "GalleryPropertyLessThanEquals");
-        qmlRegisterType<GalleryFilterGreaterThan>(uri, 1, 0, "GalleryPropertyGreaterThan");
-        qmlRegisterType<GalleryFilterGreaterThanEquals>(uri, 1, 0, "GalleryPropertyGreaterThanEquals");
-        qmlRegisterType<GalleryFilterExclusiveRange>(uri, 1, 0, "GalleryExclusivePropertyRange");
-        qmlRegisterType<GalleryFilterInclusiveRange>(uri, 1, 0, "GalleryInclusivePropertyRange");
-        qmlRegisterType<GalleryFilterUnion>(uri, 1, 0, "GalleryFilterUnion");
-        qmlRegisterType<GalleryFilterIntersection>(uri, 1, 0, "GalleryFilterIntersection");
-        qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryQueryCount");
-        qmlRegisterType<GalleryItemRequest>(uri, 1, 0, "GalleryItem");
-        qmlRegisterType<GalleryQueryRequest>(uri, 1, 0, "GalleryQueryModel");
+        qmlRegisterType<QDeclarativeGalleryFilterBase>();
+        qmlRegisterType<QDeclarativeGalleryFilterUnionItem>();
+        qmlRegisterType<QDeclarativeGalleryFilterIntersectionItem>();
+        qmlRegisterType<QDeclarativeGalleryFilter>(uri, 1, 0, "GalleryFilter");
+        qmlRegisterType<QDeclarativeGalleryFilterLessThan>(uri, 1, 0, "GalleryPropertyLessThan");
+        qmlRegisterType<QDeclarativeGalleryFilterLessThanEquals>(uri, 1, 0, "GalleryPropertyLessThanEquals");
+        qmlRegisterType<QDeclarativeGalleryFilterGreaterThan>(uri, 1, 0, "GalleryPropertyGreaterThan");
+        qmlRegisterType<QDeclarativeGalleryFilterGreaterThanEquals>(uri, 1, 0, "GalleryPropertyGreaterThanEquals");
+        qmlRegisterType<QDeclarativeGalleryFilterExclusiveRange>(uri, 1, 0, "GalleryExclusivePropertyRange");
+        qmlRegisterType<QDeclarativeGalleryFilterInclusiveRange>(uri, 1, 0, "GalleryInclusivePropertyRange");
+        qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 0, "GalleryFilterUnion");
+        qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 0, "GalleryFilterIntersection");
+        qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 0, "GalleryItem");
+        qmlRegisterType<QDeclarativeGalleryQueryCount>(uri, 1, 0, "GalleryQueryCount");
+        qmlRegisterType<QDeclarativeGalleryQueryModel>(uri, 1, 0, "GalleryQueryModel");
         qmlRegisterType<QAbstractGallery>();
         qmlRegisterType<QDocumentGallery>(uri, 1, 0, "DocumentGallery");
     }
 };
 
-#include "gallery.moc"
+#include "qdeclarativegallery.moc"
 
 QTM_END_NAMESPACE
 

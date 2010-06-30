@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "galleryfilter.h"
+#include "qdeclarativegalleryfilter.h"
 
 #include <qgalleryfilter.h>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryFilter GalleryFilter
+    \qmlclass GalleryFilter QDeclarativeGalleryFilter
 
     \brief The GalleryFilter element provides filtering criteria for a gallery
     query.
@@ -79,7 +79,7 @@ QTM_BEGIN_NAMESPACE
     This property holds how a value is filtered against a property.
 */
 
-QGalleryFilter GalleryFilter::filter() const
+QGalleryFilter QDeclarativeGalleryFilter::filter() const
 {
     QGalleryMetaDataFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -109,7 +109,7 @@ QGalleryFilter GalleryFilter::filter() const
     This property holds the value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterLessThan::filter() const
+QGalleryFilter QDeclarativeGalleryFilterLessThan::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -138,7 +138,7 @@ QGalleryFilter GalleryFilterLessThan::filter() const
     This property holds the value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterLessThanEquals::filter() const
+QGalleryFilter QDeclarativeGalleryFilterLessThanEquals::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -167,7 +167,7 @@ QGalleryFilter GalleryFilterLessThanEquals::filter() const
     This property holds the value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterGreaterThan::filter() const
+QGalleryFilter QDeclarativeGalleryFilterGreaterThan::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -196,7 +196,7 @@ QGalleryFilter GalleryFilterGreaterThan::filter() const
     This property holds the value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
+QGalleryFilter QDeclarativeGalleryFilterGreaterThanEquals::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -231,7 +231,7 @@ QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
     This property holds the maximum value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterExclusiveRange::filter() const
+QGalleryFilter QDeclarativeGalleryFilterExclusiveRange::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -266,7 +266,7 @@ QGalleryFilter GalleryFilterExclusiveRange::filter() const
     This property holds the maximum value the filter tests against.
 */
 
-QGalleryFilter GalleryFilterInclusiveRange::filter() const
+QGalleryFilter QDeclarativeGalleryFilterInclusiveRange::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
     filter.setPropertyName(m_propertyName);
@@ -288,11 +288,11 @@ QGalleryFilter GalleryFilterInclusiveRange::filter() const
     This property holds the children of a union filter.
 */
 
-QGalleryFilter GalleryFilterUnion::filter() const
+QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
 {
     QGalleryUnionFilter unionFilter;
 
-    typedef QList<GalleryFilterUnionItem *>::const_iterator iterator;
+    typedef QList<QDeclarativeGalleryFilterUnionItem *>::const_iterator iterator;
     for (iterator it = m_filters.begin(), end = m_filters.end(); it != end; ++it) {
         QGalleryFilter filter = (*it)->filter();
         switch (filter.type()) {
@@ -327,11 +327,11 @@ QGalleryFilter GalleryFilterUnion::filter() const
     This property holds the children of a intersection filter.
 */
 
-QGalleryFilter GalleryFilterIntersection::filter() const
+QGalleryFilter QDeclarativeGalleryFilterIntersection::filter() const
 {
     QGalleryIntersectionFilter intersectionFilter;
 
-    typedef QList<GalleryFilterIntersectionItem *>::const_iterator iterator;
+    typedef QList<QDeclarativeGalleryFilterIntersectionItem *>::const_iterator iterator;
     for (iterator it = m_filters.begin(), end = m_filters.end(); it != end; ++it) {
         QGalleryFilter filter = (*it)->filter();
         switch (filter.type()) {
@@ -354,6 +354,6 @@ QGalleryFilter GalleryFilterIntersection::filter() const
     return intersectionFilter;
 }
 
-#include "moc_galleryfilter.cpp"
+#include "moc_qdeclarativegalleryfilter.cpp"
 
 QTM_END_NAMESPACE

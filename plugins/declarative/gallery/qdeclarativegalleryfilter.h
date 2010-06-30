@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef GALLERYFILTER_H
-#define GALLERYFILTER_H
+#ifndef QDECLARATIVEGALLERYFILTER_H
+#define QDECLARATIVEGALLERYFILTER_H
 
 #include <qmobilityglobal.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -49,11 +49,11 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryFilter;
 
-class GalleryFilterBase : public QObject
+class QDeclarativeGalleryFilterBase : public QObject
 {
     Q_OBJECT
 public:
-    explicit GalleryFilterBase(QObject *parent = 0)
+    explicit QDeclarativeGalleryFilterBase(QObject *parent = 0)
         : QObject(parent)
     {
     }
@@ -61,27 +61,27 @@ public:
     virtual QGalleryFilter filter() const = 0;
 };
 
-class GalleryFilterUnionItem : public GalleryFilterBase
+class QDeclarativeGalleryFilterUnionItem : public QDeclarativeGalleryFilterBase
 {
     Q_OBJECT
 public:
-    explicit GalleryFilterUnionItem(QObject *parent = 0)
-        : GalleryFilterBase(parent)
+    explicit QDeclarativeGalleryFilterUnionItem(QObject *parent = 0)
+        : QDeclarativeGalleryFilterBase(parent)
     {
     }
 };
 
-class GalleryFilterIntersectionItem : public GalleryFilterUnionItem
+class QDeclarativeGalleryFilterIntersectionItem : public QDeclarativeGalleryFilterUnionItem
 {
     Q_OBJECT
 public:
-    explicit GalleryFilterIntersectionItem(QObject *parent = 0)
-        : GalleryFilterUnionItem(parent)
+    explicit QDeclarativeGalleryFilterIntersectionItem(QObject *parent = 0)
+        : QDeclarativeGalleryFilterUnionItem(parent)
     {
     }
 };
 
-class GalleryFilter : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilter : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
@@ -103,8 +103,8 @@ public:
 
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
-    explicit GalleryFilter(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilter(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
         , m_matchFlags(Qt::MatchExactly)
     {
     }
@@ -126,14 +126,14 @@ private:
     MatchFlags m_matchFlags;
 };
 
-class GalleryFilterLessThan : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterLessThan : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant value READ value WRITE setValue)
 public:
-    explicit GalleryFilterLessThan(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterLessThan(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -150,14 +150,14 @@ private:
     QVariant m_value;
 };
 
-class GalleryFilterLessThanEquals : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterLessThanEquals : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant value READ value WRITE setValue)
 public:
-    explicit GalleryFilterLessThanEquals(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterLessThanEquals(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -174,14 +174,14 @@ private:
     QVariant m_value;
 };
 
-class GalleryFilterGreaterThan : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterGreaterThan : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant value READ value WRITE setValue)
 public:
-    explicit GalleryFilterGreaterThan(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterGreaterThan(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -198,14 +198,14 @@ private:
     QVariant m_value;
 };
 
-class GalleryFilterGreaterThanEquals : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterGreaterThanEquals : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant value READ value WRITE setValue)
 public:
-    explicit GalleryFilterGreaterThanEquals(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterGreaterThanEquals(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -222,15 +222,15 @@ private:
     QVariant m_value;
 };
 
-class GalleryFilterExclusiveRange : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterExclusiveRange : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant minimum READ minimumValue WRITE setMinimumValue)
     Q_PROPERTY(QVariant maximum READ maximumValue WRITE setMaximumValue)
 public:
-    explicit GalleryFilterExclusiveRange(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterExclusiveRange(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -251,15 +251,15 @@ private:
     QVariant m_maximumValue;
 };
 
-class GalleryFilterInclusiveRange : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterInclusiveRange : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
     Q_PROPERTY(QString property READ propertyName WRITE setPropertyName)
     Q_PROPERTY(QVariant minimum READ minimumValue WRITE setMinimumValue)
     Q_PROPERTY(QVariant maximum READ maximumValue WRITE setMaximumValue)
 public:
-    explicit GalleryFilterInclusiveRange(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterInclusiveRange(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
@@ -280,59 +280,59 @@ private:
     QVariant m_maximumValue;
 };
 
-class GalleryFilterUnion : public GalleryFilterIntersectionItem
+class QDeclarativeGalleryFilterUnion : public QDeclarativeGalleryFilterIntersectionItem
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<GalleryFilterUnionItem> filters READ filters)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGalleryFilterUnionItem> filters READ filters)
     Q_CLASSINFO("DefaultProperty", "filters")
 public:
-    explicit GalleryFilterUnion(QObject *parent = 0)
-        : GalleryFilterIntersectionItem(parent)
+    explicit QDeclarativeGalleryFilterUnion(QObject *parent = 0)
+        : QDeclarativeGalleryFilterIntersectionItem(parent)
     {
     }
 
-    QDeclarativeListProperty<GalleryFilterUnionItem> filters() {
-        return QDeclarativeListProperty<GalleryFilterUnionItem>(this, m_filters); }
+    QDeclarativeListProperty<QDeclarativeGalleryFilterUnionItem> filters() {
+        return QDeclarativeListProperty<QDeclarativeGalleryFilterUnionItem>(this, m_filters); }
 
     QGalleryFilter filter() const;
 
 private:
-    QList<GalleryFilterUnionItem *> m_filters;
+    QList<QDeclarativeGalleryFilterUnionItem *> m_filters;
 };
 
-class GalleryFilterIntersection : public GalleryFilterBase
+class QDeclarativeGalleryFilterIntersection : public QDeclarativeGalleryFilterBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeListProperty<GalleryFilterIntersectionItem> filters READ filters)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGalleryFilterIntersectionItem> filters READ filters)
     Q_CLASSINFO("DefaultProperty", "filters")
 public:
-    explicit GalleryFilterIntersection(QObject *parent = 0)
-        : GalleryFilterBase(parent)
+    explicit QDeclarativeGalleryFilterIntersection(QObject *parent = 0)
+        : QDeclarativeGalleryFilterBase(parent)
     {
     }
 
-    QDeclarativeListProperty<GalleryFilterIntersectionItem> filters() {
-        return QDeclarativeListProperty<GalleryFilterIntersectionItem>(this, m_filters); }
+    QDeclarativeListProperty<QDeclarativeGalleryFilterIntersectionItem> filters() {
+        return QDeclarativeListProperty<QDeclarativeGalleryFilterIntersectionItem>(this, m_filters); }
 
     QGalleryFilter filter() const;
 
 private:
-    QList<GalleryFilterIntersectionItem *> m_filters;
+    QList<QDeclarativeGalleryFilterIntersectionItem *> m_filters;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterBase))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterUnionItem))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterIntersectionItem))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilter))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterLessThan))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterLessThanEquals))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterGreaterThan))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterGreaterThanEquals))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterExclusiveRange))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterInclusiveRange))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterUnion))
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterIntersection))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterBase))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterUnionItem))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterIntersectionItem))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilter))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterLessThan))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterLessThanEquals))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterGreaterThan))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterGreaterThanEquals))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterExclusiveRange))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterInclusiveRange))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterUnion))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryFilterIntersection))
 
-#endif // DECLARATIVEGALLERYFILTER_H
+#endif

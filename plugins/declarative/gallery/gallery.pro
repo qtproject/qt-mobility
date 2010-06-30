@@ -10,17 +10,17 @@ include(../../../common.pri)
 QT += declarative
 
 HEADERS += \
-        gallerycountrequest.h \
-        galleryfilter.h \
-        galleryitemrequest.h \
-        galleryqueryrequest.h
+        qdeclarativegalleryfilter.h \
+        qdeclarativegalleryitem.h \
+        qdeclarativegalleryquerycount.h \
+        qdeclarativegalleryquerymodel.h
 
 SOURCES += \
-        gallerycountrequest.cpp \
-        gallery.cpp \
-        galleryfilter.cpp \
-        galleryitemrequest.cpp \
-        galleryqueryrequest.cpp
+        qdeclarativegallery.cpp \
+        qdeclarativegalleryfilter.cpp \
+        qdeclarativegalleryitem.cpp \
+        qdeclarativegalleryquerycount.cpp \
+        qdeclarativegalleryquerymodel.cpp
 
 CONFIG += mobility
 MOBILITY += gallery

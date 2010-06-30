@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "gallerycountrequest.h"
+#include "qdeclarativegalleryquerycount.h"
 
-#include "galleryfilter.h"
+#include "qdeclarativegalleryfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     \sa GalleryQueryModel, GalleryItem
 */
 
-GalleryCountRequest::GalleryCountRequest(QObject *parent)
+QDeclarativeGalleryQueryCount::QDeclarativeGalleryQueryCount(QObject *parent)
     : QObject(parent)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
@@ -218,22 +218,22 @@ GalleryCountRequest::GalleryCountRequest(QObject *parent)
     Signals that a query finished with the given \a result.
 */
 
-void GalleryCountRequest::classBegin()
+void QDeclarativeGalleryQueryCount::classBegin()
 {
 }
 
-void GalleryCountRequest::componentComplete()
+void QDeclarativeGalleryQueryCount::componentComplete()
 {
     reload();
 }
 
-void GalleryCountRequest::reload()
+void QDeclarativeGalleryQueryCount::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
     m_request.execute();
 }
 
 
-#include "moc_gallerycountrequest.cpp"
+#include "moc_qdeclarativegalleryquerycount.cpp"
 
 QTM_END_NAMESPACE

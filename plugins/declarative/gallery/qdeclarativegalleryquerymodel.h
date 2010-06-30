@@ -51,9 +51,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-class GalleryFilterBase;
+class QDeclarativeGalleryFilterBase;
 
-class GalleryQueryRequest : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeGalleryQueryModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -74,7 +74,7 @@ class GalleryQueryRequest : public QAbstractListModel, public QDeclarativeParser
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
-    Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QDeclarativeGalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
     enum State
     {
@@ -117,8 +117,8 @@ public:
         MetaDataOffset
     };
 
-    GalleryQueryRequest(QObject *parent = 0);
-    ~GalleryQueryRequest();
+    QDeclarativeGalleryQueryModel(QObject *parent = 0);
+    ~QDeclarativeGalleryQueryModel();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
@@ -164,8 +164,8 @@ public:
     QVariant scopeItemId() const { return m_request.scopeItemId(); }
     void setScopeItemId(const QVariant &itemId) { m_request.setScopeItemId(itemId); }
 
-    GalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
+    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; }
 
     int rowCount(const QModelIndex &parent) const;
 
@@ -204,7 +204,7 @@ private Q_SLOTS:
 
 private:
     QGalleryQueryRequest m_request;
-    QPointer<GalleryFilterBase> m_filter;
+    QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QGalleryItemList *m_itemList;
     int m_rowCount;
     int m_lowerOffset;
@@ -215,7 +215,7 @@ private:
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryQueryRequest))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryQueryModel))
 
 #endif
 

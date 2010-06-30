@@ -39,36 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef GALLERYCOUNTREQUEST_H
-#define GALLERYCOUNTREQUEST_H
+#ifndef QDECLARATIVEGALLERYITEM_H
+#define QDECLARATIVEGALLERYITEM_H
 
-#include <qgallerycountrequest.h>
+#include <qgalleryitemlist.h>
+#include <qgalleryitemrequest.h>
 
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
 
-class GalleryFilterBase;
-
-class GalleryCountRequest : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(State)
     Q_ENUMS(Result)
-    Q_ENUMS(Scope)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
+    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
-    Q_PROPERTY(Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
-    Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(QVariant item READ itemId WRITE setItemId)
+    Q_PROPERTY(bool reading READ isReading NOTIFY statusChanged)
+    Q_PROPERTY(bool writing READ isWriting NOTIFY statusChanged)
+    Q_PROPERTY(bool available READ isAvailable NOTIFY availableChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
+    Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
     {
@@ -86,21 +88,11 @@ public:
         NoGallery                       = QGalleryAbstractRequest::NoResult,
         NotSupported                    = QGalleryAbstractRequest::NoResult,
         ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult,
-        ItemTypeError                   = QGalleryAbstractRequest::NoResult,
-        InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
-        PropertyTypeError               = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult
+        InvalidItemError                = QGalleryAbstractRequest::NoResult
     };
 
-    enum Scope
-    {
-        AllDescendants,
-        DirectDescendants
-    };
-
-    GalleryCountRequest(QObject *parent = 0);
+    QDeclarativeGalleryItem(QObject *parent = 0);
+    ~QDeclarativeGalleryItem();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
@@ -111,28 +103,38 @@ public:
     int currentProgress() const { return m_request.currentProgress(); }
     int maximumProgress() const { return m_request.maximumProgress(); }
 
+    QStringList propertyNames() { return m_request.propertyNames(); }
+    void setPropertyNames(const QStringList &names) {
+        if (!m_complete) m_request.setPropertyNames(names); }
+
     bool isLive() const { return m_request.isLive(); }
     void setLive(bool live) { m_request.setLive(live); }
 
-    QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
+    QVariant itemId() const { return m_request.itemId(); }
+    void setItemId(const QVariant &itemId) {
+        m_request.setItemId(itemId); if (m_complete) m_request.execute(); }
 
-    Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+    bool isReading() const
+    {
+        return m_request.state() == QGalleryAbstractRequest::Active
+                || (m_itemList && (m_itemList->status(0) & QGalleryItemList::Reading));
+    }
 
-    QVariant scopeItemId() const { return m_request.scopeItemId(); }
-    void setScopeItemId(const QVariant &itemId) { m_request.setScopeItemId(itemId); }
+    bool isWriting() const {
+        return m_itemList && (m_itemList->status(0) & QGalleryItemList::Writing); }
 
-    GalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
+    bool isAvailable() const { return m_itemList && m_itemList->count() > 0; }
 
-    int count() const { return m_request.count(); }
+    QString itemType() const { return m_itemList ? m_itemList->type(0) : QString(); }
+    QUrl itemUrl() const { return m_itemList ? m_itemList->url(0) : QUrl(); }
+
+    QObject *metaData() const { return m_metaData; }
 
     void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
-    void reload();
+    void reload() { m_request.execute(); }
     void cancel() { m_request.cancel(); }
     void clear() { m_request.clear(); }
 
@@ -144,16 +146,28 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void countChanged();
+    void statusChanged();
+    void availableChanged();
+    void metaDataChanged();
+
+private Q_SLOTS:
+    void _q_itemListChanged(QGalleryItemList *list);
+    void _q_itemsInserted(int index, int count);
+    void _q_itemsRemoved(int index, int count);
+    void _q_statusChanged(int index, int count);
+    void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_valueChanged(const QString &key, const QVariant &value);
 
 private:
-    QGalleryCountRequest m_request;
-    QPointer<GalleryFilterBase> m_filter;
+    QGalleryItemRequest m_request;
+    QGalleryItemList *m_itemList;
+    QDeclarativePropertyMap *m_metaData;
+    QHash<int, QString> m_propertyKeys;
+    bool m_complete;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryCountRequest))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryItem))
 
 #endif
-
