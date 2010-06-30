@@ -162,12 +162,12 @@ public:
     int displayBrightness(int screen = 0) const { Q_UNUSED(screen); return data.displayBrightness; }
     int colorDepth(int screen = 0) const { Q_UNUSED(screen); return data.colorDepth; }
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_ASSERT(false); }
-    float contrast(int screen) const { Q_ASSERT(false); }
-    int getDPIWidth(int screen) const { Q_ASSERT(false); }
-    int getDPIHeight(int screen) const { Q_ASSERT(false); }
-    int physicalHeight(int screen) const { Q_ASSERT(false); }
-    int physicalWidth(int screen) const { Q_ASSERT(false); }
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_ASSERT(false); return QSystemDisplayInfo::Unknown; }
+    float contrast(int screen) const { Q_ASSERT(false); return -1; }
+    int getDPIWidth(int screen) const { Q_ASSERT(false); return -1; }
+    int getDPIHeight(int screen) const { Q_ASSERT(false); return -1; }
+    int physicalHeight(int screen) const { Q_ASSERT(false); return -1; }
+    int physicalWidth(int screen) const { Q_ASSERT(false); return -1; }
 
     void setDisplayBrightness(int brightness);
     void setColorDepth(int depth);
@@ -199,7 +199,7 @@ public:
     int batteryLevel() const { return data.batteryLevel; }
     bool isDeviceLocked() const { return data.deviceLocked; }
 
-    bool currentBluetoothPowerState() const { Q_ASSERT(false); }
+    bool currentBluetoothPowerState() const { Q_ASSERT(false); return false; }
 
     QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 
