@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,33 +39,45 @@
 **
 ****************************************************************************/
 
+#ifndef QGSTREAMERIMAGEENCODE_H
+#define QGSTREAMERIMAGEENCODE_H
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+class QGstreamerCaptureSession;
 
-#include <qmediaserviceproviderplugin.h>
+#include <qimageencodercontrol.h>
 
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+#include <gst/gst.h>
 QT_USE_NAMESPACE
 
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerImageEncode : public QImageEncoderControl
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QGstreamerImageEncode(QGstreamerCaptureSession *session);
+    virtual ~QGstreamerImageEncode();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
+                                      bool *continuous = 0) const;
+
+    QStringList supportedImageCodecs() const;
+    QString imageCodecDescription(const QString &formatName) const;
+
+    QImageEncoderSettings imageSettings() const;
+    void setImageSettings(const QImageEncoderSettings &settings);
 
 private:
-    void updateDevices() const;
+    QImageEncoderSettings m_settings;
 
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
+    QGstreamerCaptureSession *m_session;
+
+    // Added
+    QStringList m_codecs;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QStringList> m_codecOptions;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif

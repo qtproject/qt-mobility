@@ -119,6 +119,7 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qcamera \
         qpaintervideosurface \
         qvideowidget \
         qmediatimerange \

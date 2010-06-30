@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,33 +39,50 @@
 **
 ****************************************************************************/
 
+#ifndef QGSTREAMERCAMERAFOCUSCONTROL_H
+#define QGSTREAMERCAMERAFOCUSCONTROL_H
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#include <qcamera.h>
+#include <qcamerafocuscontrol.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include <gst/gst.h>
+#include <glib.h>
+
+class QGstreamerCaptureSession;
 
 QT_USE_NAMESPACE
 
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerCameraFocusControl  : public QCameraFocusControl
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
-public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+public:
+    QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session);
+    virtual ~QGstreamerCameraFocusControl();
+
+    QCameraFocus::FocusMode focusMode() const;
+    void setFocusMode(QCameraFocus::FocusMode mode);
+    bool isFocusModeSupported(QCameraFocus::FocusMode mode) const;
+
+    qreal maximumOpticalZoom() const;
+    qreal maximumDigitalZoom() const;
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
+
+    void zoomTo(qreal optical, qreal digital) ;
+
+    QCameraFocus::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(QCameraFocus::FocusPointMode mode) ;
+    bool isFocusPointModeSupported(QCameraFocus::FocusPointMode) const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
+    QCameraFocusZoneList focusZones() const;
 
 private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
+    QGstreamerCaptureSession *m_session;
+    GstElement &m_camerabin;
+    QCameraFocus::FocusMode m_focusMode;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif // QGSTREAMERCAMERAFOCUSCONTROL_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,32 +40,49 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERSERVICEPLUGIN_H
-#define QGSTREAMERSERVICEPLUGIN_H
+#ifndef QGSTREAMERCAMERACONTROL_H
+#define QGSTREAMERCAMERACONTROL_H
 
-#include <qmediaserviceproviderplugin.h>
+#include <QHash>
+#include <qcameracontrol.h>
+#include "qgstreamercapturesession.h"
 
 QT_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-
-class QGstreamerServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
+class QGstreamerCameraControl : public QCameraControl
 {
     Q_OBJECT
-    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+    QGstreamerCameraControl( QGstreamerCaptureSession *session );
+    virtual ~QGstreamerCameraControl();
 
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
+    bool isValid() const { return true; }
+
+    QCamera::State state() const;
+    void setState(QCamera::State state);
+
+    QCamera::CaptureMode captureMode() const { return m_captureMode; }
+    void setCaptureMode(QCamera::CaptureMode mode);
+
+    bool isCaptureModeSupported(QCamera::CaptureMode mode) const
+    {
+        return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
+    }
+
+    QCamera::LockTypes supportedLocks() const
+    {
+        return QCamera::NoLock;
+    }
+
+private slots:
+    void updateState();
 
 private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
+    QCamera::CaptureMode m_captureMode;
+    QGstreamerCaptureSession *m_session;
+    QCamera::State m_state;
+    QCamera::State m_requestedState;
 };
 
-#endif // QGSTREAMERSERVICEPLUGIN_H
+#endif // QGSTREAMERCAMERACONTROL_H
