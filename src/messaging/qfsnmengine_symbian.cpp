@@ -59,6 +59,8 @@
 #include "qmessagesortorder_p.h"
 
 #include <nmapifolderlisting.h>
+#include <nmapiemailaddress.h>
+#include <nmapimessagebody.h>
 
 #include <QTextCodec>
 #include <QEventLoop>
@@ -1650,17 +1652,19 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     int size = 0;
     message.setType(QMessage::Email);
 
-  /*  message.setDate(symbianTTimetoQDateTime(aMessage->Date()));
-    message.setReceivedDate(symbianTTimetoQDateTime(aMessage->Date()));
+    message.setDate(aMessage->sentTime());
+    message.setReceivedDate(aMessage->sentTime());
     
-    const TFolderId& folderId = aMessage->ParentFolderId();
+    quint64 parentFolderId = aMessage->parentFolder();
+    
+  /*  const TFolderId& folderId = aMessage->ParentFolderId();
     TMailboxId mailboxId = folderId.iMailboxId;
     const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId.iId));
-    message.setParentAccountId(accountId);
+    message.setParentAccountId(accountId);*/
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_parentFolderId = QMessageFolderId(QString::number(folderId.iId));
+    privateMessage->_parentFolderId = QMessageFolderId(QString::number(parentFolderId));
     
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+  /*  MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     MEmailFolder* folder = mailbox->FolderL(folderId);
     QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
     if (folder->FolderType() == EDrafts) {
@@ -1672,26 +1676,22 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     }
     folder->Release();
     mailbox->Release();
-
-    if (aMessage->Flags() & EFlag_Read) {
+*/
+    if (aMessage->isRead()) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
 
-    if (aMessage->Flags() & EFlag_Important) {
-        message.setPriority(QMessage::HighPriority); 
-    } else if (aMessage->Flags() & EFlag_Low) {
-        message.setPriority(QMessage::LowPriority);
-    } else {
-        message.setPriority(QMessage::NormalPriority);
-    }
-
     // bodytext and attachment(s)
-    MEmailMessageContent* content = aMessage->ContentL();
-    if (content) {
-       AddContentToMessage(content, &message);
+    NmApiMessageBody body;
+    aMessage->getPlainTextBody(body);
+    QString content = body.content();
+    message.setBody(content, "text/plain");
+  
+    if (aMessage->hasAttachments()) {
+        privateMessage->_status = privateMessage->_status | QMessage::HasAttachments;
+        
     }
-   
-    REmailAttachmentArray attachments;                  
+    /*REmailAttachmentArray attachments;                  
     CleanupResetAndRelease<MEmailAttachment>::PushL(attachments);
     TInt count = aMessage->GetAttachmentsL(attachments);
     if (count > 0)
@@ -1712,61 +1712,45 @@ QMessage CFSEngine::CreateQMessageL(NmApiMessageEnvelope* aMessage) const
     }
     CleanupStack::PopAndDestroy();
     attachments.Close();
-    
+    */
     //from
-    TPtrC from = aMessage->SenderAddressL()->Address();
-    if (from.Length() > 0) {
-        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
-        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    QString from = aMessage->sender();
+    if (!from.isEmpty()) {
+        message.setFrom(QMessageAddress(QMessageAddress::Email, from));
+        QMessagePrivate::setSenderName(message, from);
     }
     
     //to
-    REmailAddressArray toRecipients;
-    CleanupResetAndRelease<MEmailAddress>::PushL(toRecipients);
-
-    aMessage->GetRecipientsL(MEmailAddress::ETo, toRecipients);
+    QList<EmailClientApi::NmApiEmailAddress> toRecipients;
+    aMessage->getToRecipients(toRecipients);
     QList<QMessageAddress> toList;
-    for(TInt i = 0; i < toRecipients.Count(); i++) {
-        TPtrC to = toRecipients[i]->Address();
-        toList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(to.Ptr(), to.Length())));
+    for(TInt i = 0; i < toRecipients.count(); i++) {
+        QString to = toRecipients[i].address();
+        toList.append(QMessageAddress(QMessageAddress::Email, to));
     }
     message.setTo(toList);
-    CleanupStack::PopAndDestroy(&toRecipients);
-    toRecipients.Close();
+    toRecipients.clear();
     
     //cc
-    REmailAddressArray ccRecipients;
-    CleanupResetAndRelease<MEmailAddress>::PushL(ccRecipients);
-    aMessage->GetRecipientsL(MEmailAddress::ECc, ccRecipients);
+    QList<EmailClientApi::NmApiEmailAddress> ccRecipients;
+    aMessage->getCcRecipients(ccRecipients);
     QList<QMessageAddress> ccList;
-    for(TInt i = 0; i < ccRecipients.Count(); i++) {
-        TPtrC cc = ccRecipients[i]->Address();
-        ccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(cc.Ptr(), cc.Length())));
+    for(TInt i = 0; i < ccRecipients.count(); i++) {
+        QString cc = ccRecipients[i].address();
+        ccList.append(QMessageAddress(QMessageAddress::Email, cc));
     }
     message.setCc(ccList); 
-    CleanupStack::PopAndDestroy(&ccRecipients);
-    ccRecipients.Close();
+    ccRecipients.clear();
     
-    //bcc
-    REmailAddressArray bccRecipients;
-    CleanupResetAndRelease<MEmailAddress>::PushL(bccRecipients);
-    aMessage->GetRecipientsL(MEmailAddress::EBcc, bccRecipients);
-    QList<QMessageAddress> bccList;
-    for(TInt i = 0; i < bccRecipients.Count(); i++) {
-        TPtrC bcc = bccRecipients[i]->Address();
-        bccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(bcc.Ptr(), bcc.Length())));
-    }
-    message.setBcc(bccList);
-    CleanupStack::PopAndDestroy(&bccRecipients);
-    bccRecipients.Close();
+    //bcc not supported by nmail client api..
     
     // Read message subject   
-    TPtrC subject = aMessage->Subject();
-    if (subject.Length() > 0) {
-        message.setSubject(QString::fromUtf16(subject.Ptr(), subject.Length()));
+    QString subject = aMessage->subject();
+    if (!subject.isEmpty()) {
+        message.setSubject(subject);
     }
     // TODO: size
-    privateMessage->_size = size;*/
+    privateMessage->_size = size;
 
     return message;    
 }
