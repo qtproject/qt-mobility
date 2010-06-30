@@ -178,6 +178,9 @@ private:
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
+    // returns a fetch hint for fetching minimal amount of information
+    QOrganizerItemFetchHint fetchMinimalData() const;
+
     // calendar instance deletion helper
     void cleanupCal(CCalendar *cal) const;
 

@@ -92,6 +92,10 @@ public: // transform functions
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
 
 private:
+    // random GUID generation
+    QString randomGuid() const;
+
+private:
     // manager uri
     QString m_managerUri;
 

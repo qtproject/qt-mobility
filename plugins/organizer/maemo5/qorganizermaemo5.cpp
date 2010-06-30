@@ -426,11 +426,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
     for (int i = 0; i < itemIds.size(); ++i) {
         QOrganizerItemLocalId currId = itemIds.at(i);
 
-        QOrganizerItemFetchHint::OptimizationHints optimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
-        optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
-        QOrganizerItemFetchHint fetchHints;
-        fetchHints.setOptimizationHints(optimizationHints);
-        QOrganizerItem currItem = item(currId, fetchHints, error);
+        QOrganizerItem currItem = item(currId, fetchMinimalData(), error);
         if (*error == QOrganizerItemManager::NoError) {
             // Item exists
             QString itemId = QString::number(currItem.localId());
@@ -633,12 +629,6 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
     if (!eventOccurrence && !todoOccurrence)
         return;
 
-    // Construct a fetch hint for minimal fetch
-    QOrganizerItemFetchHint::OptimizationHints optimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
-    optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
-    QOrganizerItemFetchHint fetchHints;
-    fetchHints.setOptimizationHints(optimizationHints);
-
     // Event occurrence validity checks:
     if (eventOccurrence) {
         // Either parent id or GUID (or both) must be set
@@ -650,7 +640,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
         // If the parent ID is set, it must point to an event
         QOrganizerItem parent;
         if (eventOccurrence->parentLocalId()) {
-            parent = item(eventOccurrence->parentLocalId(), fetchHints, error);
+            parent = item(eventOccurrence->parentLocalId(), fetchMinimalData(), error);
             if (*error != QOrganizerItemManager::NoError)
                 return;
             if (parent.type() != QOrganizerItemType::TypeEvent) {
@@ -684,7 +674,7 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
         // Parent ID must point to a todo
         QOrganizerItem parent;
         if (todoOccurrence->parentLocalId()) {
-            parent = item(todoOccurrence->parentLocalId(), fetchHints, error);
+            parent = item(todoOccurrence->parentLocalId(), fetchMinimalData(), error);
             if (*error != QOrganizerItemManager::NoError)
                 return;
             if (parent.type() != QOrganizerItemType::TypeTodo) {
@@ -890,6 +880,15 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     }
 
     return calError;
+}
+
+QOrganizerItemFetchHint QOrganizerItemMaemo5Engine::fetchMinimalData() const
+{
+    QOrganizerItemFetchHint::OptimizationHints optimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
+    optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
+    QOrganizerItemFetchHint fetchHints;
+    fetchHints.setOptimizationHints(optimizationHints);
+    return fetchHints;
 }
 
 void QOrganizerItemMaemo5Engine::cleanupCal(CCalendar *cal) const

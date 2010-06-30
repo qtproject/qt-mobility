@@ -42,6 +42,7 @@
 #include "qorganizeritemtransform.h"
 #include "qtorganizer.h"
 
+#include <QtCore/quuid.h>
 #include <CalendarErrors.h>
 #include <CEvent.h>
 #include <CTodo.h>
@@ -266,12 +267,13 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         }
 
         // GUid
+        QOrganizerItemGuid ig = item->detail<QOrganizerItemGuid>();
         tempstr = QString::fromStdString(component->getGUid());
-        if(!tempstr.isEmpty()) {
-            QOrganizerItemGuid ig = item->detail<QOrganizerItemGuid>();
-            ig.setGuid( tempstr );
-            item->saveDetail(&ig);
-        }
+        if(!tempstr.isEmpty())
+            ig.setGuid(tempstr);
+        else
+            ig.setGuid(randomGuid()); // no GUID was set, generate a random GUID
+        item->saveDetail(&ig);
 
         // Set component ID
         QOrganizerItemId id;
@@ -551,4 +553,10 @@ QOrganizerItemManager::Error OrganizerItemTransform::calErrorToManagerError(int 
         default:
             return QOrganizerItemManager::UnspecifiedError;
     }
+}
+
+QString OrganizerItemTransform::randomGuid() const
+{
+    QUuid guid = QUuid::createUuid();
+    return guid.toString();
 }
