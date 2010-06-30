@@ -100,5 +100,10 @@ contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
 }
 
+# Telephony API examples
+contains(mobility_modules,telephony) {
+    SUBDIRS += telephony
+}
+
 sources.path = $$QT_MOBILITY_EXAMPLES
 INSTALLS += sources

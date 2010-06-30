@@ -14,11 +14,13 @@ contains(mobility_modules,bearer): SUBDIRS += bearer
 contains(mobility_modules,location): SUBDIRS += location
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 
-## contacts and versit need to appear before versit
+## contacts and organizer need to appear before versit
 ## so that qmake creates the .prl files correctly.
 contains(mobility_modules,contacts): SUBDIRS += contacts
 contains(mobility_modules,organizer): SUBDIRS += organizer
 contains(mobility_modules,versit): SUBDIRS += versit
+
+contains(mobility_modules,telephony): SUBDIRS += telephony
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += publishsubscribe

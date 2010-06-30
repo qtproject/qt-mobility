@@ -66,6 +66,42 @@
                     <section ref="qaudiooutput.html" title="QAudioOutput Class Reference">
                         <section ref="qaudiooutput-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcamera.html" title="QCamera Class Reference">
+                        <section ref="qcamera-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameracontrol.html" title="QCameraControl Class Reference">
+                        <section ref="qcameracontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraexposure.html" title="QCameraExposure Class Reference">
+                        <section ref="qcameraexposure-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraexposurecontrol.html" title="QCameraExposureControl Class Reference">
+                        <section ref="qcameraexposurecontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcamerafocus.html" title="QCameraFocus Class Reference">
+                        <section ref="qcamerafocus-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcamerafocuscontrol.html" title="QCameraFocusControl Class Reference">
+                        <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraimagecapture.html" title="QCameraImageCapture Class Reference">
+                        <section ref="qcameraimagecapture-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraimagecapturecontrol.html" title="QCameraImageCaptureControl Class Reference">
+                        <section ref="qcameraimagecapturecontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraimageprocessing.html" title="QCameraImageProcessing Class Reference">
+                        <section ref="qcameraimageprocessing-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraimageprocessingcontrol.html" title="QCameraImageProcessingControl Class Reference">
+                        <section ref="qcameraimageprocessingcontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameralockscontrol.html" title="QCameraLocksControl Class Reference">
+                        <section ref="qcameralockscontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qcameraviewfinder.html" title="QCameraViewfinder Class Reference">
+                        <section ref="qcameraviewfinder-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcompass.html" title="QCompass Class Reference">
                         <section ref="qcompass-members.html" title="List of all members"/>
                     </section>
@@ -549,6 +585,12 @@
                     <section ref="qtapsensor.html" title="QTapSensor Class Reference">
                         <section ref="qtapsensor-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qtelephonycallinfo.html" title="QTelephonyCallInfo Class Reference">
+                        <section ref="qtelephonycallinfo-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
+                        <section ref="qtelephonycalllist-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qvaluespacepublisher.html" title="QValueSpacePublisher Class Reference">
                         <section ref="qvaluespacepublisher-members.html" title="List of all members"/>
                     </section>
@@ -667,6 +709,7 @@
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location.html" title="Location API"/>
                     <section ref="messaging.html" title="Messaging"/>
+                    <section ref="messaging-installation-on-windows-mobile.html" title="Messaging Installation On Windows Mobile"/>
                     <section ref="multimedia.html" title="Mobility Multimedia"/>
                     <section ref="multimedia.html" title="Multimedia"/>
                     <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
@@ -687,6 +730,7 @@
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="systeminfo.html" title="System Information Classes"/>
                     <section ref="preview.html" title="Technology Preview"/>
+                    <section ref="telephony.html" title="Telephony API"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
                     <section ref="versit.html" title="Versit API"/>
@@ -730,6 +774,7 @@
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
+            <keyword name="Messaging Installation On Windows Mobile" id="Messaging Installation On Windows Mobile" ref="messaging-installation-on-windows-mobile.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
             <keyword name="Multimedia" id="Multimedia" ref="multimedia.html"/>
             <keyword name="Notes Manager Plugin Example" id="Notes Manager Plugin Example" ref="notesmanagerplugin.html"/>
@@ -972,6 +1017,321 @@
             <keyword name="stop" id="QAudioOutput::stop" ref="qaudiooutput.html#stop"/>
             <keyword name="suspend" id="QAudioOutput::suspend" ref="qaudiooutput.html#suspend"/>
             <keyword name="~QAudioOutput" id="QAudioOutput::~QAudioOutput" ref="qaudiooutput.html#dtor.QAudioOutput"/>
+            <keyword name="QCamera" id="QCamera" ref="qcamera.html"/>
+            <keyword name="QCamera::CaptureMode" id="QCamera::CaptureMode" ref="qcamera.html#CaptureMode-enum"/>
+            <keyword name="QCamera::CaptureDisabled" id="QCamera::CaptureDisabled" ref="qcamera.html#CaptureMode-enum"/>
+            <keyword name="QCamera::CaptureStillImage" id="QCamera::CaptureStillImage" ref="qcamera.html#CaptureMode-enum"/>
+            <keyword name="QCamera::CaptureVideo" id="QCamera::CaptureVideo" ref="qcamera.html#CaptureMode-enum"/>
+            <keyword name="QCamera::Error" id="QCamera::Error" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::NoError" id="QCamera::NoError" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::CameraError" id="QCamera::CameraError" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::InvalidRequestError" id="QCamera::InvalidRequestError" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::ServiceMissingError" id="QCamera::ServiceMissingError" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::NotSupportedFeatureError" id="QCamera::NotSupportedFeatureError" ref="qcamera.html#Error-enum"/>
+            <keyword name="QCamera::LockChangeReason" id="QCamera::LockChangeReason" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::UserRequest" id="QCamera::UserRequest" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::LockAcquired" id="QCamera::LockAcquired" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::LockFailed" id="QCamera::LockFailed" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::LockLost" id="QCamera::LockLost" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::LockTemporaryLost" id="QCamera::LockTemporaryLost" ref="qcamera.html#LockChangeReason-enum"/>
+            <keyword name="QCamera::LockStatus" id="QCamera::LockStatus" ref="qcamera.html#LockStatus-enum"/>
+            <keyword name="QCamera::Unlocked" id="QCamera::Unlocked" ref="qcamera.html#LockStatus-enum"/>
+            <keyword name="QCamera::Searching" id="QCamera::Searching" ref="qcamera.html#LockStatus-enum"/>
+            <keyword name="QCamera::Locked" id="QCamera::Locked" ref="qcamera.html#LockStatus-enum"/>
+            <keyword name="QCamera::LockType" id="QCamera::LockType" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::NoLock" id="QCamera::NoLock" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::LockExposure" id="QCamera::LockExposure" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::LockWhiteBalance" id="QCamera::LockWhiteBalance" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::LockFocus" id="QCamera::LockFocus" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::LockTypes" id="QCamera::LockTypes" ref="qcamera.html#LockType-enum"/>
+            <keyword name="QCamera::State" id="QCamera::State" ref="qcamera.html#State-enum"/>
+            <keyword name="QCamera::StoppedState" id="QCamera::StoppedState" ref="qcamera.html#State-enum"/>
+            <keyword name="QCamera::IdleState" id="QCamera::IdleState" ref="qcamera.html#State-enum"/>
+            <keyword name="QCamera::ActiveState" id="QCamera::ActiveState" ref="qcamera.html#State-enum"/>
+            <keyword name="availabilityError" id="QCamera::availabilityError" ref="qcamera.html#availabilityError"/>
+            <keyword name="availableDevices" id="QCamera::availableDevices" ref="qcamera.html#availableDevices"/>
+            <keyword name="captureMode" id="QCamera::captureMode" ref="qcamera.html#captureMode-prop"/>
+            <keyword name="captureModeChanged" id="QCamera::captureModeChanged" ref="qcamera.html#captureModeChanged"/>
+            <keyword name="deviceDescription" id="QCamera::deviceDescription" ref="qcamera.html#deviceDescription"/>
+            <keyword name="error" id="QCamera::error" ref="qcamera.html#error"/>
+            <keyword name="errorString" id="QCamera::errorString" ref="qcamera.html#errorString"/>
+            <keyword name="exposure" id="QCamera::exposure" ref="qcamera.html#exposure"/>
+            <keyword name="focus" id="QCamera::focus" ref="qcamera.html#focus"/>
+            <keyword name="imageProcessing" id="QCamera::imageProcessing" ref="qcamera.html#imageProcessing"/>
+            <keyword name="isAvailable" id="QCamera::isAvailable" ref="qcamera.html#isAvailable"/>
+            <keyword name="isCaptureModeSupported" id="QCamera::isCaptureModeSupported" ref="qcamera.html#isCaptureModeSupported"/>
+            <keyword name="lockFailed" id="QCamera::lockFailed" ref="qcamera.html#lockFailed"/>
+            <keyword name="lockStatus" id="QCamera::lockStatus" ref="qcamera.html#lockStatus-prop"/>
+            <keyword name="lockStatusChanged" id="QCamera::lockStatusChanged" ref="qcamera.html#lockStatusChanged"/>
+            <keyword name="locked" id="QCamera::locked" ref="qcamera.html#locked"/>
+            <keyword name="requestedLocks" id="QCamera::requestedLocks" ref="qcamera.html#requestedLocks"/>
+            <keyword name="searchAndLock" id="QCamera::searchAndLock" ref="qcamera.html#searchAndLock"/>
+            <keyword name="setCaptureMode" id="QCamera::setCaptureMode" ref="qcamera.html#captureMode-prop"/>
+            <keyword name="setViewfinder" id="QCamera::setViewfinder" ref="qcamera.html#setViewfinder"/>
+            <keyword name="start" id="QCamera::start" ref="qcamera.html#start"/>
+            <keyword name="state" id="QCamera::state" ref="qcamera.html#state-prop"/>
+            <keyword name="stateChanged" id="QCamera::stateChanged" ref="qcamera.html#stateChanged"/>
+            <keyword name="stop" id="QCamera::stop" ref="qcamera.html#stop"/>
+            <keyword name="supportedLocks" id="QCamera::supportedLocks" ref="qcamera.html#supportedLocks"/>
+            <keyword name="unlock" id="QCamera::unlock" ref="qcamera.html#unlock"/>
+            <keyword name="~QCamera" id="QCamera::~QCamera" ref="qcamera.html#dtor.QCamera"/>
+            <keyword name="QCameraControl" id="QCameraControl" ref="qcameracontrol.html"/>
+            <keyword name="captureMode" id="QCameraControl::captureMode" ref="qcameracontrol.html#captureMode"/>
+            <keyword name="captureModeChanged" id="QCameraControl::captureModeChanged" ref="qcameracontrol.html#captureModeChanged"/>
+            <keyword name="error" id="QCameraControl::error" ref="qcameracontrol.html#error"/>
+            <keyword name="isCaptureModeSupported" id="QCameraControl::isCaptureModeSupported" ref="qcameracontrol.html#isCaptureModeSupported"/>
+            <keyword name="setCaptureMode" id="QCameraControl::setCaptureMode" ref="qcameracontrol.html#setCaptureMode"/>
+            <keyword name="setState" id="QCameraControl::setState" ref="qcameracontrol.html#setState"/>
+            <keyword name="state" id="QCameraControl::state" ref="qcameracontrol.html#state"/>
+            <keyword name="stateChanged" id="QCameraControl::stateChanged" ref="qcameracontrol.html#stateChanged"/>
+            <keyword name="~QCameraControl" id="QCameraControl::~QCameraControl" ref="qcameracontrol.html#dtor.QCameraControl"/>
+            <keyword name="QCameraControl_iid" id="QCameraControl_iid" ref="qcameracontrol.html#QCameraControl_iid"/>
+            <keyword name="QCameraExposure" id="QCameraExposure" ref="qcameraexposure.html"/>
+            <keyword name="QCameraExposure::ExposureMode" id="QCameraExposure::ExposureMode" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureManual" id="QCameraExposure::ExposureManual" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureAuto" id="QCameraExposure::ExposureAuto" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureNight" id="QCameraExposure::ExposureNight" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureBacklight" id="QCameraExposure::ExposureBacklight" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureSpotlight" id="QCameraExposure::ExposureSpotlight" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureSports" id="QCameraExposure::ExposureSports" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureSnow" id="QCameraExposure::ExposureSnow" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureBeach" id="QCameraExposure::ExposureBeach" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureLargeAperture" id="QCameraExposure::ExposureLargeAperture" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposureSmallAperture" id="QCameraExposure::ExposureSmallAperture" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::ExposurePortrait" id="QCameraExposure::ExposurePortrait" ref="qcameraexposure.html#ExposureMode-enum"/>
+            <keyword name="QCameraExposure::FlashMode" id="QCameraExposure::FlashMode" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashOff" id="QCameraExposure::FlashOff" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashOn" id="QCameraExposure::FlashOn" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashAuto" id="QCameraExposure::FlashAuto" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashRedEyeReduction" id="QCameraExposure::FlashRedEyeReduction" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashFill" id="QCameraExposure::FlashFill" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashTorch" id="QCameraExposure::FlashTorch" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashSlowSyncFrontCurtain" id="QCameraExposure::FlashSlowSyncFrontCurtain" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashSlowSyncRearCurtain" id="QCameraExposure::FlashSlowSyncRearCurtain" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashManual" id="QCameraExposure::FlashManual" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::FlashModes" id="QCameraExposure::FlashModes" ref="qcameraexposure.html#FlashMode-enum"/>
+            <keyword name="QCameraExposure::MeteringMode" id="QCameraExposure::MeteringMode" ref="qcameraexposure.html#MeteringMode-enum"/>
+            <keyword name="QCameraExposure::MeteringMatrix" id="QCameraExposure::MeteringMatrix" ref="qcameraexposure.html#MeteringMode-enum"/>
+            <keyword name="QCameraExposure::MeteringAverage" id="QCameraExposure::MeteringAverage" ref="qcameraexposure.html#MeteringMode-enum"/>
+            <keyword name="QCameraExposure::MeteringSpot" id="QCameraExposure::MeteringSpot" ref="qcameraexposure.html#MeteringMode-enum"/>
+            <keyword name="aperture" id="QCameraExposure::aperture" ref="qcameraexposure.html#aperture-prop"/>
+            <keyword name="apertureChanged" id="QCameraExposure::apertureChanged" ref="qcameraexposure.html#apertureChanged"/>
+            <keyword name="apertureRangeChanged" id="QCameraExposure::apertureRangeChanged" ref="qcameraexposure.html#apertureRangeChanged"/>
+            <keyword name="exposureCompensation" id="QCameraExposure::exposureCompensation" ref="qcameraexposure.html#exposureCompensation-prop"/>
+            <keyword name="exposureMode" id="QCameraExposure::exposureMode" ref="qcameraexposure.html#exposureMode"/>
+            <keyword name="flashMode" id="QCameraExposure::flashMode" ref="qcameraexposure.html#flashMode"/>
+            <keyword name="flashReady" id="QCameraExposure::flashReady" ref="qcameraexposure.html#flashReady"/>
+            <keyword name="isAvailable" id="QCameraExposure::isAvailable" ref="qcameraexposure.html#isAvailable"/>
+            <keyword name="isExposureModeSupported" id="QCameraExposure::isExposureModeSupported" ref="qcameraexposure.html#isExposureModeSupported"/>
+            <keyword name="isFlashModeSupported" id="QCameraExposure::isFlashModeSupported" ref="qcameraexposure.html#isFlashModeSupported"/>
+            <keyword name="isFlashReady" id="QCameraExposure::isFlashReady" ref="qcameraexposure.html#isFlashReady"/>
+            <keyword name="isMeteringModeSupported" id="QCameraExposure::isMeteringModeSupported" ref="qcameraexposure.html#isMeteringModeSupported"/>
+            <keyword name="isoSensitivity" id="QCameraExposure::isoSensitivity" ref="qcameraexposure.html#isoSensitivity-prop"/>
+            <keyword name="isoSensitivityChanged" id="QCameraExposure::isoSensitivityChanged" ref="qcameraexposure.html#isoSensitivityChanged"/>
+            <keyword name="meteringMode" id="QCameraExposure::meteringMode" ref="qcameraexposure.html#meteringMode"/>
+            <keyword name="setAutoAperture" id="QCameraExposure::setAutoAperture" ref="qcameraexposure.html#setAutoAperture"/>
+            <keyword name="setAutoIsoSensitivity" id="QCameraExposure::setAutoIsoSensitivity" ref="qcameraexposure.html#setAutoIsoSensitivity"/>
+            <keyword name="setAutoShutterSpeed" id="QCameraExposure::setAutoShutterSpeed" ref="qcameraexposure.html#setAutoShutterSpeed"/>
+            <keyword name="setExposureCompensation" id="QCameraExposure::setExposureCompensation" ref="qcameraexposure.html#exposureCompensation-prop"/>
+            <keyword name="setExposureMode" id="QCameraExposure::setExposureMode" ref="qcameraexposure.html#setExposureMode"/>
+            <keyword name="setFlashMode" id="QCameraExposure::setFlashMode" ref="qcameraexposure.html#setFlashMode"/>
+            <keyword name="setManualAperture" id="QCameraExposure::setManualAperture" ref="qcameraexposure.html#aperture-prop"/>
+            <keyword name="setManualIsoSensitivity" id="QCameraExposure::setManualIsoSensitivity" ref="qcameraexposure.html#isoSensitivity-prop"/>
+            <keyword name="setManualShutterSpeed" id="QCameraExposure::setManualShutterSpeed" ref="qcameraexposure.html#shutterSpeed-prop"/>
+            <keyword name="setMeteringMode" id="QCameraExposure::setMeteringMode" ref="qcameraexposure.html#setMeteringMode"/>
+            <keyword name="shutterSpeed" id="QCameraExposure::shutterSpeed" ref="qcameraexposure.html#shutterSpeed-prop"/>
+            <keyword name="shutterSpeedChanged" id="QCameraExposure::shutterSpeedChanged" ref="qcameraexposure.html#shutterSpeedChanged"/>
+            <keyword name="shutterSpeedRangeChanged" id="QCameraExposure::shutterSpeedRangeChanged" ref="qcameraexposure.html#shutterSpeedRangeChanged"/>
+            <keyword name="supportedApertures" id="QCameraExposure::supportedApertures" ref="qcameraexposure.html#supportedApertures"/>
+            <keyword name="supportedIsoSensitivities" id="QCameraExposure::supportedIsoSensitivities" ref="qcameraexposure.html#supportedIsoSensitivities"/>
+            <keyword name="supportedShutterSpeeds" id="QCameraExposure::supportedShutterSpeeds" ref="qcameraexposure.html#supportedShutterSpeeds"/>
+            <keyword name="QCameraExposureControl" id="QCameraExposureControl" ref="qcameraexposurecontrol.html"/>
+            <keyword name="QCameraExposureControl::ExposureParameter" id="QCameraExposureControl::ExposureParameter" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::InvalidParameter" id="QCameraExposureControl::InvalidParameter" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::ISO" id="QCameraExposureControl::ISO" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::Aperture" id="QCameraExposureControl::Aperture" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::ShutterSpeed" id="QCameraExposureControl::ShutterSpeed" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::ExposureCompensation" id="QCameraExposureControl::ExposureCompensation" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::FlashPower" id="QCameraExposureControl::FlashPower" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::FlashCompensation" id="QCameraExposureControl::FlashCompensation" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="QCameraExposureControl::ExtendedExposureParameter" id="QCameraExposureControl::ExtendedExposureParameter" ref="qcameraexposurecontrol.html#ExposureParameter-enum"/>
+            <keyword name="exposureMode" id="QCameraExposureControl::exposureMode" ref="qcameraexposurecontrol.html#exposureMode"/>
+            <keyword name="exposureParameter" id="QCameraExposureControl::exposureParameter" ref="qcameraexposurecontrol.html#exposureParameter"/>
+            <keyword name="exposureParameterChanged" id="QCameraExposureControl::exposureParameterChanged" ref="qcameraexposurecontrol.html#exposureParameterChanged"/>
+            <keyword name="exposureParameterRangeChanged" id="QCameraExposureControl::exposureParameterRangeChanged" ref="qcameraexposurecontrol.html#exposureParameterRangeChanged"/>
+            <keyword name="extendedParameterName" id="QCameraExposureControl::extendedParameterName" ref="qcameraexposurecontrol.html#extendedParameterName"/>
+            <keyword name="flashMode" id="QCameraExposureControl::flashMode" ref="qcameraexposurecontrol.html#flashMode"/>
+            <keyword name="flashReady" id="QCameraExposureControl::flashReady" ref="qcameraexposurecontrol.html#flashReady"/>
+            <keyword name="isExposureModeSupported" id="QCameraExposureControl::isExposureModeSupported" ref="qcameraexposurecontrol.html#isExposureModeSupported"/>
+            <keyword name="isFlashModeSupported" id="QCameraExposureControl::isFlashModeSupported" ref="qcameraexposurecontrol.html#isFlashModeSupported"/>
+            <keyword name="isFlashReady" id="QCameraExposureControl::isFlashReady" ref="qcameraexposurecontrol.html#isFlashReady"/>
+            <keyword name="isMeteringModeSupported" id="QCameraExposureControl::isMeteringModeSupported" ref="qcameraexposurecontrol.html#isMeteringModeSupported"/>
+            <keyword name="isParameterSupported" id="QCameraExposureControl::isParameterSupported" ref="qcameraexposurecontrol.html#isParameterSupported"/>
+            <keyword name="meteringMode" id="QCameraExposureControl::meteringMode" ref="qcameraexposurecontrol.html#meteringMode"/>
+            <keyword name="setExposureMode" id="QCameraExposureControl::setExposureMode" ref="qcameraexposurecontrol.html#setExposureMode"/>
+            <keyword name="setExposureParameter" id="QCameraExposureControl::setExposureParameter" ref="qcameraexposurecontrol.html#setExposureParameter"/>
+            <keyword name="setFlashMode" id="QCameraExposureControl::setFlashMode" ref="qcameraexposurecontrol.html#setFlashMode"/>
+            <keyword name="setMeteringMode" id="QCameraExposureControl::setMeteringMode" ref="qcameraexposurecontrol.html#setMeteringMode"/>
+            <keyword name="supportedParameterRange" id="QCameraExposureControl::supportedParameterRange" ref="qcameraexposurecontrol.html#supportedParameterRange"/>
+            <keyword name="~QCameraExposureControl" id="QCameraExposureControl::~QCameraExposureControl" ref="qcameraexposurecontrol.html#dtor.QCameraExposureControl"/>
+            <keyword name="QCameraExposureControl_iid" id="QCameraExposureControl_iid" ref="qcameraexposurecontrol.html#QCameraExposureControl_iid"/>
+            <keyword name="QCameraFocus" id="QCameraFocus" ref="qcamerafocus.html"/>
+            <keyword name="QCameraFocus::FocusMode" id="QCameraFocus::FocusMode" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::ManualFocus" id="QCameraFocus::ManualFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::HyperfocalFocus" id="QCameraFocus::HyperfocalFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::InfinityFocus" id="QCameraFocus::InfinityFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::AutoFocus" id="QCameraFocus::AutoFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::ContinuousFocus" id="QCameraFocus::ContinuousFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::MacroFocus" id="QCameraFocus::MacroFocus" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::FocusModes" id="QCameraFocus::FocusModes" ref="qcamerafocus.html#FocusMode-enum"/>
+            <keyword name="QCameraFocus::FocusPointMode" id="QCameraFocus::FocusPointMode" ref="qcamerafocus.html#FocusPointMode-enum"/>
+            <keyword name="QCameraFocus::FocusPointAuto" id="QCameraFocus::FocusPointAuto" ref="qcamerafocus.html#FocusPointMode-enum"/>
+            <keyword name="QCameraFocus::FocusPointCenter" id="QCameraFocus::FocusPointCenter" ref="qcamerafocus.html#FocusPointMode-enum"/>
+            <keyword name="QCameraFocus::FocusPointFaceDetection" id="QCameraFocus::FocusPointFaceDetection" ref="qcamerafocus.html#FocusPointMode-enum"/>
+            <keyword name="QCameraFocus::FocusPointCustom" id="QCameraFocus::FocusPointCustom" ref="qcamerafocus.html#FocusPointMode-enum"/>
+            <keyword name="customFocusPoint" id="QCameraFocus::customFocusPoint" ref="qcamerafocus.html#customFocusPoint-prop"/>
+            <keyword name="digitalZoom" id="QCameraFocus::digitalZoom" ref="qcamerafocus.html#digitalZoom"/>
+            <keyword name="digitalZoomChanged" id="QCameraFocus::digitalZoomChanged" ref="qcamerafocus.html#digitalZoomChanged"/>
+            <keyword name="focusMode" id="QCameraFocus::focusMode" ref="qcamerafocus.html#focusMode"/>
+            <keyword name="focusPointMode" id="QCameraFocus::focusPointMode" ref="qcamerafocus.html#focusPointMode-prop"/>
+            <keyword name="focusZones" id="QCameraFocus::focusZones" ref="qcamerafocus.html#focusZones-prop"/>
+            <keyword name="focusZonesChanged" id="QCameraFocus::focusZonesChanged" ref="qcamerafocus.html#focusZonesChanged"/>
+            <keyword name="isAvailable" id="QCameraFocus::isAvailable" ref="qcamerafocus.html#isAvailable"/>
+            <keyword name="isFocusModeSupported" id="QCameraFocus::isFocusModeSupported" ref="qcamerafocus.html#isFocusModeSupported"/>
+            <keyword name="isFocusPointModeSupported" id="QCameraFocus::isFocusPointModeSupported" ref="qcamerafocus.html#isFocusPointModeSupported"/>
+            <keyword name="maximumDigitalZoom" id="QCameraFocus::maximumDigitalZoom" ref="qcamerafocus.html#maximumDigitalZoom"/>
+            <keyword name="maximumOpticalZoom" id="QCameraFocus::maximumOpticalZoom" ref="qcamerafocus.html#maximumOpticalZoom"/>
+            <keyword name="opticalZoom" id="QCameraFocus::opticalZoom" ref="qcamerafocus.html#opticalZoom"/>
+            <keyword name="opticalZoomChanged" id="QCameraFocus::opticalZoomChanged" ref="qcamerafocus.html#opticalZoomChanged"/>
+            <keyword name="setCustomFocusPoint" id="QCameraFocus::setCustomFocusPoint" ref="qcamerafocus.html#customFocusPoint-prop"/>
+            <keyword name="setFocusMode" id="QCameraFocus::setFocusMode" ref="qcamerafocus.html#setFocusMode"/>
+            <keyword name="setFocusPointMode" id="QCameraFocus::setFocusPointMode" ref="qcamerafocus.html#focusPointMode-prop"/>
+            <keyword name="zoomTo" id="QCameraFocus::zoomTo" ref="qcamerafocus.html#zoomTo"/>
+            <keyword name="QCameraFocusControl" id="QCameraFocusControl" ref="qcamerafocuscontrol.html"/>
+            <keyword name="customFocusPoint" id="QCameraFocusControl::customFocusPoint" ref="qcamerafocuscontrol.html#customFocusPoint"/>
+            <keyword name="digitalZoom" id="QCameraFocusControl::digitalZoom" ref="qcamerafocuscontrol.html#digitalZoom"/>
+            <keyword name="digitalZoomChanged" id="QCameraFocusControl::digitalZoomChanged" ref="qcamerafocuscontrol.html#digitalZoomChanged"/>
+            <keyword name="focusMode" id="QCameraFocusControl::focusMode" ref="qcamerafocuscontrol.html#focusMode"/>
+            <keyword name="focusPointMode" id="QCameraFocusControl::focusPointMode" ref="qcamerafocuscontrol.html#focusPointMode"/>
+            <keyword name="focusZones" id="QCameraFocusControl::focusZones" ref="qcamerafocuscontrol.html#focusZones"/>
+            <keyword name="focusZonesChanged" id="QCameraFocusControl::focusZonesChanged" ref="qcamerafocuscontrol.html#focusZonesChanged"/>
+            <keyword name="isFocusModeSupported" id="QCameraFocusControl::isFocusModeSupported" ref="qcamerafocuscontrol.html#isFocusModeSupported"/>
+            <keyword name="isFocusPointModeSupported" id="QCameraFocusControl::isFocusPointModeSupported" ref="qcamerafocuscontrol.html#isFocusPointModeSupported"/>
+            <keyword name="maximumDigitalZoom" id="QCameraFocusControl::maximumDigitalZoom" ref="qcamerafocuscontrol.html#maximumDigitalZoom"/>
+            <keyword name="maximumOpticalZoom" id="QCameraFocusControl::maximumOpticalZoom" ref="qcamerafocuscontrol.html#maximumOpticalZoom"/>
+            <keyword name="opticalZoom" id="QCameraFocusControl::opticalZoom" ref="qcamerafocuscontrol.html#opticalZoom"/>
+            <keyword name="opticalZoomChanged" id="QCameraFocusControl::opticalZoomChanged" ref="qcamerafocuscontrol.html#opticalZoomChanged"/>
+            <keyword name="setCustomFocusPoint" id="QCameraFocusControl::setCustomFocusPoint" ref="qcamerafocuscontrol.html#setCustomFocusPoint"/>
+            <keyword name="setFocusMode" id="QCameraFocusControl::setFocusMode" ref="qcamerafocuscontrol.html#setFocusMode"/>
+            <keyword name="setFocusPointMode" id="QCameraFocusControl::setFocusPointMode" ref="qcamerafocuscontrol.html#setFocusPointMode"/>
+            <keyword name="zoomTo" id="QCameraFocusControl::zoomTo" ref="qcamerafocuscontrol.html#zoomTo"/>
+            <keyword name="~QCameraFocusControl" id="QCameraFocusControl::~QCameraFocusControl" ref="qcamerafocuscontrol.html#dtor.QCameraFocusControl"/>
+            <keyword name="QCameraFocusControl_iid" id="QCameraFocusControl_iid" ref="qcamerafocuscontrol.html#QCameraFocusControl_iid"/>
+            <keyword name="QCameraImageCapture" id="QCameraImageCapture" ref="qcameraimagecapture.html"/>
+            <keyword name="QCameraImageCapture::DriveMode" id="QCameraImageCapture::DriveMode" ref="qcameraimagecapture.html#DriveMode-enum"/>
+            <keyword name="QCameraImageCapture::SingleImageCapture" id="QCameraImageCapture::SingleImageCapture" ref="qcameraimagecapture.html#DriveMode-enum"/>
+            <keyword name="QCameraImageCapture::Error" id="QCameraImageCapture::Error" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::NoError" id="QCameraImageCapture::NoError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::NotReadyError" id="QCameraImageCapture::NotReadyError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::ResourceError" id="QCameraImageCapture::ResourceError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::OutOfSpaceError" id="QCameraImageCapture::OutOfSpaceError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::NotSupportedFeatureError" id="QCameraImageCapture::NotSupportedFeatureError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="QCameraImageCapture::FormatError" id="QCameraImageCapture::FormatError" ref="qcameraimagecapture.html#Error-enum"/>
+            <keyword name="availabilityError" id="QCameraImageCapture::availabilityError" ref="qcameraimagecapture.html#availabilityError"/>
+            <keyword name="cancelCapture" id="QCameraImageCapture::cancelCapture" ref="qcameraimagecapture.html#cancelCapture"/>
+            <keyword name="capture" id="QCameraImageCapture::capture" ref="qcameraimagecapture.html#capture"/>
+            <keyword name="encodingSettings" id="QCameraImageCapture::encodingSettings" ref="qcameraimagecapture.html#encodingSettings"/>
+            <keyword name="error" id="QCameraImageCapture::error" ref="qcameraimagecapture.html#error"/>
+            <keyword name="errorString" id="QCameraImageCapture::errorString" ref="qcameraimagecapture.html#errorString"/>
+            <keyword name="imageCaptured" id="QCameraImageCapture::imageCaptured" ref="qcameraimagecapture.html#imageCaptured"/>
+            <keyword name="imageCodecDescription" id="QCameraImageCapture::imageCodecDescription" ref="qcameraimagecapture.html#imageCodecDescription"/>
+            <keyword name="imageExposed" id="QCameraImageCapture::imageExposed" ref="qcameraimagecapture.html#imageExposed"/>
+            <keyword name="imageSaved" id="QCameraImageCapture::imageSaved" ref="qcameraimagecapture.html#imageSaved"/>
+            <keyword name="isAvailable" id="QCameraImageCapture::isAvailable" ref="qcameraimagecapture.html#isAvailable"/>
+            <keyword name="isReadyForCapture" id="QCameraImageCapture::isReadyForCapture" ref="qcameraimagecapture.html#readyForCapture-prop"/>
+            <keyword name="mediaObject" id="QCameraImageCapture::mediaObject" ref="qcameraimagecapture.html#mediaObject"/>
+            <keyword name="readyForCapture" id="QCameraImageCapture::readyForCapture" ref="qcameraimagecapture.html#readyForCapture-prop"/>
+            <keyword name="readyForCaptureChanged" id="QCameraImageCapture::readyForCaptureChanged" ref="qcameraimagecapture.html#readyForCaptureChanged"/>
+            <keyword name="setEncodingSettings" id="QCameraImageCapture::setEncodingSettings" ref="qcameraimagecapture.html#setEncodingSettings"/>
+            <keyword name="setMediaObject" id="QCameraImageCapture::setMediaObject" ref="qcameraimagecapture.html#setMediaObject"/>
+            <keyword name="supportedImageCodecs" id="QCameraImageCapture::supportedImageCodecs" ref="qcameraimagecapture.html#supportedImageCodecs"/>
+            <keyword name="supportedResolutions" id="QCameraImageCapture::supportedResolutions" ref="qcameraimagecapture.html#supportedResolutions"/>
+            <keyword name="~QCameraImageCapture" id="QCameraImageCapture::~QCameraImageCapture" ref="qcameraimagecapture.html#dtor.QCameraImageCapture"/>
+            <keyword name="QCameraImageCaptureControl" id="QCameraImageCaptureControl" ref="qcameraimagecapturecontrol.html"/>
+            <keyword name="cancelCapture" id="QCameraImageCaptureControl::cancelCapture" ref="qcameraimagecapturecontrol.html#cancelCapture"/>
+            <keyword name="capture" id="QCameraImageCaptureControl::capture" ref="qcameraimagecapturecontrol.html#capture"/>
+            <keyword name="driveMode" id="QCameraImageCaptureControl::driveMode" ref="qcameraimagecapturecontrol.html#driveMode"/>
+            <keyword name="error" id="QCameraImageCaptureControl::error" ref="qcameraimagecapturecontrol.html#error"/>
+            <keyword name="imageCaptured" id="QCameraImageCaptureControl::imageCaptured" ref="qcameraimagecapturecontrol.html#imageCaptured"/>
+            <keyword name="imageExposed" id="QCameraImageCaptureControl::imageExposed" ref="qcameraimagecapturecontrol.html#imageExposed"/>
+            <keyword name="imageSaved" id="QCameraImageCaptureControl::imageSaved" ref="qcameraimagecapturecontrol.html#imageSaved"/>
+            <keyword name="isReadyForCapture" id="QCameraImageCaptureControl::isReadyForCapture" ref="qcameraimagecapturecontrol.html#isReadyForCapture"/>
+            <keyword name="readyForCaptureChanged" id="QCameraImageCaptureControl::readyForCaptureChanged" ref="qcameraimagecapturecontrol.html#readyForCaptureChanged"/>
+            <keyword name="setDriveMode" id="QCameraImageCaptureControl::setDriveMode" ref="qcameraimagecapturecontrol.html#setDriveMode"/>
+            <keyword name="~QCameraImageCaptureControl" id="QCameraImageCaptureControl::~QCameraImageCaptureControl" ref="qcameraimagecapturecontrol.html#dtor.QCameraImageCaptureControl"/>
+            <keyword name="QCameraImageCaptureControl_iid" id="QCameraImageCaptureControl_iid" ref="qcameraimagecapturecontrol.html#QCameraImageCaptureControl_iid"/>
+            <keyword name="QCameraImageProcessing" id="QCameraImageProcessing" ref="qcameraimageprocessing.html"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceMode" id="QCameraImageProcessing::WhiteBalanceMode" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceManual" id="QCameraImageProcessing::WhiteBalanceManual" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceAuto" id="QCameraImageProcessing::WhiteBalanceAuto" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceSunlight" id="QCameraImageProcessing::WhiteBalanceSunlight" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceCloudy" id="QCameraImageProcessing::WhiteBalanceCloudy" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceShade" id="QCameraImageProcessing::WhiteBalanceShade" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceTungsten" id="QCameraImageProcessing::WhiteBalanceTungsten" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceFluorescent" id="QCameraImageProcessing::WhiteBalanceFluorescent" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceIncandescent" id="QCameraImageProcessing::WhiteBalanceIncandescent" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceFlash" id="QCameraImageProcessing::WhiteBalanceFlash" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceSunset" id="QCameraImageProcessing::WhiteBalanceSunset" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="QCameraImageProcessing::WhiteBalanceVendor" id="QCameraImageProcessing::WhiteBalanceVendor" ref="qcameraimageprocessing.html#WhiteBalanceMode-enum"/>
+            <keyword name="contrast" id="QCameraImageProcessing::contrast" ref="qcameraimageprocessing.html#contrast"/>
+            <keyword name="denoisingLevel" id="QCameraImageProcessing::denoisingLevel" ref="qcameraimageprocessing.html#denoisingLevel"/>
+            <keyword name="isAvailable" id="QCameraImageProcessing::isAvailable" ref="qcameraimageprocessing.html#isAvailable"/>
+            <keyword name="isDenoisingSupported" id="QCameraImageProcessing::isDenoisingSupported" ref="qcameraimageprocessing.html#isDenoisingSupported"/>
+            <keyword name="isSharpeningSupported" id="QCameraImageProcessing::isSharpeningSupported" ref="qcameraimageprocessing.html#isSharpeningSupported"/>
+            <keyword name="isWhiteBalanceModeSupported" id="QCameraImageProcessing::isWhiteBalanceModeSupported" ref="qcameraimageprocessing.html#isWhiteBalanceModeSupported"/>
+            <keyword name="manualWhiteBalance" id="QCameraImageProcessing::manualWhiteBalance" ref="qcameraimageprocessing.html#manualWhiteBalance"/>
+            <keyword name="saturation" id="QCameraImageProcessing::saturation" ref="qcameraimageprocessing.html#saturation"/>
+            <keyword name="setContrast" id="QCameraImageProcessing::setContrast" ref="qcameraimageprocessing.html#setContrast"/>
+            <keyword name="setDenoisingLevel" id="QCameraImageProcessing::setDenoisingLevel" ref="qcameraimageprocessing.html#setDenoisingLevel"/>
+            <keyword name="setManualWhiteBalance" id="QCameraImageProcessing::setManualWhiteBalance" ref="qcameraimageprocessing.html#setManualWhiteBalance"/>
+            <keyword name="setSaturation" id="QCameraImageProcessing::setSaturation" ref="qcameraimageprocessing.html#setSaturation"/>
+            <keyword name="setSharpeningLevel" id="QCameraImageProcessing::setSharpeningLevel" ref="qcameraimageprocessing.html#setSharpeningLevel"/>
+            <keyword name="setWhiteBalanceMode" id="QCameraImageProcessing::setWhiteBalanceMode" ref="qcameraimageprocessing.html#setWhiteBalanceMode"/>
+            <keyword name="sharpeningLevel" id="QCameraImageProcessing::sharpeningLevel" ref="qcameraimageprocessing.html#sharpeningLevel"/>
+            <keyword name="whiteBalanceMode" id="QCameraImageProcessing::whiteBalanceMode" ref="qcameraimageprocessing.html#whiteBalanceMode"/>
+            <keyword name="QCameraImageProcessingControl" id="QCameraImageProcessingControl" ref="qcameraimageprocessingcontrol.html"/>
+            <keyword name="QCameraImageProcessingControl::ProcessingParameter" id="QCameraImageProcessingControl::ProcessingParameter" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="QCameraImageProcessingControl::Contrast" id="QCameraImageProcessingControl::Contrast" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="QCameraImageProcessingControl::Saturation" id="QCameraImageProcessingControl::Saturation" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="QCameraImageProcessingControl::Brightness" id="QCameraImageProcessingControl::Brightness" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="QCameraImageProcessingControl::Sharpening" id="QCameraImageProcessingControl::Sharpening" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="QCameraImageProcessingControl::Denoising" id="QCameraImageProcessingControl::Denoising" ref="qcameraimageprocessingcontrol.html#ProcessingParameter-enum"/>
+            <keyword name="isProcessingParameterSupported" id="QCameraImageProcessingControl::isProcessingParameterSupported" ref="qcameraimageprocessingcontrol.html#isProcessingParameterSupported"/>
+            <keyword name="isWhiteBalanceModeSupported" id="QCameraImageProcessingControl::isWhiteBalanceModeSupported" ref="qcameraimageprocessingcontrol.html#isWhiteBalanceModeSupported"/>
+            <keyword name="manualWhiteBalance" id="QCameraImageProcessingControl::manualWhiteBalance" ref="qcameraimageprocessingcontrol.html#manualWhiteBalance"/>
+            <keyword name="preset" id="QCameraImageProcessingControl::preset" ref="qcameraimageprocessingcontrol.html#preset"/>
+            <keyword name="presetDescription" id="QCameraImageProcessingControl::presetDescription" ref="qcameraimageprocessingcontrol.html#presetDescription"/>
+            <keyword name="processingParameter" id="QCameraImageProcessingControl::processingParameter" ref="qcameraimageprocessingcontrol.html#processingParameter"/>
+            <keyword name="setManualWhiteBalance" id="QCameraImageProcessingControl::setManualWhiteBalance" ref="qcameraimageprocessingcontrol.html#setManualWhiteBalance"/>
+            <keyword name="setPreset" id="QCameraImageProcessingControl::setPreset" ref="qcameraimageprocessingcontrol.html#setPreset"/>
+            <keyword name="setProcessingParameter" id="QCameraImageProcessingControl::setProcessingParameter" ref="qcameraimageprocessingcontrol.html#setProcessingParameter"/>
+            <keyword name="setWhiteBalanceMode" id="QCameraImageProcessingControl::setWhiteBalanceMode" ref="qcameraimageprocessingcontrol.html#setWhiteBalanceMode"/>
+            <keyword name="supportedPresets" id="QCameraImageProcessingControl::supportedPresets" ref="qcameraimageprocessingcontrol.html#supportedPresets"/>
+            <keyword name="whiteBalanceMode" id="QCameraImageProcessingControl::whiteBalanceMode" ref="qcameraimageprocessingcontrol.html#whiteBalanceMode"/>
+            <keyword name="~QCameraImageProcessingControl" id="QCameraImageProcessingControl::~QCameraImageProcessingControl" ref="qcameraimageprocessingcontrol.html#dtor.QCameraImageProcessingControl"/>
+            <keyword name="QCameraImageProcessingControl_iid" id="QCameraImageProcessingControl_iid" ref="qcameraimageprocessingcontrol.html#QCameraImageProcessingControl_iid"/>
+            <keyword name="QCameraLocksControl" id="QCameraLocksControl" ref="qcameralockscontrol.html"/>
+            <keyword name="lockStatus" id="QCameraLocksControl::lockStatus" ref="qcameralockscontrol.html#lockStatus"/>
+            <keyword name="lockStatusChanged" id="QCameraLocksControl::lockStatusChanged" ref="qcameralockscontrol.html#lockStatusChanged"/>
+            <keyword name="searchAndLock" id="QCameraLocksControl::searchAndLock" ref="qcameralockscontrol.html#searchAndLock"/>
+            <keyword name="supportedLocks" id="QCameraLocksControl::supportedLocks" ref="qcameralockscontrol.html#supportedLocks"/>
+            <keyword name="unlock" id="QCameraLocksControl::unlock" ref="qcameralockscontrol.html#unlock"/>
+            <keyword name="~QCameraLocksControl" id="QCameraLocksControl::~QCameraLocksControl" ref="qcameralockscontrol.html#dtor.QCameraLocksControl"/>
+            <keyword name="QCameraLocksControl_iid" id="QCameraLocksControl_iid" ref="qcameralockscontrol.html#QCameraLocksControl_iid"/>
+            <keyword name="QCameraViewfinder" id="QCameraViewfinder" ref="qcameraviewfinder.html"/>
+            <keyword name="mediaObject" id="QCameraViewfinder::mediaObject" ref="qcameraviewfinder.html#mediaObject"/>
+            <keyword name="setMediaObject" id="QCameraViewfinder::setMediaObject" ref="qcameraviewfinder.html#setMediaObject"/>
+            <keyword name="~QCameraViewfinder" id="QCameraViewfinder::~QCameraViewfinder" ref="qcameraviewfinder.html#dtor.QCameraViewfinder"/>
             <keyword name="QCompass" id="QCompass" ref="qcompass.html"/>
             <keyword name="reading" id="QCompass::reading" ref="qcompass.html#reading"/>
             <keyword name="~QCompass" id="QCompass::~QCompass" ref="qcompass.html#dtor.QCompass"/>
@@ -2868,7 +3228,6 @@
             <keyword name="QRemoteServiceControl" id="QRemoteServiceControl" ref="qremoteservicecontrol.html"/>
             <keyword name="publishServices" id="QRemoteServiceControl::publishServices" ref="qremoteservicecontrol.html#publishServices"/>
             <keyword name="~QRemoteServiceControl" id="QRemoteServiceControl::~QRemoteServiceControl" ref="qremoteservicecontrol.html#dtor.QRemoteServiceControl"/>
-            <keyword name="QRemoteServiceIdentifier" id="QRemoteServiceIdentifier" ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef"/>
             <keyword name="QRotationFilter" id="QRotationFilter" ref="qrotationfilter.html"/>
             <keyword name="filter" id="QRotationFilter::filter" ref="qrotationfilter.html#filter"/>
             <keyword name="QRotationReading" id="QRotationReading" ref="qrotationreading.html"/>
@@ -3204,6 +3563,33 @@
             <keyword name="reading" id="QTapSensor::reading" ref="qtapsensor.html#reading"/>
             <keyword name="returnDoubleTapEvents" id="QTapSensor::returnDoubleTapEvents" ref="qtapsensor.html#returnDoubleTapEvents-prop"/>
             <keyword name="~QTapSensor" id="QTapSensor::~QTapSensor" ref="qtapsensor.html#dtor.QTapSensor"/>
+            <keyword name="QTelephonyCallInfo" id="QTelephonyCallInfo" ref="qtelephonycallinfo.html"/>
+            <keyword name="QTelephonyCallInfo::CallStatus" id="QTelephonyCallInfo::CallStatus" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Undefined" id="QTelephonyCallInfo::Undefined" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::NoCall" id="QTelephonyCallInfo::NoCall" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Ringing" id="QTelephonyCallInfo::Ringing" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::InProgress" id="QTelephonyCallInfo::InProgress" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::OnHold" id="QTelephonyCallInfo::OnHold" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Dropped" id="QTelephonyCallInfo::Dropped" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::CallType" id="QTelephonyCallInfo::CallType" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Unknown" id="QTelephonyCallInfo::Unknown" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Any" id="QTelephonyCallInfo::Any" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Voip" id="QTelephonyCallInfo::Voip" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Voice" id="QTelephonyCallInfo::Voice" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Video" id="QTelephonyCallInfo::Video" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier"/>
+            <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts"/>
+            <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status"/>
+            <keyword name="subTyp" id="QTelephonyCallInfo::subTyp" ref="qtelephonycallinfo.html#subTyp"/>
+            <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type"/>
+            <keyword name="value" id="QTelephonyCallInfo::value" ref="qtelephonycallinfo.html#value"/>
+            <keyword name="~QTelephonyCallInfo" id="QTelephonyCallInfo::~QTelephonyCallInfo" ref="qtelephonycallinfo.html#dtor.QTelephonyCallInfo"/>
+            <keyword name="QTelephonyCallList" id="QTelephonyCallList" ref="qtelephonycalllist.html"/>
+            <keyword name="activeCallAdded" id="QTelephonyCallList::activeCallAdded" ref="qtelephonycalllist.html#activeCallAdded"/>
+            <keyword name="activeCallRemoved" id="QTelephonyCallList::activeCallRemoved" ref="qtelephonycalllist.html#activeCallRemoved"/>
+            <keyword name="activeCallStatusChanged" id="QTelephonyCallList::activeCallStatusChanged" ref="qtelephonycalllist.html#activeCallStatusChanged"/>
+            <keyword name="activeCalls" id="QTelephonyCallList::activeCalls" ref="qtelephonycalllist.html#activeCalls"/>
+            <keyword name="~QTelephonyCallList" id="QTelephonyCallList::~QTelephonyCallList" ref="qtelephonycalllist.html#dtor.QTelephonyCallList"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
             <keyword name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" id="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER"/>
@@ -3708,6 +4094,7 @@
             <keyword name="QtMultimediaKit::MaybeSupported" id="QtMultimediaKit::MaybeSupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="QtMultimediaKit::ProbablySupported" id="QtMultimediaKit::ProbablySupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="QtMultimediaKit::PreferredService" id="QtMultimediaKit::PreferredService" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit Module" id="QtMultimediaKit Module" ref="qtmultimediakit.html"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
@@ -3728,6 +4115,7 @@
             <keyword name="System Information Classes" id="System Information Classes" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
+            <keyword name="Telephony API" id="Telephony API" ref="telephony.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API" id="Versit API" ref="versit.html"/>
@@ -3740,6 +4128,7 @@
             <file>qaccelerometerreading.html</file>
             <file>qmessageaddress-members.html</file>
             <file>logfilepositionsource-clientapplication-cpp.html</file>
+            <file>qcameraexposure-members.html</file>
             <file>qradiotunercontrol.html</file>
             <file>qproximityfilter-members.html</file>
             <file>qvideoencodercontrol-members.html</file>
@@ -3769,6 +4158,7 @@
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
+            <file>qcameraimageprocessing-members.html</file>
             <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-h.html</file>
@@ -3807,7 +4197,6 @@
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
             <file>sysinfo-examples-qrc.html</file>
-            <file>qmlcontacts-qmlcontactdetail-h.html</file>
             <file>qcontactpresence-members.html</file>
             <file>qproximityreading-members.html</file>
             <file>qmessageaddress.html</file>
@@ -3815,6 +4204,7 @@
             <file>logfilepositionsource-clientapplication-h.html</file>
             <file>qcontactrelationshipfilter-members.html</file>
             <file>keepintouch-addressfinder-h.html</file>
+            <file>qcameracontrol-members.html</file>
             <file>qmediaobject-members.html</file>
             <file>qsystemdisplayinfo-members.html</file>
             <file>qcontactdetail.html</file>
@@ -3902,6 +4292,7 @@
             <file>qcompass.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-cpp.html</file>
             <file>qcontactanniversary.html</file>
+            <file>telephony.html</file>
             <file>qgeopositioninfosource-members.html</file>
             <file>qaudiocapturesource.html</file>
             <file>qsensorfilter.html</file>
@@ -3921,6 +4312,7 @@
             <file>images/sensors-sides2.jpg</file>
             <file>qservice.html</file>
             <file>qmessageaccount-members.html</file>
+            <file>qcamerafocuscontrol.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
             <file>images/publish-subscribe-publisher.png</file>
@@ -3955,7 +4347,6 @@
             <file>qvideowindowcontrol.html</file>
             <file>images/sensors-overview.png</file>
             <file>qsensorreading.html</file>
-            <file>qmlcontacts-plugin-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qcontactid.html</file>
             <file>qmessagefilter-members.html</file>
@@ -3971,7 +4362,6 @@
             <file>qgraphicsvideoitem.html</file>
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
-            <file>qmlcontacts-qmlcontactmodel-cpp.html</file>
             <file>qmetadatareadercontrol-members.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
@@ -3994,7 +4384,7 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
-            <file>qmlcontacts-qmlcontactdetailfield-h.html</file>
+            <file>qtelephonycallinfo-members.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>flickrdemo-connectivityhelper-cpp.html</file>
@@ -4018,11 +4408,12 @@
             <file>qnetworkconfigurationmanager.html</file>
             <file>qtapreading.html</file>
             <file>qmagnetometerreading.html</file>
+            <file>qtelephonycalllist.html</file>
             <file>bearercloud-main-cpp.html</file>
             <file>qcontactintersectionfilter-members.html</file>
             <file>qsystemdeviceinfo.html</file>
-            <file>qcontactdetail-members.html</file>
             <file>samplephonebook-filterpage-cpp.html</file>
+            <file>qcontactdetail-members.html</file>
             <file>qcontactfamily-members.html</file>
             <file>weatherinfo-icons-weather-fog-svg.html</file>
             <file>qversitresourcehandler.html</file>
@@ -4033,6 +4424,7 @@
             <file>keepintouch.html</file>
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
+            <file>qtelephonycalllist-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qmessageid.html</file>
@@ -4062,7 +4454,9 @@
             <file>bearercloud-icons-qrc.html</file>
             <file>filemanagerplugin-filemanagerstorage-cpp.html</file>
             <file>serviceactions-mainwindow-h.html</file>
+            <file>qcamerafocus.html</file>
             <file>qmediarecorder-members.html</file>
+            <file>qcameraimagecapture-members.html</file>
             <file>player-player-cpp.html</file>
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
@@ -4096,12 +4490,15 @@
             <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
+            <file>qcameraexposurecontrol-members.html</file>
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
+            <file>qtelephonycallinfo.html</file>
             <file>bearercloud.html</file>
-            <file>qmlcontacts-qmlcontactdetailfield-cpp.html</file>
             <file>publish-subscribe-main-cpp.html</file>
             <file>bearercloud-bearercloud-h.html</file>
+            <file>messaging-installation-on-windows-mobile.html</file>
+            <file>qcameralockscontrol.html</file>
             <file>qabstractsecuritysession-members.html</file>
             <file>qmagnetometer.html</file>
             <file>contacts.html</file>
@@ -4119,11 +4516,12 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
-            <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qvideoframe-members.html</file>
+            <file>qcamerafocus-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qcontactmanager.html</file>
+            <file>qcameraviewfinder-members.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
             <file>qnetworkconfigurationmanager-members.html</file>
@@ -4141,7 +4539,6 @@
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
             <file>player-player-pro.html</file>
             <file>serviceactions-main-cpp.html</file>
-            <file>qmlcontacts-imageprovider-h.html</file>
             <file>qmessageaccountid.html</file>
             <file>qaudioencodercontrol.html</file>
             <file>qmessageaccountfilter.html</file>
@@ -4166,7 +4563,6 @@
             <file>qcontacttype.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-cpp.html</file>
             <file>bluetoothtransferplugin.html</file>
-            <file>qmlcontacts-qmlcontactmodel-h.html</file>
             <file>qsysteminfo.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
             <file>qmagnetometerreading-members.html</file>
@@ -4211,6 +4607,7 @@
             <file>qmediaresource-members.html</file>
             <file>qabstractvideobuffer-members.html</file>
             <file>sfw-notes-main-cpp.html</file>
+            <file>qcameraexposure.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
             <file>qcontactanniversary-members.html</file>
@@ -4231,7 +4628,7 @@
             <file>qmediaplaylistprovider.html</file>
             <file>qorientationsensor.html</file>
             <file>qcompass-members.html</file>
-            <file>qmlcontacts-contents-default-svg.html</file>
+            <file>qcameraimagecapturecontrol-members.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
             <file>qaudiodeviceinfo-obsolete.html</file>
@@ -4241,14 +4638,17 @@
             <file>sfw-notes-sfw-notes-pro.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
+            <file>qcameraimageprocessingcontrol.html</file>
             <file>images/roaming-states.png</file>
             <file>qaudiodeviceinfo.html</file>
             <file>qcontactemailaddress.html</file>
+            <file>qcameraexposurecontrol.html</file>
+            <file>qcameraviewfinder.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qsystemdeviceinfo-members.html</file>
             <file>weatherinfo-weatherinfo-qrc.html</file>
-            <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>lightmaps-lightmaps-cpp.html</file>
+            <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>qserviceplugininterface.html</file>
             <file>qambientlightsensor-members.html</file>
             <file>weatherinfo-icons-weather-few-clouds-svg.html</file>
@@ -4286,7 +4686,6 @@
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
-            <file>qmlcontacts-imageprovider-cpp.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-pro.html</file>
@@ -4312,8 +4711,10 @@
             <file>qrotationsensor.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>qsensorbackend-members.html</file>
+            <file>qcameralockscontrol-members.html</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
+            <file>qcameraimagecapture.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>qversitwriter-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-h.html</file>
@@ -4331,21 +4732,20 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
-            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qaudioinput-members.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
             <file>images/flickr-demo.png</file>
             <file>qcontactsynctarget.html</file>
             <file>qradiotunercontrol-members.html</file>
+            <file>qcameraimagecapturecontrol.html</file>
             <file>qmediacontent-members.html</file>
             <file>qmediacontainercontrol.html</file>
             <file>flickrdemo-flickrdemo-pro.html</file>
             <file>qmediabindableinterface.html</file>
-            <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
-            <file>qmlcontacts-qmlcontactdetail-cpp.html</file>
+            <file>qcameraimageprocessing.html</file>
             <file>qremoteserviceclassregister.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
@@ -4354,6 +4754,7 @@
             <file>qmagnetometerfilter-members.html</file>
             <file>qtmultimediakit.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
+            <file>qcameracontrol.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
@@ -4388,6 +4789,7 @@
             <file>qgeopositioninfo-members.html</file>
             <file>images/battery-subscriber.png</file>
             <file>qmessageservice.html</file>
+            <file>qcamerafocuscontrol-members.html</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qnmeapositioninfosource-members.html</file>
             <file>qcontactglobalpresence.html</file>
@@ -4410,8 +4812,11 @@
             <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>
+            <file>qcameraimageprocessingcontrol-members.html</file>
             <file>qabstractvaluespacelayer-members.html</file>
             <file>qversitcontactexporter-members.html</file>
+            <file>qcamera-members.html</file>
+            <file>qcamera.html</file>
             <file>radio.html</file>
             <file>qversitdefaultresourcehandler.html</file>
             <file>qcontactguid-members.html</file>
