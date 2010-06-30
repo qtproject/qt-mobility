@@ -58,6 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
+set BUILD_SYMBIANCNTMODEL=no
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors telephony organizer
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
@@ -97,6 +98,7 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
+if "%1" == "-symbian-qtm-cntmodel"  goto cntmodelTag
 
 
 echo Unknown option: "%1"
@@ -223,6 +225,12 @@ REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
+shift
+goto cmdline_parsing
+
+:cntmodelTag
+REM Selects using the local CNTMODEL code instead of the SDKs
+set BUILD_SYMBIANCNTMODEL=yes
 shift
 goto cmdline_parsing
 
@@ -374,6 +382,9 @@ set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
+echo build_symbiancntmodel = %BUILD_SYMBIANCNTMODEL% >> %PROJECT_CONFIG%
+set BUILD_SYMBIANCNTMODEL=
+
 echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
@@ -506,7 +517,7 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
-
+REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
 REM compile tests go here.
@@ -575,7 +586,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == telephony (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmTelephony %SOURCE_PATH%\src\telephony
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
     REM versit implies contacts and organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
