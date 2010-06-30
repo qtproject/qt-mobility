@@ -118,7 +118,7 @@
             QAction *your = new QAction(&quot;Your weather&quot;, this);
             connect(your, SIGNAL(triggered()), SLOT(yourWeather()));
             addAction(your);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
             menuBar()-&gt;addAction(your);
     #endif
 
@@ -132,7 +132,7 @@
                 QAction *action = new QAction(cities[i], this);
                 connect(action, SIGNAL(triggered()), SLOT(chooseCity()));
                 addAction(action);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
                 menuBar()-&gt;addAction(action);
     #endif
             }
@@ -681,7 +681,7 @@
         QApplication app(argc, argv);
 
         WeatherInfo w;
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
         w.showMaximized();
     #else
         w.resize(520, 288);

@@ -57,15 +57,15 @@ RouteTab::RouteTab(QWidget *parent) :
         m_routingManager(0)
 {
     QLabel *source = new QLabel(tr("Source (lat,long):"));
-    m_srcLong = new QLineEdit("10");
+    m_srcLong = new QLineEdit("9.986572");
     m_srcLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_srcLat = new QLineEdit("50");
+    m_srcLat = new QLineEdit("53.546836");
     m_srcLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     QLabel *destination = new QLabel(tr("Destination (lat,long):"));
-    m_destLong = new QLineEdit("1");
+    m_destLong = new QLineEdit("9.733887");
     m_destLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_destLat = new QLineEdit("48");
+    m_destLat = new QLineEdit("52.382306");
     m_destLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QPushButton *requestBtn = new QPushButton(tr("Request Route"));
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
@@ -125,6 +125,12 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
 void RouteTab::on_btnRequest_clicked()
 {
     if (m_routingManager) {
+        m_resultTree->clear();
+        QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+        top->setText(0, tr("Route"));
+        top->setText(1, tr("Calculating"));
+        updateBtn->setDisabled(true);
+
         QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
         QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
 
@@ -134,9 +140,7 @@ void RouteTab::on_btnRequest_clicked()
         if((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::BasicInstructions) != 0)
             request.setInstructionDetail(QGeoRouteRequest::BasicInstructions);
 
-        m_resultTree->clear();
         m_routingManager->calculateRoute(request);
-        updateBtn->setDisabled(true);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));
     }
@@ -145,10 +149,13 @@ void RouteTab::on_btnRequest_clicked()
 void RouteTab::on_btnUpdate_clicked()
 {
     if (m_routingManager && routes.count()>0) {
-        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
         m_resultTree->clear();
-        m_routingManager->updateRoute(routes[0],src);
+        QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+        top->setText(0, tr("Route"));
+        top->setText(1, tr("Updating"));
         updateBtn->setDisabled(true);
+        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
+        m_routingManager->updateRoute(routes[0],src);
     } else {
         QMessageBox::warning(this, tr("Routing"), tr("Route update not available."));
     }

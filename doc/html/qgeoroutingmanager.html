@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRoutingManager Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRoutingManager Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoRoutingManager class provides support for geographic routing operations. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoRoutingManager&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QGeoRoutingManager&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qgeoroutingmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -98,15 +100,23 @@
 
             QGeoRouteReply *reply = routingManager-&gt;calculateRoute(request);
 
-            connect(routingManager,
-                    SIGNAL(finished(QGeoRouteReply*)),
-                    this,
-                    SLOT(routeCalculated(QGeoRouteReply*)));
+            if (reply-&gt;isFinished()) {
+                if (reply-&gt;error() != QGeoRouteReply::NoError) {
+                    routeCalculated(reply);
+                } else {
+                    routeError(reply, reply-&gt;error(), reply-&gt;errorString());
+                }
+            } else {
+                connect(routingManager,
+                        SIGNAL(finished(QGeoRouteReply*)),
+                        this,
+                        SLOT(routeCalculated(QGeoRouteReply*)));
 
-            connect(routingManager,
-                    SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
-                    this,
-                    SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+                connect(routingManager,
+                        SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                        this,
+                        SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+            }
         }
 
     private slots:

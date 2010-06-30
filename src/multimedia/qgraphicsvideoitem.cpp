@@ -169,6 +169,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a QMediaObject.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
@@ -236,6 +237,9 @@ QMediaObject *QGraphicsVideoItem::mediaObject() const
     return d_func()->mediaObject;
 }
 
+/*!
+  \internal
+*/
 bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 {
     Q_D(QGraphicsVideoItem);
@@ -395,6 +399,9 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
     return QGraphicsItem::itemChange(change, value);
 }
 
+/*!
+  \internal
+*/
 void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
 {
     QGraphicsObject::timerEvent(event);

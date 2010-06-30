@@ -364,7 +364,8 @@ QPixmap QGeoMapData::mapImage() const
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate()
-    : containerObject(new QGeoMapObject()) {}
+    : containerObject(new QGeoMapObject()),
+    imageChangesTriggerUpdates(true) {}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
         : widget(other.widget),

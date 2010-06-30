@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QVideoWindowControl
     \preliminary
+    \inmodule QtMultimediaKit
     \ingroup multimedia
     \brief The QVideoWindowControl class provides a media control for rendering video to a window.
 
@@ -63,22 +64,12 @@ QT_BEGIN_NAMESPACE
     windowControl->setAspectRatioMode(Qt::KeepAspectRatio);
     \endcode
 
-    QVideoWindowControl is one of number of possible video output controls, in
-    order to receive video it must be made the active video output control by
-    setting the output property of QVideoOutputControl to \l
-    {QVideoOutputControl::WindowOutput}{WindowOutput}.  Consequently any
-    QMediaService that implements QVideoWindowControl must also implement
-    QVideoOutputControl.
-
-    \code
-    QVideoOutputControl *outputControl = mediaService->control<QVideoOutputControl *>();
-    outputControl->setOutput(QVideoOutputControl::WindowOutput);
-    \endcode
+    QVideoWindowControl is one of number of possible video output controls.
 
     The interface name of QVideoWindowControl is \c com.nokia.Qt.QVideoWindowControl/1.0 as
     defined in QVideoWindowControl_iid.
 
-    \sa QMediaService::requestControl(), QVideoOutputControl, QVideoWidget
+    \sa QMediaService::requestControl(), QVideoWidget
 */
 
 /*!

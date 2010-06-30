@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkFetchHint Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkFetchHint Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QLandmarkFetchHint class provides miscellaneous hints to the manager when fetching landmarks. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkFetchHint&gt;</pre><ul>
+<pre>    #include &lt;QLandmarkFetchHint&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<ul>
 <li><a href="qlandmarkfetchhint-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -25,8 +27,8 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#QLandmarkFetchHint">QLandmarkFetchHint</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#QLandmarkFetchHint-2">QLandmarkFetchHint</a></b> ( const QLandmarkFetchHint &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#dtor.QLandmarkFetchHint">~QLandmarkFetchHint</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#maxItems">maxItems</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#offset">offset</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#maxItems">maxItems</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#offset">offset</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#setMaxItems">setMaxItems</a></b> ( int <i>max</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#setOffset">setOffset</a></b> ( int <i>offset</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkFetchHint &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchhint.html#operator-eq">operator=</a></b> ( const QLandmarkFetchHint &amp; <i>other</i> )</td></tr>
@@ -47,12 +49,12 @@
 <h3 class="fn"><a name="dtor.QLandmarkFetchHint"></a>QLandmarkFetchHint::~QLandmarkFetchHint ()</h3>
 <p>Destroys the fetch hint</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchHint/maxItems"></a>
-<h3 class="fn"><a name="maxItems"></a>int QLandmarkFetchHint::maxItems ()</h3>
-<p>Returns the maxmimum number of items to be retrieved.</p>
+<h3 class="fn"><a name="maxItems"></a>int QLandmarkFetchHint::maxItems () const</h3>
+<p>Returns the maxmimum number of items to be retrieved. By default, maxItems is set to -1, meaning that there is no maximum limit.</p>
 <p>See also <a href="qlandmarkfetchhint.html#setMaxItems">setMaxItems</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchHint/offset"></a>
-<h3 class="fn"><a name="offset"></a>int QLandmarkFetchHint::offset ()</h3>
-<p>Returns the offset of the items to be retrieved.</p>
+<h3 class="fn"><a name="offset"></a>int QLandmarkFetchHint::offset () const</h3>
+<p>Returns the offset of the items to be retrieved. By default, the offset is set to 0.</p>
 <p>See also <a href="qlandmarkfetchhint.html#setOffset">setOffset</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchHint/setMaxItems"></a>
 <h3 class="fn"><a name="setMaxItems"></a>void QLandmarkFetchHint::setMaxItems ( int <i>max</i> )</h3>

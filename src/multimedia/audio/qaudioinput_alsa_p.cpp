@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// We mean it.
+// Do not use this file directly.
 //
 
 #include <QtCore/qcoreapplication.h>
@@ -282,7 +282,10 @@ bool QAudioInputPrivate::open()
     QList<QByteArray> devices = QAudioDeviceInfoInternal::availableDevices(QAudio::AudioInput);
     if(dev.compare(QLatin1String("default")) == 0) {
 #if(SND_LIB_MAJOR == 1 && SND_LIB_MINOR == 0 && SND_LIB_SUBMINOR >= 14)
-        dev = QLatin1String(devices.first());
+        if (devices.size() > 0)
+            dev = QLatin1String(devices.first());
+        else
+            return false;
 #else
         dev = QLatin1String("hw:0,0");
 #endif

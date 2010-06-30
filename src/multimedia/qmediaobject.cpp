@@ -69,6 +69,7 @@ void QMediaObjectPrivate::_q_notify()
     \preliminary
     \brief The QMediaObject class provides a common base for multimedia objects.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     QMediaObject derived classes provide access to the functionality of a
@@ -137,6 +138,15 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 }
 
 /*!
+    Bind \a object to the QMediaObject instance.
+
+    This method establishes a relationship between the media object and a
+    helper object. The nature of the relationship depends on both parties. This
+    methods returns true if the helper was succesfully bound, false otherwise.
+
+    The object passed must implement the QMediaBindableInterface interface.
+
+    \sa QMediaBindableInterface
 */
 bool QMediaObject::bind(QObject *object)
 {
@@ -156,6 +166,11 @@ bool QMediaObject::bind(QObject *object)
 }
 
 /*!
+    Detach \a object from the QMediaObject instance.
+
+    Disconnect the help object from the media object.
+
+    \sa QMediaBindableInterface
 */
 void QMediaObject::unbind(QObject *object)
 {
@@ -278,10 +293,7 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
 */
 
 /*!
-    \property QMediaObject::metaDataAvailable
-    \brief whether access to a media object's meta-data is available.
-
-    If this is true there is meta-data available, otherwise there is no meta-data available.
+    Returns true if there is meta-data associated with this media object, else false.
 */
 
 bool QMediaObject::isMetaDataAvailable() const

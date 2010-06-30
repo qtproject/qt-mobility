@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteRequest Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteRequest Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoRouteRequest class represents the parameters and restrictions which define a request for routing information. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoRouteRequest&gt;</pre><ul>
+<pre>    #include &lt;QGeoRouteRequest&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<ul>
 <li><a href="qgeorouterequest-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -24,11 +26,11 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureType</a></b> { AvoidNothing, AvoidTolls, AvoidHighways, AvoidPublicTransit, ..., AvoidMotorPoolLanes }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a></b> { NoInstructions, BasicInstructions, DetailedInstructions }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a></b> { NoInstructions, BasicInstructions }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetails</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimization</a></b> { ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a></b> { NoSegmentData, BasicSegmentData, DetailedSegmentData }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a></b> { NoSegmentData, BasicSegmentData }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetails</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelMode</a></b> { CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a></b></td></tr>
@@ -66,11 +68,6 @@
 <p>The default state of a QGeoRouteRequest instance will result in a request for basic route segment and navigation instructions describing the fastest route by car which covers the given waypoints.</p>
 <p>There may be signifcant variation in the features supported by different providers of routing information, or even in the features supported by the same provider if different levels of authorization are used.</p>
 <p>There are several functions in <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> which can be used to check which features are supported with the current provider and authorization level.</p>
-<p>DESIGN NOTE FOR API REVIEW:</p>
-<p>There are plans to make this extensible by allowing the user to set a list of QGeoTransportOptions (or QGeoTransitOptions). We don't have any subclasses for that just yet, otherwise they'd be present.</p>
-<p>A QGeoPublicTransportOption subclass would allow users to specify things like cost limits, the maximum number of changes of vehicle, the maximum walking time / distance between changes of vehicle.</p>
-<p>There's Nokia / Navteq support for specifying things like Truck attributes so you can route around various road restrictions and conditions which effect trucks.</p>
-<p>A QGeoTrafficAwareTransportOption is probably also a good place to put the inputs for the various traffic / time aware bits of information. A departure / arrrival time could be set, and the presence of this transport options subclass (and the fact that user auth said that the user had support) would mean we could provide better values for the estimated travel times etc..&#x2e;</p>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -103,7 +100,6 @@
 <a name="//apple_ref/cpp/tag/QGeoRouteRequest/InstructionDetail"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/NoInstructions"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/BasicInstructions"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/DetailedInstructions"></a>
 <a name="//apple_ref/cpp/tdef/QGeoRouteRequest/InstructionDetails"></a>
 <h3 class="flags"><a name="InstructionDetail-enum"></a>enum QGeoRouteRequest::InstructionDetail<br />flags QGeoRouteRequest::InstructionDetails</h3>
 <p>Defines the amount of instruction information that should be included with the route.</p>
@@ -111,10 +107,8 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QGeoRouteRequest::NoInstructions</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">No instructions should be included with the route.</td></tr>
 <tr><td valign="top"><tt>QGeoRouteRequest::BasicInstructions</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Basic instructions will be included with the route. This will include <a href="qgeonavigationinstruction.html#instructionText">QGeoNavigationInstruction::instructionText</a>().</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::DetailedInstructions</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Detailed instructions will be included with the route. This will typically mean that subclasses of QNavigationInstruction are used to provide data structures describing the instructions. See <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> and its subclasses for more details.</td></tr>
 </table></p>
 <p>The InstructionDetails type is a typedef for <a href="qflags.html">QFlags</a>&lt;InstructionDetail&gt;. It stores an OR combination of InstructionDetail values.</p>
-<p>See also <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a>.</p>
 <a name="//apple_ref/cpp/tag/QGeoRouteRequest/RouteOptimization"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/ShortestRoute"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/FastestRoute"></a>
@@ -134,7 +128,6 @@
 <a name="//apple_ref/cpp/tag/QGeoRouteRequest/SegmentDetail"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/NoSegmentData"></a>
 <a name="//apple_ref/cpp/econst/QGeoRouteRequest/BasicSegmentData"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/DetailedSegmentData"></a>
 <a name="//apple_ref/cpp/tdef/QGeoRouteRequest/SegmentDetails"></a>
 <h3 class="flags"><a name="SegmentDetail-enum"></a>enum QGeoRouteRequest::SegmentDetail<br />flags QGeoRouteRequest::SegmentDetails</h3>
 <p>Defines the amount of route segment information that shoudl be included with the route.</p>
@@ -142,7 +135,6 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QGeoRouteRequest::NoSegmentData</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">No segment data should be included with the route. A route requested with this level of segment detail will initialise <a href="qgeoroutesegment.html#path">QGeoRouteSegment::path</a>() as a straight line between the positions of the previous and next QGeoNavigationInstructions.</td></tr>
 <tr><td valign="top"><tt>QGeoRouteRequest::BasicSegmentData</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Basic segment data will be included with the route. This will include <a href="qgeoroutesegment.html#path">QGeoRouteSegment::path</a>().</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::DetailedSegmentData</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Detailed segment data will be included with the route. This will typcially meant that subclasses of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> are used to provide data structures describing the segment. See <a href="qgeoroutesegment.html">QGeoRouteSegment</a> and its subclasses for more details.</td></tr>
 </table></p>
 <p>The SegmentDetails type is a typedef for <a href="qflags.html">QFlags</a>&lt;SegmentDetail&gt;. It stores an OR combination of SegmentDetail values.</p>
 <a name="//apple_ref/cpp/tag/QGeoRouteRequest/TravelMode"></a>
