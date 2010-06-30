@@ -102,14 +102,14 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
             return;
         }
 
-        if (index < d->rCache.cutoff) {
-            if ((index -= d->rCache.index) >= 0) {
-                row = d->rCache.values.constBegin() + (index * d->tableWidth);
+        if (index < d->iCache.cutoff) {
+            if ((index -= d->iCache.index) >= 0) {
+                row = d->iCache.values.constBegin() + (index * d->tableWidth);
             } else {
                 return;
             }
-        } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
-            row = d->aCache.values.begin() + (index * d->tableWidth);
+        } else if (index < d->rCache.count && (index -= d->rCache.offset) >= 0) {
+            row = d->rCache.values.begin() + (index * d->tableWidth);
         } else {
             return;
         }

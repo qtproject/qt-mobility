@@ -85,26 +85,26 @@ public:
         };
 
         const Type type;
-        const int aIndex;
-        const int aCount;
         const int rIndex;
         const int rCount;
+        const int iIndex;
+        const int iCount;
 
-        static SyncEvent *startEvent(int aIndex, int aCount, int rIndex, int rCount) {
-            return new SyncEvent(Start, aIndex, aCount, rIndex, rCount); }
+        static SyncEvent *startEvent(int aIndex, int aCount, int iIndex, int iCount) {
+            return new SyncEvent(Start, aIndex, aCount, iIndex, iCount); }
 
-        static SyncEvent *updateEvent(int aIndex, int rIndex, int count) {
-            return new SyncEvent(Update, aIndex, count, rIndex, count); }
+        static SyncEvent *updateEvent(int aIndex, int iIndex, int count) {
+            return new SyncEvent(Update, aIndex, count, iIndex, count); }
 
-        static SyncEvent *replaceEvent(int aIndex, int aCount, int rIndex, int rCount) {
-            return new SyncEvent(Replace, aIndex, aCount, rIndex, rCount); }
+        static SyncEvent *replaceEvent(int aIndex, int aCount, int iIndex, int iCount) {
+            return new SyncEvent(Replace, aIndex, aCount, iIndex, iCount); }
 
-        static SyncEvent *finishEvent(int aIndex, int rIndex) {
-            return new SyncEvent(Finish, aIndex, 0, rIndex, 0); }
+        static SyncEvent *finishEvent(int aIndex, int iIndex) {
+            return new SyncEvent(Finish, aIndex, 0, iIndex, 0); }
 
     private:
-        SyncEvent(Type type, int aIndex, int aCount, int rIndex, int rCount)
-            : type(type), aIndex(aIndex), aCount(aCount), rIndex(rIndex), rCount(rCount) {}
+        SyncEvent(Type type, int rIndex, int rCount, int iIndex, int iCount)
+            : type(type), rIndex(rIndex), rCount(rCount), iIndex(iIndex), iCount(iCount) {}
 
     };
 
@@ -302,8 +302,8 @@ public:
     const QVector<QGalleryTrackerImageColumn *> imageColumns;
     const QVector<QGalleryTrackerSortCriteria> sortCriteria;
     const QVector<int> resourceKeys;
-    Cache aCache;   // Access cache.
-    Cache rCache;   // Replacement cache.
+    Cache rCache;   // Remove cache.
+    Cache iCache;   // Insert cache.
 
     QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
     QFutureWatcher<void> parseWatcher;
@@ -311,10 +311,10 @@ public:
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
 
-    inline int aCacheIndex(const row_iterator &iterator) const {
-        return iterator - aCache.values.begin() + aCache.index; }
     inline int rCacheIndex(const row_iterator &iterator) const {
         return iterator - rCache.values.begin() + rCache.index; }
+    inline int iCacheIndex(const row_iterator &iterator) const {
+        return iterator - iCache.values.begin() + iCache.index; }
     
     void update();
     void requestUpdate()
@@ -355,10 +355,10 @@ public:
     }
 
     void processSyncEvents();
-    void syncStart(const int aIndex, const int aCount, const int rIndex, const int rCount);
-    void syncUpdate(const int aIndex, const int aCount, const int rIndex, const int rCount);
-    void syncReplace(const int aIndex, const int aCount, const int rIndex, const int rCount);
-    void syncFinish(const int aIndex, const int rIndex);
+    void syncStart(const int aIndex, const int aCount, const int iIndex, const int iCount);
+    void syncUpdate(const int aIndex, const int aCount, const int iIndex, const int iCount);
+    void syncReplace(const int aIndex, const int aCount, const int iIndex, const int iCount);
+    void syncFinish(const int aIndex, const int iIndex);
     bool waitForSyncFinish(int msecs);
 
     void _q_queryFinished(QDBusPendingCallWatcher *watcher);
