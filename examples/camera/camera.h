@@ -45,7 +45,6 @@
 #include <qcamera.h>
 #include <qmediarecorder.h>
 #include <qcameraimagecapture.h>
-#include <qaudiocapturesource.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
