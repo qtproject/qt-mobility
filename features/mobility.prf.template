@@ -75,6 +75,7 @@ contains(MOBILITY, sensors) {
 }
 
 contains(MOBILITY, organizer) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtOrganizer
     qtAddLibrary(QtOrganizer)
 }
 

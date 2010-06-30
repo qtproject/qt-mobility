@@ -574,7 +574,7 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
             ;;
         organizer)
-            $relpath/bin/syncheaders $shadowpath/include/QtmOrganizer $relpath/src/organizer
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;
         *)
             echo "Cannot generate headers for $module"
