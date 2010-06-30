@@ -52,7 +52,17 @@ namespace QService
         UserScope = 0,
         SystemScope
     };
+    
+    enum UnrecoverableIPCError {
+        ErrorUnknown = 0,
+        ErrorServiceNoLongerAvailable,
+        ErrorOutofMemory,
+        ErrorPermissionDenied,
+        ErrorInvalidArguments
+    };    
 }
+
+Q_ENUMS(QService::UnrecoverableIPCError);
 
 QTM_END_NAMESPACE
 
