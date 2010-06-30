@@ -327,7 +327,6 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   return rtn;
   */
 }
-#include "qcontactdetail_p.h"
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
@@ -792,11 +791,18 @@ QContact* QContactABook::convert(EContact *eContact) const
   /* Note */
   detailList << getNoteDetail(eContact);
 
-  /* Online Account */
-  QList<QContactOnlineAccount*> onlineAccountList = getOnlineAccountDetail(eContact);
+  /* Online Account & presences*/
+  QList<QContactOnlineAccount*> onlineAccounts;
+  QList<QContactPresence*> presences;
+  getOnlineAccountAndPresenceDetails(eContact, onlineAccounts, presences);
+  
   QContactOnlineAccount* onlineAccount;
-  foreach(onlineAccount, onlineAccountList)
+  foreach(onlineAccount, onlineAccounts)
     detailList << onlineAccount;
+  
+  QContactPresence* presence;
+  foreach(presence, presences)
+    detailList << presence;
 
   /* Organization */
   detailList << getOrganizationDetail(eContact);
@@ -1201,28 +1207,52 @@ static const QStringList serviceProviderCapabilities(const QString& serviceProvi
     return QStringList();
 }
 
-QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
+#if 0
+// BUG? This code has been commented out because osso_abook_presence_get_presence_status returns empty strings
+static QContactPresence::PresenceState telepathyStatusToPresenceState(const QString& status){
+  if (status == "offline")
+    return QContactPresence::PresenceOffline;
+  else if (status == "unknown" || status == "error")
+    return QContactPresence::PresenceUnknown;
+  else if (status == "available")
+    return QContactPresence::PresenceAvailable;
+  else if (status == "away" || status == "brb" ) //Be Right Back (a more specific form of Away)
+    return QContactPresence::PresenceAway;
+  else if (status == "busy" || status == "dnd") //Do Not Disturb (a more specific form of Busy)
+    return QContactPresence::PresenceBusy;
+  else if (status == "xa") //Extended Away
+    return QContactPresence::PresenceExtendedAway;
+  else if (status == "hidden") // "Invisible" or "Appear Offline"
+    return QContactPresence::PresenceHidden;
+}
+#endif
+
+void QContactABook::getOnlineAccountAndPresenceDetails(EContact *eContact, 
+                                                      QList<QContactOnlineAccount*>& onlineAccounts,
+                                                      QList<QContactPresence*>& presences) const
 {
-  QList<QContactOnlineAccount*> rtnList;
-  
-  // Get VCards that store Online Account Details.
   const QStringList telepathyVCards = vcardsManagedByTelepathy();
   
-  // Parsing Attributes associated to the previous VCards
+  // Parsing Attributes associated to the Telepathy VCards
   GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
   GList *node;
 
   if (!attributeList)
-    return rtnList;
+    return;
   
   for (node = attributeList; node != NULL; node = g_list_next (node)) {
-    QContactOnlineAccount* rtn = new QContactOnlineAccount;
+    QContactOnlineAccount* onlineAccount = new QContactOnlineAccount;
+    QContactPresence* contactPresence = new QContactPresence;
+    
     const char* accountUri = NULL;
     const char* serviceProvider = NULL;
     const char* accountPath = NULL; // Outgoing account path eg: SERVICE_NAME/PROTOCOL_NAME/USER_NAME
-    
+    EVCardAttribute* attr = NULL;
+    QVariantMap map;
+    QString presenceMsg, presenceIcon, presenceDisplayState, presenceNickname;
     QStringList caps;
-    EVCardAttribute* attr = (EVCardAttribute*)node->data;
+    
+    attr = (EVCardAttribute*)node->data;
     if (!attr)
       continue;
     
@@ -1235,32 +1265,50 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
     accountUri = e_vcard_attribute_get_value(attr);
 
     // Get AccountPath and service provider for the roster contact associated to the attribute
+    // Note: there should be just one roster contact associated to the attribute
     GList* rContacts = osso_abook_contact_find_roster_contacts_for_attribute(A_CONTACT(eContact), attr);
     for (GList * node = rContacts; node != NULL; node = g_list_next(node)){
       OssoABookContact* c = NULL;
-      McAccount* a = NULL;
       c = A_CONTACT(node->data);
       if (c) {
+       McAccount* a = NULL;
+       OssoABookPresence *p = NULL;
+       
        a = osso_abook_contact_get_account(c);
        if (a){
          accountPath = a->name;
          serviceProvider = mc_account_compat_get_profile(a);
        }
+       
+       p = OSSO_ABOOK_PRESENCE(c);
+       presenceMsg = QString::fromUtf8(osso_abook_presence_get_presence_status_message(p));
+       presenceIcon = QString::fromUtf8(osso_abook_presence_get_icon_name(p));
+       // presenceState = QString::fromUtf8(osso_abook_presence_get_presence_status(p)); //BUG in osso_abook_presence_get_presence_status??
+       presenceDisplayState = QString::fromUtf8(osso_abook_presence_get_display_status(p));
+       presenceNickname = QString::fromUtf8(osso_abook_contact_get_display_name(c));
+       // Set OnlineAccount details
+       map.clear();
+       map[QContactOnlineAccount::FieldAccountUri] = accountUri;
+       map[QContactOnlineAccount::FieldCapabilities] = serviceProviderCapabilities(serviceProvider);
+       map[QContactOnlineAccount::FieldServiceProvider] = serviceProvider; // eg: facebook-chat,
+       map["AccountPath"] = accountPath;
+       setDetailValues(map, onlineAccount);
+       onlineAccounts << onlineAccount;
+    
+       // Set OnlinePresence details
+       map.clear();
+       map[QContactDetail::FieldLinkedDetailUris] = accountUri;
+       map[QContactPresence::FieldCustomMessage] = presenceMsg;
+       map[QContactPresence::FieldPresenceStateImageUrl] = presenceIcon;
+       map[QContactPresence::FieldPresenceStateText] = presenceDisplayState;
+       map[QContactPresence::FieldNickname] = presenceNickname;
+       //map[QContactPresence::FieldPresenceState] = telepathyStatusToPresenceState(presenceState);
+       //map[QContactPresence::FieldTimestamp] = ;
+       setDetailValues(map, contactPresence);
+       presences << contactPresence;
       }
     }
-    
-    // Set details
-    QVariantMap map;
-    map[QContactOnlineAccount::FieldAccountUri] = accountUri;
-    map[QContactOnlineAccount::FieldCapabilities] = serviceProviderCapabilities(serviceProvider);
-    map[QContactOnlineAccount::FieldServiceProvider] = serviceProvider; // eg: facebook-chat,
-    map["AccountPath"] = accountPath;
-    setDetailValues(map, rtn);
-    
-    rtnList << rtn;
   }
-  
-  return rtnList;
 }
 
 QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) const
@@ -1318,134 +1366,6 @@ QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) co
   }
   g_list_free(l);
   
-  return rtnList;
-}
-
-
-QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) const
-{
-  QList<QContactPresence*> rtnList;
-
-  QStringList evcardToSkip = vcardsManagedByTelepathy();
-
-  // Gets info of online accounts from roster contacts associated to the master one
-  if (!osso_abook_contact_is_roster_contact (A_CONTACT(eContact))) {
-    QContactPresence* rtn = new QContactPresence;
-
-    GList *contacts = osso_abook_contact_get_roster_contacts(A_CONTACT(eContact));
-    GList *node;
-    for (node = contacts; node != NULL; node = g_list_next(node)){
-      OssoABookContact *rosterContact = A_CONTACT(node->data);
-
-      McProfile* id = osso_abook_contact_get_profile(rosterContact);
-      McAccount* account = osso_abook_contact_get_account(rosterContact);
-
-      // Avoid to look for Roster contacts into the VCard
-      QString accountVCard = mc_profile_get_vcard_field(id);
-      evcardToSkip.removeOne(accountVCard);
-
-      // Presence
-      OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
-      TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
-      QString presenceTypeString;
-      QContactPresence::PresenceState presenceTypeEnum;
-      switch (presenceType) {
-        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; presenceTypeEnum = QContactPresence::PresenceAvailable; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; presenceTypeEnum = QContactPresence::PresenceAway; break;
-        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; presenceTypeEnum = QContactPresence::PresenceExtendedAway; break;
-        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; presenceTypeEnum = QContactPresence::PresenceHidden; break;
-        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; presenceTypeEnum = QContactPresence::PresenceBusy; break;
-        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        default:
-          qCritical() << "Presence type is not valid" << presenceType;
-      }
-
-      QVariantMap map; // XXX FIXME
-      map[QContactPresence::FieldNickname] = osso_abook_contact_get_display_name(rosterContact);
-      map[QContactPresence::FieldPresenceState] = presenceTypeEnum;
-      map[QContactPresence::FieldPresenceStateText] = QString::fromUtf8(osso_abook_presence_get_presence_status_message(presence));
-      map[QContactPresence::FieldLinkedDetailUris] = mc_profile_get_unique_name(id); //use the unique name as a detail uri of the online account.
-      map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
-
-      setDetailValues(map, rtn);
-    }
-    rtnList << rtn;
-    g_list_free (contacts);
-  }
-
-  /* Users can add Online account details manually. Eg: IRC username.
-   * evcardToSkip stringlist contains evCard attributes that have been already processed.
-   */
-  GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
-  GList *node;
-
-  if (attributeList) {
-    for (node = attributeList; node != NULL; node = g_list_next (node)) {
-      EVCardAttribute* attr = (EVCardAttribute*)node->data;
-      if (!attr)
-        continue;
-      QString attributeName = e_vcard_attribute_get_name(attr);
-
-      // Skip attributes processed scanning roster contacts.
-      if (!evcardToSkip.contains(attributeName))
-        continue;
-
-      GList *params = e_vcard_attribute_get_params(attr);
-      GList *nodeP;
-      QString type;
-      // If the parameter list lenght is 1, X-OSSO-VALID is not specified
-      bool ossoValidIsOk = (g_list_length(params) == 1) ? true : false;
-
-      for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
-        EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-        QString paramName = e_vcard_attribute_param_get_name(p);
-        bool attrIsType = false;
-        bool attrIsOssoValid = false;
-
-        //If type is empty check if the attribute is "TYPE"
-        if (type.isEmpty())
-          attrIsType = paramName.contains(EVC_TYPE);
-
-        if(!ossoValidIsOk)
-          attrIsOssoValid = paramName.contains("X-OSSO-VALID");
-
-        if (!attrIsType && !attrIsOssoValid) {
-          //qWarning () << "Skipping attribute parameter checking for" << paramName;
-          continue;
-        }
-
-        GList *values = e_vcard_attribute_param_get_values(p);
-        GList *node;
-        for (node = values; node != NULL; node = g_list_next (node)) {
-          QString attributeParameterValue = CONST_CHAR(node->data);
-          if (attrIsOssoValid) {
-            ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
-            if (!ossoValidIsOk) {
-              //qWarning() << "X-OSSO-VALID is false.";
-              break;
-            }
-          } else if (type.isEmpty()) {
-            type = attributeParameterValue;
-            if (type.isEmpty())
-              qCritical() << "TYPE is empty";
-          }
-        }
-
-        if (ossoValidIsOk && !type.isEmpty()) {
-          QContactPresence* rtn = new QContactPresence;
-          QVariantMap map;
-          map[QContactPresence::FieldNickname] = QString::fromUtf8(e_vcard_attribute_get_value(attr));
-          map[QContactPresence::FieldLinkedDetailUris] = type; // XXX FIXME
-          setDetailValues(map, rtn);
-          rtnList << rtn;
-        }
-      }
-    }
-  }
-
   return rtnList;
 }
 

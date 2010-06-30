@@ -408,9 +408,13 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
     defns[contactType][QContactPhoneNumber::DefinitionName].setUnique(false);
 
-    // No QContactPresence
-    defns[contactType].remove(QContactPresence::DefinitionName);
-
+    // QContactPresence
+    fields = defns[contactType][QContactPresence::DefinitionName].fields();
+    fields.remove(QContactPresence::FieldTimestamp);
+    fields.remove(QContactPresence::FieldPresenceState);
+    defns[contactType][QContactPresence::DefinitionName].setFields(fields);
+    defns[contactType][QContactPresence::DefinitionName].setUnique(false);
+    
     // No QContactRingtone
     defns[contactType].remove(QContactRingtone::DefinitionName);
     
