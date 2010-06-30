@@ -364,19 +364,17 @@ bool GalleryQueryRequest::setData(const QModelIndex &index, const QVariant &valu
 QModelIndex GalleryQueryRequest::index(int row, int column, const QModelIndex &parent) const
 {
     if (!parent.isValid() && row >= 0 && row < m_rowCount && column == 0) {
-        if (m_updateCursor) {
-            if (row < m_itemList->count() - 1) {
-                const int position = m_itemList->cursorPosition();
+        if (m_updateCursor && m_lowerOffset != m_upperOffset) {
+            const int position = m_itemList->cursorPosition();
 
-                if (row - m_lowerOffset < position && position > 0) {
-                    m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
+            if (row - m_lowerOffset < position && position > 0) {
+                m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
 
-                    emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
-                } else if (row + m_upperOffset > position) {
-                    m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
+                emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
+            } else if (row + m_upperOffset > position) {
+                m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
 
-                    emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
-                }
+                emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
             }
         }
 

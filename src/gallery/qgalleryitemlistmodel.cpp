@@ -44,6 +44,7 @@
 #include "qgalleryitemlist.h"
 
 #include <QtCore/qstringlist.h>
+#include <QtCore/qpointer.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,9 +72,10 @@ public:
     void _q_removed(int index, int count);
     void _q_moved(int from, int to, int count);
     void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_itemListDestroyed();
 
     QGalleryItemListModel *q_ptr;
-    QGalleryItemList *itemList;
+    QPointer<QGalleryItemList> itemList;
     bool updateCursorPosition;
     int rowCount;
     int columnCount;
@@ -102,14 +104,15 @@ void QGalleryItemListModelPrivate::updateRoles(int column)
             if (propertyNames.contains(it.value())) {
                 const int key = itemList->propertyKey(it.value());
 
-                roleKeys.append(it.key());
-                roleKeys.append(key);
+                roleKeys.insert(offset, it.key());
+                roleKeys.insert(offset + 1, key);
 
                 offset += 2;
 
-                if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole)) {
-                    roleKeys.append(Qt::EditRole);
-                    roleKeys.append(key);
+                if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole) &&
+                        (itemList->propertyAttributes(key) & QGalleryProperty::CanWrite)) {
+                    roleKeys.insert(offset, Qt::EditRole);
+                    roleKeys.insert(offset + 1, key);
 
                     offset += 2;
                 }
@@ -121,7 +124,7 @@ void QGalleryItemListModelPrivate::updateRoles(int column)
             }
         }
 
-        const int difference = columnOffsets.at(column) - offset;
+        const int difference = column != 0 ? offset - columnOffsets.at(column - 1) : offset;
         for (int i = column + 1; i < columnCount; ++i)
             columnOffsets[i] += difference;
 
@@ -153,7 +156,8 @@ void QGalleryItemListModelPrivate::updateRoles()
 
                     offset += 2;
 
-                    if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole)) {
+                    if (it.key() == Qt::DisplayRole && !properties.contains(Qt::EditRole) &&
+                            (itemList->propertyAttributes(key) & QGalleryProperty::CanWrite)) {
                         roleKeys.append(Qt::EditRole);
                         roleKeys.append(key);
 
@@ -205,11 +209,37 @@ void QGalleryItemListModelPrivate::_q_metaDataChanged(int index, int count, cons
 {
     Q_Q(QGalleryItemListModel);
 
-    Q_UNUSED(keys);
-
-    if (columnCount > 0) {
+    if (keys.isEmpty() && columnCount > 0) {
         emit q->dataChanged(
                 q->createIndex(index, 0), q->createIndex(index + count - 1, columnCount - 1));
+    } else {
+        for (int i = 0, column = 0; i < roleKeys.count(); i += 2) {
+            if (i == columnOffsets.at(column))
+                column += 1;
+
+            if (keys.contains(roleKeys.at(i + 1))) {
+                const int start = column;
+
+                column += 1;
+
+                for (i = columnOffsets.at(start); i < roleKeys.count(); i += 2) {
+                    if (i == columnOffsets.at(column))
+                        break;
+
+                    if (keys.contains(roleKeys.at(i + 1))) {
+                        i = columnOffsets.at(column) - 2;
+
+                        column += 1;
+                    }
+                }
+
+                emit q->dataChanged(
+                        q->createIndex(index, start), q->createIndex(index + count - 1, column - 1));
+
+                column += 1;
+
+            }
+        }
     }
 }
 
@@ -266,12 +296,12 @@ void QGalleryItemListModel::setItemList(QGalleryItemList *list)
         disconnect(d->itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_moved(int,int,int)));
         disconnect(d->itemList, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+    }
 
-        if (d->rowCount > 0) {
-            beginRemoveRows(QModelIndex(), 0, d->rowCount - 1);
-            d->rowCount = 0;
-            endRemoveRows();
-        }
+    if (d->rowCount > 0) {
+        beginRemoveRows(QModelIndex(), 0, d->rowCount - 1);
+        d->rowCount = 0;
+        endRemoveRows();
     }
 
     d->itemList = list;
@@ -363,7 +393,7 @@ void QGalleryItemListModel::addColumn(const QHash<int, QString> &properties)
 
     d->columnCount += 1;
 
-    d->updateRoles(d->columnCount);
+    d->updateRoles(d->columnCount - 1);
 
     endInsertColumns();
 }
@@ -396,7 +426,7 @@ void QGalleryItemListModel::insertColumn(int index, const QHash<int, QString> &p
 
     d->roleProperties.insert(index, properties);
     d->itemFlags.insert(index, Qt::ItemFlags());
-    d->columnOffsets.insert(index, index == 0 ? 0 : d->columnOffsets.at(index - 1));
+    d->columnOffsets.insert(index, index < d->columnCount ? d->columnOffsets.at(index) : 0);
     d->headerData.insert(index, QHash<int, QVariant>());
 
     d->columnCount += 1;
@@ -475,6 +505,7 @@ QModelIndex QGalleryItemListModel::index(int row, int column, const QModelIndex 
     Q_D(const QGalleryItemListModel);
 
     if (!parent.isValid()
+            && d->itemList
             && row >= 0 && row < d->rowCount
             && column >= 0 && column < d->columnCount) {
         return createIndex(row, column);
@@ -549,6 +580,9 @@ bool QGalleryItemListModel::setData(const QModelIndex &index, const QVariant &va
 
 QVariant QGalleryItemListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if (role == Qt::EditRole)
+        role = Qt::DisplayRole;
+
     return orientation == Qt::Horizontal
             ? d_func()->headerData.value(section).value(role)
             : QVariant();
@@ -588,12 +622,10 @@ Qt::ItemFlags QGalleryItemListModel::flags(const QModelIndex &index) const
     Qt::ItemFlags flags;
 
     if (index.isValid()) {
-        flags |= d->itemFlags.at(index.column());
-
         if (!(d->itemList->status(index.row()) & QGalleryItemList::OutOfRange))
-            flags |= Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+            flags |= Qt::ItemIsEnabled | Qt::ItemIsSelectable | d->itemFlags.at(index.column());
 
-        if (d->updateCursorPosition  && index.row() < d->rowCount - 1) {
+        if (d->updateCursorPosition && d->lowerOffset != d->upperOffset) {
             const int position = d->itemList->cursorPosition();
 
             if (index.row() - d->lowerOffset < position && position > 0)
