@@ -1,0 +1,49 @@
+/*
+* Copyright (c) 1996-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*
+*/
+
+
+#include "ecom/registryinfo.rh"
+RESOURCE REGISTRY_INFO theInfo
+	{
+	dll_uid = 0x102035F8;
+	interfaces = 
+		{
+		INTERFACE_INFO
+			{
+			interface_uid = 0x102035F7;
+			implementations = 
+				{
+				IMPLEMENTATION_INFO
+					{
+					implementation_uid = 0x102035F9;
+					version_no = 1;
+					display_name = "default vcard converter Implementation";
+					default_data = "default";
+					opaque_data = "";
+					},
+				IMPLEMENTATION_INFO
+					{
+					implementation_uid = 0xA00015C1;
+					version_no = 1;
+					display_name = "PBAP vCard converter Implementation";
+					default_data = "default";
+					opaque_data = "";
+					}
+				};
+			}
+		};
+	}

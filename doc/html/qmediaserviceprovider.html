@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaserviceprovider.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaServiceProvider Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaServiceProvider Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -26,7 +26,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#deviceDescription">deviceDescription</a></b> ( const QByteArray &amp; <i>serviceType</i>, const QByteArray &amp; <i>device</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#devices">devices</a></b> ( const QByteArray &amp; <i>service</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#hasSupport">hasSupport</a></b> ( const QByteArray &amp; <i>serviceType</i>, const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i>, int <i>flags</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimediaKit::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#hasSupport">hasSupport</a></b> ( const QByteArray &amp; <i>serviceType</i>, const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i>, int <i>flags</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#releaseService">releaseService</a></b> ( QMediaService * <i>service</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#requestService">requestService</a></b> ( const QByteArray &amp; <i>type</i>, const QMediaServiceProviderHint &amp; <i>hint</i> = QMediaServiceProviderHint() ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#supportedMimeTypes">supportedMimeTypes</a></b> ( const QByteArray &amp; <i>serviceType</i>, int <i>flags</i> = 0 ) const</td></tr>
@@ -63,13 +63,13 @@
 <p>Returns a default provider of media services.</p>
 <a name="//apple_ref/cpp/instm/QMediaServiceProvider/deviceDescription"></a>
 <h3 class="fn"><a name="deviceDescription"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMediaServiceProvider::deviceDescription ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>serviceType</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>device</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns the description of <i>device</i> related to <i>serviceType</i>, suitable to be displayed to user.</p>
+<p>Returns the description of <i>device</i> related to <i>serviceType</i>, suitable for use by an application for display.</p>
 <a name="//apple_ref/cpp/instm/QMediaServiceProvider/devices"></a>
 <h3 class="fn"><a name="devices"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QMediaServiceProvider::devices ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>service</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of devices related to <i>service</i> type.</p>
 <a name="//apple_ref/cpp/instm/QMediaServiceProvider/hasSupport"></a>
-<h3 class="fn"><a name="hasSupport"></a><a href="qtmedia.html#SupportEstimate-enum">QtMedia::SupportEstimate</a> QMediaServiceProvider::hasSupport ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>serviceType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>codecs</i>, int <i>flags</i> = 0 ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Returns how confident a media service provider is that is can provide a <i>serviceType</i> service that is able to play media of a specific <i>mimeType</i> that is encoded using the listed <i>codecs</i> while adhearing to constraints identified in <i>flags</i>.</p>
+<h3 class="fn"><a name="hasSupport"></a>QtMultimediaKit::SupportEstimate QMediaServiceProvider::hasSupport ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>serviceType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>codecs</i>, int <i>flags</i> = 0 ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns how confident a media service provider is that is can provide a <i>serviceType</i> service that is able to play media of a specific <i>mimeType</i> that is encoded using the listed <i>codecs</i> while adhering to constraints identified in <i>flags</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaServiceProvider/releaseService"></a>
 <h3 class="fn"><a name="releaseService"></a>void QMediaServiceProvider::releaseService ( <a href="qmediaservice.html">QMediaService</a> * <i>service</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Releases a media <i>service</i> requested with <a href="qmediaserviceprovider.html#requestService">requestService</a>().</p>
@@ -84,8 +84,8 @@
 <p>The resultant list is restricted to MIME types which can be supported given the constraints in <i>flags</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

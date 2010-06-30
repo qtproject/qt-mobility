@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,25 +53,66 @@ QTM_BEGIN_NAMESPACE
   For a QContactDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
+
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+  
+  
+  \inmodule QtContacts
   
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition remove request */
-QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate)
+/*! Constructs a new detail definition remove request whose parent is the specified \a parent */
+QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
+/*! Frees any memory used by this request */
+QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
-  Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.
+  \deprecated
+*/
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& definitionNames)
+{
+    setDefinitionNames(definitionNames);
+    setContactType(contactType);
+}
+
+/*!
+  Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
-  definitions exist for contacts of the given contact type, or if \a contactType is empty.
+  definitions exist for contacts of the given contact type, specified via setContactType().
+  Equivalent to calling:
+  \code
+      setDefinitionNames(QStringList(definitionName));
+  \endcode
+
+  \sa setContactType()
  */
-void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& names)
+void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
-    d->m_contactType = contactType;
+    QMutexLocker ml(&d->m_mutex);
+    d->m_names.clear();
+    d->m_names.append(definitionName);
+}
+
+/*!
+  Sets the names of the detail definitions to remove from the manager to \a names.
+  Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
+  definitions exist for contacts of the given contact type, specified via setContactType().
+  \sa setContactType()
+ */
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
+{
+    Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -79,13 +120,25 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& co
 QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
+}
+
+/*!
+  Sets the type of contact for which detail definitions should be removed to \a contactType
+ */
+void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
+{
+    Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_contactType = contactType;
 }
 
 /*! Returns the type of contact for which detail definitions will be removed */
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -93,6 +146,7 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
 QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

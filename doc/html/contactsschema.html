@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- contactsschema.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Qt Contacts Schema</title>
+  <title>Qt Mobility Project 1.1: Qt Contacts Schema</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -18,13 +18,13 @@
 <li><a href="#schema-definition">Schema Definition</a></li>
 <li><a href="#default-schema">Default Schema</a></li>
 <ul><li><a href="#detail-definition-uniqueness">Detail Definition Uniqueness</a></li>
-<li><a href="#detail-definition-access-constraints">Detail Definition Access Constraints</a></li>
-<li><a href="#field-access-constraints">Field Access Constraints</a></li>
+<li><a href="#detail-access-constraints">Detail Access Constraints</a></li>
+<li><a href="#backend-provided-details">Backend-provided Details</a></li>
 </ul>
 </ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>The <a href="contacts.html">Qt Contacts API</a> makes use of detail leaf classes which provide certain well-known functionality. In order to develop a backend engine which can service clients or provide synchronisation to other backends, the schema must be known.</p>
+<p>The <a href="contacts.html">Qt Contacts API</a> makes use of detail leaf classes which provide certain well-known functionality. In order to develop a backend engine which can service clients or provide synchronization to other backends, the schema must be known.</p>
 <a name="schema-definition"></a>
 <h2>Schema Definition</h2>
 <p>Different backends have different capabilities. Some backends may not be able to implement certain definitions in the default schema (for example, some backends might not have support for storing location information), while other backends may not be able to implement some aspects of a particular definition in the default schema (for example, a logo field for organisation details).</p>
@@ -34,20 +34,20 @@
 <h2>Default Schema</h2>
 <p>The leaf details that form the default schema are as follows: <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qcontactaddress.html">QContactAddress</a></th><td>Contains an address of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactanniversary.html">QContactAnniversary</a></th><td>Contains the anniversary of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactanniversary.html">QContactAnniversary</a></th><td>Contains an anniversary of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactavatar.html">QContactAvatar</a></th><td>Contains the avatar of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactbirthday.html">QContactBirthday</a></th><td>Contains the birthday of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactbirthday.html">QContactBirthday</a></th><td>Contains a birthday of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></th><td>The (possibly synthesized) display label of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactemailaddress.html">QContactEmailAddress</a></th><td>Contains the email address of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactfamily.html">QContactFamily</a></th><td>Contains the names of the family members of a contact</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactemailaddress.html">QContactEmailAddress</a></th><td>Contains an email address of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactfamily.html">QContactFamily</a></th><td>Contains names of family members of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactgender.html">QContactGender</a></th><td>Contains the gender of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeoLocation</a></th><td>Contains the global location coordinate associated with a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeoLocation</a></th><td>Contains a global location coordinate associated with a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactglobalpresence.html">QContactGlobalPresence</a></th><td>Aggregated presence information for a contact, synthesized or supplied by the backend</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactguid.html">QContactGuid</a></th><td>Contains the globally unique Id of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactname.html">QContactName</a></th><td>Contains the name of a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactguid.html">QContactGuid</a></th><td>Contains a globally unique Id of a contact, for use in synchronization with other datastores</td></tr>
+<tr valign="top" class="even"><th><a href="qcontactname.html">QContactName</a></th><td>Contains a name of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactnickname.html">QContactNickname</a></th><td>Contains a nickname of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactnote.html">QContactNote</a></th><td>Contains a note associated with a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>The online account, which the contact uses to communicate with friends and family</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>Online account, which the contact uses to communicate with friends and family</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactorganization.html">QContactOrganization</a></th><td>Details about an organization that the contact is either a part of, or stands for</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactphonenumber.html">QContactPhoneNumber</a></th><td>Phone number of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactpresence.html">QContactPresence</a></th><td>Presence information for an online account of a contact</td></tr>
@@ -60,10 +60,9 @@
 <tr valign="top" class="odd"><th><a href="qcontacturl.html">QContactUrl</a></th><td>Contains a url associated with a contact</td></tr>
 </table></p>
 </p>
-<p>In the default schema, each of these definitions have various access and uniqueness constraints. Additionally, fields of the definitions may have an access constraint of read-only defined for them.</p>
 <a name="detail-definition-uniqueness"></a>
 <h3>Detail Definition Uniqueness</h3>
-<p>A uniqueness constraint on a detail definition means that for any <a href="qcontact.html">QContact</a>, only one detail of that definition may be saved. Generally, it is information for which a contradicting detail would mean inability to identify the contact. Please note that some details, such as <a href="qcontactbirthday.html">QContactBirthday</a> or <a href="qcontactname.html">QContactName</a>, do not have a uniqueness constraint, since in different contexts, different information may be valid.</p>
+<p>A uniqueness constraint on a detail definition means that for any <a href="qcontact.html">QContact</a>, only one detail of that definition may be saved.</p>
 <p>The leaf classes which have a uniqueness constraint in the default schema are as follows:</p>
 <ul>
 <li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></li>
@@ -71,28 +70,30 @@
 <li><a href="qcontactsynctarget.html">QContactSyncTarget</a></li>
 <li><a href="qcontactguid.html">QContactGuid</a></li>
 </ul>
-<a name="detail-definition-access-constraints"></a>
-<h3>Detail Definition Access Constraints</h3>
-<p>An access constraint on a detail definition means that for any detail of that definition in a <a href="qcontact.html">QContact</a>, the specified access constraints apply. For example, the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is defined in the default schema as a read-only detail definition; meaning that details of that type in a contact cannot be created, modified or deleted by the client, but are provided by the backend (in the case of <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, automatically synthesized by the backend from various details of the contact).</p>
-<p>There are three possible detail definition-level access constraints: read-only, create-only and no-constraint. A read-only constraint ensures that clients cannot create, delete or modify details of that definition; a create-only constraint ensures that clients cannot modify details of that definition, but can create them (with whichever values they see fit); if no constraint is specified, details of that definition may be created, modified or deleted as required.</p>
-<p>Please see the documentation of <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> for more information on access constraints.</p>
+<a name="detail-access-constraints"></a>
+<h3>Detail Access Constraints</h3>
+<p>Some details in a contact retrieved from a manager may have access constraints set. An access constraint on a detail means that the detail may not be removed (if the access constraint is <tt>QContactDetail::Irremovable</tt>) or updated (if the access constraint is <tt>QContactDetail::ReadOnly</tt>) by the client. If the client attempts to save an updated version of a read-only detail in a contact, or remove a detail which is irremovable from a contact, the operation will succeed; however those updates to the contact will be ignored by the manager when the contact is saved there.</p>
+<p>For example, the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is defined in the default schema as a read-only, irremovable detail, meaning that it may not be modified or deleted by the client, but are provided by the backend (in the case of <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, automatically synthesized by the backend from various details of the contact, like the <a href="qcontactname.html">QContactName</a>, <a href="qcontactnickname.html">QContactNickname</a>, etc).</p>
+<p>There are three possible detail access constraints: read-only, irremovable and no constraint. A read-only constraint ensures that clients cannot modify the values stored in such details in the persistent copy of the contact (that is, the contact as it is stored in the manager); the irremovable constaint ensures that a particular detail may not be removed by clients. In general, most details which are read only will also be irremovable, and vice versa. One exception to this is the <a href="qcontacttype.html">QContactType</a> detail, which is irremovable but may be updated by clients as desired. Details with no constraint may be added, updated and removed as desired by the client. Changes to such details in a contact will be persisted in the manager when the client calls <a href="qcontactmanager.html#saveContact">QContactManager::saveContact</a>().</p>
+<p>Please see the documentation of <a href="qcontactdetail.html">QContactDetail</a> for more information on access constraints.</p>
 <p>The leaf classes which have access constraints in the default schema are as follows:</p>
 <ul>
-<li><a href="qcontactguid.html">QContactGuid</a> is <tt>QContactDetailDefinition::CreateOnly</tt></li>
-<li><a href="qcontactsynctarget.html">QContactSyncTarget</a> is <tt>QContactDetailDefinition::CreateOnly</tt></li>
-<li><a href="qcontacttimestamp.html">QContactTimestamp</a> is <tt>QContactDetailDefinition::ReadOnly</tt></li>
-<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is <tt>QContactDetailDefinition::ReadOnly</tt></li>
+<li><a href="qcontactguid.html">QContactGuid</a> is <tt>QContactDetail::ReadOnly</tt> and <tt>QContactDetail::Irremovable</tt></li>
+<li><a href="qcontactsynctarget.html">QContactSyncTarget</a> is <tt>QContactDetail::ReadOnly</tt> and <tt>QContactDetail::Irremovable</tt></li>
+<li><a href="qcontacttimestamp.html">QContactTimestamp</a> is <tt>QContactDetail::ReadOnly</tt> and <tt>QContactDetail::Irremovable</tt></li>
+<li><a href="qcontactpresence.html">QContactPresence</a> is <tt>QContactDetail::ReadOnly</tt> and <tt>QContactDetail::Irremovable</tt></li>
+<li><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> is <tt>QContactDetail::ReadOnly</tt> and <tt>QContactDetail::Irremovable</tt></li>
+<li><a href="qcontacttype.html">QContactType</a> is <tt>QContactDetail::Irremovable</tt></li>
 </ul>
 <p>Furthermore, in the default schema, every contact is required to have at least two details by default: a <a href="qcontacttype.html">QContactType</a> which describes the type of entity that the contact represents (for example, a person or a group), and a <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> which holds the default display label for the contact.</p>
-<a name="field-access-constraints"></a>
-<h3>Field Access Constraints</h3>
-<p>Furthermore, some fields of some definitions are also constrained to be read-only. This is information which is generated or automatically provided by the backend, which is related to user-provided information that is also stored in the detail.</p>
-<p>The eponymous example of this is the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> leaf detail, which has unconstrained fields which store the URI and service provider of the account, and several read-only fields in which are stored presence information, status messages, and service availability.</p>
-<p>Currently, the <a href="qcontactonlineaccount.html">QContactOnlineAccount</a> is the only leaf detail with field-level access constraints. Every field in details of this type are <tt>QContactDetailDefinition::ReadOnly</tt> except for <tt>QContactOnlineAccount::FieldAccountUri</tt> and <tt>QContactOnlineAccount::FieldServiceProvider</tt>, which have no constraint.</p>
+<a name="backend-provided-details"></a>
+<h3>Backend-provided Details</h3>
+<p>As described in the section on detail access constraints, some details are provided by the backend, such as <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> and <a href="qcontactpresence.html">QContactPresence</a>. When the client attempts to save a <a href="qcontact.html">QContact</a> that contains these details, these details will be ignored by the backend (since any values in this field are synthesized by the backend). This means that while clients may (for example) add a <a href="qcontactpresence.html">QContactPresence</a> detail to a <a href="qcontact.html">QContact</a>, it will not be persisted in the manager when the client attempts to save that contact.</p>
+<p>Precisely which details are backend-provided is backend specific; some backends provide more details than others.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,12 +49,12 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
-#include <QtMultimedia/qvideoframe.h>
+#include "qt7videooutput.h"
+#include <qvideoframe.h>
+
+QT_BEGIN_NAMESPACE
 
 class QVideoFrame;
-
-QTM_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 class QT7PlayerService;
@@ -65,8 +65,8 @@ public:
     QT7MovieViewRenderer(QObject *parent = 0);
     ~QT7MovieViewRenderer();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
+    void updateNaturalSize(const QSize &newSize);
 
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
@@ -84,9 +84,10 @@ private:
     QSize m_nativeSize;
     QAbstractVideoSurface *m_surface;
     QVideoFrame m_currentFrame;
+    bool m_pendingRenderEvent;
     QMutex m_mutex;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,44 +60,6 @@ void completeExample();
 void exportExample();
 void importExample();
 
-//! [Detail handler]
-class MyDetailHandler : public QVersitContactExporterDetailHandler {
-public:
-    bool preProcessDetail(const QContact& contact, const QContactDetail& detail,
-                          QVersitDocument* document) {
-        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
-        return false;
-    }
-    bool postProcessDetail(const QContact& contact, const QContactDetail& detail,
-                           bool alreadyProcessed, QVersitDocument* document) {
-        Q_UNUSED(contact) Q_UNUSED(document)
-        if (!alreadyProcessed)
-            mUnknownDetails.append(detail);
-        return false;
-    }
-    QList<QContactDetail> mUnknownDetails;
-};
-//! [Detail handler]
-
-//! [Property handler]
-class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
-public:
-   bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
-                           int contactIndex, QContact* contact) {
-       Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
-       return false;
-   }
-   bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
-                            bool alreadyProcessed, int contactIndex, QContact* contact) {
-       Q_UNUSED(document) Q_UNUSED(contactIndex) Q_UNUSED(contact)
-       if (!alreadyProcessed)
-           mUnknownProperties.append(property);
-       return false;
-   }
-   QList<QVersitProperty> mUnknownProperties;
-};
-//! [Property handler]
-
 //! [Resource handler]
 class MyResourceHandler : public QVersitDefaultResourceHandler {
 public:
@@ -117,6 +79,7 @@ public:
 };
 //! [Resource handler]
 
+#if 0
 int main(int argc, char *argv[])
 {
     Q_UNUSED(argc)
@@ -125,6 +88,7 @@ int main(int argc, char *argv[])
     exportExample();
     importExample();
 }
+#endif
 
 void completeExample()
 {
@@ -179,8 +143,9 @@ void exportExample()
     //! [Export example]
     QVersitContactExporter contactExporter;
 
-    MyDetailHandler detailHandler;
-    contactExporter.setDetailHandler(&detailHandler);
+    QVersitContactExporterDetailHandlerV2* backupHandler =
+        QVersitContactExporterDetailHandlerV2::createBackupHandler();
+    contactExporter.setDetailHandler(backupHandler);
 
     QContact contact;
     // Create a name
@@ -193,6 +158,8 @@ void exportExample()
     QList<QVersitDocument> versitDocuments = contactExporter.documents();
 
     // detailHandler.mUnknownDetails now contains the list of unknown details
+
+    delete backupHandler;
     //! [Export example]
 }
 
@@ -201,8 +168,9 @@ void importExample()
     //! [Import example]
     QVersitContactImporter importer;
 
-    MyPropertyHandler propertyHandler;
-    importer.setPropertyHandler(&propertyHandler);
+    QVersitContactImporterPropertyHandlerV2* backupHandler =
+        QVersitContactImporterPropertyHandlerV2::createBackupHandler();
+    importer.setPropertyHandler(backupHandler);
 
     QVersitDocument document;
 
@@ -220,6 +188,8 @@ void importExample()
         // contactList.first() now contains the "N" property as a QContactName
         // propertyHandler.mUnknownProperties contains the list of unknown properties
     }
+
+    delete backupHandler;
     //! [Import example]
 }
 

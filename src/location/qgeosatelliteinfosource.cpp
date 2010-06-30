@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoSatelliteInfoSource
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default

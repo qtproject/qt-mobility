@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,14 +56,26 @@ QTM_BEGIN_NAMESPACE
   relationships (which may be retrieved by calling relationships()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
-/*! Constructs a new relationship fetch request
+/*! Constructs a new relationship fetch request whose parent is the specified \a parent
  */
-QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
-    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate)
+QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*! Sets the source contact criterion of the fetch request to \a firstId.
@@ -73,6 +85,7 @@ QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
 void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_first = firstId;
 }
 
@@ -81,6 +94,7 @@ void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 QContactId QContactRelationshipFetchRequest::first() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_first;
 }
 
@@ -91,6 +105,7 @@ QContactId QContactRelationshipFetchRequest::first() const
 void QContactRelationshipFetchRequest::setRelationshipType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationshipType = relationshipType;
 }
 
@@ -99,6 +114,7 @@ void QContactRelationshipFetchRequest::setRelationshipType(const QString& relati
 QString QContactRelationshipFetchRequest::relationshipType() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationshipType;
 }
 
@@ -109,6 +125,7 @@ QString QContactRelationshipFetchRequest::relationshipType() const
 void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
 {
     Q_D(QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_second = secondId;
 }
 
@@ -117,14 +134,17 @@ void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
 QContactId QContactRelationshipFetchRequest::second() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_second;
 }
+
 
 /*! Returns the list of relationships that was the result of the request
  */
 QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 

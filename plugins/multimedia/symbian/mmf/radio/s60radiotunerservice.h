@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <QMediaService>
+#include <qmediaservice.h>
 
 #ifdef TUNERLIBUSED
 #include "s60radiotunercontrol_31.h"
@@ -52,7 +52,7 @@
 #include "s60radiotunercontrol_since32.h"
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60RadioTunerService : public QMediaService
 {
@@ -61,7 +61,8 @@ public:
     S60RadioTunerService(QObject *parent = 0);
     ~S60RadioTunerService();
 
-    QMediaControl *control(const char* name) const;
+    QMediaControl *requestControl(const char* name);
+    void releaseControl(QMediaControl *control);
 
 private:
     S60RadioTunerControl *m_playerControl;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,27 +42,28 @@
 
 #include "qmediacontainercontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaContainerControl
     \preliminary
     \brief The QMediaContainerControl class provides access to the output container format of a QMediaService
 
-    \ingroup multimedia-serv
+    \inmodule QtMultimediaKit
+    \ingroup multimedia
 
     If a QMediaService supports writing encoded data it will implement
-    QMediaContainerControl.  This control provides information about the
-    output containers supported by a media service and allows one to be
-    selected as the current output containers.
+    QMediaContainerControl.  This control provides information about the output
+    containers supported by a media service and allows one to be selected as
+    the current output containers.
 
-    The functionality provided by this control is exposed to application
-    code through the QMediaRecorder class.
+    The functionality provided by this control is exposed to application code
+    through the QMediaRecorder class.
 
     The interface name of QMediaContainerControl is \c com.nokia.Qt.QMediaContainerControl/1.0 as
     defined in QMediaContainerControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaService::requestControl(), QMediaRecorder
 */
 
 /*!
@@ -116,5 +117,5 @@ QMediaContainerControl::~QMediaContainerControl()
 */
 
 #include "moc_qmediacontainercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

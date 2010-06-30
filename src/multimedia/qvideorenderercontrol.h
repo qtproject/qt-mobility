@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,10 +48,10 @@ QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
-class Q_MEDIA_EXPORT QVideoRendererControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QVideoRendererControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -68,6 +68,6 @@ protected:
 #define QVideoRendererControl_iid "com.nokia.Qt.QVideoRendererControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoRendererControl, QVideoRendererControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QVIDEORENDERERCONTROL_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,9 +44,9 @@
 
 #include <QStringList>
 
-#include <QAudioEndpointSelector>
+#include <qaudioendpointselector.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaPlayerControl;
 class S60MediaPlayerSession;
@@ -71,8 +71,7 @@ public Q_SLOTS:
 private:
     S60MediaPlayerControl* m_control;
     QString m_audioInput;
-    QList<QString> *m_audioEndpointNames;
-    QList<QString> *m_audioEndpointDescriptions;
+    QList<QString> m_audioEndpointNames;
 };
 
 #endif // S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H

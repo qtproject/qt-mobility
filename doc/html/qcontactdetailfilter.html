@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactdetailfilter.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactDetailFilter Class Reference</title>
+  <title>Qt Mobility Project 1.1: QContactDetailFilter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -62,7 +62,7 @@
 <p>See also <a href="qcontactdetailfilter.html#setMatchFlags">setMatchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailFilter/setDetailDefinitionName"></a>
 <h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailFilter::setDetailDefinitionName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fieldName</i> = QString() )</h3>
-<p>Sets the name of the detail definition of which details will be matched to <i>definitionName</i>, and the name of the field in details of that definition which will contain the value criterion to <i>fieldName</i></p>
+<p>Sets the name of the detail definition of which details will be matched to <i>definitionName</i>, and the name of the field in details of that definition which will contain the value criterion to <i>fieldName</i>. If <i>definitionName</i> is empty, the detail filter will match no contacts. If <i>fieldName</i> is empty, the detail filter acts like a &quot;detail exists&quot; filter; if any detail of the specified definition is present in a contact, that contact will match the filter, regardless of what values might be stored in that detail.</p>
 <p>See also <a href="qcontactdetailfilter.html#detailDefinitionName">detailDefinitionName</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailFilter/setMatchFlags"></a>
 <h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3>
@@ -70,16 +70,16 @@
 <p>See also <a href="qcontactdetailfilter.html#matchFlags">matchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailFilter/setValue"></a>
 <h3 class="fn"><a name="setValue"></a>void QContactDetailFilter::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
-<p>Sets the value criterion of the filter to <i>value</i></p>
-<p>See also <a href="qcontactdetailfilter.html#value">value</a>().</p>
+<p>Sets the value criterion of the filter to <i>value</i>. Note that if the field name criterion (set via <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>()) of the filter is an empty string, this value will be ignored.</p>
+<p>See also <a href="qcontactdetailfilter.html#value">value</a>() and <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailFilter/value"></a>
 <h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetailFilter::value () const</h3>
 <p>Returns the value criterion of the detail filter</p>
 <p>See also <a href="qcontactdetailfilter.html#setValue">setValue</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

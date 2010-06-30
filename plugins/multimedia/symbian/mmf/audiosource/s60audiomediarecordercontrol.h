@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,7 @@
 
 #include "s60audiocapturesession.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 //class S60AudioCaptureSession;
 
@@ -68,6 +68,8 @@ public:
 
     qint64 duration() const;
 
+    bool isMuted() const;
+
     void applySettings() {}
 
 private:                    
@@ -77,6 +79,7 @@ public slots:
     void record();
     void pause();
     void stop();
+    void setMuted(bool);
     
 private slots:
     void updateState(S60AudioCaptureSession::TAudioCaptureState aState);        

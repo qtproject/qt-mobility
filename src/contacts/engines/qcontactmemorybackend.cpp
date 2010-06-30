@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactMemoryEngine
+  
+  \inmodule QtContacts
+  
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
  
@@ -293,10 +296,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 /*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
-    if(errorMap) {
-        errorMap->clear();
-    }
-
     if (!contacts) {
         *error = QContactManager::BadArgumentError;
         return false;
@@ -309,7 +308,8 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
         current = contacts->at(i);
         if (!saveContact(&current, changeSet, error)) {
             operationError = *error;
-            errorMap->insert(i, operationError);
+            if (errorMap)
+                errorMap->insert(i, operationError);
         } else {
             (*contacts)[i] = current;
         }
@@ -376,7 +376,8 @@ bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactI
         current = contactIds.at(i);
         if (!removeContact(current, changeSet, error)) {
             operationError = *error;
-            errorMap->insert(i, operationError);
+            if (errorMap)
+                errorMap->insert(i, operationError);
         }
     }
 
@@ -690,7 +691,7 @@ void QContactMemoryEngine::performAsynchronousOperation(QContactAbstractRequest 
             QList<QContactSortOrder> sorting = r->sorting();
             QContactFetchHint fetchHint = r->fetchHint();
 
-            QContactManager::Error operationError;
+            QContactManager::Error operationError = QContactManager::NoError;
             QList<QContact> requestedContacts = contacts(filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.
@@ -914,6 +915,7 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
         case QContactManager::ArbitraryRelationshipTypes:
+        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:
@@ -965,6 +967,7 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 }
 
 /*!
+ * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QContactMemoryEngine::isFilterSupported(const QContactFilter& filter) const

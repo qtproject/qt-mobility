@@ -24,3 +24,14 @@ SOURCES += \
     test_sensorimpl.cpp\
     test_sensorplugin.cpp
 
+VPATH += ../../../plugins/sensors/dummy
+INCLUDEPATH += ../../../plugins/sensors/dummy
+HEADERS += \
+    dummyaccelerometer.h\
+    dummycommon.h
+
+SOURCES += \
+    dummyaccelerometer.cpp\
+    dummycommon.cpp
+
+symbian:TARGET.CAPABILITY = ALL -TCB

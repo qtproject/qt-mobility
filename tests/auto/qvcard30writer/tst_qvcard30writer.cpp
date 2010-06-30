@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,7 +40,9 @@
 ****************************************************************************/
 
 #include "tst_qvcard30writer.h"
+#ifdef QT_BUILD_INTERNAL
 #include "qvcard30writer_p.h"
+#endif
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include <QtTest/QtTest>
@@ -53,7 +55,7 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QVersitProperty)
-
+#ifdef QT_BUILD_INTERNAL
 void tst_QVCard30Writer::init()
 {
     mWriter = new QVCard30Writer;
@@ -148,7 +150,8 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
     expectedResult = "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
@@ -158,7 +161,7 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
 
     // Value is base64 encoded.
     QByteArray value("value");
-    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=B:" + value.toBase64() + "\r\n";
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=b:" + value.toBase64() + "\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
     groups.append(QString::fromAscii("HOUSE"));
     property.setGroups(groups);
@@ -302,6 +305,6 @@ void tst_QVCard30Writer::testBackSlashEscape()
     QVCard30Writer::backSlashEscape(input);
     QCOMPARE(input, QString::fromAscii("Escape these \\n \\; \\, \\\\ "));
 }
-
+#endif
 QTEST_MAIN(tst_QVCard30Writer)
 

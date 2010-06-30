@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qversitdefs_p.h"
+#include "qversitorganizerdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
@@ -77,17 +77,17 @@ QTM_USE_NAMESPACE
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     mDetailHandler(NULL),
+    mDetailHandler2(NULL),
+    mDetailHandlerVersion(0),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mVersitType(QVersitDocument::InvalidType)
+    mResourceHandler(mDefaultResourceHandler)
 {
-    mResourceHandler = mDefaultResourceHandler;
-
     // Detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         mPropertyMappings.insert(
-                QLatin1String(versitContactDetailMappings[i].contactDetailDefinitionName),
+                QLatin1String(versitContactDetailMappings[i].detailDefinitionName),
                 QLatin1String(versitContactDetailMappings[i].versitPropertyName));
     }
 
@@ -125,89 +125,84 @@ bool QVersitContactExporterPrivate::exportContact(
     QVersitDocument& document,
     QVersitContactExporter::Error* error)
 {
-    mVersitType = document.type();
     QList<QContactDetail> allDetails = contact.details();
     if (allDetails.isEmpty()) {
         *error = QVersitContactExporter::EmptyContactError;
         return false;
     }
-    for (int i = 0; i < allDetails.size(); i++) {
-        QContactDetail detail = allDetails.at(i);
-
+    foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler
             && mDetailHandler->preProcessDetail(contact, detail, &document))
             continue;
 
-        QVersitProperty property;
-        property.setName(mPropertyMappings.value(detail.definitionName()));
-        bool addProperty = true;
-        bool unknown = false;
+        QList<QVersitProperty> removedProperties;
+        QList<QVersitProperty> generatedProperties;
+        QSet<QString> processedFields;
 
         if (detail.definitionName() == QContactName::DefinitionName) {
-            encodeName(property, detail);
+            encodeName(detail, document, &removedProperties, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
-            encodePhoneNumber(property, detail);
+            encodePhoneNumber(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
-            encodeEmail(property, detail);
+            encodeEmail(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactAddress::DefinitionName) {
-            encodeAddress(property, detail);
+            encodeAddress(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactGuid::DefinitionName) {
-            encodeUid(property, detail);
+            encodeUid(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactUrl::DefinitionName) {
-            encodeUrl(property, detail);
+            encodeUrl(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactTimestamp::DefinitionName) {
-            addProperty = encodeRev(property, detail);
+            encodeRev(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
-            encodeBirthDay(property, detail);
+            encodeBirthDay(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactGeoLocation::DefinitionName) {
-            encodeGeoLocation(property, detail);
+            encodeGeoLocation(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactNote::DefinitionName) {
-            encodeNote(property, detail);
+            encodeNote(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
-            encodeOrganization(document, detail);
-            addProperty = false;
+            encodeOrganization(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactRingtone::DefinitionName) {
-            addProperty = encodeRingtone(property, detail);
+            encodeRingtone(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactThumbnail::DefinitionName) {
-            addProperty = encodeThumbnail(property, detail);
-            if (!addProperty)
-                unknown = true;
+            encodeThumbnail(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
-            addProperty = encodeAvatar(property, detail);
-            if (!addProperty)
-                unknown = true;
+            encodeAvatar(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactAnniversary::DefinitionName) {
-            encodeAnniversary(property, detail);
+            encodeAnniversary(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
-            encodeNickname(document, detail);
-            addProperty = false;
+            encodeNickname(detail, document, &removedProperties, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactTag::DefinitionName) {
-            encodeTag(document, detail);
-            addProperty = false;
+            encodeTag(detail, document, &removedProperties, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactGender::DefinitionName) {
-            encodeGender(property, detail);
+            encodeGender(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
-            addProperty = encodeOnlineAccount(property, detail);
-            if (!addProperty)
-                unknown = true;
+            encodeOnlineAccount(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
-            addProperty = encodeFamily(document, detail);
+            encodeFamily(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
-            addProperty = encodeDisplayLabel(property, detail, contact);
-            if (!addProperty)
-                unknown = true;
-        } else {
-            addProperty = false;
-            unknown = true;
+            encodeDisplayLabel(detail, document, &removedProperties, &generatedProperties, &processedFields);
         }
 
-        if (addProperty) {
+        if (mDetailHandler2 && mDetailHandlerVersion > 1) {
+            mDetailHandler2->detailProcessed(contact, detail, processedFields, document,
+                                             &removedProperties, &generatedProperties);
+        }
+
+        foreach(const QVersitProperty& property, removedProperties) {
+            document.removeProperty(property);
+        }
+        foreach(const QVersitProperty& property, generatedProperties) {
             document.addProperty(property);
         }
 
-        if (mDetailHandler)
-            mDetailHandler->postProcessDetail(contact, detail, !unknown, &document);
+        if (mDetailHandler && mDetailHandlerVersion == 1) {
+            mDetailHandler->postProcessDetail(contact, detail, !processedFields.isEmpty(), &document);
+        }
+    }
+
+    if (mDetailHandler2 && mDetailHandlerVersion > 1) {
+        mDetailHandler2->contactProcessed(contact, &document);
     }
 
     // Search through the document for FN or N properties.  This will find it even if it was added
@@ -236,51 +231,111 @@ bool QVersitContactExporterPrivate::documentContainsName(const QVersitDocument &
  * Encode Contact Name Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeName(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    const QVersitDocument& document,
+    QList<QVersitProperty>* removedProperties,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactName contactName = static_cast<QContactName>(detail);
-    property.setValue(QStringList()
-                      << contactName.lastName()
-                      << contactName.firstName()
-                      << contactName.middleName()
-                      << contactName.prefix()
-                      << contactName.suffix());
-    property.setValueType(QVersitProperty::CompoundType);
+    if (!contactName.lastName().isEmpty()
+        || !contactName.firstName().isEmpty()
+        || !contactName.middleName().isEmpty()
+        || !contactName.prefix().isEmpty()
+        || !contactName.suffix().isEmpty()) {
+        QVersitProperty property;
+        property.setName(mPropertyMappings.value(detail.definitionName()));
+        property.setValue(QStringList()
+                          << contactName.lastName()
+                          << contactName.firstName()
+                          << contactName.middleName()
+                          << contactName.prefix()
+                          << contactName.suffix());
+        property.setValueType(QVersitProperty::CompoundType);
+        *generatedProperties << property;
+    }
+
+    // Generate an FN field if none is already there
+    // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
+    QVersitProperty fnProperty =
+        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
+    if (fnProperty.value().isEmpty()) {
+        fnProperty.setName(QLatin1String("FN"));
+        if (!contactName.customLabel().isEmpty()) {
+            fnProperty.setValue(contactName.customLabel());
+        } else if (!contactName.firstName().isEmpty()) {
+            if (!contactName.lastName().isEmpty()) {
+                fnProperty.setValue(QString::fromAscii("%1 %2").arg(contactName.firstName(),
+                                                                    contactName.lastName()));
+            } else {
+                fnProperty.setValue(contactName.firstName());
+            }
+        } else if (!contactName.lastName().isEmpty()) {
+            fnProperty.setValue(contactName.lastName());
+        }
+    }
+
+    *generatedProperties << fnProperty;
+    *processedFields << QContactName::FieldLastName
+                     << QContactName::FieldFirstName
+                     << QContactName::FieldMiddleName
+                     << QContactName::FieldPrefix
+                     << QContactName::FieldSuffix
+                     << QContactName::FieldCustomLabel;
 }
 
 /*!
  * Encode Phone Number Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodePhoneNumber(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
-    encodeParameters(property, phoneNumber.contexts(), phoneNumber.subTypes());
+    QStringList subTypes = phoneNumber.subTypes();
+    QVersitProperty property;
+    if (subTypes.contains(QContactPhoneNumber::SubTypeAssistant))
+        property.setName(QLatin1String("X-ASSISTANT-TEL"));
+    else
+        property.setName(QLatin1String("TEL"));
+    encodeParameters(property, phoneNumber.contexts(), subTypes);
     property.setValue(phoneNumber.number());
+    *generatedProperties << property;
+    *processedFields << QContactPhoneNumber::FieldContext
+                      << QContactPhoneNumber::FieldSubTypes
+                      << QContactPhoneNumber::FieldNumber;
 }
 
 /*!
  * Encode Email Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeEmail(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactEmailAddress emailAddress = static_cast<QContactEmailAddress>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     encodeParameters(property, emailAddress.contexts());
     property.setValue(emailAddress.emailAddress());
+    *generatedProperties << property;
+    *processedFields << QContactEmailAddress::FieldContext
+                      << QContactEmailAddress::FieldEmailAddress;
 }
 
 /*!
  * Encode Address Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeAddress(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactAddress address = static_cast<QContactAddress>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     encodeParameters(property, address.contexts(), address.subTypes());
     property.setValue(QStringList()
                       << address.postOfficeBox()
@@ -291,117 +346,156 @@ void QVersitContactExporterPrivate::encodeAddress(
                       << address.postcode()
                       << address.country());
     property.setValueType(QVersitProperty::CompoundType);
+    *generatedProperties << property;
+    *processedFields << QContactAddress::FieldContext
+                      << QContactAddress::FieldSubTypes
+                      << QContactAddress::FieldPostOfficeBox
+                      << QContactAddress::FieldStreet
+                      << QContactAddress::FieldLocality
+                      << QContactAddress::FieldRegion
+                      << QContactAddress::FieldPostcode
+                      << QContactAddress::FieldCountry;
 }
 
 /*!
  * Encode URL Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeUrl(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactUrl contactUrl = static_cast<QContactUrl>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     encodeParameters(property, contactUrl.contexts());
     // The vCard specifications do not define any TYPEs for URL property.
     // No need to try to convert the subtypes to TYPEs.
     property.setValue(contactUrl.url());
+    *generatedProperties << property;
+    *processedFields << QContactUrl::FieldContext
+                      << QContactUrl::FieldUrl;
 }
 
 /*!
  * Encode Uid Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeUid(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactGuid uid = static_cast<QContactGuid>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(uid.guid());
+    *generatedProperties << property;
+    *processedFields << QContactGuid::FieldGuid;
 }
 
 /*!
  * Encode REV Field Information into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeRev(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+void QVersitContactExporterPrivate::encodeRev(
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactTimestamp  rev = static_cast<QContactTimestamp>(detail);
     QString value;
-    bool encoded = false;
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
 
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
-        encoded = true;
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
             value = rev.lastModified().toString(Qt::ISODate) + QLatin1Char('Z');
         }
         else {
             value = rev.lastModified().toString(Qt::ISODate);
         }
-    }
-
-    else if ( rev.created().toString(Qt::ISODate).size()) {
-        encoded = true;
+        property.setValue(value);
+        *generatedProperties << property;
+        *processedFields << QContactTimestamp::FieldModificationTimestamp;
+    } else if ( rev.created().toString(Qt::ISODate).size()) {
         if ( rev.created().timeSpec() == Qt::UTC ) {
             value = rev.created().toString(Qt::ISODate) + QLatin1Char('Z');
         }
         else {
             value = rev.created().toString(Qt::ISODate);
         }
+        property.setValue(value);
+        *generatedProperties << property;
+        *processedFields << QContactTimestamp::FieldCreationTimestamp;
     }
-    property.setValue(value);
-
-    return encoded;
 }
 
 /*!
  * Encode BirthDay Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeBirthDay(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     QString value = bday.date().toString(Qt::ISODate);
     property.setValue(value);
+    *generatedProperties << property;
+    *processedFields << QContactBirthday::FieldBirthday;
 }
 
 /*!
  * Encode Comment i.e. Note Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeNote(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactNote contactNote = static_cast<QContactNote>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(contactNote.note());
+    *generatedProperties << property;
+    *processedFields << QContactNote::FieldNote;
 }
 
 /*!
  * Encode Geo Prpoperties Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeGeoLocation(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(QStringList() << QString::number(geoLocation.longitude())
                       << QString::number(geoLocation.latitude()));
     property.setValueType(QVersitProperty::CompoundType);
+    *generatedProperties << property;
+    *processedFields << QContactGeoLocation::FieldLongitude
+                      << QContactGeoLocation::FieldLatitude;
 }
 
 /*!
  * Encode organization properties to the versit document
  */
 void QVersitContactExporterPrivate::encodeOrganization(
-     QVersitDocument& document,
-     const QContactDetail& detail)
+    const QContactDetail& detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactOrganization organization = static_cast<QContactOrganization>(detail);
     if (organization.title().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("TITLE"));
         property.setValue(organization.title());
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactOrganization::FieldTitle;
     }
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
@@ -410,69 +504,84 @@ void QVersitContactExporterPrivate::encodeOrganization(
         values.append(organization.department());
         property.setValue(values);
         property.setValueType(QVersitProperty::CompoundType);
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactOrganization::FieldName
+                          << QContactOrganization::FieldDepartment;
     }
     if (organization.logoUrl().isValid()) {
         QVersitProperty property;
-        // XXX TODO: FIXME!
         if (encodeContentFromFile(organization.logoUrl().toString(), property)) {
             property.setName(QLatin1String("LOGO"));
-            document.addProperty(property);
+            *generatedProperties << property;
+            *processedFields << QContactOrganization::FieldLogoUrl;
         }
     }
     if (organization.assistantName().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("X-ASSISTANT"));
         property.setValue(organization.assistantName());
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactOrganization::FieldAssistantName;
     }
 
     if (organization.role().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("ROLE"));
         property.setValue(organization.role());
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactOrganization::FieldRole;
     }
 }
 
-bool QVersitContactExporterPrivate::encodeRingtone(QVersitProperty &property, const QContactDetail &detail)
+void QVersitContactExporterPrivate::encodeRingtone(
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactRingtone ringtone = static_cast<QContactRingtone>(detail);
-    Q_ASSERT(property.name() == QLatin1String("SOUND"));
-    return encodeContentFromFile(ringtone.audioRingtoneUrl().toLocalFile(), property);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
+    if (encodeContentFromFile(ringtone.audioRingtoneUrl().toLocalFile(), property)) {
+        *generatedProperties << property;
+        *processedFields << QContactRingtone::FieldAudioRingtoneUrl;
+    }
 }
 
 /*!
  * Encode thumbnail content into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeThumbnail(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+void QVersitContactExporterPrivate::encodeThumbnail(
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactThumbnail contactThumbnail = static_cast<QContactThumbnail>(detail);
+    QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
     QImage image = contactThumbnail.thumbnail();
     if (image.isNull())
-        return false;
+        return;
     QByteArray imageData;
     QBuffer buffer(&imageData);
     buffer.open(QIODevice::WriteOnly);
     // Always store a pixmap as a PNG.
-    if (!image.save(&buffer, "PNG")) {
-        return false;
-    }
+    if (!image.save(&buffer, "PNG"))
+        return;
     property.setValue(imageData);
     property.insertParameter(QLatin1String("TYPE"), QLatin1String("PNG"));
-    return true;
+    *generatedProperties << property;
+    *processedFields << QContactThumbnail::FieldThumbnail;
 }
 
 /*!
  * Encode avatar URIs into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeAvatar(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+void QVersitContactExporterPrivate::encodeAvatar(
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
+    QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
     QUrl imageUrl(contactAvatar.imageUrl());
@@ -481,9 +590,13 @@ bool QVersitContactExporterPrivate::encodeAvatar(
     if (!imageUrl.scheme().isEmpty() && !imageUrl.host().isEmpty()) {
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
         property.setValue(imageUrl.toString());
-        return true;
+        *generatedProperties << property;
+        *processedFields << QContactAvatar::FieldImageUrl;
     } else {
-        return encodeContentFromFile(contactAvatar.imageUrl().toString(), property);
+        if (encodeContentFromFile(contactAvatar.imageUrl().toString(), property)) {
+            *generatedProperties << property;
+            *processedFields << QContactAvatar::FieldImageUrl;
+        }
     }
 }
 
@@ -491,89 +604,86 @@ bool QVersitContactExporterPrivate::encodeAvatar(
  * Encode gender property information into Versit Document
  */
 void QVersitContactExporterPrivate::encodeGender(
-    QVersitProperty& property,const
-    QContactDetail& detail)
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactGender gender = static_cast<QContactGender>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(gender.gender());
+    *generatedProperties << property;
+    *processedFields << QContactGender::FieldGender;
 }
 
 /*!
  * Encodes nickname property information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeNickname(
-    QVersitDocument& document,
-    const QContactDetail& detail)
+    const QContactDetail &detail,
+    const QVersitDocument& document,
+    QList<QVersitProperty>* removedProperties,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
-    QVersitProperty property;
-    bool found = false;
-    // XXX TODO: ensure it works for both X-NICKNAME and NICKNAME
-    foreach (const QVersitProperty& currentProperty, document.properties()) {
-        if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
-            property = currentProperty;
-            found = true;
-            break;
-        }
-    }
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("X-NICKNAME"), removedProperties);
+    property.setName(QLatin1String("X-NICKNAME"));
     QStringList value(property.variantValue().toStringList());
-    if (!found)
-        property.setName(QLatin1String("X-NICKNAME"));
     value.append(nicknameDetail.nickname());
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
-    // Replace the current property
-    document.removeProperties(QLatin1String("X-NICKNAME"));
-    document.addProperty(property);
+    *generatedProperties << property;
+    *processedFields << QContactNickname::FieldNickname;
 }
 
 /*!
  * Encodes a contact tag into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeTag(
-    QVersitDocument& document,
-    const QContactDetail& detail)
+    const QContactDetail &detail,
+    const QVersitDocument& document,
+    QList<QVersitProperty>* removedProperties,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactTag tagDetail = static_cast<QContactTag>(detail);
-    QVersitProperty property;
-    bool found = false;
-    foreach (const QVersitProperty& currentProperty, document.properties()) {
-        if (currentProperty.name() == QLatin1String("CATEGORIES")) {
-            property = currentProperty;
-            found = true;
-            break;
-        }
-    }
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("CATEGORIES"), removedProperties);
+    property.setName(QLatin1String("CATEGORIES"));
     QStringList value(property.variantValue().toStringList());
-    if (!found)
-        property.setName(QLatin1String("CATEGORIES"));
     value.append(tagDetail.tag());
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
-    // Replace the current property
-    document.removeProperties(QLatin1String("CATEGORIES"));
-    document.addProperty(property);
+    *generatedProperties << property;
+    *processedFields << QContactTag::FieldTag;
 }
 
 /*!
  * Encode anniversary information into Versit Document
  */
 void QVersitContactExporterPrivate::encodeAnniversary(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
+    QVersitProperty property;
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(anniversary.originalDate().toString(Qt::ISODate));
+    *generatedProperties << property;
+    *processedFields << QContactAnniversary::FieldOriginalDate;
 }
 
 /*!
  * Encode online account information into the Versit Document
  */
-bool QVersitContactExporterPrivate::encodeOnlineAccount(
-    QVersitProperty& property,
-    const QContactDetail& detail)
+void QVersitContactExporterPrivate::encodeOnlineAccount(
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
-    bool encoded = false;
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
 
@@ -581,23 +691,26 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
         subTypes.contains(QContactOnlineAccount::SubTypeSipVoip) ||
         subTypes.contains(QContactOnlineAccount::SubTypeVideoShare) ||
         subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
-        encoded = true;
+        QVersitProperty property;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
         QString name(QLatin1String("X-SIP"));
         if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
             name = QLatin1String("X-IMPP");
         property.setName(name);
         property.setValue(onlineAccount.accountUri());
+        *generatedProperties << property;
+        *processedFields << QContactOnlineAccount::FieldSubTypes
+                          << QContactOnlineAccount::FieldAccountUri;
     }
-    return encoded;
 }
 
 /*!
  * Encode family versit property if its supported in Versit Document
  */
-bool QVersitContactExporterPrivate::encodeFamily(
-    QVersitDocument& document,
-    const QContactDetail& detail )
+void QVersitContactExporterPrivate::encodeFamily(
+    const QContactDetail &detail,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
     QContactFamily family = static_cast<QContactFamily>(detail);
 
@@ -605,7 +718,8 @@ bool QVersitContactExporterPrivate::encodeFamily(
         QVersitProperty property;
         property.setName(QLatin1String("X-SPOUSE"));
         property.setValue(family.spouse());
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactFamily::FieldSpouse;
     }
 
     if (family.children().size()) {
@@ -613,47 +727,32 @@ bool QVersitContactExporterPrivate::encodeFamily(
         property.setName(QLatin1String("X-CHILDREN"));
         property.setValue(family.children());
         property.setValueType(QVersitProperty::ListType);
-        document.addProperty(property);
+        *generatedProperties << property;
+        *processedFields << QContactFamily::FieldChildren;
     }
-    return false;
 }
 
 
 /*!
  * Encode family versit property if its supported in Versit Document
  */
-bool QVersitContactExporterPrivate::encodeDisplayLabel(
-    QVersitProperty& property,
-    const QContactDetail& detail,
-    const QContact& contact)
+void QVersitContactExporterPrivate::encodeDisplayLabel(
+    const QContactDetail &detail,
+    const QVersitDocument& document,
+    QList<QVersitProperty>* removedProperties,
+    QList<QVersitProperty>* generatedProperties,
+    QSet<QString>* processedFields)
 {
-    bool encoded = false;
+    // Override any previous FN property
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
+    property.setName(mPropertyMappings.value(detail.definitionName()));
     QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
-    if (displayLabel.label().size()) {
-        encoded = true;
+    if (!displayLabel.label().isEmpty()) {
         property.setValue(displayLabel.label());
-    } else {
-        QContactDetail contactDetail;
-        for (int i = 0; i < contact.details().count(); i++) {
-            contactDetail = contact.details().at(i);
-            if (contactDetail.definitionName() == QContactName::DefinitionName)
-                break;
-        }
-        QContactName name = static_cast<QContactName>(contactDetail);
-        QString value;
-        if (name.customLabel().length()) {
-            value = name.customLabel();
-        } else {
-            value = name.firstName() + QLatin1Char(' ') + name.lastName();
-        }
-        if (name.customLabel().length() ||
-            name.firstName().length() ||
-            name.lastName().length()) {
-            encoded = true;
-            property.setValue(value);
-        }
+        *generatedProperties << property;
+        *processedFields << QContactDisplayLabel::FieldLabel;
     }
-    return encoded;
 }
 
 /*!

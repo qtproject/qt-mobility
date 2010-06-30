@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 
 #include <QtCore/qdebug.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistNullProvider : public QMediaPlaylistProvider
 {
@@ -67,7 +67,7 @@ public:
         :playlist(0),
         currentPos(-1),
         lastValidPos(-1),
-        playbackMode(QMediaPlaylist::Linear),
+        playbackMode(QMediaPlaylist::Sequential),
         randomPositionsOffset(-1)
     {
     }
@@ -105,7 +105,7 @@ int QMediaPlaylistNavigatorPrivate::nextItemPos(int steps) const
             return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylist::Linear:
+        case QMediaPlaylist::Sequential:
             {
                 int nextPos = currentPos+steps;
                 return nextPos < playlist->mediaCount() ? nextPos : -1;
@@ -150,7 +150,7 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
             return /*currentPos == -1 ? lastValidPos :*/ -1;
         case QMediaPlaylist::CurrentItemInLoop:
             return currentPos;
-        case QMediaPlaylist::Linear:
+        case QMediaPlaylist::Sequential:
             {
                 int prevPos = currentPos == -1 ? playlist->mediaCount() - steps : currentPos - steps;
                 return prevPos>=0 ? prevPos : -1;
@@ -194,6 +194,7 @@ int QMediaPlaylistNavigatorPrivate::previousItemPos(int steps) const
     \class QMediaPlaylistNavigator
     \preliminary
     \brief The QMediaPlaylistNavigator class provides navigation for a media playlist.
+    \inmodule QtMultimediaKit
 
     \sa QMediaPlaylist, QMediaPlaylistProvider
 */
@@ -539,5 +540,5 @@ void QMediaPlaylistNavigatorPrivate::_q_mediaChanged(int start, int end)
 */
 
 #include "moc_qmediaplaylistnavigator.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

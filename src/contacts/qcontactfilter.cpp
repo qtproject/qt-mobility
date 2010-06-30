@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,8 @@
   \brief The QContactFilter class is used to select contacts made available
   through a QContactManager.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class is used as a parameter to various functions offered by QContactManager, to allow

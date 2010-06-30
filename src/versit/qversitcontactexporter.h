@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,23 @@ public:
                                    const QContactDetail& detail,
                                    bool alreadyProcessed,
                                    QVersitDocument* document) = 0;
+
+};
+
+class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
+{
+public:
+    static QVersitContactExporterDetailHandlerV2* createBackupHandler();
+    virtual ~QVersitContactExporterDetailHandlerV2() {}
+    virtual void detailProcessed(const QContact& contact,
+                                 const QContactDetail& detail,
+                                 const QSet<QString>& processedFields,
+                                 const QVersitDocument& document,
+                                 QList<QVersitProperty>* toBeRemoved,
+                                 QList<QVersitProperty>* toBeAdded) = 0;
+    virtual void contactProcessed(const QContact& contact,
+                                  QVersitDocument* document) = 0;
+    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter
@@ -79,16 +96,21 @@ public:
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    bool exportContacts(const QList<QContact>& contacts,
-        QVersitDocument::VersitType versitType);
+    bool exportContacts(const QList<QContact>& contacts, QVersitDocument::VersitType versitType);
     QList<QVersitDocument> documents() const;
     QMap<int, Error> errors() const;
 
-    void setDetailHandler(QVersitContactExporterDetailHandler* handler);
-    QVersitContactExporterDetailHandler* detailHandler() const;
+    void setDetailHandler(QVersitContactExporterDetailHandlerV2* handler);
 
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
+
+    // Deprecated:
+
+    void Q_DECL_DEPRECATED setDetailHandler(QVersitContactExporterDetailHandler* handler);
+    QList<QVersitDocument> Q_DECL_DEPRECATED exportContacts(const QList<QContact>& contacts);
+    /* deprecated and internal */
+    Q_DECL_DEPRECATED QVersitContactExporterDetailHandler* detailHandler() const;
 
 private:
     QVersitContactExporterPrivate* d;

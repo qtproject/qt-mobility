@@ -97,7 +97,8 @@ public:
     ~CntSymbianSimEngineData();
     
     CntSimStore *m_simStore;
-    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;    
+    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;
+    int m_phoneNumberMatchLen;
 };
 
 class CntSymbianSimEngine : public QContactManagerEngine
@@ -111,33 +112,13 @@ public:
 
     QString managerName() const;
 
-    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
     int managerVersion() const { return 1;}
 
     /* Defaulted functions - XXX check*/
-    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
-    bool validateContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::validateContact(contact, error);}
-    bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const {return QContactManagerEngine::validateDefinition(def, error);}
-    QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const  {return QContactManagerEngine::detailDefinition(definitionId, contactType, error);}
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error) {return QContactManagerEngine::saveDetailDefinition(def, contactType, error);}
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error)  {return QContactManagerEngine::removeDetailDefinition(definitionId, contactType, error);}
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
+    QList<QVariant::Type> supportedDataTypes() const
     {
-        return QContactManagerEngine::relationships(relationshipType, participantId, role, error);
+        return QContactManagerEngine::supportedDataTypes();
     }
-    bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-    {
-        return QContactManagerEngine::saveRelationships(relationships, errorMap, error);
-    }
-    bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-    {
-        return QContactManagerEngine::removeRelationships(relationships, errorMap, error);
-    }
-    bool isRelationshipTypeSupported(const QString&, const QString&) const  {return false;}
-    bool isFilterSupported(const QContactFilter&) const {return false;}
-    QList<QVariant::Type> supportedDataTypes() const {return QContactManagerEngine::supportedDataTypes();}
-    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error) {return QContactManagerEngine::setSelfContactId(contactId, error);}
-    QContactLocalId selfContactId(QContactManager::Error* error) const {return QContactManagerEngine::selfContactId(error);}
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
@@ -161,15 +142,18 @@ public:
     
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QStringList supportedContactTypes() const;
 
 public:
     void updateDisplayLabel(QContact& contact) const;
     CntSimStore* simStore() { return d->m_simStore; }
     void setReadOnlyAccessConstraint(QContactDetail* detail) const;
+    bool filter(const QContactFilter &filter, const QContact &contact);
 
 private:
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error* qtError) const;
+    void getMatchLengthL(int &matchLength);
 
 private:
     QExplicitlySharedDataPointer<CntSymbianSimEngineData> d;

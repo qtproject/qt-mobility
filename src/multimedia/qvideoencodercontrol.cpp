@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,29 +43,29 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoEncoderControl
     \preliminary
-    \ingroup multimedia-serv
+    \inmodule QtMultimediaKit
+    \ingroup multimedia
 
     \brief The QVideoEncoderControl class provides access to the settings
     of a media service that performs video encoding.
 
     If a QMediaService supports encoding video data it will implement
-    QVideoEncoderControl.  This control provides information about the
-    limits of restricted video encoder options and allows the selection of
-    a set of video encoder settings as specificed in a QVideoEncoderSettings
-    object.
+    QVideoEncoderControl.  This control provides information about the limits
+    of restricted video encoder options and allows the selection of a set of
+    video encoder settings as specified in a QVideoEncoderSettings object.
 
-    The functionality provided by this control is exposed to application
-    code through the QMediaRecorder class.
+    The functionality provided by this control is exposed to application code
+    through the QMediaRecorder class.
 
     The interface name of QVideoEncoderControl is \c com.nokia.Qt.QVideoEncoderControl/1.0 as
     defined in QVideoEncoderControl_iid.
 
-    \sa QMediaRecorder, QVideoEncoderSettings, QMediaService::control()
+    \sa QMediaRecorder, QVideoEncoderSettings, QMediaService::requestControl()
 */
 
 /*!
@@ -172,5 +172,5 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 #include "moc_qvideoencodercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

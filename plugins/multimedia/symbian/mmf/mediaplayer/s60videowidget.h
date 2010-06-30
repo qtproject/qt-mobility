@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,33 @@
 #ifndef S60VIDEOWIDGET_H
 #define S60VIDEOWIDGET_H
 
-#include <QVideoWidgetControl>
+#include <qvideowidgetcontrol.h>
 #include <qmediaplayer.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-class QBlackWidget : public QWidget
+class QAbstractVideoWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    QAbstractVideoWidget(QWidget *parent = 0);
+    virtual ~QAbstractVideoWidget();
+};
+
+class QBlackSurface : public QAbstractVideoWidget
+{
+    Q_OBJECT
+
+public:
+    QBlackSurface(QWidget *parent = 0);
+    virtual ~QBlackSurface();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+};
+
+class QBlackWidget : public QAbstractVideoWidget
 {
     Q_OBJECT
     
@@ -89,15 +110,19 @@ public:
     void setHue(int hue);
     int saturation() const;
     void setSaturation(int saturation);
-
     // from QObject
     bool eventFilter(QObject *object, QEvent *event);
 
     //new methods
     WId videoWidgetWId();
+    QSize videoWidgetSize();
+
+private:
+    void initializeVideoOutput();
     
 signals:
     void widgetUpdated();
+    void widgetResized();
     void beginVideoWindowNativePaint();
     void endVideoWindowNativePaint();
     
@@ -105,8 +130,9 @@ private slots:
     void videoStateChanged(QMediaPlayer::State state);
     
 private:
-    QBlackWidget *m_widget;
+    QAbstractVideoWidget *m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
+    bool m_fullScreenEnabled;
 };
 
 #endif // S60VIDEOWIDGET_H

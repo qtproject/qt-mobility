@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,13 +44,11 @@
 
 #include <qmediaservice.h>
 
-#include "qgstreamervideooutputcontrol.h"
-
 #include <gst/gst.h>
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QAudioEndpointSelector;
 class QVideoDeviceControl;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
@@ -71,10 +69,8 @@ public:
     QGstreamerCaptureService(const QString &service, QObject *parent = 0);
     virtual ~QGstreamerCaptureService();
 
-    QMediaControl *control(const char *name) const;
-
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *);
 
 private:
     void setAudioPreview(GstElement*);
@@ -86,7 +82,8 @@ private:
     QAudioEndpointSelector *m_audioInputEndpointSelector;
     QVideoDeviceControl *m_videoInputDevice;
 
-    QGstreamerVideoOutputControl *m_videoOutput;
+    QMediaControl *m_videoOutput;
+
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
     QGstreamerVideoOverlay *m_videoWindow;

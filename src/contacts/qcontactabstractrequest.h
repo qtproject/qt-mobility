@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,9 +54,9 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractRequest() {}
     ~QContactAbstractRequest();
 
+    QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
     enum State {
         InactiveState = 0,   // operation not yet started
         ActiveState,         // operation started, not yet finished
@@ -104,12 +104,14 @@ Q_SIGNALS:
     void resultsAvailable();
 
 protected:
-    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
+    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent = 0);
     QContactAbstractRequestPrivate* d_ptr;
 
 private:
+    QContactAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
+    friend class QContactAbstractRequestPrivate;
 };
 
 QTM_END_NAMESPACE

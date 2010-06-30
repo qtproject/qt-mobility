@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: serviceactions.pro Example File (serviceactions/serviceactions.pro)</title>
+  <title>Qt Mobility Project 1.1: serviceactions.pro Example File (serviceactions/serviceactions.pro)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -18,7 +18,7 @@
 
     QT += gui
 
-    include(../examples.pri)
+    include(../demos.pri)
 
     CONFIG += mobility
     MOBILITY = messaging
@@ -26,8 +26,8 @@
 
     symbian|win32|wince*|maemo5|mac {
     } else {
-    # Temporarily link against local qtopiamail lib (should be part of the platform)
-    LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+        # Temporarily link against local qtopiamail lib (should be part of the platform)
+        LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
     }
 
     HEADERS += \
@@ -48,8 +48,8 @@
         WriteDeviceData</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

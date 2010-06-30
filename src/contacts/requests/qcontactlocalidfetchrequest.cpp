@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,19 +54,32 @@ QTM_BEGIN_NAMESPACE
   manager-local contact ids (which may be retrieved by calling ids()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact id fetch request */
-QContactLocalIdFetchRequest::QContactLocalIdFetchRequest()
-    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate)
+/*! Constructs a new contact id fetch request whose parent is the specified \a parent */
+QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
 void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactLocalIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -75,6 +88,7 @@ void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 void QContactLocalIdFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactLocalIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -82,6 +96,7 @@ void QContactLocalIdFetchRequest::setSorting(const QList<QContactSortOrder>& sor
 QContactFilter QContactLocalIdFetchRequest::filter() const
 {
     Q_D(const QContactLocalIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -89,6 +104,7 @@ QContactFilter QContactLocalIdFetchRequest::filter() const
 QList<QContactSortOrder> QContactLocalIdFetchRequest::sorting() const
 {
     Q_D(const QContactLocalIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -96,6 +112,7 @@ QList<QContactSortOrder> QContactLocalIdFetchRequest::sorting() const
 QList<QContactLocalId> QContactLocalIdFetchRequest::ids() const
 {
     Q_D(const QContactLocalIdFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_ids;
 }
 

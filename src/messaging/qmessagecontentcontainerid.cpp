@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
     \class QMessageContentContainerId
     \ingroup messaging
 
-    \preliminary
     \brief The QMessageContentContainerId class provides a unique identifier for 
     QMessageContentContainer internet media (MIME) type entities, within the scope of the
     containing message.

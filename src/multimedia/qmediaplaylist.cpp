@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,14 +56,15 @@
 
 #include "qmediapluginloader_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
-        (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
+        (QMediaPlaylistIOInterface_iid, QLatin1String("playlistformats"), Qt::CaseInsensitive))
 
 
 /*!
     \class QMediaPlaylist
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -71,6 +72,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     QMediaPlaylist is intended to be used with other media objects,
     like QMediaPlayer or QMediaImageViewer.
+
     QMediaPlaylist allows to access the service intrinsic playlist functionality
     if available, otherwise it provides the the local memory playlist implementation.
 
@@ -78,18 +80,19 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
     playlist->append(QUrl("http://example.com/movie1.mp4"));
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
 
     playlist->setCurrentIndex(1);
 
+    player->setPlaylist(playlist);
+
     player->play();
 \endcode
 
-    Depending on playlist source implementation,
-    most of playlist modifcation operations can be asynchronous.
+    Depending on playlist source implementation, most of the playlist mutating
+    operations can be asynchronous.
 
     \sa QMediaContent
 */
@@ -102,12 +105,12 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     \value CurrentItemOnce    The current item is played only once.
 
-    \value CurrentItemInLoop  The current item is played in the loop.
+    \value CurrentItemInLoop  The current item is played repeatedly in a loop.
 
-    \value Linear             Playback starts from the first to the last items and stops.
-                              next item is a null item when the last one is currently playing.
+    \value Sequential         Playback starts from the current and moves through each successive item until the last is reached and then stops.
+                              The next item is a null item when the last one is currently playing.
 
-    \value Loop               Playback continues from the first item after the last one finished playing.
+    \value Loop               Playback restarts at the first item after the last has finished playing.
 
     \value Random             Play items in random order.
 */
@@ -144,21 +147,26 @@ QMediaPlaylist::~QMediaPlaylist()
     delete d_ptr;
 }
 
+/*!
+  Returns the QMediaObject instance that this QMediaPlaylist is bound too,
+  or 0 otherwise.
+*/
 QMediaObject *QMediaPlaylist::mediaObject() const
 {
     return d_func()->mediaObject;
 }
 
 /*!
+  \internal
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
 */
-void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
+bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
 {
     Q_D(QMediaPlaylist);
 
     if (mediaObject && mediaObject == d->mediaObject)
-        return;
+        return true;
 
     QMediaService *service = mediaObject
             ? mediaObject->service() : 0;
@@ -166,7 +174,7 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
     QMediaPlaylistControl *newControl = 0;
 
     if (service)
-        newControl = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
+        newControl = qobject_cast<QMediaPlaylistControl*>(service->requestControl(QMediaPlaylistControl_iid));
 
     if (!newControl)
         newControl = d->localPlaylistControl;
@@ -193,6 +201,9 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
                     this, SIGNAL(currentIndexChanged(int)));
             disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SIGNAL(currentMediaChanged(QMediaContent)));
+
+            if (d->mediaObject)
+                d->mediaObject->service()->releaseControl(d->control);
         }
 
         d->control = newControl;
@@ -224,12 +235,9 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
         }
     }
 
-    if (d->mediaObject)
-        d->mediaObject->unbind(this);
-
     d->mediaObject = mediaObject;
-    if (d->mediaObject)
-        d->mediaObject->bind(this);
+
+    return true;
 }
 
 /*!
@@ -252,7 +260,7 @@ void QMediaPlaylist::setPlaybackMode(QMediaPlaylist::PlaybackMode mode)
 }
 
 /*!
-  Returns position of the current media source in the playlist.
+  Returns position of the current media content in the playlist.
 */
 int QMediaPlaylist::currentIndex() const
 {
@@ -269,7 +277,7 @@ QMediaContent QMediaPlaylist::currentMedia() const
 }
 
 /*!
-  Returns the index of item, which were current after calling next()
+  Returns the index of the item, which would be current after calling next()
   \a steps times.
 
   Returned value depends on the size of playlist, current position
@@ -283,7 +291,7 @@ int QMediaPlaylist::nextIndex(int steps) const
 }
 
 /*!
-  Returns the index of item, which were current after calling previous()
+  Returns the index of the item, which would be current after calling previous()
   \a steps times.
 
   \sa QMediaPlaylist::playbackMode
@@ -307,6 +315,7 @@ int QMediaPlaylist::mediaCount() const
 
 /*!
   Returns true if the playlist contains no items; otherwise returns false.
+
   \sa size()
   */
 bool QMediaPlaylist::isEmpty() const
@@ -316,6 +325,7 @@ bool QMediaPlaylist::isEmpty() const
 
 /*!
   Returns true if the playlist can be modified; otherwise returns false.
+
   \sa size()
   */
 bool QMediaPlaylist::isReadOnly() const
@@ -335,7 +345,7 @@ QMediaContent QMediaPlaylist::media(int index) const
 /*!
   Append the media \a content to the playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise return false.
   */
 bool QMediaPlaylist::addMedia(const QMediaContent &content)
 {
@@ -345,7 +355,7 @@ bool QMediaPlaylist::addMedia(const QMediaContent &content)
 /*!
   Append multiple media content \a items to the playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise return false.
   */
 bool QMediaPlaylist::addMedia(const QList<QMediaContent> &items)
 {
@@ -377,7 +387,7 @@ bool QMediaPlaylist::insertMedia(int pos, const QList<QMediaContent> &items)
 /*!
   Remove the item from the playlist at position \a pos.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise return false.
   */
 bool QMediaPlaylist::removeMedia(int pos)
 {
@@ -386,9 +396,9 @@ bool QMediaPlaylist::removeMedia(int pos)
 }
 
 /*!
-  Remove the items from the playlist from position \a start to \a end inclusive.
+  Remove items in the playlist from \a start to \a end inclusive.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise return false.
   */
 bool QMediaPlaylist::removeMedia(int start, int end)
 {
@@ -399,7 +409,7 @@ bool QMediaPlaylist::removeMedia(int start, int end)
 /*!
   Remove all the items from the playlist.
 
-  Returns true if the operation is successfull, other wise return false.
+  Returns true if the operation is successful, otherwise return false.
   */
 bool QMediaPlaylist::clear()
 {
@@ -431,7 +441,7 @@ bool QMediaPlaylistPrivate::writeItems(QMediaPlaylistWriter *writer)
 
   New items are appended to playlist.
 
-  QMediaPlaylist::loaded() signal is emited if playlist was loaded succesfully,
+  QMediaPlaylist::loaded() signal is emitted if playlist was loaded successfully,
   otherwise the playlist emits loadFailed().
 */
 void QMediaPlaylist::load(const QUrl &location, const char *format)
@@ -477,7 +487,7 @@ void QMediaPlaylist::load(const QUrl &location, const char *format)
 
   New items are appended to playlist.
 
-  QMediaPlaylist::loaded() signal is emited if playlist was loaded succesfully,
+  QMediaPlaylist::loaded() signal is emitted if playlist was loaded successfully,
   otherwise the playlist emits loadFailed().
 */
 void QMediaPlaylist::load(QIODevice * device, const char *format)
@@ -521,7 +531,7 @@ void QMediaPlaylist::load(QIODevice * device, const char *format)
   Save playlist to \a location. If \a format is specified, it is used,
   otherwise format is guessed from location name.
 
-  Returns true if playlist was saved succesfully, otherwise returns false.
+  Returns true if playlist was saved successfully, otherwise returns false.
   */
 bool QMediaPlaylist::save(const QUrl &location, const char *format)
 {
@@ -547,7 +557,7 @@ bool QMediaPlaylist::save(const QUrl &location, const char *format)
 /*!
   Save playlist to QIODevice \a device using format \a format.
 
-  Returns true if playlist was saved succesfully, otherwise returns false.
+  Returns true if playlist was saved successfully, otherwise returns false.
 */
 bool QMediaPlaylist::save(QIODevice * device, const char *format)
 {
@@ -663,13 +673,13 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 /*!
     \fn void QMediaPlaylist::mediaAboutToBeInserted(int start, int end)
 
-    Signal emitted when item to be inserted at \a start and ending at \a end.
+    Signal emitted when items are to be inserted at \a start and ending at \a end.
 */
 
 /*!
     \fn void QMediaPlaylist::mediaAboutToBeRemoved(int start, int end)
 
-    Signal emitted when item to de deleted ar \a start and ending at \a end.
+    Signal emitted when item are to be deleted at \a start and ending at \a end.
 */
 
 /*!
@@ -714,5 +724,5 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 
 #include "moc_qmediaplaylist.cpp"
 #include "moc_qmediaplaylist_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

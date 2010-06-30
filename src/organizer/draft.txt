@@ -1,0 +1,137 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*
+ * This document contains a draft proposal for the calendar API.
+ */
+
+// manages calendars; c.f. QContactManager
+QCalendarManager
+{
+
+};
+
+// a calendar consists of a series of related items, or items
+// which concern a particular context; c.f. QContact
+QCalendar
+{
+
+};
+
+// a calendar manager may support different types of items,
+// which may contain different types of information;
+// c.f. QContactDetailDefinition
+QCalendarItemDefinition
+{
+
+};
+
+// a calendar item contains details of an event or note or
+// appointment etc, which is valid for a particular context;
+// c.f. QContactDetail?
+QCalendarItem
+{
+
+};
+
+// fetch a calendar or calendars; c.f. QContactFetchRequest
+QCalendarFetchRequest
+{
+
+};
+
+// this is a departure from QContact API
+// Get any item (regardless of which calendar it's part of) that matches the criteria
+// eg: get me any events/items which are for "week 26" regardless of which calendar..
+// QUESTION: per-user calendars?  Do we need to link them to a particular contact?  Or..?
+QCalendarItemFetchRequest
+{
+
+};
+
+/*----------------------------------------------------------------
+
+Open questions:
+1) How can we allow use of different calendar systems (Gregorian vs Chinese vs Lunar vs..)
+2) How can we allow migration of items (invitation -> event -> note -> journal -> ... )
+    -> what is the difference between them from our point of view?
+    -> do we need a QCalendarItem::Type?  which is mutable..?
+    -> are the (possible) fields of an item determined by the item's type?
+3) Do we want to allow aggregation of calendars?
+    -> eg, have two calendars "2010 Judo Calendar", "2010 Social Calendar"
+        - first lists competition dates, training days, etc
+        - second lists birthday parties, weddings, etc
+        -> want to be able to create a "master calendar" by saying "aggregate these two and show me the clashes"
+            - then manually resolve (mark a competition as "Not Going To Attend (have wedding to attend instead)")
+    -> is this a UI issue as opposed to a calendar issue? 
+        -> if so, need a way to mark a calendar item as "visible but not attending"...
+        -> what possible states of attendance do we want?
+            - attending
+            - possibly attending <--- default?
+            - not attending
+        -> maybe we want priorities?
+            - must attend
+            - should attend
+            - maybe attend
+            - probably won't attend
+            - won't attend
+        -> is prioritisation different to attendance?
+            - furthermore, want to be able to store _past_ items
+            - so, "attended" and "didn't attend" and "partially attended"
+4) recurrence
+    -> how can we say that an item is a recurrent event?
+    -> how much flexibility do we want?
+    -> how does recurrence relate to marking an item as "attended"
+        -> eg, lets say we have a recurrent "Tuesday Night: Judo Training" item
+            - I attended last week, but this week I was injured, so missed it.
+            - how do we save this information?
+            - do we save this information?  maybe we cannot?
+            - do we "autogenerate" the items as they occur?
+                - ie, while it hasn't happened yet, it's the recurrent item, after it passes, a new (old/finished) item is created..?
+5) Can calendar items be shared between calendars?
+    -> does it make sense?
+    -> what about QContact - two people living together, the detail isn't shared, it's duplicated
+        -> this can lead to problems (update one information but not the other, seems like they don't live together any more..?)
+        -> but simpler to implement..
+6) Supported "types" of calendar items
+    -> dynamically registerable via the item definitions, hopefully.
+    -> invitiation, event, reminder, ToDo, note, ..?  what else?
+*/

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,12 +45,13 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
     \preliminary
     \brief The QMediaResource class provides a description of a media resource.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     A media resource is composed of a \l {url()}{URL} containing the
@@ -393,5 +394,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

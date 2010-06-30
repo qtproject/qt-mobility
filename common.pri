@@ -88,12 +88,19 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            VERSION = 1.1.0
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -150,11 +157,19 @@ wince* {
     LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
+
+    ### Landmarks
+    LANDMARKS.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLandmarks).dll
+    LANDMARKS.path = .
+    DEPLOYMENT += LANDMARKS
 }
 
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
@@ -165,7 +180,9 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,15 +42,27 @@
 #ifndef QGEOAREAMONITORMAEMO_H
 #define QGEOAREAMONITORMAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeoareamonitor.h"
 #include "qgeopositioninfosource.h"
 
-extern "C" {
-    // The following include is needed since liblocation v. 0.102 has a bug in 
+extern "C"
+{
+    // The following include is needed since liblocation v. 0.102 has a bug in
     // location-distance-utils.h
-    #include <glib-object.h>
-    
-    #include <location/location-distance-utils.h>
+#include <glib-object.h>
+
+#include <location/location-distance-utils.h>
 }
 
 QTM_BEGIN_NAMESPACE

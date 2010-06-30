@@ -1,0 +1,53 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//
+PRINT Run all CntPerfTests
+//
+LOAD_SUITE CntPerfTestServer
+//
+#
+RUN_SCRIPT c:\CntPerfTest\scripts\CustomLabelUid.script
+RUN_SCRIPT c:\CntPerfTest\scripts\UnifiedSingular.script
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81116
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-HW-P81116
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc ViewDef tests where contact item is opened/read ViewDefs containing,
+//! KUidContactFieldMatchAll only
+//! @SYMTestActions Open and read a contact using the default ViewDefs. 
+//! then read and minimally read a contact using ViewDef X containing the KUidContactFieldMatchAll uid.
+//! store the number of hidden/non-hidden and empty/non-empty fields after each read/open,
+//! repeat test 4 times so that X excludes/includes all possible combination of fields
+//! @SYMTestExpectedResults Check that the values match the expected results as constrained by the fields that are excluded / included within the ViewDef.
+RUN_TEST_STEP 100 CntPerfTestServer ViewDefAllFieldsTest
+RUN_TEST_STEP 100 CntPerfTestServer SimpleViewDefTests
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-HW-P81116
+
+RUN_SCRIPT c:\CntPerfTest\scripts\CustomTemplateTest.script 
+RUN_SCRIPT c:\CntPerfTest\scripts\AccessCountTests.script 
+RUN_SCRIPT c:\CntPerfTest\scripts\ViewDefAnyFieldsTest.script 
+RUN_SCRIPT c:\CntPerfTest\scripts\ViewDefCustomFieldsTestHW.script 
+RUN_SCRIPT c:\CntPerfTest\scripts\ContactViewTest.script 
+RUN_SCRIPT c:\cntviewtest\scripts\TestContactViewSuite.script
+RUN_SCRIPT c:\cntviewtest\scripts\TestContactViewUnderBackUpRestoreStep.Script
+RUN_SCRIPT c:\cntviewtest\scripts\TestContactViewUnderlyingViewUpdateStep.Script
+RUN_SCRIPT c:\cntviewtest\scripts\TestContactViewCRUDOperationsStep.Script
+
+
+

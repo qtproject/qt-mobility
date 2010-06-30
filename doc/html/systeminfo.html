@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- si.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: System Information</title>
+  <title>Qt Mobility Project 1.1: System Information</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,6 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">System Information<br /><span class="subtitle"></span>
 </h1>
 <ul><li><a href="#system-information">System Information</a></li>
+<li><a href="#namespace">Namespace</a></li>
 <li><a href="#overview">Overview</a></li>
 <ul><li><a href="#information-categories">Information Categories</a></li>
 <ul><li><a href="#version">Version</a></li>
@@ -27,8 +28,8 @@
 </ul>
 </ul>
 <li><a href="#building-and-compiling">Building and compiling</a></li>
-<li><a href="#reference-documentation">Reference documentation</a></li>
-<ul><li><a href="#examples">Examples</a></li>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#system-information-example">System Information Example</a></li>
 </ul>
 </ul>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
@@ -42,6 +43,9 @@
 <a name="system-information"></a>
 <h3>System Information</h3>
 <p>The System Information API provides a set of APIs to discover system related information and capabilities.</p>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>The System Information API returns the system information related to a number of categories.</p>
@@ -52,7 +56,7 @@
 <p>Contains version information for a range of supporting software on the device. For example, from the Operating System and Firmware to the version of WebKit, Qt and the Service Framework.</p>
 <a name="features-hardware"></a>
 <h5>Features (hardware)</h5>
-<p>This lists the supported hardware on the device. Feautures include items such as the camera, bluetooth, GPS, fm radio etc.</p>
+<p>This lists the supported hardware on the device. Features include items such as the camera, bluetooth, GPS, FM radio etc.</p>
 <a name="network"></a>
 <h5>Network</h5>
 <p>The state of the network connection, and also the type of network e.g&#x2e; gsm, cdma, ethernet etc.</p>
@@ -79,19 +83,15 @@
 <p>Linux supports a NetworkManager based backend and generic backend using <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> only. By default the generic backend is selected. If the NetworkManager backend is required run qmake as follows:</p>
 <pre>    qmake BACKEND=NetworkManager</pre>
 <p>The backend selection is expected to disappear once the API is integrated into Qt.</p>
-<a name="reference-documentation"></a>
-<h3>Reference documentation</h3>
 <a name="examples"></a>
-<h4>Examples</h4>
-<ul>
-<li><a href="filemanagerplugin.html">File Manager Plugin Example</a></li>
-<li><a href="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</a></li>
-<li><a href="servicebrowser.html">Service Browser Example</a></li>
-</ul>
+<h3>Examples</h3>
+<a name="system-information-example"></a>
+<h4>System Information Example</h4>
+<p>The <a href="sysinfo.html">System Information</a> example demonstrates how an application can very easily access the system information of the device.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,16 +49,18 @@
 #include <QtCore/qqueue.h>
 #include <QtCore/qpointer.h>
 #include <QtCore/qwaitcondition.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
-#include <QtMultimedia/qvideoframe.h>
-#include <QtMultimedia/qabstractvideobuffer.h>
+#include <qvideosurfaceformat.h>
+#include <qvideoframe.h>
+#include <qabstractvideobuffer.h>
 
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 class QGstXvImageBuffer;
 class QGstXvImageBufferPool;
+#endif
 
 class QVideoSurfaceGstDelegate : public QObject
 {
@@ -133,7 +135,11 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
+
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     QGstXvImageBufferPool *pool;
+#endif
+
     GstCaps *lastRequestedCaps;
     GstCaps *lastBufferCaps;
     QVideoSurfaceFormat *lastSurfaceFormat;

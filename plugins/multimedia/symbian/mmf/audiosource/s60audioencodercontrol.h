@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,10 +42,11 @@
 #ifndef AUDIOENCODERCONTROL_H
 #define AUDIOENCODERCONTROL_H
 
-#include <QAudioEncoderControl>
+#include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
+#include "qaudioformat.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60AudioCaptureSession;
 
@@ -57,38 +58,25 @@ public:
     virtual ~S60AudioEncoderControl();
 
     QStringList supportedAudioCodecs() const;
-    QString audioCodec() const;
-    bool setAudioCodec(const QString &codecName);
-
     QString codecDescription(const QString &codecName) const;
-
-    int bitRate() const;
-    void setBitRate(int);
-
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality);
-
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
-    int sampleRate() const;
-    void setSampleRate(int sampleRate);
+    
     QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-
-    int channelCount() const;
-    void setChannelCount(int channels);
-    QList<int> supportedChannelCounts() const;
-
-    int sampleSize() const;
-    void setSampleSize(int sampleSize);
-    QList<int> supportedSampleSizes() const;
-
+    
     QAudioEncoderSettings audioSettings() const;
     void setAudioSettings(const QAudioEncoderSettings&);
+    
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
+    
+private:
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
 
 private:
     S60AudioCaptureSession* m_session;
+    QAudioEncoderSettings m_settings;
+    QtMultimediaKit::EncodingQuality m_quality;
 };
 
 #endif

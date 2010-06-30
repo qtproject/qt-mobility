@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,7 +62,11 @@
 
 #include "qpaintervideosurface_p.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QtCore/qpointer.h>
+
+QT_BEGIN_NAMESPACE
+
+class QMediaService;
 
 class QVideoWidgetControlInterface
 {
@@ -99,7 +103,9 @@ class QVideoWidgetControlBackend : public QObject, public QVideoWidgetControlInt
 {
     Q_OBJECT
 public:
-    QVideoWidgetControlBackend(QVideoWidgetControl *control, QWidget *widget);
+    QVideoWidgetControlBackend(QMediaService *service, QVideoWidgetControl *control, QWidget *widget);
+
+    void releaseControl();
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -112,6 +118,7 @@ public:
     void setAspectRatioMode(Qt::AspectRatioMode mode);
 
 private:
+    QMediaService *m_service;
     QVideoWidgetControl *m_widgetControl;
 };
 
@@ -122,9 +129,10 @@ class QRendererVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QRendererVideoWidgetBackend(QVideoRendererControl *control, QWidget *widget);
+    QRendererVideoWidgetBackend(QMediaService *service, QVideoRendererControl *control, QWidget *widget);
     ~QRendererVideoWidgetBackend();
 
+    void releaseControl();
     void clearSurface();
 
     void setBrightness(int brightness);
@@ -159,6 +167,7 @@ private Q_SLOTS:
 private:
     void updateRects();
 
+    QMediaService *m_service;
     QVideoRendererControl *m_rendererControl;
     QWidget *m_widget;
     QPainterVideoSurface *m_surface;
@@ -175,8 +184,10 @@ class QWindowVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget);
+    QWindowVideoWidgetBackend(QMediaService *service, QVideoWindowControl *control, QWidget *widget);
     ~QWindowVideoWidgetBackend();
+
+    void releaseControl();
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -197,6 +208,7 @@ public:
     void paintEvent(QPaintEvent *event);
 
 private:
+    QMediaService *m_service;
     QVideoWindowControl *m_windowControl;
     QWidget *m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
@@ -213,8 +225,7 @@ public:
     QVideoWidgetPrivate()
         : q_ptr(0)
         , mediaObject(0)
-        , service(0)
-        , outputControl(0)
+        , service(0)        
         , widgetBackend(0)
         , windowBackend(0)
         , rendererBackend(0)
@@ -231,9 +242,8 @@ public:
     }
 
     QVideoWidget *q_ptr;
-    QMediaObject *mediaObject;
+    QPointer<QMediaObject> mediaObject;
     QMediaService *service;
-    QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
     QWindowVideoWidgetBackend *windowBackend;
     QRendererVideoWidgetBackend *rendererBackend;
@@ -247,12 +257,14 @@ public:
     Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
+    bool createWidgetBackend();
+    bool createWindowBackend();
+    bool createRendererBackend();
+
     void setCurrentControl(QVideoWidgetControlInterface *control);
-    void show();
     void clearService();
 
     void _q_serviceDestroyed();
-    void _q_mediaObjectDestroyed();
     void _q_brightnessChanged(int brightness);
     void _q_contrastChanged(int contrast);
     void _q_hueChanged(int hue);
@@ -261,6 +273,6 @@ public:
     void _q_dimensionsChanged();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,17 @@
 #ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
 #define QGEOSATELLITEINFOSOURCE_MAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
 #include "dbuscomm_maemo_p.h"
@@ -55,23 +66,26 @@ public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
     int init();
 
-private:
-    DBusComm* dbusComm;
-    int client_id_;
-    void dbusMessages(const QByteArray &msg);
-
-public slots:
-    virtual void startUpdates();
+public Q_SLOTS:
+    void startUpdates();
     void stopUpdates();
-
     void requestUpdate(int timeout = 5000);
 
-signals:
+Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
 
+private Q_SLOTS:
+    void newSatellitesInView(const QList<QGeoSatelliteInfo> &update);
+    void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
+    void onServiceDisconnect();
+    void onServiceConnect();
+
 private:
+    DBusComm* dbusComm;
+    bool registered;
+    bool running;
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 

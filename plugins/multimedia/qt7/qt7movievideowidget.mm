@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,7 +63,7 @@
 
 #include "math.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class GLVideoWidget : public QGLWidget
 {
@@ -80,7 +80,8 @@ public:
 
     void initializeGL()
     {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        QColor bgColor = palette().color(QPalette::Background);
+        glClearColor(bgColor.redF(), bgColor.greenF(), bgColor.blueF(), bgColor.alphaF());
     }
 
     void resizeGL(int w, int h)
@@ -206,7 +207,6 @@ QT7MovieVideoWidget::QT7MovieVideoWidget(QObject *parent)
     }
 }
 
-
 bool QT7MovieVideoWidget::createVisualContext()
 {
 #ifdef QUICKTIME_C_API_AVAILABLE
@@ -218,7 +218,19 @@ bool QT7MovieVideoWidget::createVisualContext()
     CGLPixelFormatObj cglPixelFormat = static_cast<CGLPixelFormatObj>([nsglPixelFormat CGLPixelFormatObj]);
 
     CFTypeRef keys[] = { kQTVisualContextOutputColorSpaceKey };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = NULL;
+    CMProfileRef sysprof = NULL;
+
+    // Get the Systems Profile for the main display
+    if (CMGetSystemProfile(&sysprof) == noErr) {
+        // Create a colorspace with the systems profile
+        colorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
+        CMCloseProfile(sysprof);
+    }
+
+    if (!colorSpace)
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+
     CFDictionaryRef textureContextAttributes = CFDictionaryCreate(kCFAllocatorDefault,
                                                                   (const void **)keys,
                                                                   (const void **)&colorSpace, 1,
@@ -263,7 +275,7 @@ void QT7MovieVideoWidget::setupVideoOutput()
         return;
     }
 
-    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieCurrentSizeAttribute"] sizeValue];
+    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
     m_nativeSize = QSize(size.width, size.height);
     m_videoWidget->setNativeSize(m_nativeSize);
 
@@ -273,10 +285,6 @@ void QT7MovieVideoWidget::setupVideoOutput()
 #endif
 
     m_displayLink->start();
-}
-
-void QT7MovieVideoWidget::setEnabled(bool)
-{
 }
 
 void QT7MovieVideoWidget::setMovie(void *movie)
@@ -295,6 +303,14 @@ void QT7MovieVideoWidget::setMovie(void *movie)
     [(QTMovie*)m_movie retain];
 
     setupVideoOutput();
+}
+
+void QT7MovieVideoWidget::updateNaturalSize(const QSize &newSize)
+{
+    if (m_nativeSize != newSize) {
+        m_nativeSize = newSize;
+        setupVideoOutput();
+    }
 }
 
 bool QT7MovieVideoWidget::isFullScreen() const

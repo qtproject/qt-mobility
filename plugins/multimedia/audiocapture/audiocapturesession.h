@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,11 +49,11 @@
 #include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
-#include <QtMultimedia/qaudioformat.h>
-#include <QtMultimedia/qaudioinput.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudioformat.h>
+#include <qaudioinput.h>
+#include <qaudiodeviceinfo.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureSession : public QObject
 {

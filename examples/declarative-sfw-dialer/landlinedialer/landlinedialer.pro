@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../../src/serviceframework
+PLUGIN_TYPE = serviceframework
 TARGET = serviceframework_landlinedialerservice
 include(../../examples.pri)
 
@@ -14,11 +15,9 @@ CONFIG += mobility
 MOBILITY = serviceframework
 
 symbian {
-    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData UserEnvironment WriteUserData
+    TARGET.CAPABILITY = ALL -TCB
 }
 
-xml.path = $$DESTDIR/xmldata
-xml.files = ../landlinedialerservice.xml
-xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
+xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
+xml.files = landlinedialerservice.xml
 INSTALLS += xml
-build_pass:ALL_DEPS+=install_xml

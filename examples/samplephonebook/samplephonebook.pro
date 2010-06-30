@@ -18,7 +18,7 @@ INCLUDEPATH += . \
 CONFIG += mobility
 MOBILITY = contacts
 contains(mobility_modules,versit) {
-    MOBILITY += versit
+    MOBILITY += versit organizer
     DEFINES += BUILD_VERSIT
 }
 
@@ -35,8 +35,5 @@ HEADERS += phonebook.h \
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData \
-                        SwEvent
+                        WriteUserData
 }

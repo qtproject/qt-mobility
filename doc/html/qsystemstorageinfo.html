@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qsysteminfo.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QSystemStorageInfo Class Reference</title>
+  <title>Qt Mobility Project 1.1: QSystemStorageInfo Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -48,6 +48,15 @@
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemstorageinfo.html#logicalDrivesChanged">logicalDrivesChanged</a></b> ( bool <i>added</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -59,7 +68,6 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
@@ -89,12 +97,17 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/clm/QSystemStorageInfo/logicalDrives"></a>
+<a name="//apple_ref/cpp/instm/QSystemStorageInfo/logicalDrivesChanged"></a>
 <h3 class="fn"><a name="logicalDrives-prop"></a>logicalDrives : const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
 <p>This property holds the logical drives.</p>
 <p>Returns a <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> of volumes or partitions.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>logicalDrives</b> ()</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemstorageinfo.html#logicalDrivesChanged">logicalDrivesChanged</a></b> ( bool <i>added</i> )</td></tr>
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -107,6 +120,8 @@
 <a name="//apple_ref/cpp/instm/QSystemStorageInfo/availableDiskSpace"></a>
 <h3 class="fn"><a name="availableDiskSpace"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qlonglong-typedef">qlonglong</a> QSystemStorageInfo::availableDiskSpace ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>volumeDrive</i> )</h3>
 <p>Returns the amount of available free space on the <i>volumeDrive</i>, in bytes.</p>
+<a name="//apple_ref/cpp/instm/QSystemStorageInfo/logicalDrivesChanged"></a>
+<h3 class="fn"><a name="logicalDrivesChanged"></a>void QSystemStorageInfo::logicalDrivesChanged ( bool <i>added</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QSystemStorageInfo/totalDiskSpace"></a>
 <h3 class="fn"><a name="totalDiskSpace"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qlonglong-typedef">qlonglong</a> QSystemStorageInfo::totalDiskSpace ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>volumeDrive</i> )</h3>
 <p>Returns the amount of total space on the <i>volumeDrive</i>, in bytes.</p>
@@ -115,8 +130,8 @@
 <p>Returns the type of volume <i>driveVolume</i></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

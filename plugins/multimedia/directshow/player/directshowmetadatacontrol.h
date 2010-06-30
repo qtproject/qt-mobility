@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWMETADATACONTROL_H
 #define DIRECTSHOWMETADATACONTROL_H
 
-#include "../../src/multimedia/qmetadatacontrol.h"
+#include <qmetadatareadercontrol.h>
 
 #include "directshowglobal.h"
 
@@ -56,24 +56,21 @@
 
 class DirectShowPlayerService;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-class DirectShowMetaDataControl : public QMetaDataControl
+class DirectShowMetaDataControl : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
     DirectShowMetaDataControl(QObject *parent = 0);
     ~DirectShowMetaDataControl();
 
-    bool isWritable() const;
     bool isMetaDataAvailable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
     void updateGraph(IFilterGraph2 *graph, IBaseFilter *source);

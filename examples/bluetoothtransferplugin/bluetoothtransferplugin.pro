@@ -1,6 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
+PLUGIN_TYPE=serviceframework
 INCLUDEPATH += ../../src/serviceframework
+
 HEADERS += bluetoothtransferplugin.h \
            bluetoothtransfer.h
 SOURCES += bluetoothtransferplugin.cpp \
@@ -22,8 +24,6 @@ symbian {
     TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }
 
-xml.path = $$DESTDIR/xmldata
+xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
 xml.files = bluetoothtransferservice.xml
-xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
-build_pass:ALL_DEPS+=install_xml

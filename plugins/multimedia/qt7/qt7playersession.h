@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,22 +43,21 @@
 #define QT7PLAYERSESSION_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qset.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QT7PlayerControl;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7VideoOutput;
 class QT7PlayerSession;
 class QT7PlayerService;
-QTM_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
 
 class QT7PlayerSession : public QObject
 {
@@ -70,6 +69,7 @@ public:
     void *movie() const;
 
     void setControl(QT7PlayerControl *control);
+
     void setVideoOutput(QT7VideoOutput *output);
 
     QMediaPlayer::State state() const;
@@ -107,8 +107,9 @@ public slots:
     void setMuted(bool muted);
 
     void processEOS();
-    void processStateChange();
+    void processLoadStateChange();
     void processVolumeChange();
+    void processNaturalSizeChange();
 
 signals:
     void positionChanged(qint64 position);
@@ -130,15 +131,19 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QT7VideoOutput *m_videoOutput;
+    QT7VideoOutput * m_videoOutput;
 
     mutable qint64 m_currentTime;
 
     bool m_muted;
     int m_volume;
     qreal m_rate;
+
+    qint64 m_duration;
+    bool m_videoAvailable;
+    bool m_audioAvailable;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

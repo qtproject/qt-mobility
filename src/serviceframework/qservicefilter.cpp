@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -481,7 +481,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
     quint32 storedMagicNumber;
     in >> storedMagicNumber;
     if (storedMagicNumber != magicNumber) {
-        qWarning() << "Datastream doesn't provide searialized QServiceFilter";
+        qWarning() << "Datastream doesn't provide serialized QServiceFilter";
         return in;
     }
 

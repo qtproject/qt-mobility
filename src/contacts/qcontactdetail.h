@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,8 +57,8 @@ class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
     QContactDetail();
-    QContactDetail(const char* definitionName); // possibly internal
-    QContactDetail(const QString& definitionName);
+    explicit QContactDetail(const char* definitionName); // possibly internal
+    explicit QContactDetail(const QString& definitionName);
     ~QContactDetail();
 
     QContactDetail(const QContactDetail& other);
@@ -99,6 +99,9 @@ public:
     int key() const;
     void resetKey();
 
+    void Q_DECL_DEPRECATED setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
+    QList<QContactActionDescriptor> Q_DECL_DEPRECATED preferredActions() const;
+
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
     bool removeValue(const QString& key);
@@ -121,6 +124,14 @@ public:
     {
         return variantValue(key).value<T>();
     }
+#ifdef Q_QDOC
+    QString value(const QLatin1Constant& key) const;
+    bool setValue(const QLatin1Constant& key, const QVariant& value);
+    bool removeValue(const QLatin1Constant& key);
+    bool hasValue(const QLatin1Constant& key) const;
+    QVariant variantValue(const QLatin1Constant& key) const;
+    T value(const QLatin1Constant& key) const;
+#else
     template<int N> QString value(const QLatin1Constant<N>& key) const
     {
         return value(key.latin1());
@@ -145,6 +156,7 @@ public:
     {
         return value<T>(key.latin1());
     }
+#endif
 
     void setContexts(const QStringList& contexts)
     {

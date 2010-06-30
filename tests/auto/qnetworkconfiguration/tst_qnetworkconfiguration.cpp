@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,12 +44,20 @@
 #include "../../../src/bearer/qnetworkconfiguration.h"
 #include "../../../src/bearer/qnetworkconfigmanager.h"
 
+/*
+  Although this unit test doesn't use QNetworkAccessManager
+  this include is used to ensure that bearer continues to compile against
+  Qt 4.7+ which has a QNetworkConfiguration enabled QNetworkAccessManager
+*/
+#include <QNetworkAccessManager>
+
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>
 #include <iapconf.h>
 #endif
 
 QTM_USE_NAMESPACE
+
 class tst_QNetworkConfiguration : public QObject
 {
     Q_OBJECT
@@ -176,23 +184,23 @@ void tst_QNetworkConfiguration::cleanupTestCase()
 
 void tst_QNetworkConfiguration::invalidPoint()
 {
-    QNetworkConfiguration pt;
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) pt;
 
     QVERIFY(pt.name().isEmpty());
     QVERIFY(!pt.isValid());
-    QVERIFY(pt.type() == QNetworkConfiguration::Invalid);
-    QVERIFY(!(pt.state() & QNetworkConfiguration::Defined));
-    QVERIFY(!(pt.state() & QNetworkConfiguration::Discovered));
-    QVERIFY(!(pt.state() & QNetworkConfiguration::Active));
+    QVERIFY(pt.type() == QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Invalid);
+    QVERIFY(!(pt.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Defined));
+    QVERIFY(!(pt.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Discovered));
+    QVERIFY(!(pt.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active));
     QVERIFY(!pt.isRoamingAvailable());
 
-    QNetworkConfiguration pt2(pt);
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) pt2(pt);
     QVERIFY(pt2.name().isEmpty());
     QVERIFY(!pt2.isValid());
-    QVERIFY(pt2.type() == QNetworkConfiguration::Invalid);
-    QVERIFY(!(pt2.state() & QNetworkConfiguration::Defined));
-    QVERIFY(!(pt2.state() & QNetworkConfiguration::Discovered));
-    QVERIFY(!(pt2.state() & QNetworkConfiguration::Active));
+    QVERIFY(pt2.type() == QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Invalid);
+    QVERIFY(!(pt2.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Defined));
+    QVERIFY(!(pt2.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Discovered));
+    QVERIFY(!(pt2.state() & QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active));
     QVERIFY(!pt2.isRoamingAvailable());
 
 }
@@ -201,11 +209,11 @@ void tst_QNetworkConfiguration::comparison()
 {
     //test copy constructor and assignment operator
     //compare invalid connection points 
-    QNetworkConfiguration pt1;
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) pt1;
     QVERIFY(!pt1.isValid());
-    QVERIFY(pt1.type() == QNetworkConfiguration::Invalid);
+    QVERIFY(pt1.type() == QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Invalid);
 
-    QNetworkConfiguration pt2(pt1);
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) pt2(pt1);
     QVERIFY(pt1==pt2);
     QVERIFY(!(pt1!=pt2));
     QVERIFY(pt1.name() == pt2.name());
@@ -215,7 +223,7 @@ void tst_QNetworkConfiguration::comparison()
     QVERIFY(pt1.purpose() == pt2.purpose());
 
     
-    QNetworkConfiguration pt3;
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) pt3;
     pt3 = pt1;
     QVERIFY(pt1==pt3);
     QVERIFY(!(pt1!=pt3));
@@ -227,17 +235,17 @@ void tst_QNetworkConfiguration::comparison()
 
     //test case must run on machine that has valid connection points
     QNetworkConfigurationManager manager;
-    QList<QNetworkConfiguration> preScanConfigs = manager.allConfigurations();
+    QList<QTM_PREPEND_NAMESPACE(QNetworkConfiguration)> preScanConfigs = manager.allConfigurations();
 
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations(); //initiate scans
     QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
 
-    QList<QNetworkConfiguration> configs = manager.allConfigurations(QNetworkConfiguration::Discovered);
+    QList<QTM_PREPEND_NAMESPACE(QNetworkConfiguration)> configs = manager.allConfigurations(QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Discovered);
     QVERIFY(configs.count());
-    QNetworkConfiguration defaultConfig = manager.defaultConfiguration();
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) defaultConfig = manager.defaultConfiguration();
     QVERIFY(defaultConfig.isValid());
-    QVERIFY(defaultConfig.type() != QNetworkConfiguration::Invalid);
+    QVERIFY(defaultConfig.type() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Invalid);
     QVERIFY(!defaultConfig.name().isEmpty());
 
     pt3 = defaultConfig;
@@ -253,15 +261,15 @@ void tst_QNetworkConfiguration::comparison()
 void tst_QNetworkConfiguration::children()
 {
     QNetworkConfigurationManager manager;
-    QList<QNetworkConfiguration> configs = manager.allConfigurations();
+    QList<QTM_PREPEND_NAMESPACE(QNetworkConfiguration)> configs = manager.allConfigurations();
 
-    foreach(QNetworkConfiguration c, configs)
+    foreach(QTM_PREPEND_NAMESPACE(QNetworkConfiguration) c, configs)
     {
-        if ( c.type() == QNetworkConfiguration::ServiceNetwork ) {
+        if ( c.type() == QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::ServiceNetwork ) {
             qDebug() << "found service network" << c.name() << c.children().count();
             QVERIFY(c.isValid());
-            QList<QNetworkConfiguration> members = c.children();
-            foreach(QNetworkConfiguration child, members) {
+            QList<QTM_PREPEND_NAMESPACE(QNetworkConfiguration)> members = c.children();
+            foreach(QTM_PREPEND_NAMESPACE(QNetworkConfiguration) child, members) {
                 QVERIFY(child.isValid());
                 QVERIFY(configs.contains(child));
                 qDebug() << "\t" << child.name();
@@ -273,24 +281,24 @@ void tst_QNetworkConfiguration::children()
 void tst_QNetworkConfiguration::isRoamingAvailable()
 {
     QNetworkConfigurationManager manager;
-    QList<QNetworkConfiguration> configs = manager.allConfigurations();
+    QList<QTM_PREPEND_NAMESPACE(QNetworkConfiguration)> configs = manager.allConfigurations();
     
     //force update to get maximum list
     QSignalSpy spy(&manager, SIGNAL(updateCompleted()));
     manager.updateConfigurations(); //initiate scans
     QTRY_VERIFY(spy.count() == 1); //wait for scan to complete
     
-    foreach(QNetworkConfiguration c, configs)
+    foreach(QTM_PREPEND_NAMESPACE(QNetworkConfiguration) c, configs)
     {
-        QVERIFY(QNetworkConfiguration::UserChoice != c.type());
-        QVERIFY(QNetworkConfiguration::Invalid != c.type());
-        if ( c.type() == QNetworkConfiguration::ServiceNetwork ) {
+        QVERIFY(QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::UserChoice != c.type());
+        QVERIFY(QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Invalid != c.type());
+        if ( c.type() == QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::ServiceNetwork ) {
             //cannot test flag as some SNAPs may not support roaming anyway
             //QVERIFY(c.roamingavailable())
             if ( c.children().count() <= 1 )
                 QVERIFY(!c.isRoamingAvailable());
-            foreach(QNetworkConfiguration child, c.children()) {
-                QVERIFY(QNetworkConfiguration::InternetAccessPoint == child.type());
+            foreach(QTM_PREPEND_NAMESPACE(QNetworkConfiguration) child, c.children()) {
+                QVERIFY(QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::InternetAccessPoint == child.type());
                 QCOMPARE(child.children().count(), 0);
             }
         } else {

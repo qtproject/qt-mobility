@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,6 +50,8 @@
 #include "compasssym.h"
 #include "orientationsym.h"
 #include "accelerometersym.h"
+#include "rotationsensorsym.h"
+#include "tapsensorsym.h"
 
 // QT Utility headers
 #include <QDebug>
@@ -68,6 +70,8 @@ public:
         QSensorManager::registerBackend(QCompass::type, CCompassSym::id, this);
         QSensorManager::registerBackend(QOrientationSensor::type, COrientationSensorSym::id, this);
         QSensorManager::registerBackend(QAccelerometer::type, CAccelerometerSensorSym::id, this);
+        QSensorManager::registerBackend(QRotationSensor::type, CRotationSensorSym::id, this);
+        QSensorManager::registerBackend(QTapSensor::type, CTapSensorSym::id, this);
         }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -108,11 +112,23 @@ public:
             TRAPD(err,self = CAccelerometerSensorSym::NewL(sensor));
             return self;
             }
+        if (sensor->identifier() == CRotationSensorSym::id)
+            {
+            CRotationSensorSym *self = NULL;
+            TRAPD(err,self = CRotationSensorSym::NewL(sensor));
+            return self;
+            }
+        if (sensor->identifier() == CTapSensorSym::id)
+            {
+            CTapSensorSym *self = NULL;
+            TRAPD(err,self = CTapSensorSym::NewL(sensor));
+            return self;
+            }
         return 0;
         }
     };
 
-Q_EXPORT_PLUGIN2(libsensors_sym, SensorPluginSym);
+Q_EXPORT_PLUGIN2(qtsensors_sym, SensorPluginSym);
 
 #include "main.moc"
 

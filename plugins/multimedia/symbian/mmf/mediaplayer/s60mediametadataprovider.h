@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,17 +42,17 @@
 #ifndef S60MEDIAMETADATAPROVIDER_H
 #define S60MEDIAMETADATAPROVIDER_H
 
-#include <QMetaDataControl>
+#include <qmetadatareadercontrol.h>
 #include "ms60mediaplayerresolver.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaPlayerSession;
 
-class S60MediaMetaDataProvider : public QMetaDataControl
+class S60MediaMetaDataProvider : public QMetaDataReaderControl
 {
     Q_OBJECT
-    
+
 public:
     S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
     ~S60MediaMetaDataProvider();
@@ -60,16 +60,13 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
-    
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
-    
+
 private:
-    QString metaDataKeyAsString(QtMedia::MetaData key) const;
+    QString metaDataKeyAsString(QtMultimediaKit::MetaData key) const;
 
 private:
     MS60MediaPlayerResolver& m_mediaPlayerResolver;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,12 +47,12 @@
 #include <qmobilityglobal.h>
 #include "qtmedianamespace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaService;
 
 class QMediaServiceProviderHintPrivate;
-class Q_MEDIA_EXPORT QMediaServiceProviderHint
+class Q_MULTIMEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
     enum Type { Null, ContentType, Device, SupportedFeatures };
@@ -93,7 +93,7 @@ private:
     QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
 };
 
-class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
 
@@ -101,7 +101,7 @@ public:
     virtual QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint = QMediaServiceProviderHint()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
 
-    virtual QtMedia::SupportEstimate hasSupport(const QByteArray &serviceType,
+    virtual QtMultimediaKit::SupportEstimate hasSupport(const QByteArray &serviceType,
                                              const QString &mimeType,
                                              const QStringList& codecs,
                                              int flags = 0) const;
@@ -140,12 +140,12 @@ public:
 /*!
     Service with support for camera use.
     Required Controls: QCameraControl
-    Optional Controls: QCameraExposureControl, QCameraFocusControl, QImageProcessingControl
-    Still Capture Controls: QImageCaptureControl
-    Recording Controls (QMediaRecorder):
+    Optional Controls: QCameraExposureControl, QCameraFocusControl, QCameraImageProcessingControl
+    Still Capture Controls: QCameraImageCaptureControl
+    Video Capture Controls (QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl, QVideoEncoderControl, QMediaContainerControl
-    Viewfinder Video Output Controls (used by QWideoWidget and QGraphicsVideoItem):
+    Viewfinder Video Output Controls (used by QCameraViewfinder and QGraphicsVideoItem):
                         Required: QVideoOutputControl
                         Optional: QVideoWindowControl, QVideoRendererControl, QVideoWidgetControl
 */
@@ -162,6 +162,6 @@ public:
 #define Q_MEDIASERVICE_RADIO "com.nokia.qt.radio"
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIASERVICEPROVIDER_H

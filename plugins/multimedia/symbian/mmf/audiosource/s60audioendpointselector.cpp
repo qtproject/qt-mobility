@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,9 +42,7 @@
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
-#include <QtGui/QIcon>
-#include <QtCore/QDebug>
-
+#include <qaudiodeviceinfo.h>
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
@@ -66,7 +64,6 @@ QList<QString> S60AudioEndpointSelector::availableEndpoints() const
 QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 {
     QString desc;
-
     for(int i = 0; i < m_names.count(); i++) {
         if (m_names.at(i).compare(name) == 0) {
             desc = m_descriptions.at(i);
@@ -78,9 +75,7 @@ QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 
 QString S60AudioEndpointSelector::defaultEndpoint() const
 {
-    if (m_names.size() > 0)
-        return m_names.at(0);
-    return QString();
+    return QAudioDeviceInfo(QAudioDeviceInfo::defaultInputDevice()).deviceName();
 }
 
 QString S60AudioEndpointSelector::activeEndpoint() const
@@ -100,8 +95,13 @@ void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 void S60AudioEndpointSelector::update()
 {
     m_names.clear();
-    m_descriptions.clear();
-
-    m_names.append(QString("MMF"));
-    m_descriptions.append(QString("MMF"));
+    m_descriptions.clear();    
+    QList<QAudioDeviceInfo> devices;
+    devices = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+    for(int i = 0; i < devices.size(); ++i) {
+        m_names.append(devices.at(i).deviceName());
+        m_descriptions.append(devices.at(i).deviceName());
+    }
+    if (m_names.isEmpty())
+        m_names.append("MMF");
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
+#include "qsysteminfocommon.h"
 #include "qsysteminfo_win_p.h"
 #include <qt_windows.h>
 
@@ -563,7 +563,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
             resolveLibrary();
             if(local_BluetoothFindFirstRadio == 0 ) {
-                qWarning() << "Bluetooth library could not resolve or be loaded";
+                qDebug() << "Bluetooth library could not resolve or be loaded";
                 return false;
             }
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
@@ -786,11 +786,11 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
     if(local_WlanOpenHandle)
         result = local_WlanOpenHandle(2, NULL, &version, &hWlan );
     if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error opening Wlanapi 2" << result ;
+        qDebug() << "Error opening Wlanapi 2" << result ;
         return ;
     }
     if( result != ERROR_SUCCESS) {
-        qWarning() << "Error in enumerating wireless interfaces" << result;
+        qDebug() << "Error in enumerating wireless interfaces" << result;
         return ;
     }
     if (ERROR_SUCCESS != local_WlanRegisterNotification(hWlan,
@@ -798,7 +798,7 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
                                                   true,
                                                   WLAN_NOTIFICATION_CALLBACK(wlanNotificationCallback),
                                                   this, 0, 0)) {
-        qWarning() << "failed";
+        qDebug() << "failed";
     } else {
         wlanCallbackInitialized = true;
     }
@@ -987,7 +987,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 if (hWlan ==0) {
                     result = local_WlanOpenHandle( 2, NULL, &version, &hWlan );
                     if( result != ERROR_SUCCESS ) {
-                        qWarning() << "Error opening Wlanapi 3" << result ;
+                        qDebug() << "Error opening Wlanapi 3" << result ;
                         local_WlanCloseHandle(hWlan,  0);
                         return 0;
                     }
@@ -995,7 +995,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 result = local_WlanEnumInterfaces(hWlan, NULL, &interfacesInfoList);
 
                 if( result != ERROR_SUCCESS) {
-                    qWarning() << "Error in enumerating wireless interfaces" << result;
+                    qDebug() << "Error in enumerating wireless interfaces" << result;
                     local_WlanCloseHandle(hWlan,  0);
                     return 0;
                 }
@@ -1006,7 +1006,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                     WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
                     if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-                        qWarning() << "Interface not ready";
+                        qDebug() << "Interface not ready";
                         continue;
                     }
 
@@ -1181,7 +1181,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                                           &medium, sizeof(medium), &bytesWritten, 0);
             if (!result) {
                 CloseHandle(handle);
-                qWarning() << "DeviceIo result is false";
+                qDebug() << "DeviceIo result is false";
                 return QNetworkInterface();
                 continue;
             }
@@ -1356,15 +1356,122 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    if(screen < 16 && screen > -1) {
+        int rotation = 0;
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
+
+
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+        }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
+}
+
+
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
+    : QObject(parent)
+{
+    logicalDrives();
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
+    WMIHelper *wHelper;
+    wHelper =  WMIHelper::instance();
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_VolumeChangeEvent");
+    wHelper->setupNotfication("root/cimv2","",QStringList());
+
+    connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
+#endif
+#endif
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
+
+void QSystemStorageInfoPrivate::notificationArrived()
+{
+    QMap<QString, QString> oldDrives;
+
+     oldDrives = mountEntriesMap;
+     mountEntries();
+     QString driveLetter;
+
+     if(mountEntriesMap.count() < oldDrives.count()) {
+         QMapIterator<QString, QString> i(oldDrives);
+          while (i.hasNext()) {
+              i.next();
+              if(!mountEntriesMap.contains(i.key())) {
+                  emit logicalDriveChanged(false, i.key());
+              }
+          }
+      } else if(mountEntriesMap.count() > oldDrives.count()) {
+         QMapIterator<QString, QString> i(mountEntriesMap);
+          while (i.hasNext()) {
+              i.next();
+
+              if(oldDrives.contains(i.key()))
+                  continue;
+                 emit logicalDriveChanged(true,i.key());
+         }
+     }
+ }
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
@@ -1432,6 +1539,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
+    mountEntriesMap.clear();
     QStringList drivesList;
     QFileInfoList drives = QDir::drives();
     foreach(QFileInfo drive, drives) {
@@ -1439,9 +1547,15 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
         letter.chop(1);
         if(totalDiskSpace(letter) > 0) {
             drivesList.append(letter);
+            mountEntriesMap.insert(letter,letter);
         }
     }
     return drivesList;
+}
+
+void QSystemStorageInfoPrivate::mountEntries()
+{
+    logicalDrives();
 }
 
 #if defined(Q_OS_WINCE)
@@ -1814,7 +1928,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
     if(GetSystemPowerStatusEx(&status, true) ) {
         bat = status.BatteryLifePercent;
     } else {
-       qWarning() << "Battery status failed";
+       qDebug() << "Battery status failed";
        return 0;
     }
 #else
@@ -1822,7 +1936,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
     if(GetSystemPowerStatus( &status) ) {
         bat = status.BatteryLifePercent;
     } else {
-       qWarning() << "Battery status failed";
+       qDebug() << "Battery status failed";
        return 0;
     }
 #endif
@@ -1875,9 +1989,13 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
+bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
+{
+    return false;
+}
+
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    qWarning()<< __FUNCTION__;
 #ifdef Q_OS_WINCE
     HSIM handle;
     DWORD lockedState;
@@ -1916,7 +2034,6 @@ bool QSystemScreenSaverPrivate::screenSaverSecureEnabled()
 
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
-        qWarning() << "screensaver enabled";
         screenSaverSecure = true;
     }
     screenPath = screenSettings.value("SCRNSAVE.EXE").toString();

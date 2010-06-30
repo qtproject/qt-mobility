@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
  ** Contact: Nokia Corporation (qt-info@nokia.com)
  **
@@ -41,11 +41,14 @@
 
 // Internal Headers
 #include "accelerometersym.h"
+#include <sensrvgeneralproperties.h>
+
+#define GRAVITATION_CONSTANT 9.812865328        //According to wikipedia link http://en.wikipedia.org/wiki/Standard_gravity
 
 /**
  * set the id of the accelerometer sensor
  */
-const char *CAccelerometerSensorSym::id("sym.accelerometer");
+char const * const CAccelerometerSensorSym::id("sym.accelerometer");
 
 /**
  * Factory function, this is used to create the accelerometer object
@@ -73,13 +76,72 @@ CAccelerometerSensorSym::~CAccelerometerSensorSym()
 /**
  * Default constructor
  */
-CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
+CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor),
+        iScaleRange(0),
+        iUnit(0)
         {
         setReading<QAccelerometerReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerXYZAxisData;    
         //Disable property listening
         SetListening(ETrue, EFalse);
         }
+
+void CAccelerometerSensorSym::start()
+{
+    TSensrvProperty dataFormatProperty;
+    TInt err;
+    CSensorBackendSym::start();
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty));
+    if(err == KErrNone)
+        {
+        TSensrvProperty scaleRangeProperty;
+        TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+        if(err == KErrNone)
+            {
+            if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
+                {
+                if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                    {
+                    scaleRangeProperty.GetMaxValue(iScaleRange);
+                    }
+                else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                    {
+                    TReal realScale;
+                    scaleRangeProperty.GetMaxValue(realScale);
+                    iScaleRange = realScale;
+                    }
+                }
+            else if(scaleRangeProperty.GetArrayIndex() == ESensrvArrayPropertyInfo)
+                {
+                TInt index;
+                if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                    {               
+                    scaleRangeProperty.GetValue(index);
+                    }
+                else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                    {
+                    TReal realIndex;           
+                    scaleRangeProperty.GetValue(realIndex);
+                    index = realIndex;
+                    }
+                TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, index, scaleRangeProperty));
+                if(err == KErrNone)
+                    {
+                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                        {
+                        scaleRangeProperty.GetMaxValue(iScaleRange);
+                        }
+                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                        {
+                        TReal realScaleRange;
+                        scaleRangeProperty.GetMaxValue(realScaleRange);
+                        iScaleRange = realScaleRange;
+                        }
+                    }
+                }
+            }
+        }
+}
 
 /*
  * RecvData is used to retrieve the sensor reading from sensor server
@@ -95,12 +157,28 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
         // If there is no reading available, return without setting
         return;
         }
+    TReal x = iData.iAxisX;
+    TReal y = iData.iAxisY;
+    TReal z = iData.iAxisZ;
+    //Converting unit to m/s^2
+    if(iScaleRange && iUnit == ESensevChannelUnitAcceleration)
+        {
+	qoutputrangelist rangeList = sensor()->outputRanges();
+	TReal maxValue = rangeList[sensor()->outputRange()].maximum;
+        x = (x/iScaleRange) * maxValue;
+        y = (y/iScaleRange) * maxValue;
+        z = (z/iScaleRange) * maxValue;        
+        }
+    else if(iUnit == ESensrvChannelUnitGravityConstant)
+        {
+        //conversion is yet to done
+        }
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     // Set qt mobility accelerometer reading with data from sensor server
-    iReading.setX(iData.iAxisX);
-    iReading.setY(iData.iAxisY);
-    iReading.setZ(iData.iAxisZ);
+    iReading.setX(x);
+    iReading.setY(y);
+    iReading.setZ(z);
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
@@ -114,6 +192,14 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
 void CAccelerometerSensorSym::ConstructL()
     {
     //Initialize the backend resources
-    InitializeL();
+    InitializeL(); 
+    
+    TInt err;
+    TSensrvProperty unitProperty;
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelUnit, ESensrvSingleProperty, unitProperty));
+    if(err == KErrNone)
+        {
+        unitProperty.GetValue(iUnit);
+        }
     }
 

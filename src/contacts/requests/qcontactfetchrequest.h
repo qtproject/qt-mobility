@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,7 +60,8 @@ class Q_CONTACTS_EXPORT QContactFetchRequest : public QContactAbstractRequest
     Q_OBJECT
 
 public:
-    QContactFetchRequest();
+    QContactFetchRequest(QObject* parent = 0);
+    ~QContactFetchRequest();
 
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);
@@ -69,6 +70,9 @@ public:
     QContactFilter filter() const;
     QList<QContactSortOrder> sorting() const;
     QContactFetchHint fetchHint() const;
+
+    void Q_DECL_DEPRECATED setDefinitionRestrictions(const QStringList& definitionNames);
+    QStringList Q_DECL_DEPRECATED definitionRestrictions() const;
 
     /* Results */
     QList<QContact> contacts() const;

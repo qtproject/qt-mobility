@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,9 +52,9 @@ class QStringList;
 class QAudioFormat;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -82,6 +82,6 @@ protected:
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEncoderControl, QAudioEncoderControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

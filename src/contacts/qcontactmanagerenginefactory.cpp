@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,9 +46,11 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactManagerEngineFactory
-  \preliminary
   \brief The QContactManagerEngineFactory class provides the interface for
  plugins that implement QContactManagerEngine functionality.
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-backends
  
   This class provides a simple interface for the creation of
@@ -56,7 +58,8 @@ QTM_BEGIN_NAMESPACE
   associated with it, which forms the \c managerName parameter
   when creating \l QContactManager objects.
  
-  More information on writing a contacts engine plugin is TODO.
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
  
   \sa QContactManager, QContactManagerEngine
  */

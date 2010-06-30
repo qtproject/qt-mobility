@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
@@ -67,6 +66,7 @@
 
 #include "qcontactmemorybackend_p.h"
 #include "qcontactinvalidbackend_p.h"
+#include "qmobilitypluginsearch.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -234,63 +234,6 @@ void QContactManagerData::loadStaticFactories()
     }
 }
 
-class DirChecker
-{
-public:
-    DirChecker();
-    ~DirChecker();
-    bool checkDir(const QDir& dir);
-
-private:
-#if defined(Q_OS_SYMBIAN)
-    RFs rfs;
-#endif
-};
-
-#if defined(Q_OS_SYMBIAN)
-DirChecker::DirChecker()
-{
-    qt_symbian_throwIfError(rfs.Connect());
-}
-
-bool DirChecker::checkDir(const QDir& dir)
-{
-    bool pathFound = false;
-    // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
-    // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
-    // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
-    // Use native Symbian code to check for directory existence, because checking
-    // for files from under non-existent protected dir like E:/private/<uid> using
-    // QDir::exists causes platform security violations on most apps.
-    QString nativePath = QDir::toNativeSeparators(dir.absolutePath());
-    TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
-    TUint attributes;
-    TInt err = rfs.Att(ptr, attributes);
-    if (err == KErrNone) {
-        // yes, the directory exists.
-        pathFound = true;
-    }
-    return pathFound;
-}
-
-DirChecker::~DirChecker()
-{
-    rfs.Close();
-}
-#else
-DirChecker::DirChecker()
-{
-}
-
-DirChecker::~DirChecker()
-{
-}
-
-bool DirChecker::checkDir(const QDir &dir)
-{
-    return dir.exists();
-}
-#endif
 
 /* Plugin loader */
 void QContactManagerData::loadFactories()
@@ -302,65 +245,16 @@ void QContactManagerData::loadFactories()
     // Always do this..
     loadStaticFactories();
 
-    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
+    QStringList plugins;
+    plugins = mobilityPlugins(QLatin1String("contacts"));
+
+    if (!m_discovered || plugins != m_pluginPaths) {
         m_discovered = true;
-        m_pluginPaths = QApplication::libraryPaths();
-
-        /* Discover a bunch o plugins */
-        QStringList plugins;
-
-        QStringList paths;
-        QSet<QString> processed;
-
-        paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
-#if !defined QT_NO_DEBUG
-        if (showDebug)
-            qDebug() << "Plugin paths:" << paths;
-#endif
-
-        DirChecker dirChecker;
-
-        /* Enumerate our plugin paths */
-        for (int i=0; i < paths.count(); i++) {
-            if (processed.contains(paths.at(i)))
-                continue;
-            processed.insert(paths.at(i));
-            QDir pluginsDir(paths.at(i));
-            if (!dirChecker.checkDir(pluginsDir))
-                continue;
-
-#if defined(Q_OS_WIN)
-            if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))
-                pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-            if (pluginsDir.dirName() == QLatin1String("MacOS")) {
-                pluginsDir.cdUp();
-                pluginsDir.cdUp();
-                pluginsDir.cdUp();
-            }
-#endif
-
-            QString subdir(QLatin1String("plugins/contacts"));
-            if (pluginsDir.path().endsWith(QLatin1String("/plugins"))
-                || pluginsDir.path().endsWith(QLatin1String("/plugins/")))
-                subdir = QLatin1String("contacts");
-
-            if (dirChecker.checkDir(QDir(pluginsDir.path() + QLatin1Char('/') + subdir))) {
-                pluginsDir.cd(subdir);
-                const QStringList& files = pluginsDir.entryList(QDir::Files);
-#if !defined QT_NO_DEBUG
-                if (showDebug)
-                    qDebug() << "Looking for contacts plugins in" << pluginsDir.path() << files;
-#endif
-                for (int j=0; j < files.count(); j++) {
-                    plugins <<  pluginsDir.absoluteFilePath(files.at(j));
-                }
-            }
-        }
+        m_pluginPaths = plugins;
 
         /* Now discover the dynamic plugins */
-        for (int i=0; i < plugins.count(); i++) {
-            QPluginLoader qpl(plugins.at(i));
+        for (int i=0; i < m_pluginPaths.count(); i++) {
+            QPluginLoader qpl(m_pluginPaths.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
 
@@ -373,12 +267,12 @@ void QContactManagerData::loadFactories()
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
-                        qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                        qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
                     } else {
                         m_engines.insertMulti(name, f);
                     }
                 } else {
-                    qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
+                    qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "with reserved name" << name << "ignored";
                 }
             }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,7 @@
 
 #include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaContentPrivate : public QSharedData
@@ -75,6 +75,7 @@ private:
     \preliminary
     \brief The QMediaContent class provides access to the resources relating to a media content.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     QMediaContent is used within the multimedia framework as the logical handle
@@ -235,5 +236,5 @@ QMediaResourceList QMediaContent::resources() const
             : QMediaResourceList();
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

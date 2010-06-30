@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,9 +48,12 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailFieldDefinition
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
  
+  \inmodule QtContacts
+  
   Encapsulates information about a particular datum which may be part of a
-  QContactDetail, including the type, allowable values and access constraints.
+  QContactDetail, including the type and allowable values.
  */
+
 
 /*!
  * Constructs a new field with no constraints and an invalid data type.
@@ -115,6 +118,7 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 {
     d->m_allowableValues = values;
 }
+
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field

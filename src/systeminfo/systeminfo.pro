@@ -6,8 +6,22 @@ QT+= network
 include(../../common.pri)
 
 # Input
-PUBLIC_HEADERS +=   qsysteminfo.h
-SOURCES += qsysteminfo.cpp
+PUBLIC_HEADERS +=   qsysteminfo.h \
+    qsystemgeneralinfo.h \
+    qsystemdeviceinfo.h \
+    qsystemdisplayinfo.h \
+    qsystemnetworkinfo.h \
+    qsystemscreensaver.h \
+    qsystemstorageinfo.h \
+    qsysteminfocommon.h
+
+SOURCES += qsystemgeneralinfo.cpp \
+    qsystemdeviceinfo.cpp \
+    qsystemdisplayinfo.cpp \
+    qsystemnetworkinfo.cpp \
+    qsystemscreensaver.cpp \
+    qsystemstorageinfo.cpp
+
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
@@ -43,10 +57,12 @@ win32 {
 unix: {
     QT += gui
     maemo5|maemo6|linux-*: {
+        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
     !maemo5:!maemo6:linux-*: {
+LIBS+=-lX11 -lXrandr
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): {
@@ -66,8 +82,9 @@ unix: {
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
+            LIBS += -lXrandr
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
+            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
@@ -85,7 +102,8 @@ unix: {
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
-         -framework CoreServices -framework ScreenSaver -framework QTKit
+         -framework CoreServices -framework ScreenSaver -framework QTKit \
+         -framework DiskArbitration -framework IOBluetooth
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {
@@ -97,13 +115,13 @@ unix: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
+                        LIBS += -framework CoreWLAN  -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
            } else {
                CONFIG += no_keywords
            }
-    
+
     TEMPLATE = lib
     }
 
@@ -111,24 +129,25 @@ unix: {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }        
-        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
             telephonyinfo_s60.cpp \
-            chargingstatus_s60.cpp
+            chargingstatus_s60.cpp \
+            wlaninfo_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
             telephonyinfo_s60.h \
-            chargingstatus_s60.h
+            chargingstatus_s60.h \
+            wlaninfo_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
             -lsysutil \
             -lcentralrepository \
             -lcenrepnotifhandler \
-            -lefsrv \
-            -lptiengine \
+            -lefsrv \            
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
@@ -137,8 +156,18 @@ unix: {
             -lcentralrepository \
             -lprofileengine \
             -lbluetooth \
-            -lgdi
+            -lgdi \
+            -lecom \
 
+	    contains(hb_symbian_enabled,yes) {	    	
+	    		CONFIG += qt hb        
+	        	DEFINES += HB_SUPPORTED        
+	        	message("s60_HbKeymap enabled")	            	            
+	        	LIBS += -lhbcore	        
+    	} else {
+            LIBS += -lptiengine 
+        }
+        
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 class QContactManager;
 class QContactData;
 class QContactName;
+class QContactAction;
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -95,11 +96,15 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
+    /* deprecated */
+    QContactDetail Q_DECL_DEPRECATED detailWithAction(const QString& actionName) const;
+    QList<QContactDetail> Q_DECL_DEPRECATED detailsWithAction(const QString& actionName) const;
+
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> detailsWithAction(const QString& actionName) const;
+    QContactDetail detailWithAction(QContactAction* action) const;
+    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -108,6 +113,11 @@ public:
     QList<QContactDetail> details(const char* definitionId, const char* fieldName, const QString& value) const;
 
     /* Templated retrieval for definition names */
+#ifdef Q_QDOC
+    QContactDetail detail(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value);
+#else
     template <int N> QContactDetail detail(const QLatin1Constant<N>& definitionName) const
     {
         return detail(definitionName.latin1());
@@ -120,6 +130,7 @@ public:
     {
         return details(definitionName.latin1(), fieldName.latin1(), value);
     }
+#endif
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const
@@ -162,6 +173,9 @@ public:
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
+    QList<QContactId> Q_DECL_DEPRECATED relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const;
+    void Q_DECL_DEPRECATED setRelationshipOrder(const QList<QContactRelationship>& reordered);
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;

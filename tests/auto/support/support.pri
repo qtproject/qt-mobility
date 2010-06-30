@@ -1,9 +1,13 @@
 
 HEADERS += \
-    $$PWD/support.h
+    $$PWD/support.h \
+    $$PWD/../../../src/messaging/messagingutil_p.h
+
+SOURCES += $$PWD/../../../src/messaging/messagingutil.cpp
 
 symbian|wince*|maemo*|win32|mac {
     symbian {
+
         SOURCES += $$PWD/support_symbian.cpp
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
@@ -17,7 +21,6 @@ symbian|wince*|maemo*|win32|mac {
         else {
             LIBS += mapi32.lib Advapi32.lib
         }
-
     }
     maemo5 {
         QT += dbus
@@ -26,7 +29,7 @@ symbian|wince*|maemo*|win32|mac {
         SOURCES += $$PWD/support_maemo5.cpp
     }
     mac|maemo6 {
-         SOURCES += $$PWD/support_stub.cpp       
+         SOURCES += $$PWD/support_stub.cpp
     }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -103,6 +103,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
 {
+    setState(StoppedState);
+    gst_element_set_state(m_pipeline, GST_STATE_NULL);
     gst_object_unref(GST_OBJECT(m_pipeline));
 }
 

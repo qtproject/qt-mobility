@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,12 @@
 #ifndef QAUDIOENDPOINTSELECTOR_H
 #define QAUDIOENDPOINTSELECTOR_H
 
-#include <QtMultimedia/qaudio.h>
-#include "qmediacontrol.h"
+#include <qaudio.h>
+#include <qmediacontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
 {
     Q_OBJECT
 
@@ -73,6 +73,6 @@ protected:
 #define QAudioEndpointSelector_iid "com.nokia.Qt.QAudioEndpointSelector/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEndpointSelector, QAudioEndpointSelector_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QAUDIOENDPOINTSELECTOR_H

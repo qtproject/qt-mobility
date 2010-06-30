@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,20 +54,48 @@ QTM_BEGIN_NAMESPACE
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
+
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+  
+  
+  \inmodule QtContacts
   
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition save request */
-QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)
+/*! Constructs a new detail definition save request whose parent is the specified \a parent */
+QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
+/*!
+  Sets the definition to save to be the given \a definition.
+  Equivalent to calling:
+  \code
+      setDefinitions(QList<QContactDetailDefinition>() << definition);
+  \endcode
+ */
+void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
+{
+    Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_definitions.clear();
+    d->m_definitions.append(definition);
 }
 
 /*! Sets the definitions to save to be \a definitions */
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_definitions = definitions;
 }
 
@@ -76,6 +104,7 @@ void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDet
 QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_definitions;
 }
 
@@ -83,6 +112,7 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
 void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactType = contactType;
 }
 
@@ -90,6 +120,7 @@ void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactT
 QString QContactDetailDefinitionSaveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -97,6 +128,7 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
 QMap<int, QContactManager::Error> QContactDetailDefinitionSaveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

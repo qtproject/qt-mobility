@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,6 @@ IMPLEMENT_READING(QCompassReading)
     \class QCompassReading
     \ingroup sensors_reading
 
-    \preliminary
     \brief The QCompassReading class represents one reading from a
            compass.
 
@@ -85,6 +84,8 @@ qreal QCompassReading::azimuth() const
 
 /*!
     Sets the \a azimuth of the device.
+    
+    \sa {QCompassReading Units}
 */
 void QCompassReading::setAzimuth(qreal azimuth)
 {
@@ -118,7 +119,6 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     \class QCompassFilter
     \ingroup sensors_filter
 
-    \preliminary
     \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to QCompassReading
@@ -133,13 +133,12 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     \sa QSensorFilter::filter()
 */
 
-const char *QCompass::type("QCompass");
+char const * const QCompass::type("QCompass");
 
 /*!
     \class QCompass
     \ingroup sensors_type
 
-    \preliminary
     \brief The QCompass class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitcontactexporter.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QVersitContactExporter Class Reference</title>
+  <title>Qt Mobility Project 1.1: QVersitContactExporter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitContactExporter Class Reference</h1>
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QVersitContactExporter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QVersitContactExporter&gt;</pre><ul>
 <li><a href="qversitcontactexporter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -45,22 +44,53 @@
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
 <p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
 <p>By associating a <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a> with the exporter using <a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a>(), the client can pass in a handler to override the processing of details and/or handle details that QVersitContactExporter doesn't support.</p>
-<p>An example detail handler that logs unknown properties:</p>
+<p>An example detail handler that encodes all unknown details as nonstandard vCard propreties:</p>
 <pre>    class MyDetailHandler : public QVersitContactExporterDetailHandler {
     public:
+        MyDetailHandler() : detailNumber(0) {}
         bool preProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
                               QVersitDocument* document) {
             Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
             return false;
         }
+        <span class="comment">/* eg. a detail with definition name &quot;Detail1&quot; and fields &quot;Field1&quot;=&quot;Value1&quot; and
+         * &quot;Field2&quot;=&quot;Value2&quot; will be exported to the vCard properties:
+         * G0.DETAIL1-FIELD1:Value1
+         * G0.DETAIL1-FIELD2:Value2
+         * And the next detail (say, &quot;Detail2&quot; with a field &quot;Field3&quot;=&quot;Value3&quot; will generate:
+         * G1.DETAIL2-FIELD3:Value3
+         * ie. Different details will have different vCard groups.
+         */</span>
         bool postProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
                                bool alreadyProcessed, QVersitDocument* document) {
-            Q_UNUSED(contact) Q_UNUSED(document)
-            if (!alreadyProcessed)
-                mUnknownDetails.append(detail);
-            return false;
+            Q_UNUSED(contact)
+            <span class="comment">// beware: if the base implementation exports some but not all fields, alreadyProcessed</span>
+            <span class="comment">// will be true and the unprocessed fields won't be exported</span>
+            if (alreadyProcessed)
+                return false;
+            if (detail.definitionName() == QContactType::DefinitionName)
+                return false; <span class="comment">// special case of an unhandled detail that we don't export</span>
+            QVersitProperty property;
+            QVariantMap fields = detail.variantValues();
+            <span class="comment">// fields from the same detail have the same group so the importer can collate them</span>
+            QString detailGroup = QLatin1String(&quot;G&quot;) + QString::number(detailNumber++);
+            for (QVariantMap::const_iterator it = fields.constBegin();
+                 it != fields.constEnd();
+                 it++) {
+                property.setGroups(QStringList(detailGroup));
+                <span class="comment">// beware: detail.definitionName and the field name will be made uppercase on export</span>
+                property.setName(QLatin1String(&quot;X-QCONTACTDETAIL-&quot;)
+                                 + detail.definitionName()
+                                 + QLatin1String(&quot;-&quot;)
+                                 + it.key());
+                <span class="comment">// beware: this might not handle nonstring values properly:</span>
+                property.setValue(it.value());
+                document-&gt;addProperty(property);
+            }
+            return true;
         }
-        QList&lt;QContactDetail&gt; mUnknownDetails;
+    private:
+        int detailNumber;
     };</pre>
 <p>An example usage of QVersitContactExporter</p>
 <pre>        QVersitContactExporter contactExporter;
@@ -169,11 +199,11 @@
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/errors"></a>
 <h3 class="fn"><a name="errors"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qversitcontactexporter.html#Error-enum">Error</a>&gt; QVersitContactExporter::errors () const</h3>
-<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>(). The key is the index into the input list of contacts and the value is the error that occured on that contact.</p>
+<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>(). The key is the index into the input list of contacts and the value is the error that occurred on that contact.</p>
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/exportContacts"></a>
 <h3 class="fn"><a name="exportContacts"></a>bool QVersitContactExporter::exportContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3>
-<p>Converts <i>contacts</i> into a list of corresponding QVersitDocuments, using the format given by <i>versitType</i>. Returns true on success. If any of the contacts could not be exported, false is returned and <a href="qversitcontactexporter.html#errors">errors</a>() will return a list describing the errors that occured. The successfully exported documents will still be available via <a href="qversitcontactexporter.html#documents">documents</a>().</p>
+<p>Converts <i>contacts</i> into a list of corresponding QVersitDocuments, using the format given by <i>versitType</i>. Returns true on success. If any of the contacts could not be exported, false is returned and <a href="qversitcontactexporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully exported documents will still be available via <a href="qversitcontactexporter.html#documents">documents</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/resourceHandler"></a>
 <h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactExporter::resourceHandler () const</h3>
 <p>Returns the associated resource handler.</p>
@@ -190,8 +220,8 @@
 <p>See also <a href="qversitcontactexporter.html#resourceHandler">resourceHandler</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,8 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
-#include <QAudioFormat>
+#include "qaudioformat.h"
+#include <qmediarecorder.h>
 
 #include <Mda\Common\Audio.h>
 #include <Mda\Common\Resource.h>
@@ -56,12 +57,13 @@
 #include <MdaAudioSampleEditor.h>
 #include <mmf\common\mmfutilities.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 struct ControllerData
 {
 	int controllerUid;
 	int destinationFormatUid;
 	QString destinationFormatDescription;
+	QString fileExtension;
 };
 
 struct CodecData
@@ -69,9 +71,9 @@ struct CodecData
     TFourCC fourCC;
     QString codecDescription;
 };
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObserver
 {
@@ -79,7 +81,7 @@ class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObser
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(TAudioCaptureState)
 public:
-    
+
     enum TAudioCaptureState
     {
         ENotInitialized = 0,
@@ -90,11 +92,11 @@ public:
         EPaused,
         ERecordComplete
     };
-    
+
     S60AudioCaptureSession(QObject *parent = 0);
     ~S60AudioCaptureSession();
 
-    QAudioFormat format() const;    
+    QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
@@ -102,19 +104,24 @@ public:
     QString audioCodec() const;
     QString audioContainer() const;
     QStringList supportedAudioContainers() const;
-    bool setAudioContainer(const QString &containerMimeType); 
+    bool setAudioContainer(const QString &containerMimeType);
     QString audioContainerDescription(const QString &containerName);
-    QList<int> supportedAudioSampleRates() const;
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings) const;
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
-    qint64 position() const;    
+    qint64 position() const;
     void record();
     void pause();
     void stop();
-    
-private:    
+    void mute(bool muted);
+    bool muted();
+
+private:
     void initializeSessionL();
-    void updateAudioContainersL();    
+    void setError(TInt aError);
+    QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);
+    QString initializeSinkL();
+    void updateAudioContainersL();
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
     void applyAudioSettingsL();
@@ -125,7 +132,7 @@ private:
     void MoscoStateChangeEvent(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
-            TInt aCurrentState, TInt aErrorCode);    
+            TInt aCurrentState, TInt aErrorCode);
 
 public slots:
     void setCaptureDevice(const QString &deviceName);
@@ -133,18 +140,21 @@ public slots:
 Q_SIGNALS:
     void stateChanged(S60AudioCaptureSession::TAudioCaptureState);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 private:
-    QString m_container;    
+    QString m_container;
     QString m_captureDevice;
     QUrl m_sink;
     TTimeIntervalMicroSeconds m_pausedPosition;
     CMdaAudioRecorderUtility *m_recorderUtility;
     TAudioCaptureState m_captureState;
-    QAudioFormat m_format;    
+    QAudioFormat m_format;
     QHash<QString, ControllerData> m_controllerIdMap;
     QHash<QString, CodecData>  m_audioCodeclist;
-    QList<int> m_supportedSampleRates;    
+    QList<int> m_supportedSampleRates;
+    int m_error;
+    bool isMuted;
 };
 
 #endif // S60AUDIOCAPTURESESSION_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,22 +43,18 @@
 #define S60VIDEOPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
+#include <qmediaservice.h>
 
-#include <QMediaService>
-#include <QVideoOutputControl>
-
-#include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
-
 #include "s60mediaplayeraudioendpointselector.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60VideoPlayerSession;
 class S60AudioPlayerSession;
@@ -68,38 +64,35 @@ class S60VideoWidgetControl;
 class S60MediaRecognizer;
 class S60VideoRenderer;
 class S60VideoOverlay;
-
 class QMediaPlaylistNavigator;
 
 class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
 {
     Q_OBJECT
-    
-public:   
+
+public:
+
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
-    QMediaControl *control(const char *name) const;
-
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
 protected: // From MS60MediaPlayerResolver
     S60MediaPlayerSession* PlayerSession();
     S60MediaPlayerSession* VideoPlayerSession();
     S60MediaPlayerSession* AudioPlayerSession();
-    
+
 private:
     S60MediaPlayerControl *m_control;
-    S60MediaRecognizer *m_mediaRecognizer;
-    mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;
-    mutable S60VideoWidgetControl *m_videoWidget;
-    mutable S60VideoOverlay *m_videoWindow;
-    mutable S60VideoRenderer *m_videoRenderer;
-    mutable S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
+    S60MediaMetaDataProvider *m_metaData;
+    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
+    QMediaControl *m_videoWidget;
+    QMediaControl *m_videoWindow;
+    QMediaControl *m_videoRenderer;
+    QMediaControl *m_videoOutput;
 };
 
 #endif

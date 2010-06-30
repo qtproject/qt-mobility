@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,11 +47,11 @@
 #include "qmediaplaylistnavigator.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProvider;
 
-class Q_MEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -85,6 +85,6 @@ protected:
 #define QMediaPlaylistControl_iid "com.nokia.Qt.QMediaPlaylistControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlaylistControl, QMediaPlaylistControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTCONTROL_H

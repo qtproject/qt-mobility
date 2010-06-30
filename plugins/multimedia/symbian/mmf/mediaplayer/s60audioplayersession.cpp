@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,24 +43,21 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
 
-#include <AudioOutput.h>
-#include <MAudioOutputObserver.h>
-
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
     , m_player(0)
-    , m_audioOutput(0)
+    , m_audioEndpoint("Default")
 {
+#ifdef HAS_AUDIOROUTING
+    m_audioOutput = 0;
+#endif //HAS_AUDIOROUTING    
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
-    //QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
-    //QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
-
     m_player->RegisterForAudioLoadingNotification(*this);
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
-#ifndef HAS_NO_AUDIOROUTING
+#ifdef HAS_AUDIOROUTING
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
@@ -71,6 +68,13 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 
 void S60AudioPlayerSession::doLoadL(const TDesC &path)
 {
+#ifdef HAS_AUDIOROUTING
+    // m_audioOutput needs to be reinitialized after MapcInitComplete
+    if (m_audioOutput)
+        m_audioOutput->UnregisterObserver(*this);
+    delete m_audioOutput;
+    m_audioOutput = NULL;
+#endif //HAS_AUDIOROUTING
     m_player->OpenFileL(path);
 }
 
@@ -169,6 +173,14 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 {
     Q_UNUSED(aDuration);
     setError(aError);
+#ifdef HAS_AUDIOROUTING    
+    TRAPD(err, 
+        m_audioOutput = CAudioOutput::NewL(*m_player);
+        m_audioOutput->RegisterObserverL(*this);
+    );
+    setActiveEndpoint(m_audioEndpoint);
+    setError(err);
+#endif //HAS_AUDIOROUTING
     loaded();
 }
 
@@ -182,34 +194,38 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
     endOfMedia();
 }
 
+void S60AudioPlayerSession::doSetAudioEndpoint(const QString& audioEndpoint)
+{
+    m_audioEndpoint = audioEndpoint;
+}
+
 QString S60AudioPlayerSession::activeEndpoint() const
 {
-#ifndef HAS_NO_AUDIOROUTING
-    QString outputName;
+    QString outputName = QString("Default");
+#ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
     }
-    return outputName;
 #endif
-    return QString("Default");
+    return outputName;
 }
 
 QString S60AudioPlayerSession::defaultEndpoint() const
 {
-#ifndef HAS_NO_AUDIOROUTING
-    QString outputName;
+    QString outputName = QString("Default");
+#ifdef HAS_AUDIOROUTING
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
     }
-    return outputName;
 #endif
-    return QString("Default");
+    return outputName;
 }
 
 void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
 {
+#ifdef HAS_AUDIOROUTING
     CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
 
     if (name == QString("Default"))
@@ -222,39 +238,25 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
-#ifndef HAS_NO_AUDIOROUTING
+
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
+
+        if (m_audioEndpoint != name) {
+            m_audioEndpoint = name;
+            emit activeEndpointChanged(name);
+        }
     }
 #endif
-
 }
-
+#ifdef HAS_AUDIOROUTING
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
-#ifndef HAS_NO_AUDIOROUTING
-    if (m_audioOutput) {
-        CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
-        if (output == CAudioOutput::ENoPreference) {
-            QString name;
-            if (output == CAudioOutput::EAll)
-                name = QString("All");
-            else if (output == CAudioOutput::ENoOutput)
-                name = QString("None");
-            else if (output == CAudioOutput::EPrivate)
-                name = QString("Earphone");
-            else if (output == CAudioOutput::EPublic)
-                name = QString("Speaker");
-            if (!name.isEmpty())
-                emit activeEndpointChanged(name);
-        }
-    }
-#else
+    // Emit already implemented in setActiveEndpoint function
     Q_UNUSED(aAudioOutput)
     Q_UNUSED(aNewDefault)
-#endif
 }
 
 QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
@@ -264,10 +266,11 @@ QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::T
     else if (output == CAudioOutput::EAll)
         return QString("All");
     else if (output == CAudioOutput::ENoOutput)
-            return QString("None");
+        return QString("None");
     else if (output == CAudioOutput::EPrivate)
-            return QString("Earphone");
+        return QString("Earphone");
     else if (output == CAudioOutput::EPublic)
-            return QString("Speaker");
-    return QString();
+        return QString("Speaker");
+    return QString("Default");
 }
+#endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,8 +43,8 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <QRadioTunerControl>
-#include <QRadioTuner>
+#include <qradiotunercontrol.h>
+#include <qradiotuner.h>
 
 #include <radioutility.h>
 #include <radiofmtunerutility.h>
@@ -53,7 +53,7 @@
 class S60RadioTunerService;
 class CFMRadioEngineCallObserver;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60RadioTunerControl 
     : public QRadioTunerControl
@@ -96,7 +96,7 @@ public:
     bool isValid() const;
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
     
     void start();
     void stop();
@@ -263,6 +263,7 @@ private:
     CRadioFmTunerUtility* m_fmTunerUtility;
     CRadioPlayerUtility* m_playerUtility;
     TInt m_maxVolume;
+    TReal m_volMultiplier;
 
 	bool m_tunerControl;
     bool m_audioInitializationComplete;
@@ -278,8 +279,6 @@ private:
     QRadioTuner::Error m_radioError;
     QRadioTuner::StereoMode m_stereoMode;
     QString m_errorString;
-    // caps meaning what the tuner can do.
-    // TTunerCapabilities m_currentTunerCapabilities;
     QRadioTuner::State m_apiTunerState;
 };
 

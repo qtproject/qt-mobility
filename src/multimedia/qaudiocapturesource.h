@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 #include "qmediarecorder.h"
 #include "qmediacontrol.h"
@@ -55,22 +55,20 @@
 
 #include "qmediaserviceprovider.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QAudioCaptureSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 {
     Q_OBJECT
 
 public:
     QAudioCaptureSource(QObject *parent = 0, QMediaServiceProvider *service = QMediaServiceProvider::defaultServiceProvider());
-    QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent = 0);
-
     ~QAudioCaptureSource();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     QList<QString> audioInputs() const;
 
@@ -92,6 +90,6 @@ private:
     Q_DECLARE_PRIVATE(QAudioCaptureSource)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QAUDIOCAPTURESOURCE_H
