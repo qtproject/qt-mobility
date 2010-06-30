@@ -1,9 +1,11 @@
 INCLUDEPATH += ../../../src/telephony
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_telephony
+TARGET  = $$qtLibraryTarget(declarative_telephony)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = QtMobility/telephony
-include(../../qimportbase.pri)
+PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
@@ -16,7 +18,6 @@ SOURCES += qdeclarativetelephony.cpp \
 CONFIG += mobility
 MOBILITY += telephony
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
