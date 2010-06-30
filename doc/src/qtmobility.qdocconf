@@ -16,9 +16,11 @@ headerdirs = ../../src/bearer \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              ../../src/sensors \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
+             ../../src/camera \
              .
 
 sourcedirs = ../../src/bearer \
@@ -31,9 +33,11 @@ sourcedirs = ../../src/bearer \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              ../../src/sensors \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
+             ../../src/camera \
              .
 
 excludedirs = ../../src/messaging/win32wce \

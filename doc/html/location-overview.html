@@ -1,41 +1,57 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- location.qdoc -->
+<head>
   <title>Qt Mobility Project 1.1: Location</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Location</li><div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#namespace">Namespace</a></li>
-<li class="level1"><a href="#overview">Overview</a></li>
-<li class="level2"><a href="#requesting-location-data-from-data-sources">Requesting location data from data sources</a></li>
-<li class="level2"><a href="#controlling-aspects-of-data-sources">Controlling aspects of data sources</a></li>
-<li class="level2"><a href="#reading-nmea-data">Reading NMEA data</a></li>
-<li class="level1"><a href="#example-creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
-<li class="level1"><a href="#examples">Examples</a></li>
-<li class="level2"><a href="#flickr-demo">Flickr Demo</a></li>
-<li class="level2"><a href="#weather-info-demo">Weather Info Demo</a></li>
-<li class="level2"><a href="#light-maps-demo">Light Maps Demo</a></li>
-<li class="level1"><a href="#classes">Classes</a></li>
-</ul>
-</div>
-<h1 class="title">Location</h1>
-<span class="subtitle"></span>
-<div class="descr"/>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Location<br /><span class="subtitle"></span>
+</h1>
 <p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#location-positioning">Location Positioning</a></li>
+<ul><li><a href="#example-creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#flickr-demo">Flickr Demo</a></li>
+<li><a href="#weather-info-demo">Weather Info Demo</a></li>
+<li><a href="#light-maps-demo">Light Maps Demo</a></li>
+</ul>
+<li><a href="#location-classes">Location classes</a></li>
+</ul>
+<li><a href="#landmarks">Landmarks</a></li>
+<ul><li><a href="#landmark-examples">Landmark Examples</a></li>
+<li><a href="#landmark-classes">Landmark classes</a></li>
+<ul><li><a href="#main-landmark-classes">Main Landmark Classes</a></li>
+<li><a href="#landmark-selection-classes">Landmark Selection classes</a></li>
+<ul><li><a href="#filters">Filters</a></li>
+<li><a href="#sortorders">SortOrders</a></li>
+</ul>
+<li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
+<li><a href="#implementing-backends">Implementing backends</a></li>
+</ul>
+</ul>
+<li><a href="#maps-and-navigation">Maps and Navigation</a></li>
+<ul><li><a href="#common-classes">Common classes</a></li>
+<li><a href="#mapping">Mapping</a></li>
+<ul><li><a href="#map-objects">Map objects</a></li>
+</ul>
+<li><a href="#routing">Routing</a></li>
+<li><a href="#places">Places</a></li>
+<li><a href="#implementing-backends">Implementing backends</a></li>
+</ul>
+</ul>
 <a name="namespace"></a>
-<h2>Namespace</h2>
+<h3>Namespace</h3>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a>
-<h2>Overview</h2>
+<a name="location-positioning"></a>
+<h3>Location Positioning</h3>
 <p>Location data involves a precisely specified position on the Earth's surface &#x2014; as provided by a latitude-longitude coordinate &#x2014; along with associated data, such as:</p>
 <ul>
 <li>The date and time at which the position was reported</li>
@@ -48,18 +64,17 @@
 <p>A default position source may be available on some platforms. Call <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() to create an instance of the default position source; the method returns 0 if no default source is available for the platform.</p>
 <p>The <a href="qgeoareamonitor.html">QGeoAreaMonitor</a> class enables client applications to be notified when the receiving device has moved in or out of a particular area, as specified by a coordinate and radius. If the platform provides built-in support for area monitoring, <a href="qgeoareamonitor.html#createDefaultMonitor">QGeoAreaMonitor::createDefaultMonitor</a>() returns an instance of the default area monitor.</p>
 <p>Satellite information can also be distributed through the <a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a> class. Call <a href="qgeosatelliteinfosource.html#createDefaultSource">QGeoSatelliteInfoSource::createDefaultSource</a>() to create an instance of the default satellite data source for the platform, if one is available. Alternatively, clients can subclass it to provide a custom satellite data source.</p>
-<a name="requesting-location-data-from-data-sources"></a>
-<h3>Requesting location data from data sources</h3>
+<p>Requesting location data from data sources</p>
 <p>To receive data from a source, connect to its <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal, then call either <a href="qgeopositioninfosource.html#startUpdates">startUpdates()</a> or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate()</a> to begin.</p>
 <p>Here is an example of a client that receives data from the default location data source, as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>():</p>
-<pre class="highlightedCode brush: cpp">    class MyClass : public QObject
+<pre>    class MyClass : public QObject
     {
         Q_OBJECT
     public:
         MyClass(QObject *parent = 0)
             : QObject(parent)
         {
-            QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
+            QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(this);
             if (source) {
                 connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                         this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -73,24 +88,22 @@
             qDebug() &lt;&lt; &quot;Position updated:&quot; &lt;&lt; info;
         }
     };</pre>
-<a name="controlling-aspects-of-data-sources"></a>
-<h3>Controlling aspects of data sources</h3>
+<p>Controlling aspects of data sources</p>
 <p>The <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource::setUpdateInterval</a>() method can be used to control the rate at which position updates are received. For example, if the client application only requires updates once every 30 seconds, it can call <tt>setUpdateInterval(30000)</tt>. (If no update interval is set, or <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval()</a> is called with a value of 0, the source uses a default interval or some other internal logic to determine when updates should be provided.)</p>
 <p><a href="qgeopositioninfosource.html#setPreferredPositioningMethods">QGeoPositionInfoSource::setPreferredPositioningMethods</a>() enables client applications to request that a certain type of positioning method be used. For example, if the application prefers to use only satellite positioning, which offers fairly precise outdoor positioning but can be a heavy user of power resources, it can call this method with the <a href="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::SatellitePositioningMethods</a> value. However, this method should only be used in specialized client applications; in most cases, the default positioning methods should not be changed, as a source may internally use a variety of positioning methods that can be useful to the application.</p>
-<a name="reading-nmea-data"></a>
-<h3>Reading NMEA data</h3>
+<p>Reading NMEA data</p>
 <p><a href="http://en.wikipedia.org/wiki/NMEA_0183">NMEA</a> is a common text-based protocol for specifying navigational data. For convenience, the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> is provided to enable client applications to read and distribute NMEA data in either real-time mode (for example, when streaming from a GPS device) or simulation mode (for example, when reading from a NMEA log file). In simulation mode, the source will emit updates according to the time stamp of each NMEA sentence to produce a &quot;replay&quot; of the recorded data.</p>
 <a name="example-creating-a-custom-location-data-source"></a>
-<h2>Example: Creating a custom location data source</h2>
+<h4>Example: Creating a custom location data source</h4>
 <p>Generally, the capabilities provided by the default position source as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>(), along with the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> class, are sufficient for retrieving location data. However, in some cases developers may wish to write their own custom location data sources.</p>
 <p>The <tt>LogFilePositionSource</tt> class in <tt>examples/logfilepositionsource</tt> shows how to subclass <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> to create a custom location data source.</p>
 <p>This example class reads location data from a text file, <i>log.txt</i>. The file specifies location data using a simple text format: it contains one location update per line, where each line contains a date/time, a latitude and a longitude, separated by spaces. The date/time is in ISO 8601 format and the latitude and longitude are in degrees decimal format. Here is an excerpt from <i>log.txt</i>:</p>
-<pre class="highlightedCode brush: cpp">        2009-08-24T22:25:01 -27.576082 153.092415
+<pre>        2009-08-24T22:25:01 -27.576082 153.092415
         2009-08-24T22:25:02 -27.576223 153.092530
         2009-08-24T22:25:03 -27.576364 153.092648</pre>
 <p>The class reads this data and distributes it via the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal.</p>
 <p>Here is the definition of the <tt>LogFilePositionSource</tt> class:</p>
-<pre class="highlightedCode brush: cpp">    class LogFilePositionSource : public QGeoPositionInfoSource
+<pre>    class LogFilePositionSource : public QGeoPositionInfoSource
     {
         Q_OBJECT
     public:
@@ -123,7 +136,7 @@
 </ul>
 <p>When a position update is available, the subclass emits the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal.</p>
 <p>Here are the key methods in the class implementation:</p>
-<pre class="highlightedCode brush: cpp">    LogFilePositionSource::LogFilePositionSource(QObject *parent)
+<pre>    LogFilePositionSource::LogFilePositionSource(QObject *parent)
         : QGeoPositionInfoSource(parent),
           logFile(new QFile(this)),
           timer(new QTimer(this))
@@ -186,28 +199,165 @@
 <p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the example to see the data that is received by <tt>ClientApplication</tt>.</p>
 <p>Before running the example, make sure you have done both <tt>make</tt> and <tt>make install</tt>.</p>
 <a name="examples"></a>
-<h2>Examples</h2>
+<h4>Examples</h4>
 <a name="flickr-demo"></a>
-<h3>Flickr Demo</h3>
+<h5>Flickr Demo</h5>
 <p>The <a href="flickrdemo.html">Flickr Demo</a> uses the Location to download thumbnail images from Flickr relevant to the current location.</p>
 <a name="weather-info-demo"></a>
-<h3>Weather Info Demo</h3>
+<h5>Weather Info Demo</h5>
 <p>The <a href="weatherinfo.html">Weather Info demo</a> uses Location display data about the weather for the current location.</p>
 <a name="light-maps-demo"></a>
-<h3>Light Maps Demo</h3>
+<h5>Light Maps Demo</h5>
 <p>The <a href="lightmaps.html">Light Maps demo</a> uses Location display a street map for the current location.</p>
-<a name="classes"></a>
-<h2>Classes</h2>
-<table class="annotated">
-<tr class="odd topAlign"><td><p><a href="qgeoareamonitor.html">QGeoAreaMonitor</a></p></td><td><p>Enables the detection of proximity changes for a specified set of coordinates</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgeocoordinate.html">QGeoCoordinate</a></p></td><td><p>Defines a geographical position on the surface of the Earth</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgeopositioninfo.html">QGeoPositionInfo</a></p></td><td><p>Contains information gathered on a global position, direction and velocity at a particular point in time</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a></p></td><td><p>Abstract base class for the distribution of positional updates</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a></p></td><td><p>Contains basic information about a satellite</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a></p></td><td><p>Abstract base class for the distribution of satellite information updates</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></p></td><td><p>Positional information using a NMEA data source</p></td></tr>
-</table>
-</div>
+<a name="location-classes"></a>
+<h4>Location classes</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeoaddress.html">QGeoAddress</a></th><td>Represents an address</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoareamonitor.html">QGeoAreaMonitor</a></th><td>Enables the detection of proximity changes for a specified set of coordinates</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeocoordinate.html">QGeoCoordinate</a></th><td>Defines a geographical position on the surface of the Earth</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoplace.html">QGeoPlace</a></th><td>Represents basic information about a place</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeopositioninfo.html">QGeoPositionInfo</a></th><td>Contains information gathered on a global position, direction and velocity at a particular point in time</td></tr>
+<tr valign="top" class="even"><th><a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a></th><td>Abstract base class for the distribution of positional updates</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a></th><td>Contains basic information about a satellite</td></tr>
+<tr valign="top" class="even"><th><a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a></th><td>Abstract base class for the distribution of satellite information updates</td></tr>
+<tr valign="top" class="odd"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
+</table></p>
+<a name="landmarks"></a>
+<h3>Landmarks</h3>
+<p>The Landmarks portion of the Location API facilitates the creation, retrieval, updating and deletion of landmarks from arbitrary data stores.</p>
+<p>A landmark is a location of some significance, also known as a point of interest.</p>
+<a name="landmark-examples"></a>
+<h4>Landmark Examples</h4>
+<p>For more details see the <a href="landmarks.html">Landmark Examples</a> page.</p>
+<a name="landmark-classes"></a>
+<h4>Landmark classes</h4>
+<a name="main-landmark-classes"></a>
+<h5>Main Landmark Classes</h5>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qlandmark.html">QLandmark</a></th><td>Represents a location or point of interest of some significance</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkcategory.html">QLandmarkCategory</a></th><td>Designates a grouping of landmarks of similar type</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a></th><td>Unique identifier for a category</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a></th><td>Miscellaneous hints to the manager when fetching landmarks</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkid.html">QLandmarkId</a></th><td>Unique identifier for a landmark</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkmanager.html">QLandmarkManager</a></th><td>Interface for storage and retrieval of landmarks from a landmark store</td></tr>
+</table></p>
+<a name="landmark-selection-classes"></a>
+<h5>Landmark Selection classes</h5>
+<p>Landmark selection is facilitated by filter and sort order classes. The filter classes define what criteria that landmarks must match and the sort order classes specify how the returned landmarks are sorted. The filter and sort order classes are used with either the <a href="qlandmarkmanager.html">QLandmarkManager</a> class (for synchronous landmark selection) or the request classes for (asynchronous landmark selection)</p>
+<a name="filters"></a>
+<h6>Filters</h6>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qlandmarkattributefilter.html">QLandmarkAttributeFilter</a></th><td>Filtering based on generic landmark attributes</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a></th><td>Used to search for landmarks within a given bounding box</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a></th><td>Used to search for landmarks that belong to a certain category</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkfilter.html">QLandmarkFilter</a></th><td>Serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkidfilter.html">QLandmarkIdFilter</a></th><td>Used to search for landmarks based on a list of landmark identifiers</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a></th><td>Filter which intersects the results of its constituent filters</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarknamefilter.html">QLandmarkNameFilter</a></th><td>Used to search for landmarks by name</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a></th><td>Used to search for landmarks based on the radius around a given coordinate</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a></th><td>Filter which unions the results of its constituent filters</td></tr>
+</table></p>
+<a name="sortorders"></a>
+<h6>SortOrders</h6>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a></th><td>Used to sort landmarks by distance from a given coordinate</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarknamesort.html">QLandmarkNameSort</a></th><td>Used to sort landmarks by name</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarksortorder.html">QLandmarkSortOrder</a></th><td>Serves as a base class for the different sort order types</td></tr>
+</table></p>
+<a name="asynchronous-requests"></a>
+<h5>Asynchronous Requests</h5>
+<p>Asynchronous operations are facilitates by the request classes listed below:</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a></th><td>The interface from which all asynchronous request classes inherit</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</a></th><td>Allows a client to asynchronously request a list of categories from a landmark manager</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of category identifiers from a landmark manager</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a></th><td>Allows a client to asynchronously request that certain categories be removed from a landmark manager</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a></th><td>Allows a client to asynchronously request that certain categories be saved by a landmark manager</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a></th><td>Allows a client to asynchronously request that a landmark manager export a set of landmarks</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a></th><td>Allows a client to asynchronously request a list of landmarks from a landmark manager</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of landmark identifiers from a landmark manager</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkimportrequest.html">QLandmarkImportRequest</a></th><td>Allows a client to asynchronously request that a landmark manager import a set of landmarks</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a></th><td>Allows a client to asynchronously request that certain landmarks be removed from a landmark manager</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a></th><td>Allows a client to asynchronously request that certain landmarks be saved by a landmark manager</td></tr>
+</table></p>
+<a name="implementing-backends"></a>
+<h5>Implementing backends</h5>
+<p>A manager backend may be implemented by subclassing <a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a>, and providing a <a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a> which can instantiate it when required.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a></th><td>The interface for all implementations of the landmark manager backend functionality</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a></th><td>The interface for plugins that implement QLandmarkManagerEngine functionality</td></tr>
+</table></p>
+<a name="maps-and-navigation"></a>
+<h3>Maps and Navigation</h3>
+<p>The Maps and Navigation API is based on plugins.</p>
+<p>Since most providers of mapping, geocoding and routing information offer no guarantees that their data is interoperable with the data provided by other services, the plugins are used to group the functionality per service provider.</p>
+<p>The plugins are accessed via <a href="qgeoserviceprovider.html">QGeoServiceProvider</a>, and a Nokia based plugin is part of Qt Mobility.</p>
+<pre>        QGeoMappingManager *mappingManager = 0;
+        QGeoRoutingManager *routingManager = 0;
+        QGeoPlacesManager *placesManager = 0;
+
+        QGeoServiceProvider serviceProvider(&quot;nokia&quot;);
+
+        if (serviceProvider.error() == QGeoServiceProvider::NoError) {
+            mappingManager = serviceProvider.mappingManager();
+            routingManager = serviceProvider.routingManager();
+            placesManager = serviceProvider.placesManager();
+        }</pre>
+<a name="common-classes"></a>
+<h4>Common classes</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeoboundingbox.html">QGeoBoundingBox</a></th><td>Defines a rectangular geographic area</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoserviceprovider.html">QGeoServiceProvider</a></th><td>Aggregates access to services which provide geographical information</td></tr>
+</table></p>
+<a name="mapping"></a>
+<h4>Mapping</h4>
+<p>The <a href="qgeomapwidget.html">QGeoMapWidget</a> class is the main class used for displaying and interacting with maps. It is designed for use within the Graphics View Framework, and is a subclass of <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<p>The <a href="qgeomappingmanager.html">QGeoMappingManager</a> provides most of the functionality required by <a href="qgeomapwidget.html">QGeoMapWidget</a>. The details of <a href="qgeomappingmanager.html">QGeoMappingManager</a> are mostly only important to plugin implementers, as regular users should not need to make use of <a href="qgeomappingmanager.html">QGeoMappingManager</a> outside of the <a href="qgeomapwidget.html">QGeoMapWidget</a> constructor:</p>
+<pre>        QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);</pre>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomapwidget.html">QGeoMapWidget</a></th><td>Used to display a map and manager the interactions between the user and the map</td></tr>
+<tr valign="top" class="even"><th><a href="qgeomappingmanager.html">QGeoMappingManager</a></th><td>Support for displaying and interacting with maps</td></tr>
+</table></p>
+<a name="map-objects"></a>
+<h5>Map objects</h5>
+<p><a href="qgeomapobject.html">QGeoMapObject</a> and its subclasses provide the ability to add graphics to the map specified in terms of coordinates and distances. <a href="qgeomapobject.html">QGeoMapObject</a> instances can also be grouped into heirarchies in order to simplify the process of creating compound objects and managing groups of objects.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomapcircleobject.html">QGeoMapCircleObject</a></th><td>QGeoMapObject used to draw the region within a certain distance of a coordinate</td></tr>
+<tr valign="top" class="even"><th><a href="qgeomapobject.html">QGeoMapObject</a></th><td>Graphical item for display in QGeoMapWidget instancse, that is specified in terms of coordinates and distances</td></tr>
+</table></p>
+<a name="routing"></a>
+<h4>Routing</h4>
+<p><a href="qgeoroutingmanager.html">QGeoRoutingManager</a> handles requests for routing information.</p>
+<p>The requests are created as <a href="qgeorouterequest.html">QGeoRouteRequest</a> instances, which are passed to <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(). The returned <a href="qgeoroutereply.html">QGeoRouteReply</a> instance will contain the result of the request when it is completed.</p>
+<p>The <a href="qgeoroute.html">QGeoRoute</a> class describes the resulting route. Each route is broken up into a number of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> instances, with the division usually occurring at either user specified waypoints or at changes in the mode of transport, like when changing from a train to a bus.</p>
+<p>Each <a href="qgeoroutesegment.html">QGeoRouteSegment</a> has a <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> instance which describes the instructions that would be issued to a user attempting to follow a route. These instructions a location, which is typically somewhere near the end of the associated <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, and instruction text describing how the next <a href="qgeoroutesegment.html">QGeoRouteSegment</a> should be reached.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represents a navigation instruction</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Represents a route between two points</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutereply.html">QGeoRouteReply</a></th><td>Manages an operation started by an instance of QGeoRoutingManager</td></tr>
+<tr valign="top" class="even"><th><a href="qgeorouterequest.html">QGeoRouteRequest</a></th><td>Represents the parameters and restrictions which define a request for routing information</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutesegment.html">QGeoRouteSegment</a></th><td>Represents a segment of a route</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoroutingmanager.html">QGeoRoutingManager</a></th><td>Support for geographic routing operations</td></tr>
+</table></p>
+<a name="places"></a>
+<h4>Places</h4>
+<p>QGeoPlacesManager handles geocoding, reverse geocoding and free-text search for places.</p>
+<p>The free-text search will attempt to geocode text that looks like an address while simultaneously searching any landmark databases that the service pro. It is even possibly to add additional <a href="qlandmarkmanager.html">QLandmarkManager</a> instances to the soures of data, so that users can search online databases alongside their personal offline landmarks store.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeosearchmanager.html">QGeoSearchManager</a></th><td>Support for searching operations related to geographic information</td></tr>
+<tr valign="top" class="even"><th><a href="qgeosearchreply.html">QGeoSearchReply</a></th><td>Manages an operation started by an instance of QGeoSearchManager</td></tr>
+</table></p>
+<a name="implementing-backends"></a>
+<h4>Implementing backends</h4>
+<p>A plugin implementer needs to subclass <a href="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</a> and as many of the ManagerEngine classes as they want to provide implementations for.</p>
+<p>Subclassing <a href="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</a> will only involve exposing a name and a version by overriding <a href="qgeoserviceproviderfactory.html#providerName">QGeoServiceProviderFactory::providerName</a>() and <a href="qgeoserviceproviderfactory.html#providerVersion">QGeoServiceProviderFactory::providerVersion</a>(), and overriding QGeoServiceProviderFactory::createPlacesManagerEngine(), <a href="qgeoserviceproviderfactory.html#createMappingManagerEngine">QGeoServiceProviderFactory::createMappingManagerEngine</a>() and <a href="qgeoserviceproviderfactory.html#createRoutingManagerEngine">QGeoServiceProviderFactory::createRoutingManagerEngine</a>() as appropriate.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomapdata.html">QGeoMapData</a></th><td>Are used as a bridge between QGeoMapWidget and QGeoMappingManager</td></tr>
+<tr valign="top" class="even"><th><a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a></th><td>Interface and convenience methods to implementors of QGeoServiceProvider plugins who want to provides support for displaying and interacting with maps</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutingmanagerengine.html">QGeoRoutingManagerEngine</a></th><td>Interface and convenience methods to implementers of QGeoServiceProvider plugins who want to provide access to geographic routing information</td></tr>
+<tr valign="top" class="even"><th><a href="qgeosearchmanagerengine.html">QGeoSearchManagerEngine</a></th><td>Interface and convenience methods to implementers of QGeoServiceProvider plugins who want to provide support for searching operations related to geographic data</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</a></th><td>Factory class used as the plugin interface for services related to geographical information</td></tr>
+</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,11 +1,24 @@
-INCLUDEPATH += ../../../src/gallery
-DEPENDPATH += ../../../src/gallery
-INCLUDEPATH += ../../../src/global
+DEPENDPATH += .
+INCLUDEPATH += . \
+    ../../../include \
+    ../../../src/gallery
 
-TARGET  = declarative_gallery
+TARGET = $$qtLibraryTarget(declarative_gallery)
 TARGETPATH = QtMobility/gallery
-include(../../qimportbase.pri)
+
+TEMPLATE = lib
+CONFIG += plugin
+PLUGIN_TYPE = declarative
+
 include(../../../common.pri)
+
+QT += declarative
+
+
+CONFIG += mobility
+MOBILITY = gallery
+
+target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 QT += declarative
 

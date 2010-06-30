@@ -57,7 +57,7 @@ SOURCES += \
 
 
 !win32:!embedded:!mac:!symbian {
-    LIBS += -lXv
+    LIBS += -lXv -lX11 -lXext
 
     HEADERS += \
         qgstreamervideooverlay.h \

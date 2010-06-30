@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// We mean it.
+// Do not use this file directly.
 //
 
 
@@ -366,6 +366,11 @@ void QAudioDeviceInfoInternal::updateLists()
 #endif
 	channelz.append(1);
 	channelz.append(2);
+        if (mode == QAudio::AudioOutput) {
+            channelz.append(4);
+            channelz.append(6);
+            channelz.append(8);
+        }
 
 	byteOrderz.append(QAudioFormat::LittleEndian);
 

@@ -1,42 +1,42 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qtmobility-known-issues.qdoc -->
+<head>
   <title>Qt Mobility Project 1.1: Release Notes of the QtMobility Project</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Release Notes of the QtMobility Project</li><div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#new-features">New Features</a></li>
-<li class="level2"><a href="#detailed-feature-support-symbian-s60">Detailed Feature support - Symbian/S60</a></li>
-<li class="level3"><a href="#bearer-management-api">Bearer Management API</a></li>
-<li class="level3"><a href="#contacts-api">Contacts API</a></li>
-<li class="level3"><a href="#messaging-api">Messaging API</a></li>
-<li class="level3"><a href="#multimedia-api">Multimedia API</a></li>
-<li class="level3"><a href="#service-framework-api">Service Framework API</a></li>
-<li class="level3"><a href="#system-info-api">System Info API</a></li>
-<li class="level1"><a href="#known-issues">Known Issues</a></li>
-<li class="level2"><a href="#non-api-specific-issues">Non-API specific issues</a></li>
-<li class="level2"><a href="#bearer-management-api">Bearer Management API</a></li>
-<li class="level2"><a href="#contacts-api">Contacts API</a></li>
-<li class="level2"><a href="#bearer-management-api">Bearer Management API</a></li>
-<li class="level2"><a href="#messaging-api">Messaging API</a></li>
-<li class="level2"><a href="#multimedia-api">Multimedia API</a></li>
-<li class="level2"><a href="#system-info-api">System Info API</a></li>
-</ul>
-</div>
-<h1 class="title">Release Notes of the QtMobility Project</h1>
-<span class="subtitle"></span>
-<div class="descr"/>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Release Notes of the QtMobility Project<br /><span class="subtitle"></span>
+</h1>
 <p>An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com">QtMobility Project Bug Tracker</a> on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.</p>
 <p>The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
+<ul><li><a href="#new-features">New Features</a></li>
+<ul><li><a href="#detailed-feature-support-symbian-s60">Detailed Feature support - Symbian/S60</a></li>
+<ul><li><a href="#bearer-management-api">Bearer Management API</a></li>
+<li><a href="#contacts-api">Contacts API</a></li>
+<li><a href="#messaging-api">Messaging API</a></li>
+<li><a href="#multimedia-api">Multimedia API</a></li>
+<li><a href="#service-framework-api">Service Framework API</a></li>
+<li><a href="#system-info-api">System Info API</a></li>
+</ul>
+</ul>
+<li><a href="#known-issues">Known Issues</a></li>
+<ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
+<li><a href="#contacts-api">Contacts API</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
+<li><a href="#messaging-api">Messaging API</a></li>
+<li><a href="#multimedia-api">Multimedia API</a></li>
+<li><a href="#system-info-api">System Info API</a></li>
+</ul>
+</ul>
 <a name="new-features"></a>
 <h2>New Features</h2>
 <a name="detailed-feature-support-symbian-s60"></a>
@@ -118,9 +118,9 @@
 <h3>Non-API specific issues</h3>
 <ul>
 <li>Not all example applications will display(fit) well on small screens.</li>
-<li>Prefixed paths in includes such as<pre class="highlightedCode brush: cpp">    #include &lt;QtLibrary/MyClass&gt;</pre>
+<li>Prefixed paths in includes such as<pre>    #include &lt;QtLibrary/MyClass&gt;</pre>
 <p>or</p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QtLibrary/myclass.h&gt;</pre>
+<pre>    #include &lt;QtLibrary/myclass.h&gt;</pre>
 <p>do not currently work on Symbian.</p>
 </li>
 </ul>
@@ -128,6 +128,11 @@
 <h3>Bearer Management API</h3>
 <ul>
 <li>Fremantle: Segmentation fault on removing a connected network</li>
+</ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>All platforms: <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> is not thread-safe; using it from other than main-thread off the application will not work properly. Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.</li>
 </ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
@@ -144,6 +149,7 @@
 <ul>
 <li>Messaging filtering and sorting functions are not fully optimized.</li>
 <li>Fremantle: <tt>modest</tt> process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.</li>
+<li>Fremantle: <tt>SMS</tt> sending is failing when using MessagingEx example. Regression wrt 1.0&#x2e;0 release. serviceactions and writemessage work OK.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
 <li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
 <li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
@@ -176,7 +182,6 @@
 <ul>
 <li>S60: Signal strength is not implemented</li>
 </ul>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

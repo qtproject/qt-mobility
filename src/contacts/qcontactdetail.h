@@ -44,6 +44,7 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -97,6 +98,9 @@ public:
 
     int key() const;
     void resetKey();
+
+    void Q_DECL_DEPRECATED setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
+    QList<QContactActionDescriptor> Q_DECL_DEPRECATED preferredActions() const;
 
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);

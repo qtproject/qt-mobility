@@ -2,9 +2,11 @@ INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_publishsubscribe
+TARGET  = $$qtLibraryTarget(declarative_publishsubscribe)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = QtMobility/publishsubscribe
-include(../../qimportbase.pri)
+PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative

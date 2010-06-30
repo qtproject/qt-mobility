@@ -45,7 +45,7 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.0.2 > $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.0.2 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
     system(echo MOBILITY_MINOR_VERSION = 0 >> $$PRF_CONFIG)
     system(echo MOBILITY_PATCH_VERSION = 2 >> $$PRF_CONFIG)
@@ -156,6 +156,12 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
         INSTALLS += qtmheaderssensors
     }
+
+    contains(mobility_modules,organizer) {
+        qtmheadersorganizer.path = $${QT_MOBILITY_INCLUDE}/QtOrganizer
+        qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
+        INSTALLS += qtmheadersorganizer
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
@@ -169,7 +175,8 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtPublishSubscribe/* \
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
-                       include/QtSensors/*
+                       include/QtSensors/* \
+                       include/QtOrganizer/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
@@ -183,7 +190,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

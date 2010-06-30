@@ -1,0 +1,40 @@
+/*
+* Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*
+*/
+
+
+target          T_States.exe
+targettype      EXE
+CAPABILITY   	ReadUserData WriteUserData
+UID				0x1027289C
+VENDORID 		0x70000001
+ 
+systeminclude	/EPOC32/INCLUDE 
+systeminclude 	../../CNTMODEL/INC 
+systeminclude 	../NbCntTestLib
+
+userinclude 	. 
+
+SOURCEPATH	.
+source		T_CStatesTest.cpp 
+source		T_CStatesTestMain.cpp 
+
+
+library         EUSER.LIB 
+library         ESTOR.LIB 
+library         BAFL.LIB 
+library		cntmodel.lib
+library         NbCntTestLib.LIB
