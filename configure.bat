@@ -460,9 +460,11 @@ setlocal
     if "%MOBILITY_BUILDSYSTEM%" == "symbian-sbsv2" (
         call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
+        call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
     ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
+        call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
     ) else {
         REM Make for other builds
         call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
