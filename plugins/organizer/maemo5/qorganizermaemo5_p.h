@@ -72,7 +72,7 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
-#include "qorganizerrecurrencetransform.h"
+#include "qorganizeritemtransform.h"
 #include "qorganizerguidmapper.h"
 
 #include "qorganizerjournal.h"
@@ -128,8 +128,8 @@ public:
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
 
-    // recurrence rule converter instance
-    OrganizerRecurrenceTransform m_recTransformer;
+    // item converter instance
+    OrganizerItemTransform m_itemTransformer;
 
     // guid mapper instance
     OrganizerGuidMapper m_guidMapper;
@@ -177,23 +177,6 @@ private:
     // single item saving implementation
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
-
-    // conversion functions
-    QOrganizerEvent convertCEventToQEvent(CEvent *cevent) const;
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceDate) const;
-    QOrganizerTodo convertCTodoToQTodo(CTodo *ctodo) const;
-    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo *ctodo, const QString &calendarName) const;
-    QOrganizerJournal convertCJournalToQJournal(CJournal *cjournal ) const;
-
-    // conversions between CComponent and QOrganizerItem
-    void fillInCommonCComponentDetails(QOrganizerItem *item, CComponent *component, bool setId = true) const;
-    CComponent* createCComponent(CCalendar *cal, const QOrganizerItem *item) const;
-
-    // recurrence information conversions
-    CRecurrence* createCRecurrence(const QOrganizerItem *item) const;
-
-    // error code conversion
-    QOrganizerItemManager::Error calErrorToManagerError(int calError) const;
 
     // calendar instance deletion helper
     void cleanupCal(CCalendar *cal) const;
