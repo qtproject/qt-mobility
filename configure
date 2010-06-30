@@ -101,7 +101,7 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors organizer telephony feedback"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer telephony feedback"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
@@ -140,7 +140,7 @@ usage()
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework telephony"
     echo "                    sensors versit organizer feedback"
     echo "                    Modules should be separated by a space and surrounded"
@@ -233,7 +233,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|telephony|versit|organizer|feedback)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|organizer|feedback)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -578,6 +578,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         feedback)
             $relpath/bin/syncheaders $shadowpath/include/QtFeedback $relpath/src/feedback
+            ;;
+        gallery)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/gallery
             ;;
         organizer)
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer

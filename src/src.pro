@@ -44,6 +44,8 @@ contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
     }
 }
 
+contains(mobility_modules,gallery): SUBDIRS += gallery
+
 contains(mobility_modules,landmarks): SUBDIRS += landmarks
 
 landmarks.subdir=landmarks

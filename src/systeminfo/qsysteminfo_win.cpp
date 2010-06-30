@@ -1424,14 +1424,54 @@ int QSystemDisplayInfoPrivate::physicalWidth(int screen)
 
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
+    logicalDrives();
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
+    WMIHelper *wHelper;
+    wHelper =  WMIHelper::instance();
+    wHelper->setWmiNamespace("root/cimv2");
+    wHelper->setClassName("Win32_VolumeChangeEvent");
+    wHelper->setupNotfication("root/cimv2","",QStringList());
+
+    connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
+#endif
+#endif
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
 }
+
+void QSystemStorageInfoPrivate::notificationArrived()
+{
+    QMap<QString, QString> oldDrives;
+
+     oldDrives = mountEntriesMap;
+     mountEntries();
+     QString driveLetter;
+
+     if(mountEntriesMap.count() < oldDrives.count()) {
+         QMapIterator<QString, QString> i(oldDrives);
+          while (i.hasNext()) {
+              i.next();
+              if(!mountEntriesMap.contains(i.key())) {
+                  emit logicalDriveChanged(false, i.key());
+              }
+          }
+      } else if(mountEntriesMap.count() > oldDrives.count()) {
+         QMapIterator<QString, QString> i(mountEntriesMap);
+          while (i.hasNext()) {
+              i.next();
+
+              if(oldDrives.contains(i.key()))
+                  continue;
+                 emit logicalDriveChanged(true,i.key());
+         }
+     }
+ }
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
@@ -1499,6 +1539,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
+    mountEntriesMap.clear();
     QStringList drivesList;
     QFileInfoList drives = QDir::drives();
     foreach(QFileInfo drive, drives) {
@@ -1506,9 +1547,15 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
         letter.chop(1);
         if(totalDiskSpace(letter) > 0) {
             drivesList.append(letter);
+            mountEntriesMap.insert(letter,letter);
         }
     }
     return drivesList;
+}
+
+void QSystemStorageInfoPrivate::mountEntries()
+{
+    logicalDrives();
 }
 
 #if defined(Q_OS_WINCE)

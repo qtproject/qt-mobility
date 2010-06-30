@@ -66,30 +66,65 @@ QTM_BEGIN_NAMESPACE
 
 class WMIHelper : public QObject
 {
+    Q_OBJECT
+
 public:
     WMIHelper(QObject *parent = 0);
     ~WMIHelper();
     QVariant getWMIData();
     QVariant getWMIData(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);
     QList <QVariant> wmiVariantList;
-   void setWmiNamespace(const QString &wmiNamespace);
-   void setClassName(const QString &className);
-   void setClassProperty(const QStringList &classProperties);
+    void setWmiNamespace(const QString &wmiNamespace);
+    void setClassName(const QString &className);
+    void setClassProperty(const QStringList &classProperties);
 
-   void setConditional(const QString &conditional); //see WQL SQL for WMI)
+    void setConditional(const QString &conditional); //see WQL SQL for WMI)
+    void setupNotfication(const QString &wmiNamespace,const QString &className, const QStringList &classProperties);
+    static QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
+
+    static  WMIHelper *instance();
+    void emitNotificationArrived();
+
+Q_SIGNALS:
+    void wminotificationArrived();
 
 private:
-   IWbemLocator *wbemLocator;
-   IWbemServices *wbemServices;
-   IWbemClassObject *wbemCLassObject;
-   IEnumWbemClassObject *wbemEnumerator;
+    IWbemLocator *wbemLocator;
+    IWbemServices *wbemServices;
+    IWbemClassObject *wbemCLassObject;
+    IEnumWbemClassObject *wbemEnumerator;
 
-   QString m_className;
-   QStringList m_classProperties;
-   QString m_conditional;
-   QString m_wmiNamespace;
-   QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
-   void initializeWMI(const QString &wmiNamespace);
+    QString m_className;
+    QStringList m_classProperties;
+    QString m_conditional;
+    QString m_wmiNamespace;
+    void initializeWMI(const QString &wmiNamespace);
+
+};
+
+class EventSink : public IWbemObjectSink
+{
+    LONG m_lRef;
+    bool bDone;
+
+public:
+    EventSink() { m_lRef = 0; }
+    ~EventSink() { bDone = true; }
+
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+    virtual HRESULT
+            STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv);
+
+    virtual HRESULT STDMETHODCALLTYPE Indicate(
+            LONG lObjectCount,
+            IWbemClassObject __RPC_FAR *__RPC_FAR *apObjArray);
+
+    virtual HRESULT STDMETHODCALLTYPE SetStatus(
+            LONG lFlags,
+            HRESULT hResult,
+            BSTR strParam,
+            IWbemClassObject __RPC_FAR *pObjParam);
 
 };
 

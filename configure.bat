@@ -58,7 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors telephony organizer feedback
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -133,7 +133,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -demos ............ Build demo applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts location publishsubscribe
+    echo                     Choose from: bearer contacts gallery location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework telephony
     echo                     sensors versit organizer feedback
     echo                     Modules should be separated by a space and surrounded
@@ -310,6 +310,8 @@ if %FIRST% == bearer (
     echo     Feedback selected
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == gallery (
+    echo     Gallery selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -591,6 +593,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == gallery (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtGallery %SOURCE_PATH%\src\gallery
 ) else if %FIRST% == organizer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- gallery.qdoc -->
+  <title>Qt Mobility Project 1.1: Document Gallery</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Document Gallery</li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#overview">Overview</a></li>
+<li class="level2"><a href="#requests">Requests</a></li>
+<li class="level2"><a href="#filters">Filters</a></li>
+<li class="level2"><a href="#galleries">Galleries</a></li>
+<li class="level1"><a href="#examples">Examples</a></li>
+</ul>
+</div>
+<h1 class="title">Document Gallery</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
+<a name="overview"></a>
+<h2>Overview</h2>
+<p>The Document Gallery provides a meta-data focused API for managing collections of documents and media.</p>
+<p>The primary interface to items in a gallery is the <a href="qgalleryitemlist.html">QGalleryItemList</a> class which provides accessors for reading and writing the meta-data of a set of items.</p>
+<p>A <a href="qgalleryitemlist.html">QGalleryItemList</a> cannot be created directly, instead an instance must be requested from a gallery using one of the gallery request classes.</p>
+<a name="requests"></a>
+<h3>Requests</h3>
+<p>The gallery request classes inherit from <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a> and are used to fetch items from a gallery, or to initiate service provided by a gallery.</p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></p></td><td><p>Base class for gallery requests</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgallerycountrequest.html">QGalleryCountRequest</a></p></td><td><p>Request for the number of items in a gallery matching some criteria</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for an item from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
+</table>
+<a name="filters"></a>
+<h3>Filters</h3>
+<p>The filter classes provide a way to describe meta-data criteria items must satisfy to be included in the results of some requests.</p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qgalleryfilter.html">QGalleryFilter</a></p></td><td><p>Filtering criteria for gallery requests</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a></p></td><td><p>Filter which matches the intersection of two or more meta-data filters</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a></p></td><td><p>Filter which accepts items with meta-data properties matching a specific value</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a></p></td><td><p>Filter which matches items with meta-data properties with values within a specified range</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a></p></td><td><p>Filter which matches the union of two or more meta-data filters</p></td></tr>
+</table>
+<a name="galleries"></a>
+<h3>Galleries</h3>
+<p>The gallery classes provide instances of different gallery types. Currently the only gallery type is the Document Gallery.</p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qabstractgallery.html">QAbstractGallery</a></p></td><td><p>Base class for gallery implementations</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qdocumentgallery.html">QDocumentGallery</a></p></td><td><p>Gallery of documents</p></td></tr>
+</table>
+<a name="examples"></a>
+<h2>Examples</h2>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="documentshare.html">Document Sharing</a></p></td><td><p></p></td></tr>
+<tr class="even topAlign"><td><p><a href="mediabrowser.html">Media Browser</a></p></td><td><p></p></td></tr>
+</table>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>
