@@ -138,16 +138,18 @@ symbian|win32|maemo6|maemo5|mac {
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-		contains(messaging_freestyle_enabled, yes) {
-	   		CONFIG += FREESTYLEMAIL
-			DEFINES += FREESTYLEMAILUSED
-			DEFINES += FREESTYLEMAILBOXOBSERVERUSED
-		}
-	contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
 	contains(messaging_freestylenm_enabled, yes) {
             CONFIG += FREESTYLENMAIL
             DEFINES += FREESTYLENMAILUSED
         }
+    contains(CONFIG, !FREESTYLENMAIL) {
+		contains(messaging_freestyle_enabled, yes) {
+		   		CONFIG += FREESTYLEMAIL
+				DEFINES += FREESTYLEMAILUSED
+				DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+			}
+		}
+	contains(messaging_ncnlist_enabled, no) : DEFINES += NCNLISTREMOVED
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
