@@ -62,7 +62,6 @@ CCoeControl *QFeedbackSymbian::defaultWidget()
 
 #ifndef NO_TACTILE_SUPPORT
 #include <touchfeedback.h>
-#include <touchlogicalfeedback.h>
 
 static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effect)
 {
@@ -170,6 +169,9 @@ static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effec
 
 #ifdef ADVANCED_TACTILE_SUPPORT
 typedef MTouchFeedback QTouchFeedback;
+// This define is for the second parameter of StartFeedback, which needs to be of type
+// TTouchContinuousFeedback in platforms with ADVANCED_TACTILE_SUPPORT
+#define DEFAULT_CONTINUOUS_EFFECT ETouchContinuousSmooth
 #else
 class QTouchFeedback : public MTouchFeedback
 {
@@ -202,6 +204,8 @@ public:
         MTouchFeedback::Instance()->InstantFeedback(ETouchFeedbackSensitive);
     }
 };
+// The second parameter of StartFeedback: an int
+#define DEFAULT_CONTINUOUS_EFFECT 0
 #endif //ADVANCED_TACTILE_SUPPORT
 
 bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
@@ -402,7 +406,7 @@ void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFee
             if (m_elapsed[effect].elapsed() >= effect->duration())
                 m_elapsed.remove(effect); //we reached the end. it's time to restart
             QTouchFeedback::Instance()->StartFeedback(defaultWidget(),
-                                         (TTouchContinuousFeedback)0x300, // ETouchContinuousSmooth
+                                         DEFAULT_CONTINUOUS_EFFECT,
                                          0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000));
             m_elapsed[effect].start();
             break;
