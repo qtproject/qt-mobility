@@ -76,7 +76,8 @@ public:
 
     bool isParameterSupported(ExposureParameter parameter) const;
     QVariant exposureParameter(ExposureParameter parameter) const;
-    QVariantList supportedParameterRange(ExposureParameter parameter, bool *continuous) const;
+    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const;
+    QVariantList supportedParameterRange(ExposureParameter parameter) const;
     bool setExposureParameter(ExposureParameter parameter, const QVariant& value);
 
     QString extendedParameterName(ExposureParameter parameter);

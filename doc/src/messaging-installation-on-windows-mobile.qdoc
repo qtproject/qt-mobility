@@ -155,3 +155,5 @@ Windows Mobile 6 Standard SDK (including ActiveSync) must be installed \l {http:
         "QtMessaging.dll|$(TargetDir)|%CSIDL_PROGRAM_FILES%\serviceactions|0"
  \endcode
  Replacing "serviceactions" with the relevant project.
+
+*/
