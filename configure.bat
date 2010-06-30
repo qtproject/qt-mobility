@@ -662,4 +662,3 @@ set MODULES_TEMP=
 set QT_MOBILITY_EXAMPLES=
 set QT_MOBILITY_DEMOS=
 exit /b 0
->>>>>>> 0bab8cec69f548e510b2e4be2a4ac6997a39f4d0
