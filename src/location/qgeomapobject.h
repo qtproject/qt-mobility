@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QList>
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,8 +54,10 @@ class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
 
-class Q_LOCATION_EXPORT QGeoMapObject
+class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
+    Q_OBJECT
+
 public:
     enum Type {
         ContainerType,
@@ -86,10 +89,18 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
+signals:
+    void childObjectAdded(QGeoMapObject *childObject);
+    void childObjectRemoved(QGeoMapObject *childObject);
+    void zValueChanged(int newZValue, int oldZValue);
+
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
 
     QGeoMapObjectPrivate *d_ptr;
+
+private slots:
+    void childObjectDestroyed(QObject *obj);
 
 private:
 

@@ -398,4 +398,6 @@ QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & ot
     return *this;
 }
 
+#include "moc_qgeomapdata.cpp"
+
 QTM_END_NAMESPACE

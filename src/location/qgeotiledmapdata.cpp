@@ -221,17 +221,10 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         painter.drawPixmap(target, QGeoMapData::mapImage(), source);
     }
 
-    //recompute obj info
+    //clear obj info
     d_ptr->clearObjInfo();
-    QHashIterator<QGeoMapObject*, QGeoCompositeZValue> it(d_ptr->objToCompZValue);
-
-    while (it.hasNext()) {
-        it.next();
-        d_ptr->calculateInfo(it.key());
-    }
 
     setMapImage(pm);
-
 }
 
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
@@ -346,23 +339,30 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
     return QList<QGeoMapObject*>();
 }
 
-QPixmap QGeoTiledMapData::mapObjectsOverlay() const
+QPixmap QGeoTiledMapData::mapObjectsOverlay()
 {
+    QList<QGeoMapObject*> queue;
+    queue.append(this->mapObjects());
     bool needsPainting = false;
     QPixmap overlay(d_ptr->screenRect.width(), d_ptr->screenRect.height());
     overlay.fill(Qt::transparent);
     QPainter painter(&overlay);
 
-    QMapIterator<QGeoCompositeZValue, QGeoMapObject*> it(d_ptr->zOrderedObj);
-
-    while (it.hasNext()) {
-        it.next();
-        QGeoMapObject *obj = it.value();
+    //iterate through all map objects as defined by their (composite) zValues
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
 
         if (d_ptr->intersects(obj, d_ptr->screenRect)) {
             needsPainting = true;
             d_ptr->paintMapObject(painter, obj);
         }
+
+        //prepend children to queue
+        QList<QGeoMapObject*> children = obj->childObjects();
+        int sz = children.size();
+
+        for (int i = 0; i < sz; ++i)
+            queue.prepend(children.at(i));
     }
 
     if (needsPainting)
@@ -373,77 +373,44 @@ QPixmap QGeoTiledMapData::mapObjectsOverlay() const
 
 void QGeoTiledMapData::addMapObject(QGeoMapObject *mapObject)
 {
-    //construct composite zValue first
-    QGeoCompositeZValue zValue;
-    QGeoMapObject* parent = mapObject->parentObject();
+    //we need to connect this object's and its children's
+    //childObjectRemoved signal to keep objInfo up-to-date
+    QList<QGeoMapObject*> queue;
+    queue.append(mapObject);
 
-    if (parent && d_ptr->objToCompZValue.contains(parent))
-        zValue = d_ptr->objToCompZValue[parent];
-
-    zValue.compZValue.append(mapObject->zValue());
-    //add to internal tables
-    d_ptr->objToCompZValue.insert(mapObject, zValue);
-    d_ptr->zOrderedObj.insert(zValue, mapObject);
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+        //add all children to queue
+        queue.append(obj->childObjects());
+        
+        //connect to childObjectRemoved signal
+        connect(obj, SIGNAL(childObjectRemoved(QGeoMapObject*)),
+                this, SLOT(mapObjectRemoved(QGeoMapObject*)));
+    }
 
     d_ptr->calculateInfo(mapObject);
-
     QGeoMapData::addMapObject(mapObject);
 }
 
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoCompositeZValue::QGeoCompositeZValue() {}
-
-QGeoCompositeZValue::QGeoCompositeZValue(const QGeoCompositeZValue &other)
-    : compZValue(other.compZValue) 
-{}
-
-QGeoCompositeZValue& QGeoCompositeZValue::operator=(const QGeoCompositeZValue &other)
+void QGeoTiledMapData::removeMapObject(QGeoMapObject *mapObject)
 {
-    compZValue = other.compZValue;
-    return *this;
+    mapObjectRemoved(mapObject);
+    QGeoMapData::removeMapObject(mapObject);
 }
 
-bool QGeoCompositeZValue::operator==(const QGeoCompositeZValue &other) const
+void QGeoTiledMapData::mapObjectRemoved(QGeoMapObject *mapObject)
 {
-    if (compZValue.size() != other.compZValue.size())
-        return false;
+    //remove obj info for this mapObject and all its descendants
+    QList<QGeoMapObject*> queue;
+    queue.append(mapObject);
 
-    int sz = compZValue.size();
-
-    for (int i = 0; i < sz; i++)
-
-        if (compZValue.at(i) != other.compZValue.at(i))
-            return false;
-
-    return true;
-}
-
-bool QGeoCompositeZValue::operator<(const QGeoCompositeZValue &other) const
-{
-    int sz = compZValue.size();
-    int otherSz = other.compZValue.size();
-    
-    for (int i = 0; i < sz && i < otherSz; i++)
-
-        if (compZValue.at(i) < other.compZValue.at(i))
-            return true;
-        else if (compZValue.at(i) > other.compZValue.at(i))
-            return false;
-
-    return false;
-}
-
-uint qHash(const QGeoCompositeZValue &zValue)
-{
-    QString hashStr;
-    int len = zValue.compZValue.size();
-
-    for (int i = 0; i < len; i++)
-        hashStr += QString::number(zValue.compZValue.at(i)) + "/";
-
-    return qHash(hashStr);
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+        //add children to queue
+        queue.append(obj->childObjects());
+        obj->disconnect(this);
+        d_ptr->objInfo.remove(obj);
+    }
 }
 
 /*******************************************************************************
@@ -508,12 +475,13 @@ bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF 
     return rect.intersects(objInfo[mapObject]->boundingBox);
 }
 
-void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const
+void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *mapObject)
 {
     if (!mapObject)
         return;
+
     if (!objInfo.contains(mapObject))
-        return;
+        calculateInfo(mapObject);
 
     if (mapObject->type() == QGeoMapObject::RectangleType)
         paintMapRectangle(painter, static_cast<QGeoMapRectangleObject*>(mapObject));
@@ -524,7 +492,7 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *m
         paintMapPolyline(painter, static_cast<QGeoMapPolylineObject*>(mapObject));
 }
 
-void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const
+void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
@@ -537,7 +505,7 @@ void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectan
     painter.setBrush(oldBrush);
 }
 
-void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const
+void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker)
 {
     QPixmap icon = marker->icon();
 
@@ -549,7 +517,7 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObj
     painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
 }
 
-void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const
+void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();

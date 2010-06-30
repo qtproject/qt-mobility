@@ -79,20 +79,6 @@ struct QGeoTiledMapPolylineInfo : public QGeoTiledMapObjectInfo
     QPainterPath path;
 };
 
-class QGeoCompositeZValue
-{
-public:
-    QGeoCompositeZValue();
-    QGeoCompositeZValue(const QGeoCompositeZValue &other);
-    QGeoCompositeZValue& operator=(const QGeoCompositeZValue &other);
-    bool operator==(const QGeoCompositeZValue &other) const;
-    bool operator<(const QGeoCompositeZValue &other) const;
-
-    QList<int> compZValue;
-};
-
-uint qHash(const QGeoCompositeZValue &zValue);
-
 class QGeoTiledMapDataPrivate
 {
 public:
@@ -110,10 +96,10 @@ public:
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect) const;
 
-    void paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const;
-    void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const;
-    void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const;
-    void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const;
+    void paintMapObject(QPainter &painter, QGeoMapObject *mapObject);
+    void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle);
+    void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker);
+    void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline);
 
     void clearObjInfo();
 
@@ -123,9 +109,7 @@ public:
     QRectF protectRegion;
     QRectF screenRect;
 
-    QHash<QGeoMapObject*, QGeoCompositeZValue> objToCompZValue;
     QHash<QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
-    QMultiMap<QGeoCompositeZValue, QGeoMapObject*> zOrderedObj;
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)

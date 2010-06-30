@@ -65,6 +65,7 @@ public:
     QGeoCoordinate center() const;
 
     void addMapObject(QGeoMapObject *mapObject);
+    void removeMapObject(QGeoMapObject *mapObject);
 
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
@@ -76,7 +77,7 @@ public:
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
-    virtual QPixmap mapObjectsOverlay() const;
+    virtual QPixmap mapObjectsOverlay();
 
     QRectF protectedRegion() const;
     void clearProtectedRegion();
@@ -84,6 +85,9 @@ public:
 protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
     virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+
+private slots:
+    void mapObjectRemoved(QGeoMapObject *mapObject);
 
 private:
     QGeoTiledMapDataPrivate *d_ptr;

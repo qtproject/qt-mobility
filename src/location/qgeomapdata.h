@@ -57,8 +57,10 @@ class QGeoMappingManagerEngine;
 class QGeoMapObject;
 class QGeoMapDataPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData
+class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
+    Q_OBJECT
+
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapData();
@@ -83,7 +85,7 @@ public:
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-    virtual QPixmap mapObjectsOverlay() const = 0;
+    virtual QPixmap mapObjectsOverlay() = 0;
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
