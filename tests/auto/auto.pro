@@ -103,6 +103,10 @@ contains(mobility_modules,versit) {
             qversitwriter
 }
 
+contains(mobility_modules,telephony) {
+    SUBDIRS += qtelephony
+}
+
 contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \

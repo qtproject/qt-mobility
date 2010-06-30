@@ -16,6 +16,7 @@ headerdirs = ../../src/bearer \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              ../../src/sensors \
              ../../src/camera \
              .
@@ -30,6 +31,7 @@ sourcedirs = ../../src/bearer \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              ../../src/sensors \
              ../../src/camera \
              .
