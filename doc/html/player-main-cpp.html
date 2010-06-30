@@ -63,8 +63,6 @@
 
     #ifdef Q_OS_SYMBIAN
         QMainWindow window;
-        window.setContentsMargins(10, 10, 10, 10); <span class="comment">// workaround for issue where UI is not drawn in older SDKs</span>
-                                                   <span class="comment">// this line can be removed when bug QTBUG-8697 is fixed</span>
         Player *player = new Player(&amp;window);
         window.setCentralWidget(player);
         window.showMaximized();

@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistSourceControl
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -113,9 +114,9 @@ QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl()
 
 
 /*!
-  \fn QMediaPlaylistSourceControl::playlistChanged(QMediaPlaylist*)
+  \fn QMediaPlaylistSourceControl::playlistChanged(QMediaPlaylist* playlist)
 
-  Signal emited when the playlist has changed.
+  Signal emited when the playlist has changed to \a playlist.
 */
 
 #include "moc_qmediaplaylistsourcecontrol.cpp"

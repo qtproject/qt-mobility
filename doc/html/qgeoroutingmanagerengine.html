@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRoutingManagerEngine Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRoutingManagerEngine Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoRoutingManagerEngine class provides an interface and convenience methods to implementers of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provide access to geographic routing information. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoRoutingManagerEngine&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QGeoRoutingManagerEngine&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qgeoroutingmanagerengine-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -85,6 +87,7 @@
 <p>If the routing service supports updating routes as they are being travelled, the subclass should provide an implementation of <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() and call setSupportsRouteUpdates(true) at some point in time before <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() is called.</p>
 <p>The function <a href="qgeoroutingmanagerengine.html#setSupportsRouteUpdates">setSupportsRouteUpdates</a>() is one of several functions which configure the reported capabilities of the engine. If the capabilities of an engine differ from the default values these functions should be used so that the reported capabilies are accurate.</p>
 <p>It is important that this is done before <a href="qgeoroutingmanagerengine.html#calculateRoute">calculateRoute</a>(), <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() or any of the capability reporting functions are used to prevent incorrect or inconsistent behaviour.</p>
+<p>A subclass of QGeoRouteManagerEngine will often make use of a subclass fo <a href="qgeoroutereply.html">QGeoRouteReply</a> internally, in order to add any engine-specific data (such as a <a href="http://qt.nokia.com/doc/4.6/qnetworkreply.html">QNetworkReply</a> object for network-based services) to the <a href="qgeoroutereply.html">QGeoRouteReply</a> instances used by the engine.</p>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>

@@ -41,7 +41,7 @@
 #ifndef MESSAGESENDER_H
 #define MESSAGESENDER_H
 
-#include "qtmessaging.h"
+#include "qmessageservice.h"
 
 #include <QMap>
 #include <QWidget>

@@ -63,6 +63,11 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicefilter
 ./tst_qservicemanager
 ./tst_qabstractsecuritysession
+./tst_qservicecontext
+./tst_icheck
+./tst_qmetaobjectbuilder
+./tst_qremoteserviceclassregister
+./tst_qservicemanager_ipc
 
 #BearerManagement
 ./tst_qnetworkconfiguration
