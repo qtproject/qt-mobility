@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 #include "ipcendpoint_p.h"
 #include "qremoteserviceclassregister.h"
+#include "qservice.h"
 #include <QPointer>
 #include <QHash>
 
@@ -77,7 +78,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void newPackageReady();
-    void disconnected(); 
+    void disconnected();
 
 private:
     void waitForResponse(const QUuid& requestId);
