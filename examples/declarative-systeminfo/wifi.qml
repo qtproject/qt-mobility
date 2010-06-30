@@ -36,74 +36,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+***********************************/
 
-#ifndef DIALOG_H
-#define DIALOG_H
+import Qt 4.7
+import QtMobility.systeminfo 1.0
 
-#include <QWidget>
-#include <qsysteminfo.h>
+Rectangle {
+    width: 640
+    height: 480
+//    color: "#343434"
 
-#ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
-#include "ui_dialog_landscape.h"
-#else //QTM_EXAMPLES_PREFER_LANDSCAPE
-#ifdef Q_OS_SYMBIAN
-#include "ui_dialog_s60.h"
-#else //Q_OS_SYMBIAN
-#include "ui_dialog.h"
-#endif //Q_OS_SYMBIAN
-#endif //QTM_EXAMPLES_PREFER_LANDSCAPE
-QTM_USE_NAMESPACE
+    SystemNetworkInfo {
+        id: netinfo
+    }
 
-class Dialog : public QWidget, public Ui_Dialog
-{
-    Q_OBJECT
-public:
-    Dialog();
-    ~Dialog();
+        property int currentMode;
+        function getSignal() {
+            return netinfo.networkSignalStrength(netinfo.currentMode)
+        }
 
-protected:
-    void changeEvent(QEvent *e);
+        Image {
+            id: wifi
+            source : "images/wlan.svg"
+            anchors.horizontalCenter: parent.horizontalCenter;
+            anchors.verticalCenter: parent.verticalCenter;
+        }
+        Text {
+            id: signalText
+            text: netinfo.networkName(netinfo.currentMode) + " "+getSignal();
+            anchors.top: wifi.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+//    }
 
-private:
-    void setupGeneral();
-    void setupDevice();
-    void setupDisplay();
-    void setupStorage();
-    void setupNetwork();
-    void setupSaver();
-
-    QSystemScreenSaver *saver;
-    QSystemInfo *systemInfo;
-    QSystemDeviceInfo *di;
-    QSystemNetworkInfo *ni;
-    QSystemStorageInfo *sti;
-    void updateStorage();
-    
-private slots:
-    void tabChanged(int index);
-    void getVersion(int index);
-    void getFeature(int index);
-    void setSaverEnabled(bool b);
-    void updateDeviceLockedState();
-
-    void netStatusComboActivated(int);
-    void updateBatteryStatus(int);
-    void updatePowerState(QSystemDeviceInfo::PowerState);
-    void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
-    void updateProfile(QSystemDeviceInfo::Profile profile);
-    void updateSimStatus();
-    void updateProfile();
-
-     void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
-     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
-     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
-     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-
-    void storageChanged(bool added,const QString &vol);
-    void bluetoothChanged(bool);
-
-};
-
-#endif // DIALOG_H
+}

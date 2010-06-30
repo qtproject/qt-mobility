@@ -382,9 +382,6 @@ QSystemInfo::QSystemInfo(QObject *parent)
 {
     qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
     qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
-
-    connect(d,SIGNAL(currentLanguageChanged(QString)),
-            this,SIGNAL(currentLanguageChanged(QString)));
 }
 
 /*!
@@ -392,6 +389,39 @@ QSystemInfo::QSystemInfo(QObject *parent)
 */
 QSystemInfo::~QSystemInfo()
 {
+}
+
+/*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemInfo::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        connect(d,SIGNAL(currentLanguageChanged(QString)),
+                this,SIGNAL(currentLanguageChanged(QString)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        disconnect(d,SIGNAL(currentLanguageChanged(QString)),
+                   this,SIGNAL(currentLanguageChanged(QString)));
+    }
 }
 
 /*!

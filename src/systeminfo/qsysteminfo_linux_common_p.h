@@ -201,7 +201,7 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool, const QString &);
 
 private:
      QMap<QString, QString> mountEntriesMap;

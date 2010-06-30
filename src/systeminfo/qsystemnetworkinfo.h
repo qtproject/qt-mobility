@@ -124,6 +124,7 @@ protected:
 
 private:
        QSystemNetworkInfoPrivate *d;
+
 };
 
 
