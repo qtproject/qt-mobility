@@ -150,7 +150,7 @@ QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& fi
 }
 
 /*!
-    Returns a list of all category identifiers.  Any error which occurs will be saved in \a
+    Returns a list of all category identifiers which are sorted according to \a nameSort.  Any error which occurs will be saved in \a
     error and \a errorString.
 */
 QList<QLandmarkCategoryId> QLandmarkManagerEngine::categoryIds(const QLandmarkNameSort &nameSort, QLandmarkManager::Error *error,

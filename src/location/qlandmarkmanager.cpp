@@ -645,6 +645,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of
     landmarks are imported.
+
+    The current default managers for the maemo and desktop platforms
+    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &format)
 {
@@ -671,6 +674,9 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of landmarks
     are imported.
+
+    The current default managers for the maemo and desktop platforms
+    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
 {
