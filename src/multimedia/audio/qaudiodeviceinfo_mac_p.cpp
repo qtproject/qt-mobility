@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// We mean it.
+// Do not use this file directly.
 //
 
 #include <QtCore/qstringlist.h>
@@ -55,7 +55,6 @@
 #include <QtCore/qbytearray.h>
 #include <QtCore/qdatastream.h>
 #include <QtCore/qdebug.h>
-#include <private/qcore_mac_p.h>
 
 #include <qaudiodeviceinfo.h>
 #include "qaudio_mac_p.h"
@@ -65,6 +64,18 @@
 
 QT_BEGIN_NAMESPACE
 
+// XXX: remove at some future date
+static inline QString cfStringToQString(CFStringRef str)
+{
+    CFIndex length = CFStringGetLength(str);
+    const UniChar *chars = CFStringGetCharactersPtr(str);
+    if (chars)
+        return QString(reinterpret_cast<const QChar *>(chars), length);
+
+    UniChar buffer[length];
+    CFStringGetCharacters(str, CFRangeMake(0, length), buffer);
+    return QString(reinterpret_cast<const QChar *>(buffer), length);
+}
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray const& handle, QAudio::Mode)
 {
@@ -265,7 +276,7 @@ static QByteArray get_device_info(AudioDeviceID audioDevice, QAudio::Mode mode)
                                 &size, &name) != noErr) {
         qWarning() << "QAudioDeviceInfo: Unable to find device name";
     }
-    ds << QCFString::toQString(name);
+    ds << cfStringToQString(name);
 
     CFRelease(name);
 

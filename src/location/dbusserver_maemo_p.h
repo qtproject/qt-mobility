@@ -42,6 +42,17 @@
 #ifndef DBUSSERVER_MAEMO_H
 #define DBUSSERVER_MAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtDBus/QDBusAbstractAdaptor>
 #include "qgeopositioninfo.h"
 #include "qgeopositioninfosource.h"
@@ -52,7 +63,7 @@ QTM_BEGIN_NAMESPACE
 class DBusServerIF {
 public:
     virtual void receivePositionUpdate(const QGeoPositionInfo &update) = 0;
-    virtual void receiveSettings(const QGeoPositionInfoSource::PositioningMethod methods, int interval) = 0;
+    virtual void receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval) = 0;
     virtual void receiveSatellitesInView(const QList<QGeoSatelliteInfo> &update) = 0;
     virtual void receiveSatellitesInUse(const QList<QGeoSatelliteInfo> &update) = 0;
 };
@@ -70,8 +81,7 @@ public Q_SLOTS:
     Q_NOREPLY void positionUpdate(const QByteArray &update);
     Q_NOREPLY void satellitesInViewUpdate(const QByteArray &update);
     Q_NOREPLY void satellitesInUseUpdate(const QByteArray &update);
-    Q_NOREPLY void currentSettings(const QGeoPositionInfoSource::PositioningMethod methods,
-                                   int interval);
+    Q_NOREPLY void currentSettings(quint32 methods, quint32 interval);
 
 private:
     Q_DISABLE_COPY(DBusServer)

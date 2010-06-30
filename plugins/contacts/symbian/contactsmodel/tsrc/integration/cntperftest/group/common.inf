@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* Contacts Performance Integration tests & contact views Integration tests
+*
+*/
+
+
+PRJ_TESTEXPORTS
+../Scripts/CntPerfTest.script					c:/cntperftest/scripts/cntperftest.script
+../Scripts/CntPerfTestHW.script					c:/cntperftest/scripts/cntperftesthw.script
+../Scripts/CustomLabelUid.script				c:/cntperftest/scripts/customlabeluid.script
+../Scripts/UnifiedSingular.script				c:/cntperftest/scripts/unifiedsingular.script
+../Scripts/ViewDefCustomFieldsTest.script			c:/cntperftest/scripts/viewdefcustomfieldstest.script
+../Scripts/ViewDefCustomFieldsTestHW.script			c:/cntperftest/scripts/viewdefcustomfieldstesthw.script
+../Scripts/CustomTemplateTest.script				c:/cntperftest/scripts/customtemplatetest.script
+../Scripts/AccessCountTests.script				c:/cntperftest/scripts/accesscounttests.script
+../Scripts/ViewDefAnyFieldsTest.script				c:/cntperftest/scripts/viewdefanyfieldstest.script
+../Scripts/TestContactViewSuite.Script				c:/cntviewtest/scripts/testcontactviewsuite.script
+../Scripts/TestContactViewCRUDOperationsStep.Script		c:/cntviewtest/scripts/testcontactviewcrudoperationsstep.script
+../Scripts/TestContactViewUnderlyingViewUpdateStep.Script	c:/cntviewtest/scripts/testcontactviewunderlyingviewupdatestep.script
+../Scripts/TestContactViewUnderBackUpRestoreStep.Script		c:/cntviewtest/scripts/testcontactviewunderbackuprestorestep.script
+
+
+../testdata/CntPerfTest.ini					c:/cntperftest/configs/cntperftest.ini
+../testdata/TestContactViewSuite.ini				c:/cntviewtest/configs/testcontactviewsuite.ini
+../testdata/TestContactViewCRUDOperationsStep.ini		c:/cntviewtest/configs/testcontactviewcrudoperationsstep.ini
+../testdata/TestContactViewUnderlyingViewUpdateStep.ini		c:/cntviewtest/configs/testcontactviewunderlyingviewupdatestep.ini
+../testdata/TestContactViewUnderBackupRestoreStep.ini		c:/cntviewtest/configs/testcontactviewunderbackuprestorestep.ini
+
+
+../testdata/vcf/vcard01.vcf					c:/cntviewtest/configs/vcf/vcard01.vcf
+../testdata/vcf/vcard02.vcf					c:/cntviewtest/configs/vcf/vcard02.vcf
+../testdata/vcf/vcard100.vcf					c:/cntviewtest/configs/vcf/vcard100.vcf
+
+./CntPerfTestServer.iby					       /epoc32/rom/include/cntperftestserver.iby
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkcategorysaverequest.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QLandmarkCategorySaveRequest Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkCategorySaveRequest"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkCategorySaveRequest Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
+<p>The QLandmarkCategorySaveRequest class allows a client to asynchronously request that certain categories be saved by a landmark manager. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkCategorySaveRequest&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a>.</p>
+<ul>
+<li><a href="qlandmarkcategorysaverequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#QLandmarkCategorySaveRequest">QLandmarkCategorySaveRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest">~QLandmarkCategorySaveRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#categories">categories</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QLandmarkManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#setCategories">setCategories</a></b> ( const QList&lt;QLandmarkCategory&gt; &amp; <i>categories</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategorysaverequest.html#setCategory">setCategory</a></b> ( const QLandmarkCategory &amp; <i>category</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkCategorySaveRequest class allows a client to asynchronously request that certain categories be saved by a landmark manager.</p>
+<p>For a QLandmarkCategorySaveRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either an individual items error out (individaul errors may be retrieved by calling <a href="qlandmarkcategorysaverequest.html#errorMap">errorMap</a>()), an overall operation error occurs(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()), or when individual items have been saved (which may be retrieved by calling <a href="qlandmarkcategorysaverequest.html#categories">categories</a>()).</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/QLandmarkCategorySaveRequest"></a>
+<h3 class="fn"><a name="QLandmarkCategorySaveRequest"></a>QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a category save request with the given <i>manager</i> and <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/~QLandmarkCategorySaveRequest"></a>
+<h3 class="fn"><a name="dtor.QLandmarkCategorySaveRequest"></a>QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest ()</h3>
+<p>Destroys the request object.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/categories"></a>
+<h3 class="fn"><a name="categories"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkCategorySaveRequest::categories () const</h3>
+<p>Returns the list of categories which will be saved if called prior to callling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>(), otherwise returns the list of categories as they were saved into the landmark manager.</p>
+<p>See also <a href="qlandmarkcategorysaverequest.html#setCategories">setCategories</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/errorMap"></a>
+<h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkCategorySaveRequest::errorMap () const</h3>
+<p>Returns the mapping of the input category list indices to the errors which occurred.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/setCategories"></a>
+<h3 class="fn"><a name="setCategories"></a>void QLandmarkCategorySaveRequest::setCategories ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; &amp; <i>categories</i> )</h3>
+<p>Sets the list of <i>categories</i> to be saved.</p>
+<p>See also <a href="qlandmarkcategorysaverequest.html#categories">categories</a>() and <a href="qlandmarkcategorysaverequest.html#setCategory">setCategory</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategorySaveRequest/setCategory"></a>
+<h3 class="fn"><a name="setCategory"></a>void QLandmarkCategorySaveRequest::setCategory ( const <a href="qlandmarkcategory.html">QLandmarkCategory</a> &amp; <i>category</i> )</h3>
+<p>Convenience function to set a single <i>category</i> to be saved.</p>
+<p>See also <a href="qlandmarkcategorysaverequest.html#setCategories">setCategories</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

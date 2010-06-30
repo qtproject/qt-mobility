@@ -137,6 +137,7 @@ public:
     \brief The QVideoSurfaceFormat class specifies the stream format of a video presentation
     surface.
     \since 4.6
+    \inmodule QtMultimediaKit
 
     A video surface presents a stream of video frames.  The surface's format describes the type of
     the frames and determines how they should be presented.

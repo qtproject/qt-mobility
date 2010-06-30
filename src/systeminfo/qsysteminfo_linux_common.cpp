@@ -69,10 +69,12 @@
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
-
 #endif
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/bnep.h>
+
+#ifdef BLUEZ_SUPPORTED
+# include <bluetooth/bluetooth.h>
+# include <bluetooth/bnep.h>
+#endif
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -603,6 +605,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
+#ifdef BLUEZ_SUPPORTED
     int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
     if (ctl < 0) {
         qDebug() << "Cannot open bnep socket";
@@ -625,6 +628,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         }
     }
     close(ctl);
+#endif
 
     return QSystemNetworkInfo::UndefinedStatus;
 }
