@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRemoteServiceControl
+    \inmodule QtServiceFramework
     \ingroup servicefw
     \brief The QRemoteServiceControl class manages instances of remote service objects.
 
