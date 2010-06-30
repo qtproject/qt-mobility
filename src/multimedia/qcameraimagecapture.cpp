@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QCameraImageCapture
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

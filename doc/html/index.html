@@ -183,170 +183,276 @@
     Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
     <br>
     <br>
-    <table align="center" cellpadding="2" cellspacing="1" border="1">
-    <tbody>
-    <tr>
-    <td rowspan="2">&nbsp;</td>
-    <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-
-    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
-    </tr>
-    <tr>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 1</b></td>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 2</b></td>
-    <td width="9%"><b>S60 5th Edition</b></td>
-    <td width="9%"><b>Symbian^3</b></td>
-    <td width="9%"><b>Maemo 5</b></td>
-    <td width="9%"><b>Windows CE/Mobile<b></b></b></td>
-    <td width="9%"><b>Windows XP/Vista</b></td>
-
-    <td width="9%"><b>Linux</b></td>
-    <td width="9%"><b>Mac OS X</b></td>
-    </tr>
-    <tr>
-    <td>Service Framework (in-process)</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-    <td>Messaging</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-
-    </tr>
-    <tr>
-    <td>Bearer Management</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-
-    <td>Publish and Subscribe</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-    <td>Contacts</td>
-
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    </tr>
-    <tr>
-    <td>Location</td>
-    <td>FINAL</td>
-
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-    <td>Multimedia</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-    <td>System Information</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    </tr>
-    <tr>
-    <td>Sensors</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    </tr>
-    <tr>
-    <td>Versit</td>
-    <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-
-    <td bgcolor="green"></td>
-    </tr>
-    <p></p>
-    <p></p>
-    </tbody>
-    </table>
+<table align="center" cellpadding="2" cellspacing="1" border="1">
+<tbody>
+<tr>
+<td rowspan="2">&nbsp;</td>
+<td rowspan="2"><b>API Maturity Level</b></td>
+<td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+<td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+</tr>
+<tr>
+<td width="9%"><b>S60 3rd Edition, Feature Pack 1</b></td>
+<td width="9%"><b>S60 3rd Edition, Feature Pack 2</b></td>
+<td width="9%"><b>S60 5th Edition</b></td>
+<td width="9%"><b>Symbian^3</b></td>
+<td width="9%"><b>Maemo 5</b></td>
+<td width="9%"><b>Windows CE/Mobile<b></b></b></td>
+<td width="9%"><b>Windows XP/Vista</b></td>
+<td width="9%"><b>Linux</b></td>
+<td width="9%"><b>Mac OS X</b></td>
+</tr>
+<tr>
+<td>Service Framework (in-process)</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Messaging</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Bearer Management</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Publish and Subscribe</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Location</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Multimedia</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>System Information</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Sensors</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Versit(vCard)</td>
+<td>FINAL</td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Versit(iCal)</td>
+<td>TP</td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+<td bgcolor="green"></td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>TP</td>
+<td bgcolor="lightgray"></td>
+<td bgcolor="lightgray"></td>
+<td bgcolor="lightgray"></td>
+<td bgcolor="lightgray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Service Framework(OOP)</td>
+<td>TP</td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+</tr>
+<tr>
+<td>Organizer</td>
+<td>TP</td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Landmarks</td>
+<td>TP</td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Document Gallery</td>
+<td>TP</td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Maps/Navigation</td>
+<td>TP</td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="yellow"></td>
+</tr>
+<tr>
+<td>Vibra</td>
+<td>TP</td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<tr>
+<td>Telephony Events</td>
+<td>TP</td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="yellow"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+<td bgcolor="gray"></td>
+</tr>
+<p></p>
+<p></p>
+</tbody>
+</table>
     <br>
 
         <p>

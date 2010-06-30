@@ -85,6 +85,7 @@ private:
     \preliminary
     \brief The QAudioEncoderSettings class provides a set of audio encoder settings.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     A audio encoder settings object is used to specify the audio encoder

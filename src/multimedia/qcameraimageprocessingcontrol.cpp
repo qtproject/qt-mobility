@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QCameraImageProcessingControl
+    \inmodule QtMultimediaKit
     \ingroup multimedia-serv
 
     \preliminary

@@ -1,4 +1,4 @@
-load(basic_examples_setup)
+include(../features/basic_examples_setup.pri)
 
 !plugin {
     target.path=$$QT_MOBILITY_DEMOS

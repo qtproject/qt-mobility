@@ -156,6 +156,7 @@ void QCameraFocusZone::setStatus(QCameraFocusZone::FocusZoneStatus status)
     \brief The QCameraFocus class provides interface for
     focus and zoom related camera settings.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
 The Camera API of Qt Mobility is still in \bold Technology Preview. It has

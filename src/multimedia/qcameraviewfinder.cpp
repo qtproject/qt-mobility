@@ -56,6 +56,7 @@ QT_USE_NAMESPACE
     \preliminary
     \brief The QCameraViewfinder class provides camera viewfinder widget.
 
+    \inmodule QtMultimediaKit
     \ingroup camera
 
     \code
