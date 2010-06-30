@@ -1427,6 +1427,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
     logicalDrives();
+#if !defined( Q_CC_MINGW)
+#if !defined( Q_OS_WINCE)
     WMIHelper *wHelper;
     wHelper =  WMIHelper::instance();
     wHelper->setWmiNamespace("root/cimv2");
@@ -1434,6 +1436,8 @@ QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     wHelper->setupNotfication("root/cimv2","",QStringList());
 
     connect(wHelper,SIGNAL(wminotificationArrived()),this,SLOT(notificationArrived()));
+#endif
+#endif
 }
 
 
