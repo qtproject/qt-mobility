@@ -26,15 +26,6 @@
 ****************************************************************************/
 
 
-/*!
-\module QtPublishSubscribe
-\title  QtPublishSubscribe Module
-\brief  The Publish and Subscribe API, containing Value Space, enables
-applications to read item values, navigate through and subscribe
-to change notifications.
-
-*/
-
 
 
 /*!
