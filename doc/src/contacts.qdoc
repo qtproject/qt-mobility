@@ -27,6 +27,18 @@
 
 
 /*!
+    \module QtContacts
+
+    \title QtContacts Module
+
+    \brief The QtContacts module offers classes that allow
+    you to manage addressbook contacts.
+
+*/
+
+
+
+/*!
 
 \page contacts.html
 
