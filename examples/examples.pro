@@ -61,6 +61,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
+        camera \
         slideshow \
         audiorecorder \
         audiodevices \
