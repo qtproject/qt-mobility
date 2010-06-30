@@ -163,8 +163,8 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                     if (landmarkFetch->error() == QLandmarkManager::NoError) {
                         QList<QLandmark> lms = landmarkFetch->landmarks();
                         if (lms.count() == 0) {
-                            progress->hide();
                             QMessageBox::information(this,"Information", "No landmarks found", QMessageBox::Ok, QMessageBox::NoButton);
+                            progress->hide();
                             return;
                         }
 
