@@ -20,6 +20,7 @@ contains(mobility_modules,contacts): SUBDIRS += contacts
 contains(mobility_modules,organizer): SUBDIRS += organizer
 contains(mobility_modules,versit): SUBDIRS += versit
 
+contains(mobility_modules,feedback): SUBDIRS += feedback
 contains(mobility_modules,telephony): SUBDIRS += telephony
 
 contains(mobility_modules,publishsubscribe) {
@@ -42,6 +43,8 @@ contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
         !win32-g++:SUBDIRS += messaging
     }
 }
+
+contains(mobility_modules,gallery): SUBDIRS += gallery
 
 contains(mobility_modules,landmarks): SUBDIRS += landmarks
 

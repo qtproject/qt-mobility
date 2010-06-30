@@ -127,6 +127,16 @@
 #    else
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
+#    if defined(QT_BUILD_FEEDBACK_LIB)
+#      define Q_FEEDBACK_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_GALLERY_LIB)
+#      define Q_GALLERY_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_GALLERY_EXPORT Q_DECL_IMPORT
+#    endif
 #    if defined(QT_BUILD_ORGANIZER_LIB)
 #      define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #    else
@@ -148,6 +158,8 @@
 #    endif
 #    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #    define Q_SENSORS_EXPORT Q_DECL_IMPORT
+#    define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
+#    define Q_GALLERY_EXPORT Q_DECL_IMPORT
 #    define Q_ORGANIZER_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
@@ -165,6 +177,8 @@
 #    define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #    define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    define Q_SENSORS_EXPORT Q_DECL_EXPORT
+#    define Q_FEEDBACK_EXPORT Q_DECL_EXPORT
+#    define Q_GALLERY_EXPORT Q_DECL_EXPORT
 #    define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #  else
 #    define Q_BEARER_EXPORT
@@ -178,6 +192,8 @@
 #    define Q_SERVICEFW_EXPORT
 #    define Q_SYSINFO_EXPORT
 #    define Q_SENSORS_EXPORT
+#    define Q_FEEDBACK_EXPORT
+#    define Q_GALLERY_EXPORT
 #    define Q_ORGANIZER_EXPORT
 #  endif
 #endif

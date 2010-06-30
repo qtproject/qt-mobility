@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt Mobility Project 1.1: downloadcompletedialog.cpp Example File (documentshare/downloadcompletedialog.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">downloadcompletedialog.cpp Example File</h1>
+<span class="small-subtitle">documentshare/downloadcompletedialog.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;downloadcompletedialog.h&quot;
+
+    #include &lt;qdocumentgallery.h&gt;
+    #include &lt;qgalleryitemlist.h&gt;
+    #include &lt;qgalleryitemrequest.h&gt;
+
+    #include &lt;QtGui&gt;
+
+    DownloadCompleteDialog::DownloadCompleteDialog(
+            QDocumentGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
+        : QDialog(parent, flags)
+        , request(0)
+        , item(0)
+        , fileName(0)
+        , mimeType(0)
+        , title(0)
+        , subject(0)
+        , description(0)
+        , fileNameKey(-1)
+        , mimeTypeKey(-1)
+        , titleKey(-1)
+        , subjectKey(-1)
+        , descriptionKey(-1)
+    {
+        request = new QGalleryItemRequest(gallery, this);
+        request-&gt;setPropertyNames(QStringList()
+                &lt;&lt; QDocumentGallery::fileName
+                &lt;&lt; QDocumentGallery::mimeType
+                &lt;&lt; QDocumentGallery::title
+                &lt;&lt; QDocumentGallery::subject
+                &lt;&lt; QDocumentGallery::description);
+
+        connect(request, SIGNAL(itemChanged(QGalleryItemList*)), this, SLOT(itemChanged()));
+
+        connect(this, SIGNAL(finished(int)), request, SLOT(clear()));
+
+        fileName = new QLabel;
+        mimeType = new QLabel;
+
+        title = new QLineEdit;
+        title-&gt;setReadOnly(true);
+        connect(title, SIGNAL(editingFinished()), this, SLOT(titleEdited()));
+
+        subject = new QLineEdit;
+        subject-&gt;setReadOnly(true);
+        connect(subject, SIGNAL(editingFinished()), this, SLOT(subjectEdited()));
+
+        description = new QTextEdit;
+        description-&gt;setReadOnly(true);
+
+        QFormLayout *layout = new QFormLayout;
+        layout-&gt;addRow(tr(&quot;File Name&quot;), fileName);
+        layout-&gt;addRow(tr(&quot;Mime Type&quot;), mimeType);
+        layout-&gt;addRow(tr(&quot;Title&quot;), title);
+        layout-&gt;addRow(tr(&quot;Subject&quot;), subject);
+        layout-&gt;addRow(tr(&quot;Description&quot;), description);
+
+        setLayout(layout);
+        setWindowTitle(tr(&quot;Download Complete&quot;));
+    }
+
+    void DownloadCompleteDialog::show(const QVariant &amp;itemId)
+    {
+        request-&gt;setItemId(itemId);
+        request-&gt;execute();
+
+        QDialog::show();
+    }
+
+    void DownloadCompleteDialog::itemChanged()
+    {
+        if (item) {
+            disconnect(item, SIGNAL(inserted(int,int)), this, SLOT(itemsInserted(int,int)));
+            disconnect(item, SIGNAL(removed(int,int)), this, SLOT(itemsRemoved(int,int)));
+            disconnect(item, SIGNAL(metaDataChanged(int,int,QList&lt;int&gt;)),
+                    this, SLOT(metaDataChanged(int,int,QList&lt;int&gt;)));
+
+            if (item-&gt;count() &gt; 0)
+                itemsRemoved(0, item-&gt;count());
+        }
+
+        item = request-&gt;item();
+
+        if (item) {
+            fileNameKey = item-&gt;propertyKey(QDocumentGallery::fileName);
+            mimeTypeKey = item-&gt;propertyKey(QDocumentGallery::mimeType);
+            titleKey = item-&gt;propertyKey(QDocumentGallery::title);
+            subjectKey = item-&gt;propertyKey(QDocumentGallery::subject);
+            descriptionKey = item-&gt;propertyKey(QDocumentGallery::description);
+
+            connect(item, SIGNAL(inserted(int,int)), this, SLOT(itemsInserted(int,int)));
+            connect(item, SIGNAL(removed(int,int)), this, SLOT(itemsRemoved(int,int)));
+            connect(item, SIGNAL(metaDataChanged(int,int,QList&lt;int&gt;)),
+                    this, SLOT(metaDataChanged(int,int,QList&lt;int&gt;)));
+
+            if (item-&gt;count() &gt; 0)
+                itemsInserted(0, item-&gt;count());
+        }
+    }
+
+    void DownloadCompleteDialog::itemsInserted(int, int)
+    {
+        fileName-&gt;setText(item-&gt;metaData(0, fileNameKey).toString());
+        mimeType-&gt;setText(item-&gt;metaData(0, mimeTypeKey).toString());
+
+        title-&gt;setText(item-&gt;metaData(0, titleKey).toString());
+        title-&gt;setReadOnly(false);
+
+        subject-&gt;setText(item-&gt;metaData(0, subjectKey).toString());
+        subject-&gt;setReadOnly(false);
+
+        description-&gt;setText(item-&gt;metaData(0, descriptionKey).toString());
+    }
+
+    void DownloadCompleteDialog::itemsRemoved(int, int)
+    {
+        fileName-&gt;clear();
+        mimeType-&gt;clear();
+        title-&gt;clear();
+        title-&gt;setReadOnly(true);
+        subject-&gt;clear();
+        subject-&gt;setReadOnly(true);
+        description-&gt;clear();
+    }
+
+    void DownloadCompleteDialog::metaDataChanged(int, int, const QList&lt;int&gt; &amp;keys)
+    {
+        if (keys.contains(fileNameKey) || keys.isEmpty())
+            fileName-&gt;setText(item-&gt;metaData(0, fileNameKey).toString());
+
+        if (keys.contains(mimeTypeKey) || keys.isEmpty())
+            mimeType-&gt;setText(item-&gt;metaData(0, mimeTypeKey).toString());
+
+        if (keys.contains(titleKey) || keys.isEmpty())
+            title-&gt;setText(item-&gt;metaData(0, titleKey).toString());
+
+        if (keys.contains(subjectKey) || keys.isEmpty())
+            subject-&gt;setText(item-&gt;metaData(0, subjectKey).toString());
+
+        if (keys.contains(descriptionKey) || keys.isEmpty())
+            description-&gt;setText(item-&gt;metaData(0, descriptionKey).toString());
+    }
+
+    void DownloadCompleteDialog::titleEdited()
+    {
+        item-&gt;setMetaData(0, titleKey, title-&gt;text());
+    }
+
+    void DownloadCompleteDialog::subjectEdited()
+    {
+        item-&gt;setMetaData(0, subjectKey, subject-&gt;text());
+    }</pre>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

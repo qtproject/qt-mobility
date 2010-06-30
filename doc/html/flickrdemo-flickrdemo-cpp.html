@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Qt Mobility Project 1.1: flickrdemo.cpp Example File (flickrdemo/flickrdemo.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">flickrdemo.cpp Example File<br /><span class="small-subtitle">flickrdemo/flickrdemo.cpp</span>
-</h1>
-<pre><span class="comment">    /****************************************************************************
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">flickrdemo.cpp Example File</h1>
+<span class="small-subtitle">flickrdemo/flickrdemo.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
     **
     ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
@@ -303,7 +303,7 @@
 
         QString
         urlstring =
-            &quot;http:<span class="comment">//api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&amp;extras=date_taken&amp;method=flickr.photos.search&amp;per_page=30&amp;sort=date-taken-desc&quot;;</span>
+            &quot;http://api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&amp;extras=date_taken&amp;method=flickr.photos.search&amp;per_page=30&amp;sort=date-taken-desc&quot;;
         urlstring.append(&quot;&amp;api_key=&quot;);
         urlstring.append(apikey);
         urlstring.append(&quot;&amp;lat=&quot;);
@@ -370,7 +370,7 @@
 
             QDomElement child = photosElement.firstChildElement(&quot;photo&quot;);
             while (!child.isNull()) {
-                QString url = &quot;http:<span class="comment">//farm&quot;;</span>
+                QString url = &quot;http://farm&quot;;
                 url.append(child.attribute(&quot;farm&quot;));
                 url.append(&quot;.static.flickr.com/&quot;);
                 url.append(child.attribute(&quot;server&quot;));
@@ -642,6 +642,7 @@
 
         setWindowTitle(tr(&quot;Flickr Demo&quot;));
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

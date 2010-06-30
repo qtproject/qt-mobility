@@ -2,6 +2,8 @@ include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
+SUBDIRS += hapticsplayer
+
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
@@ -76,6 +78,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
+        camera \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -109,6 +112,13 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        mediabrowser
+
+    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
+}
+
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
@@ -120,4 +130,6 @@ contains(mobility_modules,telephony) {
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
+
 INSTALLS += sources
+

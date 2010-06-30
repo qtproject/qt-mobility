@@ -142,6 +142,7 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qcamera \
         qpaintervideosurface \
         qvideowidget \
         qmediatimerange \
@@ -177,3 +178,27 @@ contains(mobility_modules,messaging) {
 contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
+
+#Document Gallery
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        qdocumentgallery \
+        qgalleryabstractrequest \
+        qgalleryabstractresponse \
+        qgallerybaseresponse \
+        qgallerycountrequest \
+        qgalleryfilter \
+        qgalleryitemlist \
+        qgalleryitemlistmodel \
+        qgalleryitemrequest \
+        qgalleryqueryrequest \
+        qgalleryremoverequest \
+        qgalleryresource \
+        qgalleryurlrequest
+
+    unix: contains(QT_CONFIG, dbus) {
+        SUBDIRS += \
+                qgallerytrackeritemlist_maemo5
+    }
+}
+
