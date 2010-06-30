@@ -198,6 +198,13 @@ public:
     Q_PROPERTY(int displayBrightness READ displayBrightness WRITE setDisplayBrightness)
     Q_PROPERTY(int colorDepth READ colorDepth WRITE setColorDepth)
 
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen) const { Q_ASSERT(false); }
+    float contrast(int screen) const { Q_ASSERT(false); }
+    int getDPIWidth(int screen) const { Q_ASSERT(false); }
+    int getDPIHeight(int screen) const { Q_ASSERT(false); }
+    int physicalHeight(int screen) const { Q_ASSERT(false); }
+    int physicalWidth(int screen) const { Q_ASSERT(false); }
+
 public slots:
     void setDisplayBrightness(int brightness);
     void setColorDepth(int depth);
@@ -250,6 +257,8 @@ public:
 
     int batteryLevel() const { return data.batteryLevel; }
     bool isDeviceLocked() const { return data.deviceLocked; }
+
+    bool currentBluetoothPowerState() const { Q_ASSERT(false); }
 
     Q_INVOKABLE QSystemDeviceInfo::BatteryStatus batteryStatus() const;
 

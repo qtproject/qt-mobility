@@ -45,6 +45,10 @@
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPrivate(); }
+#endif
+
 // display
  /*!
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)

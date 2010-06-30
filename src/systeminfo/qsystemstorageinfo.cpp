@@ -47,6 +47,10 @@ QTM_BEGIN_NAMESPACE
 
         Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
+#ifdef QT_SIMULATOR
+QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivate(); }
+#endif
+
 /*!
   \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
   Constructs a QSystemStorageInfo object with the given \a parent.

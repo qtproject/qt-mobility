@@ -372,7 +372,11 @@ information from the system.
 
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
- /*!
+#ifdef QT_SIMULATOR
+QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
+#endif
+
+/*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
    Constructs a QSystemInfo object with the given \a parent.
  */
