@@ -2,8 +2,6 @@ include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
-SUBDIRS += hapticsplayer
-
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
@@ -127,6 +125,11 @@ contains(mobility_modules, organizer) {
 # Telephony API examples
 contains(mobility_modules,telephony) {
     SUBDIRS += telephony
+}
+
+# Feedback API examples
+contains(mobility_modules, feedback) {
+    SUBDIRS += hapticsplayer
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
