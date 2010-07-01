@@ -103,7 +103,7 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
     
     if(localSignals.at(id)){
       QMetaObject::activate(this, d->meta, id, a);
-      return;      
+      return id;      
     }
 
     if (c == QMetaObject::InvokeMetaMethod) {
