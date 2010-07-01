@@ -509,7 +509,7 @@ setlocal
 endlocal&goto :EOF
 
 :compileTests
-
+REM We shouldn't enable some of these if the corresponding modules are not enabled
 echo.
 echo Start of compile tests
 REM compile tests go here.
@@ -523,6 +523,8 @@ call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
+call :compileTest SymbianContactModel symbiancntmodel
+call :compileTest SymbianContactModelv2 symbiancntmodelv2
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Symbian_Hb hb_symbian
@@ -578,7 +580,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == telephony (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmTelephony %SOURCE_PATH%\src\telephony
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
     REM versit implies contacts and organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
