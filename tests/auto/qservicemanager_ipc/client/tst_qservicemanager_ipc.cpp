@@ -55,6 +55,12 @@
     }                                           \
     QVERIFY(a)
 
+// Add in to test Unique service instances
+//#define UNIQUE_TESTS
+
+#ifdef QT_NO_DBUS
+    #define UNIQUE_TESTS
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -74,24 +80,42 @@ private slots:
     void cleanupTestCase();
     void init();
     void cleanup();
+    
+    void verifySharedServiceObject(); //rough count
+    void verifySharedMethods();
+    void verifySharedMethods_data();
+    void verifySharedProperties();
+    void verifySharedProperties_data();
 
-    void verifyTransmittedServiceObject(); //rough count
-    void verifyMethods();
-    void verifyMethods_data();
-    void verifyProperties();
-    void verifyProperties_data();
-    void verifyClassInfo();
-    void verifyClassInfo_data();
-    void verifyEnumerator();
-    void verifyEnumerator_data();
+#ifdef UNIQUE_TESTS
+    void verifyUniqueServiceObject(); //rough count
+    void verifyUniqueMethods();
+    void verifyUniqueMethods_data();
+    void verifyUniqueProperties();
+    void verifyUniqueProperties_data();
+    void verifyUniqueClassInfo();
+    void verifyUniqueClassInfo_data();
+    void verifyUniqueEnumerator();
+    void verifyUniqueEnumerator_data();
+    
+    void uniqueTestService();
+#endif
 
     void testInvokableFunctions();
-    void testSignalling();
     void testSlotInvokation();
+
+#ifdef UNIQUE_TESTS
+    void testSignalling();
+#endif
     
+    void sharedTestService();
     void testIpcFailure();
+
 private:
-    QObject* service;
+    QObject* serviceUnique;
+    QObject* serviceUniqueOther;
+    QObject* serviceShared;
+    QObject* serviceSharedOther;
     QServiceManager* manager;
     bool verbose;
     QProcess* lackey;
@@ -102,7 +126,6 @@ private:
     TODO:
     -Test service with multiple inheritance hierarchy
 */
-
 bool tst_QServiceManager_IPC::requiresLackey()
 {
     //return false;
@@ -120,7 +143,8 @@ void tst_QServiceManager_IPC::initTestCase()
     ipcfailure = false;
     verbose = false;
     lackey = 0;
-    service = 0;
+    serviceUnique = 0;
+    serviceShared = 0;
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     QServiceManager* manager = new QServiceManager(this);
@@ -138,11 +162,23 @@ void tst_QServiceManager_IPC::initTestCase()
     }
 
     //test that the service is installed
-    service = manager->loadInterface("com.nokia.qt.ipcunittest");
+    QList<QServiceInterfaceDescriptor> list = manager->findInterfaces("IPCExampleService");
+    serviceUnique = manager->loadInterface(list[0]);
+    serviceUniqueOther = manager->loadInterface(list[0]);
+    serviceShared = manager->loadInterface(list[1]);
+    serviceSharedOther = manager->loadInterface(list[1]);
+    
     QString errorCode = "Cannot find service. Error: %1";
     errorCode = errorCode.arg(manager->error());
-    QVERIFY2(service,errorCode.toLatin1());
-    connect(service, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+    QVERIFY2(serviceUnique,errorCode.toLatin1());
+    QVERIFY2(serviceUniqueOther,errorCode.toLatin1());
+    QVERIFY2(serviceShared,errorCode.toLatin1());
+    QVERIFY2(serviceSharedOther,errorCode.toLatin1());
+    
+    connect(serviceUnique, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+    connect(serviceUniqueOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+    connect(serviceShared, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
+    connect(serviceSharedOther, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));
 }
 
 void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
@@ -153,8 +189,20 @@ void tst_QServiceManager_IPC::ipcError(QService::UnrecoverableIPCError err)
 
 void tst_QServiceManager_IPC::cleanupTestCase()
 {
-    if (service) {
-        delete service;
+    if (serviceUnique) {
+        delete serviceUnique;
+    }
+
+    if (serviceUniqueOther) {
+        delete serviceUniqueOther;
+    }
+    
+    if (serviceShared) {
+        delete serviceShared;
+    }
+
+    if (serviceSharedOther) {
+        delete serviceSharedOther;
     }
     
     if (requiresLackey()) {
@@ -179,16 +227,242 @@ void tst_QServiceManager_IPC::cleanup()
 {
 }
 
-void tst_QServiceManager_IPC::verifyTransmittedServiceObject()
+void tst_QServiceManager_IPC::sharedTestService()
 {
-    QVERIFY(service != 0);
-    const QMetaObject* mo = service->metaObject();
+    const QMetaObject *meta = serviceShared->metaObject(); 
+    const QMetaObject *metaOther = serviceSharedOther->metaObject(); 
+
+    // test changes on the property 'value'
+    QMetaProperty prop = meta->property(1);
+    QMetaProperty propOther = metaOther->property(1);
+
+    // check that the property values are the same before and after an edit in one instance
+    QCOMPARE(prop.read(serviceShared), propOther.read(serviceSharedOther));
+    prop.write(serviceShared, "Shared");
+    QCOMPARE(prop.read(serviceShared), propOther.read(serviceSharedOther));
+
+    prop.reset(serviceShared);
+}
+
+#ifdef UNIQUE_TESTS
+void tst_QServiceManager_IPC::uniqueTestService()
+{
+    const QMetaObject *meta = serviceUnique->metaObject(); 
+    const QMetaObject *metaOther = serviceUniqueOther->metaObject(); 
+
+    // test changes on the property 'value'
+    QMetaProperty prop = meta->property(1);
+    QMetaProperty propOther = metaOther->property(1);
+
+    // check that the property values are not the same after an edit in one instance
+    QCOMPARE(prop.read(serviceUnique), propOther.read(serviceUniqueOther));
+    prop.write(serviceUnique, "Unique");
+    QVERIFY(prop.read(serviceUnique) != propOther.read(serviceUniqueOther));
+    
+    prop.reset(serviceUnique);
+}
+#endif
+
+void tst_QServiceManager_IPC::verifySharedServiceObject()
+{
+    QVERIFY(serviceShared != 0);
+    const QMetaObject* mo = serviceShared->metaObject();
+    QCOMPARE(mo->className(), "SharedTestService");
+    QVERIFY(mo->superClass());
+    QCOMPARE(mo->superClass()->className(), "QObject");
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 17);
+    QCOMPARE(mo->methodCount(), 21); //20 meta functions available
+    //actual function presence will be tested later
+    
+    //test properties
+    QCOMPARE(mo->propertyCount()-mo->propertyOffset(), 1);
+    QCOMPARE(mo->propertyCount(), 2);
+    
+    QCOMPARE(mo->enumeratorCount()-mo->enumeratorOffset(), 0);
+    QCOMPARE(mo->enumeratorCount(), 0);
+    
+    QCOMPARE(mo->classInfoCount()-mo->classInfoOffset(), 0);
+    QCOMPARE(mo->classInfoCount(), 0);
+    
+    if (verbose) {
+        qDebug() << "ServiceObject class: " << mo->className() << mo->superClass() << mo->superClass()->className();
+        qDebug() << "------------------- Meta Methods -----------";
+        qDebug() << "Methods:" << mo->methodCount()- mo->methodOffset() << "(" << mo->methodCount() << ")";
+        for (int i=0; i< mo->methodCount(); i++) {
+            QMetaMethod method = mo->method(i);
+            QString type;
+            switch(method.methodType()) {
+            case QMetaMethod::Signal:
+                type = "signal"; break;
+            case QMetaMethod::Slot:
+                type = "slot"; break;
+            case QMetaMethod::Constructor:
+                type = "constrcutor"; break;
+            case QMetaMethod::Method:
+                type = "method"; break;
+            }
+            qDebug() << "    " << i << "." << method.signature() << type;
+        }
+
+        qDebug() << "------------------- Meta Properties --------";
+        qDebug() << "Properties:" << mo->propertyCount()- mo->propertyOffset() << "(" << mo->propertyCount() << ")";
+        for(int i=0; i< mo->propertyCount(); i++) {
+            QMetaProperty property = mo->property(i);
+            QString info = "Readable: %1 Resettable: %2 Writeable: %3 Designable: %4 Scriptable: %5 User: %6 Stored: %7 Constant: %8 Final: %9 HasNotify: %10 EnumType: %11 FlagType: %12";
+            info = info.arg(property.isReadable()).arg(property.isResettable()).arg(property.isWritable());
+            info = info.arg(property.isDesignable()).arg(property.isScriptable()).arg(property.isUser());
+            info = info.arg(property.isStored()).arg(property.isConstant()).arg(property.isFinal());
+            info = info.arg(property.hasNotifySignal()).arg(property.isEnumType()).arg(property.isFlagType());
+
+            qDebug() << "    " << i << "." << property.name() << "Type:" << property.typeName() << info;
+        }
+
+        qDebug() << "------------------- Meta Enumerators --------";
+        qDebug() << "Enums:" << mo->enumeratorCount()- mo->enumeratorOffset() << "(" << mo->enumeratorCount() << ")";
+
+        qDebug() << "------------------- Meta class info ---------";
+        qDebug() << "ClassInfos:" << mo->classInfoCount()- mo->classInfoOffset() << "(" << mo->classInfoCount() << ")";
+    }
+}
+
+void tst_QServiceManager_IPC::verifySharedMethods_data()
+{
+    QTest::addColumn<QByteArray>("signature");
+    QTest::addColumn<int>("metaMethodType");
+    QTest::addColumn<QByteArray>("returnType");
+
+    //list of all slots, signals and invokable functions
+    QTest::newRow("signalWithIntParam(int)") 
+        << QByteArray("signalWithIntParam(int)") <<  (int)( QMetaMethod::Signal) << QByteArray("");
+    QTest::newRow("signalWithVariousParam(QVariant,QString,QServiceFilter)") 
+        << QByteArray("signalWithVariousParam(QVariant,QString,QServiceFilter)") <<  (int)( QMetaMethod::Signal) << QByteArray("");
+    QTest::newRow("valueChanged()") 
+        << QByteArray("valueChanged()") <<  (int)( QMetaMethod::Signal) << QByteArray("");
+    QTest::newRow("triggerSignalWithIntParam()") 
+        << QByteArray("triggerSignalWithIntParam()") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("triggerSignalWithVariousParam()") 
+        << QByteArray("triggerSignalWithVariousParam()") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("triggerSignalWithIntParamExecute()") 
+        << QByteArray("triggerSignalWithIntParamExecute()") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("triggerSignalWithVariousParamExecute()") 
+        << QByteArray("triggerSignalWithVariousParamExecute()") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testSlot()") 
+        << QByteArray("testSlot()") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testSlotWithArgs(QByteArray,int,QVariant)") 
+        << QByteArray("testSlotWithArgs(QByteArray,int,QVariant)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testSlotWithCustomArg(QServiceFilter)") 
+        << QByteArray("testSlotWithCustomArg(QServiceFilter)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+
+    //QServiceInterfaceDescriptor has not been declared as meta type
+    QTest::newRow("testSlotWithUnknownArg(QServiceInterfaceDescriptor)") 
+        << QByteArray("testSlotWithUnknownArg(QServiceInterfaceDescriptor)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
+    QTest::newRow("testFunctionWithReturnValue(int)") 
+        << QByteArray("testFunctionWithReturnValue(int)") <<  (int)( QMetaMethod::Method) << QByteArray("QString");
+    QTest::newRow("testFunctionWithVariantReturnValue(QVariant)") 
+        << QByteArray("testFunctionWithVariantReturnValue(QVariant)") <<  (int)( QMetaMethod::Method) << QByteArray("QVariant");
+    QTest::newRow("testFunctionWithCustomReturnValue()") 
+        << QByteArray("testFunctionWithCustomReturnValue()") <<  (int)( QMetaMethod::Method) << QByteArray("QServiceFilter");
+    QTest::newRow("slotConfirmation()")
+        << QByteArray("slotConfirmation()") <<  (int)( QMetaMethod::Method) << QByteArray("uint");
+    QTest::newRow("setConfirmationHash(uint)")
+        << QByteArray("setConfirmationHash(uint)") <<  (int)( QMetaMethod::Method) << QByteArray("");
+}
+
+void tst_QServiceManager_IPC::verifySharedMethods()
+{
+    QVERIFY(serviceShared);
+    QFETCH(QByteArray, signature);
+    QFETCH(int, metaMethodType);
+    QFETCH(QByteArray, returnType);
+
+    const QMetaObject* meta = serviceShared->metaObject();
+    const int index = meta->indexOfMethod(signature.constData());
+    QVERIFY(index>=0);
+    QMetaMethod method = meta->method(index);
+    QCOMPARE(metaMethodType, (int)method.methodType());
+    QCOMPARE(returnType, QByteArray(method.typeName()));
+}
+
+Q_DECLARE_METATYPE(QVariant)
+
+void tst_QServiceManager_IPC::verifySharedProperties_data()
+{
+    QTest::addColumn<QByteArray>("signature");
+    QTest::addColumn<QString>("typeName");
+    QTest::addColumn<qint16>("flags");
+    QTest::addColumn<QVariant>("defaultValue");
+    QTest::addColumn<QVariant>("writeValue");
+    QTest::addColumn<QVariant>("expectedReturnValue");
+
+    //
+    //    bit order:
+    //        0 isWritable - 1 isUser - 2 isStored - 3 isScriptable 
+    //        4 isResettable - 5 isReadable - 6 isFlagType - 7 isFinal
+    //        8 isEnumType - 9 isDesignable - 10 isConstant - 11 hasNotifySgnal
+    //
+    //        for more details see verifyProperties()
+    //
+
+    QTest::newRow("value property") << QByteArray("value")
+            << QString("QString") << qint16(0x0A3D) << QVariant(QString("FFF")) << QVariant(QString("GGG")) << QVariant(QString("GGG"));
+}
+
+void tst_QServiceManager_IPC::verifySharedProperties()
+{
+    QVERIFY(serviceShared);
+    QFETCH(QByteArray, signature);
+    QFETCH(QString, typeName);
+    QFETCH(qint16, flags);
+    QFETCH(QVariant, defaultValue);
+    QFETCH(QVariant, writeValue);
+    QFETCH(QVariant, expectedReturnValue);
+
+    const QMetaObject* meta = serviceShared->metaObject();
+    const int index = meta->indexOfProperty(signature.constData());
+    QVERIFY(index>=0);
+    QMetaProperty property = meta->property(index);
+    QVERIFY(property.isValid());
+    QCOMPARE(QString(property.typeName()), typeName);
+
+    QVERIFY( property.isWritable() == (bool) (flags & 0x0001) );
+    QVERIFY( property.isUser() == (bool) (flags & 0x0002) );
+    QVERIFY( property.isStored() == (bool) (flags & 0x0004) );
+    QVERIFY( property.isScriptable() == (bool) (flags & 0x0008) );
+    QVERIFY( property.isResettable() == (bool) (flags & 0x0010) );
+    QVERIFY( property.isReadable() == (bool) (flags & 0x0020) );
+    QVERIFY( property.isFlagType() == (bool) (flags & 0x0040) );
+    QVERIFY( property.isFinal() == (bool) (flags & 0x0080) );
+    QVERIFY( property.isEnumType() == (bool) (flags & 0x0100) );
+    QVERIFY( property.isDesignable() == (bool) (flags & 0x0200) );
+    QVERIFY( property.isConstant() == (bool) (flags & 0x0400) );
+    QVERIFY( property.hasNotifySignal() == (bool) (flags & 0x0800) );
+
+    if (property.isReadable()) {
+        QCOMPARE(defaultValue, serviceShared->property(signature));
+        if (property.isWritable()) {
+            serviceShared->setProperty(signature, writeValue);
+            QCOMPARE(expectedReturnValue, serviceShared->property(signature));
+            if (property.isResettable()) {
+                property.reset(serviceShared);
+                QCOMPARE(defaultValue, serviceShared->property(signature));
+            }
+            serviceShared->setProperty(signature, defaultValue);
+            QCOMPARE(defaultValue, serviceShared->property(signature));
+        }
+    }
+}
+
+#ifdef UNIQUE_TESTS
+void tst_QServiceManager_IPC::verifyUniqueServiceObject()
+{
+    QVERIFY(serviceUnique != 0);
+    const QMetaObject* mo = serviceUnique->metaObject();
     QCOMPARE(mo->className(), "UniqueTestService");
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
 // TODO adding the ipc failure signal seems to break these    
-//    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19); // 17+1 added signal for error signal added by library
-//    QCOMPARE(mo->methodCount(), 22); //21 meta functions available + 1 signal
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19); // 17+1 added signal for error signal added by library
+    QCOMPARE(mo->methodCount(), 22); //21 meta functions available + 1 signal
     //actual function presence will be tested later
 
     //test properties
@@ -201,8 +475,6 @@ void tst_QServiceManager_IPC::verifyTransmittedServiceObject()
     QCOMPARE(mo->classInfoCount()-mo->classInfoOffset(), 2);
     QCOMPARE(mo->classInfoCount(), 2);
     
-    
-
     if (verbose) {
         qDebug() << "ServiceObject class: " << mo->className() << mo->superClass() << mo->superClass()->className();
         qDebug() << "------------------- Meta Methods -----------";
@@ -254,7 +526,7 @@ void tst_QServiceManager_IPC::verifyTransmittedServiceObject()
     }
 }
 
-void tst_QServiceManager_IPC::verifyMethods_data()
+void tst_QServiceManager_IPC::verifyUniqueMethods_data()
 {
     QTest::addColumn<QByteArray>("signature");
     QTest::addColumn<int>("metaMethodType");
@@ -297,28 +569,24 @@ void tst_QServiceManager_IPC::verifyMethods_data()
         << QByteArray("slotConfirmation()") <<  (int)( QMetaMethod::Method) << QByteArray("uint");
     QTest::newRow("setConfirmationHash(uint)")
         << QByteArray("setConfirmationHash(uint)") <<  (int)( QMetaMethod::Method) << QByteArray("");
-
 }
 
-void tst_QServiceManager_IPC::verifyMethods()
+void tst_QServiceManager_IPC::verifyUniqueMethods()
 {
-    QVERIFY(service);
+    QVERIFY(serviceUnique);
     QFETCH(QByteArray, signature);
     QFETCH(int, metaMethodType);
     QFETCH(QByteArray, returnType);
 
-    const QMetaObject* meta = service->metaObject();
+    const QMetaObject* meta = serviceUnique->metaObject();
     const int index = meta->indexOfMethod(signature.constData());
     QVERIFY(index>=0);
     QMetaMethod method = meta->method(index);
     QCOMPARE(metaMethodType, (int)method.methodType());
     QCOMPARE(returnType, QByteArray(method.typeName()));
-
 }
 
-Q_DECLARE_METATYPE(QVariant)
-
-void tst_QServiceManager_IPC::verifyProperties_data()
+void tst_QServiceManager_IPC::verifyUniqueProperties_data()
 {
     QTest::addColumn<QByteArray>("signature");
     QTest::addColumn<QString>("typeName");
@@ -344,9 +612,9 @@ void tst_QServiceManager_IPC::verifyProperties_data()
             << QString("ServiceFlag") << qint16(0x036D) << QVariant((int)4) << QVariant("FirstBit|ThirdBit") << QVariant((int)5);
 }
 
-void tst_QServiceManager_IPC::verifyProperties()
+void tst_QServiceManager_IPC::verifyUniqueProperties()
 {
-    QVERIFY(service);
+    QVERIFY(serviceUnique);
     QFETCH(QByteArray, signature);
     QFETCH(QString, typeName);
     QFETCH(qint16, flags);
@@ -354,7 +622,7 @@ void tst_QServiceManager_IPC::verifyProperties()
     QFETCH(QVariant, writeValue);
     QFETCH(QVariant, expectedReturnValue);
 
-    const QMetaObject* meta = service->metaObject();
+    const QMetaObject* meta = serviceUnique->metaObject();
     const int index = meta->indexOfProperty(signature.constData());
     QVERIFY(index>=0);
     QMetaProperty property = meta->property(index);
@@ -375,21 +643,21 @@ void tst_QServiceManager_IPC::verifyProperties()
     QVERIFY( property.hasNotifySignal() == (bool) (flags & 0x0800) );
 
     if (property.isReadable()) {
-        QCOMPARE(defaultValue, service->property(signature));
+        QCOMPARE(defaultValue, serviceUnique->property(signature));
         if (property.isWritable()) {
-            service->setProperty(signature, writeValue);
-            QCOMPARE(expectedReturnValue, service->property(signature));
+            serviceUnique->setProperty(signature, writeValue);
+            QCOMPARE(expectedReturnValue, serviceUnique->property(signature));
             if (property.isResettable()) {
-                property.reset(service);
-                QCOMPARE(defaultValue, service->property(signature));
+                property.reset(serviceUnique);
+                QCOMPARE(defaultValue, serviceUnique->property(signature));
             }
-            service->setProperty(signature, defaultValue);
-            QCOMPARE(defaultValue, service->property(signature));
+            serviceUnique->setProperty(signature, defaultValue);
+            QCOMPARE(defaultValue, serviceUnique->property(signature));
         }
     }
 }
 
-void tst_QServiceManager_IPC::verifyClassInfo_data()
+void tst_QServiceManager_IPC::verifyUniqueClassInfo_data()
 {
     QTest::addColumn<QString>("classInfoKey");
     QTest::addColumn<QString>("classInfoValue");
@@ -398,12 +666,12 @@ void tst_QServiceManager_IPC::verifyClassInfo_data()
     QTest::newRow("Key") << QString("Key") << QString("Value");
 
 }
-void tst_QServiceManager_IPC::verifyClassInfo()
+void tst_QServiceManager_IPC::verifyUniqueClassInfo()
 {
     QFETCH(QString, classInfoKey);
     QFETCH(QString, classInfoValue);
 
-    const QMetaObject* meta = service->metaObject();
+    const QMetaObject* meta = serviceUnique->metaObject();
     const int index = meta->indexOfClassInfo(classInfoKey.toAscii().constData());
 
     QMetaClassInfo info = meta->classInfo(index);
@@ -413,7 +681,7 @@ void tst_QServiceManager_IPC::verifyClassInfo()
 }
 
 Q_DECLARE_METATYPE(QList<int> )
-void tst_QServiceManager_IPC::verifyEnumerator_data()
+void tst_QServiceManager_IPC::verifyUniqueEnumerator_data()
 {
     QTest::addColumn<QString>("enumName");
     QTest::addColumn<QString>("enumScope");
@@ -442,7 +710,7 @@ void tst_QServiceManager_IPC::verifyEnumerator_data()
         << 4 << false << keynames << values;
 }
 
-void tst_QServiceManager_IPC::verifyEnumerator()
+void tst_QServiceManager_IPC::verifyUniqueEnumerator()
 {
     QFETCH(QString, enumName);
     QFETCH(QString, enumScope);
@@ -451,7 +719,7 @@ void tst_QServiceManager_IPC::verifyEnumerator()
     QFETCH(QStringList, enumKeyNames);
     QFETCH(QList<int>, enumKeyValues);
 
-    const QMetaObject* meta = service->metaObject();
+    const QMetaObject* meta = serviceUnique->metaObject();
     const int index = meta->indexOfEnumerator(enumName.toAscii().constData());
     QMetaEnum metaEnum = meta->enumerator(index);
 
@@ -466,66 +734,107 @@ void tst_QServiceManager_IPC::verifyEnumerator()
         QCOMPARE(enumKeyValues.at(i), metaEnum.keyToValue(enumKeyNames.at(i).toAscii().constData()));
     }
 }
+#endif
 
 void tst_QServiceManager_IPC::testInvokableFunctions()
 {
     QString result;
 
-    QString pattern("%1 x 3 = %2");
+    // test function input with calculated return value
     QString temp;
+    QString patternShared("%1 + 3 = %2");
+    QString patternUnique("%1 x 3 = %2");
     for (int i = -10; i<10; i++) {
         result.clear(); temp.clear();
         QVERIFY(result.isEmpty());
         QVERIFY(temp.isEmpty());
-        
-        QMetaObject::invokeMethod(service, "testFunctionWithReturnValue", 
-            Q_RETURN_ARG(QString, result), Q_ARG(int, i));
-        temp = pattern.arg(i).arg(i*3);
+    
+        // Shared service
+        QMetaObject::invokeMethod(serviceShared, "testFunctionWithReturnValue", 
+                                  Q_RETURN_ARG(QString, result),
+                                  Q_ARG(int, i));
+        temp = patternShared.arg(i).arg(i+3);
         QCOMPARE(temp, result);
+        
+
+        result.clear(); temp.clear();
+        QVERIFY(result.isEmpty());
+        QVERIFY(temp.isEmpty());
+
+#ifdef UNIQUE_TESTS
+        // Unique service
+        QMetaObject::invokeMethod(serviceUnique, "testFunctionWithReturnValue", 
+                                  Q_RETURN_ARG(QString, result), 
+                                  Q_ARG(int, i));
+        temp = patternUnique.arg(i).arg(i*3);
+        QCOMPARE(temp, result);
+#endif
     }
 
+    // test function with QVariant return type
     QList<QVariant> variants;
     variants << QVariant() << QVariant(6) << QVariant(QString("testString"));
     for(int i = 0; i<variants.count(); i++) {
         QVariant varResult;
-        QMetaObject::invokeMethod(service, "testFunctionWithVariantReturnValue",
-              Q_RETURN_ARG(QVariant, varResult), Q_ARG(QVariant, variants.at(i)));
         
+        // Shared service
+        QMetaObject::invokeMethod(serviceShared, "testFunctionWithVariantReturnValue",
+                                  Q_RETURN_ARG(QVariant, varResult),
+                                  Q_ARG(QVariant, variants.at(i)));
         QCOMPARE(variants.at(i), varResult);
+        
+#ifdef UNIQUE_TESTS
+        // Unique service
+        QMetaObject::invokeMethod(serviceUnique, "testFunctionWithVariantReturnValue",
+                                  Q_RETURN_ARG(QVariant, varResult),
+                                  Q_ARG(QVariant, variants.at(i)));
+        QCOMPARE(variants.at(i), varResult);
+#endif
     }
 
     //test custom return type
     QServiceFilter f;
-    QMetaObject::invokeMethod(service, "testFunctionWithCustomReturnValue",
-          Q_RETURN_ARG(QServiceFilter, f));
-    QCOMPARE(f.serviceName(), QString("MyService"));
+    // Shared service
+    QMetaObject::invokeMethod(serviceShared, "testFunctionWithCustomReturnValue",
+                              Q_RETURN_ARG(QServiceFilter, f));
+    QCOMPARE(f.serviceName(), QString("MySharedService"));
+    QCOMPARE(f.interfaceName(), QString("com.nokia.qt.ipcunittest"));
+    QCOMPARE(f.majorVersion(), 6);
+    QCOMPARE(f.minorVersion(), 2);
+    
+#ifdef UNIQUE_TESTS
+    // Unique service
+    QMetaObject::invokeMethod(serviceUnique, "testFunctionWithCustomReturnValue",
+                              Q_RETURN_ARG(QServiceFilter, f));
+    QCOMPARE(f.serviceName(), QString("MyUniqueService"));
     QCOMPARE(f.interfaceName(), QString("com.nokia.qt.ipcunittest"));
     QCOMPARE(f.majorVersion(), 6);
     QCOMPARE(f.minorVersion(), 7);
+#endif
 }
 
+#ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::testSignalling()
 {
-    QSignalSpy spy(service, SIGNAL(signalWithIntParam(int)));
-    QMetaObject::invokeMethod(service, "triggerSignalWithIntParam");
+    QSignalSpy spy(serviceUnique, SIGNAL(signalWithIntParam(int)));
+    QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithIntParam");
     QTRY_VERIFY(spy.count() == 1);
     QCOMPARE(spy.at(0).at(0).toInt(), 5);
-
     
     //test signalling for property changes
-    QCOMPARE(QString("FFF"), service->property("value").toString());
-    QSignalSpy propSpy(service, SIGNAL(valueChanged()));
+    QCOMPARE(QString("FFF"), serviceUnique->property("value").toString());
+    QSignalSpy propSpy(serviceUnique, SIGNAL(valueChanged()));
     
-    service->setProperty("value", QString("GGG"));
+    serviceUnique->setProperty("value", QString("GGG"));
     QTRY_VERIFY(propSpy.count() == 1);
     propSpy.clear();
-    service->setProperty("value", QString("FFF"));
+    serviceUnique->setProperty("value", QString("FFF"));
     QTRY_VERIFY(propSpy.count() == 1);
-    QCOMPARE(QString("FFF"), service->property("value").toString());
+    QCOMPARE(QString("FFF"), serviceUnique->property("value").toString());
    
     //signal with custom types
-    QSignalSpy variousSpy(service, SIGNAL(signalWithVariousParam(QVariant,QString,QServiceFilter,QVariant)));
-    QMetaObject::invokeMethod(service, "triggerSignalWithVariousParam");
+    QSignalSpy variousSpy(serviceUnique, SIGNAL(signalWithVariousParam(QVariant,QString,QServiceFilter,QVariant)));
+    QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithVariousParam");
     QTRY_VERIFY(variousSpy.count() == 1);
 
     QCOMPARE(variousSpy.at(0).count(), 4);
@@ -543,22 +852,29 @@ void tst_QServiceManager_IPC::testSignalling()
 
     QCOMPARE(variousSpy.at(0).at(3).value<QVariant>(), QVariant(5));
 }
+#endif
 
 void tst_QServiceManager_IPC::testSlotInvokation()
 {
+#ifdef UNIQUE_TESTS
+    QObject *service = serviceUnique;
+#else
+    QObject *service = serviceShared;
+#endif
+
     uint hash = 1;
     uint expectedHash = 0;
     //to check whether the slot was properly invoked we
     //generate a hash value based on the slot name and its parameters
 
-    QMetaObject::invokeMethod( service, "setConfirmationHash",
+    QMetaObject::invokeMethod(service, "setConfirmationHash",
               Q_ARG(uint, 0));
     QMetaObject::invokeMethod(service, "slotConfirmation",
               Q_RETURN_ARG(uint, hash));
     QCOMPARE( hash, (uint)0);
 
 
-    QMetaObject::invokeMethod( service, "testSlot");
+    QMetaObject::invokeMethod(service, "testSlot");
     QMetaObject::invokeMethod(service, "slotConfirmation",
               Q_RETURN_ARG(uint, hash));
     expectedHash = qHash(QString("testSlot()"));
@@ -568,7 +884,7 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QServiceFilter f("com.myInterface" , "4.5");
     f.setServiceName("MyService");
 
-    QMetaObject::invokeMethod( service, "testSlotWithCustomArg",
+    QMetaObject::invokeMethod(service, "testSlotWithCustomArg",
           Q_ARG(QServiceFilter, f));
     QString output("%1: %2 - %3.%4");
     output = output.arg(f.serviceName()).arg(f.interfaceName())
@@ -580,7 +896,7 @@ void tst_QServiceManager_IPC::testSlotInvokation()
 
     //should fail as QServiceInterfaceDescriptor is not registered as meta type
     QServiceInterfaceDescriptor desc;
-    QMetaObject::invokeMethod( service, "testSlotWithUnknownArg",
+    QMetaObject::invokeMethod(service, "testSlotWithUnknownArg",
           Q_ARG(QServiceInterfaceDescriptor, desc));
     QMetaObject::invokeMethod(service, "slotConfirmation",
               Q_RETURN_ARG(uint, hash));
@@ -591,7 +907,7 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QVariant test;
     QByteArray d = "array";
     int num = 5;
-    QMetaObject::invokeMethod( service, "testSlotWithArgs",
+    QMetaObject::invokeMethod(service, "testSlotWithArgs",
           Q_ARG(QByteArray, d), Q_ARG(int, num), Q_ARG(QVariant, test));
     
     output = QString("%1, %2, %3, %4");
