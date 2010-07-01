@@ -391,13 +391,15 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
             for (int i = 0; i < requests.size(); ++i)
                 requestRects.insert(requests.at(i).tileRect());
         } else {
-//            QMutableListIterator<QGeoTiledMapRequest> requestIter(requestQueue);
-//            while (requestIter.hasNext()) {
-//                QGeoTiledMapRequest req = requestIter.next();
+            QMutableListIterator<QGeoTiledMapRequest> requestIter(requestQueue);
+            while (requestIter.hasNext()) {
+                QGeoTiledMapRequest req = requestIter.next();
 
-//                if (!mapData->screenRect().intersects(req.tileRect()))
-//                    requestIter.remove();
-//            }
+                if (!mapData->screenRect().intersects(req.tileRect())) {
+                    requestRects.remove(req.tileRect());
+                    requestIter.remove();
+                }
+            }
             for (int i = 0; i < requests.size(); ++i)
                 if (!requestRects.contains(requests.at(i).tileRect())
                     && !replyRects.contains(requests.at(i).tileRect())) {
@@ -412,7 +414,7 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
     lastMapType = mapData->mapType();
 
     if (wasEmpty)
-        QTimer::singleShot(0, this, SLOT(processRequests()));
+        QTimer::singleShot(50, this, SLOT(processRequests()));
 }
 
 void QGeoTiledMapRequestHandler::processRequests()
@@ -444,6 +446,7 @@ void QGeoTiledMapRequestHandler::processRequests()
         }
 
         QGeoTiledMapReply *reply = engine->getTileImage(req);
+
         if (!reply) {
             continue;
         }
@@ -466,10 +469,10 @@ void QGeoTiledMapRequestHandler::processRequests()
         replies.insert(reply);
         replyRects.insert(reply->request().tileRect());
 
-        if (!reply->isCached())
-            break;
+        if (reply->isCached())
+            ++cachedReplies;
 
-        ++cachedReplies;
+        break;
     }
 }
 
@@ -497,7 +500,7 @@ void QGeoTiledMapRequestHandler::tileFinished()
         emit triggerUpdate(reply->request().mapData());
 
     if (requestQueue.size() != 0)
-        QTimer::singleShot(0, this, SLOT(processRequests()));
+        QTimer::singleShot(50, this, SLOT(processRequests()));
 }
 
 void QGeoTiledMapRequestHandler::tileError(QGeoTiledMapReply::Error error, const QString &errorString)

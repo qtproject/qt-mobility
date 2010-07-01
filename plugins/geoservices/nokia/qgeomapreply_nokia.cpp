@@ -76,7 +76,7 @@ QNetworkReply* QGeoMapReplyNokia::networkReply() const
 
 void QGeoMapReplyNokia::abort()
 {
-    m_reply->close();
+    m_reply->abort();
     m_reply->deleteLater();
     cleanedUp = true;
 }
