@@ -297,9 +297,7 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-  qDebug() << "Registering QService::UnrecoverableIPCError";
-    int type = qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
-  qDebug() << "QService::UnrecoverableIPCError is type: " << type;
+    qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
     d->scope = QService::UserScope;
 }
 
