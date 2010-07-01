@@ -68,7 +68,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
     if (QFile::exists(libNameOrPath))
@@ -300,6 +299,9 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
+  qDebug() << "Registering QService::UnrecoverableIPCError";
+    int type = qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
+  qDebug() << "QService::UnrecoverableIPCError is type: " << type;
     d->scope = QService::UserScope;
 }
 
