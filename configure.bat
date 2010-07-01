@@ -98,7 +98,6 @@ if "%1" == "-h"                 goto usage
 if "%1" == "-help"              goto usage
 if "%1" == "--help"             goto usage
 if "%1" == "-symbian-unfrozen"  goto unfrozenTag
-if "%1" == "-symbian-qtm-cntmodel"  goto cntmodelTag
 
 
 echo Unknown option: "%1"
@@ -225,12 +224,6 @@ REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
-shift
-goto cmdline_parsing
-
-:cntmodelTag
-REM Selects using the local CNTMODEL code instead of the SDKs
-set BUILD_SYMBIANCNTMODEL=yes
 shift
 goto cmdline_parsing
 
@@ -381,9 +374,6 @@ echo build_tools = %BUILD_TOOLS% >> %PROJECT_CONFIG%
 set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
-
-echo build_symbiancntmodel = %BUILD_SYMBIANCNTMODEL% >> %PROJECT_CONFIG%
-set BUILD_SYMBIANCNTMODEL=
 
 echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
