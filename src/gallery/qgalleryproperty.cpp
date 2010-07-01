@@ -83,40 +83,13 @@ QString QGalleryProperty::name() const
 */
 
 /*!
-    Returns a gallery filter which tests if a property matches a \a value.
-    The match \a flags identify the criteria for a match.
-*/
-
-QGalleryMetaDataFilter QGalleryProperty::matches(const QVariant &value, Qt::MatchFlags flags) const
-{
-    return QGalleryMetaDataFilter(name(), value, flags);
-}
-
-/*!
-    Returns a gallery filter which tests if a property is in a range between
-    a \a minimum and \a maximum value.
-*/
-
-QGalleryMetaDataRangeFilter QGalleryProperty::isInRange(
-        const QVariant &minimum, const QVariant &maximum) const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(name());
-    filter.setInclusiveRange(minimum, maximum);
-    return filter;
-}
-
-/*!
     Returns a gallery filter which tests if  a property is less than a
     \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryProperty::operator <(const QVariant &value) const
+QGalleryMetaDataFilter QGalleryProperty::operator <(const QVariant &value) const
 {
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(name());
-    filter.setLessThan(value);
-    return filter;
+    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::LessThan);
 }
 
 /*!
@@ -124,12 +97,9 @@ QGalleryMetaDataRangeFilter QGalleryProperty::operator <(const QVariant &value) 
     a \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryProperty::operator <=(const QVariant &value) const
+QGalleryMetaDataFilter QGalleryProperty::operator <=(const QVariant &value) const
 {
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(name());
-    filter.setLessThanEquals(value);
-    return filter;
+    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::LessThanEquals);
 }
 
 /*!
@@ -146,12 +116,9 @@ QGalleryMetaDataFilter QGalleryProperty::operator ==(const QVariant &value) cons
     to a \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryProperty::operator >=(const QVariant &value) const
+QGalleryMetaDataFilter QGalleryProperty::operator >=(const QVariant &value) const
 {
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(name());
-    filter.setGreaterThanEquals(value);
-    return filter;
+    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::GreaterThanEquals);
 }
 
 /*!
@@ -159,12 +126,9 @@ QGalleryMetaDataRangeFilter QGalleryProperty::operator >=(const QVariant &value)
     \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryProperty::operator >(const QVariant &value) const
+QGalleryMetaDataFilter QGalleryProperty::operator >(const QVariant &value) const
 {
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(name());
-    filter.setGreaterThan(value);
-    return filter;
+    return QGalleryMetaDataFilter(name(), value, QGalleryFilter::GreaterThan);
 }
 
 /*!
