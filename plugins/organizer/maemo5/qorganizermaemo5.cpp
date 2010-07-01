@@ -648,9 +648,13 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
                 return;
             }
         }
-
-        // TODO: If GUID is set and parent ID is NOT set:
-        //       - must find at least one event with GUID
+        else if(d->m_guidMapper.itemIds(eventOccurrence->guid(), QOrganizerItemType::TypeEvent).isEmpty()) {
+            // The parent ID was not set, so the GUID is always set here.
+            // Must find at least one event with the given GUID.
+            // If not, then the occurrence is not valid.
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
 
         // If both parent ID and GUID are both set, they must be consistent
         if (eventOccurrence->parentLocalId() && !eventOccurrence->guid().isEmpty()) {
@@ -660,7 +664,6 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
                 return;
             }
         }
-
     }
 
     // Todo occurrence validity checks:
@@ -682,9 +685,13 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, 
                 return;
             }
         }
-
-        // TODO: If GUID is set and parent ID is NOT set:
-        //       - must find at least one todo with GUID
+        else if(d->m_guidMapper.itemIds(todoOccurrence->guid(), QOrganizerItemType::TypeTodo).isEmpty()) {
+            // The parent ID was not set, so the GUID is always set here.
+            // Must find at least one todo with the given GUID.
+            // If not, then the occurrence is not valid.
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return;
+        }
 
         // If both parent ID and GUID are set, they must be consistent
         if (todoOccurrence->parentLocalId() && !todoOccurrence->guid().isEmpty()) {
@@ -705,9 +712,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     // Check item validity
     checkItemIdValidity(item, error);
     if (*error != QOrganizerItemManager::NoError)
-        return calError; // Item localId or GUID is not valid
+        return calError;
 
-    // Return InvalidItemTypeError if type won't be recognized
+    // Returns InvalidItemTypeError if the type won't be recognized later
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     CComponent *component = d->m_itemTransformer.createCComponent(cal, item);
@@ -754,13 +761,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
                 calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
                 *error = QOrganizerItemManager::NoError; // reset the error
-
             }
         }
 
         // Update GUID mapping
         d->m_guidMapper.setCalendar(cal);
-        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cevent->getId()));
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cevent->getId()), QOrganizerItemType::TypeEvent);
 
         delete cevent;
         return calError;
@@ -768,14 +774,10 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     else if (item->type() == QOrganizerItemType::TypeEventOccurrence)
     {
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(item);
-        // Check that the occurrence has either parentLocalId or GUID set
-        if (eventOccurrence->guid().isEmpty() && !eventOccurrence->parentLocalId()) {
-            *error = QOrganizerItemManager::InvalidOccurrenceError;
-            return calError;
-        }
+
+        QOrganizerItem parentItem = parentOf(eventOccurrence, error);
 
         // TODO...
-
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
         CTodo* ctodo = static_cast<CTodo *>(component);
@@ -819,7 +821,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         // Update GUID mapping
         d->m_guidMapper.setCalendar(cal);
-        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(ctodo->getId()));
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(ctodo->getId()), QOrganizerItemType::TypeTodo);
 
         delete ctodo;
         return calError;
@@ -870,7 +872,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         // Update GUID mapping
         d->m_guidMapper.setCalendar(cal);
-        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cjournal->getId()));
+        d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cjournal->getId()), QOrganizerItemType::TypeJournal);
 
         delete cjournal;
         return calError;
@@ -880,6 +882,64 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     }
 
     return calError;
+}
+
+QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(QOrganizerItem *occurrence, QOrganizerItemManager::Error *error)
+{
+    // the item must be valid when this method becomes called
+    QOrganizerItemLocalId parentId;
+    if (occurrence->type() == QOrganizerItemType::TypeEventOccurrence) {
+        QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(occurrence);
+        if (eventOccurrence->parentLocalId()) {
+            // parent local id was set
+            parentId = eventOccurrence->parentLocalId();
+        }
+        else {
+            // fetch with [GUID,originalDate]
+            QList<QString> ids = d->m_guidMapper.itemIds(eventOccurrence->guid(), QOrganizerItemType::TypeEvent);
+            foreach (QString id, ids) {
+                QOrganizerItemLocalId parentLocalId = id.toUInt();
+                QOrganizerItem parentCandidate = item(parentLocalId, fetchMinimalData(), error);
+                if (*error != QOrganizerItemManager::NoError)
+                    return QOrganizerItem(); // error occured
+                // parent must be an event here as events were requested from the GUID mapper
+                QOrganizerEvent *parentCandidateEvent = static_cast<QOrganizerEvent *>(&parentCandidate);
+                if (parentCandidateEvent->startDateTime().date() == eventOccurrence->originalDate()) {
+                    parentId = parentLocalId;
+                    break; // parent event found
+                }
+            }
+        }
+    }
+    else if (occurrence->type() == QOrganizerItemType::TypeTodoOccurrence) {
+        QOrganizerTodoOccurrence *todoOccurrence = static_cast<QOrganizerTodoOccurrence *>(occurrence);
+        if (todoOccurrence->parentLocalId()) {
+            // parent local id was set
+            parentId = todoOccurrence->parentLocalId();
+        }
+        else {
+            // fetch with [GUID,originalDate]
+            QList<QString> ids = d->m_guidMapper.itemIds(todoOccurrence->guid(), QOrganizerItemType::TypeTodo);
+            foreach (QString id, ids) {
+                QOrganizerItemLocalId parentLocalId = id.toUInt();
+                QOrganizerItem parentCandidate = item(parentLocalId, fetchMinimalData(), error);
+                if (*error != QOrganizerItemManager::NoError)
+                    return QOrganizerItem(); // error occured
+                // parent must be a todo here as todos were requested from the GUID mapper
+                QOrganizerTodo *parentCandidateTodo = static_cast<QOrganizerTodo *>(&parentCandidate);
+                if (parentCandidateTodo->startDateTime().date() == todoOccurrence->originalDate()) {
+                    parentId = parentLocalId;
+                    break; // parent todo found
+                }
+            }
+        }
+    }
+    else {
+        return QOrganizerItem(); // other types can't have a parent
+    }
+
+    // Parent id got, now fetch & return the parent
+    return item(parentId, fetchMinimalData(), error);
 }
 
 QOrganizerItemFetchHint QOrganizerItemMaemo5Engine::fetchMinimalData() const

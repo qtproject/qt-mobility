@@ -68,18 +68,35 @@ void OrganizerGuidMapper::setCalendar(CCalendar *targetCalendar)
     }
 }
 
-QList<QString> OrganizerGuidMapper::itemIds(const QString &guid)
+QList<QString> OrganizerGuidMapper::itemIds(const QString &guid, const QString &itemType)
 {
     init();
-    return m_GuidToItemId.values(guid);
+    const QList<QString> correspondingIds = m_GuidToItemId.values(qMakePair(guid, itemType));
+    if (!correspondingIds.isEmpty()) {
+        return correspondingIds;
+    }
+    else {
+        // have to re-fetch all the items as the asked GUID may have
+        // been added by some other application after the last
+        // enumerateItems() call
+
+        // TODO: CCalendarDB::commitDB sends a DBus message on commit.
+        // Can we use it to observe when the calendar DB has actually
+        // changed to avoid worthless iterating over all the items?
+        // If possible, change also the hasItem() method!
+
+        m_GuidToItemId.clear();
+        enumerateItems();
+        return m_GuidToItemId.values(qMakePair(guid, itemType));
+    }
 }
 
-void OrganizerGuidMapper::addMapping(const QString &guid, const QString &id)
+void OrganizerGuidMapper::addMapping(const QString &guid, const QString &itemType, const QString &id)
 {
     init();
-    QList<QString> ids = m_GuidToItemId.values();
+    const QList<QString> ids = m_GuidToItemId.values();
     if (ids.indexOf(id) == -1) // no duplicate ids allowed
-        m_GuidToItemId.insertMulti(guid, id);
+        m_GuidToItemId.insertMulti(qMakePair(guid, itemType), id);
 
     /* // ONLY FOR DEBUGGING THE MAPPING, REMOVE LATER
     QMultiMap<QString, QString>::iterator i = m_GuidToItemId.begin();
@@ -106,43 +123,51 @@ void OrganizerGuidMapper::enumerateItems()
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     // Events
-    std::vector< CEvent* > events = m_targetCalendar->getEvents(calError);
-    std::vector< CEvent* >::iterator event;
+    const std::vector< CEvent* > events = m_targetCalendar->getEvents(calError);
+    std::vector< CEvent* >::const_iterator event;
     for (event = events.begin(); event != events.end(); ++event)
     {
         CEvent *cevent = *event;
         if (cevent) {
             QString guid = QString::fromStdString(cevent->getGUid());
-            if (!guid.isEmpty())
-                m_GuidToItemId.insertMulti(guid, QString::fromStdString(cevent->getId()));
+            if (!guid.isEmpty()) {
+                const QString eventType = QOrganizerItemType::TypeEvent;
+                m_GuidToItemId.insertMulti(qMakePair(guid, eventType), QString::fromStdString(cevent->getId()));
+            }
+
             delete cevent;
         }
     }
 
     // Todos
-    std::vector< CTodo* > todos = m_targetCalendar->getTodos(calError);
-    std::vector< CTodo* >::iterator todo;
+    const std::vector< CTodo* > todos = m_targetCalendar->getTodos(calError);
+    std::vector< CTodo* >::const_iterator todo;
     for (todo = todos.begin(); todo != todos.end(); ++todo)
     {
         CTodo *ctodo = *todo;
         if (ctodo) {
             QString guid = QString::fromStdString(ctodo->getGUid());
-            if (!guid.isEmpty())
-                m_GuidToItemId.insertMulti(guid, QString::fromStdString(ctodo->getId()));
+            if (!guid.isEmpty()) {
+                const QString todoType = QOrganizerItemType::TypeTodo;
+                m_GuidToItemId.insertMulti(qMakePair(guid, todoType), QString::fromStdString(ctodo->getId()));
+            }
+
             delete ctodo;
         }
     }
 
     // Journals
-    std::vector< CJournal* > journals = m_targetCalendar->getJournals(calError);
-    std::vector< CJournal* >::iterator journal;
+    const std::vector< CJournal* > journals = m_targetCalendar->getJournals(calError);
+    std::vector< CJournal* >::const_iterator journal;
     for (journal = journals.begin(); journal != journals.end(); ++journal)
     {
         CJournal *cjournal = *journal;
         if (cjournal) {
             QString guid = QString::fromStdString(cjournal->getGUid());
-            if (!guid.isEmpty())
-                m_GuidToItemId.insertMulti(guid, QString::fromStdString(cjournal->getId()));
+            if (!guid.isEmpty()) {
+                const QString journalType = QOrganizerItemType::TypeJournal;
+                m_GuidToItemId.insertMulti(qMakePair(guid, journalType), QString::fromStdString(cjournal->getId()));
+            }
             delete cjournal;
         }
     }
