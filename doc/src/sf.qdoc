@@ -25,15 +25,6 @@
 **
 ****************************************************************************/
 
-/*!
-
-\module QtServiceFramework
-\title  QtServiceFramework Module
-\brief  A set of Qt APIs to that allows clients to discover and instantiate
-arbitrary services.
-
-*/
-
 
 /*!
     \group servicefw
