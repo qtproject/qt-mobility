@@ -5328,7 +5328,6 @@
             <file>qmessageaccount-members.html</file>
             <file>qcamerafocuscontrol.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
-            <file>qmlcontacts-qmlcontacts-cpp.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
             <file>qgeoroutingmanagerengine-members.html</file>
             <file>qgeomapcircleobject.html</file>
@@ -5420,7 +5419,6 @@
             <file>qmediaplaylistioplugin.html</file>
             <file>qtelephonycallinfo-members.html</file>
             <file>qgeosearchmanager.html</file>
-            <file>qmlcontacts-qmlcontactsa-h.html</file>
             <file>qgeoplace.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
@@ -5574,7 +5572,6 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
-            <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qvideoframe-members.html</file>
             <file>qcamerafocus-members.html</file>
             <file>qgeoboundingbox-members.html</file>
@@ -5706,7 +5703,6 @@
             <file>qorientationsensor.html</file>
             <file>qcameraimagecapturecontrol-members.html</file>
             <file>qcompass-members.html</file>
-            <file>qmlcontacts-contents-default-svg.html</file>
             <file>qlandmarkboxfilter-members.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
@@ -5826,7 +5822,6 @@
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
             <file>qgeomapdata.html</file>
-            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qaudioinput-members.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
@@ -5838,7 +5833,6 @@
             <file>qmediacontainercontrol.html</file>
             <file>flickrdemo-flickrdemo-pro.html</file>
             <file>qmediabindableinterface.html</file>
-            <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>qgeonavigationinstruction-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
@@ -5854,7 +5848,6 @@
             <file>qtmultimediakit.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qcameracontrol.html</file>
-            <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
@@ -5911,7 +5904,6 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
-            <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
             <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>flickrdemo-main-cpp.html</file>

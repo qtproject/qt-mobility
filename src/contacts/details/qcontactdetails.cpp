@@ -77,6 +77,9 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-details
  */
 
@@ -410,6 +413,116 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
 
 /*!
+   \deprecated
+   \variable QContactOnlineAccount::FieldNickname
+
+   The constant key for which the nickname value is stored in details
+   of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldNickname instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldNickname, "Nickname");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::FieldPresence
+
+   The constant key for which the presence value is stored in details
+   of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldPresence instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldPresence, "Presence");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceAvailable
+
+   The value for presence which specifies that the contact's current
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceAvailable instead!
+   status is available.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceAvailable, "Available");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceHidden
+
+   The value for presence which specifies that the contact's current.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceHidden instead!
+   status is hidden
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceHidden, "Hidden");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceBusy
+   The value for presence which specifies that the contact's current status is busy.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceBusy instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceBusy, "Busy");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceAway
+   The value for presence which specifies that the contact's current status is away.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceAway instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceAway, "Away");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceExtendedAway
+   The value for presence which specifies that the contact's current status is extended away.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceExtendedAway instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceExtendedAway, "ExtendedAway");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceUnknown
+   The value for presence which specifies that the contact's current status is unknown.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceUnknown instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceUnknown, "Unknown");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::PresenceOffline
+   The value for presence which specifies that the contact's current status is offline.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceOffline instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::PresenceOffline, "Offline");
+
+/*!
+   \deprecated
+   \variable QContactOnlineAccount::FieldStatusMessage
+
+   The constant key for which the status message value is stored in
+   details of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldStatusMessage instead!
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
+
+/*!
    \variable QContactAddress::FieldRegion
 
    The field key constant for the value containing the region segment.
@@ -536,6 +649,39 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
  */
 
 /*!
+   \deprecated
+   \variable QContactAvatar::FieldAvatar
+
+   The constant key for which the uri of the avatar value is stored in
+   details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldAvatar, "Avatar");
+
+/*!
+   \deprecated
+   \variable QContactAvatar::FieldAvatarPixmap
+
+   The constant key for which the pixmap of the avatar value is stored in
+   details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
+
+/*!
+   \deprecated
+   \variable QContactAvatar::FieldSubType
+
+   The constant key for which the subtype value is stored in
+   details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldSubType, "SubType");
+
+/*!
    \fn QContactAddress::country() const
    Returns the country segment of the address stored in this detail.
  */
@@ -554,6 +700,36 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International")
    \fn QContactAddress::setSubTypes(const QString& subType)
    Sets the subtypes which this detail implements to be just the given \a subType.
  */
+
+/*!
+   \deprecated
+   \variable QContactName::FieldFirst
+
+   The constant key for which the first name value is stored in
+   details of the QContactName type.
+   Deprecated (to be removed) - use FieldFirstName instead.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldFirst, "FirstName");
+
+/*!
+   \deprecated
+   \variable QContactName::FieldMiddle
+
+   The constant key for which the middle name value is stored in
+   details of the QContactName type.
+   Deprecated (to be removed) - use FieldMiddleName instead.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldMiddle, "MiddleName");
+
+/*!
+   \deprecated
+   \variable QContactName::FieldLast
+
+   The constant key for which the last name value is stored in details
+   of the QContactName type.
+   Deprecated (to be removed) - use FieldLastName instead.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldLast, "LastName");
 
 /*!
    \fn QContactAddress::subTypes() const
@@ -804,6 +980,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
  */
 
 /*!
+   \deprecated
+   \variable QContactOrganization::FieldLogo
+
+   The constant key for which the logo path value is stored in details
+   of the QContactOrganization type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldLogo, "Logo");
+
+/*!
    \variable QContactBirthday::DefinitionName
    The string constant for the definition name of QContactBirthday details.
  */
@@ -923,6 +1110,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldLatitude, "Latitude");
 Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldLongitude, "Longitude");
 
 /*!
+   \variable QContactPhoneNumber::SubTypeFacsimile
+   \deprecated
+
+   The constant attribute value which describes the phone number as
+   identifying a fax machine.
+
+   This has been deprecated - use QContactPhoneNumebr::SubTypeFax instead.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeFacsimile, "Fax");
+
+/*!
    \variable QContactGeoLocation::FieldAccuracy
 
    The field key constant for the value containing the location (latitude/longitude) accuracy.
@@ -1029,6 +1227,62 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
    Sets the altitude portion of the coordinate (in metres above the
    ellipsoid) of the location stored in the detail to \a altitude.
  */
+
+/*!
+   \deprecated
+   \variable QContactAvatar::SubTypeImage
+
+   The constant attribute value which describes the avatar as being an
+   image.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::SubTypeImage, "Image");
+
+/*!
+   \deprecated
+   \variable QContactAvatar::SubTypeVideo
+
+   The constant attribute value which describes the avatar as being a
+   video.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::SubTypeVideo, "Video");
+
+/*!
+   \deprecated
+   \variable QContactAvatar::SubTypeAudioRingtone
+
+   The constant attribute value which describes the avatar as being an
+   audio ringtone.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::SubTypeAudioRingtone, "AudioRingtone");
+
+/*!
+   \deprecated
+   \variable QContactAvatar::SubTypeVideoRingtone
+
+   The constant attribute value which describes the avatar as being a
+   video ringtone.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::SubTypeVideoRingtone, "VideoRingtone");
+
+
+/*!
+   \deprecated
+   \variable QContactAvatar::SubTypeTexturedMesh
+
+   The constant attribute value which describes the avatar as being a
+   textured, 3D mesh.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::SubTypeTexturedMesh, "TexturedMesh");
 
 /*!
    \fn QContactGeoLocation::altitude() const
@@ -1174,6 +1428,83 @@ Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldMiddleName, "MiddleName");
    \sa lastName(), setLastName()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldLastName, "LastName");
+
+/*!
+   \deprecated
+   \fn QContactAvatar::avatar() const
+   Returns the location of an avatar file associated with the contact.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+QString QContactAvatar::avatar() const
+{
+    qWarning("QContactAvatar::avatar() This function is deprecated and will be removed after the transition period has elapsed!  Use imageUri() or QContactThumbnail instead!");
+    return QString();
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::setAvatar(const QString& avatar)
+   Sets the location of an avatar file associated with the contact to \a avatar.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+bool QContactAvatar::setAvatar(const QString& avatar)
+{
+    Q_UNUSED(avatar);
+    qWarning("QContactAvatar::setAvatar() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+    return false;
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::pixmap() const
+   Returns a thumbnail for a picture associated with this contact.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+QPixmap QContactAvatar::pixmap() const
+{
+    qWarning("QContactAvatar::pixmap() This function is deprecated and will be removed after the transition period has elapsed!  Use imageUri() or QContactThumbnail instead!");
+    return QPixmap();
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
+   Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
+   If \a pixmap is empty, the thumbnail pixmap will be removed.
+
+   Returns true if the pixmap could be set, and false otherwise.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+bool QContactAvatar::setPixmap(const QPixmap& pixmap)
+{
+    Q_UNUSED(pixmap);
+    qWarning("QContactAvatar::setPixmap() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+    return false;
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::subType() const
+   Returns the subtype that this detail implements, if defined.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+QString QContactAvatar::subType() const
+{
+    qWarning("QContactAvatar::subType() This function is deprecated and will be removed after the transition period has elapsed!");
+    return QString();
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::setSubType(const QString& subType)
+   Sets the subtype which this detail implements to be the given \a subType.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+void QContactAvatar::setSubType(const QString& subtype)
+{
+    Q_UNUSED(subtype);
+    qWarning("QContactAvatar::avatar() This function is deprecated and will be removed after the transition period has elapsed!");
+}
 
 /*!
    \variable QContactName::FieldSuffix
@@ -1680,6 +2011,100 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare")
    Returns the list of subtypes that this detail implements.
  */
 
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::setNickname(const QString& nickname)
+   
+   Sets the last-known nickname used by the contact during
+   communications via the online account about which this detail
+   stores presence information to \a nickname.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setNickname() instead!
+ */
+void QContactOnlineAccount::setNickname(const QString& nickname)
+{
+    setValue(FieldNickname, nickname);
+}
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::nickname() const
+   
+   Returns the last-known nickname used by the contact during
+   communications via the online account.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::nickname() instead!
+ */
+QString QContactOnlineAccount::nickname() const
+{
+    return value(FieldNickname);
+}
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::setPresence(const QString& presence)
+   
+   Sets the presence of the online account according to the presence
+   information provider to \a presence.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setPresence() instead!
+ */
+void QContactOnlineAccount::setPresence(const QString& presence)
+{
+    setValue(FieldPresence, presence);
+}
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::presence() const
+   
+   Returns the presence of the online account according to the
+   presence provider.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::presence() instead!
+ */
+QString QContactOnlineAccount::presence() const
+{
+    return value(FieldPresence);
+}
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
+
+   Sets the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information to \a statusMessage.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setStatusMessage() instead!
+ */
+void QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
+{
+    setValue(FieldStatusMessage, statusMessage);
+}
+
+/*!
+   \deprecated
+   \fn QContactOnlineAccount::statusMessage() const
+   
+   Returns the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::statusMessage() instead!
+ */
+QString QContactOnlineAccount::statusMessage() const
+{
+    return value(FieldStatusMessage);
+}
+
 /*!
    \fn QContactOnlineAccount::setCapabilities(const QStringList& capabilities)
 
@@ -1786,6 +2211,19 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \fn QContactOrganization::logoUrl() const
    Returns the url of the logo of the organization stored in this detail.
  */
+
+/*!
+   \deprecated
+   \fn QContactOrganization::setLogo(const QString& logo)
+   Sets the logo of the organization stored in this detail to \a logo.
+ */
+
+/*!
+   \deprecated
+   \fn QContactOrganization::logo() const
+   Returns the logo of the organization stored in this detail.
+ */
+
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)

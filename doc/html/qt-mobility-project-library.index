@@ -10296,14 +10296,6 @@
             <contents name="motivation" title="Motivation" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.cpp" href="qmlcontacts-qmlcontact-cpp.html" subtype="file" title="" fulltitle="qmlcontact.cpp Example File" subtitle="qmlcontacts/qmlcontact.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.h" href="qmlcontacts-qmlcontact-h.html" subtype="file" title="" fulltitle="qmlcontact.h Example File" subtitle="qmlcontacts/qmlcontact.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.cpp" href="qmlcontacts-qmlcontacts-cpp.html" subtype="file" title="" fulltitle="qmlcontacts.cpp Example File" subtitle="qmlcontacts/qmlcontacts.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactsa.h" href="qmlcontacts-qmlcontactsa-h.html" subtype="file" title="" fulltitle="qmlcontactsa.h Example File" subtitle="qmlcontacts/qmlcontactsa.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/contents/default.svg" href="qmlcontacts-contents-default-svg.html" subtype="file" title="" fulltitle="default.svg Example File" subtitle="qmlcontacts/contents/default.svg" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/main.cpp" href="qmlcontacts-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="qmlcontacts/main.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.pro" href="qmlcontacts-qmlcontacts-pro.html" subtype="file" title="" fulltitle="qmlcontacts.pro Example File" subtitle="qmlcontacts/qmlcontacts.pro" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.qrc" href="qmlcontacts-qmlcontacts-qrc.html" subtype="file" title="" fulltitle="qmlcontacts.qrc Example File" subtitle="qmlcontacts/qmlcontacts.qrc" location=""/>
         </page>
         <page access="public" status="commendable" name="weatherinfo" href="weatherinfo.html" subtype="example" title="Weather Info Example" fulltitle="Weather Info Example" subtitle="" location="weatherinfo.qdoc">
             <page access="public" status="commendable" name="weatherinfo/weatherinfo.cpp" href="weatherinfo-weatherinfo-cpp.html" subtype="file" title="" fulltitle="weatherinfo.cpp Example File" subtitle="weatherinfo/weatherinfo.cpp" location=""/>

@@ -101,7 +101,7 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors telephony"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery organizer telephony feedback"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
@@ -140,15 +140,14 @@ usage()
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework telephony"
-    echo "                    sensors versit"
+    echo "                    sensors versit organizer feedback"
     echo "                    Modules should be separated by a space and surrounded"
-    echo "                    by double quotation. If a"
-    echo "                    selected module depends on other modules dependencies"
-    echo "                    will automatically be enabled."
+    echo "                    by double quotation. If a selected module depends on other modules"
+    echo "                    those modules (and their dependencies) will automatically be enabled."
     echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
-    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
+    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Fremantle)."
     echo "-sdk <sdk>......... Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
@@ -234,7 +233,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|telephony|versit)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|sensors|gallery|telephony|versit|organizer|feedback)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -506,6 +505,7 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest Immersion immersion
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 compileTest "Maemo5 contacts dependencies" maemo5-contacts
@@ -518,7 +518,7 @@ fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts organizer" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
@@ -565,15 +565,25 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtmTelephony $relpath/src/telephony
             ;;
         versit)
-            #versit implies contacts
+            #versit implies contacts & organizer
             $relpath/bin/syncheaders $shadowpath/include/QtVersit $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
             $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
+            ;;
+        feedback)
+            $relpath/bin/syncheaders $shadowpath/include/QtFeedback $relpath/src/feedback
+            ;;
+        gallery)
+            $relpath/bin/syncheaders $shadowpath/include/QtGallery $relpath/src/gallery
+            ;;
+        organizer)
+            $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
             ;;
         *)
             echo "Cannot generate headers for $module"

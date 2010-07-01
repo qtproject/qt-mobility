@@ -230,9 +230,11 @@
 <h3 class="fn"><a name="importLandmarks"></a>bool QLandmarkManager::importLandmarks ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )</h3>
 <p>Reads landmarks from the given <i>device</i> and saves them. The data from the <i>device</i> is expected to adhere to the provided <i>format</i>. If no <i>format</i> is provided, the manager tries to auto detect the <i>format</i>.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
+<p>The current default managers for the maemo and desktop platforms support GPX version 1.1, and the format to use is <tt>GpxV1.1</tt>.</p>
 <h3 class="fn"><a name="importLandmarks-2"></a>bool QLandmarkManager::importLandmarks ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )</h3>
 <p>Convenience function that will read landmarks from <i>fileName</i> in the expected <i>format</i>. If no <i>format</i> is provided, the manager tries to auto detect the <i>format</i>. Internally a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> is opened with <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::ReadOnly</a> permissions.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
+<p>The current default managers for the maemo and desktop platforms support GPX version 1.1, and the format to use is <tt>GpxV1.1</tt>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkManager/isFeatureSupported"></a>
 <h3 class="fn"><a name="isFeatureSupported"></a>bool QLandmarkManager::isFeatureSupported ( <a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a> <i>feature</i> ) const</h3>
 <p>Returns whether the manager supports the given <i>feature</i>.</p>

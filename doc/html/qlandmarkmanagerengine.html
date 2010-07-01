@@ -151,7 +151,7 @@
 <p>Any errors encountered are stored in <i>error</i> and <i>errorString</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkManagerEngine/categoryIds"></a>
 <h3 class="fn"><a name="categoryIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkManagerEngine::categoryIds ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i>, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a> * <i>error</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>errorString</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a list of all category identifiers. Any error which occurs will be saved in <i>error</i> and <i>errorString</i>.</p>
+<p>Returns a list of all category identifiers which are sorted according to <i>nameSort</i>. Any error which occurs will be saved in <i>error</i> and <i>errorString</i>.</p>
 <a name="//apple_ref/cpp/clm/QLandmarkManagerEngine/compareDistance"></a>
 <h3 class="fn"><a name="compareDistance"></a>int QLandmarkManagerEngine::compareDistance ( const <a href="qlandmark.html">QLandmark</a> &amp; <i>a</i>, const <a href="qlandmark.html">QLandmark</a> &amp; <i>b</i>, const <a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a> &amp; <i>distanceSort</i> )&nbsp;&nbsp;<tt> [static protected]</tt></h3>
 <p>Compares two landmarks (<i>a</i> and <i>b</i>) by distance from a point given by <i>distanceSort</i>. Returns a negative number if <i>a</i> should appear before <i>b</i> according to the sort order, a positive number if <i>a</i> should appear after <i>b</i> according to the sort order, and zero if the two are unable to be sorted.</p>

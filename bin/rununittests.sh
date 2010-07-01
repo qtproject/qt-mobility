@@ -148,6 +148,8 @@ a
 ./tst_qversitcontactexporter
 ./tst_qversitcontactimporter
 ./tst_qversitdocument
+./tst_qversitorganizerexporter
+./tst_qversitorganizerimporter
 ./tst_qversitproperty
 ./tst_qversitreader
 ./tst_qversitwriter
@@ -156,6 +158,9 @@ a
 ./tst_qmessage
 ./tst_qmessagestore
 ./tst_qmessagestorekeys
+
+#QOrganizer
+./tst_qorganizeritemmanager
 
 cd $SAVED_PWD
 
