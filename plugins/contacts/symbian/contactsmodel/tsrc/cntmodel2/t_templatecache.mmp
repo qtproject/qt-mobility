@@ -22,13 +22,12 @@ CAPABILITY   	ReadUserData WriteUserData
 UID				0x102730F8
 VENDORID 		0x70000001
 
-systeminclude	/EPOC32/INCLUDE 
-systeminclude 	../../CNTMODEL/INC 
-systeminclude 	../../src
-systeminclude 	../NbCntTestLib
+APP_LAYER_SYSTEMINCLUDE
 
 userinclude 	. 
-
+userinclude 	../../CNTMODEL/INC 
+userinclude 	../../src
+userinclude 	../NbCntTestLib
 
 SOURCEPATH	.
 source		T_TemplateCache.cpp 

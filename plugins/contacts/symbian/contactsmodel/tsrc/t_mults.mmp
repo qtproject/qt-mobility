@@ -24,7 +24,9 @@ VENDORID 0x70000001
 
 SOURCEPATH	../TSRC
 
-systeminclude   ../INC  /EPOC32/INCLUDE
+APP_LAYER_SYSTEMINCLUDE
+
+userinclude   ../INC
 
 source          T_MULTS.CPP
 source 		t_utils2.cpp

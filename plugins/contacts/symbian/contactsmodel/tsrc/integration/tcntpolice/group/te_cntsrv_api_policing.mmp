@@ -127,7 +127,7 @@ SOURCE        ELockSrvNotSupported1_CStep.cpp
 USERINCLUDE   ../inc
 USERINCLUDE   ../../../../cntsrv/inc\
 
-SYSTEMINCLUDE /epoc32/include /epoc32/include/test
+APP_LAYER_SYSTEMINCLUDE
 LIBRARY       euser.lib 
 
 //For TEF 
