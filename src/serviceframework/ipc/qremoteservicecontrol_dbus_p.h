@@ -39,37 +39,37 @@
 **
 ****************************************************************************/
 
-#include "ipcendpoint_p.h"
+#ifndef QREMOTESERVICECONTROL_DBUS_P_H
+#define QREMOTESERVICECONTROL_DBUS_P_H
+
+#include "qremoteservicecontrol.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include <QLocalServer>
+#include <QUuid>
+#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
-/*!
-    QServiceIpcEndPoint
-*/
-QServiceIpcEndPoint::QServiceIpcEndPoint(QObject* parent)
-    : QObject( parent )
-{
-}
 
-QServiceIpcEndPoint::~QServiceIpcEndPoint()
-{
-}
+class ObjectEndPoint;
 
-bool QServiceIpcEndPoint::packageAvailable() const
+class QRemoteServiceControlPrivate: public QObject
 {
-    return !incoming.isEmpty();
-}
+    Q_OBJECT
+public:
+    QRemoteServiceControlPrivate(QObject* parent);
+    void publishServices(const QString& ident );
 
-QServicePackage QServiceIpcEndPoint::nextPackage()
-{
-    if (!incoming.isEmpty())
-        return incoming.dequeue();
-    return QServicePackage();
-}
+private:
+    bool createServiceEndPoint(const QString& ident);
 
-void QServiceIpcEndPoint::writePackage(QServicePackage newPackage)
-{
-    flushPackage(newPackage);
-}
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
 
-#include "moc_ipcendpoint_p.cpp"
+public:
+    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+};
+
 QTM_END_NAMESPACE
+
+#endif
