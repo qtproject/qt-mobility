@@ -44,6 +44,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageFolderId
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
