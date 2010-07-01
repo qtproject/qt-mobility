@@ -45,7 +45,10 @@
 /*!
   \class QContactInvalidFilter
   \brief The QContactInvalidFilter class matches no contacts.
-   \ingroup contacts-filters
+  
+  \inmodule QtContacts
+  
+  \ingroup contacts-filters
  
   This class provides a filter which will never match any contacts
  */

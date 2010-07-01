@@ -58,7 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors telephony organizer
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -82,6 +82,8 @@ if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
 if "%1" == "-plugindir"         goto pluginTag
+if "%1" == "-examplesdir"       goto examplesDirTag
+if "%1" == "-demosdir"          goto demosDirTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-demos"             goto demosTag
@@ -117,6 +119,10 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/bin)
     echo -plugindir (dir) .. Plug-ins will be installed to dir
     echo                     (default PREFIX/plugins)
+    echo -examplesdir (dir)  Examples will be installed to dir
+    echo                     (default PREFIX/bin)
+    echo -demosdir (dir) ... Demos will be installed to dir
+    echo                     (default PREFIX/bin)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -128,8 +134,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework versit
-    echo                     sensors
+    echo                     messaging multimedia systeminfo serviceframework telephony
+    echo                     sensors versit organizer
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -190,6 +196,20 @@ goto cmdline_parsing
 :pluginTag
 shift
 echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
+:examplesDirTag
+shift
+echo QT_MOBILITY_EXAMPLES = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
+:demosDirTag
+shift
+echo QT_MOBILITY_DEMOS =%1 >> %PROJECT_CONFIG%
 shift
 echo
 goto cmdline_parsing
@@ -281,8 +301,12 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
+) else if %FIRST% == telephony (
+    echo     Telephony selected
 ) else if %FIRST% == versit (
-    echo     Versit selected ^(implies Contacts^)
+    echo     Versit selected ^(implies Contacts and Organizer^)
+) else if %FIRST% == organizer (
+    echo     Organizer selected
 ) else if %FIRST% == sensors (
     echo     Sensors selected
 ) else (
@@ -354,11 +378,11 @@ echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_P
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_EXAMPLES):QT_MOBILITY_EXAMPLES=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_DEMOS):QT_MOBILITY_DEMOS=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
-REM no Sysinfo support on Maemo yet
-echo maemo5^|maemo6:mobility_modules -= systeminfo >> %PROJECT_CONFIG%
-echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts organizer  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -498,6 +522,7 @@ call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
@@ -549,15 +574,28 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
+) else if %FIRST% == telephony (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmTelephony %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
-    REM versit implies contacts
+    REM versit implies contacts and organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == organizer (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 )
 
 if "%REMAINING%" == "" (
@@ -599,9 +637,11 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-SET REMAINING=
-SET FIRST=
-SET MODULES_TEMP=
+set REMAINING=
+set FIRST=
+set MODULES_TEMP=
+set QT_MOBILITY_EXAMPLES=
+set QT_MOBILITY_DEMOS=
 exit /b 1
 
 :exitTag
@@ -616,7 +656,9 @@ set QT_PATH=
 set SOURCE_PATH=
 set MOBILITY_MODULES=
 set MOBILITY_MODULES_UNPARSED=
-SET REMAINING=
-SET FIRST=
-SET MODULES_TEMP=
+set REMAINING=
+set FIRST=
+set MODULES_TEMP=
+set QT_MOBILITY_EXAMPLES=
+set QT_MOBILITY_DEMOS=
 exit /b 0

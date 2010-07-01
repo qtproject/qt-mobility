@@ -29,6 +29,7 @@
 <li><a href="#known-issues">Known Issues</a></li>
 <ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
 <li><a href="#bearer-management-api">Bearer Management API</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
 <li><a href="#contacts-api">Contacts API</a></li>
 <li><a href="#bearer-management-api">Bearer Management API</a></li>
 <li><a href="#messaging-api">Messaging API</a></li>
@@ -128,6 +129,11 @@
 <ul>
 <li>Fremantle: Segmentation fault on removing a connected network</li>
 </ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>All platforms: <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> is not thread-safe; using it from other than main-thread off the application will not work properly. Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.</li>
+</ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
 <ul>
@@ -143,6 +149,7 @@
 <ul>
 <li>Messaging filtering and sorting functions are not fully optimized.</li>
 <li>Fremantle: <tt>modest</tt> process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.</li>
+<li>Fremantle: <tt>SMS</tt> sending is failing when using MessagingEx example. Regression wrt 1.0&#x2e;0 release. serviceactions and writemessage work OK.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
 <li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
 <li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>

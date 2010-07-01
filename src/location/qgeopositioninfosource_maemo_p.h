@@ -42,18 +42,30 @@
 #ifndef QGEOPOSITIONINFOSOURCEMAEMO_H
 #define QGEOPOSITIONINFOSOURCEMAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeopositioninfosource.h"
 #include "dbuscomm_maemo_p.h"
 
 #ifdef Q_WS_MAEMO_5
 #include "qgeocoordinate.h"
 
-extern "C" {
-   #include <glib.h>
-   #include <location/location-gpsd-control.h>
-   #include <location/location-gps-device.h>
-   #include <location/location-misc.h>
-   #include <location/location-distance-utils.h>
+extern "C"
+{
+#include <glib.h>
+#include <location/location-gpsd-control.h>
+#include <location/location-gps-device.h>
+#include <location/location-misc.h>
+#include <location/location-distance-utils.h>
 }
 #endif
 
@@ -65,7 +77,6 @@ class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
     Q_OBJECT
 
 public:
-
     QGeoPositionInfoSourceMaemo(QObject *parent = 0);
     int init();
 
@@ -81,16 +92,17 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 5000);
 
 private:
-    static const int MinimumUpdateInterval = 1000;
-    static const int DefaultUpdateInterval = 5000;
-
     DBusComm* dbusComm;
-
-    int time_interval_;
-    PositioningMethods availableMethods;
+    QTimer* requestTimer;
+    bool locationOngoing;
+    
+    void shutdownRequestSession();
 
 private Q_SLOTS:
     void newPositionUpdate(const QGeoPositionInfo &update);
+    void onServiceConnect();
+    void onServiceDisconnect();
+    void requestTimerExpired();
 };
 
 QTM_END_NAMESPACE

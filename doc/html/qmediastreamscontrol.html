@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaStreamsControl Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaStreamsControl Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
 <p>The QMediaStreamsControl class provides a media stream selection control. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaStreamsControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
 <li><a href="qmediastreamscontrol-members.html">List of all members, including inherited members</a></li>
@@ -113,9 +115,9 @@
 <h3 class="fn"><a name="isActive"></a>bool QMediaStreamsControl::isActive ( int <i>stream</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if the media <i>stream</i> is active.</p>
 <a name="//apple_ref/cpp/instm/QMediaStreamsControl/metaData"></a>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaStreamsControl::metaData ( int <i>stream</i>, <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::MetaData</a> <i>key</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaStreamsControl::metaData ( int <i>stream</i>, QtMultimediaKit::MetaData <i>key</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the meta-data value of <i>key</i> for a given <i>stream</i>.</p>
-<p>Useful metadata keya are <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Title</a>, <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Description</a> and <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Language</a>.</p>
+<p>Useful metadata keya are QtMultimediaKit::Title, QtMultimediaKit::Description and QtMultimediaKit::Language.</p>
 <a name="//apple_ref/cpp/instm/QMediaStreamsControl/setActive"></a>
 <h3 class="fn"><a name="setActive"></a>void QMediaStreamsControl::setActive ( int <i>stream</i>, bool <i>state</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the active <i>state</i> of a media <i>stream</i>.</p>
