@@ -85,8 +85,8 @@ function contactFind(name, partialMatch){
 // returns true if automated testing can be done, false manual testing is to be done
 
 function automatedTestEnvironment(){
-      //return (checkOS("symbian") || checkOS("maemo"));
-      return (checkOS("symbian") || checkOS("maemo") || checkOS("linux"));
+      return (checkOS("symbian") || checkOS("maemo"));
+      //return (checkOS("symbian") || checkOS("maemo") || checkOS("linux"));
 }
 
 
