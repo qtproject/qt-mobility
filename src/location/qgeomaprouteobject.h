@@ -39,75 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECT_H
-#define QGEOMAPOBJECT_H
+#ifndef QGEOMAPROUTEOBJECT_H
+#define QGEOMAPROUTEOBJECT_H
 
-#include "qmobilityglobal.h"
+#include "qgeomapobject.h"
 
-#include <QList>
-#include <QObject>
+#include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoMapRouteObjectPrivate;
+class QGeoRoute;
 class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMapObjectPrivate;
-class QGeoMapContainer;
 
-class Q_LOCATION_EXPORT QGeoMapObject : public QObject
+class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
 {
-    Q_OBJECT
-
 public:
-    enum Type {
-        ContainerType,
-        RectangleType,
-        CircleType,
-        PolylineType,
-        PolygonType,
-        MarkerType,
-        GeoRouteType
-    };
+    QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent = 0);
+    ~QGeoMapRouteObject();
 
-    QGeoMapObject(QGeoMapObject *parent = 0);
-    virtual ~QGeoMapObject();
+    QPen pen() const;
+    void setPen(const QPen &aPen);
 
-    Type type() const;
-
-    void setZValue(int zValue);
-    int zValue() const;
-
-    void setVisible(bool visible);
-    bool isVisible() const;
-
-    // TODO selection and selectability?
-
-    virtual QGeoBoundingBox boundingBox() const;
-    virtual bool contains(const QGeoCoordinate &coordinate) const;
-
-    QGeoMapObject* parentObject() const;
-    void addChildObject(QGeoMapObject *childObject);
-    void removeChildObject(QGeoMapObject *childObject);
-    QList<QGeoMapObject*> childObjects() const;
-
-signals:
-    void childObjectAdded(QGeoMapObject *childObject);
-    void childObjectRemoved(QGeoMapObject *childObject);
-    void zValueChanged(int newZValue, int oldZValue);
-
-protected:
-    QGeoMapObject(QGeoMapObjectPrivate *dd);
-
-    QGeoMapObjectPrivate *d_ptr;
-
-private slots:
-    void childObjectDestroyed(QObject *obj);
+    QGeoRoute route() const;
 
 private:
-
-
-    Q_DECLARE_PRIVATE(QGeoMapObject)
-    Q_DISABLE_COPY(QGeoMapObject)
+    Q_DECLARE_PRIVATE(QGeoMapRouteObject)
+    Q_DISABLE_COPY(QGeoMapRouteObject)
 };
 
 QTM_END_NAMESPACE

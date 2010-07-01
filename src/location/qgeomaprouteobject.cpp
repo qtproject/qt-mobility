@@ -39,77 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPOBJECT_H
-#define QGEOMAPOBJECT_H
-
-#include "qmobilityglobal.h"
-
-#include <QList>
-#include <QObject>
+#include "qgeomaprouteobject.h"
+#include "qgeomaprouteobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMapObjectPrivate;
-class QGeoMapContainer;
-
-class Q_LOCATION_EXPORT QGeoMapObject : public QObject
+QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
 {
-    Q_OBJECT
+    Q_D(QGeoMapRouteObject);
+    d->route = route;
+}
 
-public:
-    enum Type {
-        ContainerType,
-        RectangleType,
-        CircleType,
-        PolylineType,
-        PolygonType,
-        MarkerType,
-        GeoRouteType
-    };
+QGeoMapRouteObject::~QGeoMapRouteObject()
+{
+}
 
-    QGeoMapObject(QGeoMapObject *parent = 0);
-    virtual ~QGeoMapObject();
+QPen QGeoMapRouteObject::pen() const
+{
+    Q_D(const QGeoMapRouteObject);
 
-    Type type() const;
+    return d->pen;
+}
 
-    void setZValue(int zValue);
-    int zValue() const;
+void QGeoMapRouteObject::setPen(const QPen &aPen)
+{
+    Q_D(QGeoMapRouteObject);
 
-    void setVisible(bool visible);
-    bool isVisible() const;
+    d->pen = aPen;
+}
 
-    // TODO selection and selectability?
+/*******************************************************************************
+*******************************************************************************/
 
-    virtual QGeoBoundingBox boundingBox() const;
-    virtual bool contains(const QGeoCoordinate &coordinate) const;
+QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
+{
+    type = QGeoMapObject::GeoRouteType;
+}
 
-    QGeoMapObject* parentObject() const;
-    void addChildObject(QGeoMapObject *childObject);
-    void removeChildObject(QGeoMapObject *childObject);
-    QList<QGeoMapObject*> childObjects() const;
+QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other)
+    : QGeoMapObjectPrivate(other), route(other.route) {}
 
-signals:
-    void childObjectAdded(QGeoMapObject *childObject);
-    void childObjectRemoved(QGeoMapObject *childObject);
-    void zValueChanged(int newZValue, int oldZValue);
+QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
 
-protected:
-    QGeoMapObject(QGeoMapObjectPrivate *dd);
+QGeoMapRouteObjectPrivate& QGeoMapRouteObjectPrivate::operator= (const QGeoMapRouteObjectPrivate &other)
+{
+    route = other.route;
+    QGeoMapObjectPrivate::operator=(other);
 
-    QGeoMapObjectPrivate *d_ptr;
-
-private slots:
-    void childObjectDestroyed(QObject *obj);
-
-private:
-
-
-    Q_DECLARE_PRIVATE(QGeoMapObject)
-    Q_DISABLE_COPY(QGeoMapObject)
-};
+    return *this;
+}
 
 QTM_END_NAMESPACE
 
-#endif

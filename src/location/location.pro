@@ -24,6 +24,7 @@ PUBLIC_HEADERS += \
                     qgeomappolygonobject.h \
                     qgeomappolylineobject.h \
                     qgeomaprectangleobject.h \
+                    qgeomaprouteobject.h \
                     qgeomapwidget.h \
                     qgeonavigationinstruction.h \
                     qgeoplace.h \
@@ -91,6 +92,7 @@ PRIVATE_HEADERS += \
                     qgeomappolygonobject_p.h \
                     qgeomappolylineobject_p.h \
                     qgeomaprectangleobject_p.h \
+                    qgeomaprouteobject_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
                     qgeoplace_p.h \
@@ -219,6 +221,7 @@ SOURCES += \
             qgeomappolygonobject.cpp \
             qgeomappolylineobject.cpp \
             qgeomaprectangleobject.cpp \
+            qgeomaprouteobject.cpp \
             qgeomapwidget.cpp \
             qgeonavigationinstruction.cpp \
             qgeoplace.cpp \
