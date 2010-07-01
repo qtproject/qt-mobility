@@ -295,9 +295,6 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QContactDetailFieldDefinition gsfd; //Generic string field definition
     gsfd.setDataType(QVariant::String);
 
-    // XXX NOTE: only QContactPhoneNumber, QContactOnlineAccount,
-    // QContactEmailAddress and QContactAddress are currently non-unique.
-    
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
     fields.remove(QContactAddress::FieldSubTypes);
@@ -428,7 +425,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields = defns[contactType][QContactTimestamp::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactTimestamp::DefinitionName].setFields(fields);
-
+    
     // QContactType
     fields = defns[contactType][QContactType::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
@@ -624,7 +621,7 @@ void QContactMaemo5Engine::performAsynchronousOperation(){
      } break;
      default:
      {
-       // symbian engine currently does not support mutable definitions.
+       // this engine currently does not support mutable definitions.
      } break;
 
     
