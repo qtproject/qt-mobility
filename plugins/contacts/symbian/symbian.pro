@@ -13,7 +13,7 @@ contains(symbiancntmodel_enabled, yes) {
         message(Building Symbian CNTMODEL and contacts plugin DISABLED!)
     } else {
         ## this is symbian 3.1, 3.2, 5.0 or ^3
-        MESSAGE(Building Symbian contacts plugin)
+        message(Building Symbian contacts plugin)
         SUBDIRS += plugin
     }
 } else {
