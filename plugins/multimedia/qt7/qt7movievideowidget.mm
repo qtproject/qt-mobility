@@ -192,7 +192,9 @@ QT7MovieVideoWidget::QT7MovieVideoWidget(QObject *parent)
     m_hue(0),
     m_saturation(0)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieVideoWidget";
+#endif
 
     QGLFormat format = QGLFormat::defaultFormat();
     format.setSwapInterval(1); // Vertical sync (avoid tearing)
@@ -268,7 +270,9 @@ void QT7MovieVideoWidget::setupVideoOutput()
 {
     AutoReleasePool pool;
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieVideoWidget::setupVideoOutput" << m_movie;
+#endif
 
     if (m_movie == 0) {
         m_displayLink->stop();
@@ -416,7 +420,9 @@ void QT7MovieVideoWidget::updateVideoFrame(const CVTimeStamp &ts)
         // the above call may produce a null frame so check for this first
         // if we have a frame, then draw it
         if (status == noErr && currentFrame) {
-            //qDebug() << "render video frame";
+#ifdef QT_DEBUG_QT7
+            qDebug() << "render video frame";
+#endif
             m_videoWidget->setCVTexture(currentFrame);
             CVOpenGLTextureRelease(currentFrame);
         }

@@ -66,6 +66,7 @@ public:
 
 private:
     QServiceProxyPrivate* d;
+    QVector<bool> localSignals;
 };
 
 

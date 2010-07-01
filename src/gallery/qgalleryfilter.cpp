@@ -164,13 +164,17 @@ class QGalleryMetaDataFilterPrivate : public QGalleryFilterPrivate
 public:
     QGalleryMetaDataFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaData)
         : QGalleryFilterPrivate(type)
-        , flags(0)
+        , comparator(QGalleryFilter::Equals)
+        , caseSensitivity(Qt::CaseSensitive)
+        , inverted(false)
     {
     }
 
     QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
         : QGalleryFilterPrivate(other)
-        , flags(other.flags)
+        , comparator(other.comparator)
+        , caseSensitivity(other.caseSensitivity)
+        , inverted(other.inverted)
         , property(other.property)
         , value(other.value)
     {
@@ -182,7 +186,9 @@ public:
             const QGalleryMetaDataFilterPrivate &o
                     = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
 
-            return o.flags == flags
+            return o.comparator == comparator
+                    && o.caseSensitivity == caseSensitivity
+                    && o.inverted == inverted
                     && o.property == property
                     && o.value == value;
         } else {
@@ -193,82 +199,24 @@ public:
 #ifndef QT_NO_DEBUG_STREAM
     void printDebug(QDebug &debug) const
     {
+        if (inverted)
+            debug << "!";
         debug << "QGalleryMetaDataFilter(";
         if (!property.isNull())
-            debug << "propertyName: " << property;
-        if (flags != 0)
-            debug << " flags: " << flags;
+            debug << "propertyName: " << property << " ";
+        debug << "comparator: " << comparator << " ";
+        debug << "case-sensitive: " << caseSensitivity;
         if (!value.isNull())
-            debug << " value:" << value;
+            debug << " value: " << value;
         debug << ")";
     }
 #endif
 
-    Qt::MatchFlags flags;
+    QGalleryFilter::Comparator comparator;
+    Qt::CaseSensitivity caseSensitivity;
+    bool inverted;
     QString property;
     QVariant value;
-};
-
-class QGalleryMetaDataRangeFilterPrivate : public QGalleryFilterPrivate
-{
-public:
-    QGalleryMetaDataRangeFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaDataRange)
-        : QGalleryFilterPrivate(type)
-        , flags(0)
-    {
-    }
-
-    QGalleryMetaDataRangeFilterPrivate(const QGalleryMetaDataRangeFilterPrivate &other)
-        : QGalleryFilterPrivate(other)
-        , flags(other.flags)
-        , property(other.property)
-        , minimum(other.minimum)
-        , maximum(other.maximum)
-    {
-    }
-
-    bool isEqual(const QGalleryFilterPrivate &other) const
-    {
-        if (other.type == type) {
-            const QGalleryMetaDataRangeFilterPrivate &o
-                    = static_cast<const QGalleryMetaDataRangeFilterPrivate &>(other);
-
-            return o.flags == flags
-                    && o.property == property
-                    && o.minimum == minimum
-                    && o.maximum == maximum;
-        } else {
-            return false;
-        }
-    }
-
-#ifndef QT_NO_DEBUG_STREAM
-    void printDebug(QDebug &debug) const
-    {
-        debug << "QGalleryMetaDataRangeFilter(";
-        if (!property.isNull())
-            debug << "propertyName: " << property;
-        if (flags != 0)
-            debug << " flags: " << flags;
-        if (!minimum.isNull())
-            debug << " minimum:" << minimum;
-        if (!maximum.isNull())
-            debug << " maximum:" << maximum;
-        debug << ")";
-    }
-#endif
-
-    void setRange(const QVariant &min, const QVariant &max, QGalleryFilter::RangeFlags f)
-    {
-        minimum = min;
-        maximum = max;
-        flags = f;
-    }
-
-    QGalleryFilter::RangeFlags flags;
-    QString property;
-    QVariant minimum;
-    QVariant maximum;
 };
 
 /*!
@@ -291,16 +239,6 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter()
 }
 
 /*!
-    Constructs an intersection filter from a union \a filter.
-*/
-
-QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryUnionFilter &filter)
-    : d(new QGalleryIntersectionFilterPrivate)
-{
-    d->filters.append(filter);
-}
-
-/*!
     Constructs an intersection filter from a meta-data \a filter.
 */
 
@@ -311,10 +249,10 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataFil
 }
 
 /*!
-    Constructs an intersection filter from a meta-data range \a filter.
+    Constructs an intersection filter from a union \a filter.
 */
 
-QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataRangeFilter &filter)
+QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryUnionFilter &filter)
     : d(new QGalleryIntersectionFilterPrivate)
 {
     d->filters.append(filter);
@@ -409,15 +347,6 @@ QList<QGalleryFilter> QGalleryIntersectionFilter::filters() const
 }
 
 /*!
-    Appends a union \a filter to an intersection.
-*/
-
-void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
-{
-    d->filters.append(filter);
-}
-
-/*!
     Appends a meta-data \a filter to an intersection.
 */
 
@@ -427,10 +356,10 @@ void QGalleryIntersectionFilter::append(const QGalleryMetaDataFilter &filter)
 }
 
 /*!
-    Appends a meta-data range \a filter to an intersection.
+    Appens a union \a filter to an intersection.
 */
 
-void QGalleryIntersectionFilter::append(const QGalleryMetaDataRangeFilter &filter)
+void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
 {
     d->filters.append(filter);
 }
@@ -445,16 +374,7 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 }
 
 /*!
-    Inserts a union \a filter into an intersection at \a index.
-*/
-
-void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &filter)
-{
-    d->filters.insert(index, filter);
-}
-
-/*!
-    Inserts a meta-data \a filter into an intersection \a index.
+    Inserts a meta-data \a filter into an intersection at \a index.
 */
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter &filter)
@@ -463,10 +383,10 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter 
 }
 
 /*!
-    Inserts a meta-data range \a filter into an intersection at \a index.
+    Inserts a union \a filter into an intersection at \a index.
 */
 
-void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataRangeFilter &filter)
+void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &filter)
 {
     d->filters.insert(index, filter);
 }
@@ -485,15 +405,6 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryIntersectionFil
 }
 
 /*!
-    Replaces the filter at \a index in an intersection with a union \a filter.
-*/
-
-void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &filter)
-{
-    d->filters.replace(index, filter);
-}
-
-/*!
     Replaces the filter at \a index in an intersection with a meta-data
     \a filter.
 */
@@ -504,11 +415,11 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataFilter
 }
 
 /*!
-    Replaces the filter at \a index in an intersection with a meta-data range
+    Replaces the filter at \a index in an intersection with a union
     \a filter.
 */
 
-void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataRangeFilter &filter)
+void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &filter)
 {
     d->filters.replace(index, filter);
 }
@@ -532,7 +443,7 @@ void QGalleryIntersectionFilter::clear()
 }
 
 /*!
-    \fn QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2)
+    \fn QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
 
     Returns a gallery filter matches the intersection of \a filter1 and
     \a filter2.
@@ -570,10 +481,10 @@ QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataFilter &filter)
 }
 
 /*!
-    Constructs a union filter from a meta-data range \a filter.
+    Constructs a union filter from an intersection \a filter.
 */
 
-QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataRangeFilter &filter)
+QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryIntersectionFilter &filter)
     : d(new QGalleryUnionFilterPrivate)
 {
     d->filters.append(filter);
@@ -674,10 +585,10 @@ void QGalleryUnionFilter::append(const QGalleryMetaDataFilter &filter)
 }
 
 /*!
-    Appends a meta-data range \a filter to a union.
+    Appends an intersection \a filter to a union.
 */
 
-void QGalleryUnionFilter::append(const QGalleryMetaDataRangeFilter &filter)
+void QGalleryUnionFilter::append(const QGalleryIntersectionFilter &filter)
 {
     d->filters.append(filter);
 }
@@ -701,10 +612,10 @@ void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataFilter &filter
 }
 
 /*!
-    Inserts a meta-data range \a filter into a union at \a index.
+    Inserts an intersection \a filter into a union at \a index.
 */
 
-void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataRangeFilter &filter)
+void QGalleryUnionFilter::insert(int index, const QGalleryIntersectionFilter &filter)
 {
     d->filters.insert(index, filter);
 }
@@ -731,10 +642,10 @@ void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataFilter &filte
 }
 
 /*!
-    Replaces the filter at \a index in a union with a meta-data range \a filter.
+    Replaces the filter at \a index in a union with an intersetion \a filter.
 */
 
-void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataRangeFilter &filter)
+void QGalleryUnionFilter::replace(int index, const QGalleryIntersectionFilter &filter)
 {
     d->filters.replace(index, filter);
 }
@@ -758,7 +669,7 @@ void QGalleryUnionFilter::clear()
 }
 
 /*!
-    \fn QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2)
+    \fn QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
 
     Returns a gallery filter which matches the union of \a filter1 and
     \a filter2.
@@ -793,12 +704,16 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
-        const QString &property, const QVariant &value, Qt::MatchFlags flags)
+        const QString &property,
+        const QVariant &value,
+        QGalleryFilter::Comparator comparator,
+        Qt::CaseSensitivity caseSensitivity)
             : d(new QGalleryMetaDataFilterPrivate)
 {
     d->property = property;
     d->value = value;
-    d->flags = flags;
+    d->comparator = comparator;
+    d->caseSensitivity = caseSensitivity;
 }
 
 /*!
@@ -900,208 +815,68 @@ void QGalleryMetaDataFilter::setValue(const QVariant &value)
 }
 
 /*!
-    Returns the type of comparison made by a meta-data filter.
+    Returns the comparator used by a meta-data filter.
 */
 
-Qt::MatchFlags QGalleryMetaDataFilter::matchFlags() const
+QGalleryFilter::Comparator QGalleryMetaDataFilter::comparator() const
 {
-    return d->flags;
+    return d->comparator;
 }
 
 /*!
-    Sets \a flags identifying the type of comparsion made by a meta-data
-    filter.
+    Sets the \a comparator used by a meta-data filter.
 */
 
-void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
+void QGalleryMetaDataFilter::setComparator(QGalleryFilter::Comparator comparator)
 {
-    d->flags = flags;
+    d->comparator = comparator;
 }
 
 /*!
-    \class QGalleryMetaDataRangeFilter
-
-    \ingroup gallery
-    \ingroup gallery-filters
-
-    \brief The QGalleryMetaDataRangeFilter class provides a filter which matches
-    items with meta-data properties with values within a specified range.
+    Returns whether a filter performs case-sensitive comparisons.
 */
 
-/*!
-    Constructs an empty meta-data range filter.
-*/
-
-QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter()
-    : d(new QGalleryMetaDataRangeFilterPrivate)
+Qt::CaseSensitivity QGalleryMetaDataFilter::caseSensitivity() const
 {
-
+    return d->caseSensitivity;
 }
 
 /*!
-    Constructs a copy of a meta-data range \a filter.
+    Sets the case-\a{sensitivity} of a meta-data filter.
 */
 
-QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(const QGalleryMetaDataRangeFilter &filter)
-    : d(filter.d)
+void QGalleryMetaDataFilter::setCaseSensitivity(Qt::CaseSensitivity sensitivity)
 {
+    d->caseSensitivity = sensitivity;
 }
 
 /*!
-    \internal
+    Returns whether the result of a meta-data filter should be inverted.
 */
 
-QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d)
-    : d(static_cast<QGalleryMetaDataRangeFilterPrivate *>(d))
+bool QGalleryMetaDataFilter::isInverted() const
 {
+    return d->inverted;
 }
 
 /*!
-    \internal
+    Sets whether the result of a meta-data filter should be inverted.
 */
 
-inline QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(QGalleryFilter::Type type)
-    : d(new QGalleryMetaDataRangeFilterPrivate(type))
+void QGalleryMetaDataFilter::setInverted(bool inverted)
 {
+    d->inverted = inverted;
 }
 
 /*!
-    Destroys a meta-data range filter.
+    Returns a meta-data filter which tests the inverse of an existing filter.
 */
 
-QGalleryMetaDataRangeFilter::~QGalleryMetaDataRangeFilter()
+QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 {
-}
-
-/*!
-    Assigns the value \a filter to another meta-data range filter.
-*/
-
-QGalleryMetaDataRangeFilter &QGalleryMetaDataRangeFilter::operator =(
-        const QGalleryMetaDataRangeFilter &filter)
-{
-    d = filter.d;
-
-    return *this;
-}
-
-/*!
-    Returns true if the filter is a valid meta-data range filter.
-
-    An invalid filter can be obtained by casting a non
-    QGalleryFilter::MetaDataRange type QGalleryFilter to
-    QGalleryMetaDataRangeFilter.
-*/
-
-bool QGalleryMetaDataRangeFilter::isValid() const
-{
-    return d->type == QGalleryFilter::MetaDataRange;
-}
-
-/*!
-    Returns the name of the property the value of a meta-data filter is
-    compared against.
-*/
-
-QString QGalleryMetaDataRangeFilter::propertyName() const
-{
-    return d->property;
-}
-
-/*!
-    Sets the \a name of the property the value of a meta-data filter is
-    compared against.
-*/
-
-void QGalleryMetaDataRangeFilter::setPropertyName(const QString &name)
-{
-    d->property = name;
-}
-
-/*!
-    Returns a range's minimum value.
-*/
-
-QVariant QGalleryMetaDataRangeFilter::minimumValue() const
-{
-    return d->minimum;
-}
-
-/*!
-    Returns a range's maximum value.
-*/
-
-QVariant QGalleryMetaDataRangeFilter::maximumValue() const
-{
-    return d->maximum;
-}
-
-/*!
-    Returns flags identifying how a value is compared to the limits of a range.
-*/
-
-QGalleryFilter::RangeFlags QGalleryMetaDataRangeFilter::rangeFlags() const
-{
-    return d->flags;
-}
-
-/*!
-    Sets a range that matches values that are between or equal to the \a minimum
-    and \a maximum values.
-*/
-
-void QGalleryMetaDataRangeFilter::setInclusiveRange(
-        const QVariant &minimum, const QVariant &maximum)
-{
-    d->setRange(minimum, maximum, QGalleryFilter::InclusiveRange);
-}
-
-/*!
-    Sets a range that matches values that are between but not equal to the
-    \a minimum and \a maximum values.
-*/
-
-void QGalleryMetaDataRangeFilter::setExclusiveRange(
-        const QVariant &minimum, const QVariant &maximum)
-{
-    d->setRange(minimum, maximum, QGalleryFilter::ExclusiveRange);
-}
-
-/*!
-    Sets a range that matches values that are less than a \a value.
-*/
-
-void QGalleryMetaDataRangeFilter::setLessThan(const QVariant &value)
-{
-    d->setRange(QVariant(), value, QGalleryFilter::LessThanMaximum);
-}
-
-/*!
-    Sets a range that matches values that are less than or equal to a \a value.
-*/
-
-void QGalleryMetaDataRangeFilter::setLessThanEquals(const QVariant &value)
-{
-    d->setRange(QVariant(), value, QGalleryFilter::LessThanEqualsMaximum);
-}
-
-/*!
-    Sets a range that matches values that are greater than a \a value.
-*/
-
-void QGalleryMetaDataRangeFilter::setGreaterThan(const QVariant &value)
-{
-    d->setRange(value, QVariant(), QGalleryFilter::GreaterThanMinimum);
-}
-
-/*!
-    Sets a range that matches values that are greater than or equal to a
-    \a value.
-*/
-
-void QGalleryMetaDataRangeFilter::setGreaterThanEquals(const QVariant &value)
-{
-    d->setRange(value, QVariant(), QGalleryFilter::GreaterThanEqualsMinimum);
+    QGalleryMetaDataFilter filter(*this);
+    filter.setInverted(!d->inverted);
+    return filter;
 }
 
 /*!
@@ -1119,26 +894,36 @@ void QGalleryMetaDataRangeFilter::setGreaterThanEquals(const QVariant &value)
 
     Identifies the type of a filter.
 
-    \value Invalid
-    \value Intersection
-    \value Union
-    \value MetaData
-    \value MetaDataRange
+    \value Invalid  The filter is a null QGalleryFilter.
+    \value Intersection The filter is a QGalleryIntersectionFilter.
+    \value Union The filter is a QGalleryUnionFilter.
+    \value MetaData The filter is a QGalleryMetaDataFilter.
 */
 
 /*!
-    \enum QGalleryFilter::RangeFlag
+    \enum Comparator
 
-    Enumerates the comparisons made by QGalleryMetaDataRangeFilter.
+    Identifies the comparison made by a QGalleryMetaDataFilter.
 
-    \value EqualsMinimum
-    \value GreaterThanMinimum
-    \value GreaterThanEqualsMinimum
-    \value LessThanMaximum
-    \value EqualsMaximum
-    \value LessThanEqualsMaximum
-    \value InclusiveRange
-    \value ExclusiveRange
+    \value Equals The filter tests if a meta-data property is equal to a value.
+    \value LessThan The filter tests if a meta-data property is less than a
+    value.
+    \value GreaterThan The filter tests if a meta-data property is greater
+    than a value.
+    \value LessThanEquals The filter tests if a meta-data property is less than
+    or equal to a value.
+    \value GreaterThanEquals The filter tests if a meta-data property is
+    greater than or equal to a value.
+    \value Contains The filter tests if a meta-data property contains a
+    sub-string.
+    \value StartsWith The filter tests if a meta-data property starts with a
+    string.
+    \value EndsWith The filter tests if a meta-data property ends with a
+    string.
+    \value Wildcard The filter tests if a meta-data property matches a wildcard
+    string.
+    \value RegExp The filter tests if a meta-data property matches a regular
+    expression.
 */
 
 /*!
@@ -1183,15 +968,6 @@ QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
 
 QGalleryFilter::QGalleryFilter(const QGalleryMetaDataFilter &filter)
     : d(const_cast<QGalleryMetaDataFilterPrivate *>(filter.d.constData()))
-{
-}
-
-/*!
-    Constructs a copy of a gallery meta-data range \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryMetaDataRangeFilter &filter)
-    : d(const_cast<QGalleryMetaDataRangeFilterPrivate *>(filter.d.constData()))
 {
 }
 
@@ -1272,20 +1048,6 @@ QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
     return d->type == MetaData
             ? QGalleryMetaDataFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
             : QGalleryMetaDataFilter(QGalleryFilter::Invalid);
-}
-
-/*!
-    Casts a filter to a meta-data range filter.  The filter must be of type
-    MetaDataRange or this will return an Invalid filter.
-
-    Returns a QGalleryMetaDataRangeFilter.
-*/
-
-QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
-{
-    return d->type == MetaDataRange
-            ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryMetaDataRangeFilter(QGalleryFilter::Invalid);
 }
 
 #ifndef QT_NO_DEBUG_STREAM

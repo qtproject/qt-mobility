@@ -580,7 +580,7 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtFeedback $relpath/src/feedback
             ;;
         gallery)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/gallery
+            $relpath/bin/syncheaders $shadowpath/include/QtGallery $relpath/src/gallery
             ;;
         organizer)
             $relpath/bin/syncheaders $shadowpath/include/QtOrganizer $relpath/src/organizer
