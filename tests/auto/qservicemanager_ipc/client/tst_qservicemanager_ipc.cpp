@@ -87,10 +87,11 @@ private slots:
     void verifySharedProperties();
     void verifySharedProperties_data();
 
-#ifdef UNIQUE_TESTS
     void verifyUniqueServiceObject(); //rough count
     void verifyUniqueMethods();
     void verifyUniqueMethods_data();
+
+#ifdef UNIQUE_TESTS
     void verifyUniqueProperties();
     void verifyUniqueProperties_data();
     void verifyUniqueClassInfo();
@@ -272,8 +273,8 @@ void tst_QServiceManager_IPC::verifySharedServiceObject()
     QCOMPARE(mo->className(), "SharedTestService");
     QVERIFY(mo->superClass());
     QCOMPARE(mo->superClass()->className(), "QObject");
-    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 17);
-    QCOMPARE(mo->methodCount(), 21); //20 meta functions available
+    QCOMPARE(mo->methodCount()-mo-> methodOffset(), 18);
+    QCOMPARE(mo->methodCount(), 22); //20 meta functions available
     //actual function presence will be tested later
     
     //test properties
@@ -454,7 +455,6 @@ void tst_QServiceManager_IPC::verifySharedProperties()
     }
 }
 
-#ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::verifyUniqueServiceObject()
 {
     QVERIFY(serviceUnique != 0);
@@ -464,7 +464,7 @@ void tst_QServiceManager_IPC::verifyUniqueServiceObject()
     QCOMPARE(mo->superClass()->className(), "QObject");
 // TODO adding the ipc failure signal seems to break these    
     QCOMPARE(mo->methodCount()-mo-> methodOffset(), 19); // 17+1 added signal for error signal added by library
-    QCOMPARE(mo->methodCount(), 22); //21 meta functions available + 1 signal
+    QCOMPARE(mo->methodCount(), 23); //21 meta functions available + 1 signal
     //actual function presence will be tested later
 
     //test properties
@@ -587,6 +587,7 @@ void tst_QServiceManager_IPC::verifyUniqueMethods()
     QCOMPARE(metaMethodType, (int)method.methodType());
     QCOMPARE(returnType, QByteArray(method.typeName()));
 }
+#ifdef UNIQUE_TESTS
 
 void tst_QServiceManager_IPC::verifyUniqueProperties_data()
 {
