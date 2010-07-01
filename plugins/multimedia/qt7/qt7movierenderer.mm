@@ -167,8 +167,9 @@ QT7MovieRenderer::QT7MovieRenderer(QObject *parent)
 #endif
     m_surface(0)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieRenderer";
-
+#endif
     m_displayLink = new QCvDisplayLink(this);
     connect(m_displayLink, SIGNAL(tick(CVTimeStamp)), SLOT(updateVideoFrame(CVTimeStamp)));
 }
@@ -277,7 +278,9 @@ void QT7MovieRenderer::setupVideoOutput()
 {
     AutoReleasePool pool;
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieRenderer::setupVideoOutput" << m_movie;
+#endif
 
     if (m_movie == 0 || m_surface == 0) {
         m_displayLink->stop();
@@ -316,12 +319,16 @@ void QT7MovieRenderer::setupVideoOutput()
             QVideoSurfaceFormat format(m_nativeSize, QVideoFrame::Format_RGB32);
 
             if (m_surface->isActive() && m_surface->surfaceFormat() != format) {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Surface format was changed, stop the surface.";
+#endif
                 m_surface->stop();
             }
 
             if (!m_surface->isActive()) {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Starting the surface with format" << format;
+#endif
                 if (!m_surface->start(format)) {
                     qWarning() << "failed to start video surface" << m_surface->error();
                     qWarning() << "Surface format:" << format;
@@ -345,14 +352,18 @@ void QT7MovieRenderer::setupVideoOutput()
     if (!m_nativeSize.isEmpty()) {
         if (!m_visualContext) {
             if (m_usingGLContext) {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Building OpenGL visual context" << m_nativeSize;
+#endif
                 m_currentGLContext = QGLContext::currentContext();
                 if (!createGLVisualContext()) {
                     qWarning() << "QT7MovieRenderer: failed to create visual context";
                     return;
                 }
             } else {
+#ifdef QT_DEBUG_QT7
                 qDebug() << "Building Pixel Buffer visual context" << m_nativeSize;
+#endif
                 if (!createPixelBufferVisualContext()) {
                     qWarning() << "QT7MovieRenderer: failed to create visual context";
                     return;
@@ -371,7 +382,9 @@ void QT7MovieRenderer::setupVideoOutput()
 
 void QT7MovieRenderer::setMovie(void *movie)
 {
-    //qDebug() << "QT7MovieRenderer::setMovie" << movie;
+#ifdef QT_DEBUG_QT7
+    qDebug() << "QT7MovieRenderer::setMovie" << movie;
+#endif
 
 #ifdef QUICKTIME_C_API_AVAILABLE
     QMutexLocker locker(&m_mutex);
@@ -406,7 +419,9 @@ QAbstractVideoSurface *QT7MovieRenderer::surface() const
 
 void QT7MovieRenderer::setSurface(QAbstractVideoSurface *surface)
 {
-    //qDebug() << "Set video surface" << surface;
+#ifdef QT_DEBUG_QT7
+    qDebug() << "Set video surface" << surface;
+#endif
 
     if (surface == m_surface)
         return;
