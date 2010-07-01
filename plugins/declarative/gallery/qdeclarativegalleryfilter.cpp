@@ -74,204 +74,56 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty enum GalleryFilter::matchFlags
+    \qmlproperty enum GalleryFilter::comparator
 
-    This property holds how a value is filtered against a property.
+    This property holds the type of comparison made by a GalleryFilter.  It can
+    be one of:
+
+    \list
+    \o Equals The filter tests if a meta-data property is equal to a value.
+    \o LessThan The filter tests if a meta-data property is less than a
+    value.
+    \o GreaterThan The filter tests if a meta-data property is greater
+    than a value.
+    \o LessThanEquals The filter tests if a meta-data property is less than
+    or equal to a value.
+    \o GreaterThanEquals The filter tests if a meta-data property is
+    greater than or equal to a value.
+    \o Contains The filter tests if a meta-data property contains a
+    sub-string.
+    \o StartsWith The filter tests if a meta-data property starts with a
+    string.
+    \o EndsWith The filter tests if a meta-data property ends with a
+    string.
+    \o Wildcard The filter tests if a meta-data property matches a wildcard
+    string.
+    \o RegExp The filter tests if a meta-data property matches a regular
+    expression.
+    \endlist
+*/
+
+/*!
+    \qmlproperty enum GalleryFilter::caseSensitivity
+
+    This property holds whether the comparison made by a GalleryFilter should
+    be case sensitive.  It can be one of:
+
+    \list
+    \o Qt.CaseSensitive The comparison is case sensitive.
+    \o Qt.CaseInsensitive The comparison is not case case sensitive.
+    \endlist
+*/
+
+/*!
+    \qmlproperty bool GalleryFilter::inverted
+
+    This property holds whether the result of a GalleryFilter should be
+    inverted.
 */
 
 QGalleryFilter QDeclarativeGalleryFilter::filter() const
 {
-    QGalleryMetaDataFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setValue(m_value);
-    filter.setMatchFlags(Qt::MatchFlag(int(m_matchFlags)));
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryPropertyLessThan GalleryFilterLessThan
-
-    \brief The GalleryPropertyLessThan element provides a gallery filter which
-    tests if a property value is less than a value.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryPropertyLessThan::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyLessThan::value
-
-    This property holds the value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterLessThan::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setLessThan(m_value);
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryPropertyLessThan GalleryFilterLessEqualsThan
-
-    \brief The GalleryPropertyLessEqualThan element provides a gallery filter
-    which tests if a property value is less than or equals a value.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryPropertyLessThan::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyLessThan::value
-
-    This property holds the value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterLessThanEquals::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setLessThanEquals(m_value);
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryPropertyGreaterThan GalleryFilterGreaterThan
-
-    \brief The GalleryPropertyGreaterThan element provides a gallery filter
-    which tests if a property value is greater than a value.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryPropertyGreaterThan::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyGreaterThan::value
-
-    This property holds the value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterGreaterThan::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setGreaterThan(m_value);
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryPropertyGreaterThanEquals GalleryFilterGreaterThanEquals
-
-    \brief The GalleryPropertyGreaterThanEquals element provides a gallery filter which
-    tests if a property value is greater than or equals a value.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryPropertyGreaterThanEquals::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyGreaterThanEquals::value
-
-    This property holds the value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterGreaterThanEquals::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setGreaterThanEquals(m_value);
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryPropertyExclusiveRange GalleryFilterExclusiveRange
-
-    \brief The GalleryPropertyExclusiveRange element provides a gallery filter
-    which tests if a property value is between but not equal to two values.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryPropertyExclusiveRange::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyExclusiveRange::minimum
-
-    This property holds the minimum value the filter tests against.
-*/
-
-/*!
-    \qmlproperty variant GalleryPropertyExclusiveRange::maximum
-    
-    This property holds the maximum value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterExclusiveRange::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setExclusiveRange(m_minimumValue, m_maximumValue);
-    return filter;
-}
-
-/*!
-    \qmlclass GalleryInclusivePropertyRange GalleryFilterInclusiveRange
-
-    \brief The GalleryInclusivePropertyRange element provides a gallery filter
-    which tests if a property value is between or equal to two values.
-
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
-*/
-
-/*!
-    \qmlproperty string GalleryInclusivePropertyRange::property
-
-    This property holds the name of the property the filter tests.
-*/
-
-/*!
-    \qmlproperty variant GalleryInclusivePropertyRange::minimum
-
-    This property holds the minimum value the filter tests against.
-*/
-
-/*!
-    \qmlproperty variant GalleryInclusivePropertyRange::maximum
-    
-    This property holds the maximum value the filter tests against.
-*/
-
-QGalleryFilter QDeclarativeGalleryFilterInclusiveRange::filter() const
-{
-    QGalleryMetaDataRangeFilter filter;
-    filter.setPropertyName(m_propertyName);
-    filter.setInclusiveRange(m_minimumValue, m_maximumValue);
-    return filter;
+    return m_filter;
 }
 
 /*!
@@ -292,18 +144,18 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
 {
     QGalleryUnionFilter unionFilter;
 
-    typedef QList<QDeclarativeGalleryFilterUnionItem *>::const_iterator iterator;
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
     for (iterator it = m_filters.begin(), end = m_filters.end(); it != end; ++it) {
         QGalleryFilter filter = (*it)->filter();
         switch (filter.type()) {
         case QGalleryFilter::MetaData:
             unionFilter.append(filter.toMetaDataFilter());
             break;
-        case QGalleryFilter::MetaDataRange:
-            unionFilter.append(filter.toMetaDataRangeFilter());
-            break;
         case QGalleryFilter::Union:
             unionFilter.append(filter.toUnionFilter());
+            break;
+        case QGalleryFilter::Intersection:
+            unionFilter.append(filter.toIntersectionFilter());
             break;
         default:
             break;
@@ -331,15 +183,12 @@ QGalleryFilter QDeclarativeGalleryFilterIntersection::filter() const
 {
     QGalleryIntersectionFilter intersectionFilter;
 
-    typedef QList<QDeclarativeGalleryFilterIntersectionItem *>::const_iterator iterator;
+    typedef QList<QDeclarativeGalleryFilterBase *>::const_iterator iterator;
     for (iterator it = m_filters.begin(), end = m_filters.end(); it != end; ++it) {
         QGalleryFilter filter = (*it)->filter();
         switch (filter.type()) {
         case QGalleryFilter::MetaData:
             intersectionFilter.append(filter.toMetaDataFilter());
-            break;
-        case QGalleryFilter::MetaDataRange:
-            intersectionFilter.append(filter.toMetaDataRangeFilter());
             break;
         case QGalleryFilter::Union:
             intersectionFilter.append(filter.toUnionFilter());
