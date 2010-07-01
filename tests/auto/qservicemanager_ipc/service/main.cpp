@@ -57,11 +57,12 @@ class SharedTestService : public QObject
     Q_OBJECT
     Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
-public:
 
+public:
     SharedTestService(QObject* parent = 0) 
         : QObject(parent)
     {
+        resetValue();
     }
 
     QString value() const
@@ -80,42 +81,49 @@ public:
     void resetValue()
     {
         qDebug() << "SharedTestService: Resetting property";
-        m_value = "<empty>";
+        m_value = "FFF";
         emit valueChanged();
     }
-
-
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
     {
         qDebug() << "SharedTestService::testFunctionWithReturnValue(" << input << ")";
-        QString output("%1 x 3 = %2");
-        output = output.arg(input).arg(input*3);
+        QString output("%1 + 3 = %2");
+        output = output.arg(input).arg(input+3);
         return output;
     }
     
-    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue()
+    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "SharedTestService::testFunctionWithVariantReturnValue()";
-        return QVariant('4');
+        return input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
         qDebug() << "SharedTestService::testFunctionWithCustomReturnValue()";
-        QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
-        f.setServiceName("MyService");
+        QServiceFilter f("com.nokia.qt.ipcunittest", "6.2");
+        f.setServiceName("MySharedService");
         return f;
+    }
 
+    Q_INVOKABLE uint slotConfirmation() const
+    {
+        return m_hash;
+    }
+
+    Q_INVOKABLE void setConfirmationHash(uint hash)
+    {
+        m_hash = hash;
     }
 
 Q_SIGNALS:
     void signalWithIntParam(int);
     void signalWithVariousParam(QVariant,QString,QServiceFilter);
     void valueChanged();
-public slots:
 
-    Q_INVOKABLE void triggerSignalWithIntParam()
+public slots:
+    void triggerSignalWithIntParam()
     {
         QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
     }
@@ -140,14 +148,16 @@ public slots:
     }
     void testSlot()
     {
-        qDebug() << "SharedTestService::testSlot() called";
+        m_hash = qHash(QString("testSlot()"));
+        qDebug() << "SharedTestService::testSlot() called" << m_hash;
     }
 
     void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
     {
-        QString output("%1, %2, %3");
-        output = output.arg(d.constData()).arg(a).arg(variant.toString());
-        qDebug() << "SharedTestService::testSlotWithArgs(" << output << ") called" << variant.isValid();
+        QString output("%1, %2, %3, %4");
+        output = output.arg(d.constData()).arg(a).arg(variant.toString()).arg(variant.isValid());
+        m_hash = qHash(output);
+        qDebug() << "SharedTestService::testSlotWithArgs(" << output << ") called" << m_hash;
     }
     
     void testSlotWithCustomArg(const QServiceFilter& f)
@@ -155,17 +165,21 @@ public slots:
         QString output("%1: %2 - %3.%4");
         output = output.arg(f.serviceName()).arg(f.interfaceName())
                 .arg(f.majorVersion()).arg(f.minorVersion());
-        qDebug() << "SharedTestService::testSlotWithCustomArg(" << output << ") called";
+        m_hash = qHash(output);
+        qDebug() << "SharedTestService::testSlotWithCustomArg(" << output << ") called" << m_hash;
     }
     
     void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
     {
         qDebug() << "SharedTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
+        m_hash = 1;
     }
+
 private:
     QString m_value;
-
+    uint m_hash;
 };
+
 class UniqueTestService : public QObject 
 {
     Q_OBJECT
@@ -175,11 +189,11 @@ class UniqueTestService : public QObject
 
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
     Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY priorityChanged);
-    Q_ENUMS(Priority);
     Q_PROPERTY(ServiceFlag serviceFlags READ flags WRITE setFlags);
+    Q_ENUMS(Priority);
     Q_FLAGS(ServiceFlag ServiceFlags);
-public:
 
+public:
     enum ServiceFlag {
         FirstBit = 0x01,
         SecondBit = 0x02,
@@ -192,15 +206,22 @@ public:
         m_flags = f;
     }
 
-
     enum Priority { High, Low, VeryLow, ExtremelyLow };
+    
     void setPriority(Priority p) {
         m_priority = p;
         emit priorityChanged();
     }
+    
     Priority priority() const
     {
         return m_priority;
+    }
+
+    UniqueTestService(QObject* parent = 0) 
+        : QObject(parent), m_priority(UniqueTestService::High), m_flags(ThirdBit)
+    {
+        resetValue();
     }
 
     QString value() const
@@ -223,14 +244,6 @@ public:
         emit valueChanged();
     }
 
-
-
-    /*Q_INVOKABLE*/ UniqueTestService(QObject* parent = 0) 
-        : QObject(parent), m_priority(UniqueTestService::High), m_flags(ThirdBit)
-    {
-        resetValue();
-    }
-
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
     {
         qDebug() << "UniqueTestService::testFunctionWithReturnValue(" << input << ")";
@@ -242,16 +255,15 @@ public:
     Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "UniqueTestService::testFunctionWithVariantReturnValue()";
-        return  input;
+        return input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
         qDebug() << "TestService::testFunctionWithCustomReturnValue()";
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
-        f.setServiceName("MyService");
+        f.setServiceName("MyUniqueService");
         return f;
-
     }
 
     Q_INVOKABLE uint slotConfirmation() const
@@ -261,7 +273,7 @@ public:
 
     Q_INVOKABLE void setConfirmationHash(uint hash)
     {
-        m_hash=hash;
+        m_hash = hash;
     }
 
 Q_SIGNALS:
@@ -271,7 +283,6 @@ Q_SIGNALS:
     void priorityChanged();
 
 public slots:
-
     void triggerSignalWithIntParam()
     {
         QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
@@ -305,8 +316,8 @@ public slots:
     {
         QString output("%1, %2, %3, %4");
         output = output.arg(d.constData()).arg(a).arg(variant.toString()).arg(variant.isValid());
-        qDebug() << "UniqueTestService::testSlotWithArgs(" << output << ") called";
         m_hash = qHash(output);
+        qDebug() << "UniqueTestService::testSlotWithArgs(" << output << ") called" << m_hash;
     }
 
     void testSlotWithCustomArg(const QServiceFilter& f)
@@ -323,6 +334,7 @@ public slots:
         qDebug() << "UniqueTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
         m_hash = 1;
     }
+
 private:
     QString m_value;
     Priority m_priority;
@@ -366,7 +378,6 @@ int main(int argc, char** argv)
 
     QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
     QRemoteServiceClassRegister::registerType<UniqueTestService>(QRemoteServiceClassRegister::UniqueInstance);
-
 
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();

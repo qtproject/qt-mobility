@@ -222,7 +222,6 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
     openRequests()->insert(p.d->messageId, response);
 
     dispatch->writePackage(p);
-
     waitForResponse(p.d->messageId);
 
     if (response->isFinished) {
@@ -337,13 +336,12 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         //client side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
-        //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
             response->result = 0;
             response->isFinished = true;
             QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
-            qWarning() << "Service instanciation failed";
+            qWarning() << "Service instantiation failed";
             return;
         }
         //deserialize meta object and
@@ -359,7 +357,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         //service side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
 
-        //qDebug() << p;
         QServicePackage response = p.createResponse();
         InstanceManager* m = InstanceManager::instance();
 
@@ -377,7 +374,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         QMetaObjectBuilder builder(meta);
         builder.serialize(stream);
 
-        //instanciate service object from type register
+        //instantiate service object from type register
         service = m->createObjectInstance(p.d->typeId, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
@@ -401,7 +398,6 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         //service side if slot invocation
         //client side if signal emission (isSignal==true)
 
-        //qDebug() << p;
         QByteArray data = p.d->payload.toByteArray();
         QDataStream stream(&data, QIODevice::ReadOnly);
         int metaIndex = -1;
@@ -503,7 +499,6 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         //client side
         Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
 
-        //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {

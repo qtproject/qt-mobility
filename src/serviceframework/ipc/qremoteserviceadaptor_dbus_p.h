@@ -39,37 +39,42 @@
 **
 ****************************************************************************/
 
-#include "ipcendpoint_p.h"
+#ifndef QREMOTESERVICEADAPTOR_DBUS_P_H
+#define QREMOTESERVICEADAPTOR_DBUS_P_H
+
+#include <QtDBus>
 
 QTM_BEGIN_NAMESPACE
-/*!
-    QServiceIpcEndPoint
-*/
-QServiceIpcEndPoint::QServiceIpcEndPoint(QObject* parent)
-    : QObject( parent )
-{
-}
 
-QServiceIpcEndPoint::~QServiceIpcEndPoint()
+class DBusSession: public QObject
 {
-}
+    Q_OBJECT
+public:
+    DBusSession(QObjecet *parent) {;}
+    ~DBusSession() {;}
 
-bool QServiceIpcEndPoint::packageAvailable() const
+public slots:
+    bool connect() { return true; }
+};
+
+/*class DBusSessionAdaptor: public QDBusAbstractAdaptor
 {
-    return !incoming.isEmpty();
-}
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.qtmobility.DBus")
 
-QServicePackage QServiceIpcEndPoint::nextPackage()
-{
-    if (!incoming.isEmpty())
-        return incoming.dequeue();
-    return QServicePackage();
-}
+public:
+    DBusSessionAdaptor(QObject *parent);
+    ~DBusSessionAdaptor();
 
-void QServiceIpcEndPoint::writePackage(QServicePackage newPackage)
-{
-    flushPackage(newPackage);
-}
+public slots:
+    bool connect() { 
+        bool ret;
+        QMetaObject::invokeMethod(parent(), "connect",
+                                  Q_RETURN_ARG(bool, ret)); 
+        return ret;
+    }
+};*/
 
-#include "moc_ipcendpoint_p.cpp"
 QTM_END_NAMESPACE
+
+#endif
