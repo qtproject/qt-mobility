@@ -362,7 +362,9 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
 {
     AutoReleasePool pool;
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "SetMedia" << content.canonicalUrl();
+#endif
 
     if (m_QTMovie) {
         [(QTMovieObserver*)m_movieObserver setMovie:nil];
@@ -411,7 +413,9 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     if (requestUrl.scheme().isEmpty())
         requestUrl.setScheme(QLatin1String("file"));
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "Play" << requestUrl;
+#endif
 
     NSError *err = 0;
     NSString *urlString = qString2CFStringRef(requestUrl.toString());
@@ -483,7 +487,9 @@ void QT7PlayerSession::processLoadStateChange()
 
     signed long state = [[(QTMovie*)m_QTMovie attributeForKey:QTMovieLoadStateAttribute]
                          longValue];
+#ifdef QT_DEBUG_QT7
     qDebug() << "Moview load state changed:" << state;
+#endif
 
 #ifndef QUICKTIME_C_API_AVAILABLE
     enum {
@@ -552,7 +558,9 @@ void QT7PlayerSession::processVolumeChange()
 void QT7PlayerSession::processNaturalSizeChange()
 {
     NSSize size = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
+#ifdef QT_DEBUG_QT7
     qDebug() << "Native size changed:" << QSize(size.width, size.height);
+#endif
 
     if (m_videoOutput)
         m_videoOutput->updateNaturalSize(QSize(size.width, size.height));
