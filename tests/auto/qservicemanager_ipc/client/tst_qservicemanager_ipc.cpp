@@ -933,7 +933,7 @@ void tst_QServiceManager_IPC::testSlotInvokation()
 
 void tst_QServiceManager_IPC::testIpcFailure()
 {
-  QMetaObject::invokeMethod( service, "testIpcFailure");
+  QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
   int i = 0;
   while (!ipcfailure && i++ < 50)
       QTest::qWait(50);
