@@ -35,10 +35,6 @@ contains(MOBILITY, location) {
     qtAddLibrary(QtLocation)
 }
 
-contains(MOBILITY, landmarks) {
-    qtAddLibrary(QtLandmarks)
-}
-
 contains(MOBILITY, serviceframework) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtServiceFramework
     qtAddLibrary(QtServiceFramework)
