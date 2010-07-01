@@ -187,7 +187,6 @@ contains(mobility_modules,gallery) {
         qgalleryabstractresponse \
         qgallerybaseresponse \
         qgallerycountrequest \
-        qgalleryfilter \
         qgalleryitemlist \
         qgalleryitemlistmodel \
         qgalleryitemrequest \
@@ -195,6 +194,8 @@ contains(mobility_modules,gallery) {
         qgalleryremoverequest \
         qgalleryresource \
         qgalleryurlrequest
+
+    !unix: SUBDIRS += qgalleryfilter
 
     unix: contains(QT_CONFIG, dbus) {
         SUBDIRS += \
