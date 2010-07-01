@@ -62,8 +62,6 @@ namespace QService
     };    
 }
 
-Q_ENUMS(QService::UnrecoverableIPCError);
-
 QTM_END_NAMESPACE
 
 #endif //Q_SERVICE_H
