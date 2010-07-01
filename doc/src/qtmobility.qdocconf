@@ -84,6 +84,7 @@ language                = Cpp
 imagedirs = images
 
 headerdirs = ../../src/bearer \
+             ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
              ../../src/publishsubscribe \
@@ -101,6 +102,7 @@ headerdirs = ../../src/bearer \
              .
 
 sourcedirs = ../../src/bearer \
+             ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
              ../../src/publishsubscribe \
