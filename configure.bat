@@ -297,6 +297,7 @@ if %FIRST% == bearer (
     echo     ServiceFramework selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
+    set CONTACTS_SELECTED=yes
 ) else if %FIRST% == sensors (
     echo     Sensors selected
     set SENSORS_SELECTED=yes
