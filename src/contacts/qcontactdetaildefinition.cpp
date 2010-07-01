@@ -47,6 +47,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactDetailDefinition
 
+  \inmodule QtContacts
+  
   The QContactDetailDefinition class provides the specification for
   a detail that can be included in any particular QContact.
   The definition does not include any data, but defines
@@ -157,5 +159,6 @@ void QContactDetailDefinition::removeField(const QString& key)
 {
     d->m_fields.remove(key);
 }
+
 
 QTM_END_NAMESPACE

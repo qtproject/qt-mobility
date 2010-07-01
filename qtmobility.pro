@@ -156,6 +156,12 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
         INSTALLS += qtmheaderssensors
     }
+
+    contains(mobility_modules,organizer) {
+        qtmheadersorganizer.path = $${QT_MOBILITY_INCLUDE}/QtOrganizer
+        qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
+        INSTALLS += qtmheadersorganizer
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
@@ -169,7 +175,8 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtPublishSubscribe/* \
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
-                       include/QtSensors/*
+                       include/QtSensors/* \
+                       include/QtOrganizer/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
@@ -183,7 +190,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

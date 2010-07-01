@@ -58,6 +58,9 @@ public:
 /*!
     \class QGeoSatelliteInfo
     \brief The QGeoSatelliteInfo class contains basic information about a satellite.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     \sa QGeoSatelliteInfoSource
