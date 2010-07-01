@@ -3,8 +3,8 @@ INCLUDEPATH += ../../../../src/serviceframework
 DEPENDPATH += ../../../../src/serviceframework
 
 QT = core testlib
-CONFIG+=testcase
-TEMPLATE=app
+CONFIG += testcase
+TEMPLATE = app
 
 include(../../../../common.pri)
 
