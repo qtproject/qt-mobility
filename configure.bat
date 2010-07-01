@@ -532,6 +532,7 @@ call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest SymbianContactModel symbiancntmodel
+call :compileTest SymbianContactModelv2 symbiancntmodelv2
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Symbian_Hb hb_symbian
