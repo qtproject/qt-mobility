@@ -162,6 +162,11 @@ public slots:
     {
         qDebug() << "SharedTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
+    
+    void testIpcFailure() {
+      qApp->exit(0); // exit to show failure
+    }
+
 private:
     QString m_value;
 
@@ -323,6 +328,11 @@ public slots:
         qDebug() << "UniqueTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
         m_hash = 1;
     }
+    
+    void testIpcFailure() {
+      qApp->exit(0); // exit to show failure
+    }
+    
 private:
     QString m_value;
     Priority m_priority;

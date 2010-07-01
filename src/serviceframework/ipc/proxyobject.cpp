@@ -71,6 +71,12 @@ QServiceProxy::QServiceProxy(const QByteArray& metadata, ObjectEndPoint* endPoin
     if (stream.status() != QDataStream::Ok) {
         qWarning() << "Invalid metaObject for service received";
     } else {
+        QMetaMethodBuilder b = builder.addSignal("errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)");
+        
+        // After all methods are filled in, otherwise qvector won't be big enough
+        localSignals.fill(false, builder.methodCount());        
+        localSignals.replace(b.index(), true); // Call activate locally
+        
         d->meta = builder.toMetaObject();
         qWarning() << "Proxy object for" << d->meta->className() << "created.";
     }
@@ -94,6 +100,11 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
     id = QObject::qt_metacall(c, id, a);
     if (id < 0 || !d->meta) 
         return id;
+    
+    if(localSignals.at(id)){
+      QMetaObject::activate(this, d->meta, id, a);
+      return id;      
+    }
 
     if (c == QMetaObject::InvokeMetaMethod) {
         const int mcount = d->meta->methodCount() - d->meta->methodOffset();
@@ -155,7 +166,6 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             || c == QMetaObject::ResetProperty ) {
         const int pCount = d->meta->propertyCount() - d->meta->propertyOffset();
         const int metaIndex = id + d->meta->propertyOffset();
-
         QMetaProperty property = d->meta->property(metaIndex);
         if (property.isValid()) {
             int pType = property.type();
@@ -173,7 +183,6 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
                     arg = QVariant(pType, a[0]);
                 }
             }
-
             QVariant result;
             if (c == QMetaObject::ReadProperty) {
                 result = d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
@@ -190,7 +199,6 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             } else {
                 d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
             }
-
         } 
         id-=pCount;
     } else if ( c == QMetaObject::QueryPropertyDesignable
@@ -205,7 +213,6 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
         //TODO
         qWarning() << "MetaCall type" << c << "not yet handled";
     }
-
     return id;
 }
 
