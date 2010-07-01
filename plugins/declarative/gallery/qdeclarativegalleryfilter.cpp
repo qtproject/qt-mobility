@@ -302,6 +302,9 @@ QGalleryFilter QDeclarativeGalleryFilterUnion::filter() const
         case QGalleryFilter::MetaDataRange:
             unionFilter.append(filter.toMetaDataRangeFilter());
             break;
+        case QGalleryFilter::Intersection:
+            unionFilter.append(filter.toIntersectionFilter());
+            break;
         case QGalleryFilter::Union:
             unionFilter.append(filter.toUnionFilter());
             break;
@@ -340,9 +343,6 @@ QGalleryFilter QDeclarativeGalleryFilterIntersection::filter() const
             break;
         case QGalleryFilter::MetaDataRange:
             intersectionFilter.append(filter.toMetaDataRangeFilter());
-            break;
-        case QGalleryFilter::Union:
-            intersectionFilter.append(filter.toUnionFilter());
             break;
         case QGalleryFilter::Intersection:
             intersectionFilter.append(filter.toIntersectionFilter());
