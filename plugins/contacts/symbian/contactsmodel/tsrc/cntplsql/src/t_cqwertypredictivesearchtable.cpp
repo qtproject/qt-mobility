@@ -240,6 +240,34 @@ void UT_CQwertyPredictiveSearchTable::UT_DeleteLL()
     }
 
 // -----------------------------------------------------------------------------
+// UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL
+// -----------------------------------------------------------------------------
+//
+void UT_CQwertyPredictiveSearchTable::UT_UnmappedMailAddressL()
+    {
+    // All mail addresses begin with unmapped characters, so the contact should
+    // not be stored to QWERTY tables at all.
+    _LIT(KNameWithUnmappedChars, "rname28afternbr");
+    _LIT(KUnmappedMail, "mailto:123user@domain");
+    _LIT(KUnmappedMail2, "800@call.id");
+    AddContactL(KTestContactId, KNameWithUnmappedChars, KLastName, 
+                KUnmappedMail, KUnmappedMail2);
+    
+    // Check tables are empty
+    CheckItemCountL(InitTableVector());
+    
+    
+    // One mail address begin with a mapped character
+    AddContactL(KTestContactId2, KNullDesC, KNameWithUnmappedChars, 
+                KUnmappedMail, KUnmappedMail2, KMail);
+    
+    QVector<TInt> result = InitTableVector();
+    result[3] = 1; // KNameWithUnmappedChars
+    result[4] = 1; // KMail
+    CheckItemCountL(result);
+    }
+
+// -----------------------------------------------------------------------------
 // UT_CQwertyPredictiveSearchTable::InitTableVector
 // -----------------------------------------------------------------------------
 //
@@ -397,6 +425,13 @@ EUNIT_TEST(
     "DeleteL",
     "FUNCTIONALITY",
     SetupL, UT_DeleteLL, Teardown )
+
+EUNIT_TEST(
+    "CreateInDbL - unmapped mail address",
+    "UT_CQwertyPredictiveSearchTable",
+    "CreateInDbL",
+    "FUNCTIONALITY",
+    SetupL, UT_UnmappedMailAddressL, Teardown )
 
 EUNIT_END_TEST_TABLE
 
