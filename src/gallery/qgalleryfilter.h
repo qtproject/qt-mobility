@@ -145,7 +145,6 @@ class Q_GALLERY_EXPORT QGalleryIntersectionFilter
 {
 public:
     QGalleryIntersectionFilter();
-    QGalleryIntersectionFilter(const QGalleryUnionFilter &filter);
     QGalleryIntersectionFilter(const QGalleryMetaDataFilter &filter);
     QGalleryIntersectionFilter(const QGalleryMetaDataRangeFilter &filter);
     QGalleryIntersectionFilter(const QGalleryIntersectionFilter &filter);
@@ -160,17 +159,14 @@ public:
 
     QList<QGalleryFilter> filters() const;
 
-    void append(const QGalleryUnionFilter &filter);
     void append(const QGalleryMetaDataFilter &filter);
     void append(const QGalleryMetaDataRangeFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
 
-    void insert(int index, const QGalleryUnionFilter &filter);
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryMetaDataRangeFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
 
-    void replace(int index, const QGalleryUnionFilter &filter);
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryMetaDataRangeFilter &filter);
 
@@ -194,6 +190,7 @@ public:
     QGalleryUnionFilter();
     QGalleryUnionFilter(const QGalleryMetaDataFilter &filter);
     QGalleryUnionFilter(const QGalleryMetaDataRangeFilter &filter);
+    QGalleryUnionFilter(const QGalleryIntersectionFilter &filter);
     QGalleryUnionFilter(const QGalleryUnionFilter &other);
     ~QGalleryUnionFilter();
 
@@ -208,14 +205,17 @@ public:
 
     void append(const QGalleryMetaDataFilter &filter);
     void append(const QGalleryMetaDataRangeFilter &filter);
+    void append(const QGalleryIntersectionFilter &filter);
     void append(const QGalleryUnionFilter &filter);
 
     void insert(int index, const QGalleryMetaDataFilter &filter);
     void insert(int index, const QGalleryMetaDataRangeFilter &filter);
+    void insert(int index, const QGalleryIntersectionFilter &filter);
     void insert(int index, const QGalleryUnionFilter &filter);
 
     void replace(int index, const QGalleryMetaDataFilter &filter);
     void replace(int index, const QGalleryMetaDataRangeFilter &filter);
+    void replace(int index, const QGalleryIntersectionFilter &filter);
 
     void removeAt(int index);
     void clear();
@@ -305,7 +305,7 @@ QTM_END_NAMESPACE
 
 #ifndef Q_QDOC
 template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator &&(
+QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator ||(
         const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
 {
     QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) filter = filter1;
@@ -314,7 +314,7 @@ QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator &&(
 }
 
 template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator ||(
+QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator &&(
         const QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) &filter1, const T &filter2)
 {
     QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) filter = filter1;
@@ -322,8 +322,8 @@ QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator ||(
     return filter;
 }
 #else
-QGalleryUnionFilter Q_GALLERY_EXPORT operator &&(const QGalleryUnionFilter &filter1, const T &filter2);
-QGalleryIntersectionFilter Q_GALLERY_EXPORT operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2);
+QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(const QGalleryUnionFilter &filter1, const T &filter2);
+QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2);
 #endif
 
 
