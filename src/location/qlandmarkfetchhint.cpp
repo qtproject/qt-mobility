@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QLandmarkFetchHint
 
   \inmodule QtLocation
-    
+
   \ingroup landmarks-main
   \brief The QLandmarkFetchHint class provides miscellaneous hints to the manager
   when fetching landmarks.
@@ -91,9 +91,10 @@ QLandmarkFetchHint &QLandmarkFetchHint::operator=(const QLandmarkFetchHint &othe
 }
 
 /*!
-    Returns the maxmimum number of items to be retrieved.
+    Returns the maxmimum number of items to be retrieved.  By default,
+    maxItems is set to -1, meaning that there is no maximum limit.
 */
-int QLandmarkFetchHint::maxItems()
+int QLandmarkFetchHint::maxItems() const
 {
     return d->maxItems;
 }
@@ -107,9 +108,10 @@ void QLandmarkFetchHint::setMaxItems(int max)
 }
 
 /*!
-    Returns the offset of the items to be retrieved.
+    Returns the offset of the items to be retrieved.  By default, the offset
+    is set to 0.
 */
-int QLandmarkFetchHint::offset()
+int QLandmarkFetchHint::offset() const
 {
     return d->offset;
 }

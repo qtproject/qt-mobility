@@ -72,9 +72,6 @@ public:
 
     FilterType type() const;
 
-    int maximumMatches() const;
-    void setMaximumMatches(int maxMatches);
-
     bool operator==(const QLandmarkFilter &other) const;
     bool operator!=(const QLandmarkFilter &other) const {
         return !(*this == other);
