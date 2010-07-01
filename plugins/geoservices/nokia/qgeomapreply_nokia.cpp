@@ -45,6 +45,9 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapReq
         : QGeoTiledMapReply(request, parent),
         m_reply(reply)
 {
+    QVariant fromCache = reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
+    setCached(fromCache.toBool());
+
     cleanedUp = false;
     connect(m_reply,
             SIGNAL(finished()),

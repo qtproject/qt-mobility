@@ -69,6 +69,9 @@ public:
 
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
+
+    void startPanning();
+    void stopPanning();
     void pan(int dx, int dy);
 
     QRectF screenRect() const;
@@ -92,6 +95,7 @@ private slots:
 private:
     QGeoTiledMapDataPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoTiledMapData)
+    friend class QGeoTiledMappingManagerEngine;
 };
 
 QTM_END_NAMESPACE

@@ -170,6 +170,10 @@ qreal QGeoMapData::zoomLevel() const
     return d_ptr->zoomLevel;
 }
 
+void QGeoMapData::startPanning() {}
+
+void QGeoMapData::stopPanning() {}
+
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in they y direction.
@@ -364,7 +368,8 @@ QPixmap QGeoMapData::mapImage() const
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate()
-    : containerObject(new QGeoMapObject()),
+    : zoomLevel(-1.0),
+    containerObject(new QGeoMapObject()),
     imageChangesTriggerUpdates(true) {}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)

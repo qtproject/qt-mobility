@@ -64,7 +64,7 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidg
         d_ptr(new QGeoTiledMapDataPrivate(this))
 {
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
-    QGeoMapData::setZoomLevel(DEFAULT_ZOOMLEVEL);
+    QGeoMapData::setZoomLevel(8.0);
     d_ptr->width = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().width();
     d_ptr->height = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().height();
 }
@@ -238,6 +238,16 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     if (!QGeoMapData::mapImage().isNull())
         p.drawPixmap(QGeoMapData::mapImage().rect(), QGeoMapData::mapImage(), QGeoMapData::mapImage().rect());
     setMapImage(pm);
+}
+
+void QGeoTiledMapData::startPanning()
+{
+    setImageChangesTriggerUpdates(false);
+}
+
+void QGeoTiledMapData::stopPanning()
+{
+    setImageChangesTriggerUpdates(true);
 }
 
 void QGeoTiledMapData::pan(int dx, int dy)

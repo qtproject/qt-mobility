@@ -77,16 +77,20 @@ MapWidget::~MapWidget() {}
 void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton) {
         panActive = true;
+        startPanning();
+    }
 
     event->accept();
 }
 
 void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton) {
         panActive = false;
+        stopPanning();
+    }
 
     event->accept();
 }

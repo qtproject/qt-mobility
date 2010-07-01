@@ -44,7 +44,6 @@ PUBLIC_HEADERS += \
                     qgeoserviceproviderfactory.h \
                     qgeotiledmapdata.h \
                     qgeotiledmappingmanagerengine.h \
-                    qgeotiledmappingmanagerthread.h \
                     qgeotiledmapreply.h \
                     qgeotiledmaprequest.h \
                     qlandmark.h \
@@ -107,7 +106,6 @@ PRIVATE_HEADERS += \
                     qgeoserviceprovider_p.h \
                     qgeotiledmapdata_p.h \
                     qgeotiledmappingmanagerengine_p.h \
-                    qgeotiledmappingmanagerthread_p.h \
                     qgeotiledmapreply_p.h \
                     qgeotiledmaprequest_p.h \
                     qlandmark_p.h \
@@ -241,7 +239,6 @@ SOURCES += \
             qgeoserviceproviderfactory.cpp \
             qgeotiledmapdata.cpp \
             qgeotiledmappingmanagerengine.cpp \
-            qgeotiledmappingmanagerthread.cpp \
             qgeotiledmapreply.cpp \
             qgeotiledmaprequest.cpp \
             qlandmark.cpp \

@@ -44,42 +44,11 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
-#include <qgeotiledmappingmanagerthread.h>
 
 class QNetworkAccessManager;
 class QNetworkDiskCache;
 
 QTM_USE_NAMESPACE
-
-class QGeoMappingManagerEngineNokia;
-
-class QGeoMappingManagerThreadNokia : public QGeoTiledMappingManagerThread
-{
-    Q_OBJECT
-public:
-    QGeoMappingManagerThreadNokia(QGeoMappingManagerEngineNokia* engine,
-                                  const QMap<QString, QString> &parameters);
-    ~QGeoMappingManagerThreadNokia();
-
-    void initialize();
-    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
-
-private:
-    Q_DISABLE_COPY(QGeoMappingManagerThreadNokia)
-
-    QString getRequestString(const QGeoTiledMapRequest &request) const;
-
-    static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(QGeoMapWidget::MapType type);
-
-    QGeoMappingManagerEngineNokia* m_engine;
-    QMap<QString, QString> m_parameters;
-    QNetworkAccessManager *m_nam;
-    QNetworkDiskCache *m_cache;
-    QString m_host;
-    QString m_token;
-    QString m_referrer;
-};
 
 class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
@@ -88,14 +57,25 @@ public:
     QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
-    virtual ~QGeoMappingManagerEngineNokia();
+    ~QGeoMappingManagerEngineNokia();
 
-protected:
-    QGeoTiledMappingManagerThread* createTileManagerThread();
+    void initialize();
+    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
 private:
-    QMap<QString, QString> parameters;
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
+
+    QString getRequestString(const QGeoTiledMapRequest &request) const;
+
+    static QString sizeToStr(const QSize &size);
+    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+
+    QMap<QString, QString> m_parameters;
+    QNetworkAccessManager *m_nam;
+    QNetworkDiskCache *m_cache;
+    QString m_host;
+    QString m_token;
+    QString m_referrer;
 };
 
 #endif

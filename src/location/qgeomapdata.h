@@ -71,6 +71,8 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
+    virtual void startPanning();
+    virtual void stopPanning();
     virtual void pan(int dx, int dy);
 
     virtual void setCenter(const QGeoCoordinate &center);

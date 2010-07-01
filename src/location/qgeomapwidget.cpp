@@ -232,6 +232,18 @@ qreal QGeoMapWidget::zoomLevel() const
     return -1;
 }
 
+void QGeoMapWidget::startPanning()
+{
+    if (d_ptr->mapData)
+        d_ptr->mapData->startPanning();
+}
+
+void QGeoMapWidget::stopPanning()
+{
+    if (d_ptr->mapData)
+        d_ptr->mapData->stopPanning();
+}
+
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in they y direction.
@@ -245,6 +257,7 @@ void QGeoMapWidget::pan(int dx, int dy)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->pan(dx, dy);
+        update();
         d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 }
