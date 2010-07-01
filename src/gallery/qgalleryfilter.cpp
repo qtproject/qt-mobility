@@ -901,7 +901,7 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 */
 
 /*!
-    \enum Comparator
+    \enum QGalleryFilter::Comparator
 
     Identifies the comparison made by a QGalleryMetaDataFilter.
 
