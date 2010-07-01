@@ -177,14 +177,14 @@ testcase = {
             enter(vCardFile, "File name:");
             // need to accept entry due to autocompletion
             keyClick(Qt.Key_Enter);
-            var contactVCFData = getData(contactsVCFFile);
+            var contactVCFData = getData(vCardFile);
             if (!(contactVCFData.indexOf(name1)
                 && contactVCFData.indexOf(name2))) {
                 print(".vcf contains:" + contactVCFData);
                 deletePath(contactsVCFFile);
                 fail("Did not find in .vcf:" + name1 + "," + name2);
             }
-            deletePath(contactsVCFFile);
+            deletePath(vCardFile);
         }else{
             prompt(twiki('---+++ Verify Exported Contacts
     1. If =Export Contacts...= menu is missing skip this test
