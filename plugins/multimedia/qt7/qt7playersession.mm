@@ -422,7 +422,9 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
                 [NSNumber numberWithBool:YES], QTMovieIsActiveAttribute,
                 [NSNumber numberWithBool:YES], QTMovieResolveDataRefsAttribute,
                 [NSNumber numberWithBool:YES], QTMovieDontInteractWithUserAttribute,
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
                 [NSNumber numberWithBool:YES], QTMovieOpenForPlaybackAttribute,
+#endif
                 nil];
 
     m_QTMovie = [[QTMovie movieWithAttributes:attr error:&err] retain];
