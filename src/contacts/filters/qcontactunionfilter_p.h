@@ -76,7 +76,7 @@ public:
 
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactUnionFilterPrivate *od = static_cast<const QContactUnionFilterPrivate*>(other);
         if (m_filters != od->m_filters)

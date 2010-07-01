@@ -75,7 +75,7 @@ public:
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactLocalIdFilterPrivate *od = static_cast<const QContactLocalIdFilterPrivate*>(other);
         if (m_ids != od->m_ids)
