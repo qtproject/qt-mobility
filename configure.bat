@@ -63,6 +63,15 @@ set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
+REM We use these variables to indicate which modules are selected
+REM They are used for example to see which modules need config.tests built
+set CONTACTS_SELECTED=yes
+set BEARER_SELECTED=yes
+set SYSTEMINFO_SELECTED=yes
+set SENSORS_SELECTED=yes
+set MESSAGING_SELECTED=yes
+set MULTIMEDIA_SELECTED=yes
+set LOCATION_SELECTED=yes
 if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
@@ -247,13 +256,13 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
 
-REM reset selected modules
 set CONTACTS_SELECTED=
 set BEARER_SELECTED=
 set SYSTEMINFO_SELECTED=
 set SENSORS_SELECTED=
 set MESSAGING_SELECTED=
 set MULTIMEDIA_SELECTED=
+set LOCATION_SELECTED=
 echo Checking selected modules:
 :modulesTag2
 
@@ -272,6 +281,7 @@ if %FIRST% == bearer (
     set CONTACTS_SELECTED=yes
 ) else if %FIRST% == location (
     echo     Location selected
+    set LOCATION_SELECTED=yes
 ) else if %FIRST% == messaging (
     echo     Messaging selected
     set MESSAGING_SELECTED=yes
@@ -505,7 +515,6 @@ if "%MULTIMEDIA_SELECTED%" == "yes" (
     call :compileTest Surfaces_s60 surfaces_s60
 )
 if "%CONTACTS_SELECTED%" == "yes" (
-    call :compileTest LBT lbt
     call :compileTest SymbianContactSIM symbiancntsim
 )
 if "%BEARER_SELECTED%" == "yes" (
@@ -522,7 +531,9 @@ if "%MESSAGING_SELECTED%" == "yes" (
 if "%SYSTEMINFO_SELECTED%" == "yes" (
     call :compileTest Symbian_Hb hb_symbian
 )
-
+if "%LOCATION_SELECTED%" == "yes" (
+    call :compileTest LBT lbt
+)
 :noTests
 
 echo End of compile tests
@@ -620,6 +631,13 @@ set MOBILITY_MODULES_UNPARSED=
 SET REMAINING=
 SET FIRST=
 SET MODULES_TEMP=
+set CONTACTS_SELECTED=
+set BEARER_SELECTED=
+set SYSTEMINFO_SELECTED=
+set SENSORS_SELECTED=
+set MESSAGING_SELECTED=
+set MULTIMEDIA_SELECTED=
+set LOCATION_SELECTED=
 exit /b 1
 
 :exitTag
@@ -637,4 +655,11 @@ set MOBILITY_MODULES_UNPARSED=
 SET REMAINING=
 SET FIRST=
 SET MODULES_TEMP=
+set CONTACTS_SELECTED=
+set BEARER_SELECTED=
+set SYSTEMINFO_SELECTED=
+set SENSORS_SELECTED=
+set MESSAGING_SELECTED=
+set MULTIMEDIA_SELECTED=
+set LOCATION_SELECTED=
 exit /b 0
