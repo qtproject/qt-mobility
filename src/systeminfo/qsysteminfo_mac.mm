@@ -925,7 +925,7 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi && /* networkThreadOk &&*/ runloopThread->isRunning()) {
+    if(hasWifi && networkThreadOk && runloopThread->isRunning()) {
         runloopThread->stop();
    }
 #endif
