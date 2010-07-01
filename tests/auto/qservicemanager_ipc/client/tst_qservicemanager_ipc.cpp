@@ -109,7 +109,9 @@ private slots:
 #endif
     
     void sharedTestService();
+#ifdef UNIQUE_TESTS
     void testIpcFailure();
+#endif
 
 private:
     QObject* serviceUnique;
@@ -931,6 +933,7 @@ void tst_QServiceManager_IPC::testSlotInvokation()
     QCOMPARE(hash, expectedHash);
 }
 
+#ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::testIpcFailure()
 {
   QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
@@ -947,6 +950,7 @@ void tst_QServiceManager_IPC::testIpcFailure()
 //  QVERIFY2(service,errorCode.toLatin1());
 //  connect(service, SIGNAL(errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)), this, SLOT(ipcError(QService::UnrecoverableIPCError)));  
 }
+#endif
 
 QTEST_MAIN(tst_QServiceManager_IPC);
 #include "tst_qservicemanager_ipc.moc"
