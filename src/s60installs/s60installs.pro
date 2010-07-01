@@ -66,6 +66,8 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
 
+    contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
 
     contains(mobility_modules, bearer) {
         bearer = \
@@ -106,7 +108,7 @@ isEmpty(QT_LIBINFIX):symbian {
         contains(symbiancntsim_enabled, yes) {
             pluginstubs += \
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/qtcontacts_symbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbiansim.qtplugin\""
-
+?
             symbiancntsim = \
                 "IF package(0x1028315F)" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbiansim.dll\" - \"!:\\sys\\bin\\qtcontacts_symbiansim.dll\"" \
