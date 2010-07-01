@@ -105,6 +105,25 @@ bool QContactDetailDefinition::isEmpty() const
     return true;
 }
 
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& definition)
+{
+    return out << definition.name() << definition.isUnique() << definition.fields();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
+{
+    QString name;
+    bool unique;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    in >> name >> unique >> fields;
+    definition.setName(name);
+    definition.setUnique(unique);
+    definition.setFields(fields);
+    return in;
+}
+#endif
+
 /*! Sets the unique identifier of this detail type to \a definitionName. */
 void QContactDetailDefinition::setName(const QString& definitionName)
 {

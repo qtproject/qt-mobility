@@ -51,6 +51,8 @@
 #include "qtcontactsglobal.h"
 #include "qcontactid.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactRelationshipPrivate;
@@ -105,6 +107,10 @@ private:
 Q_CONTACTS_EXPORT uint qHash(const QContactRelationship& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactRelationship& rel);
+#endif
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactRelationship& rel);
 #endif
 
 QTM_END_NAMESPACE

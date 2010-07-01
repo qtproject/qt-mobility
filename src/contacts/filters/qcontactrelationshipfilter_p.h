@@ -95,6 +95,19 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << m_relationshipType << m_relatedContactId << (quint32)m_relatedContactRole;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        quint32 role;
+        stream >> m_relationshipType >> m_relatedContactId >> role;
+        m_relatedContactRole = QContactRelationship::Role(role);
+        return stream;
+    }
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
     QString m_relationshipType;

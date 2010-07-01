@@ -50,6 +50,8 @@
 #include <QStringList>
 #include <QVariant>
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactDetailPrivate;
@@ -207,12 +209,19 @@ protected:
 private:
     friend class QContact;
     friend class QContactDetailPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
+#endif
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContactDetail& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetail& detail);
+#endif
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetail& detail);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
 #endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);

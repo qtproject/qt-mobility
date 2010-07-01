@@ -195,4 +195,26 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
     d->m_optimizationHints = hints;
 }
 
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
+{
+    return out << hint.detailDefinitionsHint()
+        << hint.relationshipTypesHint()
+        << (quint32)hint.optimizationHints();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
+{
+    QStringList detailDefinitionHints;
+    QStringList relationshipTypeHints;
+    quint32 optimizations;
+    in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
+    hint.setDetailDefinitionsHint(detailDefinitionHints);
+    hint.setRelationshipTypesHint(relationshipTypeHints);
+    hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    return in;
+}
+
+#endif
+
 QTM_END_NAMESPACE

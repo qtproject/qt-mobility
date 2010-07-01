@@ -43,6 +43,7 @@
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -477,6 +478,35 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
     }
     dbg.nospace() << ')';
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
+{
+    out << detail.definitionName() << (quint32)detail.accessConstraints() << detail.variantValues();
+    return out;
+}
+
+QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
+{
+    QString definitionName;
+    in >> definitionName;
+    detail = QContactDetail(definitionName);
+
+    quint32 accessConstraintsInt;
+    in >> accessConstraintsInt;
+    QContactDetail::AccessConstraints accessConstraints(accessConstraintsInt);
+    detail.d->m_access = accessConstraints;
+
+    QVariantMap values;
+    in >> values;
+    QMapIterator<QString, QVariant> it(values);
+    while (it.hasNext()) {
+        it.next();
+        detail.setValue(it.key(), it.value());
+    }
+    return in;
 }
 #endif
 

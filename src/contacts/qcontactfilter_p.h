@@ -55,7 +55,7 @@
 
 #include "qcontactfilter.h"
 #include <QSharedData>
-
+#include <QDataStream>
 
 /* Boiler plate code */
 #define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
@@ -87,6 +87,8 @@ public:
     }
 
     virtual bool compare(const QContactFilterPrivate* other) const = 0;
+    virtual QDataStream& outputToStream(QDataStream& stream) const = 0;
+    virtual QDataStream& inputFromStream(QDataStream& stream) = 0;
     virtual QContactFilterPrivate* clone() const = 0;
     virtual QContactFilter::FilterType type() const = 0;
 

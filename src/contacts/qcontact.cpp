@@ -41,6 +41,7 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QDataStream>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
@@ -646,6 +647,7 @@ uint qHash(const QContact &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QContact& contact)
 {
     dbg.nospace() << "QContact(" << contact.id() << ")";
@@ -654,6 +656,31 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
     }
     return dbg.maybeSpace();
 }
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContact& contact)
+{
+    out << contact.id();
+    out << contact.details();
+    return out;
+}
+
+QDataStream& operator>>(QDataStream& in, QContact& contact)
+{
+    contact.clearDetails();
+    QContactId id;
+    in >> id;
+    contact.setId(id);
+    QList<QContactDetail> details;
+    in >> details;
+    foreach (QContactDetail detail, details) {
+        contact.saveDetail(&detail);
+    }
+    return in;
+}
+
+#endif
 
 
 /*!

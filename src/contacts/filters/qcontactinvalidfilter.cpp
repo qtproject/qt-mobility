@@ -65,6 +65,16 @@ public:
         return true; // all invalid filters are alike
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        return stream;
+    }
+
     /* There is no way this can be called - d is never detached */
     QContactFilterPrivate* clone() const
     {
@@ -75,8 +85,6 @@ public:
     {
         return QContactFilter::InvalidFilter;
     }
-
-    QList<QContactFilter> m_filters;
 };
 
 /*!

@@ -138,4 +138,21 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
     return !(*this == other);
 }
 
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
+{
+    return out << (quint32)definition.dataType() << definition.allowableValues();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
+{
+    quint32 dataType;
+    QVariantList allowableValues;
+    in >> dataType >> allowableValues;
+    definition.setDataType(QVariant::Type(dataType));
+    definition.setAllowableValues(allowableValues);
+    return in;
+}
+#endif
+
 QTM_END_NAMESPACE

@@ -103,6 +103,10 @@ protected:
 
 protected:
     friend class QContactFilterPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+    friend QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+#endif
     QSharedDataPointer<QContactFilterPrivate> d_ptr;
 };
 
@@ -110,6 +114,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFilter::MatchFlags);
 
 const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
 const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+#endif
 
 QTM_END_NAMESPACE
 

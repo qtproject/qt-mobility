@@ -102,6 +102,22 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << m_defId << m_fieldId << m_minValue << m_maxValue
+            << (quint32)m_flags << (quint32)m_rangeflags;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        quint32 flags;
+        quint32 rangeFlags;
+        stream >> m_defId >> m_fieldId >> m_minValue >> m_maxValue >> flags >> rangeFlags;
+        m_flags = QContactFilter::MatchFlags(flags);
+        m_rangeflags = QContactDetailRangeFilter::RangeFlags(rangeFlags);
+        return stream;
+    }
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactDetailRangeFilter, QContactFilter::ContactDetailRangeFilter)
 
     QString m_defId;

@@ -49,6 +49,7 @@
 #include <QString>
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -186,6 +187,27 @@ QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
     dbg.nospace() << "QContactRelationship(" << rel.first() << ' ' << rel.relationshipType()
             << ' ' << rel.second() << ')';
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
+{
+    return out << rel.first() << rel.relationshipType() << rel.second();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
+{
+    QContactId first;
+    in >> first;
+    rel.setFirst(first);
+    QString relationshipType;
+    in >> relationshipType;
+    rel.setRelationshipType(relationshipType);
+    QContactId second;
+    in >> second;
+    rel.setSecond(second);
+    return in;
 }
 #endif
 

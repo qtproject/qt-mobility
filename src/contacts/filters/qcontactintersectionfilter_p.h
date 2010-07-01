@@ -84,6 +84,16 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << m_filters;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        return stream >> m_filters;
+    }
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIntersectionFilter, QContactFilter::IntersectionFilter)
 
     QList<QContactFilter> m_filters;

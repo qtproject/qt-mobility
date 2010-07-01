@@ -128,6 +128,33 @@ bool QContactSortOrder::operator ==(const QContactSortOrder& other) const
     return false;
 }
 
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
+{
+    return out << sortOrder.detailDefinitionName()
+        << sortOrder.detailFieldName()
+        << (quint32)sortOrder.blankPolicy()
+        << (quint32)sortOrder.direction()
+        << (quint32)sortOrder.caseSensitivity();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
+{
+    QString definitionName;
+    QString fieldName;
+    quint32 blankPolicy;
+    quint32 direction;
+    quint32 caseSensitivity;
+    in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
+    sortOrder.setDetailDefinitionName(definitionName, fieldName);
+    sortOrder.setBlankPolicy(QContactSortOrder::BlankPolicy(blankPolicy));
+    sortOrder.setDirection(Qt::SortOrder(direction));
+    sortOrder.setCaseSensitivity(Qt::CaseSensitivity(caseSensitivity));
+    return in;
+}
+#endif
+
 /*!
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,
  * and the name of those details' fields which contains the value which contacts will be sorted by to \a fieldName

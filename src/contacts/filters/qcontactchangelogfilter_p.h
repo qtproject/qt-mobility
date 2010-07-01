@@ -78,7 +78,7 @@ public:
 
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactChangeLogFilterPrivate *od = static_cast<const QContactChangeLogFilterPrivate*>(other);
         if (m_eventType != od->m_eventType)
@@ -86,6 +86,19 @@ public:
         if (m_since != od->m_since)
             return false;
         return true;
+    }
+
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << (quint32)m_eventType << m_since;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        quint32 eventType;
+        stream >> eventType >> m_since;
+        m_eventType = (QContactChangeLogFilter::EventType)eventType;
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactChangeLogFilter, QContactFilter::ChangeLogFilter)

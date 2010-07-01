@@ -43,6 +43,7 @@
 #include "qcontactid_p.h"
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -154,6 +155,24 @@ QDebug operator<<(QDebug dbg, const QContactId& id)
 {
     dbg.nospace() << "QContactId(" << id.managerUri() << ", " << id.localId() << ")";
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactId& id)
+{
+    return out << id.managerUri() << id.localId();
+}
+
+QDataStream& operator>>(QDataStream& in, QContactId& id)
+{
+    QString managerUri;
+    in >> managerUri;
+    id.setManagerUri(managerUri);
+    QContactLocalId localId;
+    in >> localId;
+    id.setLocalId(localId);
+    return in;
 }
 #endif
 

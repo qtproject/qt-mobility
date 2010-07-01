@@ -93,6 +93,19 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << m_defId << m_fieldId << m_exactValue << (quint32)m_flags;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        quint32 flags;
+        stream >> m_defId >> m_fieldId >> m_exactValue >> flags;
+        m_flags = QContactFilter::MatchFlags(flags);
+        return stream;
+    }
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactDetailFilter, QContactFilter::ContactDetailFilter)
 
     QString m_defId;

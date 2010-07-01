@@ -83,6 +83,16 @@ public:
         return true;
     }
 
+    QDataStream& outputToStream(QDataStream& stream) const
+    {
+        return stream << m_ids;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream)
+    {
+        return stream >> m_ids;
+    }
+
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactLocalIdFilter, QContactFilter::LocalIdFilter)
 
     QList<QContactLocalId> m_ids;
