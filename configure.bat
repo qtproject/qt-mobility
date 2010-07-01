@@ -58,8 +58,7 @@ set BUILD_EXAMPLES=no
 set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set BUILD_SYMBIANCNTMODEL=no
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors telephony organizer
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery telephony organizer feedback
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -134,13 +133,12 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -demos ............ Build demo applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts location publishsubscribe
+    echo                     Choose from: bearer contacts gallery location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework telephony
-    echo                     sensors versit organizer
+    echo                     sensors versit organizer feedback
     echo                     Modules should be separated by a space and surrounded
-    echo                     by double quotation. If a
-    echo                     selected module depends on other modules dependencies
-    echo                     will automatically be enabled.
+    echo                     by double quotation. If a selected module depends on other modules
+    echo                     those modules (and their dependencies) will automatically be enabled.
     echo -vc ............... Generate Visual Studio make files
 
 
@@ -308,8 +306,12 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts and Organizer^)
 ) else if %FIRST% == organizer (
     echo     Organizer selected
+) else if %FIRST% == feedback (
+    echo     Feedback selected
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == gallery (
+    echo     Gallery selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -532,7 +534,7 @@ call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
-
+call :compileTest IMMERSION immersion
 :noTests
 
 echo End of compile tests
@@ -593,12 +595,16 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == gallery (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtGallery %SOURCE_PATH%\src\gallery
 ) else if %FIRST% == organizer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\items
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtOrganizer %SOURCE_PATH%\src\organizer\details
+) else if %FIRST% == feedback (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtFeedback %SOURCE_PATH%\src\feedback
 )
 
 if "%REMAINING%" == "" (

@@ -18,6 +18,8 @@ headerdirs = ../../src/bearer \
              ../../src/versit \
              ../../src/telephony \
              ../../src/sensors \
+             ../../src/gallery \
+             ../../plugins/declarative/gallery \
              ../../src/camera \
              .
 
@@ -33,6 +35,8 @@ sourcedirs = ../../src/bearer \
              ../../src/versit \
              ../../src/telephony \
              ../../src/sensors \
+             ../../src/gallery \
+             ../../plugins/declarative/gallery \
              ../../src/camera \
              .
 

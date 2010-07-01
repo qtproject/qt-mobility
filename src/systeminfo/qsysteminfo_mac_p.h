@@ -225,9 +225,10 @@ public:
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 public Q_SLOTS:
-    void storageChanged( bool added);
+    void storageChanged( bool added,const QString &vol);
+
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool added,const QString &vol);
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -369,7 +370,7 @@ public:
     void stop();
     DASessionRef session;
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDrivesChanged(bool added,const QString & vol);
 
 protected:
     void run();

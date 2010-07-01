@@ -87,6 +87,16 @@ contains(MOBILITY, sensors) {
     qtAddLibrary(QtSensors)
 }
 
+contains(MOBILITY, feedback) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtFeedback
+    qtAddLibrary(QtFeedback)
+}
+
+contains(MOBILITY, gallery) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtGallery
+    qtAddLibrary(QtGallery)
+}
+
 contains(MOBILITY, organizer) {
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtOrganizer
     qtAddLibrary(QtOrganizer)
