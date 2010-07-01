@@ -20,6 +20,7 @@ contains(mobility_modules,contacts): SUBDIRS += contacts
 contains(mobility_modules,organizer): SUBDIRS += organizer
 contains(mobility_modules,versit): SUBDIRS += versit
 
+contains(mobility_modules,feedback): SUBDIRS += feedback
 contains(mobility_modules,telephony): SUBDIRS += telephony
 
 contains(mobility_modules,publishsubscribe) {

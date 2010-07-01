@@ -2,6 +2,8 @@ include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
+SUBDIRS += hapticsplayer
+
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \

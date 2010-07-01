@@ -438,7 +438,7 @@ static bool qt_writeCondition(
         const QGalleryItemPropertyList &properties)
 {
     if (!filter.isEmpty()) {
-        xml->writeStartElement(QLatin1String("rdfq:or"));
+        xml->writeStartElement(QLatin1String("rdfq:and"));
 
         const QList<QGalleryFilter> filters = filter.filters();
         for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
@@ -463,7 +463,7 @@ static bool qt_writeCondition(
         const QGalleryItemPropertyList &properties)
 {
     if (!filter.isEmpty()) {
-        xml->writeStartElement(QLatin1String("rdfq:and"));
+        xml->writeStartElement(QLatin1String("rdfq:or"));
 
         const QList<QGalleryFilter> filters = filter.filters();
         for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
