@@ -45,6 +45,8 @@
 #include <stdint.h>
 #endif
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -499,8 +501,9 @@ QMetaMethodBuilder QMetaObjectBuilder::addMethod(const QMetaMethod& prototype)
     QMetaMethodBuilder method;
     if (prototype.methodType() == QMetaMethod::Method)
         method = addMethod(prototype.signature());
-    else if (prototype.methodType() == QMetaMethod::Signal)
+    else if (prototype.methodType() == QMetaMethod::Signal) {        
         method = addSignal(prototype.signature());
+    }
     else if (prototype.methodType() == QMetaMethod::Slot)
         method = addSlot(prototype.signature());
     else if (prototype.methodType() == QMetaMethod::Constructor)

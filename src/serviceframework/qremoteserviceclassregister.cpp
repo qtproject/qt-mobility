@@ -68,6 +68,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRemoteServiceClassRegister
+    \inmodule QtServiceFramework
     \ingroup servicefw
     \brief The QRemoteServiceClassRegister class manages the various remote service classes
     which can be instanciated.

@@ -27,20 +27,10 @@
 
 
 /*!
-    \module QtMultimediaKit
-    \title  QtMultimediaKit Module
-    \brief  The QtMultimediaKit Module providees APIs to play and record media, and manage a collection of media content.
-    
-*/
-
-
-/*!
     \group multimedia
     \title Mobility Multimedia
     APIs to play and record media, and manage a collection of media content.
 */
-
-
 
 /*!
 
