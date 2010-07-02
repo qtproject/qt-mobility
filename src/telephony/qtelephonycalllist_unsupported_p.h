@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,37 +39,48 @@
 **
 ****************************************************************************/
 
-#include "ipcendpoint_p.h"
+#ifndef QTELEPHONYCALLLIST_UNSUPPORTED_P_H
+#define QTELEPHONYCALLLIST_UNSUPPORTED_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
-/*!
-    QServiceIpcEndPoint
-*/
-QServiceIpcEndPoint::QServiceIpcEndPoint(QObject* parent)
-    : QObject( parent )
-{
-}
 
-QServiceIpcEndPoint::~QServiceIpcEndPoint()
-{
-}
+class QTelephonyCallInfoPrivate;
+class QTelephonyCallList;
 
-bool QServiceIpcEndPoint::packageAvailable() const
+class QTelephonyCallListPrivate
 {
-    return !incoming.isEmpty();
-}
+    friend class QTelephonyCallList;
 
-QServicePackage QServiceIpcEndPoint::nextPackage()
-{
-    if (!incoming.isEmpty())
-        return incoming.dequeue();
-    return QServicePackage();
-}
+public:
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { 
+		qWarning("Telephone is not supported on this platform");
+	};
+    virtual ~QTelephonyCallListPrivate() { 
+	};
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const 
+	{ 
+	QList<QTelephonyCallInfo> e; 
+	return e; 
+	};
 
-void QServiceIpcEndPoint::writePackage(QServicePackage newPackage)
-{
-    flushPackage(newPackage);
-}
+private:
+};
 
-#include "moc_ipcendpoint_p.cpp"
 QTM_END_NAMESPACE
+QT_END_HEADER
+
+#endif // QTELEPHONYCALLLIST_UNSUPPORTED_P_H

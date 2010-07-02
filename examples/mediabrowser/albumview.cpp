@@ -56,8 +56,6 @@ AlbumView::AlbumView(QWidget *parent)
             << QDocumentGallery::title
             << QDocumentGallery::artist
             << QDocumentGallery::trackCount
-            << QDocumentGallery::duration
-            << QDocumentGallery::rating
             << QDocumentGallery::thumbnailImage);
     setSortFields(QStringList()
             << QDocumentGallery::title);
@@ -67,6 +65,7 @@ AlbumView::AlbumView(QWidget *parent)
     properties.insert(Qt::DisplayRole, QDocumentGallery::title);
     properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
     properties.insert(AlbumDelegate::Artist, QDocumentGallery::artist);
+    properties.insert(AlbumDelegate::TrackCount, QDocumentGallery::trackCount);
 
     model = new QGalleryItemListModel;
     model->addColumn(properties);

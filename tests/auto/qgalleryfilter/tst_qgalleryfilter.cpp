@@ -515,7 +515,6 @@ void tst_QGalleryFilter::cast()
     QCOMPARE(QGalleryFilter().toIntersectionFilter().isValid(), false);
 }
 
-
 void tst_QGalleryFilter::intersectionOperator()
 {
     QList<QGalleryFilter> filters;
@@ -655,7 +654,6 @@ void tst_QGalleryFilter::propertyOperators()
     }
 }
 
-
 void tst_QGalleryFilter::equality_data()
 {
     const QGalleryProperty albumProperty("albumTitle");
@@ -774,6 +772,22 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(trackProperty < 3)
             << QGalleryFilter(durationProperty >= 23004)
             << false;
+    QTest::newRow("unequal meta-data filter (negated")
+            << QGalleryFilter(metaDataFilter)
+            << QGalleryFilter(!metaDataFilter)
+            << false;
+    QTest::newRow("unequal meta-data filter (case-sensitivity")
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    albumProperty,
+                    QLatin1String("Self Titled"),
+                    QGalleryFilter::Equals,
+                    Qt::CaseSensitive))
+            << QGalleryFilter(QGalleryMetaDataFilter(
+                    albumProperty,
+                    QLatin1String("Self Titled"),
+                    QGalleryFilter::Equals,
+                    Qt::CaseInsensitive))
+            << false;
 
     QTest::newRow("unequal union filter count")
             << QGalleryFilter(unionFilter)
@@ -848,7 +862,6 @@ void tst_QGalleryFilter::equality_data()
             << QGalleryFilter(QGalleryIntersectionFilter())
             << false;
 }
-
 
 void tst_QGalleryFilter::equality()
 {

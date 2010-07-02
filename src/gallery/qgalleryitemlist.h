@@ -93,7 +93,7 @@ public:
         Writing = 0x04
     };
 
-    Q_DECLARE_FLAGS(ItemStatus, ItemStatusFlag);
+    Q_DECLARE_FLAGS(ItemStatus, ItemStatusFlag)
 
     QGalleryItemList(QObject *parent = 0);
     ~QGalleryItemList();

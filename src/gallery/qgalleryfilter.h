@@ -60,19 +60,6 @@ class QGalleryMetaDataFilter;
 class QGalleryUnionFilter;
 QTM_END_NAMESPACE
 
-#ifndef Q_QDOC
-bool Q_GALLERY_EXPORT operator ==(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
-
-bool Q_GALLERY_EXPORT operator !=(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
-#else
-bool Q_GALLERY_EXPORT operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-bool Q_GALLERY_EXPORT operator !=(const QGalleryFilter &filter2, const QGalleryFilter &filter2);
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 class QGalleryFilterPrivate;
@@ -121,15 +108,18 @@ public:
 private:
     QSharedDataPointer<QGalleryFilterPrivate> d;
 
-    friend Q_GALLERY_EXPORT bool ::operator ==(
+    friend Q_GALLERY_EXPORT bool operator ==(
             const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-    friend Q_GALLERY_EXPORT bool ::operator !=(
+    friend Q_GALLERY_EXPORT bool operator !=(
             const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
 #endif
 };
+
+Q_GALLERY_EXPORT bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+Q_GALLERY_EXPORT bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
@@ -265,29 +255,22 @@ private:
     friend class QGalleryFilter;
 };
 
+template <typename T>
+QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
+{
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
+template <typename T>
+QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
 QTM_END_NAMESPACE
-
-#ifndef Q_QDOC
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator ||(
-        const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator &&(
-        const QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-#else
-QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(const QGalleryUnionFilter &filter1, const T &filter2);
-QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2);
-#endif
 
 #endif

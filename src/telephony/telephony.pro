@@ -29,7 +29,7 @@ symbian: {
     SOURCES += qtelephonycalllist_symbian.cpp
 } else {
     unix: {
-        !maemo* {
+        !maemo*|!mac {
             QT += dbus
             HEADERS += linux/qtelephonycalllist_linux_p.h
             SOURCES += linux/qtelephonycalllist_linux.cpp
@@ -44,10 +44,14 @@ symbian: {
                         linux/dbusadaptor.h \
                         linux/dbusinterface.h
         }
-        maemo* {
-            HEADERS += qtelephonycalllist_maemo_p.h
-            SOURCES += qtelephonycalllist_maemo.cpp
-        }
+# TODO: remove comment to enable maemo
+#        maemo* {
+#            HEADERS += qtelephonycalllist_maemo_p.h
+#            SOURCES += qtelephonycalllist_maemo.cpp
+#        }
+	mac*|maemo* {
+	    HEADERS += qtelephonycalllist_unsupported_p.h
+	}
     }
 }
 

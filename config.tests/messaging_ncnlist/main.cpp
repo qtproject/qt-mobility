@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <MNcnNotification.h>
 
-#include "ipcendpoint_p.h"
-
-QTM_BEGIN_NAMESPACE
-/*!
-    QServiceIpcEndPoint
-*/
-QServiceIpcEndPoint::QServiceIpcEndPoint(QObject* parent)
-    : QObject( parent )
+int main(int, char**)
 {
+    return 0;
 }
-
-QServiceIpcEndPoint::~QServiceIpcEndPoint()
-{
-}
-
-bool QServiceIpcEndPoint::packageAvailable() const
-{
-    return !incoming.isEmpty();
-}
-
-QServicePackage QServiceIpcEndPoint::nextPackage()
-{
-    if (!incoming.isEmpty())
-        return incoming.dequeue();
-    return QServicePackage();
-}
-
-void QServiceIpcEndPoint::writePackage(QServicePackage newPackage)
-{
-    flushPackage(newPackage);
-}
-
-#include "moc_ipcendpoint_p.cpp"
-QTM_END_NAMESPACE
