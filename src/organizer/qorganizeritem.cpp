@@ -115,9 +115,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-    Construct an empty organizeritem.
+    Construct an empty organizer item.
 
-    The organizeritem will have an empty display label, an empty id, and have type \l QOrganizerItemType::TypeOrganizerItem.
+    The organizer item will have an empty display label, an empty id, and an empty description
+    and have type \l QOrganizerItemType::TypeNote.
     The isEmpty() function will return true.
 */
 QOrganizerItem::QOrganizerItem()
@@ -677,17 +678,28 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
     saveDetail(&newType);
 }
 
+/*!
+ * Returns the display label of the item
+ */
 QString QOrganizerItem::displayLabel() const
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
     return dl.label();
 }
+
+/*!
+ * Sets the display label of the item to \a label
+ */
 void QOrganizerItem::setDisplayLabel(const QString& label)
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
     dl.setLabel(label);
     saveDetail(&dl);
 }
+
+/*!
+ * Sets the display label of the item to \a label
+ */
 void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
@@ -695,12 +707,18 @@ void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
     saveDetail(&dl);
 }
 
+/*!
+ * Returns the human-readable description of the item
+ */
 QString QOrganizerItem::description() const
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
     return descr.description();
 }
 
+/*!
+ * Sets the human-readable description of the item to \a description
+ */
 void QOrganizerItem::setDescription(const QString& description)
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
@@ -708,6 +726,9 @@ void QOrganizerItem::setDescription(const QString& description)
     saveDetail(&descr);
 }
 
+/*!
+ * Sets the human-readable description of the item to \a description
+ */
 void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
@@ -715,6 +736,10 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
     saveDetail(&descr);
 }
 
+/*!
+ * Returns the list of comments (or arbitrary notes about the item)
+ * which pertain to this item
+ */
 QStringList QOrganizerItem::comments() const
 {
     QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
@@ -725,6 +750,9 @@ QStringList QOrganizerItem::comments() const
     return list;
 }
 
+/*!
+ * Clears the comments (arbitrary notes) about this item
+ */
 void QOrganizerItem::clearComments()
 {
     QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
@@ -733,6 +761,9 @@ void QOrganizerItem::clearComments()
     }
 }
 
+/*!
+ * Adds the comment \a comment to this item
+ */
 void QOrganizerItem::addComment(const QString& comment)
 {
     QOrganizerItemComment detail;
@@ -740,12 +771,19 @@ void QOrganizerItem::addComment(const QString& comment)
     saveDetail(&detail);
 }
 
+/*!
+ * Returns the globally unique identifier which identifies this item,
+ * which is used for synchronization purposes.
+ */
 QString QOrganizerItem::guid() const
 {
     QOrganizerItemGuid guid = detail<QOrganizerItemGuid>();
     return guid.guid();
 }
 
+/*!
+ * Sets the item's globally unique identifier to \a guid
+ */
 void QOrganizerItem::setGuid(const QString& guid)
 {
     QOrganizerItemGuid guidDetail = detail<QOrganizerItemGuid>();

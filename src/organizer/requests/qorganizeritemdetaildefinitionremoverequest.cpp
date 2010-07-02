@@ -66,13 +66,13 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 /*!
   Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different organizeritem types, and so attempting to remove definitions with certain names may fail if no such
-  definitions exist for organizeritems of the given organizeritem type, specified via setOrganizerItemType().
+  definitions exist for organizeritems of the given organizeritem type, specified via setItemType().
   Equivalent to calling:
   \code
       setDefinitionNames(QStringList(definitionName));
   \endcode
 
-  \sa setOrganizerItemType()
+  \sa setItemType()
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
@@ -84,8 +84,8 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QStrin
 /*!
   Sets the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different organizeritem types, and so attempting to remove definitions with certain names may fail if no such
-  definitions exist for organizeritems of the given organizeritem type, specified via setOrganizerItemType().
-  \sa setOrganizerItemType()
+  definitions exist for organizeritems of the given organizeritem type, specified via setItemType().
+  \sa setItemType()
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {

@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
   when creating \l QOrganizerItemManager objects.
 
   More information on writing a organizeritems engine plugin is available in
-  the \l{Qt OrganizerItems Manager Engines} documentation.
+  the \l{Qt Organizer Manager Engines} documentation.
 
   \sa QOrganizerItemManager, QOrganizerItemManagerEngine
  */
