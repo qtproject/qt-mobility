@@ -255,6 +255,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::DefinitionName, "JournalTim
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryDateTime");
 
+/*!
+   \fn QOrganizerJournalTimeRange::entryDateTime() const
+   Returns the journal entry date and time as QDateTime.
+ */
+
+/*!
+   \fn QOrganizerJournalTimeRange::setEntryDateTime(const QDateTime& entryDateTime)
+   Sets the journal entry date and time to \a entryDateTime.
+ */
 
 /* ==================== QOrganizerItemLocation ======================= */
 // XXX TODO: do we include all three pieces of data into a single detail
@@ -417,10 +426,35 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
+/*!
+   \fn QOrganizerItemRecurrence::recurrenceDates() const
+   Returns a list of recurrence dates.
+ */
 
+/*!
+   \fn QOrganizerItemRecurrence::setRecurrenceDates(const QList<QDate>& rdates)
+   Sets a list of recurrence dates to \a rdates.
+ */
 
+/*!
+   \fn QOrganizerItemRecurrence::exceptionRules() const
+   Returns a list of exception rules.
+ */
 
+/*!
+   \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
+   Sets a list of exception rules to \a xrules.
+ */
 
+/*!
+   \fn QOrganizerItemRecurrence::recurrenceRules() const
+   Returns a list of recurrence rules.
+ */
+
+/*!
+   \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+   Sets a list of recurrence rules to \a rrules.
+ */
 
 
 
@@ -517,10 +551,43 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldPercentageComplete, "Perce
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "FinishedDateTime");
 
+/*!
+  \enum QOrganizerTodoProgress::Status
+  Enumerates the various possible types of todo item status
+  \value StatusNotStarted The todo item hasn't been started yet
+  \value StatusInProgress The todo item is current in progress
+  \value StatusComplete The todo item has finished
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::status() const
+  Returns the todo progress item's current status as QOrganizerTodoProgress::Status.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::setStatus(Status status)
+  Sets the todo progress item's current status to \a status.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::finishedDateTime() const
+  Returns the todo progress item's finished date and timeas QDateTime.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::setFinishedDateTime(const QDateTime& finishedDateTime)
+  Sets the todo progress item's finished date and time to \a finishedDateTime.
+ */
+
+/*!
+  \fn QOrganizerTodoProgress::percentageComplete() const
+  Returns the todo progress item's completion percentage.
+ */
+
+/*!
+  \fn QOrganizerTodoProgress::setPercentageComplete(int percentage)
+  Sets the todo progress item's completion percentage to \a percentage.
+ */
 /* ==================== QOrganizerTodoTimeRange ======================= */
 /*!
    \class QOrganizerTodoTimeRange
