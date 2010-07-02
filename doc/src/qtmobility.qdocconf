@@ -4,7 +4,7 @@ include(qt-cpp-ignore.qdocconf)
 include(qt-html-templates.qdocconf)
 include(qt-defines.qdocconf)
 
-project                 = Qt Mobility Project Library
+project                 = QtMobility
 description             = Qt Mobility Project Library Reference Documentation
 versionsym              =
 version                 = 1.1
@@ -52,29 +52,29 @@ qhp.Qt.extraFiles          = index.html \
 			     style/style_ie8.css \
 			     style/style.css
 
-qhp.Mobility.filterAttributes   = qtmobility
-qhp.Mobility.file               = qtmobility.qhp
-qhp.Mobility.namespace          = com.nokia.qtmobility
-qhp.Mobility.virtualFolder      = mobility
-qhp.Mobility.indexTitle         = Qt Mobility Project Reference Documentation
-qhp.Mobility.indexRoot          =
+qhp.QtMobility.filterAttributes   = qtmobility
+qhp.QtMobility.file               = qtmobility.qhp
+qhp.QtMobility.namespace          = com.nokia.qtmobility
+qhp.QtMobility.virtualFolder      = mobility
+qhp.QtMobility.indexTitle         = Qt Mobility Project Reference Documentation
+qhp.QtMobility.indexRoot          =
 
-qhp.Mobility.customFilters.QtMobility.name = Qt Mobility
-qhp.Mobility.customFilters.QtMobility.filterAttributes = qtmobility
+qhp.QtMobility.customFilters.QtMobility.name = Qt Mobility
+qhp.QtMobility.customFilters.QtMobility.filterAttributes = qtmobility
 
-qhp.Mobility.subprojects = classes overviews examples
-qhp.Mobility.subprojects.classes.title = Classes
-qhp.Mobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
-qhp.Mobility.subprojects.classes.selectors = class
-qhp.Mobility.subprojects.classes.sortPages = true
-qhp.Mobility.subprojects.overviews.title = Overviews
-qhp.Mobility.subprojects.overviews.indexTitle = Qt Mobility Project Overview
-qhp.Mobility.subprojects.overviews.selectors = fake:page,group
-qhp.Mobility.subprojects.overviews.sortPages = true
-qhp.Mobility.subprojects.examples.title = Examples
-qhp.Mobility.subprojects.examples.indexTitle = Qt Mobility Project Examples
-qhp.Mobility.subprojects.examples.selectors = fake:example
-qhp.Mobility.subprojects.examples.sortPages = true
+qhp.QtMobility.subprojects = classes overviews examples
+qhp.QtMobility.subprojects.classes.title = Classes
+qhp.QtMobility.subprojects.classes.indexTitle = All Qt Mobility Project Classes
+qhp.QtMobility.subprojects.classes.selectors = class
+qhp.QtMobility.subprojects.classes.sortPages = true
+qhp.QtMobility.subprojects.overviews.title = Overviews
+qhp.QtMobility.subprojects.overviews.indexTitle = Qt Mobility Project Overview
+qhp.QtMobility.subprojects.overviews.selectors = fake:page,group
+qhp.QtMobility.subprojects.overviews.sortPages = true
+qhp.QtMobility.subprojects.examples.title = Examples
+qhp.QtMobility.subprojects.examples.indexTitle = Qt Mobility Project Examples
+qhp.QtMobility.subprojects.examples.selectors = fake:example
+qhp.QtMobility.subprojects.examples.sortPages = true
 
 defines                 = Q_QDOC \
                           __cplusplus \
@@ -132,12 +132,12 @@ examples.fileextensions = "*.cpp *.h *.js *.xq *.svg *.xml *.ui *.qhp *.qhcp *.q
 examples.imageextensions = "*.png"
 
 imagedirs               = images \
-                         $QTDIR/examples \
-			             $QTDIR/doc/src/template/images
+                         $QT_MOBILITY_SOURCE_TREE/examples \
+			             $QT_MOBILITY_SOURCE_TREE/doc/src/template/images
 
-outputdir               = $QTDIR/doc/html
-tagfile                 = $QTDIR/doc/html/qt.tags
-base                    = file:$QTDIR/doc/html
+outputdir               = $QT_MOBILITY_SOURCE_TREE/doc/html
+tagfile                 = $QT_MOBILITY_SOURCE_TREE/doc/html/qt.tags
+base                    = file:$MOBILITY_SRC_DIR/doc/html
 
 
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
