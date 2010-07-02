@@ -12,7 +12,7 @@ defines                 = Q_QDOC \
                           Q_NO_USING_KEYWORD \
                           __cplusplus
 
-versionsym              = QT_VERSION_STR
+versionsym              = Qt Mobility 1.1
 
 codeindent              = 1
 
