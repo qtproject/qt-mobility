@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -78,20 +78,18 @@ private:
     QTimer *updateTimer;
     QTimer *requestTimer;
     int timerInterval;
+    bool errorOccurred;
+    bool errorSent;
+
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
-    int lowSignalLevelCount;
     
     enum PositionInfoState {
         Undefined = 0,
         Started = 1,
         Stopped = 2,
         RequestActive = 4,
-        RequestSingleShot = 8,
-        PowersaveActive = 16,
-        TogglePowersave = 32,
-        SignalLevelLow = 64,        
+        PowersaveActive = 8
     };
     int positionInfoState;
     
@@ -106,6 +104,7 @@ public slots:
 
 private slots:
     void requestTimeoutElapsed();
+    void error();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)

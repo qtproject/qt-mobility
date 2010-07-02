@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Session Details</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -195,7 +195,7 @@
        <item>
         <widget class="QLabel" name="errorStringLabel">
          <property name="text">
-          <string>Error String</string>
+          <string>Error String:</string>
          </property>
         </widget>
        </item>

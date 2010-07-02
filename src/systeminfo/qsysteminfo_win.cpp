@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,6 @@
 #include <qt_windows.h>
 
 #include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 
 #include <QStringList>
 #include <QSize>
@@ -359,6 +358,8 @@ static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC_WITH_ARGS(QMutex, dynamicLoadMutex, (QMutex::Recursive));
+
 static void resolveLibrary()
 {
 #if !defined( Q_OS_WINCE)
@@ -366,7 +367,7 @@ static void resolveLibrary()
 
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&local_WlanOpenHandle));
+        QMutexLocker locker(dynamicLoadMutex());
 #endif
 
         if (!triedResolve) {
@@ -562,7 +563,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
             resolveLibrary();
             if(local_BluetoothFindFirstRadio == 0 ) {
-                qWarning() << "Bluetooth library could not resolve or be loaded";
+                qDebug() << "Bluetooth library could not resolve or be loaded";
                 return false;
             }
             BLUETOOTH_FIND_RADIO_PARAMS  radioParams = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS)};
@@ -785,11 +786,11 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
     if(local_WlanOpenHandle)
         result = local_WlanOpenHandle(2, NULL, &version, &hWlan );
     if( result != ERROR_SUCCESS ) {
-        qWarning() << "Error opening Wlanapi 2" << result ;
+        qDebug() << "Error opening Wlanapi 2" << result ;
         return ;
     }
     if( result != ERROR_SUCCESS) {
-        qWarning() << "Error in enumerating wireless interfaces" << result;
+        qDebug() << "Error in enumerating wireless interfaces" << result;
         return ;
     }
     if (ERROR_SUCCESS != local_WlanRegisterNotification(hWlan,
@@ -797,7 +798,7 @@ void QSystemNetworkInfoPrivate::startWifiCallback()
                                                   true,
                                                   WLAN_NOTIFICATION_CALLBACK(wlanNotificationCallback),
                                                   this, 0, 0)) {
-        qWarning() << "failed";
+        qDebug() << "failed";
     } else {
         wlanCallbackInitialized = true;
     }
@@ -986,7 +987,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 if (hWlan ==0) {
                     result = local_WlanOpenHandle( 2, NULL, &version, &hWlan );
                     if( result != ERROR_SUCCESS ) {
-                        qWarning() << "Error opening Wlanapi 3" << result ;
+                        qDebug() << "Error opening Wlanapi 3" << result ;
                         local_WlanCloseHandle(hWlan,  0);
                         return 0;
                     }
@@ -994,7 +995,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 result = local_WlanEnumInterfaces(hWlan, NULL, &interfacesInfoList);
 
                 if( result != ERROR_SUCCESS) {
-                    qWarning() << "Error in enumerating wireless interfaces" << result;
+                    qDebug() << "Error in enumerating wireless interfaces" << result;
                     local_WlanCloseHandle(hWlan,  0);
                     return 0;
                 }
@@ -1005,7 +1006,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                     WLAN_INTERFACE_STATE wlanInterfaceState = interfaceInfo->isState;
 
                     if( wlanInterfaceState == wlan_interface_state_not_ready ) {
-                        qWarning() << "Interface not ready";
+                        qDebug() << "Interface not ready";
                         continue;
                     }
 
@@ -1180,7 +1181,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                                           &medium, sizeof(medium), &bytesWritten, 0);
             if (!result) {
                 CloseHandle(handle);
-                qWarning() << "DeviceIo result is false";
+                qDebug() << "DeviceIo result is false";
                 return QNetworkInterface();
                 continue;
             }
@@ -1700,12 +1701,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -1813,7 +1814,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
     if(GetSystemPowerStatusEx(&status, true) ) {
         bat = status.BatteryLifePercent;
     } else {
-       qWarning() << "Battery status failed";
+       qDebug() << "Battery status failed";
        return 0;
     }
 #else
@@ -1821,7 +1822,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
     if(GetSystemPowerStatus( &status) ) {
         bat = status.BatteryLifePercent;
     } else {
-       qWarning() << "Battery status failed";
+       qDebug() << "Battery status failed";
        return 0;
     }
 #endif
@@ -1876,7 +1877,6 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    qWarning()<< __FUNCTION__;
 #ifdef Q_OS_WINCE
     HSIM handle;
     DWORD lockedState;
@@ -1915,7 +1915,6 @@ bool QSystemScreenSaverPrivate::screenSaverSecureEnabled()
 
     QSettings screenSettings(settingsPath, QSettings::NativeFormat);
     if(screenSettings.value("ScreenSaverIsSecure").toString() == "1") {
-        qWarning() << "screensaver enabled";
         screenSaverSecure = true;
     }
     screenPath = screenSettings.value("SCRNSAVE.EXE").toString();

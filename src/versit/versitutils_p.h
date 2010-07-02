@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,9 +68,6 @@ QTM_BEGIN_NAMESPACE
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
-    static void backSlashEscape(QString& text);
-    static void removeBackSlashEscaping(QString& text);
-
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
     static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);

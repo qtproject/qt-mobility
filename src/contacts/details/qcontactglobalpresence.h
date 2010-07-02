@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,13 +58,13 @@ class Q_CONTACTS_EXPORT QContactGlobalPresence : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldTimestamp;
-    const char* FieldNickname;
-    const char* FieldPresenceState;
-    const char* FieldPresenceStateText;
-    const char* FieldPresenceStateImageUrl;
-    const char* FieldCustomMessage;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTimestamp;
+    static const QLatin1Constant FieldNickname;
+    static const QLatin1Constant FieldPresenceState;
+    static const QLatin1Constant FieldPresenceStateText;
+    static const QLatin1Constant FieldPresenceStateImageUrl;
+    static const QLatin1Constant FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGlobalPresence, "GlobalPresence")
     Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");

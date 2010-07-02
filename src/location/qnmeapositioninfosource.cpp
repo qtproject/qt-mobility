@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -118,7 +118,7 @@ bool QNmeaSimulatedReader::setFirstDateTime()
         if (size <= 0)
             continue;
         bool ok = m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix);
-        if (ok && update.dateTime().isValid()) {
+        if (ok && update.timestamp().isValid()) {
             QPendingGeoPositionInfo pending;
             pending.info = update;
             pending.hasFix = hasFix;
@@ -155,7 +155,7 @@ void QNmeaSimulatedReader::processNextSentence()
     int timeToNextUpdate = -1;
     QTime prevTime;
     if (m_pendingUpdates.size() > 0)
-        prevTime = m_pendingUpdates.head().info.dateTime().time();
+        prevTime = m_pendingUpdates.head().info.timestamp().time();
 
     // find the next update with a valid time (as long as the time is valid,
     // we can calculate when the update should be emitted)
@@ -165,7 +165,7 @@ void QNmeaSimulatedReader::processNextSentence()
         if (size <= 0)
             continue;
         if (m_proxy->parsePosInfoFromNmeaData(buf, size, &info, &hasFix)) {
-            QTime time = info.dateTime().time();
+            QTime time = info.timestamp().time();
             if (time.isValid()) {
                 if (!prevTime.isValid()) {
                     timeToNextUpdate = 0;
@@ -361,16 +361,16 @@ void QNmeaPositionInfoSourcePrivate::updateRequestTimeout()
 void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, bool hasFix)
 {
     // include <QDebug> before uncommenting
-    //qDebug() << "QNmeaPositionInfoSourcePrivate::notifyNewUpdate()" << update->dateTime() << hasFix << m_invokedStart << (m_requestTimer && m_requestTimer->isActive());
+    //qDebug() << "QNmeaPositionInfoSourcePrivate::notifyNewUpdate()" << update->timestamp() << hasFix << m_invokedStart << (m_requestTimer && m_requestTimer->isActive());
 
-    QDate date = update->dateTime().date();
+    QDate date = update->timestamp().date();
     if (date.isValid()) {
         m_currentDate = date;
     } else {
         // some sentence have time but no date
-        QTime time = update->dateTime().time();
+        QTime time = update->timestamp().time();
         if (time.isValid() && m_currentDate.isValid())
-            update->setDateTime(QDateTime(m_currentDate, time, Qt::UTC));
+            update->setTimestamp(QDateTime(m_currentDate, time, Qt::UTC));
     }
 
     if (hasFix && update->isValid()) {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#if !defined(HAS_NO_SENSOR_PROVISION)
 //Symbian
 #include <e32std.h>
 #include <rrsensorapi.h>
@@ -48,12 +49,12 @@
 
 // Constants
 const int KAccelerometerSensorUID = 0x10273024;
-// Values are from http://www.st.com/stonline/products/literature/ds/12726/lis302dl.pdf
 
-const char *QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
+char const * const QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
 
 QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
-    : QS60SensorApiCommon(sensor)
+    : QSensorBackend(sensor)
+    , m_nativeSensor(NULL)
     , m_sampleFactor(0.0f)
 {
     TRAPD(err, findAndCreateNativeSensorL());
@@ -71,28 +72,74 @@ QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     
     // 2G - mode
     addDataRate(100, 100);
-    qreal range = 2.3f * 9.80665f;
-    addOutputRange(-range, range, 0.0f);
+    addOutputRange(-22.418, 22.418, 0.17651);
     setDescription(QLatin1String("lis302dl"));
     
     //Synbian interface gives values between -680 - 680
-    m_sampleFactor =  range / 680.0f;
+    m_sampleFactor =  this->sensor()->outputRanges()[0].maximum / 680.0f;
 }
+
+QS60SensorApiAccelerometer::~QS60SensorApiAccelerometer()
+{
+    stop();
+    delete m_nativeSensor;
+    m_nativeSensor = NULL;
+}
+
+void QS60SensorApiAccelerometer::start()
+{
+    if(!m_nativeSensor)
+        return;
+    
+    m_nativeSensor->AddDataListener(this);    
+}
+
+void QS60SensorApiAccelerometer::stop()
+{
+    if(!m_nativeSensor)
+        return;
+    
+    m_nativeSensor->RemoveDataListener();
+}
+
+void QS60SensorApiAccelerometer::poll()
+{
+    //empty implementation
+}
+
 
 void QS60SensorApiAccelerometer::HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent)
 {
-    QS60SensorApiCommon::HandleDataEventL(aSensor, aEvent);
+    if (aSensor.iSensorId != KAccelerometerSensorUID) 
+        return; 
     
     TTime time;
     time.UniversalTime();
     m_reading.setTimestamp(time.Int64());
     m_reading.setX((qreal)aEvent.iSensorData2 * m_sampleFactor);
-    m_reading.setY((qreal)-aEvent.iSensorData1 * m_sampleFactor);
-    m_reading.setZ((qreal)-aEvent.iSensorData3 * m_sampleFactor);
+    m_reading.setY((qreal)aEvent.iSensorData1 * -m_sampleFactor);
+    m_reading.setZ((qreal)aEvent.iSensorData3 * -m_sampleFactor);
     newReadingAvailable();
 }
 
-int QS60SensorApiAccelerometer::nativeSensorId()
+void QS60SensorApiAccelerometer::findAndCreateNativeSensorL()
 {
-    return KAccelerometerSensorUID;
+    if(m_nativeSensor)
+        return;
+    
+    RArray<TRRSensorInfo> sensorList;
+    CRRSensorApi::FindSensorsL(sensorList);
+    CleanupClosePushL(sensorList);
+
+    TInt index = 0;
+    do {
+        if (sensorList[index].iSensorId == KAccelerometerSensorUID)
+            m_nativeSensor = CRRSensorApi::NewL(sensorList[index]);
+    } while(!m_nativeSensor && ++index < sensorList.Count());
+        
+    if (!m_nativeSensor)
+        User::Leave(KErrHardwareNotAvailable);
+    
+    CleanupStack::PopAndDestroy(&sensorList);
 }
+#endif

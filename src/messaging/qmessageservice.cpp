@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,7 +49,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageService
 
-    \preliminary
     \ingroup messaging
 
     \brief The QMessageService class provides the interface for requesting 
@@ -60,7 +59,7 @@ QTM_BEGIN_NAMESPACE
     the same interface for communicating status, and progress information.
 
     All service request operations communicate changes in their operational state 
-    by emitting the activityChanged() signal.
+    by emitting the stateChanged() signal.
 
     Service request operations report progress information by emitting the 
     progressChanged() signal.
@@ -129,6 +128,9 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
     
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     Returns true if the operation can be initiated; otherwise returns false.
 
     Note: This function should not initiate network activity, instead only message data
@@ -156,6 +158,9 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
 
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     Returns true if the operation can be initiated; otherwise returns false.
     
     Note: This function should not initiate network activity, instead only message data
@@ -174,6 +179,9 @@ QTM_BEGIN_NAMESPACE
     signal  being emitted multiple times. An emission of the progressChanged()
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
+    
+    The performance of counting messages is currently significantly less than optimal 
+    for some filters on some platforms.
     
     Returns true if the operation can be initiated; otherwise returns false.
     
@@ -194,6 +202,10 @@ QTM_BEGIN_NAMESPACE
     transmission, or moved to that folder if it is already stored in another folder.
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
+    
+    Currently on the Maemo 5 (Fremantle) and Windows Mobile platforms the service 
+    action object enters the FinishedState when the message is queued for sending 
+    rather than actually sent.
   
     Returns true if the operation can be initiated; otherwise returns false.
     
@@ -238,6 +250,8 @@ QTM_BEGIN_NAMESPACE
 
     If the message can not be found on the originating server it will be marked as removed.
 
+    On the Symbian^3 platform this function is not yet supported.
+
     Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessageId, QMessage::Removed
@@ -262,6 +276,8 @@ QTM_BEGIN_NAMESPACE
     The default application for handling the type of message that \a id identifies should be used.
 
     Returns true if the operation can be initiated; otherwise returns false.
+    
+    On the Maemo 5 (Fremantle) platform this function is not yet supported for SMS type messages.
     
     On the QMF platform implementation of this function is left as a task for system 
     integrators.

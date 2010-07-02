@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -56,8 +55,6 @@ Q_OBJECT
 public:
     tst_QContactRelationship();
     virtual ~tst_QContactRelationship();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 private slots:
     void operations();

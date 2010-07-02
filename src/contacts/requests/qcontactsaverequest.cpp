@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,24 +54,38 @@ QTM_BEGIN_NAMESPACE
   contacts (which may be retrieved by calling contacts()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact save request */
-QContactSaveRequest::QContactSaveRequest()
-    : QContactAbstractRequest(new QContactSaveRequestPrivate)
+/*! Constructs a new contact save request whose parent is the specified \a parent */
+QContactSaveRequest::QContactSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this contact save request */
-QContactSaveRequest::~QContactSaveRequest()
+/*!
+  Sets the contact to be saved to \a contact.
+  Equivalent to calling:
+  \code
+      setContacts(QList<QContact>() << contact);
+  \endcode
+ */
+void QContactSaveRequest::setContact(const QContact& contact)
 {
+    Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_contacts.clear();
+    d->m_contacts.append(contact);
 }
 
 /*! Sets the list of contacts to be saved to \a contacts */
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {
     Q_D(QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contacts = contacts;
 }
 
@@ -80,6 +94,7 @@ void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contacts;
 }
 
@@ -87,6 +102,7 @@ QList<QContact> QContactSaveRequest::contacts() const
 QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
 {
     Q_D(const QContactSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

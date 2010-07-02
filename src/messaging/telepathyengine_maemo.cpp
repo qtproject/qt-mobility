@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,10 +57,7 @@ Q_GLOBAL_STATIC(TelepathyEngine,telepathyEngine);
 
 TelepathyEngine::TelepathyEngine()
 {
-    qDebug() << "TelepathyEngine::TelepathyEngine()";
-    tpSession=new TpSession("ring",TRUE); // Create as sync, telephony "ring" as default
-    qDebug() << "TelepathyEngine::TelepathyEngine() exit";
-
+  tpSession=TpSession::instance(TRUE); // Create as sync, telephony "ring" as default
 }
 
 TelepathyEngine::~TelepathyEngine()
@@ -75,42 +72,52 @@ TelepathyEngine* TelepathyEngine::instance()
 
 bool TelepathyEngine::sendMessage(QMessage &message)
 {
-    QMessage::Type type=message.type();
-    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? "gabble" : "";
-    QMessageAddressList toList=message.to();
-    QMessageAccountId account=message.parentAccountId();
-    if(!cm.isEmpty()) {
-        foreach(QMessageAddress to,toList) {
-             tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
-        };
-    }
-    else
-        qDebug() << "TelepathyEngine::sendMessage unsupported message type" << type;
+  bool retVal=false;
+  QMessage::Type type=message.type();
+  QMessageAccountId account=message.parentAccountId();
+  QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
+  QMessageAddressList toList=message.to();
+  TpSessionAccount *tpsa=tpSession->getAccount(account.toString());
+  // qDebug() << "sendMessage account:" << account.toString() << tpsa;
+  if(!tpsa) return false;
+  if(!cm.isEmpty()) {
+    foreach(QMessageAddress to,toList) {
+      connect(tpsa,SIGNAL(messageQueued(TpSessionAccount *,bool)),SLOT(onMessageQueued(TpSessionAccount *,bool)));
+      opBusy=true;
+      tpsa->sendMessageToAddress(to.addressee(),message.textContent());
+      if(opBusy) loop.exec(); // Wait untill this message has been queued to sent next one
+     // qDebug() << "sendMessage loop exit";
+      retVal=true;
+    };
+  }
+  else
+    qDebug() << "TelepathyEngine::sendMessage unsupported message type" << type;
+  return retVal;
 }
 
 
+ void TelepathyEngine::onMessageSent(const Tp::Message &,TpSessionAccount *)
+ {
+    qDebug() << "onMessageSent:" ;
+    // loop.quit();
+ };
 
-bool TelepathyEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    return true;
-}
+ void TelepathyEngine::onMessageQueued(TpSessionAccount *,bool status)
+ {
+     //qDebug() << "onMessageQueued:" << status;
+     opBusy=false;
+     loop.quit(); // If queuinf failed, exit loop
+ };
 
-bool TelepathyEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    return true;
-}
 
-bool TelepathyEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
-{
-    return true;
-};
 
 void TelepathyEngine::updateImAccounts() const
 {
 //    iDefaultImAccountId = QMessageAccountId();
+//  qDebug() << "TelepathyEngine::updateImAccounts";
     iAccounts.clear();
     foreach (TpSessionAccount *tpacc, tpSession->accounts) {
-        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
+      //     qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
         bool account_ok = tpacc->acc->isEnabled() && tpacc->acc->isValidAccount();
         QString cm=tpacc->acc->cmName();
         if (account_ok) {
@@ -122,28 +129,36 @@ void TelepathyEngine::updateImAccounts() const
                                                                        accountName,
                                                                        QMessageAddress(QMessageAddress::Phone, accountAddress),
                                                                        QMessage::Sms);
+               //  qDebug() << "updateImAccounts Sms id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
                 iAccounts.insert(accountId, account);
                 defaultSmsAccountId=accountId;
-            } else
-             if(cm=="gabble") { // Gabble for googletalk
+            } else {
                 QString accountId = tpacc->acc->uniqueIdentifier();
                 QString accountName = tpacc->acc->normalizedName();
                 QString accountAddress = tpacc->acc->normalizedName();
+                // Some ugly hardcoded hacks
+                if(tpacc->acc->protocol()=="skype") accountName+=QString("@skype");
+                if(!accountName.contains("@")) accountName+=QString("@")+tpacc->acc->parameters()["server"].toString();
+                // qDebug() << "updateImAccounts InstantMessage id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
                 QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
                                                                        accountName,
                                                                        QMessageAddress(QMessageAddress::InstantMessage, accountAddress),
                                                                        QMessage::InstantMessage);
                 iAccounts.insert(accountId, account);
-            } else qDebug() << "Protocol " << tpacc->acc->protocol() << "with connectionmanager " << cm << "Is not yet supported";
-//                if (strncmp(account_name_key, default_account, strlen(default_account))) iDefaultEmailAccountId = accountId;
-
             }
+//            else qDebug() << "Protocol " << tpacc->acc->protocol() << "with connectionmanager " << cm << "Is not yet supported";
+//                if (strncmp(account_name_key, default_account, strlen(default_account))) iDefaultEmailAccountId = accountId;
+        }
         }
 }
 
 QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
                                                   uint limit, uint offset, bool &isFiltered, bool &isSorted) const
 {
+    Q_UNUSED(sortOrder);
+    Q_UNUSED(limit);
+    Q_UNUSED(offset);
+  //  qDebug() << "TelepathyEngine::queryAccounts";
     QMessageAccountIdList accountIds;
 
     updateImAccounts();
@@ -173,8 +188,10 @@ QMessageAccount TelepathyEngine::account(const QMessageAccountId &id) const
 
 QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type) const
 {
+  //  qDebug() << "TelepathyEngine::defaultAccount";
     updateImAccounts();
     return defaultSmsAccountId;
 }
 
+#include "moc_telepathyengine_maemo_p.cpp"
 QTM_END_NAMESPACE

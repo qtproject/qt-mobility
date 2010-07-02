@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,6 +61,12 @@ data using arbitrary data sources.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 
@@ -132,7 +138,7 @@ public:
     MyClass(QObject *parent = 0)
         : QObject(parent)
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(this);
         if (source) {
             connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -243,7 +249,7 @@ Here are the key methods in the class implementation:
 
 
 The example includes a \c ClientApplication class that requests updates
-from the \c LogFilePositionSource class. Run the exaple to see the data
+from the \c LogFilePositionSource class. Run the example to see the data
 that is received by \c ClientApplication.
 
 Before running the example, make sure you have done both \tt make

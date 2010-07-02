@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,25 +39,25 @@
 **
 ****************************************************************************/
 
-#include <qaudioencodercontrol.h>
+#include "qaudioencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
     \class QAudioEncoderControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
 
-    \brief The QAudioEncoderControl class provides access to the settings of a media service that
-    performs audio encoding.
+    \brief The QAudioEncoderControl class provides access to the settings of a
+    media service that performs audio encoding.
 
-    If a QMediaService supports encoding audio data it will implement QAudioEncoderControl.  This
-    control provides information about the limits of restricted audio encoder options and allows
-    the selection of a set of audio encoder settings as specificed in a QAudioEncoderSettings
-    object.
+    If a QMediaService supports encoding audio data it will implement
+    QAudioEncoderControl.  This control provides information about the limits
+    of restricted audio encoder options and allows the selection of a set of
+    audio encoder settings as specified in a QAudioEncoderSettings object.
 
     The functionality provided by this control is exposed to application code through the
     QMediaRecorder class.
@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
     The interface name of QAudioEncoderControl is \c com.nokia.Qt.QAudioEncoderControl/1.0 as
     defined in QAudioEncoderControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaService::requestControl(), QMediaRecorder
 */
 
 /*!
@@ -151,5 +151,5 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 #include "moc_qaudioencodercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

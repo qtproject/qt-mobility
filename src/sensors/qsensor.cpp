@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -73,7 +73,6 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \class QSensor
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensor class represents a single hardware sensor.
 
     The life cycle of a sensor is typically:
@@ -116,15 +115,18 @@ QSensor::~QSensor()
 }
 
 /*!
-    \property QSensor::connected
+    \property QSensor::connectedToBackend
     \brief a value indicating if the sensor has connected to a backend.
 
     A sensor that has not been connected to a backend cannot do anything useful.
 
-    Call the connect() method to force the sensor to connect to a backend immediately.
+    Call the connectToBackend() method to force the sensor to connect to a backend
+    immediately. This is automatically called if you call start() so you only need
+    to do this if you need access to sensor properties (ie. to poll the sensor's
+    meta-data before you use it).
 */
 
-bool QSensor::isConnected() const
+bool QSensor::isConnectedToBackend() const
 {
     return (d->backend != 0);
 }
@@ -136,7 +138,7 @@ bool QSensor::isConnected() const
     Note that the identifier is filled out automatically
     when the sensor is connected to a backend. If you want
     to connect a specific backend, you should call
-    setIdentifier() before connect().
+    setIdentifier() before connectToBackend().
 */
 
 QByteArray QSensor::identifier() const
@@ -147,7 +149,7 @@ QByteArray QSensor::identifier() const
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
     if (d->backend) {
-        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected!";
+        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected to a backend!";
         return;
     }
     d->identifier = identifier;
@@ -170,9 +172,9 @@ QByteArray QSensor::type() const
 
     The type must be set before calling this method if you are using QSensor directly.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
-bool QSensor::connect()
+bool QSensor::connectToBackend()
 {
     if (d->backend)
         return true;
@@ -225,6 +227,8 @@ bool QSensor::isActive() const
     \brief the data rates that the sensor supports.
 
     This is a list of the data rates that the sensor supports.
+    Measured in Hertz.
+
     Entries in the list can represent discrete rates or a
     continuous range of rates.
     A discrete rate is noted by having both values the same.
@@ -232,7 +236,7 @@ bool QSensor::isActive() const
     See the sensor_explorer example for an example of how to interpret and use
     this information.
 
-    \sa updateInterval
+    \sa QSensor::dataRate
 */
 
 qrangelist QSensor::availableDataRates() const
@@ -241,29 +245,53 @@ qrangelist QSensor::availableDataRates() const
 }
 
 /*!
-    \property QSensor::updateInterval
-    \brief the update interval of the sensor (measured in milliseconds).
+    \property QSensor::dataRate
+    \brief the data rate that the sensor should be run at.
 
-    The default value is 0. Note that this causes undefined behaviour.
+    Measured in Hertz.
+
+    The data rate is the maximum frequency at which the sensor can detect changes.
+
+    Setting this property is not portable and can cause conflicts with other
+    applications. Check with the sensor backend and platform documentation for
+    any policy regarding multiple applications requesting a data rate.
+
+    The default value (0) means that the app does not care what the data rate is.
+    Applications should consider using a timer-based poll of the current value or
+    ensure that the code that processes values can run very quickly as the platform
+    may provide updates hundreds of times each second.
 
     This should be set before calling start() because the sensor may not
     notice changes to this value while it is running.
 
-    Note that some sensors can only operate at particular rates.
-    The system will attempt to run the sensor at an appropriate rate
-    while delivering updates as often as requested.
+    Note that there is no mechanism to determine the current data rate in use by the
+    platform.
 
-    \sa availableDataRates
+    \sa QSensor::availableDataRates
 */
 
-int QSensor::updateInterval() const
+int QSensor::dataRate() const
 {
-    return d->updateInterval;
+    return d->dataRate;
 }
 
-void QSensor::setUpdateInterval(int interval)
+void QSensor::setDataRate(int rate)
 {
-    d->updateInterval = interval;
+    if (rate == 0) {
+        d->dataRate = rate;
+        return;
+    }
+    bool warn = true;
+    Q_FOREACH (const qrange &range, d->availableDataRates) {
+        if (rate >= range.first && rate <= range.second) {
+            warn = false;
+            d->dataRate = rate;
+            break;
+        }
+    }
+    if (warn) {
+        qWarning() << "setDataRate: rate" << rate << "is not supported by the sensor.";
+    }
 }
 
 /*!
@@ -278,7 +306,7 @@ bool QSensor::start()
 {
     if (d->active)
         return true;
-    if (!connect())
+    if (!connectToBackend())
         return false;
     // Set these flags to their defaults
     d->active = true;
@@ -309,9 +337,9 @@ void QSensor::stop()
 
     The reading class provides access to sensor readings.
 
-    Note that this will return 0 until a sensor backend is connected.
+    Note that this will return 0 until a sensor backend is connected to a backend.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
 
 QSensorReading *QSensor::reading() const
@@ -381,8 +409,16 @@ qoutputrangelist QSensor::outputRanges() const
     \property QSensor::outputRange
     \brief the output range in use by the sensor.
 
-    A sensor may have more than one output range. Typically this is done
-    to give a greater measurement range at the cost of lowering accuracy.
+    This value represents the index in the QSensor::outputRanges list to use.
+
+    Setting this property is not portable and can cause conflicts with other
+    applications. Check with the sensor backend and platform documentation for
+    any policy regarding multiple applications requesting an output range.
+
+    The default value (-1) means that the app does not care what the output range is.
+
+    Note that there is no mechanism to determine the current output range in use by the
+    platform.
 
     \sa QSensor::outputRanges
 */
@@ -394,7 +430,7 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    if (index < 0 || index >= d->outputRanges.count()) {
+    if (index < -1 || index >= d->outputRanges.count()) {
         qWarning() << "ERROR: Output range" << index << "is not valid";
         return;
     }
@@ -437,7 +473,6 @@ int QSensor::error() const
     \class QSensorFilter
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorFilter class provides an efficient
            callback facility for asynchronous notifications of
            sensor changes.
@@ -502,7 +537,6 @@ void QSensorFilter::setSensor(QSensor *sensor)
     \class QSensorReading
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorReading class holds the readings from the sensor.
 
     Note that QSensorReading is not particularly useful by itself. The interesting
@@ -514,14 +548,9 @@ void QSensorFilter::setSensor(QSensor *sensor)
 */
 QSensorReading::QSensorReading(QObject *parent, QSensorReadingPrivate *_d)
     : QObject(parent)
-    , d(_d)
+    , d(_d?_d:new QSensorReadingPrivate)
 {
 }
-
-/*!
-    \fn QSensorReading::d_ptr()
-    \internal
-*/
 
 /*!
     \internal
@@ -623,6 +652,13 @@ QVariant QSensorReading::value(int index) const
 
     Note that this method should only be called by QSensorBackend.
 */
+void QSensorReading::copyValuesFrom(QSensorReading *other)
+{
+    QSensorReadingPrivate *my_ptr = d.data();
+    QSensorReadingPrivate *other_ptr = other->d.data();
+    /* Do a direct copy of the private class */
+    *(my_ptr) = *(other_ptr);
+}
 
 /*!
     \macro DECLARE_READING(classname)

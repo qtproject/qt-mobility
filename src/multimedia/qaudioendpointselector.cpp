@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,23 +39,24 @@
 **
 ****************************************************************************/
 
-#include <qaudioendpointselector.h>
+#include "qaudioendpointselector.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QAudioEndpointSelector
     \preliminary
     \brief The QAudioEndpointSelector class provides an audio endpoint selector media control.
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
-    The QAudioEndpointSelector class provides descriptions of the audio endpoints available on a system
-    and allows one to be selected as the audio of a media service.
+    The QAudioEndpointSelector class provides descriptions of the audio
+    endpoints available on a system and allows one to be selected as the audio
+    of a media service.
 
     The interface name of QAudioEndpointSelector is \c com.nokia.Qt.QAudioEndpointSelector/1.0 as
     defined in QAudioEndpointSelector_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!
@@ -126,5 +127,5 @@ QAudioEndpointSelector::~QAudioEndpointSelector()
 */
 
 #include "moc_qaudioendpointselector.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

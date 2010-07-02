@@ -57,9 +57,11 @@
 #include <QByteArray>
 #include <QMultiHash>
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QTextCodec;
 class QTextEncoder;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

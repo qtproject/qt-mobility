@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QtCore/qstring.h>
 #include <QtCore/qlist.h>
+#include <QtCore/qpluginloader.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,6 +67,7 @@ class Q_AUTOTEST_EXPORT QSensorPluginLoader
 {
 public:
     QSensorPluginLoader(const char *iid, const QString &suffix = QString());
+    ~QSensorPluginLoader();
 
     QList<QSensorPluginInterface*> plugins() const { return m_plugins; }
 
@@ -75,6 +77,7 @@ private:
     QByteArray  m_iid;
     QString     m_location;
     QList<QSensorPluginInterface*> m_plugins;
+    QList<QPluginLoader *> m_loaders;
 };
 
 QTM_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
-#elif (defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5))
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"

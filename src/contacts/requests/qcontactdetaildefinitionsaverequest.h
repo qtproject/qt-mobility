@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,10 +57,10 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionSaveRequest : public QContactAbs
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionSaveRequest();
-    ~QContactDetailDefinitionSaveRequest();
+    QContactDetailDefinitionSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setDefinition(const QContactDetailDefinition& definition);
     void setDefinitions(const QList<QContactDetailDefinition>& definitions);
     void setContactType(const QString& contactType);
     QString contactType() const;

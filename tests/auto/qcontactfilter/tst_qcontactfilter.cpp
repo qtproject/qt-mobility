@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,14 +39,18 @@
 **
 ****************************************************************************/
 #include <QtTest/QtTest>
+#include <QMetaType>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QContact)
+Q_DECLARE_METATYPE(QContactFilter)
+
 class tst_QContactFilter : public QObject
 {
 Q_OBJECT
@@ -54,9 +58,6 @@ Q_OBJECT
 public:
     tst_QContactFilter();
     virtual ~tst_QContactFilter();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -68,10 +69,13 @@ private slots:
     void detailFilter();
     void detailRangeFilter();
     void changeLogFilter();
-    void actionFilter();
     void relationshipFilter();
     void boringFilters();
     void idListFilter();
+    void canonicalizedFilter();
+    void canonicalizedFilter_data();
+    void testFilter();
+    void testFilter_data();
 
     void traits();
 
@@ -347,86 +351,6 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf3.filters().at(3) == df3);
 }
 
-void tst_QContactFilter::actionFilter()
-{
-    QContactActionFilter af;
-
-    /* Test initial conditions */
-    QVERIFY(af.type() == QContactFilter::ActionFilter);
-    QVERIFY(af.actionName().isEmpty());
-    QVERIFY(af.value().isNull());
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setActionName("Action Name");
-    QVERIFY(af.actionName() == "Action Name");
-
-    af.setActionName(QString());
-    QVERIFY(af.actionName().isEmpty());
-
-    af.setValue(5);
-    QVERIFY(af.value() == 5);
-
-    af.setValue("This is a string");
-    QVERIFY(af.value() == "This is a string");
-
-    af.setVendor("Vendor");
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor(QString());
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor(QString(), 10);
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor("Vendor", 10);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == 10);
-
-    af.setVendor("Vendor", -1);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor("Vendor", 10);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == 10);
-
-    af.setVendor("Vendor");
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    // Make sure there isn't a shadow copy
-    af.setVendor("Vendor", 10);
-    af.setVendor(QString());
-    QVERIFY(af.implementationVersion() == -1);
-    af.setVendor("Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    /* Test op= */
-    QContactFilter f = af;
-    QVERIFY(f == af);
-
-    QContactActionFilter af2 = f;
-    QVERIFY(af2 == af);
-
-    /* Self assignment should do nothing */
-    af2 = af2;
-    QVERIFY(af2 == af);
-
-    QContactDetailFilter dfil;
-    QContactActionFilter af3(dfil);
-    QVERIFY(af3.type() == QContactFilter::ActionFilter);
-    QContactActionFilter af4(af);
-    QVERIFY(af4 == af);
-    af = dfil;
-    QVERIFY(af == af3);
-    af = af3;
-    af.setActionName("test"); // should force a detach
-}
-
 void tst_QContactFilter::changeLogFilter()
 {
     QContactChangeLogFilter cf;
@@ -521,10 +445,58 @@ void tst_QContactFilter::detailFilter()
 
     QContactDetailFilter df2 = f;
     QVERIFY(df2 == df);
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
 
     /* Self assignment should do nothing */
     df2 = df2;
     QVERIFY(df2 == df);
+
+    /* Some cross casting */
+    QContactDetailRangeFilter rf;
+
+    /* Directly */
+    df2 = rf;
+    QVERIFY(df2.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* reset it */
+    df2 = df;
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
+
+    /* Through base class */
+    f = rf;
+    df2 = f;
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* Now test copy ctor */
+    QContactDetailFilter df3(rf);
+    QVERIFY(df3.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df3.detailDefinitionName().isEmpty());
+    QVERIFY(df3.detailFieldName().isEmpty());
+    QVERIFY(df3.value().isNull());
+
+    /* reset it */
+    df3 = df;
+    QVERIFY(df3.detailDefinitionName() == "Definition");
+    QVERIFY(df3.detailFieldName() == "Field");
+
+    /* Now test copy ctor through base class */
+    QContactDetailFilter df4(f);
+    QVERIFY(df4.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df4.detailDefinitionName().isEmpty());
+    QVERIFY(df4.detailFieldName().isEmpty());
+    QVERIFY(df4.value().isNull());
+
+    /* reset it */
+    df4 = df;
+    QVERIFY(df4.detailDefinitionName() == "Definition");
+    QVERIFY(df4.detailFieldName() == "Field");
 }
 
 void tst_QContactFilter::detailRangeFilter()
@@ -561,6 +533,16 @@ void tst_QContactFilter::detailRangeFilter()
 
     rf.setMatchFlags(QContactFilter::MatchExactly);
     QVERIFY(rf.matchFlags() == QContactFilter::MatchExactly);
+
+    rf.setMatchFlags(QContactFilter::MatchCaseSensitive);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchCaseSensitive);
+
+    // Contains is not allowed
+    rf.setMatchFlags(QContactFilter::MatchCaseSensitive | QContactFilter::MatchContains);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchCaseSensitive);
+
+    rf.setMatchFlags(QContactFilter::MatchEndsWith);
+    QVERIFY(rf.matchFlags() == QContactFilter::MatchExactly); // 0
 
     rf.setRange(5, 10);
     QVERIFY(rf.minValue() == 5);
@@ -917,13 +899,346 @@ void tst_QContactFilter::idListFilter()
     idf.setIds(ids); // force a detach
 }
 
+void tst_QContactFilter::canonicalizedFilter()
+{
+    QFETCH(QContactFilter, in);
+    QFETCH(QContactFilter, expected);
+
+    QContactFilter out = QContactManagerEngine::canonicalizedFilter(in);
+    QCOMPARE(out, expected);
+}
+
+void tst_QContactFilter::canonicalizedFilter_data()
+{
+    QTest::addColumn<QContactFilter>("in");
+    QTest::addColumn<QContactFilter>("expected");
+
+    QContactFilter detailFilter1 = QContactName::match("1");
+    QContactFilter detailFilter2 = QContactName::match("2");
+    QContactInvalidFilter invalidFilter;
+    QContactFilter defaultFilter;
+
+    {
+        QTest::newRow("Normal detail filter")
+                << static_cast<QContactFilter>(detailFilter1)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QTest::newRow("Normal intersection filter")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(qcif);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QTest::newRow("Normal intersection filter")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(qcuf);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        QTest::newRow("Empty intersection")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(defaultFilter);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        QTest::newRow("Empty union")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << detailFilter1;
+        QTest::newRow("Single entry intersection filter")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << detailFilter1;
+        QTest::newRow("Single entry union filter")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << invalidFilter;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QTest::newRow("Intersection with invalid")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << defaultFilter;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QContactIntersectionFilter expected;
+        expected << detailFilter1;
+        expected << detailFilter2;
+        QTest::newRow("Intersection with default")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << invalidFilter;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QContactUnionFilter expected;
+        expected << detailFilter1;
+        expected << detailFilter2;
+        QTest::newRow("Union with invalid")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << defaultFilter;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QTest::newRow("Union with default")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(defaultFilter);
+    }
+
+    {
+        QContactLocalIdFilter qclif;
+        QTest::newRow("Empty local id filter")
+                << static_cast<QContactFilter>(qclif)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactLocalIdFilter qclif;
+        qclif.setIds(QList<QContactLocalId>() << 1 << 2);
+        QTest::newRow("Normal local id filter")
+                << static_cast<QContactFilter>(qclif)
+                << static_cast<QContactFilter>(qclif);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        QContactDetailFilter expected;
+        expected.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        QTest::newRow("Null valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("a"));
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
+        QContactDetailFilter expected;
+        expected.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        expected.setValue(QLatin1String("a"));
+        expected.setMatchFlags(QContactFilter::MatchFixedString);
+        QTest::newRow("Equal valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("a"),
+               QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
+        QTest::newRow("Equal valued range filter with excluded bounds")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("b"));
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
+        QTest::newRow("Normal range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdrf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QVariant(QVariant::String), QVariant(QVariant::String)); // null bounds
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
+        QContactDetailFilter qcdf;
+        qcdf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdf.setMatchFlags(QContactFilter::MatchFixedString);
+        qcdf.setValue(QVariant(QVariant::String));
+        QTest::newRow("Null valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QVariant(QVariant::String), QLatin1String("a")); // min is null
+        qcdrf.setMatchFlags(QContactFilter::MatchFixedString);
+        QTest::newRow("One sided range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdrf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        QTest::newRow("Empty range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactDetailFilter qcdf;
+        QTest::newRow("Empty detail filter")
+                << static_cast<QContactFilter>(qcdf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+}
+
+void tst_QContactFilter::testFilter()
+{
+    QFETCH(QContact, contact);
+    QFETCH(QContactFilter, filter);
+    QFETCH(bool, expected);
+
+    QCOMPARE(QContactManagerEngine::testFilter(filter, contact), expected);
+}
+
+void tst_QContactFilter::testFilter_data()
+{
+    QTest::addColumn<QContact>("contact");
+    QTest::addColumn<QContactFilter>("filter");
+    QTest::addColumn<bool>("expected");
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("first"));
+        name.setMiddleName(QLatin1String("middle"));
+        name.setLastName(QLatin1String("last"));
+        name.setPrefix(QLatin1String("prefix"));
+        name.setSuffix(QLatin1String("suffix"));
+        contact.saveDetail(&name);
+
+        QTest::newRow("QContactName::match firstname")
+                << contact
+                << QContactName::match("first")
+                << true;
+        QTest::newRow("QContactName::match lastname")
+                << contact
+                << QContactName::match("last")
+                << true;
+        QTest::newRow("QContactName::match middlename")
+                << contact
+                << QContactName::match("middle")
+                << true;
+        QTest::newRow("QContactName::match prefix")
+                << contact
+                << QContactName::match("prefix")
+                << true;
+        QTest::newRow("QContactName::match suffix")
+                << contact
+                << QContactName::match("suffix")
+                << true;
+        QTest::newRow("QContactName::match first last")
+                << contact
+                << QContactName::match(QLatin1String("first"), QLatin1String("last"))
+                << true;
+        QTest::newRow("QContactName::match substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"))
+                << true;
+        QTest::newRow("QContactName::match first last substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"), QLatin1String("as"))
+                << true;
+        QTest::newRow("QContactName::match negative")
+                << contact
+                << QContactName::match("foo")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("foo"));
+        QTest::newRow("QContactDisplayLabel::match positive")
+                << contact
+                << QContactDisplayLabel::match("foo")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match positive substring")
+                << contact
+                << QContactDisplayLabel::match("o")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match negative")
+                << contact
+                << QContactDisplayLabel::match("bar")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactPhoneNumber phone;
+        phone.setNumber("1234");
+        contact.saveDetail(&phone);
+        QTest::newRow("QContactPhoneNumber::match positive")
+                << contact
+                << QContactPhoneNumber::match("1234")
+                << true;
+        QTest::newRow("QContactPhoneNumber::match negative")
+                << contact
+                << QContactPhoneNumber::match("5678")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactEmailAddress email;
+        email.setEmailAddress("foo");
+        contact.saveDetail(&email);
+        QTest::newRow("QContactEmailAddress::match positive")
+                << contact
+                << QContactEmailAddress::match("foo")
+                << true;
+        QTest::newRow("QContactEmailAddress::match positive substring")
+                << contact
+                << QContactEmailAddress::match("o")
+                << true;
+        QTest::newRow("QContactEmailAddress::match negative")
+                << contact
+                << QContactEmailAddress::match("bar")
+                << false;
+    }
+}
+
 void tst_QContactFilter::traits()
 {
-    // QCOMPARE(sizeof(QContactFilter), sizeof(void *));
+    QCOMPARE(sizeof(QContactFilter), sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QContactFilter)> ti;
     QVERIFY(ti.isComplex);
     QVERIFY(!ti.isStatic);
-    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
 }

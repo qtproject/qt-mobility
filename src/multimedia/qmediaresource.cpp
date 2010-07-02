@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <QtCore/qsize.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
@@ -393,5 +393,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

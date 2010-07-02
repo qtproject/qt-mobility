@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,7 +54,6 @@
 #include "cntfilterinvalid.h"
 #include "cntfilterdetailrange.h"
 #include "cntfilterchangelog.h"
-#include "cntfilteraction.h"
 #include "cntfilterlocalid.h"
 #include <QLatin1String>
 #include <e32cmn.h>
@@ -81,7 +80,6 @@ void CntSymbianFilter::initializeFilters()
     m_filterMap.insert(QContactFilter::InvalidFilter, new CntFilterInvalid(m_contactDatabase,*m_srvConnection,*m_dbInfo));
     m_filterMap.insert(QContactFilter::ContactDetailRangeFilter, new CntFilterdetailrange(m_contactDatabase,*m_srvConnection,*m_dbInfo));
     m_filterMap.insert(QContactFilter::ChangeLogFilter, new CntFilterChangeLog(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ActionFilter, new CntFilterAction(m_contactDatabase,*m_srvConnection,*m_dbInfo));
     m_filterMap.insert(QContactFilter::LocalIdFilter, new CntFilterLocalId(m_contactDatabase,*m_srvConnection,*m_dbInfo));
     
     }

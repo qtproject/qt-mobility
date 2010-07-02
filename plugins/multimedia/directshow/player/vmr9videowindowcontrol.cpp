@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,6 +58,7 @@ Vmr9VideoWindowControl::Vmr9VideoWindowControl(QObject *parent)
     if (IVMRFilterConfig9 *config = com_cast<IVMRFilterConfig9>(m_filter, IID_IVMRFilterConfig9)) {
         config->SetRenderingMode(VMR9Mode_Windowless);
         config->SetNumberOfStreams(1);
+        config->SetRenderingPrefs(RenderPrefs9_DoNotRenderBorder);
         config->Release();
     }
 }

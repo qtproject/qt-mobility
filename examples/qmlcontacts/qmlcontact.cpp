@@ -6,187 +6,119 @@
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-#include "qmlcontact.h"
 #include <qcontactdetails.h>
-#include <QtDebug>
-#include <QStringList>
+#include "qmlcontact.h"
+#include "qmlcontactdetail.h"
+#include <QDebug>
 
-QT_USE_NAMESPACE
-QTM_USE_NAMESPACE
-
-QmlContact::QmlContact(QContact& contact, QObject *parent)
-    : QObject(parent), m_contact(contact)
-{   
+static QString normalizePropertyName(const QString& name)
+{
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toLower());
+   return QString();
 }
 
-QmlContact::QmlContact()
+
+QMLContact::QMLContact(QObject *parent)
+    :QObject(parent),
+    m_contactMap(0)
 {
 
 }
 
-QmlContact::~QmlContact()
+void QMLContact::setContact(const QContact& c)
 {
+    m_contact = c;
 
+    if (m_contactMap) {
+        delete m_contactMap;
+        m_detailMaps.clear();
+    }
+
+    foreach (QObject* detail, m_details) {
+        delete detail;
+    }
+    m_details.clear();
+
+    m_contactMap = new QDeclarativePropertyMap(this);
+
+
+    QList<QContactDetail> details = m_contact.details();
+    foreach (const QContactDetail& detail, details) {
+      QMLContactDetail* qd = new QMLContactDetail(this);
+
+      QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
+
+      connect(dm, SIGNAL(valueChanged(QString,QVariant)), qd, SLOT(detailChanged(QString,QVariant)));
+
+
+      QVariantMap values = detail.variantValues();
+      foreach (const QString& key, values.keys()) {
+          dm->insert(normalizePropertyName(key), values.value(key));
+      }
+      qd->setName(normalizePropertyName(detail.definitionName()));
+      m_details.append(qd);
+      qd->setDetailPropertyMap(dm);
+      m_detailMaps.append(dm);;
+      m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
+    }
 }
 
-QContact &QmlContact::contact()
+QContact QMLContact::contact() const
 {
-    return m_contact;
-}
-
-void QmlContact::setContact(QContact& contact)
-{
-    m_contact = contact;
-    emit contactChanged(this);
-}
-
-QString QmlContact::name()
-{
-    QList<QContactDetail> allNames = m_contact.details(QContactName::DefinitionName);
-
-    const QLatin1String space(" ");
-
-    // synthesise the display label from the name.
-    for (int i=0; i < allNames.size(); i++) {
-        const QContactName& name = allNames.at(i);
-
-        QString result;
-        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-           result += name.value(QContactName::FieldPrefix);
-        }
-
-        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldFirst);
-        }
-
-        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldMiddle);
-        }
-
-        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldLast);
-        }
-
-        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldSuffix);
-        }
-
-        if (!result.isEmpty()) {
-            return result;
+    QContact c(m_contact); 
+    foreach (QObject* o, m_details) {
+        QMLContactDetail* d = qobject_cast<QMLContactDetail*>(o);
+        if (d && d->isDetailChanged()) {
+            QContactDetail detail = d->detail();
+            c.saveDetail(&detail);
         }
     }
 
-
-    return QString("noName");
+    return c;
 }
 
-void QmlContact::setName(QString name)
+QList<QObject*> QMLContact::details() const
 {
-    Q_UNUSED(name);
-    qWarning() << "Not implemented yet";
-    emit nameChanged(this);
+    return m_details;
 }
 
-QString QmlContact::email()
+QVariant QMLContact::contactMap() const
 {
-    QList<QContactDetail> allEmails = m_contact.details(QContactEmailAddress::DefinitionName);
-
-    QStringList emails;
-    foreach (const QContactDetail& email, allEmails) {
-        emails << email.value(QContactEmailAddress::FieldEmailAddress);
-    }
-    return emails.join(QString::fromLatin1(","));
+    if (m_contactMap)
+        return QVariant::fromValue(static_cast<QObject*>(m_contactMap));
+    return QVariant();
 }
 
-void QmlContact::setEmail(QString email)
-{
-    Q_UNUSED(email);
-    qWarning() << "Not implemented yet";
-    emit emailChanged(this);
-}
-
-
-QStringList QmlContact::availableActions()
-{
-    QList<QContactActionDescriptor> actions =  m_contact.availableActions();
-    QStringList names;
-
-    foreach (const QContactActionDescriptor& action, actions) {
-        names << action.actionName();
-    }
-    return names;
-}
-
-QStringList QmlContact::details()
-{
-    QStringList dets;
-    QList<QContactDetail> ld = m_contact.details();
-    QContactDetail d;
-    foreach(d, ld){
-        dets += d.definitionName();
-    }
-    return dets;
-}
-
-QStringList QmlContact::contexts()
-{
-    QStringList dets;
-    QList<QContactDetail> ld = m_contact.details();
-    QContactDetail d;
-    foreach(d, ld){
-        dets += d.contexts();
-    }
-    return dets;
-}
-
-QVariantMap QmlContact::values(QString definitionId)
-{
-    QStringList strlist;
-    QContactDetail detail = m_contact.detail(definitionId);
-
-    QVariantMap map = detail.variantValues();
-    return map;
-}
-
-#include "moc_qmlcontact.cpp"

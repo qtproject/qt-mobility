@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,6 +43,7 @@
 #define QMESSAGINGGLOBAL_H
 
 #include <qmobilityglobal.h>
+#include <QString>
 
 // A variant of Q_GLOBAL_STATIC for use in class scope
 #define Q_SCOPED_STATIC_DECLARE(TYPE, NAME)                      \

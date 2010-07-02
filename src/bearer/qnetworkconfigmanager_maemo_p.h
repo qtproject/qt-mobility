@@ -60,7 +60,6 @@
 
 #include "qnetworkconfigmanager.h"
 #include "qnetworkconfiguration_maemo_p.h"
-#include "qnetworksession_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -129,7 +128,7 @@ public:
     void addConfiguration(QString &iap_id);
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
     uint32_t getNetworkAttrs(bool is_iap_id, const QString& iap_id,
-			     QString& iap_type, QString security_method);
+                             const QString& iap_type, QString security_method);
 
     QDBusInterface *m_dbusInterface;
     QTimer m_scanTimer;

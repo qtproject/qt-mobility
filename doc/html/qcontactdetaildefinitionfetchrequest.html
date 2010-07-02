@@ -23,13 +23,13 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest">QContactDetailDefinitionFetchRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#dtor.QContactDetailDefinitionFetchRequest">~QContactDetailDefinitionFetchRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest">QContactDetailDefinitionFetchRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#contactType">contactType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#definitionNames">definitionNames</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setContactType">setContactType</a></b> ( const QString &amp; <i>contactType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setDefinitionName">setDefinitionName</a></b> ( const QString &amp; <i>definitionName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames">setDefinitionNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
 </table>
 <ul>
@@ -53,14 +53,12 @@
 <h2>Detailed Description</h2>
 <p>The QContactDetailDefinitionFetchRequest class allows a client to asynchronously request detail definitions from a contacts store manager.</p>
 <p>For a QContactDetailDefinitionFetchRequest, the <a href="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either the individual item errors (which may be retrieved by calling <a href="qcontactdetaildefinitionfetchrequest.html#errorMap">errorMap</a>()), or the resultant detail definitions (which may be retrieved by calling <a href="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</a>()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qcontactabstractrequest.html#error">error</a>()) is updated.</p>
+<p>Please see the class documentation of <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> for more information about the usage of request classes and ownership semantics.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/QContactDetailDefinitionFetchRequest"></a>
-<h3 class="fn"><a name="QContactDetailDefinitionFetchRequest"></a>QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest ()</h3>
-<p>Constructs a new detail definition fetch request</p>
-<a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/~QContactDetailDefinitionFetchRequest"></a>
-<h3 class="fn"><a name="dtor.QContactDetailDefinitionFetchRequest"></a>QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest ()</h3>
-<p>Cleans up the memory in use by this detail definition fetch request</p>
+<h3 class="fn"><a name="QContactDetailDefinitionFetchRequest"></a>QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new detail definition fetch request whose parent is the specified <i>parent</i></p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/contactType"></a>
 <h3 class="fn"><a name="contactType"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetailDefinitionFetchRequest::contactType () const</h3>
 <p>Returns the type of contact for which detail definitions will be retrieved</p>
@@ -79,14 +77,18 @@
 <h3 class="fn"><a name="setContactType"></a>void QContactDetailDefinitionFetchRequest::setContactType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> )</h3>
 <p>Sets the type of contact for which detail definitions should be retrieved to <i>contactType</i></p>
 <p>See also <a href="qcontactdetaildefinitionfetchrequest.html#contactType">contactType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/setDefinitionName"></a>
+<h3 class="fn"><a name="setDefinitionName"></a>void QContactDetailDefinitionFetchRequest::setDefinitionName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i> )</h3>
+<p>Sets the name of the detail definition to retrieve to <i>definitionName</i>. Equivalent to calling</p>
+<pre>    setDefinitionNames(QList&lt;QContactDetailDefinition&gt;() &lt;&lt; definitionName);</pre>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/setDefinitionNames"></a>
 <h3 class="fn"><a name="setDefinitionNames"></a>void QContactDetailDefinitionFetchRequest::setDefinitionNames ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>names</i> )</h3>
 <p>Sets the names of the detail definitions to retrieve to <i>names</i></p>
 <p>See also <a href="qcontactdetaildefinitionfetchrequest.html#definitionNames">definitionNames</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

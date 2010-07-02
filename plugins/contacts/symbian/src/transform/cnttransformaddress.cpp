@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -114,7 +114,7 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
 
         // Merge detail with existing detail
         detail = new QContactAddress( existingAddress );
-        foreach(const QString key, address.variantValues().keys() )
+        foreach(const QString& key, address.variantValues().keys() )
             detail->setValue( key, address.variantValue(key) );
         break;
     }
@@ -126,20 +126,6 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
     return detail;
 }
 
-bool CntTransformAddress::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldCountry.iUid ||
-        fieldType == KUidContactFieldPostcode.iUid ||
-        fieldType == KUidContactFieldAddress.iUid ||
-        fieldType == KUidContactFieldLocality.iUid ||
-        fieldType == KUidContactFieldRegion.iUid ||
-        fieldType == KUidContactFieldPostOffice.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformAddress::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -147,6 +133,17 @@ bool CntTransformAddress::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformAddress::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldAddress
+        << KUidContactFieldLocality
+        << KUidContactFieldRegion
+        << KUidContactFieldPostcode
+        << KUidContactFieldCountry
+        << KUidContactFieldPostOffice;
 }
 
 QList<TUid> CntTransformAddress::supportedSortingFieldTypes(QString detailFieldName) const
@@ -245,8 +242,9 @@ void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefiniti
             << QLatin1String(QContactDetail::ContextWork));
         fields[QContactDetail::FieldContext] = f;
 
-        // Sub-types not supported in symbian back-end, remove
+        // Sub-types not supported in symbian back-end
         fields.remove(QContactAddress::FieldSubTypes);
+
         d.setFields(fields);
 
         // Replace original definitions

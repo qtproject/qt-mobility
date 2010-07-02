@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,24 +54,37 @@ QTM_BEGIN_NAMESPACE
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition fetch request */
-QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate)
+/*! Constructs a new detail definition fetch request whose parent is the specified \a parent */
+QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this detail definition fetch request */
-QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
+/*! Sets the name of the detail definition to retrieve to \a definitionName.
+    Equivalent to calling
+    \code
+        setDefinitionNames(QList<QContactDetailDefinition>() << definitionName);
+    \endcode
+ */
+void QContactDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
+    Q_D(QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
+    d->m_names.clear();
+    d->m_names.append(definitionName);
 }
 
 /*! Sets the names of the detail definitions to retrieve to \a names */
 void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -79,6 +92,7 @@ void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList&
 QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -86,6 +100,7 @@ QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
 void QContactDetailDefinitionFetchRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactType = contactType;
 }
 
@@ -93,6 +108,7 @@ void QContactDetailDefinitionFetchRequest::setContactType(const QString& contact
 QString QContactDetailDefinitionFetchRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -102,6 +118,7 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_definitions;
 }
 
@@ -109,6 +126,7 @@ QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::de
 QMap<int, QContactManager::Error> QContactDetailDefinitionFetchRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

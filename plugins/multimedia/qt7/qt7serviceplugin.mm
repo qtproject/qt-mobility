@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 
 #include <qmediaserviceprovider.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QStringList QT7ServicePlugin::keys() const
 {
@@ -69,6 +69,6 @@ void QT7ServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(qt7_serviceplugin, QT7ServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

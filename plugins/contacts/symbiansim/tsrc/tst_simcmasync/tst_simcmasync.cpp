@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -385,7 +385,7 @@ void tst_SimCMAsync::saveContactReq()
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
     QVERIFY(m_cm->contactIds().count() == 2);
-    c = m_cm->contact(c1.localId(), QStringList());
+    c = m_cm->contact(c1.localId());
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
 }

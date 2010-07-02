@@ -25,7 +25,6 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#QAudioCaptureSource">QAudioCaptureSource</a></b> ( QObject * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#QAudioCaptureSource-2">QAudioCaptureSource</a></b> ( QMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#dtor.QAudioCaptureSource">~QAudioCaptureSource</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#activeAudioInput">activeAudioInput</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#audioDescription">audioDescription</a></b> ( const QString &amp; <i>name</i> ) const</td></tr>
@@ -36,11 +35,11 @@
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimediaKit::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#availabilityError">availabilityError</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#isAvailable">isAvailable</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -60,12 +59,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#availableAudioInputsChanged">availableAudioInputsChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
@@ -94,8 +93,6 @@
 <a name="//apple_ref/cpp/instm/QAudioCaptureSource/QAudioCaptureSource"></a>
 <h3 class="fn"><a name="QAudioCaptureSource"></a>QAudioCaptureSource::QAudioCaptureSource ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
 <p>Construct a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> using the <a href="qmediaservice.html">QMediaService</a> from <i>provider</i>, with <i>parent</i>.</p>
-<h3 class="fn"><a name="QAudioCaptureSource-2"></a>QAudioCaptureSource::QAudioCaptureSource ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Construct a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> using the <a href="qmediaobject.html">QMediaObject</a> <i>mediaObject</i>, with <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QAudioCaptureSource/~QAudioCaptureSource"></a>
 <h3 class="fn"><a name="dtor.QAudioCaptureSource"></a>QAudioCaptureSource::~QAudioCaptureSource ()</h3>
 <p>Destroys the audiocapturesource object.</p>
@@ -112,7 +109,7 @@
 <h3 class="fn"><a name="audioInputs"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QAudioCaptureSource::audioInputs () const</h3>
 <p>Returns a list of available audio inputs</p>
 <a name="//apple_ref/cpp/instm/QAudioCaptureSource/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QAudioCaptureSource::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimediakit.html#AvailabilityError-enum">QtMultimediaKit::AvailabilityError</a> QAudioCaptureSource::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the error state of the audio capture service.</p>
 <a name="//apple_ref/cpp/instm/QAudioCaptureSource/availableAudioInputsChanged"></a>
@@ -130,8 +127,8 @@
 <p>Set the active audio input to <i>name</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

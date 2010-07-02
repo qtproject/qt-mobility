@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -79,7 +79,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
     encodeParameters(modifiedProperty.parameters());
     writeString(QLatin1String(":"));
 
-    QString value;
+    QString renderedValue;
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         QByteArray data;
@@ -90,14 +90,40 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
         subWriter.setDevice(&buffer);
         subWriter.encodeVersitDocument(embeddedDocument);
         QString documentString(mCodec->toUnicode(data));
-        VersitUtils::backSlashEscape(documentString);
-        value = documentString;
+        backSlashEscape(documentString);
+        renderedValue = documentString;
     } else if (variant.type() == QVariant::String) {
-        value = variant.toString();
+        renderedValue = variant.toString();
+        backSlashEscape(renderedValue);
+    } else if (variant.type() == QVariant::StringList) {
+        // We need to backslash escape and concatenate the values in the list
+        QStringList values = property.variantValue().toStringList();
+        QString separator;
+        if (property.valueType() == QVersitProperty::CompoundType) {
+            separator = QLatin1String(";");
+        } else {
+            if (property.valueType() != QVersitProperty::ListType) {
+                qWarning("Variant value is a QStringList but the property's value type is neither "
+                         "CompoundType or ListType");
+            }
+            // Assume it's a ListType
+            separator = QLatin1String(",");
+        }
+        bool first = true;
+        foreach (QString value, values) {
+            if (!(value.isEmpty() && property.valueType() == QVersitProperty::ListType)) {
+                if (!first) {
+                    renderedValue += separator;
+                }
+                backSlashEscape(value);
+                renderedValue += value;
+                first = false;
+            }
+        }
     } else if (variant.type() == QVariant::ByteArray) {
-        value = QLatin1String(variant.toByteArray().toBase64().data());
+        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
-    writeString(value);
+    writeString(renderedValue);
     writeCrlf();
 }
 
@@ -110,7 +136,7 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
     foreach (QString nameString, names) {
         writeString(QLatin1String(";"));
         QStringList values = parameters.values(nameString);
-        VersitUtils::backSlashEscape(nameString);
+        backSlashEscape(nameString);
         writeString(nameString);
         writeString(QLatin1String("="));
         for (int i=0; i<values.size(); i++) {
@@ -118,8 +144,25 @@ void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
                 writeString(QLatin1String(","));
             QString value = values.at(i);
 
-            VersitUtils::backSlashEscape(value);
+            backSlashEscape(value);
             writeString(value);
         }
     }
+}
+
+
+/*!
+ * Performs backslash escaping for line breaks (CRLFs), semicolons, backslashes and commas according
+ * to RFC 2426.  This is called on parameter names and values and property values.
+ * Colons ARE NOT escaped because the examples in RFC2426 suggest that they shouldn't be.
+ */
+void QVCard30Writer::backSlashEscape(QString& text)
+{
+    /* replaces ; with \;
+                , with \,
+                \ with \\
+     */
+    text.replace(QRegExp(QLatin1String("([;,\\\\])")), QLatin1String("\\\\1"));
+    // replaces any CRLFs with \n
+    text.replace(QRegExp(QLatin1String("\r\n|\r|\n")), QLatin1String("\\n"));
 }

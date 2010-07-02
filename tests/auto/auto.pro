@@ -10,11 +10,8 @@ contains(mobility_modules,serviceframework) {
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext \
-           icheck
-
-# servicedatabase is not compiled into the serviceframework library on symbian,
-# special handling is needed
-    !symbian:SUBDIRS+=servicedatabase
+           icheck \
+           servicedatabase
 }
 
 contains(mobility_modules,bearer) {
@@ -66,12 +63,15 @@ contains(mobility_modules,systeminfo) {
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+    maemo6: {
+          #maemo6 spesific autotests
+          SUBDIRS += maemo6
+    }
 }
 
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
-            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -80,7 +80,10 @@ contains(mobility_modules,contacts) {
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
-            qcontactrelationship
+            qcontactrelationship \
+            qlatin1constant
+    # This needs glibc:
+    linux*: SUBDIRS += qcontactmemusage
 }
 
 contains(mobility_modules,versit) {
@@ -94,7 +97,6 @@ contains(mobility_modules,versit) {
             qversitdocument \
             qversitproperty \
             qversitreader \
-            qversitutils \
             qversitwriter
 }
 
@@ -116,7 +118,13 @@ contains(mobility_modules,multimedia) {
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
-        qmediatimerange
+        qmediatimerange \
+        qaudiodeviceinfo \
+        qaudiooutput \
+        qaudioinput \
+        qaudioformat \
+        qvideoframe \
+        qvideosurfaceformat
 
     symbian: {
         #symbian spesific autotests
@@ -137,4 +145,9 @@ contains(mobility_modules,messaging) {
         qmessage \
         qmessageservice
     }
+}
+
+# Sensors
+contains(mobility_modules,sensors) {
+    SUBDIRS += qsensor
 }

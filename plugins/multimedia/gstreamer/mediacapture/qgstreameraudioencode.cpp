@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -188,8 +188,8 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     }
 
     if (encoderElement) {
-        if (m_audioSettings.encodingMode() == QtMedia::ConstantQualityEncoding) {
-            QtMedia::EncodingQuality qualityValue = m_audioSettings.quality();
+        if (m_audioSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
+            QtMultimediaKit::EncodingQuality qualityValue = m_audioSettings.quality();
 
             if (codec == QLatin1String("audio/vorbis")) {
                 double qualityTable[] = {

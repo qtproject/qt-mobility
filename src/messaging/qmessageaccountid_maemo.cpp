@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,6 +40,8 @@
 ****************************************************************************/
 #include "qmessageaccountid.h"
 #include "qmessageaccountid_p.h"
+
+#include <qhash.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -99,10 +101,10 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = qHash(d_ptr->_id);
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = qHash(other.d_ptr->_id);
     }
 
     return (left < right);

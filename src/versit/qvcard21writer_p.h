@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,7 @@ public:
     ~QVCard21Writer();
 
     void encodeVersitProperty(const QVersitProperty& property);
+    bool encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
     bool quotedPrintableEncode(QString& text) const;
     bool shouldBeQuotedPrintableEncoded(QChar chr) const;

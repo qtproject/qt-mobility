@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,6 +56,7 @@ QTM_USE_NAMESPACE
 /*!
   \class LineReader
   \brief The LineReader class is a wrapper around a QIODevice that allows line-by-line reading.
+  \internal
 
   This class keeps an internal buffer which it uses to temporarily store data which it has read from
   the device but not returned to the user.
@@ -150,7 +151,7 @@ QTextCodec* LineReader::codec()
  */
 bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
 {
-    int crlfPos;
+    int crlfPos = -1;
 
     QByteArray space = VersitUtils::encode(' ', mCodec);
     QByteArray tab = VersitUtils::encode('\t', mCodec);
@@ -197,6 +198,7 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
 /*! Links the signals from this to the signals of \a reader. */
 void QVersitReaderPrivate::init(QVersitReader* reader)
 {
+    qRegisterMetaType<QVersitReader::State>("QVersitReader::State");
     connect(this, SIGNAL(stateChanged(QVersitReader::State)),
             reader, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
     connect(this, SIGNAL(resultsAvailable()),
@@ -212,6 +214,42 @@ QVersitReaderPrivate::QVersitReaderPrivate()
     mError(QVersitReader::NoError),
     mIsCanceling(false)
 {
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("AGENT")),
+                         QVersitProperty::VersitDocumentType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("AGENT")),
+                         QVersitProperty::VersitDocumentType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("N")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("N")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ADR")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ADR")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("GEO")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("GEO")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("ORG")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
+                         QVersitProperty::CompoundType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
+                         QVersitProperty::ListType);
 }
 
 /*! Destroy a reader. */
@@ -392,6 +430,11 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
     QVersitProperty property;
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
+    // set the propertyValueType
+    QPair<QVersitDocument::VersitType, QString> key =
+        qMakePair(versitType, property.name());
+    if (mValueTypeMap.contains(key))
+        property.setValueType(mValueTypeMap.value(key));
 
     if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property, lineReader);
@@ -410,9 +453,8 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
     property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
 
     QByteArray value = extractPropertyValue(cursor);
-    if (property.name() == QLatin1String("AGENT")) {
+    if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
-        // XXX: Handle non-ASCII charsets in nested AGENT documents.
         bool foundBegin = false;
         if (value == "BEGIN:VCARD") {
             foundBegin = true;
@@ -421,17 +463,23 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
             property = QVersitProperty();
             return;
         }
-        QVersitDocument agentDocument;
-        if (!parseVersitDocument(lineReader, agentDocument, foundBegin)) {
+        QVersitDocument subDocument;
+        if (!parseVersitDocument(lineReader, subDocument, foundBegin)) {
             property = QVersitProperty();
         } else {
-            property.setValue(QVariant::fromValue(agentDocument));
+            property.setValue(QVariant::fromValue(subDocument));
         }
     } else {
         QTextCodec* codec;
-        QVariant valueVariant(decodeCharset(value, property, lineReader.codec(), &codec));
-        unencode(valueVariant, cursor, property, codec, lineReader);
-        property.setValue(valueVariant);
+        bool isBinary = unencode(value, cursor, property, lineReader);
+        if (isBinary) {
+            property.setValue(value);
+            property.setValueType(QVersitProperty::BinaryType);
+        }
+        else {
+            property.setValue(decodeCharset(value, property, lineReader.codec(), &codec));
+            splitStructuredValue(property, false);
+        }
     }
 }
 
@@ -446,33 +494,44 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
     QByteArray value = extractPropertyValue(cursor);
 
     QTextCodec* codec;
-    QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
-    VersitUtils::removeBackSlashEscaping(valueString);
 
-    if (property.name() == QLatin1String("AGENT")) {
+    if (property.valueType() == QVersitProperty::VersitDocumentType) {
+        QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
+        removeBackSlashEscaping(valueString);
         // Make a line reader from the value of the property.
-        QByteArray agentValue(codec->fromUnicode(valueString));
-        QBuffer agentData(&agentValue);
-        agentData.open(QIODevice::ReadOnly);
-        agentData.seek(0);
-        LineReader agentLineReader(&agentData, codec);
+        QByteArray subDocumentValue(codec->fromUnicode(valueString));
+        QBuffer subDocumentData(&subDocumentValue);
+        subDocumentData.open(QIODevice::ReadOnly);
+        subDocumentData.seek(0);
+        LineReader subDocumentLineReader(&subDocumentData, codec);
 
-        QVersitDocument agentDocument;
-        if (!parseVersitDocument(agentLineReader, agentDocument)) {
+        QVersitDocument subDocument;
+        if (!parseVersitDocument(subDocumentLineReader, subDocument)) {
             property = QVersitProperty();
         } else {
-            property.setValue(QVariant::fromValue(agentDocument));
+            property.setValue(QVariant::fromValue(subDocument));
         }
     } else {
-        QVariant valueVariant(valueString);
-        unencode(valueVariant, cursor, property, codec, lineReader);
-        if (valueVariant.type() == QVariant::ByteArray) {
-            // hack: add the charset parameter back in (even if there wasn't one to start with and
-            // the default codec was used).  This will help later on if someone calls valueString()
-            // on the property.
-            property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
+        bool isBinary = unencode(value, cursor, property, lineReader);
+        if (isBinary) {
+            property.setValue(value);
+            property.setValueType(QVersitProperty::BinaryType);
+        } else {
+            property.setValue(decodeCharset(value, property, lineReader.codec(), &codec));
+            bool isList = splitStructuredValue(property, true);
+            // Do backslash unescaping
+            if (isList) {
+                QStringList list = property.value<QStringList>();
+                for (int i = 0; i < list.length(); i++) {
+                    removeBackSlashEscaping(list[i]);
+                }
+                property.setValue(list);
+            } else {
+                QString value = property.value();
+                removeBackSlashEscaping(value);
+                property.setValue(value);
+            }
         }
-        property.setValue(valueVariant);
     }
 }
 
@@ -484,8 +543,10 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     bool valid = true;
     if (property.name() == QLatin1String("VERSION")) {
         QString value = property.value().trimmed();
-        if (property.parameters().contains(QLatin1String("ENCODING"),QLatin1String("BASE64"))
-            || property.parameters().contains(QLatin1String("TYPE"),QLatin1String("BASE64")))
+        QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+            || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive))
             value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
         if (value == QLatin1String("2.1")) {
             document.setType(QVersitDocument::VCard21Type);
@@ -499,43 +560,41 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
 }
 
 /*!
- * On entry, \a value should hold a QString.  On exit, it may be either a QString or a QByteArray.
+ * On entry, \a value should be the byte array to unencode.  It is modified to be the unencoded
+ * version.  Returns true if and only if the value was base-64 encoded.  \a cursor and
+ * \a lineReader are supplied in case more lines need to be read (for quoted-printable).  The
+ * \a property is supplied so we know what kind of encoding was used.
  */
-void QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
-                                    QVersitProperty& property, QTextCodec* codec,
+bool QVersitReaderPrivate::unencode(QByteArray& value, VersitCursor& cursor,
+                                    QVersitProperty& property,
                                     LineReader& lineReader) const
 {
-    Q_ASSERT(value.type() == QVariant::String);
-
-    QString valueString = value.toString();
-
-    if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"))) {
+    QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+    QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+    if (encodingParameters.contains(QLatin1String("QUOTED-PRINTABLE"), Qt::CaseInsensitive)) {
         // At this point, we need to accumulate bytes until we hit a real line break (no = before
         // it) value already contains everything up to the character before the newline
-        while (valueString.endsWith(QLatin1Char('='))) {
-            valueString.chop(1); // Get rid of '='
+        while (value.endsWith('=')) {
+            value.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
             cursor = lineReader.readLine();
-            QString line = codec->toUnicode(
-                    cursor.data.mid(cursor.position, cursor.selection-cursor.position));
-            valueString.append(line);
+            QByteArray line = cursor.data.mid(cursor.position, cursor.selection-cursor.position);
+            value.append(line);
         }
-        decodeQuotedPrintable(valueString);
+        decodeQuotedPrintable(value);
         // Remove the encoding parameter as the value is now decoded
         property.removeParameters(QLatin1String("ENCODING"));
-        value.setValue(valueString);
-    } else if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("B"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("B"))) {
-        value.setValue(QByteArray::fromBase64(valueString.toAscii()));
+        return false;
+    } else if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || encodingParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)) {
+        value = QByteArray::fromBase64(value);
         // Remove the encoding parameter as the value is now decoded
         property.removeParameters(QLatin1String("ENCODING"));
-        // Hack: add the charset parameter back in (even if there wasn't one to start with and
-        // the default codec was used).  This will help later on if someone calls valueString()
-        // on the property.
-        property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
+        return true;
     }
+    return false;
 }
 
 /*!
@@ -566,13 +625,13 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
 /*!
  * Decodes Quoted-Printable encoded (RFC 1521) characters in /a text.
  */
-void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
+void QVersitReaderPrivate::decodeQuotedPrintable(QByteArray& text) const
 {
     for (int i=0; i < text.length(); i++) {
-        QChar current = text.at(i);
-        if (current == QLatin1Char('=') && i+2 < text.length()) {
-            int next = text.at(i+1).unicode();
-            int nextAfterNext = text.at(i+2).unicode();
+        char current = text.at(i);
+        if (current == '=' && i+2 < text.length()) {
+            char next = text.at(i+1);
+            char nextAfterNext = text.at(i+2);
             if (((next >= 'a' && next <= 'f') ||
                  (next >= 'A' && next <= 'F') ||
                  (next >= '0' && next <= '9')) &&
@@ -580,9 +639,11 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
                  (nextAfterNext >= 'A' && nextAfterNext <= 'F') ||
                  (nextAfterNext >= '0' && nextAfterNext <= '9'))) {
                 bool ok;
-                QChar decodedChar(text.mid(i+1, 2).toInt(&ok,16));
-                if (ok)
-                    text.replace(i, 3, decodedChar);
+                char decodedChar(text.mid(i+1, 2).toInt(&ok,16));
+                if (ok) {
+                    text[i] = decodedChar;
+                    text.remove(i+1, 2);
+                }
             } else if (next == '\r' && nextAfterNext == '\n') {
                 // Newlines can still be found here if they are encoded in a non-default charset.
                 text.remove(i, 3);
@@ -590,7 +651,6 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
         }
     }
 }
-
 
 /*!
  * Extracts the groups and the name of the property using \a codec to determine the delimiters
@@ -683,25 +743,14 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
         QString name(paramName(param, codec));
-        VersitUtils::removeBackSlashEscaping(name);
+        removeBackSlashEscaping(name);
         QString values = paramValue(param, codec);
-        QList<QString> valueList = values.split(QLatin1Char(','), QString::SkipEmptyParts);
-        QString buffer; // for any part ending in a backslash, join it to the next.
+        QStringList valueList = splitValue(values, QLatin1Char(','), QString::SkipEmptyParts, true);
         foreach (QString value, valueList) {
-            if (value.endsWith(QLatin1Char('\\')) && !value.endsWith(QLatin1String("\\\\"))) {
-                value.chop(1);
-                buffer.append(value);
-                buffer.append(QLatin1Char(',')); // because the comma got nuked by split()
-            }
-            else {
-                buffer.append(value);
-                VersitUtils::removeBackSlashEscaping(buffer);
-                result.insert(name, buffer);
-                buffer.clear();
-            }
+            removeBackSlashEscaping(value);
+            result.insert(name, value);
         }
     }
-
     return result;
 }
 
@@ -825,5 +874,97 @@ bool QVersitReaderPrivate::containsAt(const QByteArray& text, const QByteArray& 
     const char* matchData = match.constData();
     return memcmp(textData+index, matchData, n) == 0;
 }
+
+/*!
+ * If the \a type and the \a property's name is known to contain a structured value, \a property's
+ * value is split according to the type of structuring (compound vs. list) it is known to have.
+ * Returns true if and only if such a split happened (ie. the property value holds a QStringList on
+ * exit).
+ */
+bool QVersitReaderPrivate::splitStructuredValue(
+        QVersitProperty& property,
+        bool hasEscapedBackslashes) const
+{
+    QVariant variant = property.variantValue();
+    if (property.valueType() == QVersitProperty::CompoundType) {
+        variant.setValue(splitValue(variant.toString(), QLatin1Char(';'),
+                                    QString::KeepEmptyParts, hasEscapedBackslashes));
+        property.setValue(variant);
+        return true;
+    } else if (property.valueType() == QVersitProperty::ListType) {
+        variant.setValue(splitValue(variant.toString(), QLatin1Char(','),
+                                    QString::SkipEmptyParts, hasEscapedBackslashes));
+        property.setValue(variant);
+        return true;
+    }
+    return false;
+}
+
+/*!
+ * Splits the \a string into substrings wherever \a sep occurs.
+ * If \a hasEscapedBackslashes is false, then a \a sep preceded by a backslash is not considered
+ * a split point (but the backslash is removed).
+ * If \a hasEscapedBackslashes is true, then a \a sep preceded by an odd number of backslashes is
+ * not considered a split point (but one backslash is removed).
+ */
+QStringList QVersitReaderPrivate::splitValue(const QString& string,
+                                             const QChar& sep,
+                                             QString::SplitBehavior behaviour,
+                                             bool hasEscapedBackslashes)
+{
+    QStringList list;
+    bool isEscaped = false; // is the current character escaped
+    int segmentStartIndex = 0;
+    QString segment;
+    for (int i = 0; i < string.length(); i++) {
+        if (string.at(i) == QLatin1Char('\\')) {
+            if (hasEscapedBackslashes)
+                isEscaped = !isEscaped; // two consecutive backslashes make isEscaped false
+            else
+                isEscaped = true;
+        } else if (string.at(i) == sep) {
+            if (isEscaped) {
+                // we see an escaped separator - remove the backslash
+                segment += string.midRef(segmentStartIndex, i-segmentStartIndex-1);
+                segment += sep;
+            } else {
+                // we see a separator
+                segment += string.midRef(segmentStartIndex, i - segmentStartIndex);
+                if (behaviour == QString::KeepEmptyParts || !segment.isEmpty())
+                    list.append(segment);
+                segment.clear();
+            }
+            segmentStartIndex = i+1;
+            isEscaped = false;
+        } else { // normal character - keep going
+            isEscaped = false;
+        }
+    }
+    // The rest of the string after the last sep.
+    segment += string.midRef(segmentStartIndex);
+    if (behaviour == QString::KeepEmptyParts || !segment.isEmpty())
+        list.append(segment);
+    return list;
+}
+
+/*!
+ * Removes backslash escaping for line breaks (CRLFs), colons, semicolons, backslashes and commas
+ * according to RFC 2426.  This is called on parameter names and values and property values.
+ * Colons ARE unescaped because the text of RFC2426 suggests that they should be.
+ */
+void QVersitReaderPrivate::removeBackSlashEscaping(QString& text)
+{
+    if (!(text.startsWith(QLatin1Char('"')) && text.endsWith(QLatin1Char('"')))) {
+        /* replaces \; with ;
+                    \, with ,
+                    \: with :
+                    \\ with \
+         */
+        text.replace(QRegExp(QLatin1String("\\\\([;,:\\\\])")), QLatin1String("\\1"));
+        // replaces \n with a CRLF
+        text.replace(QLatin1String("\\n"), QLatin1String("\r\n"), Qt::CaseInsensitive);
+    }
+}
+
 
 #include "moc_qversitreader_p.cpp"

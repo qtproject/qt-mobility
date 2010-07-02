@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,30 +46,31 @@
 
 #include <qmediacontent.h>
 #include <qmediaobject.h>
+#include <qmediabindableinterface.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProvider;
 
 class QMediaPlaylistPrivate;
-class Q_MEDIA_EXPORT QMediaPlaylist : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaPlaylist : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
     Q_PROPERTY(QMediaContent currentMedia READ currentMedia NOTIFY currentMediaChanged)
     Q_PROPERTY(int currentIndex READ currentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged)
     Q_ENUMS(PlaybackMode Error)
 
 public:
-    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Sequential, Loop, Random };
     enum Error { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError };
 
     QMediaPlaylist(QObject *parent = 0);
     virtual ~QMediaPlaylist();
 
     QMediaObject *mediaObject() const;
-    void setMediaObject(QMediaObject *object);
 
     PlaybackMode playbackMode() const;
     void setPlaybackMode(PlaybackMode mode);
@@ -126,6 +127,7 @@ Q_SIGNALS:
     void loadFailed();
 
 protected:
+    bool setMediaObject(QMediaObject *object);
     QMediaPlaylistPrivate *d_ptr;
 
 private:
@@ -133,10 +135,10 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_loadFailed(QMediaPlaylist::Error, const QString &))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlaylist::PlaybackMode))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlaylist::Error))
+Q_DECLARE_METATYPE(QMediaPlaylist::PlaybackMode)
+Q_DECLARE_METATYPE(QMediaPlaylist::Error)
 
 
 #endif  // QMEDIAPLAYLIST_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,6 +50,61 @@
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+
+QDBusArgument &operator<<(QDBusArgument &argument,
+                          const QtMobility::ICd2DetailsDBusStruct &icd2)
+{
+    argument.beginStructure();
+    argument << icd2.serviceType;
+    argument << icd2.serviceAttributes;
+    argument << icd2.setviceId;
+    argument << icd2.networkType;
+    argument << icd2.networkAttributes;
+    argument << icd2.networkId;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument,
+                                QtMobility::ICd2DetailsDBusStruct &icd2)
+{
+    argument.beginStructure();
+    argument >> icd2.serviceType;
+    argument >> icd2.serviceAttributes;
+    argument >> icd2.setviceId;
+    argument >> icd2.networkType;
+    argument >> icd2.networkAttributes;
+    argument >> icd2.networkId;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument,
+                                QtMobility::ICd2DetailsList &detailsList)
+{
+     argument.beginArray();
+     detailsList.clear();
+
+     while (!argument.atEnd()) {
+         QtMobility::ICd2DetailsDBusStruct element;
+         argument >> element;
+         detailsList.append(element);
+     }
+
+     argument.endArray();
+     return argument;
+}
+
+QDBusArgument &operator<<(QDBusArgument &argument,
+                          const QtMobility::ICd2DetailsList &detailsList)
+{
+     argument.beginArray(qMetaTypeId<QtMobility::ICd2DetailsDBusStruct>());
+     for (int i = 0; i < detailsList.count(); ++i)
+         argument << detailsList[i];
+     argument.endArray();
+     return argument;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -605,208 +660,206 @@ void QNetworkSessionPrivate::open()
         if ((activeConfig.state() & QNetworkConfiguration::Active) != QNetworkConfiguration::Active) {
             state = QNetworkSession::Connecting;
             emit q->stateChanged(state);
-
-	    QTimer::singleShot(0, this, SLOT(do_open()));
-	    return;
+            QTimer::singleShot(0, this, SLOT(do_open()));
+            return;
         }
-
         isOpen = (activeConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
         if (isOpen)
             emit quitPendingWaitsForOpened();
     } else {
-	/* We seem to be active so inform caller */
-	emit quitPendingWaitsForOpened();
+        /* We seem to be active so inform caller */
+        emit quitPendingWaitsForOpened();
     }
 }
-
 
 void QNetworkSessionPrivate::do_open()
 {
     icd_connection_flags flags = connectFlags;
-    bool st;
-    QString result;
     QString iap = publicConfig.identifier();
 
     if (state == QNetworkSession::Connected) {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "Already connected to" << activeConfig.identifier();
+        qDebug() << "Already connected to" << activeConfig.identifier();
 #endif
         emit q->stateChanged(QNetworkSession::Connected);
-	emit quitPendingWaitsForOpened();
+        emit quitPendingWaitsForOpened();
 	return;
     }
 
-    Maemo::IcdConnectResult connect_result;
-    Maemo::Icd icd(ICD_LONG_CONNECT_TIMEOUT);
-    QNetworkConfiguration config;
     if (publicConfig.type() == QNetworkConfiguration::UserChoice)
-	config = activeConfig;
+        config = activeConfig;
     else
-	config = publicConfig;
+        config = publicConfig;
 
     if (iap == OSSO_IAP_ANY) {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connecting to default IAP" << iap;
+        qDebug() << "connecting to default IAP" << iap;
 #endif
-	st = icd.connect(flags, connect_result);
-
+        m_connectRequestTimer.start(ICD_LONG_CONNECT_TIMEOUT);
+        m_dbusInterface->asyncCall(ICD_DBUS_API_CONNECT_REQ, (uint)flags); // Return value ignored
+        m_asynchCallActive = true;
     } else {
-
-	QList<Maemo::ConnectParams> params;
-	Maemo::ConnectParams param;
-	param.connect.service_type = config.d->service_type;
-	param.connect.service_attrs = config.d->service_attrs;
-	param.connect.service_id = config.d->service_id;
-	param.connect.network_type = config.d->iap_type;
-	param.connect.network_attrs = config.d->network_attrs;
-	if (config.d->network_attrs & ICD_NW_ATTR_IAPNAME)
-	    param.connect.network_id = QByteArray(iap.toLatin1());
-	else
-	    param.connect.network_id = config.d->network_id;
-	params.append(param);
+        ICd2DetailsDBusStruct icd2;
+        icd2.serviceType = config.d->service_type;
+        icd2.serviceAttributes = config.d->service_attrs;
+        icd2.setviceId = config.d->service_id;
+        icd2.networkType = config.d->iap_type;
+        icd2.networkAttributes = config.d->network_attrs;
+        if (config.d->network_attrs & ICD_NW_ATTR_IAPNAME) {
+            icd2.networkId  = QByteArray(iap.toLatin1());
+        } else {
+            icd2.networkId  = config.d->network_id;
+        }
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s",
-	    param.connect.network_id.data(),
-	    param.connect.network_type.toAscii().constData(),
-	    param.connect.network_attrs,
-	    param.connect.service_type.toAscii().constData(),
-	    param.connect.service_attrs,
-	    param.connect.service_id.toAscii().constData());
+    qDebug("connecting to %s/%s/0x%x/%s/0x%x/%s",
+        icd2.networkId.data(),
+        icd2.networkType.toAscii().constData(),
+        icd2.networkAttributes,
+        icd2.serviceType.toAscii().constData(),
+        icd2.serviceAttributes,
+        icd2.setviceId.toAscii().constData());
 #endif
-	st = icd.connect(flags, params, connect_result);
+
+        ICd2DetailsList paramArray;
+        paramArray.append(icd2);
+        m_connectRequestTimer.start(ICD_LONG_CONNECT_TIMEOUT);
+        m_dbusInterface->asyncCall(ICD_DBUS_API_CONNECT_REQ, (uint)flags, QVariant::fromValue(paramArray)); // Return value ignored
+        m_asynchCallActive = true;
     }
+}
 
-    if (st) {
-	result = connect_result.connect.network_id.data();
-	QString connected_iap = result;
+ void QNetworkSessionPrivate::stateChange(const QDBusMessage& rep)
+{
+     if (m_asynchCallActive == true) {
+        if (m_connectRequestTimer.isActive())
+            m_connectRequestTimer.stop();
+        m_asynchCallActive = false;
 
-	if (connected_iap.isEmpty()) {
+        QString result = rep.arguments().at(5).toString(); // network id or empty string
+        QString connected_iap = result;
+        if (connected_iap.isEmpty()) {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	    qDebug() << "connect to"<< iap << "failed, result is empty";
+            qDebug() << "connect to"<< publicConfig.identifier() << "failed, result is empty";
 #endif
-	    updateState(QNetworkSession::Disconnected);
-	    emit q->error(QNetworkSession::InvalidConfigurationError);
-	    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
-                copyConfig(publicConfig, activeConfig);
-	    return;
-	}
+            updateState(QNetworkSession::Disconnected);
+            emit q->error(QNetworkSession::InvalidConfigurationError);
+            if (publicConfig.type() == QNetworkConfiguration::UserChoice)
+                    copyConfig(publicConfig, activeConfig);
+            return;
+        }
 
-	/* If the user tried to connect to some specific connection (foo)
-	 * and we were already connected to some other connection (bar),
-	 * then we cannot activate this session although icd has a valid
-	 * connection to somewhere.
-	 */
-	if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
-	    (connected_iap != config.identifier())) {
-	    updateState(QNetworkSession::Disconnected);
-	    emit q->error(QNetworkSession::InvalidConfigurationError);
-	    return;
-	}
+         /* If the user tried to connect to some specific connection (foo)
+         * and we were already connected to some other connection (bar),
+         * then we cannot activate this session although icd has a valid
+         * connection to somewhere.
+         */
+        if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
+            (connected_iap != config.identifier())) {
+            updateState(QNetworkSession::Disconnected);
+            emit q->error(QNetworkSession::InvalidConfigurationError);
+            return;
+        }
 
+        /* Did we connect to non saved IAP? */
+        if (!(config.d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
+            /* Because the connection succeeded, the IAP is now known.
+             */
+            config.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
+            config.d->id = connected_iap;
+        }
 
-	/* Did we connect to non saved IAP? */
-	if (!(config.d->network_attrs & ICD_NW_ATTR_IAPNAME)) {
-	    /* Because the connection succeeded, the IAP is now known.
-	     */
-	    config.d->network_attrs |= ICD_NW_ATTR_IAPNAME;
-	    config.d->id = connected_iap;
-	}
+        /* User might have changed the IAP name when a new IAP was saved */
+        Maemo::IAPConf iap_name(config.d->id);
+        QString name = iap_name.value("name").toString();
+        if (!name.isEmpty())
+            config.d->name = name;
 
-	/* User might have changed the IAP name when a new IAP was saved */
-	Maemo::IAPConf iap_name(config.d->id);
-	QString name = iap_name.value("name").toString();
-	if (!name.isEmpty())
-	    config.d->name = name;
+        config.d->iap_type = rep.arguments().at(3).toString(); // connect_result.connect.network_type;
+        config.d->isValid = true;
+        config.d->state = QNetworkConfiguration::Active;
+        config.d->type = QNetworkConfiguration::InternetAccessPoint;
 
-        config.d->iap_type = connect_result.connect.network_type;
-
-	config.d->isValid = true;
-	config.d->state = QNetworkConfiguration::Active;
-	config.d->type = QNetworkConfiguration::InternetAccessPoint;
-
-	startTime = QDateTime::currentDateTime();
-	updateState(QNetworkSession::Connected);
-
-	currentNetworkInterface = get_network_interface();
-
+        startTime = QDateTime::currentDateTime();
+        updateState(QNetworkSession::Connected);
+        //currentNetworkInterface = get_network_interface();
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connected to" << result << config.d->name << "at" << currentNetworkInterface;
+        //qDebug() << "connected to" << result << config.d->name << "at" << currentNetworkInterface;
 #endif
 
-	/* We first check if the configuration already exists in the manager
-	 * and if it is not found there, we then insert it. Note that this
-	 * is only done for user choice config only because it can be missing
-	 * from config manager list.
-	 */
-
-	if (publicConfig.d->type == QNetworkConfiguration::UserChoice) {
-
+        /* We first check if the configuration already exists in the manager
+         * and if it is not found there, we then insert it. Note that this
+         * is only done for user choice config only because it can be missing
+         * from config manager list.
+         */
+        if (publicConfig.d->type == QNetworkConfiguration::UserChoice) {
 #ifdef BEARER_MANAGEMENT_DEBUG
 #if 0
-	    QList<QNetworkConfiguration> configs;
-	    QNetworkConfigurationManagerPrivate *conPriv = (QNetworkConfigurationManagerPrivate*)config.d.data()->manager;
-	    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
-	    foreach( QString ii, cpsIdents) {
-		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
-		    conPriv->accessPointConfigurations.value(ii);
-		QNetworkConfiguration pt;
-		pt.d = conPriv->accessPointConfigurations.value(ii);
-		configs << pt;
-	    }
+            QList<QNetworkConfiguration> configs;
+            QNetworkConfigurationManagerPrivate *conPriv = (QNetworkConfigurationManagerPrivate*)config.d.data()->manager;
+            QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
+            foreach( QString ii, cpsIdents) {
+                QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p =
+                        conPriv->accessPointConfigurations.value(ii);
+                QNetworkConfiguration pt;
+                pt.d = conPriv->accessPointConfigurations.value(ii);
+                configs << pt;
+            }
 
-	    int all = configs.count();
-	    qDebug() << "All configurations:" << all;
-	    foreach(QNetworkConfiguration p, configs) {
-		qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() << 
-		    " roaming->" << p.isRoamingAvailable() << "identifier->" << p.identifier() <<
-		    " purpose->" << p.purpose() << " state->" << p.state();
-	    }
+            int all = configs.count();
+            qDebug() << "All configurations:" << all;
+            foreach(QNetworkConfiguration p, configs) {
+                qDebug() << p.name() <<":  isvalid->" <<p.isValid() << " type->"<< p.type() <<
+                        " roaming->" << p.isRoamingAvailable() << "identifier->" << p.identifier() <<
+                        " purpose->" << p.purpose() << " state->" << p.state();
+            }
 #endif
 #endif
             QNetworkConfigurationManagerPrivate *mgr = (QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager;
             if (!mgr->accessPointConfigurations.contains(result)) {
-		QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = config.d;
-		mgr->accessPointConfigurations.insert(result, ptr);
+                QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = config.d;
+                mgr->accessPointConfigurations.insert(result, ptr);
 
-		QNetworkConfiguration item;
-		item.d = ptr;
-		emit mgr->configurationAdded(item);
+                QNetworkConfiguration item;
+                item.d = ptr;
+                emit mgr->configurationAdded(item);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-		//qDebug()<<"New configuration"<<result<<"added to manager in open";
+            qDebug()<<"New configuration"<<result<<"added to manager in open";
 #endif
 
-	    } else {
+            } else {
                 QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = mgr->accessPointConfigurations.value(result);
-		QNetworkConfiguration reference;
-		reference.d = priv;
+                QNetworkConfiguration reference;
+                reference.d = priv;
                 copyConfig(config, reference, false);
                 reference.d.data()->id = result; // Note: Id was not copied in copyConfig() function
                 config = reference;
                 activeConfig = reference;
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-		//qDebug()<<"Existing configuration"<<result<<"updated in manager in open";
+                qDebug()<<"Existing configuration"<<result<<"updated in manager in open";
 #endif
-	    }
-	}
+            }
+        }
 
-	emit quitPendingWaitsForOpened();
-
-    } else {
-#ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "connect to"<< iap << "failed, status:" << connect_result.status;
-#endif
-	updateState(QNetworkSession::Disconnected);
-	if (publicConfig.type() == QNetworkConfiguration::UserChoice)
-            copyConfig(publicConfig, activeConfig);
-	emit q->error(QNetworkSession::UnknownSessionError);
+        emit quitPendingWaitsForOpened();
     }
+}
+
+void QNetworkSessionPrivate::connectTimeout()
+{
+    updateState(QNetworkSession::Disconnected);
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
+            copyConfig(publicConfig, activeConfig);
+        emit q->error(QNetworkSession::UnknownSessionError);
 }
 
 void QNetworkSessionPrivate::close()
 {
+    if (m_connectRequestTimer.isActive())
+        m_connectRequestTimer.stop();
+
     if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);
@@ -820,6 +873,9 @@ void QNetworkSessionPrivate::close()
 
 void QNetworkSessionPrivate::stop()
 {
+    if (m_connectRequestTimer.isActive())
+        m_connectRequestTimer.stop();
+
     if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
         emit q->error(lastError);

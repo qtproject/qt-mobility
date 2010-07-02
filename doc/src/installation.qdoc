@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,15 +46,17 @@
 \tableofcontents
 
 \section1 Get the Qt Mobility API Package
-To begin, obtain the most recent distrubution package from 
+To begin, obtain the most recent distribution package from
 \l {http://get.qt.nokia.com}
 
 \section1 Pre-requisites & Dependencies
 To install Qt Mobility you must already have installed
 Qt 4.6 or higher, visit \l {http://get.qt.nokia.com} to obtain
-a copy. Furthermore perl must be installed and available in the environment path. Windows
-environments may require the installtion of a perl interpreter such as
-\l {http://www.activestate.com/activeperl} {ActivePerl}.
+a copy. Furthermore perl must be installed and available in the environment path. 
+Windows environments may require the installation of a perl interpreter such as
+\l {http://www.activestate.com/activeperl} {ActivePerl}. On the Maemo 5 (Fremantle) 
+platform PR1.2 firmware release or newer is required. 
+
 
 Qt Mobility Project APIs are comprised of a number of domains. Some of
 these domains have dependencies and these are outlined below:
@@ -75,7 +77,8 @@ these domains have dependencies and these are outlined below:
     \o N  
 \row
     \o Contacts
-    \o The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
+    \o The Maemo 5 backend depends on \l {http://maemo.org/packages/view/libosso-abook/}{libosso-abook}.
+       The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
        Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.
     \o Y
     \o N
@@ -87,7 +90,7 @@ these domains have dependencies and these are outlined below:
        The LBT library is not publicly available at the time of writing.
        The developer documentation for \l {http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html}
        {S60 Location Services} is probably the best source for LBT availability updates, as it
-       will be updated when the library is relased.
+       will be updated when the library is released.
     \o N(Y)
     \o N
 \row
@@ -101,13 +104,13 @@ these domains have dependencies and these are outlined below:
        functionality will not work if you are using the MinGW compiler.
 
        The messaging API SMS/MMS functionality requires that the platform
-       provides SMS/MMS facilites. Email functionality requires that an email
+       provides SMS/MMS facilities. Email functionality requires that an email
        account is available on the platform.
     \o N
     \o Y
 \row
     \o Multimedia
-    \o On all platforms, QtMedia depends on QtMultimedia and QtNetwork.
+    \o On all platforms, QtMultimediaKit depends on QtGui and QtNetwork.
 
        On all platforms, QML elements for sound effects and music and video playing are exported if QtDeclarative (auto-detected) is available.
 
@@ -116,17 +119,19 @@ these domains have dependencies and these are outlined below:
     \o
 \row
     \o Multimedia mediaservice plugins
-    \o The audioengine plugin for Unix depends on QtMultimedia.
+    \o The audioengine plugin for Unix depends on QtMultimediaKit.
 
-       The dsengine plugin for desktop Windows depends on QtMultimedia.
+       The dsengine plugin for desktop Windows depends on QtMultimediaKit.
 
        The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (>= 0.10.19), gstreamer-audio-0.10 (>= 0.10.19), gstreamer-base-0.10 (>= 0.10.19), gstreamer-interfaces-0.10 (>= 0.10.19) and gstreamer-video-0.10 (>= 0.10.19).
        If asound (auto-detected) is available, ALSA device detection will be enabled.
 
-       The QtMobilityMultimediaEngine for Symbian depends on QtMultimedia. 
-       To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
-       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 
-       MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed).
+       To enable all mediaservices on Symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features:
+       AudioRoutingAPI, Tuner Utility (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed).
+
+       Multimedia also includes audio and video (from 1.0.1 onwards) and in Symbian we need MMFDevSound API-SDK plugin to compile/link API. This is also available in Forum Nokia as a supplementary pack.
+
     \o Y
     \o N
 \row
@@ -136,6 +141,16 @@ these domains have dependencies and these are outlined below:
        On Maemo 6, it depends on contextsubscriber-1.0 from \l {http://maemo.gitorious.org/maemo-af/contextkit}{Context Kit}
     \o Y
     \o N
+\row
+    \o  Sensors
+    \o  The QtSensors s60_sensor_api plugin for S60 3.1 depends on the \l {http://www.forum.nokia.com/info/sw.nokia.com/id/4284ae69-d37a-4319-bdf0-d4acdab39700/Sensor_plugin_S60_3rd_ed.html}{Sensor API Plug-in}
+    \o  Y
+    \o  N
+\row
+    \o
+    \o  The QtSensors symbian plugin for S60 3.2 depends on the backported \l {http://www.forum.nokia.com/info/sw.nokia.com/id/8059e8ae-8c22-4684-be6b-d40d443d7efc/Sensor_API_Plug_in_S60_3rd_FP2.html}{Sensor API Plug-in}
+    \o  Y
+    \o  N
 \row
     \o  Service Framework
     \o  On all platforms, QtServiceFramework depends on QtSql. QtSql also needs the SQLite 3 driver (enabled by default) at runtime.
@@ -149,9 +164,14 @@ these domains have dependencies and these are outlined below:
        although System Information will compile without them, there will be reduced functionality. It also depends on QtGui.
        
        On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
-       with older SDK's but there will be reduced functionality.
+       with older SSDKsbut there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       
+       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
+
+       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
     \o N(Y)
     \o N
 \row
@@ -178,7 +198,7 @@ On windows, uncompress the zip file into the directory you want
 Qt Mobility Project installed, extracting to \c {C:\QtMobility}
 will create the directory \c {C:\QtMobility\%DISTNAME%}
 
-NOTE: The install path must not contain any spaces.
+NOTE: The install path(prefix) must not contain any spaces.
 
 \section1 Building
 Ensure that all compile time dependencies for your particular
@@ -186,6 +206,8 @@ platform have been met before building.
 
 If Qt is installed for multiple platforms it is also important 
 to ensure that the correct version of \c{qmake} is being used.
+
+\bold{Note:} Static builds of Qt are not supported by Qt Mobility.
 
 \section2 Building On Unix
 
@@ -256,8 +278,8 @@ mobility libraries into $PWD/install.
 \section2 Building For Windows CE
 
     The process is much the same as for Windows, although it is 
-    important to run the \c{setcepaths} script from the \c{bin} 
-    directory of the Qt for Windows CE installation to ensure that 
+    important to run the \c{setcepaths} script from the \c{bin}
+    directory of the Qt for Windows CE installation to ensure that
     the correct headers and libraries are used.
 
 \section2 Building For Symbian On Windows
@@ -296,6 +318,16 @@ mobility libraries into $PWD/install.
     be ready to use for compiling applications for the
     emulator and/or device.
 
+\section2 Building For Mac OS X
+    The process is the same as for Unix, with the additional configuration
+    option of \c { -sdk /Developer/SDKs/MacOSX10.5.sdk } to specify an Apple SDK 
+    version other than the default.
+ 
+    Note: QtMobility currently has no support for building with Xcode.
+
+    Note: QtMobility will be built using the same frameworks configuration option 
+    that Qt was built with.
+    
 \section2 Building Individual Qt Mobility Modules
 
     Qt Mobility is comprised of several modules but all of
@@ -356,15 +388,19 @@ editing \c{C:\autoexec.bat}
 
 \section2 Making the libraries available on Windows CE
 
-    Environment variables do not exist on Windows CE, and so users 
-    of Qt Mobility for Windows CE have to do things slightly differently.
+Environment variables do not exist on Windows CE, and so users 
+of Qt Mobility for Windows CE have to do things slightly differently.
+A pre-requisite for Qt Mobility applications is that the Qt libraries and plugins have been deployed as per Qt's documentation.
 
-    The deployment of the libraries to the device is normally done 
-    with Microsoft Visual Studio or Microsoft ActiveSync.
+The deployment of the libraries to the device is normally done 
+with Microsoft Visual Studio or Microsoft ActiveSync.
 
-    The libraries can be made globally available by deploying them 
-    to \c{c:\Windows} on the device, or can be deployed once per 
-    application by copying them into the same directory as the executable.
+The libraries can be made globally available by deploying them 
+to \c{C:\Windows} on the device, or can be deployed once per 
+application by copying them into the same directory as the executable. Mobility 
+expects plug-ins in the subdirecty \c {plugins/<APIname>} in one of
+the locations specified by \l QCoreApplication::libraryPaths() which includes 
+\c{C:\Windows} and the Mobility application's directory.
 
 And now the installation is complete, we hope you enjoy 
 using Qt Mobility.

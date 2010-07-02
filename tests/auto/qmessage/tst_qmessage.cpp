@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "qtmessaging.h"
+#include "qmessage.h"
 #include "../support/support.h"
 
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
@@ -109,6 +109,7 @@ private slots:
     void testMessageAddress_data();
     void testMessageAddress();
     void testHeaderFields();
+    void testStandardFolder();
 
 private:
     QMessageAccountId testAccountId;
@@ -456,3 +457,8 @@ void tst_QMessage::testHeaderFields()
     QCOMPARE(msg.headerFieldValue("X-None").isEmpty(), true);
 }
 
+void tst_QMessage::testStandardFolder()
+{
+    QMessage msg;
+    QCOMPARE(msg.standardFolder(), QMessage::DraftsFolder);
+}

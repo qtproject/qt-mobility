@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,90 +62,87 @@ QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent)
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
-    if (LiblocationWrapper::instance()->inited()) {
-        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
+    if (LiblocationWrapper::instance()->inited())
         return INIT_OK;
-    } else {
+    else
         return INIT_FAILED;
-    }
 }
 
 void QGeoSatelliteInfoSourceMaemo::setUpdateInterval(int msec)
 {
     bool updateTimerInterval = false;
-    
+
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)
         if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
             updateTimerInterval = true;
-    
-    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
-                            QGeoSatelliteInfoSourceMaemo::PowersaveActive);
-    
+
     timerInterval = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
 
-    if (timerInterval >= POWERSAVE_THRESHOLD) {
-        satelliteInfoState |= (QGeoSatelliteInfoSourceMaemo::PowersaveActive |
-                               QGeoSatelliteInfoSourceMaemo::TogglePowersave);
-    } else {
-        satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
-                                QGeoSatelliteInfoSourceMaemo::PowersaveActive);
-    }  
+    if (timerInterval >= POWERSAVE_THRESHOLD)
+        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::PowersaveActive;
+    else
+        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::PowersaveActive;
 
-    if (updateTimerInterval || (satelliteInfoState &
-                                QGeoSatelliteInfoSourceMaemo::Started))
-        activateTimer();    
+    // If powersave has been active when new update interval has been set,
+    // ensure that timer is started.
+    if(updateTimerInterval)
+        startLocationDaemon();
+    
+    // Ensure that new timer interval is taken into use immediately.
+    activateTimer();
 }
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)) {
-        startLocationDaemon();
-        satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestSingleShot |
-                                QGeoSatelliteInfoSourceMaemo::TogglePowersave);
-    }
+    startLocationDaemon();
+
+    // Ensure that powersave is selected, if stopUpdates() has been called,
+    // but selected update interval is still greater than POWERSAVE_THRESHOLD.
+    if (timerInterval >= POWERSAVE_THRESHOLD)
+        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::PowersaveActive;
+
     activateTimer();
 }
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot)) {    
+    satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::PowersaveActive;
+
+    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive)) {
         updateTimer->stop();
-        requestTimer->stop();    
-        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
-        stopLocationDaemon();
+        if (LiblocationWrapper::instance()->isActive())
+            LiblocationWrapper::instance()->stop();
     }
+
+    satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Started;
+    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
 }
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
     int timeoutForRequest = 0;
-    
+
     if (!timeout) {
         if (LiblocationWrapper::instance()->isActive())
+            // If GPS is active, assume quick fix.
             timeoutForRequest = DEFAULT_UPDATE_INTERVAL;
         else
+            // Otherwise reserve longer time to get a fix.
             timeoutForRequest = POWERSAVE_POWERON_PERIOD;
     } else if (timeout < MINIMUM_UPDATE_INTERVAL) {
-        if (satelliteInfoState & (QGeoSatelliteInfoSourceMaemo::RequestActive |
-                                 QGeoSatelliteInfoSourceMaemo::RequestSingleShot))
+        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive)
             return;
-        else 
-            satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestActive |
-                                    QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
+
         emit requestTimeout();
         return;
     } else {
         timeoutForRequest = timeout;
     }
 
-    updateTimer->stop();
-    requestTimer->stop();
-
     satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::RequestActive;
-    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
-       satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
 
-    startLocationDaemon();
+    if (!(LiblocationWrapper::instance()->isActive()))
+        LiblocationWrapper::instance()->start();
 
     activateTimer();
     requestTimer->start(timeoutForRequest);
@@ -158,24 +155,38 @@ void QGeoSatelliteInfoSourceMaemo::satelliteStatus()
     QList<QGeoSatelliteInfo> satellitesInUse = 
             LiblocationWrapper::instance()->satellitesInUse();
 
-    if (satellitesInView.length()) {
-        // If there are satellites in view, also in use can be emitted.
-        emit satellitesInViewUpdated(satellitesInView);
-        emit satellitesInUseUpdated(satellitesInUse);
-     }
-
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
         satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
-    
-        requestTimer->stop();
-        
-        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
-            satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
 
-            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive))            
-                return;
+        requestTimer->stop();
+
+        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped) {
+            if (LiblocationWrapper::instance()->isActive()) {
+                LiblocationWrapper::instance()->stop();
+            }
+        }
+
+        // Ensure that requested satellite info is emitted even though
+        // powersave is active and GPS would normally be off.
+        if ((satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) &&
+           (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)) {
+            if (satellitesInView.length()) {
+                emit satellitesInViewUpdated(satellitesInView);
+                emit satellitesInUseUpdated(satellitesInUse);
+            }
         }
     }
+
+    // Make sure that if update is triggered when waking up, there
+    // is no false position update.
+    if (!((satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) &&
+         (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped))) {
+        if (satellitesInView.length()) {
+            emit satellitesInViewUpdated(satellitesInView);
+            emit satellitesInUseUpdated(satellitesInUse);
+        }
+    }
+
     activateTimer();
 }
 
@@ -186,49 +197,46 @@ void QGeoSatelliteInfoSourceMaemo::requestTimeoutElapsed()
     
     satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
 
-    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
-        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
-        stopLocationDaemon();
-        if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive))
-            return;
-    }
+    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
+        if (LiblocationWrapper::instance()->isActive())
+            LiblocationWrapper::instance()->stop();
+
     activateTimer();
 }
 
 void QGeoSatelliteInfoSourceMaemo::activateTimer() {
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
         updateTimer->start(MINIMUM_UPDATE_INTERVAL);
-    } else {
-        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) {
-            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::TogglePowersave)) {
-                startLocationDaemon();
-                satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::TogglePowersave;
-                updateTimer->start(POWERSAVE_POWERON_PERIOD);
-            } else if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::TogglePowersave) {
-                stopUpdates();
-                satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::TogglePowersave;
-                updateTimer->start(timerInterval - POWERSAVE_POWERON_PERIOD);
-            }
-        } else {
-            updateTimer->start(timerInterval);
-        }
+        return;
     }
+
+    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) {
+        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Started) {
+            // Cannot call stopUpdates() here since we want to keep powersave
+            // active.
+            if (LiblocationWrapper::instance()->isActive())
+                LiblocationWrapper::instance()->stop();
+            updateTimer->start(timerInterval - POWERSAVE_POWERON_PERIOD);
+                
+            satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Started;
+            satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
+        } else if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped) {
+            startLocationDaemon();
+            updateTimer->start(POWERSAVE_POWERON_PERIOD);
+        }
+        return;
+    }
+    
+    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Started)
+            updateTimer->start(timerInterval);
 }
 
 void QGeoSatelliteInfoSourceMaemo::startLocationDaemon() {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Started))
+    if (!(LiblocationWrapper::instance()->isActive()))
         LiblocationWrapper::instance()->start();
     satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Started;
     satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Stopped;
 }
-
-void QGeoSatelliteInfoSourceMaemo::stopLocationDaemon() {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped))
-        LiblocationWrapper::instance()->stop();
-    satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Started;
-    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
-}
-
 
 #include "moc_qgeosatelliteinfosource_maemo5_p.cpp"
 QTM_END_NAMESPACE

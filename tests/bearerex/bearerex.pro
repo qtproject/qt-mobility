@@ -5,9 +5,15 @@ QT += core \
       gui \
       network
 
-FORMS += sessiondialog.ui \
-         bearerex.ui \
-         detailedinfodialog.ui
+FORMS += detailedinfodialog.ui
+maemo5|maemo6 {
+    FORMS += sessiondialog_maemo.ui \
+        bearerex_maemo.ui
+} else {
+    FORMS += sessiondialog.ui \
+        bearerex.ui
+}
+
 include(../../common.pri)
 #not really a test case but deployment happens same way
 CONFIG += testcase
@@ -18,11 +24,13 @@ INCLUDEPATH += . \
 
 # Example headers and sources
 HEADERS += bearerex.h \
-           xqlistwidget.h
+           xqlistwidget.h \
+    datatransferer.h
     
 SOURCES += bearerex.cpp \
            main.cpp \
-           xqlistwidget.cpp
+           xqlistwidget.cpp \
+    datatransferer.cpp
 
 CONFIG += mobility
 MOBILITY = bearer

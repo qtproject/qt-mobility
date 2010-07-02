@@ -9,13 +9,16 @@ contains(mobility_modules,serviceframework) {
                notesmanagerplugin \
                servicebrowser
 
-    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
+    !symbian:SUBDIRS+= sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
-                   declarative-sfw-dialer
+        SUBDIRS += declarative-sfw-dialer
+
+        sources.files += declarative-sfw-notes \
+                         declarative-sfw-dialer/declarative-sfw-dialer
     }
 }
+
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
@@ -50,6 +53,8 @@ contains(mobility_modules,publishsubscribe) {
         SUBDIRS += publish-subscribe
         contains(QT_CONFIG, declarative) {
             SUBDIRS += battery-charge
+
+            sources.files += battery-charge/battery-subscriber
         }
     }
 }
@@ -64,7 +69,12 @@ contains(mobility_modules,multimedia) {
         radio \
         player \
         slideshow \
-        audiorecorder
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
 
@@ -77,9 +87,12 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
                 writemessage \
                 serviceactions
 
-                contains(mobility_modules,contacts) {
-                    SUBDIRS += keepintouch
-                }
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+
+            # MessagingEx lives in tests for some reason
+            maemo5:SUBDIRS += ../tests/messagingex
          }
     }
 }
@@ -89,3 +102,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+sources.path = $$QT_MOBILITY_PREFIX/bin
+INSTALLS += sources

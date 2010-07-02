@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactFilter Class Reference</h1>
 <p>The QContactFilter class is used to select contacts made available through a <a href="qcontactmanager.html">QContactManager</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactFilter&gt;</pre><p>Inherited by <a href="qcontactactionfilter.html">QContactActionFilter</a>, <a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a>, <a href="qcontactdetailfilter.html">QContactDetailFilter</a>, <a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a>, <a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a>, <a href="qcontactinvalidfilter.html">QContactInvalidFilter</a>, <a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a>, <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>, and <a href="qcontactunionfilter.html">QContactUnionFilter</a>.</p>
+<pre>    #include &lt;QContactFilter&gt;</pre><p>Inherited by <a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a>, <a href="qcontactdetailfilter.html">QContactDetailFilter</a>, <a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a>, <a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a>, <a href="qcontactinvalidfilter.html">QContactInvalidFilter</a>, <a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a>, <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>, and <a href="qcontactunionfilter.html">QContactUnionFilter</a>.</p>
 <ul>
 <li><a href="qcontactfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -33,7 +33,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#QContactFilter">QContactFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#QContactFilter-2">QContactFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#dtor.QContactFilter">~QContactFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#dtor.QContactFilter">~QContactFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FilterType </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#operator-not-eq">operator!=</a></b> ( const QContactFilter &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#operator-eq">operator=</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
@@ -71,8 +71,7 @@
 <tr><td valign="top"><tt>QContactFilter::InvalidFilter</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid filter which matches nothing</td></tr>
 <tr><td valign="top"><tt>QContactFilter::ContactDetailFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition with a particular value</td></tr>
 <tr><td valign="top"><tt>QContactFilter::ContactDetailRangeFilter</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range</td></tr>
-<tr><td valign="top"><tt>QContactFilter::ChangeLogFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches contacts whose timestamps have been updated since some particular date and time</td></tr>
-<tr><td valign="top"><tt>QContactFilter::ActionFilter</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available</td></tr>
+<tr><td valign="top"><tt>QContactFilter::ChangeLogFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches contacts whose timestamps have been updated since some particular date and time A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available</td></tr>
 <tr><td valign="top"><tt>QContactFilter::RelationshipFilter</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches contacts which participate in a particular type of relationship, or relationship with a specified contact</td></tr>
 <tr><td valign="top"><tt>QContactFilter::IntersectionFilter</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A filter which matches all contacts that are matched by all filters it includes</td></tr>
 <tr><td valign="top"><tt>QContactFilter::UnionFilter</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which matches any contact that is matched by any of the filters it includes</td></tr>
@@ -100,7 +99,7 @@
 <tr><td valign="top"><tt>QContactFilter::MatchFixedString</tt></td><td align="center" valign="top"><tt>Qt::MatchFixedString</tt></td><td valign="top">Performs string-based matching. String-based comparisons are case-insensitive unless the <tt>MatchCaseSensitive</tt> flag is also specified</td></tr>
 <tr><td valign="top"><tt>QContactFilter::MatchCaseSensitive</tt></td><td align="center" valign="top"><tt>Qt::MatchCaseSensitive</tt></td><td valign="top">The search is case sensitive</td></tr>
 <tr><td valign="top"><tt>QContactFilter::MatchPhoneNumber</tt></td><td align="center" valign="top"><tt>1024</tt></td><td valign="top">The search term is considered to be in the form of a phone number, and special processing (removing dialing prefixes, non significant characters like '-'. ')' etc). may be performed when matching the item.</td></tr>
-<tr><td valign="top"><tt>QContactFilter::MatchKeypadCollation</tt></td><td align="center" valign="top"><tt>1025</tt></td><td valign="top">The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads). Each digit in the search term can represent a number of alphanumeric symbols. For example, the search string &quot;43556&quot; would match items &quot;HELLO&quot;, &quot;GEKKO&quot;, &quot;HELL6&quot; and &quot;43556&quot; among others. Accented characters and other punctuation characters may additionally be matched by the <a href="qcontactmanager.html">QContactManager</a> in a way consistent with the platform.</td></tr>
+<tr><td valign="top"><tt>QContactFilter::MatchKeypadCollation</tt></td><td align="center" valign="top"><tt>2048</tt></td><td valign="top">The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads). Each digit in the search term can represent a number of alphanumeric symbols. For example, the search string &quot;43556&quot; would match items &quot;HELLO&quot;, &quot;GEKKO&quot;, &quot;HELL6&quot; and &quot;43556&quot; among others. Accented characters and other punctuation characters may additionally be matched by the <a href="qcontactmanager.html">QContactManager</a> in a way consistent with the platform.</td></tr>
 </table></p>
 <p>The MatchFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;MatchFlag&gt;. It stores an OR combination of MatchFlag values.</p>
 <hr />
@@ -111,7 +110,7 @@
 <h3 class="fn"><a name="QContactFilter-2"></a>QContactFilter::QContactFilter ( const QContactFilter &amp; <i>other</i> )</h3>
 <p>Constructs a new copy of <i>other</i></p>
 <a name="//apple_ref/cpp/instm/QContactFilter/~QContactFilter"></a>
-<h3 class="fn"><a name="dtor.QContactFilter"></a>QContactFilter::~QContactFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QContactFilter"></a>QContactFilter::~QContactFilter ()</h3>
 <p>Cleans up the memory used by this filter</p>
 <a name="//apple_ref/cpp/instm/QContactFilter/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qcontactfilter.html#FilterType-enum">FilterType</a> QContactFilter::type () const</h3>
@@ -136,8 +135,8 @@
 <p>See also <a href="qcontactunionfilter.html">QContactUnionFilter</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

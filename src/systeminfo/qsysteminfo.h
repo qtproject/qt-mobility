@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -107,6 +107,9 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 private:
     QSystemInfoPrivate *d;
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
@@ -175,6 +178,11 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+protected:
+    virtual void connectNotify(const char *signal);
+    virtual void disconnectNotify(const char *signal);
+
 private:
        QSystemNetworkInfoPrivate *d;
 };
@@ -240,9 +248,9 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
 
 
-    Q_ENUMS(BatteryLevel)
+    Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
-    Q_ENUMS(InputMethod)
+    Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
 
@@ -276,6 +284,7 @@ public:
         MultiTouch = 0x0000010,
         Mouse = 0x0000020
     };
+
     Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
@@ -320,8 +329,12 @@ Q_SIGNALS:
 
 private:
     QSystemDeviceInfoPrivate *d;
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )
 
 class QSystemScreenSaverPrivate;
 class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject

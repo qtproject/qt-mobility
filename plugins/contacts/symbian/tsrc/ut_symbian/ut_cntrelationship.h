@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,7 +67,7 @@ private slots:
 	void invalidFirstAndSecondContactGroupRelationship();
 
 private:
-    bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
+    bool validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
 
 private:
      CntSymbianEngine *m_manager;

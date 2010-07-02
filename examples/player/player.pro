@@ -3,7 +3,7 @@ TARGET = player
 QT += network \
       xml
 
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 
 include(../examples.pri)
 CONFIG += mobility
@@ -21,7 +21,7 @@ SOURCES = main.cpp \
     videowidget.cpp
 
 symbian {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData NetworkServices
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData NetworkServices SwEvent
     HEADERS += mediakeysobserver.h
     SOURCES += mediakeysobserver.cpp
     LIBS += -lremconinterfacebase \

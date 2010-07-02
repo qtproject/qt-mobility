@@ -88,12 +88,19 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            VERSION = 1.0.2
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -123,10 +130,6 @@ maemo6 {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
-    LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4}
-maemo* {
-    LIBS += -L/opt/qt4-maemo5/lib
-    QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
 }
 
 wince* {
@@ -159,6 +162,9 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
@@ -173,3 +179,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

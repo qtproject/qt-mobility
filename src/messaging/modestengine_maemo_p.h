@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,26 +42,32 @@
 #ifndef MODESTENGINE_MAEMO_H
 #define MODESTENGINE_MAEMO_H
 
+#include "qmessagemanager.h"
+#include "qmessagefilter_p.h"
+#include "qmessageservice.h"
+
+#include "gconf/gconf-client.h"
+#include "libosso.h"
+
 #include <QMap>
 #include <QString>
 #include <QDBusArgument>
-
-#include "qmessagemanager.h"
-#include "qmessagefilter_p.h"
-#include "gconf/gconf-client.h"
-#include "libosso.h"
 #include <QDBusPendingCallWatcher>
 #include <QFileInfoList>
 #include <QThread>
 #include <QMutex>
+#include <QEventLoop>
 
 class QDBusInterface;
 class QFileSystemWatcher;
+class QEventLoop;
 
 QTM_BEGIN_NAMESPACE
 
 typedef QMap< QString, QString > ModestStringMap;
 typedef QList< ModestStringMap > ModestStringMapList;
+
+static const int maxCacheSize = 100000;
 
 class QMessageService;
 class QMessageServicePrivate;
@@ -81,6 +87,9 @@ struct MessageQueryInfo
     int currentFilterListIndex;
     int handledFiltersCount;
     QMessageIdList ids;
+    QString realAccountId;
+    bool isQuery;
+    bool returnWithSingleShot;
 };
 
 struct ModestUnreadMessageDBusStruct
@@ -111,6 +120,35 @@ struct ModestMessage
 };
 
 typedef enum {
+    MessagingModestFolderTypeUnknown,
+    MessagingModestFolderTypeNormal,
+    MessagingModestFolderTypeInbox,
+    MessagingModestFolderTypeOutbox,
+    MessagingModestFolderTypeTrash,
+    MessagingModestFolderTypeJunk,
+    MessagingModestFolderTypeSent,
+    MessagingModestFolderTypeRoot,
+    MessagingModestFolderTypeNotes,
+    MessagingModestFolderTypeDrafts,
+    MessagingModestFolderTypeContacts,
+    MessagingModestFolderTypeCalendar,
+    MessagingModestFolderTypeArchive,
+    MessagingModestFolderTypeMerge,
+    MessagingModestFolderTypeNum
+} MessagingModestFolderType;
+
+struct MessagingModestFolder
+{
+    QString id;
+    QString modestId;
+    QString parentAccountId;
+    QString parentFolderId;
+    MessagingModestFolderType type;
+    QString name;
+    QString localizedName;
+};
+
+typedef enum {
     MessagingModestMessageNotDefined  = 0,
     MessagingModestMessageAnswered    = 1<<0,
     MessagingModestMessageDeleted     = 1<<1,
@@ -125,11 +163,10 @@ typedef enum {
 } MessagingModestMessageFlags;
 
 typedef enum {
-    MessagingModestMessagePriorityDefined   = 0,
-    MessagingModestMessageHighPriority      = 1<<9|1<<10,
-    MessagingModestMessageNormalPriority    = 0<<9|0<<10,
-    MessagingModestMessageLowPriority       = 0<<9|1<<10,
-    MessagingModestMessageSuspendedPriority = 1<<9|0<<10
+    MessagingModestMessagePriorityNotDefined = 0,
+    MessagingModestMessageHighPriority       = 0<<9|1<<10,
+    MessagingModestMessageNormalPriority     = 0<<9|0<<10,
+    MessagingModestMessageLowPriority        = 1<<9|0<<10,
 } MessagingModestMessagePriority;
 
 struct MessagingModestMimePart
@@ -137,6 +174,7 @@ struct MessagingModestMimePart
     QString mimeType;
     bool isAttachment;
     QString fileName;
+    QString contentId;
 };
 
 struct MessagingModestMessage
@@ -187,12 +225,13 @@ public:
     QStringList files() const;
     int addDirectory(const QString& path, uint eventsToWatch = 0);
     QStringList directories() const;
+    void clear();
 
 private slots:
     void notifySlot();
 
 signals:
-   void fileChanged(int watchDescriptor, const QString& filePath, uint events);
+   void fileChanged(int watchDescriptor, QString filePath, uint events);
 
 private: //Data
     int m_inotifyFileDescriptor;
@@ -215,6 +254,7 @@ public:
 
     enum NotificationType
     {
+        None = 0,
         Added,
         Updated,
         Removed
@@ -238,7 +278,9 @@ public:
     int countFolders(const QMessageFolderFilter &filter) const;
     QMessageFolder folder(const QMessageFolderId &id) const;
 
-    QMessage message(const QMessageId &id) const;
+    QMessage message(const QMessageId &id, bool useCache = true) const;
+    bool addMessage(QMessage &message);
+    bool updateMessage(QMessage &message);
     bool removeMessage(const QMessageId &id, QMessageManager::RemovalOption option);
 
     bool queryMessages(QMessageService& messageService, const QMessageFilter &filter,
@@ -248,6 +290,14 @@ public:
                        const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool countMessages(QMessageService& messageService, const QMessageFilter &filter);
 
+    QMessageIdList queryMessagesSync(const QMessageFilter &filter, const QMessageSortOrder &sortOrder,
+                                     uint limit, uint offset, bool &isFiltered, bool &isSorted) const;
+    QMessageIdList queryMessagesSync(const QMessageFilter &filter, const QString &body,
+                                     QMessageDataComparator::MatchFlags matchFlags,
+                                     const QMessageSortOrder &sortOrder, uint limit, uint offset,
+                                     bool &isFiltered, bool &isSorted) const;
+    int countMessagesSync(const QMessageFilter &filter) const;
+
     bool sendEmail(QMessage &message);
     bool composeEmail(const QMessage &message);
     bool showMessage(const QMessageId &id);
@@ -256,6 +306,12 @@ public:
                                                                      const QMessageFilter& filter,
                                                                      QMessageManager::NotificationFilterId id = 0);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
+    QByteArray getMimePart (const QMessageId &id, const QString &attachmentId);
+
+    bool retrieveBody(QMessageService& messageService, const QMessageId &id);
+    bool retrieve(QMessageService& messageService, const QMessageId &messageId, const QMessageContentContainerId &id, QMessage *msg = 0);
+
+    void clearHeaderCache();
 
 private:
     QFileInfoList localFolders() const;
@@ -264,6 +320,9 @@ private:
     QFileInfoList accountFolders(QMessageAccountId& accountId) const;
     QString localRootFolder() const;
     QString accountRootFolder(QMessageAccountId& accountId) const;
+    void foldersFromModest(QList<MessagingModestFolder>& folders) const;
+    bool startObservingModestFolder(const QMessageFolderId& folderId) const;
+    bool stopObservingModestFolder(const QMessageFolderId& folderId) const;
     EmailProtocol accountEmailProtocol(QMessageAccountId& accountId) const;
     QString accountEmailProtocolAsString(const QMessageAccountId& accountId) const;
     QString accountUsername(QMessageAccountId& accountId) const;
@@ -273,12 +332,15 @@ private:
 
     bool filterMessage(const QMessage& message, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const;
     bool queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const;
+    bool startQueryingAndFilteringMessages(MessageQueryInfo &msgQueryInfo) const;
     bool searchMessages(MessageQueryInfo &msgQueryInfo, const QStringList& accountIds,
-                        const QStringList& folderUris, const QDateTime& startDate,
-                        const QDateTime& endDate) const;
+                        const QStringList& folderUris, const QString& body,
+                        const QDateTime& startTimeStamp, const QDateTime& endTimeStamp,
+                        const QDateTime& startReceptionTimeStamp, const QDateTime& endReceptionTimeStamp) const;
     void searchNewMessages(const QString& searchString, const QString& folderToSearch,
                            const QDateTime& startDate, const QDateTime& endDate,
                            int searchflags, uint minimumMessageSize) const;
+    void handleQueryFinished(int queryIndex) const;
 
     void watchAllKnownEmailFolders();
     void notification(const QMessageId& messageId, NotificationType notificationType) const;
@@ -287,36 +349,62 @@ private:
     QMessageFolderId folderIdFromModestMessageId(const QString& modestMessageId,
                                                  const QMessageAccountId accountId = QMessageAccountId()) const;
 
-    MessagingModestMessage messageFromModest(const QString& accountId, const QString &folderId, const QString& messageId) const;
+    MessagingModestMessage messageFromModest(const QString& accountId,
+                                             const QString &folderId,
+                                             const QString& messageId) const;
 
     QString modestAccountIdFromAccountId(const QMessageAccountId& accountId) const;
     QString modestFolderIdFromFolderId(const QMessageFolderId& folderId) const;
     QString modestFolderUriFromFolderId(const QMessageFolderId& folderId) const;
-    QString modestAccountIdFromMessageId(const QMessageId& messageId) const;
+    QString modestAccountIdFromMessageId(const QMessageId& messageId, bool checkProtocol = true) const;
+    QString modestAccountIdFromFolderId(const QMessageFolderId& folderId, bool checkProtocol = true) const;
     QString modestFolderIdFromMessageId(const QMessageId& messageId) const;
     QString modestMessageIdFromMessageId(const QMessageId& messageId) const;
+    void replaceProtocol(QString& id, const QString& newProtocol) const;
+    QMessageAccountId realAccountId(const MessagingModestMessage& modestMessage) const;
+    QMessageAccountId accountIdFromMessageId(const QMessageId& messageId) const;
+    QMessageAccountId accountIdFromFolderId(const QMessageFolderId& folderId) const;
     QMessageAccountId accountIdFromModestAccountId(const QString& accountId) const;
-    QMessageFolderId folderIdFromModestFolderId(const QMessageAccountId& accountId, const QString& folderId) const;
+    QMessageFolderId folderIdFromModestFolderId(const QMessageAccountId& accountId,
+                                                bool isLocalFolder,
+                                                const QString& folderId) const;
     QMessageId messageIdFromModestMessageId(const QString& messageId) const;
     QMessageId messageIdFromModestMessageFilePath(const QString& messageFilePath) const;
 
-    QMessage messageFromModestMessage(const MessagingModestMessage& modestMessage) const;
+    QMessage messageFromModestMessage(const MessagingModestMessage& modestMessage,
+                                      QMessageAccountId accountId = QMessageAccountId()) const;
     void appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
 
     static QString unescapeString(const QString& string);
     static QString escapeString(const QString& string);
 
+    QMessage::StandardFolder standardFolderFromModestFolderId(const QString& modestFolderId) const;
+    QString modestFolderIdFromStandardFolder(QMessage::StandardFolder standardFolder) const;
+
+    ModestStringMap getModestSenderInfo(QMessage &message);
+    ModestStringMap getModestRecipients(QMessage &message);
+    ModestStringMap getModestMessageData(QMessage &message);
+    ModestStringMapList getModestAttachments(QMessage &message);
+    ModestStringMapList getModestImages(QMessage &message);
+    uint getModestPriority(QMessage &message);
+    ModestStringMap getModestHeaders(QMessage &message);
+
+    bool accountExists(const QMessageAccountId& accountId) const;
+
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
+    void mimePartDownloadFinishedSlot(QDBusMessage msg);
     void folderUpdatedSlot(QDBusMessage msg);
     void messageReadChangedSlot(QDBusMessage msg);
     void pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
     void pendingSearchFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
-    void fileChangedSlot(int watchDescriptor, const QString& filePath, uint events);
-
-    // Async D-BUS call ended
+    void fileChangedSlot(int watchDescriptor, QString filePath, uint events);
     void sendEmailCallEnded(QDBusPendingCallWatcher *watcher);
+    void addMessageCallEnded(QDBusPendingCallWatcher *watcher);
+    void stateChanged(QMessageService::State newState);
+    void returnQueryResultsSlot();
+    void modestFolderContentsChangedSlot(QDBusMessage msg);
 
 private: //Data
     GConfClient *m_gconfclient;
@@ -337,6 +425,23 @@ private: //Data
     QMessageStorePrivate* m_messageStore;
 
     QMap<QString, QDateTime> accountsLatestTimestamp;
+
+    mutable QStringList m_latestAddOrRemoveNotifications;
+
+    mutable QMap<QString, MessagingModestFolder> m_folderCache;
+    mutable QMap<QString, QMessage> m_messageCache;
+
+    mutable QMap<int, QMessageServicePrivate*> m_pending_downloads;
+
+    mutable QMessageFolderIdList m_observed_folders;
+
+    // Following variables are used for sync queries
+    mutable QMessageService m_service;
+    mutable QEventLoop      m_eventLoop;
+    mutable QMessageIdList  m_ids;
+    mutable int             m_count;
+    mutable bool            m_isSorted;
+    mutable bool            m_isFiltered;
 };
 
 QTM_END_NAMESPACE
@@ -354,6 +459,7 @@ Q_DECLARE_METATYPE(QtMobility::ModestUnreadMessageDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestAccountsUnreadMessagesDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestMessage);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestMimePart);
+Q_DECLARE_METATYPE(QtMobility::MessagingModestFolder);
 
 #endif // MODESTENGINE_MAEMO_H
 

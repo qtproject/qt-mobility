@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -101,7 +101,6 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
                                        gint errorCode, gpointer data)
 {
     Q_UNUSED(device);
-    Q_UNUSED(data);
     QString locationError;
 
     switch (errorCode) {
@@ -125,6 +124,10 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
     }
 
     qDebug() << "Location error:" << locationError;
+
+    LiblocationWrapper *object;
+    object = (LiblocationWrapper *)data;
+    emit object->error();
 }
 
 void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
@@ -145,14 +148,14 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
     if (device) {
         if (device->fix) {
             if (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) {
-                posInfo.setDateTime(QDateTime::fromTime_t(device->fix->time));
+                posInfo.setTimestamp(QDateTime::fromTime_t(device->fix->time));
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_LATLONG_SET) {
                 coordinate.setLatitude(device->fix->latitude);
                 coordinate.setLongitude(device->fix->longitude);
                 posInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy,
-                                     device->fix->eph);
+                                     device->fix->eph * 100);
                 posInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy,
                                      device->fix->epv);
             }
@@ -209,10 +212,9 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
        
     posInfo.setCoordinate(coordinate);
 
-    // Only position updates with time (3D) are provided.
-    if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
-        ((satellitesInUseCount >= 3) && 
-         (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))){
+    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) && 
+        ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
+         (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);
@@ -220,12 +222,9 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 }
 
 void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
-                                     bool location3D)
+                                     bool locationValid)
 {
-    if (!location3D)
-        validLastSatUpdate = false;
-    else
-        validLastSatUpdate = true;
+    validLastSatUpdate = locationValid;
     lastSatUpdate = update;
 }
 
@@ -296,7 +295,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
 
     // Only positions with time (3D) are provided.
     if (time) {
-        posInfo.setDateTime(QDateTime::fromTime_t(time));
+        posInfo.setTimestamp(QDateTime::fromTime_t(time));
         return posInfo;
     }
 

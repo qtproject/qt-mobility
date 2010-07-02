@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactManagerEngineFactory Class Reference</h1>
 <p>The QContactManagerEngineFactory class provides the interface for plugins that implement <a href="qcontactmanagerengine.html">QContactManagerEngine</a> functionality. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactManagerEngineFactory&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QContactManagerEngineFactory&gt;</pre><ul>
 <li><a href="qcontactmanagerenginefactory-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -33,7 +32,7 @@
 <h2>Detailed Description</h2>
 <p>The QContactManagerEngineFactory class provides the interface for plugins that implement <a href="qcontactmanagerengine.html">QContactManagerEngine</a> functionality.</p>
 <p>This class provides a simple interface for the creation of manager engine instances. Each factory has a specific id associated with it, which forms the <tt>managerName</tt> parameter when creating <a href="qcontactmanager.html">QContactManager</a> objects.</p>
-<p>More information on writing a contacts engine plugin is TODO.</p>
+<p>More information on writing a contacts engine plugin is available in the <a href="contactsengines.html">Qt Contacts Manager Engines</a> documentation.</p>
 <p>See also <a href="qcontactmanager.html">QContactManager</a> and <a href="qcontactmanagerengine.html">QContactManagerEngine</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -42,6 +41,9 @@
 <p>A default, empty destructor.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngineFactory/engine"></a>
 <h3 class="fn"><a name="engine"></a><a href="qcontactmanagerengine.html">QContactManagerEngine</a> * QContactManagerEngineFactory::engine ( const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>parameters</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>This function is called by the <a href="qcontactmanager.html">QContactManager</a> implementation to create an instance of the engine provided by this factory.</p>
+<p>The <i>parameters</i> supplied can be ignored or interpreted as desired.</p>
+<p>If a supplied parameter results in an unfulfillable request, or some other error occurs, this function may return a null pointer, and the client developer will get an invalid <a href="qcontactmanager.html">QContactManager</a> in return. Any error should be stored in the supplied <i>error</i> reference.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngineFactory/managerName"></a>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactManagerEngineFactory::managerName () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>This function should return a unique string that identifies the engines provided by this factory.</p>
@@ -51,8 +53,8 @@
 <p>This function should return a list of versions of the engine which this factory can instantiate.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

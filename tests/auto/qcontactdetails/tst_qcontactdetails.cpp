@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -55,9 +54,6 @@ Q_OBJECT
 public:
     tst_QContactDetails();
     virtual ~tst_QContactDetails();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -81,8 +77,10 @@ private slots:
     void onlineAccount();
     void organization();
     void phoneNumber();
+    void ringtone();
     void syncTarget();
     void tag();
+    void thumbnail();
     void timestamp();
     void type();
     void url();
@@ -241,6 +239,12 @@ void tst_QContactDetails::avatar()
     a1.setImageUrl(QUrl("1234"));
     QCOMPARE(a1.imageUrl(), QUrl("1234"));
     QCOMPARE(a1.value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("1234"));
+    a2.setVideoUrl(QUrl("videoUrl"));
+    a2.setImageUrl(QUrl("imageUrl"));
+    QCOMPARE(a2.videoUrl(), QUrl("videoUrl"));
+    QCOMPARE(a2.value<QUrl>(QContactAvatar::FieldVideoUrl), QUrl("videoUrl"));
+    QCOMPARE(a2.imageUrl(), QUrl("imageUrl"));
+    QCOMPARE(a2.value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("imageUrl"));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
@@ -315,13 +319,11 @@ void tst_QContactDetails::displayLabel()
 
     // test property add [== fail]
     QVERIFY(!c.saveDetail(&d2));
-    QVERIFY(d2.accessConstraints() & QContactDetail::ReadOnly);
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
 
     // test property update [== fail]
     d1 = c.detail<QContactDisplayLabel>();
     QVERIFY(!c.saveDetail(&d1));
-    QVERIFY(d1.accessConstraints() & QContactDetail::ReadOnly);
 
     // test property remove
     QVERIFY(!c.removeDetail(&d1)); // cannot remove display label
@@ -538,6 +540,27 @@ void tst_QContactDetails::name()
     QCOMPARE(n1.middleName(), QString("William Preston"));
     QCOMPARE(n1.lastName(), QString("Gumboots"));
     QCOMPARE(n1.suffix(), QString("Esquire"));
+
+    // Values based (ql1c)
+    QCOMPARE(n1.value(QContactName::FieldPrefix), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix), QString("Esquire"));
+
+    // Values based (const char *)
+    QCOMPARE(n1.value(QContactName::FieldPrefix.latin1()), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName.latin1()), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName.latin1()), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName.latin1()), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix.latin1()), QString("Esquire"));
+
+    // Values based (QLatin1String)
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldPrefix)), QString("Dr"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldFirstName)), QString("Freddy"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldMiddleName)), QString("William Preston"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldLastName)), QString("Gumboots"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldSuffix)), QString("Esquire"));
 
     // test property add
     QVERIFY(c.saveDetail(&n1));
@@ -788,6 +811,47 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::ringtone()
+{
+    QContact c;
+    QContactRingtone r1, r2;
+
+    // test property set
+    r1.setAudioRingtoneUrl(QUrl("audioUrl"));
+    QCOMPARE(r1.audioRingtoneUrl(), QUrl("audioUrl"));
+    QCOMPARE(r1.value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl"));
+
+    // and the other fields
+    r2.setVideoRingtoneUrl(QUrl("videoUrl"));
+    QCOMPARE(r2.videoRingtoneUrl(), QUrl("videoUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVideoRingtoneUrl), QUrl("videoUrl"));
+    r2.setVibrationRingtoneUrl(QUrl("vibrationUrl"));
+    QCOMPARE(r2.vibrationRingtoneUrl(), QUrl("vibrationUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVibrationRingtoneUrl), QUrl("vibrationUrl"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 1);
+    QCOMPARE(QContactRingtone(c.details(QContactRingtone::DefinitionName).value(0)).audioRingtoneUrl(), r1.audioRingtoneUrl());
+
+    // test property update
+    r1.setValue("label","label1");
+    r1.setAudioRingtoneUrl(QUrl("audioUrl2"));
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl2"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&r2));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&r2));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&r2) == false);
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::syncTarget()
 {
     QContact c;
@@ -852,6 +916,44 @@ void tst_QContactDetails::tag()
     QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&t2) == false);
     QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::thumbnail()
+{
+    QContact c;
+    QContactThumbnail t1, t2;
+    QImage i1, i2; // XXX TODO: FIXME load an image from bytearray
+
+    // test property set
+    t1.setThumbnail(i1);
+    QCOMPARE(t1.thumbnail(), i1);
+    QCOMPARE(t1.value<QImage>(QContactThumbnail::FieldThumbnail), i1);
+
+    // Make sure we have none to start with
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 0);
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t1.thumbnail());
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setThumbnail(i2);
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value<QImage>(QContactThumbnail::FieldThumbnail), i2);
+
+    // Uniqueness is not currently enforced
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
+    t2.setThumbnail(i1);
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 2); // save should overwrite!
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), i1);
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t2.thumbnail());
+
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
 }
 
 void tst_QContactDetails::timestamp()
@@ -975,7 +1077,7 @@ void tst_QContactDetails::url()
 class CustomTestDetail : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail")
     Q_DECLARE_LATIN1_CONSTANT(FieldTestLabel, "TestLabel");
 
     ~CustomTestDetail()

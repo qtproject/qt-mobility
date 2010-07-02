@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QTapReading Class Reference</h1>
 <p>The QTapReading class represents one reading from the tap sensor. <a href="#details">More...</a></p>
-<pre>    #include &lt;QTapReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
+<pre>    #include &lt;QTapReading&gt;</pre><p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qtapreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -66,24 +65,7 @@
 <a name="qtapreading-units"></a>
 <h3>QTapReading Units</h3>
 <p>The tap sensor registers tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
-<pre>             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            <span class="comment">//|--/--- / |</span>
-           <span class="comment">// | /   //  /</span>
-          <span class="comment">//  |/   //  /</span>
-         <span class="comment">//   '--------------- +x</span>
-        <span class="comment">//       //  /</span>
-       <span class="comment">//       //  /</span>
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/</pre>
-<p>By default it returns double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>By default it returns only double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QTapReading/TapDirection"></a>
@@ -146,8 +128,8 @@
 <p>See also <a href="qtapreading.html#tapDirection-prop">tapDirection</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

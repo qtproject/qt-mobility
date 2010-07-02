@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,7 @@
 
 #include "cntabstractcontactfilter.h"
 #include <e32cmn.h>
+#include <cntdef.h>
 
 class CContactDatabase;
 class CContactIdArray;
@@ -89,6 +90,7 @@ private:
             const TDesC& phoneNumber,
             const TInt matchLength);
     bool isFalsePositive(const CContactItemFieldSet& fieldSet, const TUid& fieldTypeUid, const TDesC& searchString);
+    bool contactExists(const TContactItemId &contactId);
     void getMatchLengthL(TInt& matchLength);
     CContactDatabase &m_contactDatabase;
     CntAbstractContactSorter *m_contactSorter;

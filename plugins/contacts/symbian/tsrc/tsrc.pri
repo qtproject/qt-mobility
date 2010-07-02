@@ -22,9 +22,11 @@ SYMBIAN_HEADERS += \
         ../../inc/transform/cnttransformurl.h \
         ../../inc/transform/cnttransformbirthday.h \
         ../../inc/transform/cnttransformonlineaccount.h \
+        ../../inc/transform/cnttransformonlineaccountsimple.h \
         ../../inc/transform/cnttransformorganisation.h \
+        ../../inc/transform/cnttransformringtone.h \
+        ../../inc/transform/cnttransformthumbnail.h \
         ../../inc/transform/cnttransformavatar.h \
-        ../../inc/transform/cnttransformavatarsimple.h \
         ../../inc/transform/cntthumbnailcreator.h \        
         ../../inc/transform/cnttransformsynctarget.h \
         ../../inc/transform/cnttransformgender.h \
@@ -57,7 +59,6 @@ SYMBIAN_HEADERS += \
         ../../inc/filtering/cntfilterinvalid.h \
         ../../inc/filtering/cntfilterdetailrange.h \
         ../../inc/filtering/cntfilterchangelog.h \
-        ../../inc/filtering/cntfilteraction.h \
         ../../inc/filtering/cntfilterlocalid.h \
         ../../inc/filtering/cntfilterdetaildisplaylabel.h \
         
@@ -74,9 +75,11 @@ SYMBIAN_SOURCES += \
         ../../src/transform/cnttransformurl.cpp \
         ../../src/transform/cnttransformbirthday.cpp \
         ../../src/transform/cnttransformonlineaccount.cpp \
+        ../../src/transform/cnttransformonlineaccountsimple.cpp \
         ../../src/transform/cnttransformorganisation.cpp \
+        ../../src/transform/cnttransformringtone.cpp \
+        ../../src/transform/cnttransformthumbnail.cpp \        
         ../../src/transform/cnttransformavatar.cpp \
-        ../../src/transform/cnttransformavatarsimple.cpp \
         ../../src/transform/cntthumbnailcreator.cpp \
         ../../src/transform/cnttransformsynctarget.cpp \
         ../../src/transform/cnttransformgender.cpp \
@@ -107,7 +110,6 @@ SYMBIAN_SOURCES += \
         ../../src/filtering/cntfilterinvalid.cpp \
         ../../src/filtering/cntfilterdetailrange.cpp \
         ../../src/filtering/cntfilterchangelog.cpp \
-        ../../src/filtering/cntfilteraction.cpp \
         ../../src/filtering/cntfilterlocalid.cpp \
         ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
@@ -120,4 +122,5 @@ SYMBIAN_LIBS += \
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \ 
-        -lbafl   
+        -lbafl \
+        -ltzclient

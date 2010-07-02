@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@
 
 #include <qmobilityglobal.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -56,11 +56,8 @@ class QUrl;
 class QByteArray;
 class QIODevice;
 class QStringList;
-QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class Q_MEDIA_EXPORT QMediaPlaylistReader
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistReader
 {
 public:
     virtual ~QMediaPlaylistReader();
@@ -70,7 +67,7 @@ public:
     virtual void close() = 0;
 };
 
-class Q_MEDIA_EXPORT QMediaPlaylistWriter
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistWriter
 {
 public:
     virtual ~QMediaPlaylistWriter();
@@ -79,7 +76,7 @@ public:
     virtual void close() = 0;
 };
 
-struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
+struct Q_MULTIMEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
 {
     virtual bool canRead(QIODevice *device, const QByteArray &format = QByteArray() ) const = 0;
     virtual bool canRead(const QUrl& location, const QByteArray &format = QByteArray()) const = 0;
@@ -92,21 +89,13 @@ struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
-QTM_END_NAMESPACE
-
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
-//MOC doesn't recognire paramitized macros
-//Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QMediaPlaylistIOInterface), QMediaPlaylistIOInterface_iid);
-QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(QtMobility::QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
-QT_END_NAMESPACE
+Q_DECLARE_INTERFACE(QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
 
-QTM_BEGIN_NAMESPACE
-
-class Q_MEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
+class Q_MULTIMEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
 {
 Q_OBJECT
-Q_INTERFACES(QtMobility::QMediaPlaylistIOInterface:QFactoryInterface)
+Q_INTERFACES(QMediaPlaylistIOInterface:QFactoryInterface)
 public:
     explicit QMediaPlaylistIOPlugin(QObject *parent = 0);
     virtual ~QMediaPlaylistIOPlugin();
@@ -124,6 +113,6 @@ public:
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTIOPLUGIN_H

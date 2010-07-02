@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -66,7 +66,7 @@ public:
         : identifier()
         , type()
         , outputRange(-1)
-        , updateInterval(0)
+        , dataRate(0)
         , backend(0)
         , active(false)
         , busy(false)
@@ -88,7 +88,7 @@ public:
 
     // policy
     qrangelist availableDataRates;
-    int updateInterval;
+    int dataRate;
 
     QSensorBackend *backend;
     QFilterList filters;
@@ -108,8 +108,6 @@ public:
         : timestamp(0)
     {
     }
-
-    size_t size;
 
     // sensor data cache
     qtimestamp timestamp;

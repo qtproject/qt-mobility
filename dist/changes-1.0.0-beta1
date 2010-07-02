@@ -243,7 +243,7 @@ QtMessaging
     * MMS Message content retrieval bug fixed (related to QByteArray QMessageContentContainer::content() const; bug)
 
 
-QtMedia
+QtMultimediaKit
 ------
 
  - Added Audio and Video QML elements.
@@ -385,11 +385,6 @@ Qt Mobility for Windows CE
 
  -
 
-<<<<<<< HEAD:dist/changes-1.0.0-beta1
-Qt Mobility for Symbian
-------
-
-=======
 Qt Mobility for Maemo5
 ------
 

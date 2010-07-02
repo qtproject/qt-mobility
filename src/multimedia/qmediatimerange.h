@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,14 +43,14 @@
 #define QMEDIATIMERANGE_H
 
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 #include <QtCore/qshareddata.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaTimeRangePrivate;
 
-class Q_MEDIA_EXPORT QMediaTimeInterval
+class Q_MULTIMEDIA_EXPORT QMediaTimeInterval
 {
 public:
     QMediaTimeInterval();
@@ -74,10 +74,10 @@ private:
     qint64 e;
 };
 
-Q_MEDIA_EXPORT bool operator==(const QMediaTimeInterval&, const QMediaTimeInterval&);
-Q_MEDIA_EXPORT bool operator!=(const QMediaTimeInterval&, const QMediaTimeInterval&);
+Q_MULTIMEDIA_EXPORT bool operator==(const QMediaTimeInterval&, const QMediaTimeInterval&);
+Q_MULTIMEDIA_EXPORT bool operator!=(const QMediaTimeInterval&, const QMediaTimeInterval&);
 
-class Q_MEDIA_EXPORT QMediaTimeRange
+class Q_MULTIMEDIA_EXPORT QMediaTimeRange
 {
 public:
 
@@ -118,12 +118,12 @@ private:
     QSharedDataPointer<QMediaTimeRangePrivate> d;
 };
 
-Q_MEDIA_EXPORT bool operator==(const QMediaTimeRange&, const QMediaTimeRange&);
-Q_MEDIA_EXPORT bool operator!=(const QMediaTimeRange&, const QMediaTimeRange&);
-Q_MEDIA_EXPORT QMediaTimeRange operator+(const QMediaTimeRange&, const QMediaTimeRange&);
-Q_MEDIA_EXPORT QMediaTimeRange operator-(const QMediaTimeRange&, const QMediaTimeRange&);
+Q_MULTIMEDIA_EXPORT bool operator==(const QMediaTimeRange&, const QMediaTimeRange&);
+Q_MULTIMEDIA_EXPORT bool operator!=(const QMediaTimeRange&, const QMediaTimeRange&);
+Q_MULTIMEDIA_EXPORT QMediaTimeRange operator+(const QMediaTimeRange&, const QMediaTimeRange&);
+Q_MULTIMEDIA_EXPORT QMediaTimeRange operator-(const QMediaTimeRange&, const QMediaTimeRange&);
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIATIMERANGE_H

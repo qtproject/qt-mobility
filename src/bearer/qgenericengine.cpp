@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -198,7 +198,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         else
             cpPriv->bearer = qGetInterfaceType(interface.name());
 
-        if (interface.flags() & QNetworkInterface::IsUp)
+        if((interface.flags() & QNetworkInterface::IsUp) && !interface.addressEntries().isEmpty())
             cpPriv->state |= QNetworkConfiguration::Active;
 
         configurationInterface[identifier] = interface.name();

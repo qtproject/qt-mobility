@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,7 +52,7 @@
 
 The Contacts Synchronous API enables a client to synchronously fetch, update, or remove
 contact data from a contact manager.  A synchronous API is of most use to clients who wish
-to perform simple requests where performance or UI responsiveness is not critical.
+to perform simple requests where performance or user interface responsiveness is not critical.
 Synchronous calls to a contact manager will block until they are completed, and therefore
 should not be performed in the GUI thread if the manager is a frontend to an online service
 or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
@@ -68,55 +68,26 @@ applications that the asynchronous API be used where possible.
 The synchronous API offered by the Contacts module is available through the QContactManager
 class.  It consists of four major sections:
 \list
-  \o Information And Reporting
+  \o Error Reporting
   \o Schema Manipulation
   \o Contact Manipulation
   \o Relationship Manipulation
 \endlist
 
 
-\section2 Information And Reporting
+\section2 Error Reporting
 
-The API offered by the QContactManager exposes functionality which is implemented by
-plugins.  These plugins may be platform specific, and may be provided by Nokia or by
-third party developers.  Each plugin will have different capabilities and implement
-the functionality exposed by the Contacts API to a different degree.
-
-The QContactManager class provides a static function QContactManager::availableManagers() which
-allows clients of the API to determine (at run time) which plugins (managers) are available for use.
-
-Clients of the API also need to be able to determine (at run time) what the capabilities of a
-given plugin (contact manager) are.  The QContactManager class provides API to query the capabilities
-of a given manager with the following functions:
-\list
-  \o hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const
-  \o isFilterSupported(const QContactFilter& filter) const
-  \o supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const
-  \o supportedDataTypes() const
-  \o supportedContactTypes() const
-\endlist
-
-A given manager is identified by its URI.  The URI consists of the manager's name, any relevant parameters
-which were used during instantiation of the manager, and the version of the manager.
-While the name of the manager identifies the plugin which provides the functionality, you cannot
-guarantee that the data available through one manager will be available through another with the
-same name (for example, if one parameter tells the plugin to store and retrieve contact information
-from a particular online service or local file).
-
-The synchronous API offered to allow run-time querying of a manager's metadata includes:
-\list
-  \o managerName() const
-  \o managerParameters() const
-  \o managerUri() const
-  \o managerVersion() const;
-  \o (static) parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params)
-  \o (static) buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1)
-\endlist
-
-The functionality that the above functions provide is only available through the synchronous API.
-
-Finally, when a synchronous operation fails, clients need to be able to retrieve error information associated
+When a synchronous operation fails, clients need to be able to retrieve error information associated
 with that synchronous operation.  The QContactManager::error() function provides this information to clients.
+
+For some synchronous operations (for example, batch save or remove operations) it is possible that
+multiple errors may occur during the operation.  In those cases, the synchronous function will take
+a pointer to a map of input index to error, which will be filled by the function as required, and
+the QContactManager::error() function will report the overall operation error.
+
+Error reporting is handled slightly differently in the asynchronous API, in that each instance of
+an asynchronous request is able to report any overall operation error as well as the finer-grained
+map of errors, for the operation which it requested.
 
 
 \section2 Contact Manipulation
@@ -130,7 +101,7 @@ A contact is identified by its QContactId.  This id consists of two parts: a URI
 which stores the contact, and the local id of the contact in that manager.  Some operations which take a pointer
 to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.
 
-The QContactManager class provides API for accessing the ids of contacts which are stored in the manager:
+The QContactManager class provides API for accessing the IDs of contacts which are stored in the manager:
 \list
   \o contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
   \o contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
@@ -140,27 +111,27 @@ The contact id retrieval functionality is also provided via asynchronous API thr
 
 The synchronous, singular contact manipulation functions offered by the QContactManager class are:
 \list
-  \o contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions = QStringList()) const
+  \o contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint = QContactFetchHint()) const
   \o saveContact(QContact* contact)
   \o removeContact(const QContactLocalId& contactId)
 \endlist
 
-The (optional) definitionRestrictions argument to the contact accessor function allows clients to tell the plugin
-which types of details they wish to retrieve.  This argument is a hint only, and may be ignored safely by the plugin,
+The (optional) fetch argument to the contact accessor function allows clients to tell the plugin
+which types of information they wish to retrieve.  This argument is a hint only, and may be ignored safely by the plugin,
 or used by the plugin to optimize the performance of the retrieve operation.
 
 The save operation entails a validation step, where the contact's details are checked against the supported schema.
 If the contact is valid, it will be saved.  Note that if the contact already exists in the database (determined by
 the id of the contact) it will be replaced with the contact contained in the argument.  This means that clients should
-not save any contact which was retrieved with a non-empty definitionRestrictions set defined, or data loss may occur.
+not save any contact which was retrieved with a non-empty fetchHint defined, or data loss may occur.
 
 Any error which occurs during such singular contact manipulation functions may be accessed by calling QContactManager::error()
 directly after the original synchronous call.
 
 The synchronous, batch contact manipulation functions offered by the QContactManager class are:
 \list
-  \o contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const
-  \o contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const
+  \o contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
+  \o contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
   \o saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
   \o removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 \endlist
@@ -263,10 +234,10 @@ datastores.
 The client creates a new contact, adds a name and a phone number, and
 saves it to the default store of the default manager.
 
-We assume the existence of a specialised leaf-class that allows simple
+We assume the existence of a specialized leaf-class that allows simple
 access to details of the definition identified by the "PhoneNumber"
 identifier, and another that allows simple access to details of the
-definition identified by the "Name" identifier.  These specialised leaf
+definition identified by the "Name" identifier.  These specialized leaf
 classes may be written by anyone, and simply wrap the functionality
 provided by QContactDetail in order to allow simpler access to fields
 supported by a particular definition.
@@ -275,7 +246,7 @@ supported by a particular definition.
 
 \section2 Filtering by detail definition and value
 
-The client utilises a default manager and asks for any contacts with a
+The client utilizes a default manager and asks for any contacts with a
 particular phone number.  The example assumes that the default manager
 supports the provided QContactPhoneNumber detail leaf class (which
 implements the default definition for phone number details).
