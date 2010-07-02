@@ -489,27 +489,45 @@ static bool qt_writeCondition(
 {
     QVariant value = filter.value();
 
-    switch (filter.matchFlags()) {
-    case Qt::MatchExactly:
+    if (filter.isInverted())
+        xml->writeStartElement(QLatin1String("rdfq:not"));
+
+    switch (filter.comparator()) {
+    case QGalleryFilter::Equals:
         xml->writeStartElement(QLatin1String("rdfq:equals"));
         break;
-    case Qt::MatchContains:
+    case QGalleryFilter::LessThan:
+        xml->writeStartElement(QLatin1String("rdfq:lessThan"));
+        break;
+    case QGalleryFilter::GreaterThan:
+        xml->writeStartElement(QLatin1String("rdfq:greaterThan"));
+        break;
+    case QGalleryFilter::LessThanEquals:
+        xml->writeStartElement(QLatin1String("rdfq:lessThanEqual"));
+        break;
+    case QGalleryFilter::GreaterThanEquals:
+        xml->writeStartElement(QLatin1String("rdfq:greaterThanEqual"));
+        break;
+    case QGalleryFilter::Contains:
         xml->writeStartElement(QLatin1String("rdfq:contains"));
         break;
-    case Qt::MatchStartsWith:
+    case QGalleryFilter::StartsWith:
         xml->writeStartElement(QLatin1String("rdfq:startsWith"));
         break;
-    case Qt::MatchEndsWith:
+    case QGalleryFilter::EndsWith:
         xml->writeStartElement(QLatin1String("rdfq:equals"));
         value = QLatin1Char('*') + value.toString();
         break;
-    case Qt::MatchRegExp:
-        xml->writeStartElement(QLatin1String("rdfq:regex"));
-        break;
-    case Qt::MatchWildcard:
+    case QGalleryFilter::Wildcard:
         xml->writeStartElement(QLatin1String("rdfq:equals"));
         break;
+    case QGalleryFilter::RegExp:
+        xml->writeStartElement(QLatin1String("rdfq:regex"));
+        break;
     default:
+        if (filter.isInverted())
+            xml->writeEndElement();
+
         *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
 
         return false;
@@ -519,64 +537,18 @@ static bool qt_writeCondition(
             && qt_writeValue<QVariant>(error, xml, value)) {
         xml->writeEndElement();
 
+        if (filter.isInverted())
+            xml->writeEndElement();
+
         return true;
     } else {
         xml->writeEndElement();
 
+        if (filter.isInverted())
+            xml->writeEndElement();
+
         return false;
     }
-}
-
-static bool qt_writeCondition(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryMetaDataRangeFilter &filter,
-        const QGalleryItemPropertyList &properties)
-{
-    const QString propertyName = filter.propertyName();
-    const QGalleryFilter::RangeFlags flags = filter.rangeFlags();
-
-    bool isRange = (flags == QGalleryFilter::InclusiveRange || QGalleryFilter::ExclusiveRange);
-
-    if (isRange)
-        xml->writeStartElement(QLatin1String("rdfq:and"));
-
-    if (flags & QGalleryFilter::GreaterThanEqualsMinimum) {
-        if (flags & QGalleryFilter::EqualsMinimum)
-            xml->writeStartElement(QLatin1String("rdfq:greaterThanEqual"));
-        else
-            xml->writeStartElement(QLatin1String("rdfq:greaterThan"));
-
-        if (!qt_writePropertyName(error, xml, propertyName, properties)
-                || !qt_writeValue<QVariant>(error, xml, filter.minimumValue())) {
-            xml->writeEndElement();
-            if (isRange)
-                xml->writeEndElement();
-
-            return false;
-        }
-    }
-
-    if (flags & QGalleryFilter::LessThanEqualsMaximum) {
-        if (flags & QGalleryFilter::EqualsMaximum)
-            xml->writeStartElement(QLatin1String("rdfq:lessThanEqual"));
-        else
-            xml->writeStartElement(QLatin1String("rdfq:lessThan"));
-
-        if (!qt_writePropertyName(error, xml, propertyName, properties)
-                || !qt_writeValue<QVariant>(error, xml, filter.maximumValue())) {
-            xml->writeEndElement();
-            if (isRange)
-                xml->writeEndElement();
-
-            return false;
-        }
-    }
-
-    if (isRange)
-        xml->writeEndElement();
-
-    return true;
 }
 
 static bool qt_writeCondition(
@@ -595,9 +567,6 @@ static bool qt_writeCondition(
         return qt_writeCondition(error, xml, filter.toUnionFilter(), properties);
     case QGalleryFilter::MetaData:
         return qt_writeCondition(error, xml, filter.toMetaDataFilter(), properties);
-    case QGalleryFilter::MetaDataRange:
-        return qt_writeCondition(
-                error, xml, filter.toMetaDataRangeFilter(), properties);
     default:
         *error = QGalleryAbstractRequest::UnsupportedFilterTypeError;
 

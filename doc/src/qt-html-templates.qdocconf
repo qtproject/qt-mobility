@@ -6,7 +6,7 @@ HTML.stylesheets        =  style/style_ie6.css \
 HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "    <div id=\"nav-logo\">\n" \
 			  "      <a href=\"index.html\">Home</a></div>\n" \
-			  "    <a href=\"index.html\" class=\"qtref\"><span>Qt Reference Documentation</span></a>\n" \
+			  "    <a href=\"index.html\" class=\"qtref\"><span>Qt Mobility Reference Documentation</span></a>\n" \
 			  "    <div id=\"nav-topright\">\n" \
 			  "      <ul>\n" \
 			  "        <li class=\"nav-topright-home\"><a href=\"http://qt.nokia.com/\">Qt HOME</a></li>\n" \
@@ -20,7 +20,7 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "    </div>\n" \
 			  "    <div id=\"shortCut\">\n" \
 			  "      <ul>\n" \
-			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Qt 4.7</a></span></li>\n" \
+			  "        <li class=\"shortCut-topleft-inactive\"><span><a href=\"index.html\">Mobility 1.1</a></span></li>\n" \
 			  "        <li class=\"shortCut-topleft-active\"><a href=\"http://qt.nokia.com/doc/\">ALL Qt VERSIONS" \
 			  "        </a></li>\n" \
 			  "      </ul>\n" \

@@ -251,6 +251,8 @@ void CPcsKeyMap::InitKeyMappings()
 // ----------------------------------------------------------------------------
 // CPcsKeyMap::ConstructLanguageMappings
 // Fetch keymap for selected languages.
+// Currently QWERTY keymaps do not map digits ('0'..'9') to any key, even with
+// HbModifierChrPressed and HbModifierFnPressed modifiers.
 // ----------------------------------------------------------------------------
 void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType) 
 	{
@@ -287,7 +289,7 @@ void CPcsKeyMap::ConstructLanguageMappings(HbKeyboardType aKeyboardType)
                     if (mappedKey)
                         {
 						const QString lowerCase = mappedKey->characters(HbModifierNone); // "abc2.."
-						const QString upperCase = mappedKey->characters(HbModifierShiftPressed); // "ABC2.."
+						const QString upperCase = mappedKey->characters(HbModifierShiftPressed); // "ABC2.."						
 						const QString charsForKey = lowerCase + upperCase; 
 	    
 						// Filter out duplicate characters

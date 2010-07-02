@@ -57,22 +57,8 @@ QTM_BEGIN_NAMESPACE
 class QGalleryFilter;
 class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
-class QGalleryMetaDataRangeFilter;
 class QGalleryUnionFilter;
 QTM_END_NAMESPACE
-
-#ifndef Q_QDOC
-bool Q_GALLERY_EXPORT operator ==(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
-
-bool Q_GALLERY_EXPORT operator !=(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
-#else
-bool Q_GALLERY_EXPORT operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-bool Q_GALLERY_EXPORT operator !=(const QGalleryFilter &filter2, const QGalleryFilter &filter2);
-#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -86,30 +72,28 @@ public:
         Invalid,
         Intersection,
         Union,
-        MetaData,
-        MetaDataRange
+        MetaData
     };
 
-    enum RangeFlag
+    enum Comparator
     {
-        EqualsMinimum            = 0x01,
-        GreaterThanMinimum       = 0x02,
-        GreaterThanEqualsMinimum = EqualsMinimum | GreaterThanMinimum,
-        LessThanMaximum          = 0x04,
-        EqualsMaximum            = 0x08,
-        LessThanEqualsMaximum    = EqualsMaximum | LessThanMaximum,
-        InclusiveRange           = GreaterThanEqualsMinimum | LessThanEqualsMaximum,
-        ExclusiveRange           = GreaterThanMinimum | LessThanMaximum
+        Equals,
+        LessThan,
+        GreaterThan,
+        LessThanEquals,
+        GreaterThanEquals,
+        Contains,
+        StartsWith,
+        EndsWith,
+        Wildcard,
+        RegExp
     };
-
-    Q_DECLARE_FLAGS(RangeFlags, RangeFlag);
 
     QGalleryFilter();
     QGalleryFilter(const QGalleryFilter &filter);
     QGalleryFilter(const QGalleryIntersectionFilter &filter);
     QGalleryFilter(const QGalleryUnionFilter &filter);
     QGalleryFilter(const QGalleryMetaDataFilter &filter);
-    QGalleryFilter(const QGalleryMetaDataRangeFilter &filter);
     ~QGalleryFilter();
 
     QGalleryFilter &operator =(const QGalleryFilter &filter);
@@ -120,20 +104,22 @@ public:
     QGalleryIntersectionFilter toIntersectionFilter() const;
     QGalleryUnionFilter toUnionFilter() const;
     QGalleryMetaDataFilter toMetaDataFilter() const;
-    QGalleryMetaDataRangeFilter toMetaDataRangeFilter() const;
 
 private:
     QSharedDataPointer<QGalleryFilterPrivate> d;
 
-    friend Q_GALLERY_EXPORT bool ::operator ==(
+    friend Q_GALLERY_EXPORT bool operator ==(
             const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-    friend Q_GALLERY_EXPORT bool ::operator !=(
+    friend Q_GALLERY_EXPORT bool operator !=(
             const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
 #endif
 };
+
+Q_GALLERY_EXPORT bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+Q_GALLERY_EXPORT bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_GALLERY_EXPORT QDebug operator <<(QDebug debug, const QGalleryFilter &filter);
@@ -146,7 +132,7 @@ class Q_GALLERY_EXPORT QGalleryIntersectionFilter
 public:
     QGalleryIntersectionFilter();
     QGalleryIntersectionFilter(const QGalleryMetaDataFilter &filter);
-    QGalleryIntersectionFilter(const QGalleryMetaDataRangeFilter &filter);
+    QGalleryIntersectionFilter(const QGalleryUnionFilter &filter);
     QGalleryIntersectionFilter(const QGalleryIntersectionFilter &filter);
     ~QGalleryIntersectionFilter();
 
@@ -160,15 +146,15 @@ public:
     QList<QGalleryFilter> filters() const;
 
     void append(const QGalleryMetaDataFilter &filter);
-    void append(const QGalleryMetaDataRangeFilter &filter);
+    void append(const QGalleryUnionFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
 
     void insert(int index, const QGalleryMetaDataFilter &filter);
-    void insert(int index, const QGalleryMetaDataRangeFilter &filter);
+    void insert(int index, const QGalleryUnionFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
 
     void replace(int index, const QGalleryMetaDataFilter &filter);
-    void replace(int index, const QGalleryMetaDataRangeFilter &filter);
+    void replace(int index, const QGalleryUnionFilter &filter);
 
     void removeAt(int index);
     void clear();
@@ -189,7 +175,6 @@ class Q_GALLERY_EXPORT QGalleryUnionFilter
 public:
     QGalleryUnionFilter();
     QGalleryUnionFilter(const QGalleryMetaDataFilter &filter);
-    QGalleryUnionFilter(const QGalleryMetaDataRangeFilter &filter);
     QGalleryUnionFilter(const QGalleryIntersectionFilter &filter);
     QGalleryUnionFilter(const QGalleryUnionFilter &other);
     ~QGalleryUnionFilter();
@@ -204,17 +189,14 @@ public:
     QList<QGalleryFilter> filters() const;
 
     void append(const QGalleryMetaDataFilter &filter);
-    void append(const QGalleryMetaDataRangeFilter &filter);
     void append(const QGalleryIntersectionFilter &filter);
     void append(const QGalleryUnionFilter &filter);
 
     void insert(int index, const QGalleryMetaDataFilter &filter);
-    void insert(int index, const QGalleryMetaDataRangeFilter &filter);
     void insert(int index, const QGalleryIntersectionFilter &filter);
     void insert(int index, const QGalleryUnionFilter &filter);
 
     void replace(int index, const QGalleryMetaDataFilter &filter);
-    void replace(int index, const QGalleryMetaDataRangeFilter &filter);
     void replace(int index, const QGalleryIntersectionFilter &filter);
 
     void removeAt(int index);
@@ -238,7 +220,8 @@ public:
     QGalleryMetaDataFilter(
             const QString &propertyName,
             const QVariant &value,
-            Qt::MatchFlags flags = Qt::MatchExactly);
+            QGalleryFilter::Comparator comparator = QGalleryFilter::Equals,
+            Qt::CaseSensitivity caseSensitivity = Qt::CaseSensitive);
     QGalleryMetaDataFilter(const QGalleryMetaDataFilter &other);
     ~QGalleryMetaDataFilter();
 
@@ -252,8 +235,16 @@ public:
     QVariant value() const;
     void setValue(const QVariant &value);
 
-    Qt::MatchFlags matchFlags() const;
-    void setMatchFlags(Qt::MatchFlags flags);
+    QGalleryFilter::Comparator comparator() const;
+    void setComparator(QGalleryFilter::Comparator comparator);
+
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
+
+    bool isInverted() const;
+    void setInverted(bool inverted);
+
+    QGalleryMetaDataFilter operator !() const;
 
 private:
     explicit inline QGalleryMetaDataFilter(QGalleryFilterPrivate *d);
@@ -264,69 +255,22 @@ private:
     friend class QGalleryFilter;
 };
 
-class QGalleryMetaDataRangeFilterPrivate;
-
-class Q_GALLERY_EXPORT QGalleryMetaDataRangeFilter
+template <typename T>
+QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
 {
-public:
-    QGalleryMetaDataRangeFilter();
-    QGalleryMetaDataRangeFilter(const QGalleryMetaDataRangeFilter &filter);
-    ~QGalleryMetaDataRangeFilter();
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
-    QGalleryMetaDataRangeFilter &operator =(const QGalleryMetaDataRangeFilter &filter);
-
-    bool isValid() const;
-
-    QString propertyName() const;
-    void setPropertyName(const QString &name);
-
-    QVariant minimumValue() const;
-    QVariant maximumValue() const;
-
-    QGalleryFilter::RangeFlags rangeFlags() const;
-
-    void setInclusiveRange(const QVariant &minimum, const QVariant &maximum);
-    void setExclusiveRange(const QVariant &minimum, const QVariant &maximum);
-    void setLessThan(const QVariant &value);
-    void setLessThanEquals(const QVariant &value);
-    void setGreaterThan(const QVariant &value);
-    void setGreaterThanEquals(const QVariant &value);
-
-private:
-    explicit inline QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d);
-    explicit inline QGalleryMetaDataRangeFilter(QGalleryFilter::Type type);
-
-    QSharedDataPointer<QGalleryMetaDataRangeFilterPrivate> d;
-
-    friend class QGalleryFilter;
-};
+template <typename T>
+QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 QTM_END_NAMESPACE
-
-#ifndef Q_QDOC
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator ||(
-        const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator &&(
-        const QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-#else
-QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(const QGalleryUnionFilter &filter1, const T &filter2);
-QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2);
-#endif
-
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryFilter::RangeFlags))
 
 #endif

@@ -254,7 +254,9 @@ void QT7MovieViewRenderer::setupVideoOutput()
 {
     AutoReleasePool pool;
 
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7MovieViewRenderer::setupVideoOutput" << m_movie << m_surface;
+#endif
 
     HiddenQTMovieView *movieView = (HiddenQTMovieView*)m_movieView;
 
@@ -285,14 +287,18 @@ void QT7MovieViewRenderer::setupVideoOutput()
                                    coreImageFrameSupported ? QAbstractVideoBuffer::CoreImageHandle : QAbstractVideoBuffer::NoHandle);
 
         if (m_surface->isActive() && m_surface->surfaceFormat() != format) {
+#ifdef QT_DEBUG_QT7
             qDebug() << "Surface format was changed, stop the surface.";
+#endif
             m_surface->stop();
         }
 
         if (!m_surface->isActive()) {
+#ifdef QT_DEBUG_QT7
             qDebug() << "Starting the surface with format" << format;
+#endif
             if (!m_surface->start(format))
-                qDebug() << "failed to start video surface" << m_surface->error();
+                qWarning() << "failed to start video surface" << m_surface->error();
         }
     }
 }
