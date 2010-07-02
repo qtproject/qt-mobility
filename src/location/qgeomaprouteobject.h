@@ -43,6 +43,7 @@
 #define QGEOMAPROUTEOBJECT_H
 
 #include "qgeomapobject.h"
+#include "qgeoroute.h"
 
 #include <QPen>
 
@@ -62,6 +63,9 @@ public:
     void setPen(const QPen &aPen);
 
     QGeoRoute route() const;
+
+    void setDetailLevel(quint32 pixels);
+    quint32 detailLevel() const;
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapRouteObject)

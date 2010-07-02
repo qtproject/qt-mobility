@@ -42,6 +42,8 @@
 #include "qgeomaprouteobject.h"
 #include "qgeomaprouteobject_p.h"
 
+#define DEFAULT_ROUTE_DETAIL_LEVEL 20
+
 QTM_BEGIN_NAMESPACE
 
 QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent)
@@ -49,6 +51,7 @@ QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *pa
 {
     Q_D(QGeoMapRouteObject);
     d->route = route;
+    d->boundingBox = route.bounds();
 }
 
 QGeoMapRouteObject::~QGeoMapRouteObject()
@@ -69,6 +72,27 @@ void QGeoMapRouteObject::setPen(const QPen &aPen)
     d->pen = aPen;
 }
 
+QGeoRoute QGeoMapRouteObject::route() const
+{
+    Q_D(const QGeoMapRouteObject);
+
+    return d->route;
+}
+
+void QGeoMapRouteObject::setDetailLevel(quint32 pixels)
+{
+    Q_D(QGeoMapRouteObject);
+
+    d->detailLevel = pixels;
+}
+
+quint32 QGeoMapRouteObject::detailLevel() const
+{
+    Q_D(const QGeoMapRouteObject);
+
+    return d->detailLevel;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -79,13 +103,16 @@ QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMa
 }
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other)
-    : QGeoMapObjectPrivate(other), route(other.route) {}
+    : QGeoMapObjectPrivate(other), pen(other.pen), route(other.route), detailLevel(other.detailLevel)
+{}
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
 
 QGeoMapRouteObjectPrivate& QGeoMapRouteObjectPrivate::operator= (const QGeoMapRouteObjectPrivate &other)
 {
     route = other.route;
+    pen = other.pen;
+    detailLevel = other.detailLevel;
     QGeoMapObjectPrivate::operator=(other);
 
     return *this;

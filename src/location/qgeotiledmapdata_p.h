@@ -61,12 +61,16 @@
 #include <QMultiMap>
 #include <QString>
 #include <QPainterPath>
+#include <QPair>
+#include <QList>
+#include <QLineF>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObject;
 class QGeoMapMarkerObject;
 class QGeoMapPolylineObject;
+class QGeoMapRouteObject;
 class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
@@ -79,6 +83,11 @@ struct QGeoTiledMapObjectInfo
 struct QGeoTiledMapPolylineInfo : public QGeoTiledMapObjectInfo
 {
     QPainterPath path;
+};
+
+struct QGeoTiledMapRouteInfo : public QGeoTiledMapObjectInfo
+{
+    QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
 };
 
 class QGeoTiledMapDataPrivate
@@ -95,6 +104,8 @@ public:
     void calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle);
     void calculateMapMarkerInfo(QGeoMapMarkerObject *marker);
     void calculateMapPolylineInfo(QGeoMapPolylineObject *polyline);
+    void calculateMapRouteInfo(QGeoMapRouteObject *route);
+    void addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const;
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect) const;
 
@@ -104,6 +115,8 @@ public:
     void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline);
 
     void clearObjInfo();
+
+    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
     qulonglong width;
     qulonglong height;

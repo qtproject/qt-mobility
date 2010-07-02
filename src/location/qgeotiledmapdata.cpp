@@ -51,6 +51,8 @@
 #include "qgeomapmarkerobject.h"
 #include "qgeomappolylineobject.h"
 #include "qgeomappolygonobject.h"
+#include "qgeomaprouteobject.h"
+#include "qgeoroutesegment.h"
 
 #include <QTimer>
 
@@ -861,6 +863,106 @@ void QGeoTiledMapDataPrivate::calculateMapPolylineInfo(QGeoMapPolylineObject *po
 
     if (!startPoint.isNull())
         info->path.lineTo(startPoint);
+}
+
+void QGeoTiledMapDataPrivate::calculateMapRouteInfo(QGeoMapRouteObject *route)
+{
+    qulonglong topLeftX;
+    qulonglong topLeftY;
+    qulonglong bottomRightX;
+    qulonglong bottomRightY;
+    
+    q_ptr->coordinateToWorldPixel(route->boundingBox().topLeft(), &topLeftX, &topLeftY);
+    q_ptr->coordinateToWorldPixel(route->boundingBox().bottomRight(), &bottomRightX, &bottomRightY);
+
+    QGeoTiledMapRouteInfo* info = new QGeoTiledMapRouteInfo;
+    info->boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
+    objInfo[route] = info;
+
+    quint32 minDist = route->detailLevel();
+    QGeoCoordinate last;
+    QGeoCoordinate here;
+    int lineIndex = 0;
+    QListIterator<QGeoRouteSegment> segIt(route->route().routeSegments());
+
+    while (segIt.hasNext()) {
+        QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
+
+        while (coordIt.hasNext()) {
+            QGeoCoordinate curr = coordIt.next();
+
+            //make sure first waypoint is always shown
+            if (!last.isValid()) {
+                last = curr;
+                continue;
+            }
+
+            here = curr;
+            QLineF line = connectShortest(here, last);
+            qreal dist = (line.p1() - line.p2()).manhattanLength();
+
+            if (dist >= minDist || q_ptr->zoomLevel() == q_ptr->engine()->maximumZoomLevel()) {
+                addRouteSegmentInfo(info, line, lineIndex++);
+                last = here;
+                here = QGeoCoordinate();
+            }
+        }
+    }
+
+    //make sure last waypoint is always shown
+    if (here.isValid()) {
+        QLineF line = connectShortest(here, last);
+        addRouteSegmentInfo(info, line, lineIndex++);
+    }
+
+}
+
+QLineF QGeoTiledMapDataPrivate::connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const
+{
+    //order from west to east
+    QGeoCoordinate pt1;
+    QGeoCoordinate pt2;
+
+    if (point1.longitude() < point2.longitude()) {
+        pt1 = point1;
+        pt2 = point2;
+    } else {
+        pt1 = point2;
+        pt2 = point1;
+    }
+
+    qulonglong x;
+    qulonglong y;
+    q_ptr->coordinateToWorldPixel(pt1, &x, &y);
+    QPointF mpt1(x, y);
+    q_ptr->coordinateToWorldPixel(pt2, &x, &y);
+    QPointF mpt2(x, y);
+
+    if (pt2.longitude() - pt1.longitude() > 180.0) {
+        mpt1.rx() += this->width;
+        return QLineF(mpt2, mpt1);
+    }
+
+    return QLineF(mpt1, mpt2);
+}
+
+void QGeoTiledMapDataPrivate::addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const
+{
+    //TODO: add some type check
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(q_ptr->engine());
+
+    QGeoTileIterator it(screenRect, tiledEngine->tileSize(), qRound(q_ptr->zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (!info->intersectedTiles.contains(key))
+            info->intersectedTiles.insert(key, QList< QPair<int, QLineF> >());
+
+        info->intersectedTiles[key].append(QPair<int, QLineF>(index, line));
+    }
 }
 
 ///*******************************************************************************

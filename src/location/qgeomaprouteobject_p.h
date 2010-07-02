@@ -59,6 +59,7 @@ public:
 
     QPen pen;
     QGeoRoute route;
+    quint32 detailLevel;
 };
 
 QTM_END_NAMESPACE
