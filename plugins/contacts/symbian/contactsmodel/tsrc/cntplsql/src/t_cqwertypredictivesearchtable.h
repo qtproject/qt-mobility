@@ -65,6 +65,7 @@ NONSHARABLE_CLASS( UT_CQwertyPredictiveSearchTable ): public CEUnitTestSuiteClas
         void UT_CreateInDbLL();
 		void UT_UpdateLL();
 		void UT_DeleteLL();
+		void UT_UnmappedMailAddressL();
         
     private: // New functions
         QVector<TInt> InitTableVector() const;

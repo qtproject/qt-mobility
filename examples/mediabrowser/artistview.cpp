@@ -53,14 +53,16 @@ ArtistView::ArtistView(const QString &type, QWidget *parent)
     setType(type);
     setFields(QStringList()
             << QDocumentGallery::title
-            << QDocumentGallery::trackCount
-            << QDocumentGallery::duration
-            << QDocumentGallery::rating);
+            << QDocumentGallery::trackCount);
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
     model = new QGalleryItemListModel;
-    model->addColumn(QDocumentGallery::title);
+
+    QHash<int, QString> properties;
+    properties.insert(Qt::DisplayRole, QDocumentGallery::title);
+    properties.insert(ArtistDelegate::TrackCount, QDocumentGallery::trackCount);
+    model->addColumn(properties);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));

@@ -301,8 +301,19 @@ QStringList CQwertyPredictiveSearchTable::GetTableSpecificFields(
 				PRINT1(_L("prefix removed, mail='%S'"), &log);
 #endif
 				}
-			mailAddresses.append(iKeyMap->GetMappedString(address));
-			++storedAddressCount;
+            // Ignore mail addresses that begin with unmapped character
+            QString mapped = iKeyMap->GetMappedString(address);
+            if (mapped.length() > 0 && IsValidChar(mapped[0]))
+                {
+                mailAddresses.append(mapped);
+                ++storedAddressCount;
+                }
+#if defined(WRITE_PRED_SEARCH_LOGS)
+			else
+				{
+				PRINT(_L("mail begins with unmapped char, ignore mail"));
+				}
+#endif
 			}
 		}
 	PRINT1(_L("CQwertyPredictiveSearchTable::GetTableSpecificFields found %d mail addrs"),

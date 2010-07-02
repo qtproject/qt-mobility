@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,39 +39,48 @@
 **
 ****************************************************************************/
 
-#include "qgallerytype.h"
+#ifndef QTELEPHONYCALLLIST_UNSUPPORTED_P_H
+#define QTELEPHONYCALLLIST_UNSUPPORTED_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QGalleryType 
+class QTelephonyCallInfoPrivate;
+class QTelephonyCallList;
 
-    \ingroup gallery
-
-    \brief The QGalleryType class provides an identifier for a gallery item
-    type.
-*/
-
-/*!
-    \fn QGalleryType::QGalleryType(const char *name)
-
-    Construct a gallery item type from a string literal \a name.
-*/
-
-/*!
-    Returns the name of an item type.
-*/
-
-QString QGalleryType::name() const
+class QTelephonyCallListPrivate
 {
-    return QString::fromLatin1(m_name, m_length);
-}
+    friend class QTelephonyCallList;
 
-/*!
-    \fn QGalleryType::operator QString() const
+public:
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0) { 
+		qWarning("Telephone is not supported on this platform");
+	};
+    virtual ~QTelephonyCallListPrivate() { 
+	};
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const 
+	{ 
+	QList<QTelephonyCallInfo> e; 
+	return e; 
+	};
 
-    Returns the string name of an item type.
-*/
+private:
+};
 
 QTM_END_NAMESPACE
+QT_END_HEADER
 
+#endif // QTELEPHONYCALLLIST_UNSUPPORTED_P_H
