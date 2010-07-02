@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
   asynchronous manner, clients should use the use-case-specific classes derived from QOrganizerItemAbstractRequest.
 
   Some functionality provided by QOrganizerItemManager directly is not accessible using the asynchronous API; see
-  the \l{OrganizerItems Synchronous API}{synchronous} and \l{OrganizerItems Asynchronous API}{asynchronous} API
+  the \l{Organizer Synchronous API}{synchronous} and \l{Organizer Asynchronous API}{asynchronous} API
   information from the \l{Organizer}{organizer module} API documentation.
  */
 
@@ -305,6 +305,7 @@ QOrganizerItemManager::~QOrganizerItemManager()
   \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store
   \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid
   \value UnspecifiedError The most recent operation failed for an undocumented reason
+  \value InvalidOccurrenceError The most recent operation failed because it was an attempt to save an occurrence without a correct InstanceOrigin detail
  */
 
 /*! Return the error code of the most recent operation */
@@ -442,7 +443,7 @@ QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organize
   The manager will automatically synthesize the display label of the organizeritem when it is saved.
   The manager is not required to fetch updated details of the organizeritem on save,
   and as such, clients should fetch a organizeritem if they want the most up-to-date information
-  by calling \l QOrganizerItemManager::organizeritem().
+  by calling \l QOrganizerItemManager::item().
 
   \sa managerUri()
  */

@@ -328,10 +328,8 @@ serialization of a QOrganizerItem into an iCal document, and vice versa.
 
 \section2 Examples
 
-The following sample applications show examples of API usage:
-\list
-    \o \l{qmlcalendar}{QML-based Calendar Example}
-\endlist
-See also: \l{Organizer API Usage}
+There are no examples at this point in time.
+
+See \l{Organizer API Usage} instead.
 
 */

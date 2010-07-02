@@ -55,6 +55,20 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_ITEM
+  \relates QOrganizerItem
+
+  Macro for simplifying declaring convenience leaf classes for QOrganizerItem.
+
+  The first argument is the name of the class, and the second argument
+  is a Latin-1 string literal naming the item type.
+
+  If you are creating a convenience class for a type of QOrganizerItem,
+  you should use this macro when declaring your class to ensure that
+  it interoperates with other organizeritem functionality.
+ */
+
+/*!
   \class QOrganizerItem
 
   \brief The QOrganizerItem class represents an addressbook organizeritem.

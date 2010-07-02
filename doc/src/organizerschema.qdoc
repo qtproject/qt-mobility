@@ -73,7 +73,6 @@ The leaf classes which have a uniqueness constraint in the default schema are as
     \o \l{QOrganizerItemDisplayLabel}
     \o \l{QOrganizerItemDescription}
     \o \l{QOrganizerItemType}
-    \o \l{QOrganizerItemSyncTarget}
     \o \l{QOrganizerItemGuid}
 \endlist
 
@@ -99,7 +98,6 @@ Please see the documentation of \l{QOrganizerItemDetail} for more information on
 The leaf classes which have access constraints in the default schema are as follows:
 \list
     \o \l{QOrganizerItemGuid} is \c QOrganizerItemDetail::ReadOnly and \c QOrganizerItemDetail::Irremovable
-    \o \l{QOrganizerItemSyncTarget} is \c QOrganizerItemDetail::ReadOnly and \c QOrganizerItemDetail::Irremovable
     \o \l{QOrganizerItemTimestamp} is \c QOrganizerItemDetail::ReadOnly and \c QOrganizerItemDetail::Irremovable
     \o \l{QOrganizerItemDisplayLabel} is \c QOrganizerItemDetail::Irremovable
     \o \l{QOrganizerItemDescription} is \c QOrganizerItemDetail::Irremovable

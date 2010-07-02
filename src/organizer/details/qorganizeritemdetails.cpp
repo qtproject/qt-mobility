@@ -93,12 +93,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 */
 
 /*!
-   \fn QOrganizerItemDisplayLabel::setLabel(const QString& label) const
-   Sets the display label of the organizer item.
+   \fn void QOrganizerItemDisplayLabel::setLabel(const QString& label)
+   Sets the display label of the organizer item to \a label.
  */
 
 /*!
-   \fn QOrganizerItemDisplayLabel::label() const
+   \fn QString QOrganizerItemDisplayLabel::label() const
    Returns the display label of the organizer item.
  */
 
@@ -408,6 +408,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
  */
 
 /*!
+   \enum QOrganizerItemPriority::Priority
+   \value UnknownPriority
+   \value HighestPriority
+   \value ExtremelyHighPriority
+   \value VeryHighPriority
+   \value HighPriority
+   \value MediumPriority
+   \value LowPriority
+   \value VeryLowPriority
+   \value ExtremelyLowPriority
+   \value LowestPriority
+*/
+
+/*!
    \variable QOrganizerItemPriority::DefinitionName
    The constant string which identifies the definition of details which contain the priority of an organizer item.
  */
@@ -421,8 +435,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::DefinitionName, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
 
+/*!
+   \fn QOrganizerItemPriority::setPriority(Priority priority)
 
+   Sets the priority associated with an organizer item to \a priority.
+ */
 
+/*!
+   \fn Priority QOrganizerItemPriority::priority() const
+
+   Returns the priority associated with an organizer item.
+ */
 
 
 
@@ -525,7 +548,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 
 /*!
    \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
-   Sets a list of exception dates to \a rdates.
+   Sets a list of exception dates to \a exdates.
  */
 
 

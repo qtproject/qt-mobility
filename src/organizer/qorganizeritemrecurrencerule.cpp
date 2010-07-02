@@ -77,6 +77,30 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStar
  */
 
 /*!
+ * \enum QOrganizerItemRecurrenceRule::Frequency
+ * \value Daily
+ * \value Weekly
+ * \value Monthly
+ * \value Yearly
+ */
+
+/*!
+ * \enum QOrganizerItemRecurrenceRule::Month
+ * \value January
+ * \value February
+ * \value March
+ * \value April
+ * \value May
+ * \value June
+ * \value July
+ * \value August
+ * \value September
+ * \value October
+ * \value November
+ * \value December
+ */
+
+/*!
  * Constructs a QOrganizerItemRecurrenceRule object describing a weekly recurrence.
  */
 QOrganizerItemRecurrenceRule::QOrganizerItemRecurrenceRule()
@@ -129,8 +153,8 @@ QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency(
         return Weekly;
 }
 
-/*! Sets the "count" condition of the recurrence rule.  If an end-date was previously set,
- * it is removed as count and endDate are mutually exclusive.
+/*! Sets the "count" condition of the recurrence rule to \a count.  If an end-date was previously
+ * set, it is removed as count and endDate are mutually exclusive.
  *
  * The "count" condition is the maximum number of times the item should recur.  Setting this
  * to 0 or a negative value removes the count condition.
@@ -152,8 +176,8 @@ int QOrganizerItemRecurrenceRule::count() const
     return d->m_variantValues.value(FieldCount).toInt();
 }
 
-/*! Sets the end-date condition of the recurrence rule.  If a "count" condition was previously
- * set, it is removed as count and endDate are mutually exclusive.
+/*! Sets the end-date condition of the recurrence rule to \a endDate.  If a "count" condition was
+ * previously set, it is removed as count and endDate are mutually exclusive.
  *
  * The end-date condition is the date after which the item should not recur.  Setting this to
  * the null date removes the end-date condition.
@@ -389,9 +413,9 @@ QList<int> QOrganizerItemRecurrenceRule::positions() const
     return retn;
 }
 
-/*! Sets the day that the week starts on, for the purposes of calculating recurrences.  This is
- * significant when the frequency is Weekly and the interval is greater than 1, or when weekOfYear
- * is set.  See the iCalendar spec for examples of its significance.
+/*! Sets the day that the week starts on to \a day, for the purposes of calculating recurrences.
+ * This is significant when the frequency is Weekly and the interval is greater than 1, or when
+ * weekOfYear is set.  See the iCalendar spec for examples of its significance.
  *
  * This corresponds to the BYWKST fragment in iCalendar's RRULE.
  */
