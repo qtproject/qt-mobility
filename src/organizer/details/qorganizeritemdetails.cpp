@@ -93,6 +93,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 */
 
 /*!
+   \fn QOrganizerItemDisplayLabel::setLabel(const QString& label) const
+   Sets the display label of the organizer item.
+ */
+
+/*!
    \fn QOrganizerItemDisplayLabel::label() const
    Returns the display label of the organizer item.
  */
@@ -342,7 +347,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
  */
 
 /*!
-    \fn setGeoLocation(const QString& stringCoords)
+    \fn QOrganizerItemLocation::setGeoLocation(const QString& stringCoords)
     Sets geolication value to \a stringCoords.
  */
 
@@ -511,6 +516,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 /*!
    \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
    Sets a list of recurrence rules to \a rrules.
+ */
+
+/*!
+   \fn QOrganizerItemRecurrence::exceptionDates() const
+   Returns a list of exception dates.
+ */
+
+/*!
+   \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
+   Sets a list of exception dates to \a rdates.
  */
 
 

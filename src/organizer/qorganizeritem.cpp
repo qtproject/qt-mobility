@@ -474,15 +474,9 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName, 
  * be overwritten with \a detail.  There is never more than one organizeritem type
  * in a organizeritem.
  *
- * If \a detail is a QOrganizerItemDisplayLabel, the organizeritem will not be updated,
- * and the function will return false.  Since the display label formatting is specific
- * to each manager, use the QOrganizerItemManager::synthesizeOrganizerItemDisplayLabel() function
- * instead.
- *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
- * \sa QOrganizerItemManager::synthesizeOrganizerItemDisplayLabel()
  */
 bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
 {
