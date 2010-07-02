@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemManagerEngine
   \brief The QOrganizerItemManagerEngine class provides the interface for all
   implementations of the organizer item manager backend functionality.
-  \ingroup organizeritems-backends
+  \ingroup organizer-backends
 
   Instances of this class are usually provided by a
   \l QOrganizerItemManagerEngineFactory, which is loaded from a plugin.
@@ -70,9 +70,9 @@ QTM_BEGIN_NAMESPACE
   The default implementation of this interface provides a basic
   level of functionality for some functions so that specific engines
   can simply implement the functionality that is supported by
-  the specific organizeritems engine that is being adapted.
+  the specific organizer items engine that is being adapted.
 
-  More information on writing a organizeritems engine plugin is available in
+  More information on writing a organizer items engine plugin is available in
   the \l{Qt OrganizerItems Manager Engines} documentation.
 
   \sa QOrganizerItemManager, QOrganizerItemManagerEngineFactory
@@ -96,11 +96,11 @@ QTM_BEGIN_NAMESPACE
   As it is possible that other processes (or other devices) may have caused the
   changes, the timing can not be determined.
 
-  \sa organizeritemsAdded(), organizeritemsChanged(), organizeritemsRemoved()
+  \sa itemsAdded(), itemsChanged(), itemsRemoved()
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizeritems has been added to
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -114,7 +114,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizeritems has been modified in
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -128,7 +128,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemManagerEngine::organizeritemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
+  \fn QOrganizerItemManagerEngine::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
   This signal is emitted some time after a set of organizeritems has been removed from
   this engine where the \l dataChanged() signal was not emitted for those changes.
@@ -183,8 +183,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
   to the generator and the original instance that the event would have occurred on (if it is an
   exception).  No returned item should contain a QOrganizerItemRecurrence detail.
 
-  If the \a generator does not exist in the backend, or if there are no instances matching the
-  criteria, an empty list should be returned.
+  If there are no instances matching the criteria, an empty list should be returned.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
@@ -1417,7 +1416,7 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrgan
 
   Any error which occurs will be saved in \a error.
 
-  The default implementation will convert this into a call to removeOrganizerItems.
+  The default implementation will convert this into a call to removeItems.
  */
 bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
 {
@@ -1485,7 +1484,7 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
   Any errors encountered during this operation should be stored to
   \a error.
 
-  \sa QOrganizerItemManager::removeOrganizerItem()
+  \sa QOrganizerItemManager::removeItem()
  */
 bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
