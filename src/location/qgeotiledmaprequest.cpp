@@ -134,9 +134,9 @@ QRectF QGeoTiledMapRequest::tileRect() const
 
 uint qHash(const QGeoTiledMapRequest &key)
 {
-    uint result = QT_PREPEND_NAMESPACE(qHash)(key.row());
-    result += QT_PREPEND_NAMESPACE(qHash)(key.column());
-    result += QT_PREPEND_NAMESPACE(qHash)(key.zoomLevel());
+    uint result = QT_PREPEND_NAMESPACE(qHash)(key.row() * 13);
+    result += QT_PREPEND_NAMESPACE(qHash)(key.column() * 17);
+    result += QT_PREPEND_NAMESPACE(qHash)(key.zoomLevel() * 19);
     result += QT_PREPEND_NAMESPACE(qHash)(static_cast<int>(key.mapType()));
     return result;
 }

@@ -79,67 +79,6 @@ public:
 
     QList<QString> supportedImageFormats;
     QSize tileSize;
-    QHash<QGeoTiledMapData*, QGeoTiledMapRequestHandler*> handlers;
-};
-
-class QGeoTiledMapRequestHandler : public QObject
-{
-    Q_OBJECT
-public:
-    QGeoTiledMapRequestHandler(QGeoTiledMappingManagerEngine *engine, QGeoTiledMapData *mapData);
-    ~QGeoTiledMapRequestHandler();
-
-public slots:
-    void setRequests(const QList<QGeoTiledMapRequest> &requests);
-
-private slots:
-    void processRequests();
-    void tileFinished();
-    void tileError(QGeoTiledMapReply::Error, const QString &errorString);
-
-signals:
-    void finished(QGeoTiledMapReply *reply);
-    void error(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
-    void triggerUpdate(QGeoTiledMapData *data);
-
-private:
-    QGeoTiledMappingManagerEngine *engine;
-    QGeoTiledMapData *mapData;
-
-    QRectF lastScreenRect;
-    qreal lastZoomLevel;
-    QGeoMapWidget::MapType lastMapType;
-
-    int cachedReplies;
-
-    QSet<QRectF> requestRects;
-    QSet<QRectF> replyRects;
-
-    QList<QGeoTiledMapRequest> requestQueue;
-    QSet<QGeoTiledMapReply*> replies;
-};
-
-class QGeoTileIterator
-{
-public:
-    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
-    
-    bool hasNext();
-    void next();
-    int row() const;
-    int col() const;
-    int zoomLevel() const;
-    QRectF tileRect() const;
-
-private:
-    bool aHasNext;
-    int aRow;
-    int aCol;
-    QRectF aScreenRect;
-    QSize aTileSize;
-    int aZoomLevel;
-    QPointF currTopLeft;
-    QRectF aTileRect;
 };
 
 QTM_END_NAMESPACE

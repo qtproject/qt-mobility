@@ -78,8 +78,8 @@ public:
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
+    virtual void setMapType(QGeoMapWidget::MapType mapType);
+    virtual QGeoMapWidget::MapType mapType() const;
 
     virtual void addMapObject(QGeoMapObject *mapObject);
     virtual void removeMapObject(QGeoMapObject *mapObject);
@@ -96,7 +96,8 @@ public:
     bool imageChangesTriggerUpdates() const;
 
     void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage() const;
+    QPixmap& mapImage();
+    void imageChanged(const QRectF &updateRect = QRectF());
 
 protected:
     QGeoMapWidget* widget() const;

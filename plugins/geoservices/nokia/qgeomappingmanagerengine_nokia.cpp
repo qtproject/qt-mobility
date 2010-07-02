@@ -65,12 +65,7 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     setTileSize(QSize(128,128));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
-}
 
-QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
-
-void QGeoMappingManagerEngineNokia::initialize()
-{
     m_nam = new QNetworkAccessManager(this);
     m_cache = new QNetworkDiskCache(this);
 
@@ -109,6 +104,8 @@ void QGeoMappingManagerEngineNokia::initialize()
 
     m_nam->setCache(m_cache);
 }
+
+QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
 QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
 {

@@ -68,6 +68,8 @@ class QGeoMapRectangleObject;
 class QGeoMapMarkerObject;
 class QGeoMapPolylineObject;
 class QGeoTiledMapData;
+class QGeoTiledMapRequest;
+class QGeoTiledMapReply;
 
 struct QGeoTiledMapObjectInfo
 {
@@ -109,10 +111,39 @@ public:
     QRectF protectRegion;
     QRectF screenRect;
 
+    QSet<QRectF> requestRects;
+    QSet<QRectF> replyRects;
+
+    QList<QGeoTiledMapRequest> requests;
+    QSet<QGeoTiledMapReply*> replies;
+
     QHash<QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
+};
+
+class QGeoTileIterator
+{
+public:
+    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
+
+    bool hasNext();
+    void next();
+    int row() const;
+    int col() const;
+    int zoomLevel() const;
+    QRectF tileRect() const;
+
+private:
+    bool aHasNext;
+    int aRow;
+    int aCol;
+    QRectF aScreenRect;
+    QSize aTileSize;
+    int aZoomLevel;
+    QPointF currTopLeft;
+    QRectF aTileRect;
 };
 
 QTM_END_NAMESPACE

@@ -359,9 +359,15 @@ void QGeoMapData::setMapImage(const QPixmap &mapImage)
 /*!
     Returns the image that will be displayed in the viewport of widget().
 */
-QPixmap QGeoMapData::mapImage() const
+QPixmap& QGeoMapData::mapImage()
 {
     return d_ptr->mapImage;
+}
+
+void QGeoMapData::imageChanged(const QRectF &updateRect)
+{
+    if (d_ptr->imageChangesTriggerUpdates)
+        d_ptr->widget->update(updateRect);
 }
 
 /*******************************************************************************
