@@ -151,11 +151,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldEndDateTime, "EndDateTim
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDateTime");
 
 
+/*!
+    \fn QOrganizerEventTimeRange::startDateTime() const
+    Returns the event timerange's start date and time as QDateTime.
+ */
 
+/*!
+    \fn QOrganizerEventTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    Sets the event timerange's start date and time to \a startDateTime.
+ */
 
+/*!
+    \fn QOrganizerEventTimeRange::endDateTime() const
+    Returns the event timerange's due date and time as QDateTime.
+ */
 
-
-
+/*!
+    \fn QOrganizerEventTimeRange::setEndDateTime(const QDateTime& dueDateTime)
+    Sets the event timerange's due date and time to \a dueDateTime.
+ */
 
 /* ==================== QOrganizerItemGuid ======================= */
 
@@ -224,10 +238,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "Pare
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "OriginalDate");
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::parentLocalId() const
+    Returns the local id of the item instance origin's parent item.
+ */
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+    Sets the parent id of this instance origin item to \a parentId.
+ */
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::originalDate() const
+    Returns the original date of this instance origin item.
+ */
 
-
+/*!
+   \fn QOrganizerItemInstanceOrigin::setOriginalDate(const QDate& date)
+    Sets the origin date to \a date.
+ */
 
 
 /* ==================== QOrganizerJournalTimeRange ======================= */
@@ -307,7 +336,35 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
 
+/*!
+    \fn QOrganizerItemLocation::geoLocation() const
+    Returns a string of geolication value.
+ */
 
+/*!
+    \fn setGeoLocation(const QString& stringCoords)
+    Sets geolication value to \a stringCoords.
+ */
+
+/*!
+    \fn QOrganizerItemLocation::locationName() const
+    Returns a string of location name.
+ */
+
+/*!
+   \fn QOrganizerItemLocation::setLocationName(const QString& locationName)
+   Sets location name to \a locationName.
+ */
+
+/*!
+    \fn QOrganizerItemLocation::address() const
+    Returns a string of address name.
+ */
+
+/*!
+   \fn QOrganizerItemLocation::setAddress(const QString& address)
+   Sets address name to \a address.
+ */
 
 /* ==================== QOrganizerItemComment ======================= */
 /*!
@@ -616,6 +673,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDate
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime");
 
+/*!
+    \fn QOrganizerTodoTimeRange::startDateTime() const
+    Returns the todo timerange's start date and time as QDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    Sets the todo timerange's start date and time to \a startDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::dueDateTime() const
+    Returns the todo timerange's due date and time as QDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
+    Sets the todo timerange's due date and time to \a dueDateTime.
+ */
 
 /* ==================== QOrganizerItemType ======================= */
 /*!
