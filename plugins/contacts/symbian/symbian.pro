@@ -10,7 +10,7 @@ contains(symbiancntmodel_enabled, yes) {
         ##SUBDIRS += contactsmodel plugin
 
         ##TODO FIXME: we disabled building the symbian plugin on Symbian^4 temporarily
-        message(Building Symbian CNTMODEL and contacts plugin DISABLED!)
+        message(In-source CNTMODEL deployed: building Symbian CNTMODEL and contacts plugin DISABLED!)
     } else {
         ## this is symbian 3.1, 3.2, 5.0 or ^3
         message(Building Symbian contacts plugin)
@@ -22,5 +22,5 @@ contains(symbiancntmodel_enabled, yes) {
     ##SUBDIRS += contactsmodel plugin
 
     ##TODO FIXME: we disabled building the symbian plugin on Symbian^4 temporarily
-    message(Building Symbian CNTMODEL and contacts plugin DISABLED!)
+    message(In-source CNTMODEL not deployed: building Symbian CNTMODEL and contacts plugin DISABLED!)
 }

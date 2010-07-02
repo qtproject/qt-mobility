@@ -102,7 +102,7 @@ QFeedbackActuator::QFeedbackActuator(int id) : m_id(id)
 
 
 /*!
-    \fn int QFeedbackActuator::id()
+    \fn QFeedbackActuator::id() const
 
     returns the id of the actuator
 */
@@ -112,7 +112,7 @@ int QFeedbackActuator::id() const
 }
 
 /*!
-    \fn bool QFeedbackActuator::isValid()
+    \fn QFeedbackActuator::isValid() const
 
     returns true if the actuator is valid.
 */
@@ -122,7 +122,7 @@ bool QFeedbackActuator::isValid() const
 }
 
 /*!
-    \fn QString QFeedbackActuator::name()
+    \fn QFeedbackActuator::name() const
 
     returns the name of the actuator.
 */
@@ -132,7 +132,7 @@ QString QFeedbackActuator::name() const
 }
 
 /*!
-    \fn QFeedbackActuator::State QFeedbackActuator::state()
+    \fn QFeedbackActuator::state() const
 
     returns the state of the actuator.
 */
@@ -142,7 +142,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 }
 
 /*!
-    \fn bool  QFeedbackActuator::isCapabilitySupported(Capability capability)
+    \fn QFeedbackActuator::isCapabilitySupported(Capability capability) const
 
     returns if the actuator supports the capability capability.
 */
@@ -152,7 +152,7 @@ bool QFeedbackActuator::isCapabilitySupported(Capability capability) const
 }
 
 /*!
-    \fn  bool QFeedbackActuator::isEnabled()
+    \fn  QFeedbackActuator::isEnabled() const
 
     returns true if you can use this actuator to start effects.
 */
@@ -162,9 +162,9 @@ bool QFeedbackActuator::isEnabled() const
 }
 
 /*!
-    \fn  void QFeedbackActuator::setEnabled()
+    \fn  QFeedbackActuator::setEnabled(bool enabled)
 
-    Allows to enable or disable a actuator.
+    Allows to enable or disable a actuator to \a enabled.
 */
 void QFeedbackActuator::setEnabled(bool enabled)
 {
@@ -172,7 +172,7 @@ void QFeedbackActuator::setEnabled(bool enabled)
 }
 
 /*!
-    \fn QList<QFeedbackActuator> QFeedbackActuator::actuators()
+    \fn QFeedbackActuator::actuators()
 
     returns the list of actuators available on the system.
 */
