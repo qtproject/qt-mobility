@@ -55,19 +55,19 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemManager
-  \brief The QOrganizerItemManager class provides an interface which allows clients with access to organizeritem information stored in a particular backend.
-  \ingroup organizeritems-main
+  \brief The QOrganizerItemManager class provides an interface which allows clients with access to organizer item information stored in a particular backend.
+  \ingroup organizer-main
 
-  This class provides an abstraction of a datastore or aggregation of datastores which contains organizeritem information.
-  It provides methods to retrieve and manipulate organizeritem information, organizeritem relationship information, and
-  supported schema definitions.  It also provides metadata and error information reporting.
+  This class provides an abstraction of a datastore or aggregation of datastores which contains organizer item information.
+  It provides methods to retrieve and manipulate organizer item information and supported schema definitions.
+  It also provides metadata and error information reporting.
 
   The functions provided by QOrganizerItemManager are purely synchronous; to access the same functionality in an
   asynchronous manner, clients should use the use-case-specific classes derived from QOrganizerItemAbstractRequest.
 
   Some functionality provided by QOrganizerItemManager directly is not accessible using the asynchronous API; see
   the \l{OrganizerItems Synchronous API}{synchronous} and \l{OrganizerItems Asynchronous API}{asynchronous} API
-  information from the \l{OrganizerItems}{organizeritems module} API documentation.
+  information from the \l{Organizer}{organizer module} API documentation.
  */
 
 /*!
@@ -78,19 +78,19 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QOrganizerItemManager::organizeritemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds)
+  \fn QOrganizerItemManager::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds)
   This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been added to a datastore managed by this manager.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerItemManager::organizeritemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds)
+  \fn QOrganizerItemManager::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds)
   This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been modified in a datastore managed by this manager.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
 
 /*!
-  \fn QOrganizerItemManager::organizeritemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds)
+  \fn QOrganizerItemManager::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds)
   This signal is emitted at some point once the organizeritems identified by \a organizeritemIds have been removed from a datastore managed by this manager.
   This signal must not be emitted if the dataChanged() signal was previously emitted for these changes.
  */
@@ -295,7 +295,7 @@ QOrganizerItemManager::~QOrganizerItemManager()
   \value DoesNotExistError The most recent operation failed because the requested organizeritem or detail definition does not exist
   \value AlreadyExistsError The most recent operation failed because the specified organizeritem or detail definition already exists
   \value InvalidDetailError The most recent operation failed because the specified organizeritem contains details which do not conform to their definition
-  \value InvalidOrganizerItemTypeError The most recent operation failed because the organizeritem type specified was not valid for the operation
+  \value InvalidItemTypeError The most recent operation failed because the organizeritem type specified was not valid for the operation
   \value LockedError The most recent operation failed because the datastore specified is currently locked
   \value DetailAccessError The most recent operation failed because a detail was modified or removed and its access method does not allow that
   \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation
@@ -598,8 +598,6 @@ bool QOrganizerItemManager::removeDetailDefinition(const QString& definitionName
 /*!
   \enum QOrganizerItemManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
-  \omitvalue ActionPreferences The manager supports saving preferred details per action per organizeritem
-  \value DetailOrdering When a organizeritem is retrieved, the manager will return the details in the same order in which they were saved
   \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
   \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
   \value Anonymous The manager is isolated from other managers

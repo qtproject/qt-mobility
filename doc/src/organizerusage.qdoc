@@ -44,12 +44,17 @@ manager for that backend is available.  The list of available managers can be
 queried programmatically at run-time, and the capabilities of different
 managers can be ascertained by inspecting a QOrganizerItemManager instance.
 Furthermore, some managers can be constructed with parameters which affect the
-operation of the backend.
+operation of the backend.  In this example, the client constructs a particular
+backend, but does not construct it with any special parameters:
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Instantiating a specific manager
 
 Most users of the API will want to use the default manager for the platform,
 which provides access to the system address book.  Instantiating a manager by
 using the default constructor will result in the default manager for that
-platform being instantiated.
+platform being instantiated:
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Instantiating the default manager for the platform
 
 The default constructor can either be used to create a manager on the stack,
 in which case it will be deleted automatically when it goes out of scope,
@@ -68,7 +73,9 @@ the capabilities of the manager they have instantiated might be.
 The client can choose to load a manager for a specific backend.  While
 the engine could be found and retrieved using a more advanced plugin framework
 (such as the Qt Service Framework), this code assumes that the client has
-prior knowledge of the backend in question.
+prior knowledge of the backend in question:
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Instantiating a specific manager
 
 Clients may wish to use this feature of the API if they wish to store or
 retrieve item information to a particular manager (for example, one that
@@ -99,7 +106,8 @@ particular semantics surrounding saving, removal and modification.
 
 After instantiating a manager, clients will wish to retrieve or modify item
 information (detail definitions) which is persistently stored in the manager
-(for example, in a database or online cloud).
+(for example, in a database or online cloud).  This may be done synchronously
+or asynchronously.  And example of synchronous usage is as follows:
 
 If the client wishes to use the asynchronous API, it is suggested that their
 class uses member variables for the manager and requests.  This allows them
@@ -122,15 +130,27 @@ asynchronously using a QOrganizerItemSaveRequest and connecting to that request'
 change signals.  Alternatively, the client can explicitly block execution until the request is
 complete, by calling waitForFinished().
 
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a non-recurrent entry
+
 \section2 Retrieving items from a manager
 
 The client requests all items from the manager which match a particular
 filter, sorted according to a particular sort order.
 
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving any entry (not occurrence) which matches a search criteria
+
 The client can also retrieve a particular existing item from a manager, by
 directly requesting the item with a particular (previously known) id.
 With the asynchronous API, this takes the form of another filter.
 The synchronous API provides the QOrganizerItemManager::item() function specifically for this purpose.
+
+Some items which clients are interested in may not be explicitly stored in the manager,
+but rather dynamically generated given a recurrence rule which is saved in a particular
+item.  These are known as occurrences and may be retrieved by calling itemInstances().
+Once retrieved, a generated occurrence may be saved into the manager, at which point it
+becomes an exception to the original item.
+
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating an exception to a particular recurrent event
 
 \section2 Updating an existing item in a manager
 
@@ -138,7 +158,9 @@ The client updates a previously saved item by saving the updated version of
 the item.  Any item whose id is the same as that of the updated item
 will be overwritten as a result of the save request.
 
-\section2 Removing a item from a manager
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Editing a non-recurrent entry
+
+\section2 Removing an item from a manager
 
 The client may remove an item from the manager by specifying its local id.
 

@@ -179,43 +179,31 @@ datastores.
 
 \section2 Saving a new item to the default manager
 
-The client creates a new item, adds a name and a phone number, and
+The client creates a new non-recurring item, adds some, and
 saves it to the default store of the default manager.
 
-We assume the existence of a specialized leaf-class that allows simple
-access to details of the definition identified by the "PhoneNumber"
-identifier, and another that allows simple access to details of the
-definition identified by the "Name" identifier.  These specialized leaf
-classes may be written by anyone, and simply wrap the functionality
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a non-recurrent entry
+
+We assume the existence of various specialized leaf-classes that allow simple
+access to details of the item, such as priority, description and display label.
+These specialized leaf classes may be written by anyone, and simply wrap the functionality
 provided by QOrganizerItemDetail in order to allow simpler access to fields
 supported by a particular definition.
 
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a new item
-
 \section2 Filtering by detail definition and value
 
-The client utilizes a default manager and asks for any items which occur
-between a given time range.
+The client utilizes a default manager and asks for any items which match
+a particular search criteria:
 
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Filtering by definition and value
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving any entry (not occurrence) which matches a search criteria
 
-
-\section2 Installing a plugin that modifies the definition of one type of detail
-
-The client installs a plugin, which requires a new field to be added to
-details of a particular definition.  It loads the definition from the
-default manager, modifies it (by adding the new field - a label field), and
-saves it back.
-
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Installing a plugin which modifies a definition
 
 \section3 Modifying an existing item and saving the modifications
 
 The client retrieves a item, modifies one of its details, adds a new
-detail, and then saves the item back to the manager.  Note that it uses
-the newly added field of the modified definition!
+detail, and then saves the item back to the manager.
 
-    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Modifying an existing item
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Editing a non-recurrent entry
 
 */
 

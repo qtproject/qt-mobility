@@ -89,18 +89,12 @@ QTM_BEGIN_NAMESPACE
  * \fn QList<T> QOrganizerItem::details() const
  * Returns a list of details of the template parameter type.  The type must be
  * a subclass of QOrganizerItemDetail.
- *
- * For example:
- *  \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 3
  */
 
 /*!
  * \fn QList<T> QOrganizerItem::details(const QString& fieldName, const QString& value) const
  * Returns a list of details of the template parameter type which have field called \a fieldName, with matching \a value.
  * The type must be a subclass of QOrganizerItemDetail.
- *
- * For example:
- *  \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 4
  */
 
 /*!
@@ -237,7 +231,7 @@ QOrganizerItem::~QOrganizerItem()
     This may have been set when the organizeritem was retrieved from
     a particular manager, or when the organizeritem was first saved
     in a manager.  The QOrganizerItemId is only valid with a specific
-    manager.  See \l QOrganizerItemManager::saveOrganizerItem() for more
+    manager.  See \l QOrganizerItemManager::saveItem() for more
     information.
 
     \sa localId()
@@ -256,7 +250,7 @@ QOrganizerItemId QOrganizerItem::id() const
     manager, but other organizeritems with the same local id might exist in
     different managers.
 
-    See \l QOrganizerItemManager::saveOrganizerItem() for more
+    See \l QOrganizerItemManager::saveItem() for more
     information.
 
    \sa id()
@@ -278,7 +272,7 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
  * exist.  You can do this to create copies (possibly modified)
  * of an existing organizeritem, or to save a organizeritem in a different manager.
  *
- * \sa QOrganizerItemManager::saveOrganizerItem()
+ * \sa QOrganizerItemManager::saveItem()
  */
 void QOrganizerItem::setId(const QOrganizerItemId& id)
 {
@@ -289,14 +283,10 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     \fn QOrganizerItemDetail QOrganizerItem::detail(const QLatin1Constant& definitionName) const
     Returns the first detail stored in the organizeritem which with the given \a definitionName.
     The \a definitionName argument is typically the detail name constant provided by a
-    specific subclass of QOrganizerItemDetail.  For example:
+    specific subclass of QOrganizerItemDetail.
 
-    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 0
+    It would usually be more convenient to use the template version of this function.
 
-    It would usually be more convenient to use the template version of this function, in
-    the following manner:
-
-    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 1
 */
 
 /*!
@@ -304,14 +294,9 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     Returns a list of details of the given \a definitionName.
 
     The \a definitionName argument is typically the detail name constant provided by a
-    specific subclass of QOrganizerItemDetail.  For example:
+    specific subclass of QOrganizerItemDetail.
 
-    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 2
-
-    It would usually be more convenient to use the template version of this function, in
-    the following manner:
-
-    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 3
+    It would usually be more convenient to use the template version of this function.
 */
 
 /*!

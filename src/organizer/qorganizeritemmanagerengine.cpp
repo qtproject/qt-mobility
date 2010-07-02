@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
   the specific organizer items engine that is being adapted.
 
   More information on writing a organizer items engine plugin is available in
-  the \l{Qt OrganizerItems Manager Engines} documentation.
+  the \l{Qt Organizer Manager Engines} documentation.
 
   \sa QOrganizerItemManager, QOrganizerItemManagerEngineFactory
  */
@@ -184,6 +184,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
   exception).  No returned item should contain a QOrganizerItemRecurrence detail.
 
   If there are no instances matching the criteria, an empty list should be returned.
+  Any error which occurs should be saved to \a error.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
@@ -1383,7 +1384,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   Returns true if the save operation completed successfully, otherwise
   returns false.  Any error which occurs will be saved in \a error.
 
-  The default implementation will convert this into a call to saveOrganizerItems.
+  The default implementation will convert this into a call to saveItems.
 
   \sa managerUri()
  */
@@ -1450,7 +1451,7 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   Any errors encountered during this operation should be stored to
   \a error.
 
-  \sa QOrganizerItemManager::saveOrganizerItem()
+  \sa QOrganizerItemManager::saveItem()
  */
 bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
