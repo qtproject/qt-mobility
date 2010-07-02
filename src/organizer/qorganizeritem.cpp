@@ -55,11 +55,25 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_ITEM
+  \relates QOrganizerItem
+
+  Macro for simplifying declaring convenience leaf classes for QOrganizerItem.
+
+  The first argument is the name of the class, and the second argument
+  is a Latin-1 string literal naming the item type.
+
+  If you are creating a convenience class for a type of QOrganizerItem,
+  you should use this macro when declaring your class to ensure that
+  it interoperates with other organizeritem functionality.
+ */
+
+/*!
   \class QOrganizerItem
 
   \brief The QOrganizerItem class represents an addressbook organizeritem.
 
-  \ingroup organizeritems-main
+  \ingroup organizer-main
 
   Individual organizeritems, groups, and other types of organizeritems are represented with
   a QOrganizerItem object.  In addition to the type, a QOrganizerItem consists of information
@@ -89,18 +103,12 @@ QTM_BEGIN_NAMESPACE
  * \fn QList<T> QOrganizerItem::details() const
  * Returns a list of details of the template parameter type.  The type must be
  * a subclass of QOrganizerItemDetail.
- *
- * For example:
- *  \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 3
  */
 
 /*!
  * \fn QList<T> QOrganizerItem::details(const QString& fieldName, const QString& value) const
  * Returns a list of details of the template parameter type which have field called \a fieldName, with matching \a value.
  * The type must be a subclass of QOrganizerItemDetail.
- *
- * For example:
- *  \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 4
  */
 
 /*!
@@ -115,9 +123,10 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-    Construct an empty organizeritem.
+    Construct an empty organizer item.
 
-    The organizeritem will have an empty display label, an empty id, and have type \l QOrganizerItemType::TypeOrganizerItem.
+    The organizer item will have an empty display label, an empty id, and an empty description
+    and have type \l QOrganizerItemType::TypeNote.
     The isEmpty() function will return true.
 */
 QOrganizerItem::QOrganizerItem()
@@ -236,7 +245,7 @@ QOrganizerItem::~QOrganizerItem()
     This may have been set when the organizeritem was retrieved from
     a particular manager, or when the organizeritem was first saved
     in a manager.  The QOrganizerItemId is only valid with a specific
-    manager.  See \l QOrganizerItemManager::saveOrganizerItem() for more
+    manager.  See \l QOrganizerItemManager::saveItem() for more
     information.
 
     \sa localId()
@@ -255,7 +264,7 @@ QOrganizerItemId QOrganizerItem::id() const
     manager, but other organizeritems with the same local id might exist in
     different managers.
 
-    See \l QOrganizerItemManager::saveOrganizerItem() for more
+    See \l QOrganizerItemManager::saveItem() for more
     information.
 
    \sa id()
@@ -277,7 +286,7 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
  * exist.  You can do this to create copies (possibly modified)
  * of an existing organizeritem, or to save a organizeritem in a different manager.
  *
- * \sa QOrganizerItemManager::saveOrganizerItem()
+ * \sa QOrganizerItemManager::saveItem()
  */
 void QOrganizerItem::setId(const QOrganizerItemId& id)
 {
@@ -288,14 +297,10 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     \fn QOrganizerItemDetail QOrganizerItem::detail(const QLatin1Constant& definitionName) const
     Returns the first detail stored in the organizeritem which with the given \a definitionName.
     The \a definitionName argument is typically the detail name constant provided by a
-    specific subclass of QOrganizerItemDetail.  For example:
+    specific subclass of QOrganizerItemDetail.
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 0
+    It would usually be more convenient to use the template version of this function.
 
-    It would usually be more convenient to use the template version of this function, in
-    the following manner:
-
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 1
 */
 
 /*!
@@ -303,14 +308,9 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     Returns a list of details of the given \a definitionName.
 
     The \a definitionName argument is typically the detail name constant provided by a
-    specific subclass of QOrganizerItemDetail.  For example:
+    specific subclass of QOrganizerItemDetail.
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 2
-
-    It would usually be more convenient to use the template version of this function, in
-    the following manner:
-
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 3
+    It would usually be more convenient to use the template version of this function.
 */
 
 /*!
@@ -488,15 +488,9 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName, 
  * be overwritten with \a detail.  There is never more than one organizeritem type
  * in a organizeritem.
  *
- * If \a detail is a QOrganizerItemDisplayLabel, the organizeritem will not be updated,
- * and the function will return false.  Since the display label formatting is specific
- * to each manager, use the QOrganizerItemManager::synthesizeOrganizerItemDisplayLabel() function
- * instead.
- *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
- * \sa QOrganizerItemManager::synthesizeOrganizerItemDisplayLabel()
  */
 bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
 {
@@ -677,17 +671,28 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
     saveDetail(&newType);
 }
 
+/*!
+ * Returns the display label of the item
+ */
 QString QOrganizerItem::displayLabel() const
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
     return dl.label();
 }
+
+/*!
+ * Sets the display label of the item to \a label
+ */
 void QOrganizerItem::setDisplayLabel(const QString& label)
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
     dl.setLabel(label);
     saveDetail(&dl);
 }
+
+/*!
+ * Sets the display label of the item to \a label
+ */
 void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
 {
     QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
@@ -695,12 +700,18 @@ void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
     saveDetail(&dl);
 }
 
+/*!
+ * Returns the human-readable description of the item
+ */
 QString QOrganizerItem::description() const
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
     return descr.description();
 }
 
+/*!
+ * Sets the human-readable description of the item to \a description
+ */
 void QOrganizerItem::setDescription(const QString& description)
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
@@ -708,6 +719,9 @@ void QOrganizerItem::setDescription(const QString& description)
     saveDetail(&descr);
 }
 
+/*!
+ * Sets the human-readable description of the item to \a description
+ */
 void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
 {
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
@@ -715,6 +729,10 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
     saveDetail(&descr);
 }
 
+/*!
+ * Returns the list of comments (or arbitrary notes about the item)
+ * which pertain to this item
+ */
 QStringList QOrganizerItem::comments() const
 {
     QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
@@ -725,6 +743,9 @@ QStringList QOrganizerItem::comments() const
     return list;
 }
 
+/*!
+ * Clears the comments (arbitrary notes) about this item
+ */
 void QOrganizerItem::clearComments()
 {
     QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
@@ -733,6 +754,9 @@ void QOrganizerItem::clearComments()
     }
 }
 
+/*!
+ * Adds the comment \a comment to this item
+ */
 void QOrganizerItem::addComment(const QString& comment)
 {
     QOrganizerItemComment detail;
@@ -740,12 +764,19 @@ void QOrganizerItem::addComment(const QString& comment)
     saveDetail(&detail);
 }
 
+/*!
+ * Returns the globally unique identifier which identifies this item,
+ * which is used for synchronization purposes.
+ */
 QString QOrganizerItem::guid() const
 {
     QOrganizerItemGuid guid = detail<QOrganizerItemGuid>();
     return guid.guid();
 }
 
+/*!
+ * Sets the item's globally unique identifier to \a guid
+ */
 void QOrganizerItem::setGuid(const QString& guid)
 {
     QOrganizerItemGuid guidDetail = detail<QOrganizerItemGuid>();

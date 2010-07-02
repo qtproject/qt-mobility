@@ -15,6 +15,11 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
+# versit depends on contacts and organizer
+contains(MOBILITY, versit) {
+    MOBILITY += contacts organizer
+}
+
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
     INCLUDEPATH += $${MOBILITY_INCLUDE}/QtBearer

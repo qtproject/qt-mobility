@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
-  \ingroup organizeritems-main
+  \ingroup organizer-main
 
   It allows a client to asynchronously request some functionality of a
   particular QOrganizerItemManager.  Instances of the class will emit signals
@@ -92,11 +92,11 @@ QTM_BEGIN_NAMESPACE
   \enum QOrganizerItemAbstractRequest::RequestType
   Enumerates the various possible types of asynchronous requests
   \value InvalidRequest An invalid request
-  \value OrganizerItemInstanceFetchRequest A request to fetch a list of instances of organizeritems
-  \value OrganizerItemFetchRequest A request to fetch a list of organizeritems
-  \value OrganizerItemLocalIdFetchRequest A request to fetch a list of local organizeritem ids
-  \value OrganizerItemRemoveRequest A request to remove a list of organizeritems
-  \value OrganizerItemSaveRequest A request to save a list of organizeritems
+  \value ItemInstanceFetchRequest A request to fetch a list of instances of organizeritems
+  \value ItemFetchRequest A request to fetch a list of organizeritems
+  \value ItemLocalIdFetchRequest A request to fetch a list of local organizeritem ids
+  \value ItemRemoveRequest A request to remove a list of organizeritems
+  \value ItemSaveRequest A request to save a list of organizeritems
   \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
   \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
   \value DetailDefinitionSaveRequest A request to save a list of detail definitions
