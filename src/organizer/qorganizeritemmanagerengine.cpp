@@ -1438,7 +1438,7 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   Adds the list of organizeritems given by \a organizeritems list to the database.
   Returns true if the organizeritems were saved successfully, otherwise false.
 
-  The manager might populate \a errorMap (the map of indices of the \a organizeritems list to
+  The engine might populate \a errorMap (the map of indices of the \a organizeritems list to
   the error which occurred when saving the item at that index) for
   every index for which the item could not be saved, if it is able.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
@@ -2020,7 +2020,24 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<
 }
 
 /*!
-  Notifies the manager engine that the given request \a req has been destroyed
+  Notifies the manager engine that the given request \a req has been destroyed.
+
+  This notifies the engine that:
+  \list
+  \o the client doesn't care about the request any more.  The engine can still complete it,
+     but completion is not required.
+  \o it can't reliably access any properties of the request pointer any more.  The pointer will
+     be invalid once this function returns.
+  \endlist
+  
+  This means that if there is a worker thread, the engine needs to let that thread know that the
+  request object is not valid and block until that thread acknowledges it.  One way to do this is to
+  have a QSet<QOrganizerItemAbstractRequest*> (or QMap<QOrganizerItemAbstractRequest,
+  MyCustomRequestState>) that tracks active requests, and insert into that set in startRequest, and
+  remove in requestDestroyed (or when it finishes or is cancelled).  Protect that set/map with a
+  mutex, and make sure you take the mutex in the worker thread before calling any of the
+  QOrganizerItemAbstractRequest::updateXXXXXXRequest functions.  And be careful of lock ordering
+  problems :D
  */
 void QOrganizerItemManagerEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
@@ -2028,9 +2045,23 @@ void QOrganizerItemManagerEngine::requestDestroyed(QOrganizerItemAbstractRequest
 }
 
 /*!
-  Asks the manager engine to begin the given request \a req which
-  is currently in a (re)startable state.
-  Returns true if the request was started successfully, else returns false.
+  Asks the manager engine to begin the given request \a req which is currently in a (re)startable
+  state.  Returns true if the request was started successfully, else returns false.
+
+  Generally, the engine queues the request and processes it at some later time (probably in another
+  thread).
+  
+  Once a request is started, the engine should call the updateRequestState and/or the specific
+  updateXXXXXRequest functions to mark it in the active state.
+  
+  If the engine is particularly fast, or the operation involves only in memory data, the request can
+  be processed and completed without queueing it.
+  
+  Note that when the client is threaded, and the request might live on a different thread, the
+  engine needs to be careful with locking.  In particular, the request might be deleted while the
+  engine is still working on it.  In this case, the requestDestroyed function will be called while
+  the request is still valid, and that function should block until the worker thread (etc.) has been
+  notified not to touch that request any more.
 
   \sa QOrganizerItemAbstractRequest::start()
  */
@@ -2059,6 +2090,9 @@ bool QOrganizerItemManagerEngine::cancelRequest(QOrganizerItemAbstractRequest* r
   which was previously started, or until \a msecs milliseconds have passed.
   Returns true if the request was completed, and false if the request was not in the
   \c QOrganizerItemAbstractRequest::Active state or no progress could be reported.
+
+  It is important that this function is implemented by the engine, at least merely as a delay, since
+  clients may call it in a loop.
 
   \sa startRequest()
  */
