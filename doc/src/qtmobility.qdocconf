@@ -98,6 +98,7 @@ headerdirs = ../../src/bearer \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
              ../../src/camera \
+             ../../src/organizer \
              .
 
 sourcedirs = ../../src/bearer \
@@ -115,6 +116,7 @@ sourcedirs = ../../src/bearer \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
              ../../src/camera \
+             ../../src/organizer \
              .
 
 excludedirs = ../../src/messaging/win32wce \

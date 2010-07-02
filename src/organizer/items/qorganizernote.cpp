@@ -43,4 +43,9 @@
 
 QTM_USE_NAMESPACE
 
-// well... this class is boring.
+/*!
+ * \class QOrganizerNote
+ *
+ * \brief The QOrganizerNote class is a convenience facade for a QOrganizerItem
+ * that has its type set to TypeNote.
+ */

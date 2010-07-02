@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
   organizeritems (which may be retrieved by calling organizeritems()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new organizeritem save request whose parent is the specified \a parent */

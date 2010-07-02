@@ -18,7 +18,7 @@ INCLUDEPATH += . \
 CONFIG += mobility
 MOBILITY = contacts
 contains(mobility_modules,versit) {
-    MOBILITY += versit organizer
+    MOBILITY += versit
     DEFINES += BUILD_VERSIT
 }
 
