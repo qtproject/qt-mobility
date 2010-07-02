@@ -105,7 +105,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
 
   If you wish to create your own, customized organizeritem detail, you should use
-  the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
+  the \l Q_DECLARE_CUSTOM_ORGANIZER_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
   See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
   \l QOrganizerItemType) for more information.
@@ -115,35 +115,35 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 
   \code
 
-  QOrganizerItemPhoneNumber number;
-  number.setNumber("555-1212");
-  // number.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // number.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription description;
+  description.setDescription("Some descriptive text");
+  // description.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // description.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemDetail detail = number;
-  // detail.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // detail.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDetail detail = description;
+  // detail.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // detail.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemPhoneNumber otherNumber = detail;
-  // otherNumber.number() == "555-1212";
-  // otherNumber.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription otherDescription = detail;
+  // otherDescription.description() == "Some descriptive text";
+  // otherDescription.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemAddress address = detail;
-  // address is now a default constructed QOrganizerItemAddress
-  // address.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // address.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel label = detail;
+  // label is now a default constructed QOrganizerItemDisplayLabel
+  // label.value(QOrganizerItemDescription::FieldDescription) is empty
+  // label.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
 
-  QOrganizerItemAddress otherAddress = number;
-  // otherAddress is now a default constructed QOrganizerItemAddress
-  // otherAddress.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // otherAddress.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel otherLabel = description;
+  // otherLabel is now a default constructed QOrganizerItemDisplayLabel
+  // otherLabel.value(QOrganizerItemDescription::FieldDescription) is empty
+  // otherLabel.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
   \endcode
 
-  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
  */
 
 /*!
-  \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
   \relates QOrganizerItemDetail
 
   Macro for simplifying declaring custom (leaf) detail classes.
@@ -155,12 +155,10 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   you should use this macro when declaring your class to ensure that
   it interoperates with other organizeritem functionality.
 
-  Here is an example of a class (\l QOrganizerItemPhoneNumber) using this macro.
+  Here is an example of a class (\l QOrganizerItemDescription) using this macro.
   Note that the class provides some predefined constants
   and some convenience methods that return values associated with schema
   fields.
-
-  \snippet ../../src/organizeritems/details/qorganizeritemphonenumber.h 0
  */
 
 /*!

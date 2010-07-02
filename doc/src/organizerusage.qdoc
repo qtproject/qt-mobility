@@ -46,23 +46,16 @@ managers can be ascertained by inspecting a QOrganizerItemManager instance.
 Furthermore, some managers can be constructed with parameters which affect the
 operation of the backend.
 
-\section2 Loading the default manager for the platform
-
 Most users of the API will want to use the default manager for the platform,
 which provides access to the system address book.  Instantiating a manager by
 using the default constructor will result in the default manager for that
 platform being instantiated.
 
 The default constructor can either be used to create a manager on the stack,
-in which case it will be deleted automatically when it goes out of scope:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Loading the default manager for the platform
-
+in which case it will be deleted automatically when it goes out of scope,
 or it can be used explicitly to create a manager on the heap, in which case
 the client must ensure that they delete the manager when they are finished
-with it in order to avoid a memory leak:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Loading the default manager for the platform on heap
+with it in order to avoid a memory leak.
 
 \section2 Querying a manager for capabilities
 
@@ -70,12 +63,10 @@ Different managers will support different capabilities and details.  Clients
 can use the meta data reporting functions of QOrganizerItemManager to determine what
 the capabilities of the manager they have instantiated might be.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Querying a manager for capabilities
-
 \section2 Loading the manager for a specific backend
 
-In this example, the client loads a manager for a specific backend.  While
-this could be found and retrieved using a more advanced plugin framework
+The client can choose to load a manager for a specific backend.  While
+the engine could be found and retrieved using a more advanced plugin framework
 (such as the Qt Service Framework), this code assumes that the client has
 prior knowledge of the backend in question.
 
@@ -83,17 +74,12 @@ Clients may wish to use this feature of the API if they wish to store or
 retrieve item information to a particular manager (for example, one that
 interfaces with a particular online service).
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Loading a specific manager backend
-
 \section2 Loading a manager with specific parameters
 
-The client loads a manager with specific parameters defined.  The
-parameters which are available are backend specific, and so the client had
-to know that the "Settings" parameter was valid for the particular backend,
-and what argument it took. In this example, the client tells the backend to
-load detail definitions saved in a particular settings file.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Loading a specific manager backend with parameters
+The client can loads a manager with specific parameters defined.  The
+parameters which are available are backend specific, and so the client has
+to know which parameters are valid for a particular backend,
+and what argument it takes.
 
 \section1 Organizer Item Detail Manipulation
 
@@ -103,44 +89,11 @@ and QOrganizerItemDetail are both container (value) classes, the API offered for
 these operations is purely synchronous.
 
 A item consists of the details it contains, as well as an id.  Some details
-are read-only (such as the display label of a item) or irremovable (like
+are read-only (such as the modification timestamp of a item) or irremovable (like
 the type of a item), but most are freely modifiable by clients.
 
-\section2 Adding a detail to a item
-
-The client adds a name and a phone number to a item.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Adding a detail to a item
-
-\section2 Updating a detail in a item
-
-The client updates the phone number of a item.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Updating a detail in a item
-
-\section2 Removing a detail from a item
-
-The client removes the phone number of a item.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Removing a detail from a item
-
-\section2 Viewing a specific detail of a item
-
-The client retrieves and displays the first phone number of a item
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Viewing a specific detail of a item
-
-\section2 Viewing all of the details of a item
-
-The client retrieves all of the details of a item, and displays them
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Viewing the details of a item
-
 It is important to note that details are implicitly shared objects with
-particular semantics surrounding saving, removal and modification.  The
-following example demonstrates these semantics
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Demonstration of detail sharing semantics
+particular semantics surrounding saving, removal and modification.
 
 \section1 Persistent Organizer Item Information
 
@@ -149,14 +102,9 @@ information (detail definitions) which is persistently stored in the manager
 (for example, in a database or online cloud).
 
 If the client wishes to use the asynchronous API, it is suggested that their
-class uses member variables for the manager and requests, similarly to:
-
-    \snippet snippets/qtorganizeritemsdocsample/requestexample.h Class setup
-
-This allows them to define slots which deal with the data as required when the
-state of the request changes:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Example of an asynchronous request slot
+class uses member variables for the manager and requests.  This allows them
+to define slots which deal with the data as required when the
+state of the request changes.
 
 Note that if the client is interested in receiving the results of the request
 as they become available, rather than only the final set of results once the
@@ -166,39 +114,23 @@ slot which deals with the results.
 
 \section2 Creating a new item in a manager
 
-The client creates a new item and saves it in a manager
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Creating a new item in a manager
-
-Alternatively, the client can explicitly block execution until the request is
-complete, by doing something like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Creating a new item in a manager waiting until finished
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously creating a new item in a manager
+Clients can create a new item simply by instantiating one and saving it a manager.
+The save operation will succeed if the item initially had a zero-id, and
+if the manager supports the details in the item.  The item may be saved
+either synchronously by directly calling QOrganizerItemManager::saveItem() or
+asynchronously using a QOrganizerItemSaveRequest and connecting to that request's
+change signals.  Alternatively, the client can explicitly block execution until the request is
+complete, by calling waitForFinished().
 
 \section2 Retrieving items from a manager
 
 The client requests all items from the manager which match a particular
-filter.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Filtering items from a manager
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously filtering items from a manager
+filter, sorted according to a particular sort order.
 
 The client can also retrieve a particular existing item from a manager, by
 directly requesting the item with a particular (previously known) id.
-With the asynchronous API, this takes the form of another filter:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Retrieving an existing item from a manager
-
-The synchronous API provides a function specifically for this purpose:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously retrieving an existing item from a manager
+With the asynchronous API, this takes the form of another filter.
+The synchronous API provides the QOrganizerItemManager::item() function specifically for this purpose.
 
 \section2 Updating an existing item in a manager
 
@@ -206,54 +138,29 @@ The client updates a previously saved item by saving the updated version of
 the item.  Any item whose id is the same as that of the updated item
 will be overwritten as a result of the save request.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Updating an existing item in a manager
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously updating an existing item in a manager
-
 \section2 Removing a item from a manager
 
-The client removes a item from the manager by specifying its local id.
+The client may remove an item from the manager by specifying its local id.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Removing a item from a manager
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously removing a item from a manager
+\section2 Optimization in item retrieval
 
 Clients can inform the manager that they do not require certain details from
-and item, which can allow a manager to optimize item retrieval.
-The following code shows how the client can inform the manager that they are
-not interested in any binary blob data (e.g., images) in retrieved items:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Providing a fetch hint
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously providing a fetch hint
+an item, which can allow a manager to optimize item retrieval.
+In this way, the client can inform the manager that they are
+not interested in any binary blob data (e.g., images) in retrieved items.
 
 \section2 Querying the schema supported by a manager
 
-The client queries the schema supported by a manager, and checks to see if a
+A client may query the schema supported by a manager, and check to see if a
 particular detail definition supports a certain field.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Querying the schema supported by a manager
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously querying the schema supported by a manager
 
 \section2 Modifying the schema supported by a manager
 
-The client attempts to modify a particular detail definition by extending it
-so that it supports an extra field.
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsampleasync.cpp Modifying the schema supported by a manager
-
-The equivalent code using the synchronous API looks like:
-
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Synchronously modifying the schema supported by a manager
+A client may attempt to modify a particular detail definition by extending it
+so that it supports an extra field, or add a new detail definition, or
+remove an existing one.  These operations are not necessarily supported on
+various backends, and even those backends which do support a mutable schema
+may not allow modification of the default detail definitions.
 
 Note that some managers do not support mutable definitions, and hence
 attempting to modify or remove detail definitions in those managers will fail.

@@ -91,7 +91,7 @@ QTM_BEGIN_NAMESPACE
  * a subclass of QOrganizerItemDetail.
  *
  * For example:
- *  \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 3
+ *  \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 3
  */
 
 /*!
@@ -100,7 +100,7 @@ QTM_BEGIN_NAMESPACE
  * The type must be a subclass of QOrganizerItemDetail.
  *
  * For example:
- *  \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 4
+ *  \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 4
  */
 
 /*!
@@ -290,12 +290,12 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     The \a definitionName argument is typically the detail name constant provided by a
     specific subclass of QOrganizerItemDetail.  For example:
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 0
+    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 0
 
     It would usually be more convenient to use the template version of this function, in
     the following manner:
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 1
+    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 1
 */
 
 /*!
@@ -305,12 +305,12 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
     The \a definitionName argument is typically the detail name constant provided by a
     specific subclass of QOrganizerItemDetail.  For example:
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 2
+    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 2
 
     It would usually be more convenient to use the template version of this function, in
     the following manner:
 
-    \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp 3
+    \snippet doc/src/snippets/qtorganizerdocsample/qtorganizerdocsample.cpp 3
 */
 
 /*!

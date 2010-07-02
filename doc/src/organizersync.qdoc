@@ -190,14 +190,14 @@ classes may be written by anyone, and simply wrap the functionality
 provided by QOrganizerItemDetail in order to allow simpler access to fields
 supported by a particular definition.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Creating a new item
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Creating a new item
 
 \section2 Filtering by detail definition and value
 
 The client utilizes a default manager and asks for any items which occur
 between a given time range.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Filtering by definition and value
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Filtering by definition and value
 
 
 \section2 Installing a plugin that modifies the definition of one type of detail
@@ -207,7 +207,7 @@ details of a particular definition.  It loads the definition from the
 default manager, modifies it (by adding the new field - a label field), and
 saves it back.
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Installing a plugin which modifies a definition
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Installing a plugin which modifies a definition
 
 \section3 Modifying an existing item and saving the modifications
 
@@ -215,7 +215,7 @@ The client retrieves a item, modifies one of its details, adds a new
 detail, and then saves the item back to the manager.  Note that it uses
 the newly added field of the modified definition!
 
-    \snippet snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Modifying an existing item
+    \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Modifying an existing item
 
 */
 
