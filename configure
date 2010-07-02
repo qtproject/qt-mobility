@@ -562,7 +562,7 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
             ;;
         telephony)
-            $relpath/bin/syncheaders $shadowpath/include/QtmTelephony $relpath/src/telephony
+            $relpath/bin/syncheaders $shadowpath/include/QtTelephony $relpath/src/telephony
             ;;
         versit)
             #versit implies contacts & organizer
