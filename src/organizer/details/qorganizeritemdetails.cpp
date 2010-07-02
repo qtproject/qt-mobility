@@ -376,6 +376,9 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence")
    The constant key for the value which is stored in details of the
    QOrganizerItemRecurrence type which describes the rules for when an
    item should recur.
+
+   When multiple rules are specified, the list of recurrence dates are
+   calculated separately for each rule and the results are unioned.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceRules, "RecurrenceRules");
 
@@ -394,6 +397,10 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceDates, "Recurr
    The constant key for the value which is stored in details of the
    QOrganizerItemRecurrence type which describes the rules for when an
    item should not recur.
+
+   If a recurrence rule or the recurrence dates list specifies that an item should occur on a
+   particular date and any of the exception rules include that date, the item should not occur on
+   that date.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "ExceptionRules");
 
@@ -403,6 +410,10 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "Excepti
    The constant key for the value which is stored in details of the
    QOrganizerItemRecurrence type which describes the dates on which an
    item should not recur.
+
+   If a recurrence rule or the recurrence dates list specifies that an item should occur on a
+   particular date and that date appears in the exception dates list, the item should not occur on
+   that date.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
