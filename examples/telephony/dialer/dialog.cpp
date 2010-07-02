@@ -41,7 +41,7 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-#if defined(Q_WS_MAEMO5)
+#if defined(Q_WS_MAEMO_5)
 # include "dialer_maemo.h"
 #else
 # ifdef Q_OS_LINUX
