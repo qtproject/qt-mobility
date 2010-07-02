@@ -697,22 +697,23 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 }
 
 /*!
-    Constructs a meta-data filter which matches items with a \a property value
-    which matches \a value.
+    Constructs a meta-data filter which tests if a meta-data \a property
+    matches a \a value according to a \a comparison operator.
 
-    The type of comparison made is determined by the match \a flags.
+    The \a caseSensitivity determines whether or not a case-sensitive
+    comparison is made.
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
         const QString &property,
         const QVariant &value,
-        QGalleryFilter::Comparator comparator,
+        QGalleryFilter::Comparator comparison,
         Qt::CaseSensitivity caseSensitivity)
             : d(new QGalleryMetaDataFilterPrivate)
 {
     d->property = property;
     d->value = value;
-    d->comparator = comparator;
+    d->comparator = comparison;
     d->caseSensitivity = caseSensitivity;
 }
 
@@ -860,7 +861,7 @@ bool QGalleryMetaDataFilter::isInverted() const
 }
 
 /*!
-    Sets whether the result of a meta-data filter should be inverted.
+    Sets whether the result of a meta-data filter should be \a inverted.
 */
 
 void QGalleryMetaDataFilter::setInverted(bool inverted)
