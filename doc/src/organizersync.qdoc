@@ -31,7 +31,7 @@
 
 \page itemssync.html
 
-\title Organizer Items Synchronous API
+\title Organizer Synchronous API
 
 \tableofcontents
 
@@ -140,7 +140,7 @@ a particular detail definition might be declared to be unique per-item in a part
 
 Every plugin will support a slightly different schema, as the schema which can be supported will depend
 on the semantics and limitations of the underlying storage platform on which the plugin is based.
-The default schema is described in the \l {Qt Organizer Items Schema}{Qt Mobility Organizer Items schema documentation},
+The default schema is described in the \l {Qt Organizer Schema}{Qt Mobility Organizer schema documentation},
 and plugins should attempt to implement that schema; however no guarantees are given to clients as to
 the conformance of the schemas supported by various plugins to the default schema.
 
