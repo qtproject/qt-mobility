@@ -1201,8 +1201,11 @@ QStringList QGalleryTrackerSchema::supportedPropertyNames() const
         for (int i = 0; i < type.properties.count; ++i)
             propertyNames.append(type.properties[i].name);
 
-        for (int i = 0; i< type.aggregateProperties.count; ++i)
+        for (int i = 0; i < type.aggregateProperties.count; ++i)
             propertyNames.append(type.aggregateProperties[i].name);
+
+        for (int i = 0; i < type.thumbnailProperties.count; ++i)
+            propertyNames.append(type.thumbnailProperties[i].name);
     }
     return propertyNames;
 }
@@ -1223,6 +1226,8 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
         if (index != -1)
             return type.properties[index].attributes & PropertyMask;
         else if (type.aggregateProperties.indexOfProperty(propertyName) != -1)
+            return QGalleryProperty::CanRead;
+        else if (type.thumbnailProperties.indexOfProperty(propertyName) != -1)
             return QGalleryProperty::CanRead;
     }
     return QGalleryProperty::Attributes();
