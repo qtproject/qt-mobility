@@ -1,8 +1,11 @@
 INCLUDEPATH += ../../../src/sensors
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_sensors
+TARGET  = $$qtLibraryTarget(declarative_sensors)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = QtMobility/sensors
+PLUGIN_TYPE = declarative
 include(../../qimportbase.pri)
 include(../../../common.pri)
 
