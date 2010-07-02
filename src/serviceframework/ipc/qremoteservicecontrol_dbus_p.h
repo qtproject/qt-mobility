@@ -39,29 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef Q_SERVICE_H
-#define Q_SERVICE_H
+#ifndef QREMOTESERVICECONTROL_DBUS_P_H
+#define QREMOTESERVICECONTROL_DBUS_P_H
 
-#include "qmobilityglobal.h"
+#include "qremoteservicecontrol.h"
+#include "instancemanager_p.h"
+#include "qserviceinterfacedescriptor.h"
+#include <QLocalServer>
+#include <QUuid>
+#include <QtDBus/QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
-namespace QService 
+class ObjectEndPoint;
+
+class QRemoteServiceControlPrivate: public QObject
 {
-    enum Scope {
-        UserScope = 0,
-        SystemScope
-    };
-    
-    enum UnrecoverableIPCError {
-        ErrorUnknown = 0,
-        ErrorServiceNoLongerAvailable,
-        ErrorOutofMemory,
-        ErrorPermissionDenied,
-        ErrorInvalidArguments
-    };    
-}
+    Q_OBJECT
+public:
+    QRemoteServiceControlPrivate(QObject* parent);
+    void publishServices(const QString& ident );
+
+private:
+    bool createServiceEndPoint(const QString& ident);
+
+    QLocalServer* localServer;
+    QList<ObjectEndPoint*> pendingConnections;
+
+public:
+    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+};
 
 QTM_END_NAMESPACE
 
-#endif //Q_SERVICE_H
+#endif

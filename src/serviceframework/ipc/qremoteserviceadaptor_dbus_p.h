@@ -39,29 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef Q_SERVICE_H
-#define Q_SERVICE_H
+#ifndef QREMOTESERVICEADAPTOR_DBUS_P_H
+#define QREMOTESERVICEADAPTOR_DBUS_P_H
 
-#include "qmobilityglobal.h"
+#include <QtDBus>
 
 QTM_BEGIN_NAMESPACE
 
-namespace QService 
+class DBusSession: public QObject
 {
-    enum Scope {
-        UserScope = 0,
-        SystemScope
-    };
-    
-    enum UnrecoverableIPCError {
-        ErrorUnknown = 0,
-        ErrorServiceNoLongerAvailable,
-        ErrorOutofMemory,
-        ErrorPermissionDenied,
-        ErrorInvalidArguments
-    };    
-}
+    Q_OBJECT
+public:
+    DBusSession(QObjecet *parent) {;}
+    ~DBusSession() {;}
+
+public slots:
+    bool connect() { return true; }
+};
+
+/*class DBusSessionAdaptor: public QDBusAbstractAdaptor
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.qtmobility.DBus")
+
+public:
+    DBusSessionAdaptor(QObject *parent);
+    ~DBusSessionAdaptor();
+
+public slots:
+    bool connect() { 
+        bool ret;
+        QMetaObject::invokeMethod(parent(), "connect",
+                                  Q_RETURN_ARG(bool, ret)); 
+        return ret;
+    }
+};*/
 
 QTM_END_NAMESPACE
 
-#endif //Q_SERVICE_H
+#endif
