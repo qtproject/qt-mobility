@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QFeedbackEffect::PluginPriority
+    \enum QFeedbackInterface::PluginPriority
 
     This enum describes the priority that the plugin should have in case more than one is found.
     If more than one plugin have the same priority the first one that has been loaded will be used.
@@ -85,9 +85,6 @@ QTM_BEGIN_NAMESPACE
 
     \value PluginHighPriority The plugin will have higher priority. Use this priority if you 
     want your own plugin to be used.
-
-    \value Loading The feedback is loading. That can happen when loading
-    is done asynchronously.
 */
 
 
@@ -272,6 +269,30 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
     An effect is always played on a specified actuator.
 */
 
+
+/*!
+  \enum QFeedbackHapticsInterface::EffectProperty
+   This enum describes all effect properties for haptics effects.
+
+   \value Duration The effect duration
+   \value Intensity The effect intensity
+   \value AttackTime The effect attack time
+   \value AttackIntensity The effect attack intensity
+   \value FadeTime The effect fade time
+   \value FadeIntensity The effect fade intensity
+   \value Period The effect period, this is an optional effect property.
+*/
+
+/*!
+  \enum QFeedbackHapticsInterface::ActuatorProperty
+  This enum describes all actuator properties.
+
+  \value Name The actuator name.
+  \value State The actuator state.
+  \value Enabled The actuator enabled state.
+ */
+
+
 /*!
     \fn QFeedbackHapticsInterface::actuators()
 
@@ -285,17 +306,17 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 */
 
 /*!
-    \fn QFeedbackHapticsInterface::setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &)
+    \fn QFeedbackHapticsInterface::setActuatorProperty(const QFeedbackActuator& actuator, ActuatorProperty property, const QVariant & priority)
 
-    Sets a priority on the actuator.
+    Sets a \a priority on the \a actuator.
 
     \sa ActuatorProperty
 */
 
 /*!
-    \fn QFeedbackHapticsInterface::actuatorProperty(const QFeedbackActuator &, ActuatorProperty)
+    \fn QFeedbackHapticsInterface::actuatorProperty(const QFeedbackActuator & actuator, ActuatorProperty property)
 
-    returns a property for an actuator
+    returns a \a property for an \a actuator
 
     \sa ActuatorProperty
 */
@@ -303,27 +324,27 @@ Q_GLOBAL_STATIC(BackendManager, backendManager);
 /*!
     \fn QFeedbackHapticsInterface::isActuatorCapabilitySupported(const QFeedbackActuator &actuator, QFeedbackActuator::Capability capability)
 
-    return true if the \actuator supports the \capability.
+    return true if the \a actuator supports the \a capability.
 */
 
 
 /*!
     \fn QFeedbackHapticsInterface::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty property)
 
-    Tells the backend that the property \property has been update for the effect \effect.
+    Tells the backend that the property \property has been update for the effect \a effect.
 */
 
 /*!
     \fn QFeedbackHapticsInterface::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
 
-    Sets the state to \state for the effect \effect. If that fails the backend will report an error by
-    calling reportError and \effect will in turn emit the error signal.
+    Sets the state to \a state for the effect \a effect. If that fails the backend will report an error by
+    calling reportError and \a effect will in turn emit the error signal.
 */
 
 /*!
     \fn QFeedbackHapticsInterface::effectState(const QFeedbackHapticsEffect *effect)
 
-    Get the current state for the effect \effect.
+    Get the current state for the effect \a effect.
 */
 
 /*!
@@ -341,7 +362,7 @@ QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 /*!
     \fn QFeedbackHapticsInterface::createFeedbackActuator(int id)
 
-    Creates an instance of QFeedbackActuator with the identifier \id. That is the way
+    Creates an instance of QFeedbackActuator with the identifier \a id. That is the way
     of the backends to create instances of actuators. It is then up to the backends to manage
     the identifiers according to their needs.
 */
@@ -369,9 +390,9 @@ QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
 */
 
 /*!
-    \fn play(QFeedbackEffect::ThemeEffect effect)
+    \fn QFeedbackThemeInterface::play(QFeedbackEffect::ThemeEffect effect)
 
-    Plays the theme effect \effect. Returns false in case of an error.
+    Plays the theme effect \a effect. Returns false in case of an error.
 */
 
 /*!
@@ -399,39 +420,39 @@ QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 */
 
 /*!
-    \fn setLoaded(QFeedbackFileEffect*, bool)
+    \fn QFeedbackFileInterface::setLoaded(QFeedbackFileEffect* effect, bool value)
 
-    Sets the state of the effect \effect to be loaded or unloaded.
+    Sets the state of the effect \a effect to be loaded or unloaded.
     Loading a file is asynchronous. Once the backend know if it has loaded or can't load the plugin, it must
     call the reportLoadFinished function.
 
-    \sa reportLoadFinished
+    \sa QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect* effect, bool success)
 */
 
 /*!
-    \fn setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
+    \fn QFeedbackFileInterface::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 
-    set the state of \effect to \state.
-
-*/
-
-/*!
-    \fn effectState(const QFeedbackFileEffect *effect)
-
-    returns the current state of the effect \effect.
+    set the state of \a effect to \a state.
 
 */
 
 /*!
-    \fn effectDuration(const QFeedbackFileEffect *effect)
+    \fn QFeedbackFileInterface::effectState(const QFeedbackFileEffect *effect)
 
-    return the duration in msecs of \effect.
+    returns the current state of the effect \a effect.
+
+*/
+
+/*!
+    \fn QFeedbackFileInterface::effectDuration(const QFeedbackFileEffect *effect)
+
+    return the duration in msecs of \a effect.
     It should return QFileFeedbackEffect::INFINITE in case the duration is infinite or undefined.
 
 */
 
 /*!
-    \fn supportedMimeTypes()
+    \fn QFeedbackFileInterface::supportedMimeTypes()
 
     returns a list of supported MIME types.
 
@@ -452,10 +473,10 @@ QFeedbackFileInterface *QFeedbackFileInterface::instance()
 /*!
     \fn QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect *effect, bool success)
 
-    This is the function the backend should call when it has finished trying to load the effect \effect.
+    This is the function the backend should call when it has finished trying to load the effect \a effect.
     As loading a file is asynchronous, the backend has to call this function in order for the process
     to perform smoothly.
-    The success of the operation is indicated by \success.
+    The success of the operation is indicated by \a success.
 
 */
 

@@ -46,4 +46,10 @@
 
 QTM_USE_NAMESPACE
 
-//TODO..
+void completeExample();
+
+void completeExample()
+{
+    //TODO..
+    //! [Complete example]
+}
