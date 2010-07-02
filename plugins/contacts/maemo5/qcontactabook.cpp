@@ -869,29 +869,14 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, Q
 
   QCM5_DEBUG << "Getting aContact with id " << m_localIds[contactId] << "local contactId is" << contactId;
 
-  if(QString(m_localIds[contactId]).compare("osso-abook-self") == 0) {
+  if(QString::fromAscii(m_localIds[contactId]).compare("osso-abook-self") == 0) {
     *error = QContactManager::NoError;
     rtn = A_CONTACT(osso_abook_self_contact_get_default());
   } else {
-    EBookQuery* query;
-    GList* contacts;
-
-    query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
-    contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-    if (query)
-        e_book_query_unref(query);
-
-    if (g_list_length(contacts) == 1) {
-      *error = QContactManager::NoError;
-      rtn = A_CONTACT(contacts->data);
-    } else if (g_list_length(contacts) == 0) {
-      *error = QContactManager::DoesNotExistError;
-    } else {
-      // Several contacts have the same UID or the contactId belongs to a roster contact.
-      *error = QContactManager::UnspecifiedError;
-    }
-    if (contacts)
-      g_list_free(contacts);
+    GList* c = osso_abook_aggregator_lookup(m_abookAgregator, m_localIds[contactId]);
+    rtn = A_CONTACT(c->data);
+    *error = rtn ? QContactManager::NoError : QContactManager::DoesNotExistError;
+    return rtn;
   }
 
   return rtn;
