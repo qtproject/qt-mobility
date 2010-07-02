@@ -319,6 +319,16 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
 
     lm->saveLandmark(&monks); //lm  is a QLandmarkManager*
     //! [Add landmark synchronously]
+
+    {
+    QLandmarkManager *landmarkManager;
+    //! [Add landmark synchronously simple]
+    QLandmark monks;
+    monks.setName("Monk's cafe");
+    //..
+    landmarkManager->saveLandmark(&monks);
+    //! [Add landmark synchronously simple]
+    }
 }
 
 void categoryFetch(QLandmarkManager *lm)
@@ -336,6 +346,13 @@ void categoryFetch(QLandmarkManager *lm)
         qDebug() << "Found category: " << category.name();
     }
     //! [Retrieve categories synchronously]
+
+    {
+    QLandmarkManager *landmarkManager;
+    //! [Retrieve categories synchronously simple]
+    QList<QLandmarkCategory> categories = landmarkManager->categories();
+    //! [Retrieve categories synchronously simple]
+    }
 }
 
 void landmarkFetch(QLandmarkManager *lm)
@@ -361,6 +378,30 @@ void landmarkFetch(QLandmarkManager *lm)
         qDebug() << "Found landmark:" << landmark.name();
     }
     //! [Retrieve landmarks synchronously]
+
+    {
+        QLandmarkManager *landmarkManager;
+        //! [Retrieve landmarks by proximity synchronously]
+        QGeoCoordinate coordinate(54.0, 23.1);
+
+        QLandmarkProximityFilter filter;
+        filter.setCoordinate(coordinate);
+        filter.setRadius(5000);
+
+        QLandmarkDistanceSort distanceSort;
+        distanceSort.setCoordinate(coordinate);
+        distanceSort.setDirection(Qt::AscendingOrder);
+
+        QLandmarkFetchHint fetchHint;
+        fetchHint.setMaxItems(5);
+
+        landmarkManager->landmarks(filter, sortOrder, fetchHint);
+        //! [Retrieve landmarks by proximity synchronously]
+
+        //! [Retrieve all landmarks synchronously]
+        landmarkManager->landmarks();
+        //! [Retrieve all landmarks synchronously]
+    }
 }
 
 void filterByName(QLandmarkManager *lm)
@@ -418,12 +459,34 @@ void deleteLandmarkAndCategory(QLandmarkManager *lm)
     //landmark is a previously retrieved QLandmark object
     lm->removeLandmark(landmark.landmarkId());
     //! [Remove landmark synchronously]
+
+    {
+    QLandmarkManager *landmarkManager;
+    //! [Remove landmark synchronously simple]
+    landmarkManager->removeLandmark(landmark.landmarkId());
+    //! [Remove landmark synchronously simple]
+    }
+}
+
+void importExportLandmark() {
+    QLandmarkManager *landmarkManager;
+    //! [ImportExport landmark simple]
+    landmarkManager->importLandmarks("places.gpx");
+
+    landmarkManager->exportLandmarks("myplaces.gpx");
+    //! [ImportExport landmark simple]
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     QLandmarkManager *lm = new QLandmarkManager();
+
+    //! [Instantiate default QLandmarkManager]
+    QLandmarkManager *landmarkManager = new QLandmarkManager();
+    //! [Instantiate default QLandmarkManager]
+    Q_UNUSED(landmarkManager);
+
     //Synchronous API examples
     addLandmarkAndCategory(lm);
     categoryFetch(lm);
