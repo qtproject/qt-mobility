@@ -90,14 +90,25 @@ and what argument it takes.
 
 \section1 Organizer Item Detail Manipulation
 
-Once a item has been created (or retrieved from a manager), the client can
+Once an item has been created (or retrieved from a manager), the client can
 retrieve, create, update or delete details from the item.  Since QOrganizerItem
 and QOrganizerItemDetail are both container (value) classes, the API offered for
 these operations is purely synchronous.
 
-A item consists of the details it contains, as well as an id.  Some details
-are read-only (such as the modification timestamp of a item) or irremovable (like
-the type of a item), but most are freely modifiable by clients.
+An item consists of the details it contains, as well as an id.  Some details
+are read-only (such as the modification timestamp of an item) or irremovable (like
+the type of an item), but most are freely modifiable by clients.  The
+QOrganizerItem::details(), QOrganizerItem::detail(),
+QOrganizerItem::saveDetail() and QOrganizerItem::removeDetail() functions can be
+used to manipulate these details.
+
+To aid in the manipulation of common details, convenience functions are provided
+in QOrganizerItem like setDisplayLabel() and setDescription() which set and
+access the details directly.  Many details are specific to particular types of
+items, and convenience functions for these are provided in the subclasses of
+QOrganizerItem.  For example, the QOrganizerEvent class provides the function
+setStartDateTime(), which is equivalent to getting the QOrganizerEventTimeRange
+detail, setting the StartDateTime field and resaving it.
 
 It is important to note that details are implicitly shared objects with
 particular semantics surrounding saving, removal and modification.
@@ -186,5 +197,40 @@ may not allow modification of the default detail definitions.
 
 Note that some managers do not support mutable definitions, and hence
 attempting to modify or remove detail definitions in those managers will fail.
+
+\section1 Recurring items
+
+A recurring item is an item that occurs more than once; for example, a meeting
+that occurs every week for the next 10 weeks.  A recurring item is created by
+creating a QOrganizerEvent or QOrganizerTodo and adding a
+QOrganizerItemRecurrence detail to it to specify the rules for when it should
+recur.  While the item occurs multiple times, the client only has to create it
+once and save it once.  When QOrganizerItemManager::itemInstances() is called,
+any recurring items are expanded into multiple QOrganizerEventOccurrence and
+QOrganizerTodoOccurrence items by the manager.  Each generated occurrence item
+has a local id of zero.
+
+The client is able to make an exception for an occurrence by taking a generated
+item occurrence from the manager, making the necessary modifications, and
+resaving it.  When the manager is then queried with
+QOrganizerItemManager::itemInstances(), it will return the list of occurrences
+as before, but with the modifications in place.  The modified item will be given
+a non-zero local id, and replaces the generated one in the list.
+
+The client can also query the manager for a list of unexpanded items by calling
+QOrganizerItemManager::items().  The list of returned items will contain all
+items that have been saved to the manager with a call to saveItem() (of course,
+without any items removed with removeItem()).  That is, recurring events will be
+returned as is, and event occurrences will not appear unless they are exceptions
+(ie. have a non-zero local id).  Fetching the list in this way can be useful for
+transfering items to other managers or for exporting to iCalendar with QtVersit.
+
+\section1 Multiple organizers
+
+It may be useful for clients to separate their organizer items into different
+organizers (eg. Personal and Work) and work with different views that show items
+from one, some or all of these organizers.  This is functionality has not been
+implemented in this technical preview, but we currently are investigating the
+best model to use to offer this.
 
 */

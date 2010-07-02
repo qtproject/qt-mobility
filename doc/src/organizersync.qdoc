@@ -39,9 +39,9 @@
 \section1 Introduction
 
 The Organizer Items Synchronous API enables a client to synchronously fetch, update, or remove
-item data from a item manager.  A synchronous API is of most use to clients who wish
+item data from an item manager.  A synchronous API is of most use to clients who wish
 to perform simple requests where performance or user interface responsiveness is not critical.
-Synchronous calls to a item manager will block until they are completed, and therefore
+Synchronous calls to an item manager will block until they are completed, and therefore
 should not be performed in the GUI thread if the manager is a frontend to an online service
 or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
 convenience.
@@ -84,9 +84,9 @@ The QOrganizerItemManager class offers synchronous API to retrieve, create, upda
 and update operations are provided through the same interface.  Both singular and batch operations are offered
 by the API.
 
-A item is identified by its QOrganizerItemId.  This id consists of two parts: a URI which identifies the item manager
+An item is identified by its QOrganizerItemId.  This id consists of two parts: a URI which identifies the item manager
 which stores the item, and the local id of the item in that manager.  Some operations which take a pointer
-to a item as an argument may modify the item during the operation; updating the item id is a common example.
+to an item as an argument may modify the item during the operation; updating the item id is a common example.
 
 The QOrganizerItemManager class provides API for accessing the IDs of items which are stored in the manager:
 \list
@@ -133,7 +133,7 @@ QOrganizerItemSaveRequest, and QOrganizerItemRemoveRequest classes.
 \section2 Schema Manipulation
 
 The schema supported by a plugin is the list of detail definitions which are supported by the plugin.
-A item which contains a detail of a particular definition which is not supported by the plugin
+An item which contains a detail of a particular definition which is not supported by the plugin
 will fail to validate when the user attempts to save it in that manager.  The schema also includes
 any access constraints which may apply to certain details or detail definitions (for example,
 a particular detail definition might be declared to be unique per-item in a particular manager).
@@ -200,7 +200,7 @@ a particular search criteria:
 
 \section3 Modifying an existing item and saving the modifications
 
-The client retrieves a item, modifies one of its details, adds a new
+The client retrieves an item, modifies one of its details, adds a new
 detail, and then saves the item back to the manager.
 
     \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Editing a non-recurrent entry
