@@ -212,7 +212,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 
     posInfo.setCoordinate(coordinate);
 
-    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) && 
+    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET || posInfo.attribute(QGeoPositionInfo::HorizontalAccuracy) >= 0) && 
         ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
          (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
         object->setLocation(posInfo, true);
