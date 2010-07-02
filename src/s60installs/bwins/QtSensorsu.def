@@ -353,4 +353,8 @@ EXPORTS
 	?type@QAmbientLightSensor@QtMobility@@2QBDB @ 352 NONAME ; char const * const QtMobility::QAmbientLightSensor::type
 	?type@QProximitySensor@QtMobility@@2QBDB @ 353 NONAME ; char const * const QtMobility::QProximitySensor::type
 	?type@QOrientationSensor@QtMobility@@2QBDB @ 354 NONAME ; char const * const QtMobility::QOrientationSensor::type
+	??0QSensorPluginLoader@QtMobility@@QAE@PBDABVQString@@@Z @ 355 NONAME ; QtMobility::QSensorPluginLoader::QSensorPluginLoader(char const *, class QString const &)
+	??1QSensorPluginLoader@QtMobility@@QAE@XZ @ 356 NONAME ; QtMobility::QSensorPluginLoader::~QSensorPluginLoader(void)
+	?load@QSensorPluginLoader@QtMobility@@AAEXXZ @ 357 NONAME ; void QtMobility::QSensorPluginLoader::load(void)
+	?plugins@QSensorPluginLoader@QtMobility@@QBE?AV?$QList@PAVQSensorPluginInterface@QtMobility@@@@XZ @ 358 NONAME ; class QList<class QtMobility::QSensorPluginInterface *> QtMobility::QSensorPluginLoader::plugins(void) const
 

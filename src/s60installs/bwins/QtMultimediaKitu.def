@@ -1260,4 +1260,60 @@ EXPORTS
 	?removeInterval@QMediaTimeRange@@QAEX_J0@Z @ 1259 NONAME ; void QMediaTimeRange::removeInterval(long long, long long)
 	?qt_metacast@QAbstractAudioOutput@@UAEPAXPBD@Z @ 1260 NONAME ; void * QAbstractAudioOutput::qt_metacast(char const *)
 	??1QVideoSurfaceFormat@@QAE@XZ @ 1261 NONAME ; QVideoSurfaceFormat::~QVideoSurfaceFormat(void)
+	??0QMediaImageViewerService@@QAE@PAVQObject@@@Z @ 1262 NONAME ; QMediaImageViewerService::QMediaImageViewerService(class QObject *)
+	??0QMediaPluginLoader@@QAE@PBDABVQString@@W4CaseSensitivity@Qt@@@Z @ 1263 NONAME ; QMediaPluginLoader::QMediaPluginLoader(char const *, class QString const &, enum Qt::CaseSensitivity)
+	??0QPainterVideoSurface@@QAE@PAVQObject@@@Z @ 1264 NONAME ; QPainterVideoSurface::QPainterVideoSurface(class QObject *)
+	??1QMediaImageViewerService@@UAE@XZ @ 1265 NONAME ; QMediaImageViewerService::~QMediaImageViewerService(void)
+	??1QPainterVideoSurface@@UAE@XZ @ 1266 NONAME ; QPainterVideoSurface::~QPainterVideoSurface(void)
+	??_EQMediaImageViewerService@@UAE@I@Z @ 1267 NONAME ; QMediaImageViewerService::~QMediaImageViewerService(unsigned int)
+	??_EQPainterVideoSurface@@UAE@I@Z @ 1268 NONAME ; QPainterVideoSurface::~QPainterVideoSurface(unsigned int)
+	?brightness@QPainterVideoSurface@@QBEHXZ @ 1269 NONAME ; int QPainterVideoSurface::brightness(void) const
+	?contrast@QPainterVideoSurface@@QBEHXZ @ 1270 NONAME ; int QPainterVideoSurface::contrast(void) const
+	?createPainter@QPainterVideoSurface@@AAEXXZ @ 1271 NONAME ; void QPainterVideoSurface::createPainter(void)
+	?d_func@QMediaImageViewerService@@AAEPAVQMediaImageViewerServicePrivate@@XZ @ 1272 NONAME ; class QMediaImageViewerServicePrivate * QMediaImageViewerService::d_func(void)
+	?d_func@QMediaImageViewerService@@ABEPBVQMediaImageViewerServicePrivate@@XZ @ 1273 NONAME ; class QMediaImageViewerServicePrivate const * QMediaImageViewerService::d_func(void) const
+	?frameChanged@QPainterVideoSurface@@IAEXXZ @ 1274 NONAME ; void QPainterVideoSurface::frameChanged(void)
+	?getStaticMetaObject@QMediaImageViewerService@@SAABUQMetaObject@@XZ @ 1275 NONAME ; struct QMetaObject const & QMediaImageViewerService::getStaticMetaObject(void)
+	?getStaticMetaObject@QPainterVideoSurface@@SAABUQMetaObject@@XZ @ 1276 NONAME ; struct QMetaObject const & QPainterVideoSurface::getStaticMetaObject(void)
+	?hue@QPainterVideoSurface@@QBEHXZ @ 1277 NONAME ; int QPainterVideoSurface::hue(void) const
+	?instance@QMediaPluginLoader@@QAEPAVQObject@@ABVQString@@@Z @ 1278 NONAME ; class QObject * QMediaPluginLoader::instance(class QString const &)
+	?instances@QMediaPluginLoader@@QAE?AV?$QList@PAVQObject@@@@ABVQString@@@Z @ 1279 NONAME ; class QList<class QObject *> QMediaPluginLoader::instances(class QString const &)
+	?isFormatSupported@QPainterVideoSurface@@QBE_NABVQVideoSurfaceFormat@@PAV2@@Z @ 1280 NONAME ; bool QPainterVideoSurface::isFormatSupported(class QVideoSurfaceFormat const &, class QVideoSurfaceFormat *) const
+	?isReady@QPainterVideoSurface@@QBE_NXZ @ 1281 NONAME ; bool QPainterVideoSurface::isReady(void) const
+	?keys@QMediaPluginLoader@@QBE?AVQStringList@@XZ @ 1282 NONAME ; class QStringList QMediaPluginLoader::keys(void) const
+	?load@QMediaPluginLoader@@AAEXXZ @ 1283 NONAME ; void QMediaPluginLoader::load(void)
+	?metaObject@QMediaImageViewerService@@UBEPBUQMetaObject@@XZ @ 1284 NONAME ; struct QMetaObject const * QMediaImageViewerService::metaObject(void) const
+	?metaObject@QPainterVideoSurface@@UBEPBUQMetaObject@@XZ @ 1285 NONAME ; struct QMetaObject const * QPainterVideoSurface::metaObject(void) const
+	?networkManager@QMediaImageViewerService@@QBEPAVQNetworkAccessManager@@XZ @ 1286 NONAME ; class QNetworkAccessManager * QMediaImageViewerService::networkManager(void) const
+	?paint@QPainterVideoSurface@@QAEXPAVQPainter@@ABVQRectF@@1@Z @ 1287 NONAME ; void QPainterVideoSurface::paint(class QPainter *, class QRectF const &, class QRectF const &)
+	?playlist@QMediaImageViewer@@QBEPAVQMediaPlaylist@@XZ @ 1288 NONAME ; class QMediaPlaylist * QMediaImageViewer::playlist(void) const
+	?present@QPainterVideoSurface@@UAE_NABVQVideoFrame@@@Z @ 1289 NONAME ; bool QPainterVideoSurface::present(class QVideoFrame const &)
+	?qt_metacall@QMediaImageViewerService@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1290 NONAME ; int QMediaImageViewerService::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QPainterVideoSurface@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1291 NONAME ; int QPainterVideoSurface::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QMediaImageViewerService@@UAEPAXPBD@Z @ 1292 NONAME ; void * QMediaImageViewerService::qt_metacast(char const *)
+	?qt_metacast@QPainterVideoSurface@@UAEPAXPBD@Z @ 1293 NONAME ; void * QPainterVideoSurface::qt_metacast(char const *)
+	?releaseControl@QMediaImageViewerService@@UAEXPAVQMediaControl@@@Z @ 1294 NONAME ; void QMediaImageViewerService::releaseControl(class QMediaControl *)
+	?requestControl@QMediaImageViewerService@@UAEPAVQMediaControl@@PBD@Z @ 1295 NONAME ; class QMediaControl * QMediaImageViewerService::requestControl(char const *)
+	?saturation@QPainterVideoSurface@@QBEHXZ @ 1296 NONAME ; int QPainterVideoSurface::saturation(void) const
+	?setBrightness@QPainterVideoSurface@@QAEXH@Z @ 1297 NONAME ; void QPainterVideoSurface::setBrightness(int)
+	?setContrast@QPainterVideoSurface@@QAEXH@Z @ 1298 NONAME ; void QPainterVideoSurface::setContrast(int)
+	?setDefaultServiceProvider@QMediaServiceProvider@@SAXPAV1@@Z @ 1299 NONAME ; void QMediaServiceProvider::setDefaultServiceProvider(class QMediaServiceProvider *)
+	?setHue@QPainterVideoSurface@@QAEXH@Z @ 1300 NONAME ; void QPainterVideoSurface::setHue(int)
+	?setNetworkManager@QMediaImageViewerService@@QAEXPAVQNetworkAccessManager@@@Z @ 1301 NONAME ; void QMediaImageViewerService::setNetworkManager(class QNetworkAccessManager *)
+	?setReady@QPainterVideoSurface@@QAEX_N@Z @ 1302 NONAME ; void QPainterVideoSurface::setReady(bool)
+	?setSaturation@QPainterVideoSurface@@QAEXH@Z @ 1303 NONAME ; void QPainterVideoSurface::setSaturation(int)
+	?setStaticPlugins@QMediaPluginLoader@@SAXABVQString@@ABV?$QList@PAVQObject@@@@@Z @ 1304 NONAME ; void QMediaPluginLoader::setStaticPlugins(class QString const &, class QList<class QObject *> const &)
+	?start@QPainterVideoSurface@@UAE_NABVQVideoSurfaceFormat@@@Z @ 1305 NONAME ; bool QPainterVideoSurface::start(class QVideoSurfaceFormat const &)
+	?stop@QPainterVideoSurface@@UAEXXZ @ 1306 NONAME ; void QPainterVideoSurface::stop(void)
+	?supportedPixelFormats@QPainterVideoSurface@@UBE?AV?$QList@W4PixelFormat@QVideoFrame@@@@W4HandleType@QAbstractVideoBuffer@@@Z @ 1307 NONAME ; class QList<enum QVideoFrame::PixelFormat> QPainterVideoSurface::supportedPixelFormats(enum QAbstractVideoBuffer::HandleType) const
+	?tr@QMediaImageViewerService@@SA?AVQString@@PBD0@Z @ 1308 NONAME ; class QString QMediaImageViewerService::tr(char const *, char const *)
+	?tr@QMediaImageViewerService@@SA?AVQString@@PBD0H@Z @ 1309 NONAME ; class QString QMediaImageViewerService::tr(char const *, char const *, int)
+	?tr@QPainterVideoSurface@@SA?AVQString@@PBD0@Z @ 1310 NONAME ; class QString QPainterVideoSurface::tr(char const *, char const *)
+	?tr@QPainterVideoSurface@@SA?AVQString@@PBD0H@Z @ 1311 NONAME ; class QString QPainterVideoSurface::tr(char const *, char const *, int)
+	?trUtf8@QMediaImageViewerService@@SA?AVQString@@PBD0@Z @ 1312 NONAME ; class QString QMediaImageViewerService::trUtf8(char const *, char const *)
+	?trUtf8@QMediaImageViewerService@@SA?AVQString@@PBD0H@Z @ 1313 NONAME ; class QString QMediaImageViewerService::trUtf8(char const *, char const *, int)
+	?trUtf8@QPainterVideoSurface@@SA?AVQString@@PBD0@Z @ 1314 NONAME ; class QString QPainterVideoSurface::trUtf8(char const *, char const *)
+	?trUtf8@QPainterVideoSurface@@SA?AVQString@@PBD0H@Z @ 1315 NONAME ; class QString QPainterVideoSurface::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QMediaImageViewerService@@2UQMetaObject@@B @ 1316 NONAME ; struct QMetaObject const QMediaImageViewerService::staticMetaObject
+	?staticMetaObject@QPainterVideoSurface@@2UQMetaObject@@B @ 1317 NONAME ; struct QMetaObject const QPainterVideoSurface::staticMetaObject
 
