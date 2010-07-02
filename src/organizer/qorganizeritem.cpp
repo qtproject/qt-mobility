@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
 
   \brief The QOrganizerItem class represents an addressbook organizeritem.
 
-  \ingroup organizeritems-main
+  \ingroup organizer-main
 
   Individual organizeritems, groups, and other types of organizeritems are represented with
   a QOrganizerItem object.  In addition to the type, a QOrganizerItem consists of information

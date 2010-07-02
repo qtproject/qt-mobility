@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
   
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new detail definition remove request whose parent is the specified \a parent */

@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemDateTimePeriodFilter
   \brief The QOrganizerItemDateTimePeriodFilter class provides a filter based around
   a datetime period between start and end datetime .
-  \ingroup organizeritems-filters
+  \ingroup organizer-filters
  
   It may be used to select organizeritems between given start and end periods
  */
