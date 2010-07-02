@@ -255,29 +255,22 @@ private:
     friend class QGalleryFilter;
 };
 
+template <typename T>
+QGalleryUnionFilter operator ||(const QGalleryUnionFilter &filter1, const T &filter2)
+{
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
+template <typename T>
+QGalleryIntersectionFilter operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
 QTM_END_NAMESPACE
-
-#ifndef Q_QDOC
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator ||(
-        const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
-template <typename T>
-QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator &&(
-        const QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) &filter1, const T &filter2)
-{
-    QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-#else
-QGalleryUnionFilter Q_GALLERY_EXPORT operator ||(const QGalleryUnionFilter &filter1, const T &filter2);
-QGalleryIntersectionFilter Q_GALLERY_EXPORT operator &&(const QGalleryIntersectionFilter &filter1, const T &filter2);
-#endif
 
 #endif
