@@ -1,0 +1,337 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+
+
+/*!
+
+\page organizer.html
+
+\title Organizer
+\brief An API enabling clients to request calendar, schedule and personal data
+from local or remote backends.
+
+\ingroup mobility
+
+The Organizer API enables a client to request calendar, schedule and personal
+data from local or remote backends. This is part of the Qt Mobility Project.
+
+\tableofcontents
+
+\section1 Introduction
+
+The Organizer API provides clients with the ability to access calendar,
+schedule and personal data in a platform-independent and datastore-agnostic
+manner.  This is achieved by defining generic personal information data
+abstractions which can sufficiently describe calendar and scheduling data
+stored on any platform.  Due to the cross-platform nature of the API, and the
+ability for developers to write platform-independent implementations of a
+QOrganizerItemManager which may unify one or more platform-specific calendar
+or scheduling backends, it is intended that the semantics and quirks of the
+underlying datastores on any platform may be entirely opaque from the
+perspective of Qt-based, cross-platform client applications.
+
+\section1 Overview 
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
+Organizer information is stored in datastores whose functionality is exposed
+via a \l{QOrganizerItemManager}{manager}.  The Organizer API models organizer
+information as an \l{QOrganizerItem}{item} which consists of a collection of
+distinct details.  Each \l{QOrganizerItemDetail}{detail} conforms to a
+particular \l{QOrganizerItemDetailDefinition}{definition} (or template), which
+may be extensible or otherwise modifiable by clients.  Individual organizer
+items may be recurrent, and occurrences of such items are also items, but are
+linked to the "parent" item.
+
+\l{QOrganizerItem}{Item} and 
+\l{QOrganizerItemDetailDefinition}{detail definition} information may be
+retrieved, modified or deleted by clients using either
+\l{Organizer Synchronous API}{synchronous} or
+\l{Organizer Asynchronous API}{asynchronous} API.
+
+\section1 Client-Facing API
+
+The client-facing API allows retrieval, modification and deletion of organizer
+items and detail definitions, and access to manager meta data and capability
+reporting.
+
+\section2 Container Classes
+
+Organizational data is stored in container (value) classes.  These classes are
+not derived from QObject, and hence can be used in lists, do not have parents,
+do not emit signals, and so on.  They represent data which may be manipulated
+and retrieved from a \l{QOrganizerItemManager}{manager}.
+
+\section3 Item
+
+An \l{QOrganizerItem}{item} is the digital representation of an event, journal,
+todo, or note which is stored in a platform-specific manner.  Information
+pertaining to a single item may be located across several different datastores.
+
+Each item stored in a manager is identified by an \l{QOrganizerItemId}{id}
+which consists of a manager identifier (URI) and the
+\l{QOrganizerItemLocalId}{manager-local id} which is used to identify the item
+within that manager.  Note that an item stored in one manager may have the
+same local id as a different item stored in another manager; please see the
+QOrganizerItemId documentation for more information.
+
+\section3 Detail
+
+A \l{QOrganizerItemDetail}{detail} is a single, cohesive unit of information
+that is stored in an item.  Any detail stored in an item which is saved in a
+manager will conform to a particular detail definition which that manager
+supports.  A detail may have specific meta-data associated with it, such as
+its sub-type and arbitrary, user-defined meta-data, as well as access
+constraints which may apply to the detail (e.g., read-only, irremovable, etc).
+
+There are a number of common details defined in the API which are intended
+for use by clients, as listed \l{"Organizer Item Details" Leaf Classes}{here}.
+
+\section3 Detail Definition
+
+Each detail stored in an item has defined semantics of usage and storage.
+The Qt Organizer API allows per-datastore organizer item
+\l{QOrganizerItemDetailDefinition}{detail definitions}, allowing a manager to
+provide clients with this information on demand, and allowing third-party
+developers to register detail definitions for use by clients.  A detail
+definition includes the fields (and value-types of those fields) which make up
+the detail, and per-item uniqueness constraints on details of the definition.
+
+Most clients can safely ignore this class entirely, since they will most
+likely want to use the predefined details listed
+\l{"Organizer Item Details" Leaf Classes}{here}.  In some cases, however, a
+manager will not support all of the fields of a particular predefined detail
+leaf class; in that case, it may be necessary for the client to inspect the
+supported detail definition for that leaf class and modify its behavior
+accordingly.
+
+\section2 Manager
+
+Access to organizer items is provided by implementations of the Qt Organizer
+\l{QOrganizerItemManager}{manager} API. A manager provides access to zero or
+more platform-specific datastores.  Each datastore may support different
+capabilities (for example, the ability to store certain datatypes, the ability
+to natively filter on different details or details of different definitions,
+the provision of locking mechanisms, the provision of changelog information,
+etc) which are reported by the manager on request.  The manager therefore
+provides access to detail definitions and organizer items stored in different
+datastores, in a platform and datastore independent manner.
+
+\section3 Meta Data API
+
+The API offered by the QOrganizerItemManager exposes functionality which is
+implemented by plugins.  These plugins may be platform specific, and may be
+provided by Nokia or by third party developers.  As described above, each
+plugin will have different capabilities and implement the functionality
+exposed by the Qt Organizer API to a different degree.
+
+The QOrganizerItemManager class provides a static function
+QOrganizerItemManager::availableManagers() which allows clients of the API to
+determine (at run time) which plugins (managers) are available for use.
+
+Clients of the API also need to be able to determine (at run time) what the
+capabilities of a given plugin (organizer item manager) are.  The
+QOrganizerItemManager class provides API to query the capabilities of a given
+manager with the following synchronous functions:
+\list
+  \o hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType = QOrganizerItemType::TypeEvent) const
+  \o isFilterSupported(const QOrganizerItemFilter& filter) const
+  \o supportedDataTypes() const
+  \o supportedItemTypes() const
+\endlist
+
+A given manager is identified by its URI.  The URI consists of the manager's
+name, any relevant parameters which were used during instantiation of the
+manager, and the version of the manager.  While the name of the manager
+identifies the plugin which provides the functionality, you cannot guarantee
+that the data available through one manager will be available through another
+with the same name (for example, if one parameter tells the plugin to store
+and retrieve organizer information from a particular online service or local
+file).
+
+The synchronous API offered to allow run-time querying of a manager's metadata
+includes:
+\list
+  \o managerName() const
+  \o managerParameters() const
+  \o managerUri() const
+  \o managerVersion() const;
+  \o (static) parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params)
+  \o (static) buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1)
+\endlist
+
+The functionality that the above functions provide is only available through
+synchronous API.
+
+
+\section3 Asynchronous API
+
+The asynchronous API provides a way to access or modify the
+organizer item information managed by a particular backend via non-blocking,
+asynchronous requests.  It is recommended for most
+applications that the asynchronous API be used where possible.
+
+The asynchronous API is offered through various classes derived from the
+QOrganizerItemAbstractRequest class, including
+QOrganizerItemLocalIdFetchRequest, QOrganizerItemFetchRequest,
+QOrganizerItemSaveRequest, QOrganizerItemRemoveRequest,
+QOrganizerItemDetailDefinitionFetchRequest,
+QOrganizerItemDetailDefinitionSaveRequest, and
+QOrganizerItemDetailDefinitionRemoveRequest.
+
+The asynchronous API allows manipulation of \l{QOrganizerItem}{items} and
+\l{QOrganizerItemDetailDefinition}{schema definitions}, but does not provide
+manager capability or meta data information reporting.
+
+For more detailed documentation on the asynchronous API, see the \l{Organizer Asynchronous API}.
+
+\section3 Synchronous API
+
+The synchronous API provides the simplest way to access or modify the
+organizer item information managed by a particular backend.  It has the
+disadvantage that calls block the current thread of execution until completion
+and is therefore most suitable only for applications which interact with
+local, high-speed datastores, or for applications which do not require a
+responsive user interface.
+
+The synchronous API is offered through the QOrganizerItemManager class, and
+includes manipulation of \l{QOrganizerItem}{items} and
+\l{QOrganizerItemDetailDefinition}{schema definitions}.  As previously
+described, the meta data reporting and manipulation functions are also
+provided via synchronous API only.
+
+For more detailed documentation on the synchronous API, see the
+\l{Organizer Synchronous API}.
+
+\section1 Non-Client-Facing API
+
+The non-client-facing API allows third party developers to implement a manager
+engine plugin from which clients may request data.
+
+\section2 Manager Engine
+
+The functionality exposed by the QOrganizerItemManager class may be implemented
+by \l{QOrganizerItemManagerEngine}{engine} plugins which interface directly to
+a platform-specific backend or provide their own data storage backend.  As
+such, the terms "manager", "plugin" and "backend" are used interchangeably in
+this documentation to refer to any engine plugin which implements the
+functionality exposed by the QOrganizerItemManager interface.  The plugin
+architecture allows dynamic loading of different manager engines at runtime.
+
+A manager backend may be implemented by subclassing
+\l{QOrganizerItemManagerEngine}, and providing a
+\l{QOrganizerItemManagerEngineFactory} which can instantiate it when required.
+
+See \l{Qt Organizer Manager Engines} for more information on available engines
+and how to write your own engine.
+
+\section1 Using the API
+
+Some examples of common usage of the API may be found
+\l{Organizer API Usage}{here}.
+
+\section1 Building and compiling
+
+This library requires Qt 4.6 to be installed.
+
+To build the library, see the Qt Mobility installation instructions.
+
+\section1 Reference documentation
+
+\section2 Main classes
+
+\annotatedlist organizer-main
+
+\section2 "Organizer Item Details" Leaf Classes
+
+Several subclasses of \l{QOrganizerItemDetail} are provided as part of the
+Qt Mobility Organizer API.  They are general in design but are intended
+to fulfill specific use-cases.  Please note that certain backends may
+choose not to support one or more of these subclasses as they appear here;
+they may offer their own which provide similar functionality.
+
+\annotatedlist organizer-details
+
+Each of these subclasses provide access to information stored in fields which
+may have certain constraints, as listed in the \l{Qt Organizer Schema}{schema}.
+
+\section2 Asynchronous Requests
+
+Clients may use either the \l{Organizer Synchronous API}{synchronous}
+or \l{Organizer Asynchronous API}{asynchronous} API to access
+functionality provided by a manager backend. The
+\l{Organizer Asynchronous API}{asynchronous} API is
+offered through subclasses of the \l{QOrganizerItemAbstractRequest} class:
+
+\annotatedlist organizer-requests
+
+\section2 Organizer Item Selection And Sorting
+
+Clients may select an organizer item by specifying a unique item id, or by
+supplying a \l{QOrganizerItemFilter} which matches the item or items they
+wish to select.  The various derivatives of \l{QOrganizerItemFilter} allow for
+fine-grained and flexible selection of organizer data according to various
+criteria:
+
+\annotatedlist organizer-filters
+
+
+A client can also request that the results of such a selection be sorted,
+by passing a \l{QOrganizerItemSortOrder} (or list of sort orders) to the
+manager.
+
+\section2 Implementing Backends
+
+A backend implementor must implement the following interfaces:
+
+\annotatedlist organizer-backends
+
+For more information on this topic, see please see the documentation on
+\l{Qt Organizer Manager Engines}{implementing manager engines}.
+
+\section2 Synchronization and Serialization
+
+The organizer API is used by another Qt Mobility module: the
+\l {Versit API} {Versit}* module.  It allows
+serialization of a QOrganizerItem into an iCal document, and vice versa.
+
+[*] Versit \reg is a trademark of the Internet Mail Consortium.
+
+\section2 Examples
+
+The following sample applications show examples of API usage:
+\list
+    \o \l{qmlcalendar}{QML-based Calendar Example}
+\endlist
+See also: \l{Organizer API Usage}
+
+*/
