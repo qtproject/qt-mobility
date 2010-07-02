@@ -58,10 +58,7 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     else
         qWarning() << "Unable to initialize "<<sensorName;
     setReading<QProximityReading>(&m_reading);
-    // metadata
-    addDataRate(2, 2); // 2 Hz
-    addOutputRange(0, 1, 1); // close definition in meters - may be used as metadata even the sensor gives true/false values
-    setDescription(QLatin1String("Measures if a living object is in proximity or not"));
+
 }
 
 void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)

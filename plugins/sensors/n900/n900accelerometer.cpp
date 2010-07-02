@@ -55,10 +55,10 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
     // Details derived from the kernel driver
-    addDataRate(100, 100); // 100Hz
-    addDataRate(400, 400); // 400Hz
-    addOutputRange(-22.418, 22.418, 0.17651); // 2G
-    addOutputRange(-89.672, 89.672, 0.70608); // 8G
+    //addDataRate(100, 100); // 100Hz
+    //addDataRate(400, 400); // 400Hz
+    //addOutputRange(-22.418, 22.418, 0.17651); // 2G
+    //addOutputRange(-89.672, 89.672, 0.70608); // 8G
     setDescription(QLatin1String("lis302dl"));
 }
 
