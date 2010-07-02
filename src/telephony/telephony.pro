@@ -29,7 +29,7 @@ symbian: {
     SOURCES += qtelephonycalllist_symbian.cpp
 } else {
     unix: {
-        !maemo*|!mac {
+        !maemo*:!mac {
             QT += dbus
             HEADERS += linux/qtelephonycalllist_linux_p.h
             SOURCES += linux/qtelephonycalllist_linux.cpp

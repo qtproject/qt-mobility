@@ -43,7 +43,7 @@
 #include "qtelephonycallinfo_p.h"
 
 
-#if defined(Q_WS_MAEMO5)
+#if defined(Q_WS_MAEMO_5)
 # include "qtelephonycalllist_unsupported_p.h" // TODO change back to maemo when support is added
 #elif defined(Q_OS_LINUX)
 # include "linux/qtelephonycalllist_linux_p.h"
