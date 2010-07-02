@@ -45,6 +45,7 @@
 #include "qgallerydbusinterface_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemlist_p.h"
+#include "qgallerytrackermediaartcolumn_p.h"
 #include "qgallerytrackerthumbnailcolumn_p.h"
 
 #include <QtCore/qdatetime.h>
@@ -61,6 +62,7 @@ namespace
     template <typename T>
     struct QGalleryPropertyList
     {
+        QGalleryPropertyList() : items(0), count(0) {}
         template <int N> QGalleryPropertyList(const T (&items)[N])
             : items(items), count(N) {}
 
@@ -169,6 +171,7 @@ namespace
         QGalleryItemPropertyList identity;
         QGalleryItemPropertyList properties;
         QGalleryAggregatePropertyList aggregateProperties;
+        QGalleryThumbnailPropertyList thumbnailProperties;
         void (*writeIdCondition)(int *error, QXmlStreamWriter *xml, const QStringRef &itemId);
         int updateMask;
     };
@@ -300,6 +303,20 @@ namespace
     QGalleryItemPropertyList(qt_gallery##Type##Identity), \
     QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
     QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
+    QGalleryThumbnailPropertyList(), \
+    qt_write##Type##IdCondition, \
+    UpdateMask \
+}
+
+#define QT_GALLERY_AGGREGATE_TYPE_WITH_THUMBNAILS(Type, Service, Prefix, UpdateMask) \
+{ \
+    QLatin1String(#Type), \
+    QLatin1String(#Service), \
+    QGalleryTypePrefix(#Prefix"::"), \
+    QGalleryItemPropertyList(qt_gallery##Type##Identity), \
+    QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
+    QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
+    QGalleryThumbnailPropertyList(qt_gallery##Type##ThumbnailPropertyList), \
     qt_write##Type##IdCondition, \
     UpdateMask \
 }
@@ -924,6 +941,34 @@ static const QGalleryAggregateProperty qt_galleryAlbumAggregateList[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , "COUNT", Int),
 };
 
+static const QGalleryThumbnailProperty qt_galleryAlbumThumbnailPropertyList[] =
+{
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailImage",
+            "album",
+            Image,
+            qt_galleryAlbumIdentity,
+            QGalleryTrackerMediaArtColumn::createImageColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailPixmap",
+            "album",
+            Pixmap,
+            qt_galleryAlbumIdentity,
+            QGalleryTrackerMediaArtColumn::createPixmapColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "previewImage",
+            "album",
+            Image,
+            qt_galleryAlbumIdentity,
+            QGalleryTrackerMediaArtColumn::createImageColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "previewPixmap",
+            "album",
+            Pixmap,
+            qt_galleryAlbumIdentity,
+            QGalleryTrackerMediaArtColumn::createPixmapColumn)
+};
+
 static void qt_writeAlbumIdCondition(
         int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
@@ -1008,7 +1053,7 @@ static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
     QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist     , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist, AudioMask),
-    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album      , AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE_WITH_THUMBNAILS(Album      , Music , album      , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre , AudioMask),
     QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum , ImageMask)
 
@@ -1627,17 +1672,23 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     QStringList identityNames;
     QStringList aggregateNames;
     QStringList aliasNames;
+    QStringList thumbnailNames;
     QVector<QGalleryProperty::Attributes> identityAttributes;
     QVector<QGalleryProperty::Attributes> aggregateAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
+    QVector<QGalleryProperty::Attributes> thumbnailAttributes;
     QVector<QVariant::Type> identityTypes;
     QVector<QVariant::Type> aggregateTypes;
     QVector<QVariant::Type> aliasTypes;
+    QVector<QVariant::Type> thumbnailTypes;
+    QVector<const QGalleryThumbnailProperty *> imageProperties;
     QVector<int> identityColumns;
+    QVector<QVector<int> > imageColumns;
 
     const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
     const QGalleryItemPropertyList &properties = type.properties;
     const QGalleryAggregatePropertyList &aggregateProperties = type.aggregateProperties;
+    const QGalleryThumbnailPropertyList &thumbnailProperties = type.thumbnailProperties;
 
     for (int i = 0; i < type.identity.count; ++i)
         identityNames.append(type.identity[i].name);
@@ -1664,8 +1715,12 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     for (QStringList::const_iterator it = propertyNames.constBegin();
             it != propertyNames.constEnd();
             ++it) {
-        if (qFind(propertyNames.begin(), it, *it) != it || identityNames.contains(*it))
-            continue;    // Skip duplicates.
+        if (identityNames.contains(*it)
+                || aggregateNames.contains(*it)
+                || aliasNames.contains(*it)
+                || thumbnailNames.contains(*it)) {
+            continue;
+        }
 
         int propertyIndex = properties.indexOfProperty(*it);
 
@@ -1685,6 +1740,26 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             aggregates.append(aggregateProperties[propertyIndex].aggregate);
             aggregateAttributes.append(QGalleryProperty::CanRead);
             aggregateTypes.append(aggregateProperties[propertyIndex].type);
+        } else if ((propertyIndex = thumbnailProperties.indexOfProperty(*it)) >= 0) {
+            const QGalleryItemPropertyList &dependencies
+                    = thumbnailProperties[propertyIndex].dependencies;
+
+            QVector<int> columns;
+            for (int i = 0; i < dependencies.count; ++i) {
+                const QString field = dependencies[i].field;
+
+                int fieldIndex = identityFields.indexOf(field);
+
+                Q_ASSERT(fieldIndex >= 0);
+
+                columns.append(fieldIndex);
+            }
+
+            thumbnailNames.append(*it);
+            thumbnailAttributes.append(QGalleryProperty::CanRead);
+            thumbnailTypes.append(thumbnailProperties[propertyIndex].type);
+            imageProperties.append(&thumbnailProperties[propertyIndex]);
+            imageColumns.append(columns);
         }
     }
 
@@ -1739,9 +1814,15 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
     arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
     arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
-    arguments->propertyNames = identityNames + aggregateNames + aliasNames;
-    arguments->propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
-    arguments->propertyTypes = identityTypes + aggregateTypes + aliasTypes;
+    arguments->imageColumns = qt_createImageColumns(
+            dbus,
+            imageProperties,
+            imageColumns,
+            identityNames.count() + aggregateNames.count() + aliasNames.count());
+    arguments->propertyNames = identityNames + aggregateNames + aliasNames + thumbnailNames;
+    arguments->propertyAttributes
+            = identityAttributes + aggregateAttributes + aliasAttributes + thumbnailAttributes;
+    arguments->propertyTypes = identityTypes + aggregateTypes + aliasTypes + thumbnailTypes;
 }
 
 QTM_END_NAMESPACE
