@@ -69,7 +69,6 @@ QServicePackage QServiceIpcEndPoint::nextPackage()
 void QServiceIpcEndPoint::writePackage(QServicePackage newPackage)
 {
     flushPackage(newPackage);
-       
 }
 
 #include "moc_ipcendpoint_p.cpp"
