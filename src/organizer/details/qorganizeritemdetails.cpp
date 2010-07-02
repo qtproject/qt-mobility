@@ -363,10 +363,47 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
    \brief The QOrganizerItemRecurrence class contains a list of rules and dates on which the recurrent item occurs,
           and a list of rules and dates on which exceptions occur.
  */
+
+/*!
+   \variable QOrganizerItemRecurrence::DefinitionName
+   The constant string which identifies the definition of details which are organizer item recurrence specifications.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldRecurrenceRules
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the rules for when an
+   item should recur.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceRules, "RecurrenceRules");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldRecurrenceDates
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the dates on which an
+   item should recur.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceDates, "RecurrenceDates");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldExceptionRules
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the rules for when an
+   item should not recur.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "ExceptionRules");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldExceptionDates
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the dates on which an
+   item should not recur.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
 

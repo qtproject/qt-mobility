@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemManagerEngine
   \brief The QOrganizerItemManagerEngine class provides the interface for all
-  implementations of the organizeritem manager backend functionality.
+  implementations of the organizer item manager backend functionality.
   \ingroup organizeritems-backends
 
   Instances of this class are usually provided by a
@@ -167,9 +167,24 @@ QString QOrganizerItemManagerEngine::managerUri() const
 }
 
 /*!
-  Return the list of organizer item instances which match the given \a filter, sorted according to the given \a sortOrders.
-  The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
-  the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
+  Return the list of organizer item instances which match the given \a filter, sorted according to
+  the given \a sortOrders.  The client may instruct the manager that it does not require all
+  possible information about each instance by specifying a fetch hint \a fetchHint; the manager can
+  choose to ignore the fetch hint, but if it does so, it must return all possible information about
+  each instance.
+
+  Items of type QOrganizerItemType::TypeEvent or QOrganizerItemType::TypeTodo should NOT be included
+  in the list of returned items.  Instead, these items should be expanded according to their
+  recurrence specification and the resultant occurrence items (of type
+  QOrganizerItemType::TypeEventOccurrence and QOrganizerItemType::TypeTodoOccurrence) should be
+  returned.
+
+  The occurrence-typed returned items should have a QOrganizerItemInstanceOrigin detail that points
+  to the generator and the original instance that the event would have occurred on (if it is an
+  exception).  No returned item should contain a QOrganizerItemRecurrence detail.
+
+  If the \a generator does not exist in the backend, or if there are no instances matching the
+  criteria, an empty list should be returned.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
@@ -183,12 +198,27 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 
 
 /*!
-  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a generator recurring item, which
-  occur between the given \a periodStart date and the given \a periodEnd date.
+  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the
+  given \a generator recurring item, which occur between the given \a periodStart date and the given
+  \a periodEnd date.
 
-  If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c QOrganizerItemManager::BadArgumentError.
+  If \a periodStart is after \a periodEnd, the operation will fail, and \a error will be set to \c
+  QOrganizerItemManager::BadArgumentError.
   If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
   Some backends may return no instances, others may return some limited number of occurrences.
+
+  If the \a generator is an item of type QOrganizerItemType::TypeEvent, a list of items of type
+  QOrganizerItemType::TypeEventOccurrence will be returned, representing the expansion of the
+  generator according to its QOrganizerItemRecurrence detail.  Similarly, a \a generator of type
+  QOrganizerItemType::TypeTodo will result in a list of QOrganizerItemType::TypeTodoOccurrence
+  items.  If the \a generator is of any other type, it is returned by itself from the backend.
+
+  The occurrence-typed items returned should have a QOrganizerItemInstanceOrigin detail that refers
+  to the generator and the original instance that the event would have occurred on (if it is an
+  exception).  No returned item should contain a QOrganizerItemRecurrence detail.
+
+  If the \a generator does not exist in the backend, or if there are no instances matching the
+  criteria, an empty list should be returned.
   */
 QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
@@ -202,9 +232,9 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 }
 
 /*!
-  Returns a list of organizeritem ids that match the given \a filter, sorted according to the given list of \a sortOrders.
-  Depending on the backend, this filtering operation may involve retrieving all the organizeritems.
-  Any error which occurs will be saved in \a error.
+  Returns a list of organizer item ids that match the given \a filter, sorted according to the given
+  list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
+  all the organizeritems.  Any error which occurs will be saved in \a error.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
@@ -222,10 +252,17 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganiz
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritems will be returned.  A client should not make changes to a organizeritem which has
+  in the matching organizeritems will be returned.  A client should not make changes to an item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
+
+  Items of type EventOccurrence and TodoOccurrence should only be returned when they represent an
+  exceptional occurrence; ie. if the client has specifically saved the item occurrence in the
+  manager.  Occurrence-typed items that are generated purely from a recurrence specification of
+  another detail should not be returned in this list.
+
+  All items returned should have a non-zero local ID.
 
   \sa QOrganizerItemFetchHint
  */
@@ -239,19 +276,19 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::items(const QOrganizerItemFil
 }
 
 /*!
-  Returns the organizeritem in the database identified by \a organizeritemId.
+  Returns the organizer item in the database identified by \a organizeritemId.
 
-  If the organizeritem does not exist, an empty, default constructed QOrganizerItem will be returned,
+  If the item does not exist, an empty, default constructed QOrganizerItem will be returned,
   and the \a error will be set to  \c QOrganizerItemManager::DoesNotExistError.
 
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritem will be returned.  A client should not make changes to a organizeritem which has
+  in the matching item will be returned.  A client should not make changes to an item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the item back to the manager (as the "new" restricted item will
+  replace the previously saved item in the backend).
 
   \sa QOrganizerItemFetchHint
  */
@@ -416,7 +453,7 @@ QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
 }
 
 /*!
-  Returns the list of organizeritem types which are supported by this engine.
+  Returns the list of item types which are supported by this engine.
   This is a convenience function, equivalent to retrieving the allowable values
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this engine.
@@ -1112,7 +1149,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
 }
 
 /*!
-  Checks that the given organizeritem \a organizeritem does not have details which
+  Checks that the given item \a organizeritem does not have details which
   don't conform to a valid definition, violate uniqueness constraints,
   or contain values for nonexistent fields, and that the values contained are
   of the correct type for each field, and are allowable values for that field.
@@ -1340,7 +1377,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   default-constructed id, or an id with the manager URI set to the URI of
   this manager and a local id of zero, otherwise updates the organizeritem in
   the database which has the same id to be the given \a organizeritem.
-  If the id is non-zero but does not identify any organizeritem stored in the
+  If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
   \c QOrganizerItemManager::DoesNotExistError.
 
@@ -1373,9 +1410,9 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrgan
 }
 
 /*!
-  Remove the organizeritem identified by \a organizeritemId from the database,
-  and also removes any relationships in which the organizeritem was involved.
-  Returns true if the organizeritem was removed successfully, otherwise
+  Remove the item identified by \a organizeritemId from the database,
+  and also removes any relationships in which the item was involved.
+  Returns true if the item was removed successfully, otherwise
   returns false.
 
   Any error which occurs will be saved in \a error.
@@ -1402,14 +1439,14 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   Returns true if the organizeritems were saved successfully, otherwise false.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritems list to
-  the error which occurred when saving the organizeritem at that index) for
-  every index for which the organizeritem could not be saved, if it is able.
+  the error which occurred when saving the item at that index) for
+  every index for which the item could not be saved, if it is able.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
   if all organizeritems were saved successfully.
 
-  For each newly saved organizeritem that was successful, the id of the organizeritem
+  For each newly saved item that was successful, the id of the item
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
-  when saving a new organizeritem, the id will be cleared.
+  when saving a new item, the id will be cleared.
 
   Any errors encountered during this operation should be stored to
   \a error.
@@ -1425,21 +1462,21 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
 }
 
 /*!
-  Remove every organizeritem whose id is contained in the list of organizeritems ids
+  Remove every item whose id is contained in the list of organizeritems ids
   \a organizeritemIds.  Returns true if all organizeritems were removed successfully,
   otherwise false.
 
-  Any organizeritem that was removed successfully will have the relationships
+  Any item that was removed successfully will have the relationships
   in which it was involved removed also.
 
   The manager might populate \a errorMap (the map of indices of the \a organizeritemIds list to
-  the error which occurred when saving the organizeritem at that index) for every
-  index for which the organizeritem could not be removed, if it is able.
+  the error which occurred when saving the item at that index) for every
+  index for which the item could not be removed, if it is able.
   The \l QOrganizerItemManager::error() function will
   only return \c QOrganizerItemManager::NoError if all organizeritems were removed
   successfully.
 
-  If the list contains ids which do not identify a valid organizeritem in the manager, the function will
+  If the list contains ids which do not identify a valid item in the manager, the function will
   remove any organizeritems which are identified by ids in the \a organizeritemIds list, insert
   \c QOrganizerItemManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
   in the \a organizeritemIds list, return false, and set the overall operation error to
@@ -1459,9 +1496,9 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
-  Returns a pruned or modified version of the \a original organizeritem which is valid and can be saved in the manager.
-  The returned organizeritem might have details removed or arbitrarily changed.  The cache of relationships
-  in the organizeritem are ignored entirely when considering compatibility with the backend, as they are
+  Returns a pruned or modified version of the \a original item which is valid and can be saved in the manager.
+  The returned item might have details removed or arbitrarily changed.  The cache of relationships
+  in the item are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
  */
 QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
@@ -1473,7 +1510,7 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
     QList<QString> uniqueDefinitionIds;
     foreach (QOrganizerItemDetail detail, original.details()) {
         // check that the detail conforms to the definition in this manager.
-        // if so, then add it to the conforming organizeritem to be returned.  if not, prune it.
+        // if so, then add it to the conforming item to be returned.  if not, prune it.
 
         QVariantMap values = detail.variantValues();
         QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
@@ -1529,7 +1566,7 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
             }
         }
 
-        // if it hasn't been pruned away to nothing, save it in the conforming organizeritem
+        // if it hasn't been pruned away to nothing, save it in the conforming item
         if (!detail.isEmpty()) {
             conforming.saveDetail(&detail);
         }
@@ -1604,7 +1641,7 @@ int QOrganizerItemManagerEngine::compareVariant(const QVariant& first, const QVa
 }
 
 /*!
-  Returns true if the supplied organizeritem \a organizeritem matches the supplied filter \a filter.
+  Returns true if the supplied item \a organizeritem matches the supplied filter \a filter.
 
   This function will test each condition in the filter, possibly recursing.
  */
@@ -1939,16 +1976,16 @@ int QOrganizerItemManagerEngine::compareItem(const QOrganizerItem& a, const QOrg
 
 
 /*!
-  Performs insertion sort of the organizeritem \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
-  The first QOrganizerItemSortOrder in the list has the highest priority; if the organizeritem \a toAdd is deemed equal to another
-  in the \a sorted list, the second QOrganizerItemSortOrder in the list is used (and so on until either the organizeritem is inserted
+  Performs insertion sort of the item \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
+  The first QOrganizerItemSortOrder in the list has the highest priority; if the item \a toAdd is deemed equal to another
+  in the \a sorted list, the second QOrganizerItemSortOrder in the list is used (and so on until either the item is inserted
   or there are no more sort order objects in the list).
  */
 void QOrganizerItemManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
     if (sortOrders.count() > 0) {
         for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new organizeritem should be inserted here
+            // check to see if the new item should be inserted here
             int comparison = compareItem(sorted->at(i), toAdd, sortOrders);
             if (comparison > 0) {
                 sorted->insert(i, toAdd);
