@@ -212,6 +212,26 @@ start, stop and various other controls.
 
 \section1 Extending the API for Symbian and Maemo
 
+
+For the developer who wishes to extend the functionality of the Multimedia
+classes there are several classes of particular importance. The default
+classes are QMediaService, QMediaServiceProvider and QMediaControl.
+
+Basically, the idea is that to use the Multimedia API you would use these three classes or classes derived from them as follows
+
+    \list
+    \o \l QMediaServiceProvider is used by the top level client class to request a service. The top level class knowing what kind of service it needs.
+
+    \o \l QMediaService provides a service and when asked by the top level object, say a component, will return a QMediaControl object.
+
+    \o \l QMediaControl allows the control of the service using a known interface.
+    \endlist
+
+Consider a developer creating, for example, a media player class called MyPlayer. It may have special requirements beyond ordinary media players and so may need a custom service and a custom control. We can subclass \l QMediaServiceProvider to create out MyServiceProvider class. Also we will create a MyMediaService, and the MyMediaControl to manipulate the media service.
+
+The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling \l {QMediaService::control()}{control()} it will receive the control object derived from QMediaControl. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to control() is a c-type string, \i {const char *}, for the interface.
+
+
 \section2 Adding a Media Service Provider
 
 The base class for creating new service providers is \l{QMediaServiceProvider}. The user must implement the \l{QMediaServiceProvider::requestService()}{requestService()} function
