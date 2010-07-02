@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<relnotes schema="1.0.0" name="Contacts Model" purpose="Application model i.e. data store and supporting APIs for a Contacts (aka Address Book) application." type="component">
+  <revision major="2" functional="0" minor="6" date="20071023">
+    <ref name="DEF113167" type="defect"/>
+    <description>Replace GetDesLength with GetDesLengthL such that a leave occurs in the case of an error.</description>  
+  </revision> 
+  <revision major="2" functional="0" minor="5" date="20071023">
+    <ref name="DEF113166" type="defect"/>
+    <description>Replace GetDesLength with GetDesLengthL such that a leave occurs in the case of an error.</description>  
+  </revision> 
+  <revision major="2" functional="0" minor="4" date="20070628">
+    <ref name="DEF108481" type="defect"/>
+    <description>Before calling DatabaseTestL(), refill the disk if the size of the free space passes the threshold.</description>  
+  </revision> 
+  <revision major="2" functional="0" minor="3" date="20070618">
+    <ref name="DEF108182" type="defect"/>
+    <description>Updated cntmodel.rh according to the suggestion in TT.</description>  
+  </revision>
+  <revision major="2" functional="0" minor="2" date="20070611">
+    <ref name="PDEF107779" type="defect"/>
+    <description>Update mapping in CContactGroupView::NotifyRemovedMembersL(), also added a new test case t_GroupViewEvents.</description>  
+  </revision>  
+  <revision major="2" functional="0" minor="1" date="20070417">
+    <ref name="PDEF105170" type="defect"/>
+    <description>Added a new test case asynaccess to test opening the database simultaneously.</description>  
+  </revision>  
+  <revision major="2" functional="0" minor="0" date="20070404">
+    <ref name="PDEF103254" type="defect"/>
+    <description>Now Versit splits large binary fields, encodes and then writes to stream. Also Code improved at Contacts server so that it wont run out of memory while trying to load such a contact.</description>  
+  </revision>  
+  <revision major="1" functional="1" minor="3" date="20070402">
+    <ref name="DEF103602" type="defect"/>
+    <description>CContactGroupView::NewL() in source documentation clarified.</description>
+  </revision>
+  <revision major="1" functional="1" minor="2" date="20070326">
+    <ref name="PDEF103847" type="defect"/>
+    <description>Modified the conditions to insert an event to the event queue:
+    1. EItemAdded -    1.1 Find if an existing EItemAdded events iInt is greater or equal with incoming events iInt.  if found,insert event before the found one and increment the iInt of the rest event by 1.
+    1.2 If no match is found with same iInt, modify its iInt value with incoming events iInt, then append to the event queue.</description>
+  </revision>
+  <revision major="1" functional="1" minor="2" date="20070326">
+    <ref name="PDEF103847" type="defect"/>
+    <description>Modified the conditions to insert an event to the event queue:
+    1. EItemAdded -    1.1 Find if an existing EItemAdded events iInt is greater or equal with incoming events iInt.  if found,insert event before the found one and increment the iInt of the rest event by 1.
+    1.2 If no match is found with same iInt, modify its iInt value with incoming events iInt, then append to the event queue.</description>
+  </revision>
+  <revision major="1" functional="1" minor="NaN" date="20070320">
+    <ref name="PDEF103614" type="defect"/>
+    <description>Added an Exported function to CParserProperty, which returns the parameter array for a property.
+    A method has been added to CVCardToContactsAppConverter which finds out if a specified parameter value is present or not.
+	</description>
+  </revision>
+  <revision major="1" functional="1" minor="NaN" date="20070313">
+    <ref name="DEF103163[V9.4,V9.5] ImPlEmENTaTIoN ERRoR IN CPlCollECTIoN::UNFIlEDL()" type="defect"/>
+    <description>Have added the missing code to Push the array before calling any leaving function and Pop it before returning.</description>
+  </revision>
+  <revision major="1" functional="1" minor="NaN" date="20070313">
+    <ref name="DEF103167[V9.4,V9.5] ImPlEmENTaTIoN ERRoR IN CPlCollECTIoN::DElETEDL()" type="defect"/>
+    <description>Have added the missing code to Push the array before calling any leaving function and poped it beofre returning</description>
+  </revision>
+  <revision major="1" functional="1" minor="1" date="20070301">
+    <ref name="DEF102602" type="defect"/>
+    <description> Support for Export of multiple agents in a contact is not present.</description>
+  </revision>
+  <revision major="1" functional="1" minor="1" date="20070221">
+    <ref name="DEF102255" type="defect"/>
+    <description>Call to read agent item is placed in TRAPD to ensure that CContactVCardConverter::ExportL doesnt leave incase the agent item is already been deleted and not found.</description>
+  </revision>
+  <revision major="1" functional="0" minor="6" date="20070216">
+    <ref name="PDEF102136" type="defect"/>
+    <description>contact id is removed from iGroupContacts before a ItemRemoved event is sent.</description>
+  </revision>
+  <revision major="1" functional="1" minor="0" date="20070215">
+    <ref name="INC099524" type="defect"/>
+    <description>CLplAnalyserProxy::CheckSpeedDialUpdatesL(aItem) of CLplAnalyserProxy::UpdateL was always returning True for any change in contacts with speed dail. Added an extra parameter for updateL, which will be used for notifying &quot;contacts changed event&quot;. Adding an extra parameter will also propogate a change in MLplPersistenceBroker class.</description>
+  </revision>
+  <revision major="1" functional="0" minor="7" date="20070213">
+    <ref name="DEF101944" type="defect"/>
+    <description>If the value of ContactAgent field is not exported/imported, it should be the intial value 0</description>
+  </revision>
+  <revision major="1" functional="0" minor="6" date="20070212">
+    <ref name="DEF099834" type="defect"/>
+    <description>Database events for multiple delete of contacts fixed.</description>
+  </revision>
+  <revision major="1" functional="0" minor="5" date="20070208">
+    <ref name="INC101293" type="defect"/>
+    <description>In CTransactionLock::LockLX() locked ids are now appended to array using InsertInSignedKeyOrderL().</description>
+  </revision>
+  <revision major="1" functional="0" minor="4" date="20070206">
+    <ref name="PDEF101554" type="defect"/>
+    <description>If an attempt is made to commit the System template then we validate that the fields do not contain any data.  If they do then the commit will leave with KErrNotSupported.</description>
+  </revision>
+  <revision major="1" functional="0" minor="3" date="20070205" access="internalAll">
+    <ref name="DS521" type="dstep"/>
+    <ref name="EC021" type="ec"/>
+    <ref name="Oghma, GT0329, MS3.6" type="milestone"/>
+    <description>Deliver the plug-in implementation to app-engines cntmodel</description>
+  </revision>
+  <revision major="1" functional="0" minor="2" date="20070201">
+    <ref name="EC066" type="ec"/>
+    <description>Re-factor the contacts model server's session class to improve maintainability. The EC is necessary to increase the maintainability and modularity of the contacts model server. Currently, the contacts model server uses a huge session class. It is easy to make a clear distinction between the different requests to the server. However this has not been adequately done. All requests are bundled together with the session class. Requests should be refactored into several smaller RMessageHandler classes. A message handler should exist for each category of request.</description>
+  </revision>
+  <revision major="1" functional="0" minor="1" date="20070201">
+    <ref name="INC097928" type="defect"/>
+    <description>Events are need to insert in the queue using following two condition
+1. EItemAdded -    1.1 Find if an existing EItemAdded events iInt matches with incoming events iInt.  if found,insert event before the found one and increment the iInt of the rest event by 1
+1.2 if no match is found with same iInt, modify its iInt value with last EItemAdded elements (iInt + 1) and append to the event queue.
+1.3 If no EItemAdded events are in queue, append this one to Queue.
+2. EItemRemoved - 2.1 Find if an existing EItemAdded events iInt matches with incoming EItemRemoved events iInt if found, then remove that EItemAdded event from the Queue and decrement rest of the events iInt by 1.
+2.2 if no match is found with same iInt, then insert the event before next greater iInt event and then decerement the iInt value of rest of the event by 1.
+2.3 if no events greater than this  then append this one to Queue.</description>
+  </revision>
+  <revision date="20061120" major="1" functional="0" minor="0">
+    <description>Baseline</description>
+  </revision>
+  <revision major="2" functional="0" minor="5" date="20070717">
+    <ref name="DEF106277" type="defect"/>
+    <description>Changes made in state machine to fix CRequestStore attempts to double delete a CCntRequest</description>  
+  </revision> 
+</relnotes>

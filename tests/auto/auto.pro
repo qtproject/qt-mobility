@@ -25,19 +25,30 @@ contains(mobility_modules,bearer) {
 
 contains(mobility_modules,location) {
     SUBDIRS += qgeocoordinate \                 #Location
+          qgeoboundingbox \
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource
+          qnmeapositioninfosource \
+          #qlandmarkmanagerplugins \
+          qlandmarkmanagerengine
 
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
+
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
+contains(mobility_modules,landmarks) {
+    SUBDIRS += qlandmark \                      #Landmark
+            qlandmarkcategory
+}
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
@@ -75,6 +86,7 @@ contains(mobility_modules,systeminfo) {
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
+            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -89,6 +101,11 @@ contains(mobility_modules,contacts) {
     linux*: SUBDIRS += qcontactmemusage
 }
 
+contains(mobility_modules,organizer) {
+    # Organizer
+    SUBDIRS += qorganizeritemmanager
+}
+
 contains(mobility_modules,versit) {
     # Versit module
     SUBDIRS += \
@@ -98,6 +115,8 @@ contains(mobility_modules,versit) {
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
+            qversitorganizerexporter \
+            qversitorganizerimporter \
             qversitproperty \
             qversitreader \
             qversitwriter
@@ -123,6 +142,7 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qcamera \
         qpaintervideosurface \
         qvideowidget \
         qmediatimerange \
@@ -158,3 +178,28 @@ contains(mobility_modules,messaging) {
 contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
+
+#Document Gallery
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        qdocumentgallery \
+        qgalleryabstractrequest \
+        qgalleryabstractresponse \
+        qgallerybaseresponse \
+        qgallerycountrequest \
+        qgalleryitemlist \
+        qgalleryitemlistmodel \
+        qgalleryitemrequest \
+        qgalleryqueryrequest \
+        qgalleryremoverequest \
+        qgalleryresource \
+        qgalleryurlrequest
+
+    !unix: SUBDIRS += qgalleryfilter
+
+    unix: contains(QT_CONFIG, dbus) {
+        SUBDIRS += \
+                qgallerytrackeritemlist_maemo5
+    }
+}
+

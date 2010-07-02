@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkdistancesort.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QLandmarkDistanceSort Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkDistanceSort"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkDistanceSort Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
+<p>The QLandmarkDistanceSort class is used to sort landmarks by distance from a given coordinate. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkDistanceSort&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="qlandmarksortorder.html">QLandmarkSortOrder</a>.</p>
+<ul>
+<li><a href="qlandmarkdistancesort-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkdistancesort.html#QLandmarkDistanceSort">QLandmarkDistanceSort</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> = QGeoCoordinate(), Qt::SortOrder <i>direction</i> = Qt::AscendingOrder )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkdistancesort.html#QLandmarkDistanceSort-2">QLandmarkDistanceSort</a></b> ( const QLandmarkSortOrder &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkdistancesort.html#dtor.QLandmarkDistanceSort">~QLandmarkDistanceSort</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkdistancesort.html#coordinate">coordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkdistancesort.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>6 public functions inherited from <a href="qlandmarksortorder.html#public-functions">QLandmarkSortOrder</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkDistanceSort class is used to sort landmarks by distance from a given coordinate.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkDistanceSort/QLandmarkDistanceSort"></a>
+<h3 class="fn"><a name="QLandmarkDistanceSort"></a>QLandmarkDistanceSort::QLandmarkDistanceSort ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> = QGeoCoordinate(), <a href="http://qt.nokia.com/doc/4.6/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>direction</i> = Qt::AscendingOrder )</h3>
+<p>Creates a sort order that sorts landmarks by distance from a given <i>coordinate</i>. If the <i>direction</i> is <a href="http://qt.nokia.com/doc/4.6/qt.html#SortOrder-enum">Qt::Ascending</a>, it means that landmarks are listed in increasing order of distance.</p>
+<h3 class="fn"><a name="QLandmarkDistanceSort-2"></a>QLandmarkDistanceSort::QLandmarkDistanceSort ( const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new distance sort order.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkDistanceSort/~QLandmarkDistanceSort"></a>
+<h3 class="fn"><a name="dtor.QLandmarkDistanceSort"></a>QLandmarkDistanceSort::~QLandmarkDistanceSort ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the sort order.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkDistanceSort/coordinate"></a>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkDistanceSort::coordinate () const</h3>
+<p>Returns the coordinate to sort distances from.</p>
+<p>See also <a href="qlandmarkdistancesort.html#setCoordinate">setCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkDistanceSort/setCoordinate"></a>
+<h3 class="fn"><a name="setCoordinate"></a>void QLandmarkDistanceSort::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Sets the <i>coordinate</i> to sort distances from.</p>
+<p>See also <a href="qlandmarkdistancesort.html#coordinate">coordinate</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

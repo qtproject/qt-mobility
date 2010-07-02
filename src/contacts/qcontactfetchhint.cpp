@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactFetchHint
+  
+  \inmodule QtContacts
+  
   \brief The QContactFetchHint class provides hints to the manager about which contact
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
@@ -63,7 +66,7 @@ QTM_BEGIN_NAMESPACE
    \o a list of relationship types which the client is interested in
   (empty if interested in all relationships)
    \o some optimization flags which allow the client to tell the backend if they are
-  not interested in any relationships or any binary blobs (images etc).
+  not interested in any relationships, any action preferences, or any binary blobs (images etc).
   \endlist
 
   Important note: a client should not make changes to a contact which has been retrieved
@@ -81,7 +84,7 @@ QTM_BEGIN_NAMESPACE
 
   \value AllRequired Tells the backend that all information is required
   \value NoRelationships Tells the backend that the client does not require retrieved contacts to include a cache of relationships
-  \omitvalue NoActionPreferences Tells the backend that the client does not require retrieved contacts to include a cache of action preferences
+  \value NoActionPreferences Tells the backend that the client does not require retrieved contacts to include a cache of action preferences
   \value NoBinaryBlobs Tells the backend that the client does not require retrieved contacts to include binary blobs such as thumbnail images
  */
 
@@ -173,7 +176,7 @@ void QContactFetchHint::setRelationshipTypesHint(const QStringList& relationship
   Returns the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in a contact, including
-  relationships and binary blobs.
+  relationships, action preferences, and binary blobs.
 
   \sa setOptimizationHints()
  */
@@ -186,7 +189,7 @@ QContactFetchHint::OptimizationHints QContactFetchHint::optimizationHints() cons
   Sets the optimization hint flags specified by the client to \a hints.
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in a contact, including
-  relationships and binary blobs.
+  relationships, action preferences, and binary blobs.
 
   \sa optimizationHints()
  */

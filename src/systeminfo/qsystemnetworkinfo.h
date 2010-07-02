@@ -65,7 +65,6 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
     Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode CONSTANT)
 
-
 public:
 
     explicit QSystemNetworkInfo(QObject *parent = 0);
@@ -95,7 +94,7 @@ public:
     };
 
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    Q_INVOKABLE int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE QString macAddress(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE QSystemNetworkInfo::NetworkMode currentMode();
 
@@ -106,7 +105,7 @@ public:
     QString currentMobileNetworkCode();
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
-    Q_INVOKABLE QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 
@@ -124,6 +123,7 @@ protected:
 
 private:
        QSystemNetworkInfoPrivate *d;
+
 };
 
 

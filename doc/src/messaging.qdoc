@@ -25,6 +25,19 @@
 **
 ****************************************************************************/
 
+
+
+/*!
+    \module QtMessaging
+    \title  QtMessaging Module
+    \brief  The QtMessaging module provides access to messaging services.
+
+    The module enables access to messaging services to  search and sort
+    messages, send messages, retrieve message data, and launch the preferred
+    messaging client on the system to either display an existing message,
+    compose a new message, or respond to an existing message.
+*/
+
 /*!
 \page messaging.html
 \ingroup mobility

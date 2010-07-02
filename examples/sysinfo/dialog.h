@@ -101,7 +101,7 @@ private slots:
      void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
      void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
-    void storageChanged();
+    void storageChanged(bool added,const QString &vol);
     void bluetoothChanged(bool);
 
 };

@@ -98,7 +98,6 @@ public:
         lat-long values. Fails if lat or long fail isValidLat() or isValidLong().
     */
     Q_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);
-
 };
 
 QTM_END_NAMESPACE

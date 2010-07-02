@@ -38,8 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMOBILITYPLUGINSEARCH_H
+#define QMOBILITYPLUGINSEARCH_H
+
 #include <QApplication>
 #include <QStringList>
+#include <QDir>
 
 #if defined(Q_OS_SYMBIAN)
 # include <f32file.h>
@@ -47,62 +51,92 @@
 
 QTM_BEGIN_NAMESPACE
 
-class DirChecker
-{
-public:
-    DirChecker();
-    ~DirChecker();
-    bool checkDir(const QDir& dir);
+//class DirChecker
+//{
+//public:
+//    DirChecker();
+//    ~DirChecker();
+//    bool checkDir(const QDir& dir);
 
-private:
+//private:
+//#if defined(Q_OS_SYMBIAN)
+//    RFs rfs;
+//#endif
+//};
+
+//#if defined(Q_OS_SYMBIAN)
+//DirChecker::DirChecker()
+//{
+//    qt_symbian_throwIfError(rfs.Connect());
+//}
+
+//bool DirChecker::checkDir(const QDir& dir)
+//{
+//    bool pathFound = false;
+//    // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
+//    // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
+//    // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
+//    // Use native Symbian code to check for directory existence, because checking
+//    // for files from under non-existent protected dir like E:/private/<uid> using
+//    // QDir::exists causes platform security violations on most apps.
+//    QString nativePath = QDir::toNativeSeparators(dir.absolutePath());
+//    TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
+//    TUint attributes;
+//    TInt err = rfs.Att(ptr, attributes);
+//    if (err == KErrNone) {
+//        // yes, the directory exists.
+//        pathFound = true;
+//    }
+//    return pathFound;
+//}
+
+//DirChecker::~DirChecker()
+//{
+//    rfs.Close();
+//}
+//#else
+//DirChecker::DirChecker()
+//{
+//}
+
+//DirChecker::~DirChecker()
+//{
+//}
+
+//bool DirChecker::checkDir(const QDir &dir)
+//{
+//    return dir.exists();
+//}
+//#endif
+
 #if defined(Q_OS_SYMBIAN)
-    RFs rfs;
-#endif
-};
-
-#if defined(Q_OS_SYMBIAN)
-DirChecker::DirChecker()
-{
-    qt_symbian_throwIfError(rfs.Connect());
-}
-
-bool DirChecker::checkDir(const QDir& dir)
-{
-    bool pathFound = false;
-    // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
-    // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
-    // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
-    // Use native Symbian code to check for directory existence, because checking
-    // for files from under non-existent protected dir like E:/private/<uid> using
-    // QDir::exists causes platform security violations on most apps.
-    QString nativePath = QDir::toNativeSeparators(dir.absolutePath());
-    TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
-    TUint attributes;
-    TInt err = rfs.Att(ptr, attributes);
-    if (err == KErrNone) {
-        // yes, the directory exists.
-        pathFound = true;
+    inline bool checkMobilityPluginsDir(const QDir &dir)
+    {
+        RFs rfs;
+        qt_symbian_throwIfError(rfs.Connect());
+        bool pathFound = false;
+        // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
+        // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
+        // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
+        // Use native Symbian code to check for directory existence, because checking
+        // for files from under non-existent protected dir like E:/private/<uid> using
+        // QDir::exists causes platform security violations on most apps.
+        QString nativePath = QDir::toNativeSeparators(dir.absolutePath());
+        TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
+        TUint attributes;
+        TInt err = rfs.Att(ptr, attributes);
+        if (err == KErrNone) {
+            // yes, the directory exists.
+            pathFound = true;
+        }
+        rfs.Close();
+        return pathFound;
     }
-    return pathFound;
-}
-
-DirChecker::~DirChecker()
-{
-    rfs.Close();
-}
 #else
-DirChecker::DirChecker()
-{
-}
-
-DirChecker::~DirChecker()
-{
-}
-
-bool DirChecker::checkDir(const QDir &dir)
-{
-    return dir.exists();
-}
+    inline bool checkMobilityPluginsDir(const QDir &dir)
+    {
+        return dir.exists();
+    }
 #endif
 
 inline QStringList mobilityPlugins(const QString plugintype)
@@ -120,7 +154,7 @@ inline QStringList mobilityPlugins(const QString plugintype)
         qDebug() << "Plugin paths:" << paths;
 #endif
 
-    DirChecker dirChecker;
+    //DirChecker dirChecker;
 
     //temp variable to avoid multiple identic path
     QSet<QString> processed;
@@ -134,7 +168,7 @@ inline QStringList mobilityPlugins(const QString plugintype)
             continue;
         processed.insert(paths.at(i));
         QDir pluginsDir(paths.at(i));
-        if (!dirChecker.checkDir(pluginsDir))
+        if (!checkMobilityPluginsDir(pluginsDir))
             continue;
 
 #if defined(Q_OS_WIN)
@@ -154,7 +188,7 @@ inline QStringList mobilityPlugins(const QString plugintype)
             || pluginsDir.path().endsWith(QLatin1String("/plugins/")))
             subdir = plugintype;
 
-        if (dirChecker.checkDir(QDir(pluginsDir.path() + QLatin1Char('/') + subdir))) {
+        if (checkMobilityPluginsDir(QDir(pluginsDir.path() + QLatin1Char('/') + subdir))) {
             pluginsDir.cd(subdir);
             QStringList files = pluginsDir.entryList(QDir::Files);
 
@@ -172,3 +206,5 @@ inline QStringList mobilityPlugins(const QString plugintype)
 }
 
 QTM_END_NAMESPACE
+
+#endif
