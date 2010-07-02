@@ -142,7 +142,6 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     QGraphicsWidget::resizeEvent(event);
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->setViewportSize(event->newSize());
-        d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 
     event->accept();
@@ -214,7 +213,6 @@ void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->setZoomLevel(zoomLevel);
-        d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 }
 
@@ -258,7 +256,6 @@ void QGeoMapWidget::pan(int dx, int dy)
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->pan(dx, dy);
         update();
-        d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 }
 
@@ -269,7 +266,6 @@ void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->setCenter(center);
-        d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 }
 
@@ -308,7 +304,6 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
             return;
 
         d_ptr->mapData->setMapType(mapType);
-        d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
 }
 
