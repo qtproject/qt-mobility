@@ -38,67 +38,42 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTMODEL_H
-#define QMLCONTACTMODEL_H
+#ifndef QMLCONTACTDETAIL_H
+#define QMLCONTACTDETAIL_H
 
-#include <QAbstractListModel>
 #include <QDeclarativePropertyMap>
 #include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactfetchrequest.h"
-#include "qmlcontact.h"
+#include "qcontactdetail.h"
 
 QTM_USE_NAMESPACE;
-class QMLContactModel : public QAbstractListModel
+
+class QMLContactDetail : public QObject
 {
-Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
+    Q_OBJECT
 public:
-    explicit QMLContactModel(QObject *parent = 0);
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(bool detailChanged READ detailChanged NOTIFY onDetailChanged)
 
-    enum {
-        InterestRole = Qt::UserRole + 500,
-        InterestLabelRole,
-        ContactRole,
-        ContactIdRole,
-        DetailsRole,
-        AvatarRole,
-        PresenceAvailableRole,
-        PresenceTextRole,
-        PresenceStateRole,
-        PresenceMessageRole
-    };
+    explicit QMLContactDetail(QObject* parent = 0);
+    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    QDeclarativePropertyMap* propertyMap() const;
+    Q_INVOKABLE QList<QObject*> fields() const;
+    bool detailChanged() const;
+    void setDetailChanged(bool changed);
+    QContactDetail detail() const;
+    QString name() const;
+    void setName(const QString& name);
 
-    QStringList availableManagers() const;
-
-    QString manager() const;
-    void setManager(const QString& manager);
-
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-
-    Q_INVOKABLE QList<QObject*> details(int id) const;
 signals:
-
-public slots:
-
+    void nameChanged();
+    void onDetailChanged();
 private slots:
-    void resultsReceived();
-    void fetchAgain();
-
+    void detailChanged(const QString &key, const QVariant &value);
 private:
-    QPair<QString, QString> interestingDetail(const QContact&c) const;
-    void exposeContactsToQML();
-    void fillContactsIntoMemoryEngine(QContactManager* manager);
-
-
-    QMap<QContactLocalId, QMLContact*> m_contactMap;
-    QList<QContact> m_contacts;
-    QContactManager* m_manager;
-    QContactFetchHint m_fetchHint;
-    QContactSortOrder m_sortOrder;
-    QContactFetchRequest m_contactsRequest;
+    bool m_detailChanged;
+    QDeclarativePropertyMap* m_map;
+    QString m_detailName;
+    QList<QObject*> m_fields;
 };
 
-#endif // QMLCONTACTMODEL_H
+#endif // QMLCONTACTDETAIL_H

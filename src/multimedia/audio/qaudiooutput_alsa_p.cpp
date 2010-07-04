@@ -220,8 +220,10 @@ void QAudioOutputPrivate::start(QIODevice* device)
     errorState = QAudio::NoError;
 
     // Handle change of mode
-    if(audioSource && !pullMode)
+    if(audioSource && !pullMode) {
         delete audioSource;
+        audioSource = 0;
+    }
 
     close();
 
@@ -243,8 +245,10 @@ QIODevice* QAudioOutputPrivate::start()
     errorState = QAudio::NoError;
 
     // Handle change of mode
-    if(audioSource && !pullMode)
+    if(audioSource && !pullMode) {
         delete audioSource;
+        audioSource = 0;
+    }
 
     close();
 
@@ -292,7 +296,10 @@ bool QAudioOutputPrivate::open()
     QList<QByteArray> devices = QAudioDeviceInfoInternal::availableDevices(QAudio::AudioOutput);
     if(dev.compare(QLatin1String("default")) == 0) {
 #if(SND_LIB_MAJOR == 1 && SND_LIB_MINOR == 0 && SND_LIB_SUBMINOR >= 14)
-        dev = QLatin1String(devices.first());
+        if (devices.size() > 0)
+            dev = QLatin1String(devices.first());
+        else
+            return false;
 #else
         dev = QLatin1String("hw:0,0");
 #endif
