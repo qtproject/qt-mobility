@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkproximityfilter.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QLandmarkProximityFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkProximityFilter"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkProximityFilter Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
+<p>The QLandmarkProximityFilter class is used to search for landmarks based on the radius around a given coordinate. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkProximityFilter&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="qlandmarkfilter.html">QLandmarkFilter</a>.</p>
+<ul>
+<li><a href="qlandmarkproximityfilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#Selection-enum">Selection</a></b> { SelectAll, SelectNearestOnly }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#QLandmarkProximityFilter">QLandmarkProximityFilter</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> = QGeoCoordinate(), double <i>radius</i> = -1 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#QLandmarkProximityFilter-2">QLandmarkProximityFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#dtor.QLandmarkProximityFilter">~QLandmarkProximityFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#coordinate">coordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#radius">radius</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Selection </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#selection">selection</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#setRadius">setRadius</a></b> ( double <i>radius</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkproximityfilter.html#setSelection">setSelection</a></b> ( Selection <i>selection</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkProximityFilter class is used to search for landmarks based on the radius around a given coordinate.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QLandmarkProximityFilter/Selection"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkProximityFilter/SelectAll"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkProximityFilter/SelectNearestOnly"></a>
+<h3 class="fn"><a name="Selection-enum"></a>enum QLandmarkProximityFilter::Selection</h3>
+<p>Defines the selection behavior of the proximity filter.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QLandmarkProximityFilter::SelectAll</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Selects all landmarks in the given proximity</td></tr>
+<tr><td valign="top"><tt>QLandmarkProximityFilter::SelectNearestOnly</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Selects only the closest landmark</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/QLandmarkProximityFilter"></a>
+<h3 class="fn"><a name="QLandmarkProximityFilter"></a>QLandmarkProximityFilter::QLandmarkProximityFilter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> = QGeoCoordinate(), double <i>radius</i> = -1 )</h3>
+<p>Creates a filter that will select landmarks within a given <i>radius</i> around a central <i>coordinate</i>.</p>
+<h3 class="fn"><a name="QLandmarkProximityFilter-2"></a>QLandmarkProximityFilter::QLandmarkProximityFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new proximity filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/~QLandmarkProximityFilter"></a>
+<h3 class="fn"><a name="dtor.QLandmarkProximityFilter"></a>QLandmarkProximityFilter::~QLandmarkProximityFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/coordinate"></a>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkProximityFilter::coordinate () const</h3>
+<p>Returns the central coordinate of the filter.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#setCoordinate">setCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/radius"></a>
+<h3 class="fn"><a name="radius"></a>double QLandmarkProximityFilter::radius () const</h3>
+<p>Returns the radius of the filter.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#setRadius">setRadius</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/selection"></a>
+<h3 class="fn"><a name="selection"></a><a href="qlandmarkproximityfilter.html#Selection-enum">Selection</a> QLandmarkProximityFilter::selection () const</h3>
+<p>Returns the selection type of the proximity filter. By default the proximity filter will be <tt>SelectAll</tt> to select all landmarks with a given proximity.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#setSelection">setSelection</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/setCoordinate"></a>
+<h3 class="fn"><a name="setCoordinate"></a>void QLandmarkProximityFilter::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Sets the central <i>coordinate</i> of the filter.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#coordinate">coordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/setRadius"></a>
+<h3 class="fn"><a name="setRadius"></a>void QLandmarkProximityFilter::setRadius ( double <i>radius</i> )</h3>
+<p>Sets the <i>radius</i> of the filter.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#radius">radius</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkProximityFilter/setSelection"></a>
+<h3 class="fn"><a name="setSelection"></a>void QLandmarkProximityFilter::setSelection ( <a href="qlandmarkproximityfilter.html#Selection-enum">Selection</a> <i>selection</i> )</h3>
+<p>Sets the <i>selection</i> type of the proximity filter.</p>
+<p>See also <a href="qlandmarkproximityfilter.html#selection">selection</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

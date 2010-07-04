@@ -53,19 +53,30 @@ QTM_BEGIN_NAMESPACE
   \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
 
-  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
-  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+  A vCard is represented in abstract form as a QVersitDocument that consists of a number of
+  properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for
+  instance.  Each of these properties is stored as an instance of a QVersitProperty in a
+  QVersitDocument.
 
-  QVersitProperty supports implicit sharing.
-  The property name and parameters of a QVersitProperty are converted to upper-case when they are
-  stored to a QVersitProperty.
+  A QVersitProperty consists of a list of groups, a name, a list of parameters (key/value pairs),
+  and a value.
 
-  The value of a QVersitProperty is stored as a QVariant and should always be one of three types:
-  QString for textual values, QByteArray for binary data (eg. images), or QVersitDocument for
-  nested documents.  The \l QVersitReader will parse Versit properties and assign the correct type
-  of object to the property value.  The \l QVersitWriter will serialise objects of these types
-  correctly into the (text-based) Versit format.
+  The value of a QVersitProperty is stored as a QVariant and should always be one of four types:
+  QString for textual values, QByteArray for binary data (eg. images), QStringList for structured
+  textual data, or QVersitDocument for nested documents.  The \l QVersitReader will parse Versit
+  properties and assign the correct type of object to the property value.  The \l QVersitWriter will
+  serialize objects of these types correctly into the (text-based) Versit format.
+
+  For example, a property might appear in a vCard as:
+  \code
+  ADR;TYPE=home,postal:;;123 Main Street;Any Town;CA;91921-1234
+  \endcode
+  This would be stored as a QVersitProperty with the name \tt{ADR} and two parameters (both named
+  \tt{TYPE} and with values \tt{home} and \tt{postal} respectively.  The value of the
+  QVersitProperty is a QStringList with six strings, and the valueType is CompoundType.
+
+  QVersitProperty supports implicit sharing.  The property name and parameter names of a
+  QVersitProperty are converted to upper-case when they are stored to a QVersitProperty.
 
   \sa QVersitDocument
  */
@@ -162,7 +173,6 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     QStringList groups = property.groups();
     QString name = property.name();
     QMultiHash<QString,QString> parameters = property.parameters();
-    QString value = property.value();
     dbg.nospace() << "QVersitProperty(";
     foreach (const QString& group, groups) {
         dbg.nospace() << group << '.';
@@ -172,7 +182,10 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
-    dbg.nospace() << ':' << value;
+    if (property.valueType() == QVersitProperty::VersitDocumentType)
+        dbg.nospace() << ':' << property.value<QVersitDocument>();
+    else
+        dbg.nospace() << ':' << property.variantValue();
     dbg.nospace() << ')';
     return dbg.maybeSpace();
 }
@@ -352,6 +365,7 @@ void QVersitProperty::clear()
     d->mName.clear();
     d->mValue.clear();
     d->mParameters.clear();
+    d->mValueType = QVersitProperty::PlainType;
 }
 
 QTM_END_NAMESPACE
