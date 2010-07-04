@@ -43,15 +43,6 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-
-#if defined(Q_OS_SYMBIAN)
-    #include "qremoteservicecontrol_s60_p.h"
-#elif defined(QT_NO_DBUS)
-    #include "qremoteservicecontrol_p.h"
-#else
-    #include "qremoteservicecontrol_dbus_p.h"
-#endif
-
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_symbian_p.h"
 #else
@@ -66,6 +57,7 @@
 #include <QSystemSemaphore>
 
 QTM_BEGIN_NAMESPACE
+
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
@@ -92,32 +84,15 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             lib.unload();
             return libPath;
         }
-#else
+#else       
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
             return lib.fileName();
         }
-#endif
+#endif        
     }
     return QString();
-}
-
-/*!
-    For now we assume that localsocket means IPC via QLocalSocket and
-    dbus means IPC via QDBusConnection on the system bus.
-    This needs to be extended as new IPC mechanisms are incorporated.
-*/
-static bool qservicemanager_isIpcBasedService(const QString& location)
-{
-    // Shall be generalized later on
-    // TODO: we don't actually have to specify the specific ipc mechanism
-    // a simple flag would do.
-    if (location.startsWith("localsocket:") ||
-        location.startsWith("symbianclientserver:") ||
-        location.startsWith("dbus:"))
-        return true;
-    return false;
 }
 
 
@@ -259,7 +234,7 @@ private slots:
     \value ImplementationAlreadyExists Another service that implements the same interface version has previously been registered.
     \value PluginLoadingFailed The service plugin cannot be loaded.
     \value ComponentNotFound The service or interface implementation has not been registered.
-    \value ServiceCapabilityDenied The security session does not permit service access based on its capabilities.
+    \value ServiceCapabilityDenied The security session does not allow the service based on its capabilities.
     \value UnknownError An unknown error occurred.
 */
 
@@ -298,7 +273,6 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
     d->scope = QService::UserScope;
 }
 
@@ -421,20 +395,8 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;
     }
 
-    const QString location = descriptor.attribute(QServiceInterfaceDescriptor::Location).toString();
-    if (qservicemanager_isIpcBasedService(location)) {
-        const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
-                .arg(descriptor.minorVersion()).toLatin1();
-        const QRemoteServiceIdentifier ident(descriptor.serviceName().toLatin1(), descriptor.interfaceName().toLatin1(), version);
-        QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
-        if (!service)
-            d->setError(InvalidServiceLocation);
-
-        //client owns proxy object
-        return service;
-    }
-
-    const QString serviceFilePath = qservicemanager_resolveLibraryPath(location);
+    QString serviceFilePath = qservicemanager_resolveLibraryPath(
+            descriptor.attribute(QServiceInterfaceDescriptor::Location).toString());
     if (serviceFilePath.isEmpty()) {
         d->setError(InvalidServiceLocation);
         return 0;
@@ -592,14 +554,8 @@ bool QServiceManager::addService(QIODevice *device)
     DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
-
     bool result = d->dbManager->registerService(results, scope);
 
-    //ipc services cannot be test loaded
-    if (qservicemanager_isIpcBasedService(results.location))
-        return result;
-
-    //test the new plug-in
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
@@ -650,12 +606,8 @@ bool QServiceManager::removeService(const QString& serviceName)
 
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
-    for (int i=0; i<descriptors.count(); i++) {
-        const QString loc = descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
-        //exclude ipc services
-        if (!qservicemanager_isIpcBasedService(loc))
-            pluginPathsSet << loc;
-    }
+    for (int i=0; i<descriptors.count(); i++)
+        pluginPathsSet << descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {

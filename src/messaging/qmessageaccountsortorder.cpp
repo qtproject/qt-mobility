@@ -47,9 +47,6 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of 
     queried accounts from the messaging store.
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageAccountSortOrder is composed of a account property to sort and a sort order. 

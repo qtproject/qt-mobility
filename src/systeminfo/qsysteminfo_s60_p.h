@@ -159,13 +159,7 @@ public:
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);};
+};
 
 
 //////// QSystemStorageInfo
@@ -183,10 +177,6 @@ public:
 
 private:
     RFs iFs;
-
-
-Q_SIGNALS:
-    void logicalDriveChanged(bool, const QString &);
 };
 
 //////// QSystemDeviceInfo
@@ -233,8 +223,6 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
-
-    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

@@ -1428,32 +1428,6 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
             break;
 
         case QContactFilter::ActionFilter:
-            {
-                // Find any matching actions, and do a union filter on their filter objects
-                QContactActionFilter af(filter);
-                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
-                
-                QString str;
-                QStringList strList;
-                for (int j = 0; j < descriptors.count(); j++) {
-                    QContactAction* action = QContactAction::action(descriptors.at(j));
-
-                    QContactFilter d = action->contactFilter(af.value());
-                    delete action; // clean up.
-                    if (!QContactManagerEngine::validateActionFilter(d))
-                        return QString();
-                    
-                    str = convertFilterToQueryString(d);
-                    if (str.isEmpty())
-                        return QString();
-                    strList << str;
-                }
-
-                if (!strList.isEmpty()) {
-                    ret =QString("(%1)").arg(strList.join(" OR "));
-                }
-                // Fall through to end
-            }
             break;
 
         case QContactFilter::IntersectionFilter:

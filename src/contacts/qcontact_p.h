@@ -75,9 +75,7 @@ public:
         : QSharedData(other),
         m_id(other.m_id),
         m_details(other.m_details),
-        m_relationshipsCache(other.m_relationshipsCache),
-        m_reorderedRelationshipsCache(other.m_reorderedRelationshipsCache),
-        m_preferences(other.m_preferences)
+        m_relationshipsCache(other.m_relationshipsCache)
     {
     }
 
@@ -86,8 +84,6 @@ public:
     QContactId m_id;
     QList<QContactDetail> m_details;
     QList<QContactRelationship> m_relationshipsCache;
-    QList<QContactRelationship> m_reorderedRelationshipsCache;
-    QMap<QString, int> m_preferences;
 };
 
 QTM_END_NAMESPACE

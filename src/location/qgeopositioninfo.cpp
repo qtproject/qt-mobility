@@ -57,9 +57,6 @@ public:
 /*!
     \class QGeoPositionInfo
     \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
-
-    \inmodule QtLocation
-    
     \ingroup location
 
     A QGeoPositionInfo contains, at a minimum, a geographical coordinate and
@@ -222,8 +219,8 @@ void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 
     Returns -1 if the value has not been set, although this may also
     be a legitimate value for some attributes.
-
-    The function hasAttribute() should be used to determine whether or
+    
+    The function hasAttribute() should be used to determine whether or 
     not a value has been set for an attribute.
 
     \sa hasAttribute(), setAttribute()

@@ -174,13 +174,6 @@ public:
 
     int displayBrightness(int screen);
     int colorDepth(int screen);
-
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QObject
@@ -197,15 +190,9 @@ public:
     QStringList logicalDrives();
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
-public Q_SLOTS:
-    void notificationArrived();
-
 private:
-    QMap<QString, QString> mountEntriesMap;
+    QHash<QString, QString> mountEntriesHash;
     void mountEntries();
-
-Q_SIGNALS:
-    void logicalDriveChanged(bool,const QString&);
 
 };
 
@@ -260,8 +247,6 @@ public:
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
-
-    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

@@ -48,7 +48,8 @@
 QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
-QVCard21Writer::QVCard21Writer() : QVersitDocumentWriter()
+QVCard21Writer::QVCard21Writer()
+    : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("2.1"))
 {
 }
 

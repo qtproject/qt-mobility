@@ -89,7 +89,6 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
-contains(build_docs, yes):SUBDIRS+=demos
 
 #updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
@@ -156,12 +155,6 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
         INSTALLS += qtmheaderssensors
     }
-
-    contains(mobility_modules,organizer) {
-        qtmheadersorganizer.path = $${QT_MOBILITY_INCLUDE}/QtOrganizer
-        qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
-        INSTALLS += qtmheadersorganizer
-    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
@@ -175,8 +168,7 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtPublishSubscribe/* \
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
-                       include/QtSensors/* \
-                       include/QtOrganizer/*
+                       include/QtSensors/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
@@ -190,7 +182,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

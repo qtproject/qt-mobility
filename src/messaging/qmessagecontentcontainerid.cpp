@@ -44,9 +44,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainerId
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     \brief The QMessageContentContainerId class provides a unique identifier for 

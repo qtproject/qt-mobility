@@ -1,0 +1,950 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "fieldnames.loc"
+#include "cntmodelextuids.hrh"
+#include <cntdef.hrh> // as existing version, but see below
+#include <cntmodel.rh>
+
+
+//  
+// There are two ways of defining custom filterable fields.  The two methods cannot be mixed.
+//
+// Option 1. uses a single flag (KIntFieldFlagFilterable) to define up to four custom filterable fields. 
+// The order of priority of the fields is the order in which they are defined in an rss file. 
+// 
+// Option 2.uses four flags to define up to four custom filterable fields. KIntFieldFlagFilterable1 defines the highest priority 
+// field and KIntFieldFlagFilterable4 defines the lowest priority one. The order in which the fields appear in an rss file
+// is unimportant.
+// In total, the filterable fields must define a series starting at KIntFieldFlagFilterable1 and without gaps (e.g. it is possible 
+// to define fields with KIntFieldFlagFilterable3, KIntFieldFlagFilterable1 and KIntFieldFlagFilterable2, but illegal 
+// to define fields with KIntFieldFlagFilterable1, KIntFieldFlagFilterable4 and KIntFieldFlagFilterable3).
+// NOTE: see STRING_r_cntui_new_field_defns52 and STRING_r_cntui_new_field_defns51 below.
+//  
+
+// These field type UIDs are used in testing of the custom filterable fields only.
+// Licensees should register new UIDs for their own filterable fields.
+
+#define KUidContactFieldCustom1Value		0x101FD209
+#define KUidContactFieldCustom2Value		0x101FD20A
+
+//
+// FROM EIKDEF.RH - avoids CntModel requiring Eikon
+//
+STRUCT RSS_SIGNATURE
+    {
+    LONG signature=4; // EEikResourceSignatureValue;
+    SRLINK self;
+    }
+
+STRUCT ARRAY
+    {
+    STRUCT items[];
+    }
+
+RESOURCE RSS_SIGNATURE { }
+
+/**
+ * Symbian backend default contact card template. This resource is read by cntmodel
+ * when it creates a new database.
+ *
+ * @see FIELD
+ * @see CContactDatabase#CreateTemplateAndPrefsL()
+ */
+RESOURCE ARRAY r_cntui_new_field_defns
+    {
+    items=
+      {
+      
+      FIELD // Name: prefix
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPrefixNameValue;
+			vCardMapping=KIntContactFieldVCardMapUnusedN;
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns1;
+			flags=EContactFieldFlagDisabled;
+			},
+			FIELD	// Name: first name
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldGivenNameValue;
+			vCardMapping = KIntContactFieldVCardMapUnusedN;
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_first_name;
+			},
+			FIELD //Name: middle name
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldAdditionalNameValue;
+			vCardMapping=KIntContactFieldVCardMapUnusedN;
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns3;
+			flags=EContactFieldFlagDisabled;
+			},
+			FIELD //Name: is this needed, what is the difference between KUidContactFieldAdditionalNameValue and KUidContactFieldSecondNameValue
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldSecondNameValue;
+			vCardMapping=KIntContactFieldVCardMapSECONDNAME;
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns_second_name;
+			},
+			FIELD	// Name: last name
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldFamilyNameValue;
+			vCardMapping = KIntContactFieldVCardMapUnusedN;
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_last_name;
+			},
+			FIELD // Name: suffix
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldSuffixNameValue;
+			vCardMapping=KIntContactFieldVCardMapUnusedN;
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns5;
+			flags=EContactFieldFlagDisabled;
+			},
+      FIELD	// Phone Number (Home)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+          // NOTE: Ordering differs from contact model default template
+			    MAPPING { mapping=KIntContactFieldVCardMapVOICE; },
+          MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category = EContactCategoryHome;
+            fieldName = qtn_phob_lbl_number_home;
+			},
+      FIELD	// Phone Number Mobile  (Home)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+          // NOTE: Ordering differs from contact model default template
+			    MAPPING { mapping=KIntContactFieldVCardMapCELL; },
+          MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_number_mobile_home;
+			},
+      FIELD	// Fax Number (Home)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldFaxValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+          // NOTE: Ordering differs from contact model default template
+			    MAPPING { mapping=KIntContactFieldVCardMapFAX; },
+          MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_fax_home;
+			},
+			FIELD // Number: BBS 
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPhoneNumberValue;
+			vCardMapping=KIntContactFieldVCardMapTEL;
+			extraMapping=
+			  {
+			  MAPPING { mapping=KIntContactFieldVCardMapHOME; },
+				MAPPING { mapping=KIntContactFieldVCardMapBBS; }
+				};
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns10;
+			},
+			FIELD // Number: car
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPhoneNumberValue;
+			vCardMapping=KIntContactFieldVCardMapTEL;
+			extraMapping=
+			  {
+			  MAPPING { mapping=KIntContactFieldVCardMapHOME; },
+				MAPPING { mapping=KIntContactFieldVCardMapCAR; }
+				};
+			category=EContactCategoryHome;
+			fieldName=STRING_r_cntui_new_field_defns11;
+			},
+      FIELD // Number: video calls (Home)
+          {
+	      fieldStorageType=KStorageTypeText;
+	      contactFieldType=KUidContactFieldPhoneNumberValue;
+	      vCardMapping=KIntContactFieldVCardMapTEL;
+	      extraMapping=
+              {
+	          MAPPING { mapping=KIntContactFieldVCardMapHOME; },
+	          MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+	          };
+	      category=EContactCategoryHome;
+	      fieldName=qtn_phob_lbl_video_home;
+          },
+      FIELD	// Email Address (Home)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldEMailValue;
+			vCardMapping = KIntContactFieldVCardMapEMAILINTERNET;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+          };
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_email_home;
+			},
+      FIELD	// URL (Home)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldUrlValue;
+			vCardMapping = KIntContactFieldVCardMapURL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_url_home;
+			},
+			FIELD	// Label Address (Home)
+			{
+      // NOTE: This data differs from contact model default template
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldAddressValue;
+			vCardMapping = KIntContactFieldVCardMapLABEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category = EContactCategoryHome;
+			fieldName = qtn_phob_lbl_address_home;
+			},
+		FIELD   // P.O.box (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostOfficeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTOFFICE;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_pobox_home; 
+			},
+		FIELD   // Extension address (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldExtendedAddressValue;
+			vCardMapping=KIntContactFieldVCardMapEXTENDEDADR;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_extencion_home;
+			},
+		FIELD   // Street (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldAddressValue;
+			vCardMapping=KIntContactFieldVCardMapADR;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_street_home;
+		  },
+      FIELD   // Postal code (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostCodeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTCODE;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_postal_code_home;
+      },
+      FIELD   // City (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldLocalityValue;
+			vCardMapping=KIntContactFieldVCardMapLOCALITY;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_city_home;
+			},
+			FIELD   // State (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldRegionValue;
+			vCardMapping=KIntContactFieldVCardMapREGION;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_state_home;
+			},
+			FIELD   // Country (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldCountryValue;
+			vCardMapping=KIntContactFieldVCardMapCOUNTRY;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_country_home;
+			},
+			FIELD   // Spouse
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldSpouseValue;
+			vCardMapping=KIntContactFieldVCardMapSpouse;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_spouse;
+			},
+			FIELD   // Children
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldChildrenValue;
+			vCardMapping=KIntContactFieldVCardMapChildren;
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_children;
+			},
+// work related
+      FIELD	// Job Title
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldJobTitleValue;
+			vCardMapping = KIntContactFieldVCardMapTITLE;
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_job_title;
+			},
+      FIELD	// Company Name
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldCompanyNameValue;
+			vCardMapping = KIntContactFieldVCardMapORG;
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_company_name;
+			},
+			FIELD	// Department
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldDepartmentNameValue;
+			vCardMapping = KIntContactFieldVCardMapDepartment;
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_dept_name;
+			},
+      FIELD	// Phone Number (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+                // NOTE: Ordering differs from contact model default template
+			    MAPPING { mapping=KIntContactFieldVCardMapVOICE; },
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_number_work;
+			},
+      FIELD	// Phone Number Mobile  (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+                // NOTE: Contact model default template has mapping: WORK,VOICE,CELL
+			    MAPPING { mapping=KIntContactFieldVCardMapCELL; },
+                MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_number_mobile_work;
+			},
+      FIELD	// Fax Number (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldFaxValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+                // NOTE: Ordering differs from contact model default template
+			    MAPPING { mapping=KIntContactFieldVCardMapFAX; },
+                MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_fax_work;
+			},
+		FIELD // Number: video calls (Work)
+		    {
+		    fieldStorageType=KStorageTypeText;
+		    contactFieldType=KUidContactFieldPhoneNumberValue;
+		    vCardMapping=KIntContactFieldVCardMapTEL;
+		    extraMapping=
+                {
+		        MAPPING { mapping=KIntContactFieldVCardMapWORK; },
+		        MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+		        };
+		     category=EContactCategoryWork;
+		     fieldName=qtn_phob_lbl_video_work;
+		     },
+			FIELD //Assistant number
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldPhoneNumberValue;
+      vCardMapping=KIntContactFieldVCardMapAssistantTel;
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_number_assistant;
+      },
+      FIELD //Assistant name
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAssistantValue;
+      vCardMapping=KIntContactFieldVCardMapAssistant;
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_assistant_name;
+      },
+      FIELD	// Email Address (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldEMailValue;
+			vCardMapping = KIntContactFieldVCardMapEMAILINTERNET;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+                };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_email_work;
+			},
+      FIELD	// URL (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldUrlValue;
+			vCardMapping = KIntContactFieldVCardMapURL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_url_work;
+			},
+			FIELD	// Label Address (Work)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldAddressValue;
+			vCardMapping = KIntContactFieldVCardMapLABEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category = EContactCategoryWork;
+			fieldName = qtn_phob_lbl_address_work;
+			},
+			FIELD   // P.O.box (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostOfficeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTOFFICE;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_pobox_work; 
+			},
+			FIELD   // Extension address (work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldExtendedAddressValue;
+			vCardMapping=KIntContactFieldVCardMapEXTENDEDADR;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_extencion_work;
+			},
+			FIELD   // Street (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldAddressValue;
+			vCardMapping=KIntContactFieldVCardMapADR;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_street_work;
+      },
+			FIELD   // Postal code (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostCodeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTCODE;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_postal_code_work;
+            },
+      FIELD   // City (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldLocalityValue;
+			vCardMapping=KIntContactFieldVCardMapLOCALITY;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_city_work;
+			},
+			FIELD   // State (work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldRegionValue;
+			vCardMapping=KIntContactFieldVCardMapREGION;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_state_work;
+			},
+			FIELD   // Country (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldCountryValue;
+			vCardMapping=KIntContactFieldVCardMapCOUNTRY;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_country_work;
+			},
+
+// general
+      FIELD	// Phone Number (general)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapVOICE; }
+			    };
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_number_standard;
+            },
+        FIELD	// Phone Number Mobile (general)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapCELL; }
+			    };
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_number_mobile;
+			},
+      // NOTE: Contact model default template has only HOME and WORK pager
+      FIELD	// Pager Number
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPhoneNumberValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapPAGER; }
+			    };
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_pager;
+			},
+      FIELD	// Fax Number (general)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldFaxValue;
+			vCardMapping = KIntContactFieldVCardMapTEL;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapFAX; }
+			    };
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_fax;
+			},
+      FIELD // Number: video calls (general)
+            {
+	        fieldStorageType=KStorageTypeText;
+	        contactFieldType=KUidContactFieldPhoneNumberValue;
+	        vCardMapping=KIntContactFieldVCardMapTEL;
+	        extraMapping=
+                {
+	            MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+	            };
+	        category=EContactCategoryNone;
+	        fieldName=qtn_phob_lbl_video;
+	        },
+      FIELD	// Email Address (general)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldEMailValue;
+			vCardMapping = KIntContactFieldVCardMapEMAILINTERNET;
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_email;
+			},
+      FIELD	// URL (general)
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldUrlValue;
+			vCardMapping = KIntContactFieldVCardMapURL;
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_url;
+			},
+			FIELD	// Label Address (general)
+			{
+            // NOTE: This data differs from contact model default template
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldAddressValue;
+			vCardMapping = KIntContactFieldVCardMapLABEL;
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_address;
+			},
+			FIELD   // P.O.box (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostOfficeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTOFFICE;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_pobox; 
+			},
+			FIELD   // Extension address (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldExtendedAddressValue;
+			vCardMapping=KIntContactFieldVCardMapEXTENDEDADR;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_extencion;
+			},
+			FIELD   // Street (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldAddressValue;
+			vCardMapping=KIntContactFieldVCardMapADR;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_street;
+		  },
+      FIELD   // Postal code (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldPostCodeValue;
+			vCardMapping=KIntContactFieldVCardMapPOSTCODE;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_postal_code;
+      },
+      FIELD   // City (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldLocalityValue;
+			vCardMapping=KIntContactFieldVCardMapLOCALITY;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_city;
+			},
+			FIELD   // State (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldRegionValue;
+			vCardMapping=KIntContactFieldVCardMapREGION;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_state;
+			},
+			FIELD   // Country (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldCountryValue;
+			vCardMapping=KIntContactFieldVCardMapCOUNTRY;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_country;
+			},
+      // NOTE: There is no DTMF field in the contact model default template
+      FIELD	// DTMF String
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldDTMFValue;
+            // NOTE: DTMF is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryOther;
+			fieldName = qtn_phob_lbl_dtmf;
+            // NOTE: DTMF is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+			FIELD	// Date
+			{
+			fieldStorageType = KStorageTypeDateTime;
+			contactFieldType = KUidContactFieldBirthdayValue;
+			vCardMapping = KIntContactFieldVCardMapBDAY;
+			category = EContactCategoryOther;
+			fieldName = qtn_phob_lbl_date;
+			},
+      FIELD	// Note
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldNoteValue;
+			vCardMapping = KIntContactFieldVCardMapNOTE;
+			category = EContactCategoryOther;
+			fieldName = qtn_phob_lbl_note;
+			},
+        // NOTE: There is no corresponding field in the contact model default template
+			FIELD	// Picture
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldPictureValue;
+      // NOTE: Picture is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+      // NOTE: Picture is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+    // NOTE: Thumbnail is much like PHOTO in contact model default template
+		FIELD	// Thumbnail Image
+			{
+			fieldStorageType = KPbkThumbnailFieldStorageType;
+			contactFieldType = KUidContactFieldPictureValue;
+			vCardMapping = KIntContactFieldVCardMapPHOTO;
+			category = EContactCategoryNone;
+			},
+    // NOTE: There is no corresponding field in the contact model default template
+		FIELD	// Personal Ringing Tone Indication
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldRingToneValue;
+            // NOTE: Ringing tone is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+			fieldName = qtn_phob_lbl_tone;
+            // NOTE: Ringing tone is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+		FIELD	// Personal Video Ringing Tone Indication
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldVideoRingToneValue;
+            // NOTE: Ringing tone is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+			fieldName = STRING_r_cntui_new_field_defns12;
+            // NOTE: Ringing tone is not imported or exported with PC Sync
+			flags=EContactFieldFlagDisabled;
+			},
+	
+     // NOTE: There is no corresponding field in the contact model default template
+		FIELD	// Location privacy indicator
+			{
+			fieldStorageType = KStorageTypeText;
+			contactFieldType = KPbkUidContactFieldLocationPrivValue;
+            // NOTE: Locationing privacy is not imported or exported in vCards
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone;
+            // NOTE: Locationing privacy is not imported or exported with PC Sync
+            // NOTE: The First(1) custom field. Next field needs to be added after this field
+            // NOTE: Custom filter flags are index/order dependent!
+			flags=KIntFieldFlagFilterable1;//EContactFieldFlagFilterable;
+			},
+    // NOTE: There is no corresponding field in the contact model default template 
+    FIELD	// Top Contact Indicator
+			{
+			fieldStorageType = KStorageTypeText; // text type to store the order of top contacts
+			contactFieldType = KUidContactFieldTopContactValue;
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone; // To be set to some other val ?
+			fieldName = "Top Contact"; // debugging purposes, no need to localize		
+      // NOTE: Top Contact is filterable	
+			flags=KIntFieldFlagFilterable2; 
+			},			
+    FIELD	// IMPP
+      {
+      fieldStorageType = KStorageTypeText;
+			contactFieldType = KUidContactFieldIMPPValue;
+			vCardMapping = KIntContactFieldVCardMapUnknown;
+			category = EContactCategoryNone; // TODO: To be set to some other val ?
+			},			
+		FIELD   // Geo (Home)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldGEOValue;
+			vCardMapping = KIntContactFieldVCardMapGEO;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+			    };
+			category=EContactCategoryHome;
+			fieldName=qtn_phob_lbl_geo_home;
+			},
+		FIELD   // Geo (Work)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldGEOValue;
+			vCardMapping = KIntContactFieldVCardMapGEO;
+			extraMapping=
+			    {
+			    MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+			    };
+			category=EContactCategoryWork;
+			fieldName=qtn_phob_lbl_geo_work;
+			},
+		FIELD   // Geo (general)
+			{
+			fieldStorageType=KStorageTypeText;
+			contactFieldType=KUidContactFieldGEOValue;
+			vCardMapping = KIntContactFieldVCardMapGEO;
+			category=EContactCategoryNone;
+			fieldName=qtn_phob_lbl_geo;
+			},
+    FIELD 	// Share video (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+	        {
+          MAPPING { mapping=KIntContactFieldVCardMapSWIS; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_swis;
+      },
+    FIELD // VOIP (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_voip;
+      },
+    FIELD // VOIP (home)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; },
+          MAPPING { mapping=KIntContactFieldVCardMapHOME; }
+          };
+      category=EContactCategoryHome;
+      fieldName=qtn_phob_lbl_voip_home;
+      },
+    FIELD // VOIP (work)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapVOIP; },
+          MAPPING { mapping=KIntContactFieldVCardMapWORK; }
+          };
+      category=EContactCategoryWork;
+      fieldName=qtn_phob_lbl_voip_work;
+      },          
+    FIELD // SIP (general)
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldSIPIDValue;
+      vCardMapping=KIntContactFieldVCardMapSIPID;
+      extraMapping=
+          {
+          MAPPING { mapping=KIntContactFieldVCardMapSIPID; }
+          };
+      category=EContactCategoryNone;
+      fieldName=qtn_phob_lbl_sip;
+      },
+    FIELD // Sync target
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldClassValue;
+      vCardMapping=KIntContactFieldVCardMapClass;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns13;
+      },      
+    FIELD // Gender
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldGenderValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryNone;
+      fieldName=STRING_r_cntui_new_field_defns14;
+      },
+    FIELD // Anniversary
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAnniversaryValue;
+      vCardMapping=KIntContactFieldVCardMapAnniversary;
+      category=EContactCategoryOther;
+      fieldName=STRING_r_cntui_new_field_defns66;
+      }  
+
+    };
+ }
+
+// End of File

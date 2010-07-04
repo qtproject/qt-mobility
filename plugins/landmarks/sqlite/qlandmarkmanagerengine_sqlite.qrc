@@ -1,7 +1,0 @@
-
-<RCC>
-    <qresource prefix="/" >
-        <file>qlandmarkmanagerengine_sqlite_fk.ddl</file>
-        <file>qlandmarkmanagerengine_sqlite_no_fk.ddl</file>
-    </qresource>
-</RCC>

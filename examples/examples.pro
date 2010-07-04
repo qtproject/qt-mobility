@@ -5,14 +5,13 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-            bluetoothtransferplugin \
-            notesmanagerplugin \
-            servicebrowser
+               bluetoothtransferplugin \
+               notesmanagerplugin \
+               servicebrowser
 
-    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    !symbian:contains(QT_CONFIG, declarative) {
+    contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -29,32 +28,23 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-               satellitedialog 
-
-    !symbian:!wince* {
-        SUBDIRS += landmarkbrowser
-    }
-
-    !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += qgeoapiui \
-                   mapviewer
-
-    }
-
+		satellitedialog
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo
-                   #mapviewer (disable for now) 
-                   #qgeoapiui
-        
+    	SUBDIRS += flickrdemo \
+		    weatherinfo \
+		    lightmaps
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
-    }
+    }		
 }
 
 #Contacts examples
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        sources.files += qmlcontacts
+    }
 }
 
 #Publish and Subscribe examples
@@ -74,9 +64,10 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
+    #disabled on Symbian due to missing backend
     SUBDIRS += \
         radio \
-        camera \
+        player \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -93,7 +84,8 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
         !win32-g++ {
 	    SUBDIRS += \
                 querymessages \
-                writemessage
+                writemessage \
+                serviceactions
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
@@ -110,29 +102,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-contains(mobility_modules,gallery) {
-    SUBDIRS += \
-        mediabrowser
-
-    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
-}
-
-# Organizer API examples
-contains(mobility_modules, organizer) {
-    SUBDIRS += calendardemo
-}
-
-# Telephony API examples
-contains(mobility_modules,telephony) {
-    !mac:SUBDIRS += telephony
-}
-
-# Feedback API examples
-contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer
-}
-
-sources.path = $$QT_MOBILITY_EXAMPLES
-
+sources.path = $$QT_MOBILITY_PREFIX/bin
 INSTALLS += sources
-

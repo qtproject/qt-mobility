@@ -63,9 +63,8 @@ class Q_VERSIT_EXPORT QVersitDocument
 public:
     enum VersitType {
         InvalidType,
-        VCard21Type,    // vCard version 2.1
-        VCard30Type,    // vCard version 3.0 (RFC 2426)
-        ICalendar20Type,// iCalendar version 2.0 (RFC 2445)
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
     };
 
     QVersitDocument();
@@ -77,24 +76,14 @@ public:
     bool operator==(const QVersitDocument& other) const;
     bool operator!=(const QVersitDocument& other) const;
 
-    // Metadata about the versit document
-    // The type determines the format for serialization
+    // metadata about the versit document itself.
     void setType(VersitType type);
     VersitType type() const;
 
-    // The componentType is the value of the BEGIN property
-    void setComponentType(QString componentType);
-    QString componentType() const;
-
-    // The content
     void addProperty(const QVersitProperty& property);
     void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
     QList<QVersitProperty> properties() const;
-
-    void addSubDocument(const QVersitDocument& subdocument);
-    void setSubDocuments(const QList<QVersitDocument>& documents);
-    QList<QVersitDocument> subDocuments() const;
 
     bool isEmpty() const;
     void clear();

@@ -89,19 +89,19 @@
     has been made to these files:
 
     \list
-    \o Renamed FT_ and ft_ symbols to QT_FT_ and qt_ft_ to avoid name
+    \i Renamed FT_ and ft_ symbols to QT_FT_ and qt_ft_ to avoid name
     conflicts.
-    \o Removed parts of code not relevant when compiled with
+    \i Removed parts of code not relevant when compiled with
     _STANDALONE_ defined.
-    \o Changed behavior in ftraster.c to follow X polygon filling
+    \i Changed behavior in ftraster.c to follow X polygon filling
     rules.
-    \o Implemented support in ftraster.c for winding / odd even
+    \i Implemented support in ftraster.c for winding / odd even
     polygon fill rules.
-    \o Replaced bitmap generation with span generation in ftraster.c
-    \o Renamed: ftraster.h to qblackraster_p.h
-    \o Renamed: ftraster.c to qblackraster.c
-    \o Renamed: ftgrays.h to qgrayraster_p.h
-    \o Renamed: ftgrays.c to qgrayraster.c
+    \i Replaced bitmap generation with span generation in ftraster.c
+    \i Renamed: ftraster.h to qblackraster_p.h
+    \i Renamed: ftraster.c to qblackraster.c
+    \i Renamed: ftgrays.h to qgrayraster_p.h
+    \i Renamed: ftgrays.c to qgrayraster.c
     \endlist
 
     \section1 HarfBuzz (\c harfbuzz)

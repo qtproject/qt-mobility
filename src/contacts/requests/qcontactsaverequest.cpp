@@ -57,9 +57,6 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
-  \inmodule QtContacts
-  
   \ingroup contacts-requests
  */
 
@@ -67,12 +64,6 @@ QTM_BEGIN_NAMESPACE
 QContactSaveRequest::QContactSaveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
-}
-
-/*! Frees any memory used by this request */
-QContactSaveRequest::~QContactSaveRequest()
-{
-    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!

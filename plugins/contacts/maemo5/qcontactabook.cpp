@@ -624,38 +624,6 @@ QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) con
   return id;
 }
 
-bool QContactABook::contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const
-{
-  OssoABookCapsFlags capsFlags = osso_abook_caps_get_capabilities(OSSO_ABOOK_CAPS(contact));
-
-  if(capsFlags & OSSO_ABOOK_CAPS_NONE)
-    return false;
-
-  /* ActionNames could be incorrect */
-  OssoABookCapsFlags actionFlags = OSSO_ABOOK_CAPS_NONE;
-  for(int i = 0; i < descriptors.size(); i++){
-    QString actionName = descriptors.at(i).actionName();
-    QCM5_DEBUG << actionName;
-    if(!actionName.compare("Phone"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_PHONE);
-    else if(!actionName.compare("Voice"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE);
-    else if(!actionName.compare("SendEmail"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_EMAIL);
-    else if(!actionName.compare("Chat"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT);
-    else if(!actionName.compare("ChatAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT_ADDITIONAL);
-    else if(!actionName.compare("VoiceAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE_ADDITIONAL);
-    else if(!actionName.compare("Video"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VIDEO);
-    else if(!actionName.compare("Addressbook"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_ADDRESSBOOK);
-  }
-  return ((actionFlags & capsFlags) == actionFlags);
-}
-
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
 {
   EBookQuery* query = NULL;
@@ -731,7 +699,6 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       query = e_book_query_from_string(qPrintable(queryStr));
     } break;
     case QContactFilter::ActionFilter:
-      QCM5_DEBUG << "ActionFilter"; //eQuery doesn't support ActionFilter
       break;
     case QContactFilter::IntersectionFilter:
     {

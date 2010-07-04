@@ -15,4 +15,3 @@ CONFIG += mobility
 MOBILITY += sensors
 CONFIG += link_pkgconfig
 PKGCONFIG += sensord
-

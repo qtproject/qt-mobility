@@ -55,20 +55,42 @@
 //
 
 #include "qmobilityglobal.h"
-#include "qtcontacts.h"
+
+#include <qcontactdetail.h>
+#include <qcontactname.h>
+#include <qcontactemailaddress.h>
+#include <qcontactphonenumber.h>
+#include "qcontactaddress.h"
+#include <qcontacturl.h>
+#include <qcontactguid.h>
+#include <qcontactorganization.h>
+#include <qcontacttimestamp.h>
+#include <qcontactbirthday.h>
+#include <qcontactnote.h>
+#include <qcontactgeolocation.h>
+#include <qcontactavatar.h>
+#include <qcontactgender.h>
+#include <qcontactnickname.h>
+#include <qcontactanniversary.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactfamily.h>
+#include <qcontactdisplaylabel.h>
+#include <qcontacttag.h>
+#include <qcontactringtone.h>
+#include <qcontactthumbnail.h>
 
 QTM_BEGIN_NAMESPACE
 
 // Mapping between a string in versit specifications and Qt contact details
-struct VersitDetailMapping {
+struct VersitContactDetailMapping {
     const char* versitPropertyName;
-    const char* detailDefinitionName;
-    const char* detailFieldName;
+    const char* contactDetailDefinitionName;
+    const char* contactDetailValueKey;
 };
 
 //! [Property name mappings]
 // Mappings from versit property names to Qt contact details
-const VersitDetailMapping versitContactDetailMappings[] = {
+const VersitContactDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.latin1(),
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.latin1(),

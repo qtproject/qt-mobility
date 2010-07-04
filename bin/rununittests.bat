@@ -54,11 +54,6 @@ tst_qservicemanager.exe
 tst_qservicefilter.exe
 tst_qserviceinterfacedescriptor.exe
 tst_qabstractsecuritysession.exe
-tst_qservicecontext.exe
-tst_qmetaobjectbuilder.exe
-tst_icheck.exe
-tst_qservicemanager_ipc.exe
-tst_qremoteserviceclassregister.exe
 
 ::BearerManagement
 tst_qnetworkconfiguration.exe
@@ -78,10 +73,6 @@ tst_qnmeapositioninfosource_realtime.exe
 tst_qnmeapositioninfosource_realtime_generic.exe
 tst_qnmeapositioninfosource_simulation.exe
 tst_qnmeapositioninfosource_simulation_generic.exe
-
-::Landmarks
-tst_qlandmark.exe
-tst_qlandmarkcategory.exe
 
 ::Publish and Subscribe
 tst_qvaluespace.exe

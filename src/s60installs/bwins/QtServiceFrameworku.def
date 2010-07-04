@@ -1,275 +1,217 @@
-	??0InstanceManager@QtMobility@@QAE@XZ @ 106 NONAME ; QtMobility::InstanceManager::InstanceManager(void)
-	??0QMetaEnumBuilder@QtMobility@@AAE@PBVQMetaObjectBuilder@1@H@Z @ 107 NONAME ; QtMobility::QMetaEnumBuilder::QMetaEnumBuilder(class QtMobility::QMetaObjectBuilder const *, int)
-	??0QMetaEnumBuilder@QtMobility@@QAE@XZ @ 108 NONAME ; QtMobility::QMetaEnumBuilder::QMetaEnumBuilder(void)
-	??0QMetaMethodBuilder@QtMobility@@AAE@PBVQMetaObjectBuilder@1@H@Z @ 109 NONAME ; QtMobility::QMetaMethodBuilder::QMetaMethodBuilder(class QtMobility::QMetaObjectBuilder const *, int)
-	??0QMetaMethodBuilder@QtMobility@@QAE@XZ @ 110 NONAME ; QtMobility::QMetaMethodBuilder::QMetaMethodBuilder(void)
-	??0QMetaObjectBuilder@QtMobility@@QAE@PBUQMetaObject@@V?$QFlags@W4AddMember@QMetaObjectBuilder@QtMobility@@@@@Z @ 111 NONAME ; QtMobility::QMetaObjectBuilder::QMetaObjectBuilder(struct QMetaObject const *, class QFlags<enum QtMobility::QMetaObjectBuilder::AddMember>)
-	??0QMetaObjectBuilder@QtMobility@@QAE@XZ @ 112 NONAME ; QtMobility::QMetaObjectBuilder::QMetaObjectBuilder(void)
-	??0QMetaPropertyBuilder@QtMobility@@AAE@PBVQMetaObjectBuilder@1@H@Z @ 113 NONAME ; QtMobility::QMetaPropertyBuilder::QMetaPropertyBuilder(class QtMobility::QMetaObjectBuilder const *, int)
-	??0QMetaPropertyBuilder@QtMobility@@QAE@XZ @ 114 NONAME ; QtMobility::QMetaPropertyBuilder::QMetaPropertyBuilder(void)
-	??0QRemoteServiceControl@QtMobility@@QAE@PAVQObject@@@Z @ 115 NONAME ; QtMobility::QRemoteServiceControl::QRemoteServiceControl(class QObject *)
-	??0QServiceIpcEndPoint@QtMobility@@QAE@PAVQObject@@@Z @ 116 NONAME ; QtMobility::QServiceIpcEndPoint::QServiceIpcEndPoint(class QObject *)
-	??0QServicePackage@QtMobility@@QAE@ABV01@@Z @ 117 NONAME ; QtMobility::QServicePackage::QServicePackage(class QtMobility::QServicePackage const &)
-	??0QServicePackage@QtMobility@@QAE@XZ @ 118 NONAME ; QtMobility::QServicePackage::QServicePackage(void)
-	??0ServiceDatabase@QtMobility@@QAE@XZ @ 119 NONAME ; QtMobility::ServiceDatabase::ServiceDatabase(void)
-	??0ServiceMetaData@QtMobility@@QAE@ABVQString@@@Z @ 120 NONAME ; QtMobility::ServiceMetaData::ServiceMetaData(class QString const &)
-	??0ServiceMetaData@QtMobility@@QAE@PAVQIODevice@@@Z @ 121 NONAME ; QtMobility::ServiceMetaData::ServiceMetaData(class QIODevice *)
-	??1DBError@QtMobility@@QAE@XZ @ 122 NONAME ; QtMobility::DBError::~DBError(void)
-	??1DatabaseFileWatcher@QtMobility@@UAE@XZ @ 123 NONAME ; QtMobility::DatabaseFileWatcher::~DatabaseFileWatcher(void)
-	??1DatabaseManager@QtMobility@@UAE@XZ @ 124 NONAME ; QtMobility::DatabaseManager::~DatabaseManager(void)
-	??1InstanceManager@QtMobility@@QAE@XZ @ 125 NONAME ; QtMobility::InstanceManager::~InstanceManager(void)
-	??1QMetaObjectBuilder@QtMobility@@UAE@XZ @ 126 NONAME ; QtMobility::QMetaObjectBuilder::~QMetaObjectBuilder(void)
-	??1QRemoteServiceControl@QtMobility@@UAE@XZ @ 127 NONAME ; QtMobility::QRemoteServiceControl::~QRemoteServiceControl(void)
-	??1QServiceIpcEndPoint@QtMobility@@UAE@XZ @ 128 NONAME ; QtMobility::QServiceIpcEndPoint::~QServiceIpcEndPoint(void)
-	??1QServicePackage@QtMobility@@QAE@XZ @ 129 NONAME ; QtMobility::QServicePackage::~QServicePackage(void)
-	??1ServiceDatabase@QtMobility@@UAE@XZ @ 130 NONAME ; QtMobility::ServiceDatabase::~ServiceDatabase(void)
-	??1ServiceMetaData@QtMobility@@QAE@XZ @ 131 NONAME ; QtMobility::ServiceMetaData::~ServiceMetaData(void)
-	??4QServicePackage@QtMobility@@QAEAAV01@ABV01@@Z @ 132 NONAME ; class QtMobility::QServicePackage & QtMobility::QServicePackage::operator=(class QtMobility::QServicePackage const &)
-	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVServiceMetaDataResults@0@@Z @ 133 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::ServiceMetaDataResults &)
-	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVServiceMetaDataResults@0@@Z @ 134 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::ServiceMetaDataResults const &)
-	??_EDatabaseFileWatcher@QtMobility@@UAE@I@Z @ 135 NONAME ; QtMobility::DatabaseFileWatcher::~DatabaseFileWatcher(unsigned int)
-	??_EDatabaseManager@QtMobility@@UAE@I@Z @ 136 NONAME ; QtMobility::DatabaseManager::~DatabaseManager(unsigned int)
-	??_EQMetaObjectBuilder@QtMobility@@UAE@I@Z @ 137 NONAME ; QtMobility::QMetaObjectBuilder::~QMetaObjectBuilder(unsigned int)
-	??_EQRemoteServiceControl@QtMobility@@UAE@I@Z @ 138 NONAME ; QtMobility::QRemoteServiceControl::~QRemoteServiceControl(unsigned int)
-	??_EQServiceIpcEndPoint@QtMobility@@UAE@I@Z @ 139 NONAME ; QtMobility::QServiceIpcEndPoint::~QServiceIpcEndPoint(unsigned int)
-	??_EServiceDatabase@QtMobility@@UAE@I@Z @ 140 NONAME ; QtMobility::ServiceDatabase::~ServiceDatabase(unsigned int)
-	?access@QMetaMethodBuilder@QtMobility@@QBE?AW4Access@QMetaMethod@@XZ @ 141 NONAME ; enum QMetaMethod::Access QtMobility::QMetaMethodBuilder::access(void) const
-	?addClassInfo@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@0@Z @ 142 NONAME ; int QtMobility::QMetaObjectBuilder::addClassInfo(class QByteArray const &, class QByteArray const &)
-	?addConstructor@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQByteArray@@@Z @ 143 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addConstructor(class QByteArray const &)
-	?addConstructor@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQMetaMethod@@@Z @ 144 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addConstructor(class QMetaMethod const &)
-	?addEnumerator@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaEnumBuilder@2@ABVQByteArray@@@Z @ 145 NONAME ; class QtMobility::QMetaEnumBuilder QtMobility::QMetaObjectBuilder::addEnumerator(class QByteArray const &)
-	?addEnumerator@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaEnumBuilder@2@ABVQMetaEnum@@@Z @ 146 NONAME ; class QtMobility::QMetaEnumBuilder QtMobility::QMetaObjectBuilder::addEnumerator(class QMetaEnum const &)
-	?addKey@QMetaEnumBuilder@QtMobility@@QAEHABVQByteArray@@H@Z @ 147 NONAME ; int QtMobility::QMetaEnumBuilder::addKey(class QByteArray const &, int)
-	?addMetaObject@QMetaObjectBuilder@QtMobility@@QAEXPBUQMetaObject@@V?$QFlags@W4AddMember@QMetaObjectBuilder@QtMobility@@@@@Z @ 148 NONAME ; void QtMobility::QMetaObjectBuilder::addMetaObject(struct QMetaObject const *, class QFlags<enum QtMobility::QMetaObjectBuilder::AddMember>)
-	?addMethod@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQByteArray@@0@Z @ 149 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addMethod(class QByteArray const &, class QByteArray const &)
-	?addMethod@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQByteArray@@@Z @ 150 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addMethod(class QByteArray const &)
-	?addMethod@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQMetaMethod@@@Z @ 151 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addMethod(class QMetaMethod const &)
-	?addProperty@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaPropertyBuilder@2@ABVQByteArray@@0H@Z @ 152 NONAME ; class QtMobility::QMetaPropertyBuilder QtMobility::QMetaObjectBuilder::addProperty(class QByteArray const &, class QByteArray const &, int)
-	?addProperty@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaPropertyBuilder@2@ABVQMetaProperty@@@Z @ 153 NONAME ; class QtMobility::QMetaPropertyBuilder QtMobility::QMetaObjectBuilder::addProperty(class QMetaProperty const &)
-	?addRelatedMetaObject@QMetaObjectBuilder@QtMobility@@QAEHABQ6AABUQMetaObject@@XZ@Z @ 154 NONAME ; int QtMobility::QMetaObjectBuilder::addRelatedMetaObject(struct QMetaObject const & (* const)(void) const &)
-	?addSignal@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQByteArray@@@Z @ 155 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addSignal(class QByteArray const &)
-	?addSlot@QMetaObjectBuilder@QtMobility@@QAE?AVQMetaMethodBuilder@2@ABVQByteArray@@@Z @ 156 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::addSlot(class QByteArray const &)
-	?addType@InstanceManager@QtMobility@@QAE_NPBUQMetaObject@@P6APAVQObject@@XZP6A?AUQRemoteServiceIdentifier@2@XZW4InstanceType@QRemoteServiceClassRegister@2@@Z @ 157 NONAME ; bool QtMobility::InstanceManager::addType(struct QMetaObject const *, class QObject * (*)(void), struct QtMobility::QRemoteServiceIdentifier (*)(void), enum QtMobility::QRemoteServiceClassRegister::InstanceType)
-	?allIdents@InstanceManager@QtMobility@@QBE?AV?$QList@UQRemoteServiceIdentifier@QtMobility@@@@XZ @ 158 NONAME ; class QList<struct QtMobility::QRemoteServiceIdentifier> QtMobility::InstanceManager::allIdents(void) const
-	?attributes@QMetaMethodBuilder@QtMobility@@QBEHXZ @ 159 NONAME ; int QtMobility::QMetaMethodBuilder::attributes(void) const
-	?beginTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@W4TransactionType@12@@Z @ 160 NONAME ; bool QtMobility::ServiceDatabase::beginTransaction(class QSqlQuery *, enum QtMobility::ServiceDatabase::TransactionType)
-	?checkConnection@ServiceDatabase@QtMobility@@QAE_NXZ @ 161 NONAME ; bool QtMobility::ServiceDatabase::checkConnection(void)
-	?checkTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 162 NONAME ; bool QtMobility::ServiceDatabase::checkTables(void)
-	?checkVersion@ServiceMetaData@QtMobility@@ABE_NABVQString@@@Z @ 163 NONAME ; bool QtMobility::ServiceMetaData::checkVersion(class QString const &) const
-	?classInfoCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 164 NONAME ; int QtMobility::QMetaObjectBuilder::classInfoCount(void) const
-	?classInfoName@QMetaObjectBuilder@QtMobility@@QBE?AVQByteArray@@H@Z @ 165 NONAME ; class QByteArray QtMobility::QMetaObjectBuilder::classInfoName(int) const
-	?classInfoValue@QMetaObjectBuilder@QtMobility@@QBE?AVQByteArray@@H@Z @ 166 NONAME ; class QByteArray QtMobility::QMetaObjectBuilder::classInfoValue(int) const
-	?className@QMetaObjectBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 167 NONAME ; class QByteArray QtMobility::QMetaObjectBuilder::className(void) const
-	?clearMetadata@ServiceMetaData@QtMobility@@AAEXXZ @ 168 NONAME ; void QtMobility::ServiceMetaData::clearMetadata(void)
-	?close@ServiceDatabase@QtMobility@@QAE_NXZ @ 169 NONAME ; bool QtMobility::ServiceDatabase::close(void)
-	?closestExistingParent@DatabaseFileWatcher@QtMobility@@AAE?AVQString@@ABV3@@Z @ 170 NONAME ; class QString QtMobility::DatabaseFileWatcher::closestExistingParent(class QString const &)
-	?code@DBError@QtMobility@@QBE?AW4ErrorCode@12@XZ @ 171 NONAME ; enum QtMobility::DBError::ErrorCode QtMobility::DBError::code(void) const
-	?commitTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@@Z @ 172 NONAME ; bool QtMobility::ServiceDatabase::commitTransaction(class QSqlQuery *)
-	?constructor@QMetaObjectBuilder@QtMobility@@QBE?AVQMetaMethodBuilder@2@H@Z @ 173 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::constructor(int) const
-	?constructorCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 174 NONAME ; int QtMobility::QMetaObjectBuilder::constructorCount(void) const
-	?createObjectInstance@InstanceManager@QtMobility@@QAEPAVQObject@@ABUQRemoteServiceIdentifier@2@AAUQUuid@@@Z @ 175 NONAME ; class QObject * QtMobility::InstanceManager::createObjectInstance(struct QtMobility::QRemoteServiceIdentifier const &, struct QUuid &)
-	?createResponse@QServicePackage@QtMobility@@QBE?AV12@XZ @ 176 NONAME ; class QtMobility::QServicePackage QtMobility::QServicePackage::createResponse(void) const
-	?createTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 177 NONAME ; bool QtMobility::ServiceDatabase::createTables(void)
-	?d_func@QMetaEnumBuilder@QtMobility@@ABEPAVQMetaEnumBuilderPrivate@2@XZ @ 178 NONAME ; class QtMobility::QMetaEnumBuilderPrivate * QtMobility::QMetaEnumBuilder::d_func(void) const
-	?d_func@QMetaMethodBuilder@QtMobility@@ABEPAVQMetaMethodBuilderPrivate@2@XZ @ 179 NONAME ; class QtMobility::QMetaMethodBuilderPrivate * QtMobility::QMetaMethodBuilder::d_func(void) const
-	?d_func@QMetaPropertyBuilder@QtMobility@@ABEPAVQMetaPropertyBuilderPrivate@2@XZ @ 180 NONAME ; class QtMobility::QMetaPropertyBuilderPrivate * QtMobility::QMetaPropertyBuilder::d_func(void) const
-	?databaseChanged@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@@Z @ 181 NONAME ; void QtMobility::DatabaseFileWatcher::databaseChanged(class QString const &)
-	?databaseDirectoryChanged@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@@Z @ 182 NONAME ; void QtMobility::DatabaseFileWatcher::databaseDirectoryChanged(class QString const &)
-	?databasePath@ServiceDatabase@QtMobility@@QBE?AVQString@@XZ @ 183 NONAME ; class QString QtMobility::ServiceDatabase::databasePath(void) const
-	?deserialize@QMetaObjectBuilder@QtMobility@@QAEXAAVQDataStream@@ABV?$QMap@VQByteArray@@PB$$CBUQMetaObject@@@@@Z @ 184 NONAME ; void QtMobility::QMetaObjectBuilder::deserialize(class QDataStream &, class QMap<class QByteArray, struct QMetaObject const *> const &)
-	?device@ServiceMetaData@QtMobility@@QBEPAVQIODevice@@XZ @ 185 NONAME ; class QIODevice * QtMobility::ServiceMetaData::device(void) const
-	?disconnected@QServiceIpcEndPoint@QtMobility@@IAEXXZ @ 186 NONAME ; void QtMobility::QServiceIpcEndPoint::disconnected(void)
-	?dropTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 187 NONAME ; bool QtMobility::ServiceDatabase::dropTables(void)
-	?enumerator@QMetaObjectBuilder@QtMobility@@QBE?AVQMetaEnumBuilder@2@H@Z @ 188 NONAME ; class QtMobility::QMetaEnumBuilder QtMobility::QMetaObjectBuilder::enumerator(int) const
-	?enumeratorCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 189 NONAME ; int QtMobility::QMetaObjectBuilder::enumeratorCount(void) const
-	?executeQuery@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@ABVQString@@ABV?$QList@VQVariant@@@@@Z @ 190 NONAME ; bool QtMobility::ServiceDatabase::executeQuery(class QSqlQuery *, class QString const &, class QList<class QVariant> const &)
-	?externalDefaultsInfo@ServiceDatabase@QtMobility@@QAE?AV?$QList@U?$QPair@VQString@@V1@@@@@XZ @ 191 NONAME ; class QList<struct QPair<class QString, class QString> > QtMobility::ServiceDatabase::externalDefaultsInfo(void)
-	?extractMetadata@ServiceMetaData@QtMobility@@QAE_NXZ @ 192 NONAME ; bool QtMobility::ServiceMetaData::extractMetadata(void)
-	?flags@QMetaObjectBuilder@QtMobility@@QBE?AV?$QFlags@W4MetaObjectFlag@QMetaObjectBuilder@QtMobility@@@@XZ @ 193 NONAME ; class QFlags<enum QtMobility::QMetaObjectBuilder::MetaObjectFlag> QtMobility::QMetaObjectBuilder::flags(void) const
-	?fromRelocatableData@QMetaObjectBuilder@QtMobility@@SAXPAUQMetaObject@@PBU3@ABVQByteArray@@@Z @ 194 NONAME ; void QtMobility::QMetaObjectBuilder::fromRelocatableData(struct QMetaObject *, struct QMetaObject const *, class QByteArray const &)
-	?getInterface@ServiceDatabase@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 195 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceDatabase::getInterface(class QString const &)
-	?getInterfaceID@ServiceDatabase@QtMobility@@QAE?AVQString@@ABVQServiceInterfaceDescriptor@2@@Z @ 196 NONAME ; class QString QtMobility::ServiceDatabase::getInterfaceID(class QtMobility::QServiceInterfaceDescriptor const &)
-	?getInterfaceID@ServiceDatabase@QtMobility@@QAE?AVQString@@PAVQSqlQuery@@ABVQServiceInterfaceDescriptor@2@@Z @ 197 NONAME ; class QString QtMobility::ServiceDatabase::getInterfaceID(class QSqlQuery *, class QtMobility::QServiceInterfaceDescriptor const &)
-	?getInterfaces@DatabaseManager@QtMobility@@QAE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQServiceFilter@2@W4DbScope@12@@Z @ 198 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::DatabaseManager::getInterfaces(class QtMobility::QServiceFilter const &, enum QtMobility::DatabaseManager::DbScope)
-	?getInterfaces@ServiceDatabase@QtMobility@@QAE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQServiceFilter@2@@Z @ 199 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::ServiceDatabase::getInterfaces(class QtMobility::QServiceFilter const &)
-	?getLatestError@ServiceMetaData@QtMobility@@QBEHXZ @ 200 NONAME ; int QtMobility::ServiceMetaData::getLatestError(void) const
-	?getServiceNames@DatabaseManager@QtMobility@@QAE?AVQStringList@@ABVQString@@W4DbScope@12@@Z @ 201 NONAME ; class QStringList QtMobility::DatabaseManager::getServiceNames(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?getServiceNames@ServiceDatabase@QtMobility@@QAE?AVQStringList@@ABVQString@@@Z @ 202 NONAME ; class QStringList QtMobility::ServiceDatabase::getServiceNames(class QString const &)
-	?getStaticMetaObject@DatabaseFileWatcher@QtMobility@@SAABUQMetaObject@@XZ @ 203 NONAME ; struct QMetaObject const & QtMobility::DatabaseFileWatcher::getStaticMetaObject(void)
-	?getStaticMetaObject@DatabaseManager@QtMobility@@SAABUQMetaObject@@XZ @ 204 NONAME ; struct QMetaObject const & QtMobility::DatabaseManager::getStaticMetaObject(void)
-	?getStaticMetaObject@QRemoteServiceControl@QtMobility@@SAABUQMetaObject@@XZ @ 205 NONAME ; struct QMetaObject const & QtMobility::QRemoteServiceControl::getStaticMetaObject(void)
-	?getStaticMetaObject@QServiceIpcEndPoint@QtMobility@@SAABUQMetaObject@@XZ @ 206 NONAME ; struct QMetaObject const & QtMobility::QServiceIpcEndPoint::getStaticMetaObject(void)
-	?getStaticMetaObject@ServiceDatabase@QtMobility@@SAABUQMetaObject@@XZ @ 207 NONAME ; struct QMetaObject const & QtMobility::ServiceDatabase::getStaticMetaObject(void)
-	?hasNotifySignal@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 208 NONAME ; bool QtMobility::QMetaPropertyBuilder::hasNotifySignal(void) const
-	?hasStdCppSet@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 209 NONAME ; bool QtMobility::QMetaPropertyBuilder::hasStdCppSet(void) const
-	?index@QMetaEnumBuilder@QtMobility@@QBEHXZ @ 210 NONAME ; int QtMobility::QMetaEnumBuilder::index(void) const
-	?index@QMetaMethodBuilder@QtMobility@@QBEHXZ @ 211 NONAME ; int QtMobility::QMetaMethodBuilder::index(void) const
-	?index@QMetaPropertyBuilder@QtMobility@@QBEHXZ @ 212 NONAME ; int QtMobility::QMetaPropertyBuilder::index(void) const
-	?indexOfClassInfo@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 213 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfClassInfo(class QByteArray const &)
-	?indexOfConstructor@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 214 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfConstructor(class QByteArray const &)
-	?indexOfEnumerator@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 215 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfEnumerator(class QByteArray const &)
-	?indexOfMethod@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 216 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfMethod(class QByteArray const &)
-	?indexOfProperty@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 217 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfProperty(class QByteArray const &)
-	?indexOfSignal@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 218 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfSignal(class QByteArray const &)
-	?indexOfSlot@QMetaObjectBuilder@QtMobility@@QAEHABVQByteArray@@@Z @ 219 NONAME ; int QtMobility::QMetaObjectBuilder::indexOfSlot(class QByteArray const &)
-	?initDbPath@DatabaseManager@QtMobility@@AAEXW4DbScope@12@@Z @ 220 NONAME ; void QtMobility::DatabaseManager::initDbPath(enum QtMobility::DatabaseManager::DbScope)
-	?insertInterfaceData@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@ABVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 221 NONAME ; bool QtMobility::ServiceDatabase::insertInterfaceData(class QSqlQuery *, class QtMobility::QServiceInterfaceDescriptor const &, class QString const &)
-	?instance@InstanceManager@QtMobility@@SAPAV12@XZ @ 222 NONAME ; class QtMobility::InstanceManager * QtMobility::InstanceManager::instance(void)
-	?interfaceDefault@DatabaseManager@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@W4DbScope@12@@Z @ 223 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::DatabaseManager::interfaceDefault(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?interfaceDefault@ServiceDatabase@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@PAV4@_N@Z @ 224 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceDatabase::interfaceDefault(class QString const &, class QString *, bool)
-	?isDesignable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 225 NONAME ; bool QtMobility::QMetaPropertyBuilder::isDesignable(void) const
-	?isDynamic@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 226 NONAME ; bool QtMobility::QMetaPropertyBuilder::isDynamic(void) const
-	?isEditable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 227 NONAME ; bool QtMobility::QMetaPropertyBuilder::isEditable(void) const
-	?isEnumOrFlag@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 228 NONAME ; bool QtMobility::QMetaPropertyBuilder::isEnumOrFlag(void) const
-	?isFlag@QMetaEnumBuilder@QtMobility@@QBE_NXZ @ 229 NONAME ; bool QtMobility::QMetaEnumBuilder::isFlag(void) const
-	?isOpen@ServiceDatabase@QtMobility@@QBE_NXZ @ 230 NONAME ; bool QtMobility::ServiceDatabase::isOpen(void) const
-	?isReadable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 231 NONAME ; bool QtMobility::QMetaPropertyBuilder::isReadable(void) const
-	?isResettable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 232 NONAME ; bool QtMobility::QMetaPropertyBuilder::isResettable(void) const
-	?isScriptable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 233 NONAME ; bool QtMobility::QMetaPropertyBuilder::isScriptable(void) const
-	?isStored@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 234 NONAME ; bool QtMobility::QMetaPropertyBuilder::isStored(void) const
-	?isUser@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 235 NONAME ; bool QtMobility::QMetaPropertyBuilder::isUser(void) const
-	?isValid@QServicePackage@QtMobility@@QBE_NXZ @ 236 NONAME ; bool QtMobility::QServicePackage::isValid(void) const
-	?isWritable@QMetaPropertyBuilder@QtMobility@@QBE_NXZ @ 237 NONAME ; bool QtMobility::QMetaPropertyBuilder::isWritable(void) const
-	?key@QMetaEnumBuilder@QtMobility@@QBE?AVQByteArray@@H@Z @ 238 NONAME ; class QByteArray QtMobility::QMetaEnumBuilder::key(int) const
-	?keyCount@QMetaEnumBuilder@QtMobility@@QBEHXZ @ 239 NONAME ; int QtMobility::QMetaEnumBuilder::keyCount(void) const
-	?lastError@DatabaseManager@QtMobility@@QAE?AVDBError@2@XZ @ 240 NONAME ; class QtMobility::DBError QtMobility::DatabaseManager::lastError(void)
-	?lastError@ServiceDatabase@QtMobility@@QBE?AVDBError@2@XZ @ 241 NONAME ; class QtMobility::DBError QtMobility::ServiceDatabase::lastError(void) const
-	?latestDescriptor@DatabaseManager@QtMobility@@AAE?AVQServiceInterfaceDescriptor@2@ABV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@@Z @ 242 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::DatabaseManager::latestDescriptor(class QList<class QtMobility::QServiceInterfaceDescriptor> const &)
-	?latestInterfaceVersion@ServiceMetaData@QtMobility@@AAE?AVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 243 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceMetaData::latestInterfaceVersion(class QString const &)
-	?latestInterfaces@ServiceMetaData@QtMobility@@ABE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@XZ @ 244 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::ServiceMetaData::latestInterfaces(void) const
-	?lessThan@ServiceMetaData@QtMobility@@ABE_NABVQServiceInterfaceDescriptor@2@0@Z @ 245 NONAME ; bool QtMobility::ServiceMetaData::lessThan(class QtMobility::QServiceInterfaceDescriptor const &, class QtMobility::QServiceInterfaceDescriptor const &) const
-	?metaObject@DatabaseFileWatcher@QtMobility@@UBEPBUQMetaObject@@XZ @ 246 NONAME ; struct QMetaObject const * QtMobility::DatabaseFileWatcher::metaObject(void) const
-	?metaObject@DatabaseManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 247 NONAME ; struct QMetaObject const * QtMobility::DatabaseManager::metaObject(void) const
-	?metaObject@InstanceManager@QtMobility@@QBEPBUQMetaObject@@ABUQRemoteServiceIdentifier@2@@Z @ 248 NONAME ; struct QMetaObject const * QtMobility::InstanceManager::metaObject(struct QtMobility::QRemoteServiceIdentifier const &) const
-	?metaObject@QRemoteServiceClassRegister@QtMobility@@QBEPBUQMetaObject@@ABUQRemoteServiceIdentifier@2@@Z @ 249 NONAME ; struct QMetaObject const * QtMobility::QRemoteServiceClassRegister::metaObject(struct QtMobility::QRemoteServiceIdentifier const &) const
-	?metaObject@QRemoteServiceControl@QtMobility@@UBEPBUQMetaObject@@XZ @ 250 NONAME ; struct QMetaObject const * QtMobility::QRemoteServiceControl::metaObject(void) const
-	?metaObject@QServiceIpcEndPoint@QtMobility@@UBEPBUQMetaObject@@XZ @ 251 NONAME ; struct QMetaObject const * QtMobility::QServiceIpcEndPoint::metaObject(void) const
-	?metaObject@ServiceDatabase@QtMobility@@UBEPBUQMetaObject@@XZ @ 252 NONAME ; struct QMetaObject const * QtMobility::ServiceDatabase::metaObject(void) const
-	?method@QMetaObjectBuilder@QtMobility@@QBE?AVQMetaMethodBuilder@2@H@Z @ 253 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaObjectBuilder::method(int) const
-	?methodCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 254 NONAME ; int QtMobility::QMetaObjectBuilder::methodCount(void) const
-	?methodType@QMetaMethodBuilder@QtMobility@@QBE?AW4MethodType@QMetaMethod@@XZ @ 255 NONAME ; enum QMetaMethod::MethodType QtMobility::QMetaMethodBuilder::methodType(void) const
-	?name@QMetaEnumBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 256 NONAME ; class QByteArray QtMobility::QMetaEnumBuilder::name(void) const
-	?name@QMetaPropertyBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 257 NONAME ; class QByteArray QtMobility::QMetaPropertyBuilder::name(void) const
-	?nextPackage@QServiceIpcEndPoint@QtMobility@@QAE?AVQServicePackage@2@XZ @ 258 NONAME ; class QtMobility::QServicePackage QtMobility::QServiceIpcEndPoint::nextPackage(void)
-	?notifyChanges@DatabaseFileWatcher@QtMobility@@AAEXPAVServiceDatabase@2@W4DbScope@DatabaseManager@2@@Z @ 259 NONAME ; void QtMobility::DatabaseFileWatcher::notifyChanges(class QtMobility::ServiceDatabase *, enum QtMobility::DatabaseManager::DbScope)
-	?notifySignal@QMetaPropertyBuilder@QtMobility@@QBE?AVQMetaMethodBuilder@2@XZ @ 260 NONAME ; class QtMobility::QMetaMethodBuilder QtMobility::QMetaPropertyBuilder::notifySignal(void) const
-	?open@ServiceDatabase@QtMobility@@QAE_NXZ @ 261 NONAME ; bool QtMobility::ServiceDatabase::open(void)
-	?openDb@DatabaseManager@QtMobility@@AAE_NW4DbScope@12@@Z @ 262 NONAME ; bool QtMobility::DatabaseManager::openDb(enum QtMobility::DatabaseManager::DbScope)
-	?packageAvailable@QServiceIpcEndPoint@QtMobility@@QBE_NXZ @ 263 NONAME ; bool QtMobility::QServiceIpcEndPoint::packageAvailable(void) const
-	?parameterNames@QMetaMethodBuilder@QtMobility@@QBE?AV?$QList@VQByteArray@@@@XZ @ 264 NONAME ; class QList<class QByteArray> QtMobility::QMetaMethodBuilder::parameterNames(void) const
-	?parseResults@ServiceMetaData@QtMobility@@QBE?AVServiceMetaDataResults@2@XZ @ 265 NONAME ; class QtMobility::ServiceMetaDataResults QtMobility::ServiceMetaData::parseResults(void) const
-	?populateInterfaceProperties@ServiceDatabase@QtMobility@@QAE_NPAVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 266 NONAME ; bool QtMobility::ServiceDatabase::populateInterfaceProperties(class QtMobility::QServiceInterfaceDescriptor *, class QString const &)
-	?populateServiceProperties@ServiceDatabase@QtMobility@@QAE_NPAVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 267 NONAME ; bool QtMobility::ServiceDatabase::populateServiceProperties(class QtMobility::QServiceInterfaceDescriptor *, class QString const &)
-	?processInterfaceElement@ServiceMetaData@QtMobility@@AAE_NAAVQXmlStreamReader@@@Z @ 268 NONAME ; bool QtMobility::ServiceMetaData::processInterfaceElement(class QXmlStreamReader &)
-	?processServiceElement@ServiceMetaData@QtMobility@@AAE_NAAVQXmlStreamReader@@@Z @ 269 NONAME ; bool QtMobility::ServiceMetaData::processServiceElement(class QXmlStreamReader &)
-	?property@QMetaObjectBuilder@QtMobility@@QBE?AVQMetaPropertyBuilder@2@H@Z @ 270 NONAME ; class QtMobility::QMetaPropertyBuilder QtMobility::QMetaObjectBuilder::property(int) const
-	?propertyCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 271 NONAME ; int QtMobility::QMetaObjectBuilder::propertyCount(void) const
-	?publishServices@QRemoteServiceControl@QtMobility@@QAEXABVQString@@@Z @ 272 NONAME ; void QtMobility::QRemoteServiceControl::publishServices(class QString const &)
-	?qt_metacall@DatabaseFileWatcher@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 273 NONAME ; int QtMobility::DatabaseFileWatcher::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@DatabaseManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 274 NONAME ; int QtMobility::DatabaseManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QRemoteServiceControl@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 275 NONAME ; int QtMobility::QRemoteServiceControl::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QServiceIpcEndPoint@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 276 NONAME ; int QtMobility::QServiceIpcEndPoint::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@ServiceDatabase@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 277 NONAME ; int QtMobility::ServiceDatabase::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@DatabaseFileWatcher@QtMobility@@UAEPAXPBD@Z @ 278 NONAME ; void * QtMobility::DatabaseFileWatcher::qt_metacast(char const *)
-	?qt_metacast@DatabaseManager@QtMobility@@UAEPAXPBD@Z @ 279 NONAME ; void * QtMobility::DatabaseManager::qt_metacast(char const *)
-	?qt_metacast@QRemoteServiceControl@QtMobility@@UAEPAXPBD@Z @ 280 NONAME ; void * QtMobility::QRemoteServiceControl::qt_metacast(char const *)
-	?qt_metacast@QServiceIpcEndPoint@QtMobility@@UAEPAXPBD@Z @ 281 NONAME ; void * QtMobility::QServiceIpcEndPoint::qt_metacast(char const *)
-	?qt_metacast@ServiceDatabase@QtMobility@@UAEPAXPBD@Z @ 282 NONAME ; void * QtMobility::ServiceDatabase::qt_metacast(char const *)
-	?readyRead@QServiceIpcEndPoint@QtMobility@@IAEXXZ @ 283 NONAME ; void QtMobility::QServiceIpcEndPoint::readyRead(void)
-	?registerService@DatabaseManager@QtMobility@@QAE_NAAVServiceMetaDataResults@2@W4DbScope@12@@Z @ 284 NONAME ; bool QtMobility::DatabaseManager::registerService(class QtMobility::ServiceMetaDataResults &, enum QtMobility::DatabaseManager::DbScope)
-	?registerService@ServiceDatabase@QtMobility@@QAE_NABVServiceMetaDataResults@2@ABVQString@@@Z @ 285 NONAME ; bool QtMobility::ServiceDatabase::registerService(class QtMobility::ServiceMetaDataResults const &, class QString const &)
-	?registerType@QRemoteServiceClassRegister@QtMobility@@SA_NPBUQMetaObject@@P6APAVQObject@@XZP6A?AUQRemoteServiceIdentifier@2@XZW4InstanceType@12@@Z @ 286 NONAME ; bool QtMobility::QRemoteServiceClassRegister::registerType(struct QMetaObject const *, class QObject * (*)(void), struct QtMobility::QRemoteServiceIdentifier (*)(void), enum QtMobility::QRemoteServiceClassRegister::InstanceType)
-	?relatedMetaObject@QMetaObjectBuilder@QtMobility@@QBEPBUQMetaObject@@H@Z @ 287 NONAME ; struct QMetaObject const * QtMobility::QMetaObjectBuilder::relatedMetaObject(int) const
-	?relatedMetaObjectCount@QMetaObjectBuilder@QtMobility@@QBEHXZ @ 288 NONAME ; int QtMobility::QMetaObjectBuilder::relatedMetaObjectCount(void) const
-	?removeClassInfo@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 289 NONAME ; void QtMobility::QMetaObjectBuilder::removeClassInfo(int)
-	?removeConstructor@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 290 NONAME ; void QtMobility::QMetaObjectBuilder::removeConstructor(int)
-	?removeEnumerator@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 291 NONAME ; void QtMobility::QMetaObjectBuilder::removeEnumerator(int)
-	?removeExternalDefaultServiceInterface@ServiceDatabase@QtMobility@@QAE_NABVQString@@@Z @ 292 NONAME ; bool QtMobility::ServiceDatabase::removeExternalDefaultServiceInterface(class QString const &)
-	?removeKey@QMetaEnumBuilder@QtMobility@@QAEXH@Z @ 293 NONAME ; void QtMobility::QMetaEnumBuilder::removeKey(int)
-	?removeMethod@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 294 NONAME ; void QtMobility::QMetaObjectBuilder::removeMethod(int)
-	?removeNotifySignal@QMetaPropertyBuilder@QtMobility@@QAEXXZ @ 295 NONAME ; void QtMobility::QMetaPropertyBuilder::removeNotifySignal(void)
-	?removeObjectInstance@InstanceManager@QtMobility@@QAEXABUQRemoteServiceIdentifier@2@ABUQUuid@@@Z @ 296 NONAME ; void QtMobility::InstanceManager::removeObjectInstance(struct QtMobility::QRemoteServiceIdentifier const &, struct QUuid const &)
-	?removeProperty@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 297 NONAME ; void QtMobility::QMetaObjectBuilder::removeProperty(int)
-	?removeRelatedMetaObject@QMetaObjectBuilder@QtMobility@@QAEXH@Z @ 298 NONAME ; void QtMobility::QMetaObjectBuilder::removeRelatedMetaObject(int)
-	?restartDirMonitoring@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@0@Z @ 299 NONAME ; void QtMobility::DatabaseFileWatcher::restartDirMonitoring(class QString const &, class QString const &)
-	?returnType@QMetaMethodBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 300 NONAME ; class QByteArray QtMobility::QMetaMethodBuilder::returnType(void) const
-	?rollbackTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@@Z @ 301 NONAME ; bool QtMobility::ServiceDatabase::rollbackTransaction(class QSqlQuery *)
-	?serialize@QMetaObjectBuilder@QtMobility@@QBEXAAVQDataStream@@@Z @ 302 NONAME ; void QtMobility::QMetaObjectBuilder::serialize(class QDataStream &) const
-	?serviceAdded@DatabaseManager@QtMobility@@IAEXABVQString@@W4DbScope@12@@Z @ 303 NONAME ; void QtMobility::DatabaseManager::serviceAdded(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?serviceAdded@ServiceDatabase@QtMobility@@IAEXABVQString@@@Z @ 304 NONAME ; void QtMobility::ServiceDatabase::serviceAdded(class QString const &)
-	?serviceInitialized@DatabaseManager@QtMobility@@QAE_NABVQString@@W4DbScope@12@@Z @ 305 NONAME ; bool QtMobility::DatabaseManager::serviceInitialized(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?serviceInitialized@ServiceDatabase@QtMobility@@QAE_NABVQString@@0@Z @ 306 NONAME ; bool QtMobility::ServiceDatabase::serviceInitialized(class QString const &, class QString const &)
-	?serviceRemoved@DatabaseManager@QtMobility@@IAEXABVQString@@W4DbScope@12@@Z @ 307 NONAME ; void QtMobility::DatabaseManager::serviceRemoved(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?serviceRemoved@ServiceDatabase@QtMobility@@IAEXABVQString@@@Z @ 308 NONAME ; void QtMobility::ServiceDatabase::serviceRemoved(class QString const &)
-	?setAccess@QMetaMethodBuilder@QtMobility@@QAEXW4Access@QMetaMethod@@@Z @ 309 NONAME ; void QtMobility::QMetaMethodBuilder::setAccess(enum QMetaMethod::Access)
-	?setAttributes@QMetaMethodBuilder@QtMobility@@QAEXH@Z @ 310 NONAME ; void QtMobility::QMetaMethodBuilder::setAttributes(int)
-	?setChangeNotificationsEnabled@DatabaseManager@QtMobility@@QAEXW4DbScope@12@_N@Z @ 311 NONAME ; void QtMobility::DatabaseManager::setChangeNotificationsEnabled(enum QtMobility::DatabaseManager::DbScope, bool)
-	?setClassName@QMetaObjectBuilder@QtMobility@@QAEXABVQByteArray@@@Z @ 312 NONAME ; void QtMobility::QMetaObjectBuilder::setClassName(class QByteArray const &)
-	?setDatabasePath@ServiceDatabase@QtMobility@@QAEXABVQString@@@Z @ 313 NONAME ; void QtMobility::ServiceDatabase::setDatabasePath(class QString const &)
-	?setDesignable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 314 NONAME ; void QtMobility::QMetaPropertyBuilder::setDesignable(bool)
-	?setDevice@ServiceMetaData@QtMobility@@QAEXPAVQIODevice@@@Z @ 315 NONAME ; void QtMobility::ServiceMetaData::setDevice(class QIODevice *)
-	?setDynamic@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 316 NONAME ; void QtMobility::QMetaPropertyBuilder::setDynamic(bool)
-	?setEditable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 317 NONAME ; void QtMobility::QMetaPropertyBuilder::setEditable(bool)
-	?setEnabled@DatabaseFileWatcher@QtMobility@@QAEXPAVServiceDatabase@2@_N@Z @ 318 NONAME ; void QtMobility::DatabaseFileWatcher::setEnabled(class QtMobility::ServiceDatabase *, bool)
-	?setEnumOrFlag@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 319 NONAME ; void QtMobility::QMetaPropertyBuilder::setEnumOrFlag(bool)
-	?setError@DBError@QtMobility@@QAEXW4ErrorCode@12@ABVQString@@@Z @ 320 NONAME ; void QtMobility::DBError::setError(enum QtMobility::DBError::ErrorCode, class QString const &)
-	?setFlags@QMetaObjectBuilder@QtMobility@@QAEXV?$QFlags@W4MetaObjectFlag@QMetaObjectBuilder@QtMobility@@@@@Z @ 321 NONAME ; void QtMobility::QMetaObjectBuilder::setFlags(class QFlags<enum QtMobility::QMetaObjectBuilder::MetaObjectFlag>)
-	?setInterfaceDefault@DatabaseManager@QtMobility@@QAE_NABVQServiceInterfaceDescriptor@2@W4DbScope@12@@Z @ 322 NONAME ; bool QtMobility::DatabaseManager::setInterfaceDefault(class QtMobility::QServiceInterfaceDescriptor const &, enum QtMobility::DatabaseManager::DbScope)
-	?setInterfaceDefault@DatabaseManager@QtMobility@@QAE_NABVQString@@0W4DbScope@12@@Z @ 323 NONAME ; bool QtMobility::DatabaseManager::setInterfaceDefault(class QString const &, class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?setInterfaceDefault@ServiceDatabase@QtMobility@@QAE_NABVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 324 NONAME ; bool QtMobility::ServiceDatabase::setInterfaceDefault(class QtMobility::QServiceInterfaceDescriptor const &, class QString const &)
-	?setIsFlag@QMetaEnumBuilder@QtMobility@@QAEX_N@Z @ 325 NONAME ; void QtMobility::QMetaEnumBuilder::setIsFlag(bool)
-	?setNotFoundError@DBError@QtMobility@@QAEXABVQString@@@Z @ 326 NONAME ; void QtMobility::DBError::setNotFoundError(class QString const &)
-	?setNotifySignal@QMetaPropertyBuilder@QtMobility@@QAEXABVQMetaMethodBuilder@2@@Z @ 327 NONAME ; void QtMobility::QMetaPropertyBuilder::setNotifySignal(class QtMobility::QMetaMethodBuilder const &)
-	?setParameterNames@QMetaMethodBuilder@QtMobility@@QAEXABV?$QList@VQByteArray@@@@@Z @ 328 NONAME ; void QtMobility::QMetaMethodBuilder::setParameterNames(class QList<class QByteArray> const &)
-	?setReadable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 329 NONAME ; void QtMobility::QMetaPropertyBuilder::setReadable(bool)
-	?setResettable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 330 NONAME ; void QtMobility::QMetaPropertyBuilder::setResettable(bool)
-	?setReturnType@QMetaMethodBuilder@QtMobility@@QAEXABVQByteArray@@@Z @ 331 NONAME ; void QtMobility::QMetaMethodBuilder::setReturnType(class QByteArray const &)
-	?setSQLError@DBError@QtMobility@@QAEXABVQString@@@Z @ 332 NONAME ; void QtMobility::DBError::setSQLError(class QString const &)
-	?setScriptable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 333 NONAME ; void QtMobility::QMetaPropertyBuilder::setScriptable(bool)
-	?setStaticMetacallFunction@QMetaObjectBuilder@QtMobility@@QAEXP6AHW4Call@QMetaObject@@HPAPAX@Z@Z @ 334 NONAME ; void QtMobility::QMetaObjectBuilder::setStaticMetacallFunction(int (*)(enum QMetaObject::Call, int, void * *))
-	?setStdCppSet@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 335 NONAME ; void QtMobility::QMetaPropertyBuilder::setStdCppSet(bool)
-	?setStored@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 336 NONAME ; void QtMobility::QMetaPropertyBuilder::setStored(bool)
-	?setSuperClass@QMetaObjectBuilder@QtMobility@@QAEXPBUQMetaObject@@@Z @ 337 NONAME ; void QtMobility::QMetaObjectBuilder::setSuperClass(struct QMetaObject const *)
-	?setTag@QMetaMethodBuilder@QtMobility@@QAEXABVQByteArray@@@Z @ 338 NONAME ; void QtMobility::QMetaMethodBuilder::setTag(class QByteArray const &)
-	?setUser@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 339 NONAME ; void QtMobility::QMetaPropertyBuilder::setUser(bool)
-	?setWritable@QMetaPropertyBuilder@QtMobility@@QAEX_N@Z @ 340 NONAME ; void QtMobility::QMetaPropertyBuilder::setWritable(bool)
-	?signature@QMetaMethodBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 341 NONAME ; class QByteArray QtMobility::QMetaMethodBuilder::signature(void) const
-	?staticMetacallFunction@QMetaObjectBuilder@QtMobility@@QBEP6AHW4Call@QMetaObject@@HPAPAX@ZXZ @ 342 NONAME ; int (*)(enum QMetaObject::Call, int, void * *) QtMobility::QMetaObjectBuilder::staticMetacallFunction(void) const
-	?superClass@QMetaObjectBuilder@QtMobility@@QBEPBUQMetaObject@@XZ @ 343 NONAME ; struct QMetaObject const * QtMobility::QMetaObjectBuilder::superClass(void) const
-	?tag@QMetaMethodBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 344 NONAME ; class QByteArray QtMobility::QMetaMethodBuilder::tag(void) const
-	?text@DBError@QtMobility@@QBE?AVQString@@XZ @ 345 NONAME ; class QString QtMobility::DBError::text(void) const
-	?toMetaObject@QMetaObjectBuilder@QtMobility@@QBEPAUQMetaObject@@XZ @ 346 NONAME ; struct QMetaObject * QtMobility::QMetaObjectBuilder::toMetaObject(void) const
-	?toRelocatableData@QMetaObjectBuilder@QtMobility@@QBE?AVQByteArray@@PA_N@Z @ 347 NONAME ; class QByteArray QtMobility::QMetaObjectBuilder::toRelocatableData(bool *) const
-	?tr@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0@Z @ 348 NONAME ; class QString QtMobility::DatabaseFileWatcher::tr(char const *, char const *)
-	?tr@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0H@Z @ 349 NONAME ; class QString QtMobility::DatabaseFileWatcher::tr(char const *, char const *, int)
-	?tr@DatabaseManager@QtMobility@@SA?AVQString@@PBD0@Z @ 350 NONAME ; class QString QtMobility::DatabaseManager::tr(char const *, char const *)
-	?tr@DatabaseManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 351 NONAME ; class QString QtMobility::DatabaseManager::tr(char const *, char const *, int)
-	?tr@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0@Z @ 352 NONAME ; class QString QtMobility::QRemoteServiceControl::tr(char const *, char const *)
-	?tr@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0H@Z @ 353 NONAME ; class QString QtMobility::QRemoteServiceControl::tr(char const *, char const *, int)
-	?tr@QServiceIpcEndPoint@QtMobility@@SA?AVQString@@PBD0@Z @ 354 NONAME ; class QString QtMobility::QServiceIpcEndPoint::tr(char const *, char const *)
-	?tr@QServiceIpcEndPoint@QtMobility@@SA?AVQString@@PBD0H@Z @ 355 NONAME ; class QString QtMobility::QServiceIpcEndPoint::tr(char const *, char const *, int)
-	?tr@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0@Z @ 356 NONAME ; class QString QtMobility::ServiceDatabase::tr(char const *, char const *)
-	?tr@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0H@Z @ 357 NONAME ; class QString QtMobility::ServiceDatabase::tr(char const *, char const *, int)
-	?trUtf8@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0@Z @ 358 NONAME ; class QString QtMobility::DatabaseFileWatcher::trUtf8(char const *, char const *)
-	?trUtf8@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0H@Z @ 359 NONAME ; class QString QtMobility::DatabaseFileWatcher::trUtf8(char const *, char const *, int)
-	?trUtf8@DatabaseManager@QtMobility@@SA?AVQString@@PBD0@Z @ 360 NONAME ; class QString QtMobility::DatabaseManager::trUtf8(char const *, char const *)
-	?trUtf8@DatabaseManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 361 NONAME ; class QString QtMobility::DatabaseManager::trUtf8(char const *, char const *, int)
-	?trUtf8@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0@Z @ 362 NONAME ; class QString QtMobility::QRemoteServiceControl::trUtf8(char const *, char const *)
-	?trUtf8@QRemoteServiceControl@QtMobility@@SA?AVQString@@PBD0H@Z @ 363 NONAME ; class QString QtMobility::QRemoteServiceControl::trUtf8(char const *, char const *, int)
-	?trUtf8@QServiceIpcEndPoint@QtMobility@@SA?AVQString@@PBD0@Z @ 364 NONAME ; class QString QtMobility::QServiceIpcEndPoint::trUtf8(char const *, char const *)
-	?trUtf8@QServiceIpcEndPoint@QtMobility@@SA?AVQString@@PBD0H@Z @ 365 NONAME ; class QString QtMobility::QServiceIpcEndPoint::trUtf8(char const *, char const *, int)
-	?trUtf8@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0@Z @ 366 NONAME ; class QString QtMobility::ServiceDatabase::trUtf8(char const *, char const *)
-	?trUtf8@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0H@Z @ 367 NONAME ; class QString QtMobility::ServiceDatabase::trUtf8(char const *, char const *, int)
-	?transformVersion@ServiceMetaData@QtMobility@@ABEXABVQString@@PAH1@Z @ 368 NONAME ; void QtMobility::ServiceMetaData::transformVersion(class QString const &, int *, int *) const
-	?type@QMetaPropertyBuilder@QtMobility@@QBE?AVQByteArray@@XZ @ 369 NONAME ; class QByteArray QtMobility::QMetaPropertyBuilder::type(void) const
-	?types@QRemoteServiceClassRegister@QtMobility@@QBE?AV?$QList@UQRemoteServiceIdentifier@QtMobility@@@@XZ @ 370 NONAME ; class QList<struct QtMobility::QRemoteServiceIdentifier> QtMobility::QRemoteServiceClassRegister::types(void) const
-	?unregisterService@DatabaseManager@QtMobility@@QAE_NABVQString@@W4DbScope@12@@Z @ 371 NONAME ; bool QtMobility::DatabaseManager::unregisterService(class QString const &, enum QtMobility::DatabaseManager::DbScope)
-	?unregisterService@ServiceDatabase@QtMobility@@QAE_NABVQString@@0@Z @ 372 NONAME ; bool QtMobility::ServiceDatabase::unregisterService(class QString const &, class QString const &)
-	?value@QMetaEnumBuilder@QtMobility@@QBEHH@Z @ 373 NONAME ; int QtMobility::QMetaEnumBuilder::value(int) const
-	?writePackage@QServiceIpcEndPoint@QtMobility@@QAEXVQServicePackage@2@@Z @ 374 NONAME ; void QtMobility::QServiceIpcEndPoint::writePackage(class QtMobility::QServicePackage)
-	?staticMetaObject@QRemoteServiceControl@QtMobility@@2UQMetaObject@@B @ 375 NONAME ; struct QMetaObject const QtMobility::QRemoteServiceControl::staticMetaObject
-	?staticMetaObject@QServiceIpcEndPoint@QtMobility@@2UQMetaObject@@B @ 376 NONAME ; struct QMetaObject const QtMobility::QServiceIpcEndPoint::staticMetaObject
-	?staticMetaObject@DatabaseFileWatcher@QtMobility@@2UQMetaObject@@B @ 377 NONAME ; struct QMetaObject const QtMobility::DatabaseFileWatcher::staticMetaObject
-	?staticMetaObject@DatabaseManager@QtMobility@@2UQMetaObject@@B @ 378 NONAME ; struct QMetaObject const QtMobility::DatabaseManager::staticMetaObject
-	?staticMetaObject@ServiceDatabase@QtMobility@@2UQMetaObject@@B @ 379 NONAME ; struct QMetaObject const QtMobility::ServiceDatabase::staticMetaObject
+EXPORTS
+	?qt_metacast@QServiceManager@QtMobility@@UAEPAXPBD@Z @ 1 NONAME ; void * QtMobility::QServiceManager::qt_metacast(char const *)
+	?interfaceDefault@QServiceManager@QtMobility@@QBE?AVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 2 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::QServiceManager::interfaceDefault(class QString const &) const
+	?clientId@QServiceContext@QtMobility@@QBE?AVQString@@XZ @ 3 NONAME ; class QString QtMobility::QServiceContext::clientId(void) const
+	?staticMetaObject@QServiceManager@QtMobility@@2UQMetaObject@@B @ 4 NONAME ; struct QMetaObject const QtMobility::QServiceManager::staticMetaObject
+	?getStaticMetaObject@QAbstractSecuritySession@QtMobility@@SAABUQMetaObject@@XZ @ 5 NONAME ; struct QMetaObject const & QtMobility::QAbstractSecuritySession::getStaticMetaObject(void)
+	?serviceName@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@XZ @ 6 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::serviceName(void) const
+	?metaObject@QServiceContext@QtMobility@@UBEPBUQMetaObject@@XZ @ 7 NONAME ; struct QMetaObject const * QtMobility::QServiceContext::metaObject(void) const
+	??1QServicePluginInterface@QtMobility@@UAE@XZ @ 8 NONAME ; QtMobility::QServicePluginInterface::~QServicePluginInterface(void)
+	?customAttribute@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@ABV3@@Z @ 9 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::customAttribute(class QString const &) const
+	?addService@QServiceManager@QtMobility@@QAE_NABVQString@@@Z @ 10 NONAME ; bool QtMobility::QServiceManager::addService(class QString const &)
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQServiceFilter@0@@Z @ 11 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QServiceFilter &)
+	?tr@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0H@Z @ 12 NONAME ; class QString QtMobility::QAbstractSecuritySession::tr(char const *, char const *, int)
+	?interfaceName@QServiceFilter@QtMobility@@QBE?AVQString@@XZ @ 13 NONAME ; class QString QtMobility::QServiceFilter::interfaceName(void) const
+	?removeService@QServiceManager@QtMobility@@QAE_NABVQString@@@Z @ 14 NONAME ; bool QtMobility::QServiceManager::removeService(class QString const &)
+	?minorVersion@QServiceInterfaceDescriptor@QtMobility@@QBEHXZ @ 15 NONAME ; int QtMobility::QServiceInterfaceDescriptor::minorVersion(void) const
+	?setInterface@QServiceFilter@QtMobility@@QAEXABVQString@@0W4VersionMatchRule@12@@Z @ 16 NONAME ; void QtMobility::QServiceFilter::setInterface(class QString const &, class QString const &, enum QtMobility::QServiceFilter::VersionMatchRule)
+	?customAttribute@QServiceFilter@QtMobility@@QBE?AVQString@@ABV3@@Z @ 17 NONAME ; class QString QtMobility::QServiceFilter::customAttribute(class QString const &) const
+	??1QServiceFilter@QtMobility@@QAE@XZ @ 18 NONAME ; QtMobility::QServiceFilter::~QServiceFilter(void)
+	?setServiceName@QServiceFilter@QtMobility@@QAEXABVQString@@@Z @ 19 NONAME ; void QtMobility::QServiceFilter::setServiceName(class QString const &)
+	?setCapabilities@QServiceFilter@QtMobility@@QAEXW4CapabilityMatchRule@12@ABVQStringList@@@Z @ 20 NONAME ; void QtMobility::QServiceFilter::setCapabilities(enum QtMobility::QServiceFilter::CapabilityMatchRule, class QStringList const &)
+	?setInterfaceDefault@QServiceManager@QtMobility@@QAE_NABVQString@@0@Z @ 21 NONAME ; bool QtMobility::QServiceManager::setInterfaceDefault(class QString const &, class QString const &)
+	?getStaticMetaObject@QServiceManager@QtMobility@@SAABUQMetaObject@@XZ @ 22 NONAME ; struct QMetaObject const & QtMobility::QServiceManager::getStaticMetaObject(void)
+	??1QServiceInterfaceDescriptor@QtMobility@@QAE@XZ @ 23 NONAME ; QtMobility::QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor(void)
+	??4QServiceInterfaceDescriptor@QtMobility@@QAEAAV01@ABV01@@Z @ 24 NONAME ; class QtMobility::QServiceInterfaceDescriptor & QtMobility::QServiceInterfaceDescriptor::operator=(class QtMobility::QServiceInterfaceDescriptor const &)
+	?tr@QServiceManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 25 NONAME ; class QString QtMobility::QServiceManager::tr(char const *, char const *, int)
+	?serviceRemoved@QServiceManager@QtMobility@@IAEXABVQString@@W4Scope@QService@2@@Z @ 26 NONAME ; void QtMobility::QServiceManager::serviceRemoved(class QString const &, enum QtMobility::QService::Scope)
+	??0QAbstractSecuritySession@QtMobility@@QAE@PAVQObject@@@Z @ 27 NONAME ; QtMobility::QAbstractSecuritySession::QAbstractSecuritySession(class QObject *)
+	??4QServiceFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 28 NONAME ; class QtMobility::QServiceFilter & QtMobility::QServiceFilter::operator=(class QtMobility::QServiceFilter const &)
+	?addService@QServiceManager@QtMobility@@QAE_NPAVQIODevice@@@Z @ 29 NONAME ; bool QtMobility::QServiceManager::addService(class QIODevice *)
+	?setClientId@QServiceContext@QtMobility@@QAEXABVQString@@@Z @ 30 NONAME ; void QtMobility::QServiceContext::setClientId(class QString const &)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQServiceInterfaceDescriptor@0@@Z @ 31 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QServiceInterfaceDescriptor const &)
+	?tr@QServiceContext@QtMobility@@SA?AVQString@@PBD0@Z @ 32 NONAME ; class QString QtMobility::QServiceContext::tr(char const *, char const *)
+	?connectNotify@QServiceManager@QtMobility@@MAEXPBD@Z @ 33 NONAME ; void QtMobility::QServiceManager::connectNotify(char const *)
+	?trUtf8@QServiceManager@QtMobility@@SA?AVQString@@PBD0@Z @ 34 NONAME ; class QString QtMobility::QServiceManager::trUtf8(char const *, char const *)
+	??0QServiceManager@QtMobility@@QAE@PAVQObject@@@Z @ 35 NONAME ; QtMobility::QServiceManager::QServiceManager(class QObject *)
+	?staticMetaObject@QServiceContext@QtMobility@@2UQMetaObject@@B @ 36 NONAME ; struct QMetaObject const QtMobility::QServiceContext::staticMetaObject
+	?setClientName@QServiceContext@QtMobility@@QAEXABVQString@@@Z @ 37 NONAME ; void QtMobility::QServiceContext::setClientName(class QString const &)
+	?findServices@QServiceManager@QtMobility@@QBE?AVQStringList@@ABVQString@@@Z @ 38 NONAME ; class QStringList QtMobility::QServiceManager::findServices(class QString const &) const
+	?trUtf8@QServiceManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 39 NONAME ; class QString QtMobility::QServiceManager::trUtf8(char const *, char const *, int)
+	??1QServiceManager@QtMobility@@UAE@XZ @ 40 NONAME ; QtMobility::QServiceManager::~QServiceManager(void)
+	?majorVersion@QServiceFilter@QtMobility@@QBEHXZ @ 41 NONAME ; int QtMobility::QServiceFilter::majorVersion(void) const
+	?trUtf8@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0@Z @ 42 NONAME ; class QString QtMobility::QAbstractSecuritySession::trUtf8(char const *, char const *)
+	??0QServiceInterfaceDescriptor@QtMobility@@QAE@ABV01@@Z @ 43 NONAME ; QtMobility::QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(class QtMobility::QServiceInterfaceDescriptor const &)
+	??0QServiceManager@QtMobility@@QAE@W4Scope@QService@1@PAVQObject@@@Z @ 44 NONAME ; QtMobility::QServiceManager::QServiceManager(enum QtMobility::QService::Scope, class QObject *)
+	??_EQServicePluginInterface@QtMobility@@UAE@I@Z @ 45 NONAME ; QtMobility::QServicePluginInterface::~QServicePluginInterface(unsigned int)
+	?capabilities@QServiceFilter@QtMobility@@QBE?AVQStringList@@XZ @ 46 NONAME ; class QStringList QtMobility::QServiceFilter::capabilities(void) const
+	?serviceName@QServiceFilter@QtMobility@@QBE?AVQString@@XZ @ 47 NONAME ; class QString QtMobility::QServiceFilter::serviceName(void) const
+	?disconnectNotify@QServiceManager@QtMobility@@MAEXPBD@Z @ 48 NONAME ; void QtMobility::QServiceManager::disconnectNotify(char const *)
+	?loadInterface@QServiceManager@QtMobility@@QAEPAVQObject@@ABVQString@@PAVQServiceContext@2@PAVQAbstractSecuritySession@2@@Z @ 49 NONAME ; class QObject * QtMobility::QServiceManager::loadInterface(class QString const &, class QtMobility::QServiceContext *, class QtMobility::QAbstractSecuritySession *)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQServiceFilter@0@@Z @ 50 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QServiceFilter const &)
+	??_EQAbstractSecuritySession@QtMobility@@UAE@I@Z @ 51 NONAME ; QtMobility::QAbstractSecuritySession::~QAbstractSecuritySession(unsigned int)
+	??_EQServiceManager@QtMobility@@UAE@I@Z @ 52 NONAME ; QtMobility::QServiceManager::~QServiceManager(unsigned int)
+	?qt_metacast@QAbstractSecuritySession@QtMobility@@UAEPAXPBD@Z @ 53 NONAME ; void * QtMobility::QAbstractSecuritySession::qt_metacast(char const *)
+	?qt_metacall@QServiceContext@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 54 NONAME ; int QtMobility::QServiceContext::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?customAttributes@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQStringList@@XZ @ 55 NONAME ; class QStringList QtMobility::QServiceInterfaceDescriptor::customAttributes(void) const
+	?error@QServiceManager@QtMobility@@QBE?AW4Error@12@XZ @ 56 NONAME ; enum QtMobility::QServiceManager::Error QtMobility::QServiceManager::error(void) const
+	?metaObject@QAbstractSecuritySession@QtMobility@@UBEPBUQMetaObject@@XZ @ 57 NONAME ; struct QMetaObject const * QtMobility::QAbstractSecuritySession::metaObject(void) const
+	?staticMetaObject@QAbstractSecuritySession@QtMobility@@2UQMetaObject@@B @ 58 NONAME ; struct QMetaObject const QtMobility::QAbstractSecuritySession::staticMetaObject
+	?minorVersion@QServiceFilter@QtMobility@@QBEHXZ @ 59 NONAME ; int QtMobility::QServiceFilter::minorVersion(void) const
+	?uninstallService@QServicePluginInterface@QtMobility@@UAEXXZ @ 60 NONAME ; void QtMobility::QServicePluginInterface::uninstallService(void)
+	?qt_metacall@QAbstractSecuritySession@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 61 NONAME ; int QtMobility::QAbstractSecuritySession::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QServiceInterfaceDescriptor@QtMobility@@QAE@XZ @ 62 NONAME ; QtMobility::QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(void)
+	??8QServiceInterfaceDescriptor@QtMobility@@QBE_NABV01@@Z @ 63 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::operator==(class QtMobility::QServiceInterfaceDescriptor const &) const
+	?tr@QServiceContext@QtMobility@@SA?AVQString@@PBD0H@Z @ 64 NONAME ; class QString QtMobility::QServiceContext::tr(char const *, char const *, int)
+	??0QServiceFilter@QtMobility@@QAE@XZ @ 65 NONAME ; QtMobility::QServiceFilter::QServiceFilter(void)
+	?versionMatchRule@QServiceFilter@QtMobility@@QBE?AW4VersionMatchRule@12@XZ @ 66 NONAME ; enum QtMobility::QServiceFilter::VersionMatchRule QtMobility::QServiceFilter::versionMatchRule(void) const
+	?qt_metacast@QServiceContext@QtMobility@@UAEPAXPBD@Z @ 67 NONAME ; void * QtMobility::QServiceContext::qt_metacast(char const *)
+	?scope@QServiceInterfaceDescriptor@QtMobility@@QBE?AW4Scope@QService@2@XZ @ 68 NONAME ; enum QtMobility::QService::Scope QtMobility::QServiceInterfaceDescriptor::scope(void) const
+	??0QServiceContext@QtMobility@@QAE@PAVQObject@@@Z @ 69 NONAME ; QtMobility::QServiceContext::QServiceContext(class QObject *)
+	?tr@QServiceManager@QtMobility@@SA?AVQString@@PBD0@Z @ 70 NONAME ; class QString QtMobility::QServiceManager::tr(char const *, char const *)
+	?customAttributes@QServiceFilter@QtMobility@@QBE?AVQStringList@@XZ @ 71 NONAME ; class QStringList QtMobility::QServiceFilter::customAttributes(void) const
+	?metaObject@QServiceManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 72 NONAME ; struct QMetaObject const * QtMobility::QServiceManager::metaObject(void) const
+	?majorVersion@QServiceInterfaceDescriptor@QtMobility@@QBEHXZ @ 73 NONAME ; int QtMobility::QServiceInterfaceDescriptor::majorVersion(void) const
+	?isValid@QServiceInterfaceDescriptor@QtMobility@@QBE_NXZ @ 74 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::isValid(void) const
+	?trUtf8@QServiceContext@QtMobility@@SA?AVQString@@PBD0H@Z @ 75 NONAME ; class QString QtMobility::QServiceContext::trUtf8(char const *, char const *, int)
+	?interfaceName@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@XZ @ 76 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::interfaceName(void) const
+	??1QAbstractSecuritySession@QtMobility@@UAE@XZ @ 77 NONAME ; QtMobility::QAbstractSecuritySession::~QAbstractSecuritySession(void)
+	??9QServiceInterfaceDescriptor@QtMobility@@QBE_NABV01@@Z @ 78 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::operator!=(class QtMobility::QServiceInterfaceDescriptor const &) const
+	?clientName@QServiceContext@QtMobility@@QBE?AVQString@@XZ @ 79 NONAME ; class QString QtMobility::QServiceContext::clientName(void) const
+	?getStaticMetaObject@QServiceContext@QtMobility@@SAABUQMetaObject@@XZ @ 80 NONAME ; struct QMetaObject const & QtMobility::QServiceContext::getStaticMetaObject(void)
+	?installService@QServicePluginInterface@QtMobility@@UAEXXZ @ 81 NONAME ; void QtMobility::QServicePluginInterface::installService(void)
+	??_EQServiceContext@QtMobility@@UAE@I@Z @ 82 NONAME ; QtMobility::QServiceContext::~QServiceContext(unsigned int)
+	?attribute@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQVariant@@W4Attribute@12@@Z @ 83 NONAME ; class QVariant QtMobility::QServiceInterfaceDescriptor::attribute(enum QtMobility::QServiceInterfaceDescriptor::Attribute) const
+	??0QServiceFilter@QtMobility@@QAE@ABVQString@@0W4VersionMatchRule@01@@Z @ 84 NONAME ; QtMobility::QServiceFilter::QServiceFilter(class QString const &, class QString const &, enum QtMobility::QServiceFilter::VersionMatchRule)
+	?loadInterface@QServiceManager@QtMobility@@QAEPAVQObject@@ABVQServiceInterfaceDescriptor@2@PAVQServiceContext@2@PAVQAbstractSecuritySession@2@@Z @ 85 NONAME ; class QObject * QtMobility::QServiceManager::loadInterface(class QtMobility::QServiceInterfaceDescriptor const &, class QtMobility::QServiceContext *, class QtMobility::QAbstractSecuritySession *)
+	?tr@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0@Z @ 86 NONAME ; class QString QtMobility::QAbstractSecuritySession::tr(char const *, char const *)
+	??0QServicePluginInterface@QtMobility@@QAE@XZ @ 87 NONAME ; QtMobility::QServicePluginInterface::QServicePluginInterface(void)
+	?trUtf8@QServiceContext@QtMobility@@SA?AVQString@@PBD0@Z @ 88 NONAME ; class QString QtMobility::QServiceContext::trUtf8(char const *, char const *)
+	?setInterfaceDefault@QServiceManager@QtMobility@@QAE_NABVQServiceInterfaceDescriptor@2@@Z @ 89 NONAME ; bool QtMobility::QServiceManager::setInterfaceDefault(class QtMobility::QServiceInterfaceDescriptor const &)
+	??1QServiceContext@QtMobility@@UAE@XZ @ 90 NONAME ; QtMobility::QServiceContext::~QServiceContext(void)
+	?clearCustomAttribute@QServiceFilter@QtMobility@@QAEXABVQString@@@Z @ 91 NONAME ; void QtMobility::QServiceFilter::clearCustomAttribute(class QString const &)
+	?capabilityMatchRule@QServiceFilter@QtMobility@@QBE?AW4CapabilityMatchRule@12@XZ @ 92 NONAME ; enum QtMobility::QServiceFilter::CapabilityMatchRule QtMobility::QServiceFilter::capabilityMatchRule(void) const
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQServiceInterfaceDescriptor@0@@Z @ 93 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QServiceInterfaceDescriptor &)
+	?findInterfaces@QServiceManager@QtMobility@@QBE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQServiceFilter@2@@Z @ 94 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::QServiceManager::findInterfaces(class QtMobility::QServiceFilter const &) const
+	?findInterfaces@QServiceManager@QtMobility@@QBE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQString@@@Z @ 95 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::QServiceManager::findInterfaces(class QString const &) const
+	?serviceAdded@QServiceManager@QtMobility@@IAEXABVQString@@W4Scope@QService@2@@Z @ 96 NONAME ; void QtMobility::QServiceManager::serviceAdded(class QString const &, enum QtMobility::QService::Scope)
+	?scope@QServiceManager@QtMobility@@QBE?AW4Scope@QService@2@XZ @ 97 NONAME ; enum QtMobility::QService::Scope QtMobility::QServiceManager::scope(void) const
+	??0QServiceFilter@QtMobility@@QAE@ABV01@@Z @ 98 NONAME ; QtMobility::QServiceFilter::QServiceFilter(class QtMobility::QServiceFilter const &)
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQServiceInterfaceDescriptor@0@@Z @ 99 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QServiceInterfaceDescriptor const &)
+	?trUtf8@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0H@Z @ 100 NONAME ; class QString QtMobility::QAbstractSecuritySession::trUtf8(char const *, char const *, int)
+	?setCustomAttribute@QServiceFilter@QtMobility@@QAEXABVQString@@0@Z @ 101 NONAME ; void QtMobility::QServiceFilter::setCustomAttribute(class QString const &, class QString const &)
+	?qt_metacall@QServiceManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 102 NONAME ; int QtMobility::QServiceManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0DBError@QtMobility@@QAE@XZ @ 103 NONAME ; QtMobility::DBError::DBError(void)
+	??0DatabaseFileWatcher@QtMobility@@QAE@PAVDatabaseManager@1@@Z @ 104 NONAME ; QtMobility::DatabaseFileWatcher::DatabaseFileWatcher(class QtMobility::DatabaseManager *)
+	??0DatabaseManager@QtMobility@@QAE@XZ @ 105 NONAME ; QtMobility::DatabaseManager::DatabaseManager(void)
+	??0ServiceDatabase@QtMobility@@QAE@XZ @ 106 NONAME ; QtMobility::ServiceDatabase::ServiceDatabase(void)
+	??0ServiceMetaData@QtMobility@@QAE@ABVQString@@@Z @ 107 NONAME ; QtMobility::ServiceMetaData::ServiceMetaData(class QString const &)
+	??0ServiceMetaData@QtMobility@@QAE@PAVQIODevice@@@Z @ 108 NONAME ; QtMobility::ServiceMetaData::ServiceMetaData(class QIODevice *)
+	??1DBError@QtMobility@@QAE@XZ @ 109 NONAME ; QtMobility::DBError::~DBError(void)
+	??1DatabaseFileWatcher@QtMobility@@UAE@XZ @ 110 NONAME ; QtMobility::DatabaseFileWatcher::~DatabaseFileWatcher(void)
+	??1DatabaseManager@QtMobility@@UAE@XZ @ 111 NONAME ; QtMobility::DatabaseManager::~DatabaseManager(void)
+	??1ServiceDatabase@QtMobility@@UAE@XZ @ 112 NONAME ; QtMobility::ServiceDatabase::~ServiceDatabase(void)
+	??1ServiceMetaData@QtMobility@@QAE@XZ @ 113 NONAME ; QtMobility::ServiceMetaData::~ServiceMetaData(void)
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVServiceMetaDataResults@0@@Z @ 114 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::ServiceMetaDataResults &)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVServiceMetaDataResults@0@@Z @ 115 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::ServiceMetaDataResults const &)
+	??_EDatabaseFileWatcher@QtMobility@@UAE@I@Z @ 116 NONAME ; QtMobility::DatabaseFileWatcher::~DatabaseFileWatcher(unsigned int)
+	??_EDatabaseManager@QtMobility@@UAE@I@Z @ 117 NONAME ; QtMobility::DatabaseManager::~DatabaseManager(unsigned int)
+	??_EServiceDatabase@QtMobility@@UAE@I@Z @ 118 NONAME ; QtMobility::ServiceDatabase::~ServiceDatabase(unsigned int)
+	?beginTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@W4TransactionType@12@@Z @ 119 NONAME ; bool QtMobility::ServiceDatabase::beginTransaction(class QSqlQuery *, enum QtMobility::ServiceDatabase::TransactionType)
+	?checkConnection@ServiceDatabase@QtMobility@@QAE_NXZ @ 120 NONAME ; bool QtMobility::ServiceDatabase::checkConnection(void)
+	?checkTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 121 NONAME ; bool QtMobility::ServiceDatabase::checkTables(void)
+	?checkVersion@ServiceMetaData@QtMobility@@ABE_NABVQString@@@Z @ 122 NONAME ; bool QtMobility::ServiceMetaData::checkVersion(class QString const &) const
+	?clearMetadata@ServiceMetaData@QtMobility@@AAEXXZ @ 123 NONAME ; void QtMobility::ServiceMetaData::clearMetadata(void)
+	?close@ServiceDatabase@QtMobility@@QAE_NXZ @ 124 NONAME ; bool QtMobility::ServiceDatabase::close(void)
+	?closestExistingParent@DatabaseFileWatcher@QtMobility@@AAE?AVQString@@ABV3@@Z @ 125 NONAME ; class QString QtMobility::DatabaseFileWatcher::closestExistingParent(class QString const &)
+	?code@DBError@QtMobility@@QBE?AW4ErrorCode@12@XZ @ 126 NONAME ; enum QtMobility::DBError::ErrorCode QtMobility::DBError::code(void) const
+	?commitTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@@Z @ 127 NONAME ; bool QtMobility::ServiceDatabase::commitTransaction(class QSqlQuery *)
+	?createTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 128 NONAME ; bool QtMobility::ServiceDatabase::createTables(void)
+	?databaseChanged@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@@Z @ 129 NONAME ; void QtMobility::DatabaseFileWatcher::databaseChanged(class QString const &)
+	?databaseDirectoryChanged@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@@Z @ 130 NONAME ; void QtMobility::DatabaseFileWatcher::databaseDirectoryChanged(class QString const &)
+	?databasePath@ServiceDatabase@QtMobility@@QBE?AVQString@@XZ @ 131 NONAME ; class QString QtMobility::ServiceDatabase::databasePath(void) const
+	?device@ServiceMetaData@QtMobility@@QBEPAVQIODevice@@XZ @ 132 NONAME ; class QIODevice * QtMobility::ServiceMetaData::device(void) const
+	?dropTables@ServiceDatabase@QtMobility@@QAE_NXZ @ 133 NONAME ; bool QtMobility::ServiceDatabase::dropTables(void)
+	?executeQuery@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@ABVQString@@ABV?$QList@VQVariant@@@@@Z @ 134 NONAME ; bool QtMobility::ServiceDatabase::executeQuery(class QSqlQuery *, class QString const &, class QList<class QVariant> const &)
+	?externalDefaultsInfo@ServiceDatabase@QtMobility@@QAE?AV?$QList@U?$QPair@VQString@@V1@@@@@XZ @ 135 NONAME ; class QList<struct QPair<class QString, class QString> > QtMobility::ServiceDatabase::externalDefaultsInfo(void)
+	?extractMetadata@ServiceMetaData@QtMobility@@QAE_NXZ @ 136 NONAME ; bool QtMobility::ServiceMetaData::extractMetadata(void)
+	?getInterface@ServiceDatabase@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 137 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceDatabase::getInterface(class QString const &)
+	?getInterfaceID@ServiceDatabase@QtMobility@@QAE?AVQString@@ABVQServiceInterfaceDescriptor@2@@Z @ 138 NONAME ; class QString QtMobility::ServiceDatabase::getInterfaceID(class QtMobility::QServiceInterfaceDescriptor const &)
+	?getInterfaceID@ServiceDatabase@QtMobility@@QAE?AVQString@@PAVQSqlQuery@@ABVQServiceInterfaceDescriptor@2@@Z @ 139 NONAME ; class QString QtMobility::ServiceDatabase::getInterfaceID(class QSqlQuery *, class QtMobility::QServiceInterfaceDescriptor const &)
+	?getInterfaces@DatabaseManager@QtMobility@@QAE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQServiceFilter@2@W4DbScope@12@@Z @ 140 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::DatabaseManager::getInterfaces(class QtMobility::QServiceFilter const &, enum QtMobility::DatabaseManager::DbScope)
+	?getInterfaces@ServiceDatabase@QtMobility@@QAE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@ABVQServiceFilter@2@@Z @ 141 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::ServiceDatabase::getInterfaces(class QtMobility::QServiceFilter const &)
+	?getLatestError@ServiceMetaData@QtMobility@@QBEHXZ @ 142 NONAME ; int QtMobility::ServiceMetaData::getLatestError(void) const
+	?getServiceNames@DatabaseManager@QtMobility@@QAE?AVQStringList@@ABVQString@@W4DbScope@12@@Z @ 143 NONAME ; class QStringList QtMobility::DatabaseManager::getServiceNames(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?getServiceNames@ServiceDatabase@QtMobility@@QAE?AVQStringList@@ABVQString@@@Z @ 144 NONAME ; class QStringList QtMobility::ServiceDatabase::getServiceNames(class QString const &)
+	?getStaticMetaObject@DatabaseFileWatcher@QtMobility@@SAABUQMetaObject@@XZ @ 145 NONAME ; struct QMetaObject const & QtMobility::DatabaseFileWatcher::getStaticMetaObject(void)
+	?getStaticMetaObject@DatabaseManager@QtMobility@@SAABUQMetaObject@@XZ @ 146 NONAME ; struct QMetaObject const & QtMobility::DatabaseManager::getStaticMetaObject(void)
+	?getStaticMetaObject@ServiceDatabase@QtMobility@@SAABUQMetaObject@@XZ @ 147 NONAME ; struct QMetaObject const & QtMobility::ServiceDatabase::getStaticMetaObject(void)
+	?initDbPath@DatabaseManager@QtMobility@@AAEXW4DbScope@12@@Z @ 148 NONAME ; void QtMobility::DatabaseManager::initDbPath(enum QtMobility::DatabaseManager::DbScope)
+	?insertInterfaceData@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@ABVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 149 NONAME ; bool QtMobility::ServiceDatabase::insertInterfaceData(class QSqlQuery *, class QtMobility::QServiceInterfaceDescriptor const &, class QString const &)
+	?interfaceDefault@DatabaseManager@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@W4DbScope@12@@Z @ 150 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::DatabaseManager::interfaceDefault(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?interfaceDefault@ServiceDatabase@QtMobility@@QAE?AVQServiceInterfaceDescriptor@2@ABVQString@@PAV4@_N@Z @ 151 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceDatabase::interfaceDefault(class QString const &, class QString *, bool)
+	?isOpen@ServiceDatabase@QtMobility@@QBE_NXZ @ 152 NONAME ; bool QtMobility::ServiceDatabase::isOpen(void) const
+	?lastError@DatabaseManager@QtMobility@@QAE?AVDBError@2@XZ @ 153 NONAME ; class QtMobility::DBError QtMobility::DatabaseManager::lastError(void)
+	?lastError@ServiceDatabase@QtMobility@@QBE?AVDBError@2@XZ @ 154 NONAME ; class QtMobility::DBError QtMobility::ServiceDatabase::lastError(void) const
+	?latestDescriptor@DatabaseManager@QtMobility@@AAE?AVQServiceInterfaceDescriptor@2@ABV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@@Z @ 155 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::DatabaseManager::latestDescriptor(class QList<class QtMobility::QServiceInterfaceDescriptor> const &)
+	?latestInterfaceVersion@ServiceMetaData@QtMobility@@AAE?AVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 156 NONAME ; class QtMobility::QServiceInterfaceDescriptor QtMobility::ServiceMetaData::latestInterfaceVersion(class QString const &)
+	?latestInterfaces@ServiceMetaData@QtMobility@@ABE?AV?$QList@VQServiceInterfaceDescriptor@QtMobility@@@@XZ @ 157 NONAME ; class QList<class QtMobility::QServiceInterfaceDescriptor> QtMobility::ServiceMetaData::latestInterfaces(void) const
+	?lessThan@ServiceMetaData@QtMobility@@ABE_NABVQServiceInterfaceDescriptor@2@0@Z @ 158 NONAME ; bool QtMobility::ServiceMetaData::lessThan(class QtMobility::QServiceInterfaceDescriptor const &, class QtMobility::QServiceInterfaceDescriptor const &) const
+	?metaObject@DatabaseFileWatcher@QtMobility@@UBEPBUQMetaObject@@XZ @ 159 NONAME ; struct QMetaObject const * QtMobility::DatabaseFileWatcher::metaObject(void) const
+	?metaObject@DatabaseManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 160 NONAME ; struct QMetaObject const * QtMobility::DatabaseManager::metaObject(void) const
+	?metaObject@ServiceDatabase@QtMobility@@UBEPBUQMetaObject@@XZ @ 161 NONAME ; struct QMetaObject const * QtMobility::ServiceDatabase::metaObject(void) const
+	?notifyChanges@DatabaseFileWatcher@QtMobility@@AAEXPAVServiceDatabase@2@W4DbScope@DatabaseManager@2@@Z @ 162 NONAME ; void QtMobility::DatabaseFileWatcher::notifyChanges(class QtMobility::ServiceDatabase *, enum QtMobility::DatabaseManager::DbScope)
+	?open@ServiceDatabase@QtMobility@@QAE_NXZ @ 163 NONAME ; bool QtMobility::ServiceDatabase::open(void)
+	?openDb@DatabaseManager@QtMobility@@AAE_NW4DbScope@12@@Z @ 164 NONAME ; bool QtMobility::DatabaseManager::openDb(enum QtMobility::DatabaseManager::DbScope)
+	?parseResults@ServiceMetaData@QtMobility@@QBE?AVServiceMetaDataResults@2@XZ @ 165 NONAME ; class QtMobility::ServiceMetaDataResults QtMobility::ServiceMetaData::parseResults(void) const
+	?populateInterfaceProperties@ServiceDatabase@QtMobility@@QAE_NPAVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 166 NONAME ; bool QtMobility::ServiceDatabase::populateInterfaceProperties(class QtMobility::QServiceInterfaceDescriptor *, class QString const &)
+	?populateServiceProperties@ServiceDatabase@QtMobility@@QAE_NPAVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 167 NONAME ; bool QtMobility::ServiceDatabase::populateServiceProperties(class QtMobility::QServiceInterfaceDescriptor *, class QString const &)
+	?processInterfaceElement@ServiceMetaData@QtMobility@@AAE_NAAVQXmlStreamReader@@@Z @ 168 NONAME ; bool QtMobility::ServiceMetaData::processInterfaceElement(class QXmlStreamReader &)
+	?processServiceElement@ServiceMetaData@QtMobility@@AAE_NAAVQXmlStreamReader@@@Z @ 169 NONAME ; bool QtMobility::ServiceMetaData::processServiceElement(class QXmlStreamReader &)
+	?qt_metacall@DatabaseFileWatcher@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 170 NONAME ; int QtMobility::DatabaseFileWatcher::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@DatabaseManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 171 NONAME ; int QtMobility::DatabaseManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@ServiceDatabase@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 172 NONAME ; int QtMobility::ServiceDatabase::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@DatabaseFileWatcher@QtMobility@@UAEPAXPBD@Z @ 173 NONAME ; void * QtMobility::DatabaseFileWatcher::qt_metacast(char const *)
+	?qt_metacast@DatabaseManager@QtMobility@@UAEPAXPBD@Z @ 174 NONAME ; void * QtMobility::DatabaseManager::qt_metacast(char const *)
+	?qt_metacast@ServiceDatabase@QtMobility@@UAEPAXPBD@Z @ 175 NONAME ; void * QtMobility::ServiceDatabase::qt_metacast(char const *)
+	?registerService@DatabaseManager@QtMobility@@QAE_NAAVServiceMetaDataResults@2@W4DbScope@12@@Z @ 176 NONAME ; bool QtMobility::DatabaseManager::registerService(class QtMobility::ServiceMetaDataResults &, enum QtMobility::DatabaseManager::DbScope)
+	?registerService@ServiceDatabase@QtMobility@@QAE_NABVServiceMetaDataResults@2@ABVQString@@@Z @ 177 NONAME ; bool QtMobility::ServiceDatabase::registerService(class QtMobility::ServiceMetaDataResults const &, class QString const &)
+	?removeExternalDefaultServiceInterface@ServiceDatabase@QtMobility@@QAE_NABVQString@@@Z @ 178 NONAME ; bool QtMobility::ServiceDatabase::removeExternalDefaultServiceInterface(class QString const &)
+	?restartDirMonitoring@DatabaseFileWatcher@QtMobility@@AAEXABVQString@@0@Z @ 179 NONAME ; void QtMobility::DatabaseFileWatcher::restartDirMonitoring(class QString const &, class QString const &)
+	?rollbackTransaction@ServiceDatabase@QtMobility@@QAE_NPAVQSqlQuery@@@Z @ 180 NONAME ; bool QtMobility::ServiceDatabase::rollbackTransaction(class QSqlQuery *)
+	?serviceAdded@DatabaseManager@QtMobility@@IAEXABVQString@@W4DbScope@12@@Z @ 181 NONAME ; void QtMobility::DatabaseManager::serviceAdded(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?serviceAdded@ServiceDatabase@QtMobility@@IAEXABVQString@@@Z @ 182 NONAME ; void QtMobility::ServiceDatabase::serviceAdded(class QString const &)
+	?serviceInitialized@DatabaseManager@QtMobility@@QAE_NABVQString@@W4DbScope@12@@Z @ 183 NONAME ; bool QtMobility::DatabaseManager::serviceInitialized(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?serviceInitialized@ServiceDatabase@QtMobility@@QAE_NABVQString@@0@Z @ 184 NONAME ; bool QtMobility::ServiceDatabase::serviceInitialized(class QString const &, class QString const &)
+	?serviceRemoved@DatabaseManager@QtMobility@@IAEXABVQString@@W4DbScope@12@@Z @ 185 NONAME ; void QtMobility::DatabaseManager::serviceRemoved(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?serviceRemoved@ServiceDatabase@QtMobility@@IAEXABVQString@@@Z @ 186 NONAME ; void QtMobility::ServiceDatabase::serviceRemoved(class QString const &)
+	?setChangeNotificationsEnabled@DatabaseManager@QtMobility@@QAEXW4DbScope@12@_N@Z @ 187 NONAME ; void QtMobility::DatabaseManager::setChangeNotificationsEnabled(enum QtMobility::DatabaseManager::DbScope, bool)
+	?setDatabasePath@ServiceDatabase@QtMobility@@QAEXABVQString@@@Z @ 188 NONAME ; void QtMobility::ServiceDatabase::setDatabasePath(class QString const &)
+	?setDevice@ServiceMetaData@QtMobility@@QAEXPAVQIODevice@@@Z @ 189 NONAME ; void QtMobility::ServiceMetaData::setDevice(class QIODevice *)
+	?setEnabled@DatabaseFileWatcher@QtMobility@@QAEXPAVServiceDatabase@2@_N@Z @ 190 NONAME ; void QtMobility::DatabaseFileWatcher::setEnabled(class QtMobility::ServiceDatabase *, bool)
+	?setError@DBError@QtMobility@@QAEXW4ErrorCode@12@ABVQString@@@Z @ 191 NONAME ; void QtMobility::DBError::setError(enum QtMobility::DBError::ErrorCode, class QString const &)
+	?setInterfaceDefault@DatabaseManager@QtMobility@@QAE_NABVQServiceInterfaceDescriptor@2@W4DbScope@12@@Z @ 192 NONAME ; bool QtMobility::DatabaseManager::setInterfaceDefault(class QtMobility::QServiceInterfaceDescriptor const &, enum QtMobility::DatabaseManager::DbScope)
+	?setInterfaceDefault@DatabaseManager@QtMobility@@QAE_NABVQString@@0W4DbScope@12@@Z @ 193 NONAME ; bool QtMobility::DatabaseManager::setInterfaceDefault(class QString const &, class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?setInterfaceDefault@ServiceDatabase@QtMobility@@QAE_NABVQServiceInterfaceDescriptor@2@ABVQString@@@Z @ 194 NONAME ; bool QtMobility::ServiceDatabase::setInterfaceDefault(class QtMobility::QServiceInterfaceDescriptor const &, class QString const &)
+	?setNotFoundError@DBError@QtMobility@@QAEXABVQString@@@Z @ 195 NONAME ; void QtMobility::DBError::setNotFoundError(class QString const &)
+	?setSQLError@DBError@QtMobility@@QAEXABVQString@@@Z @ 196 NONAME ; void QtMobility::DBError::setSQLError(class QString const &)
+	?text@DBError@QtMobility@@QBE?AVQString@@XZ @ 197 NONAME ; class QString QtMobility::DBError::text(void) const
+	?tr@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0@Z @ 198 NONAME ; class QString QtMobility::DatabaseFileWatcher::tr(char const *, char const *)
+	?tr@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0H@Z @ 199 NONAME ; class QString QtMobility::DatabaseFileWatcher::tr(char const *, char const *, int)
+	?tr@DatabaseManager@QtMobility@@SA?AVQString@@PBD0@Z @ 200 NONAME ; class QString QtMobility::DatabaseManager::tr(char const *, char const *)
+	?tr@DatabaseManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 201 NONAME ; class QString QtMobility::DatabaseManager::tr(char const *, char const *, int)
+	?tr@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0@Z @ 202 NONAME ; class QString QtMobility::ServiceDatabase::tr(char const *, char const *)
+	?tr@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0H@Z @ 203 NONAME ; class QString QtMobility::ServiceDatabase::tr(char const *, char const *, int)
+	?trUtf8@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0@Z @ 204 NONAME ; class QString QtMobility::DatabaseFileWatcher::trUtf8(char const *, char const *)
+	?trUtf8@DatabaseFileWatcher@QtMobility@@SA?AVQString@@PBD0H@Z @ 205 NONAME ; class QString QtMobility::DatabaseFileWatcher::trUtf8(char const *, char const *, int)
+	?trUtf8@DatabaseManager@QtMobility@@SA?AVQString@@PBD0@Z @ 206 NONAME ; class QString QtMobility::DatabaseManager::trUtf8(char const *, char const *)
+	?trUtf8@DatabaseManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 207 NONAME ; class QString QtMobility::DatabaseManager::trUtf8(char const *, char const *, int)
+	?trUtf8@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0@Z @ 208 NONAME ; class QString QtMobility::ServiceDatabase::trUtf8(char const *, char const *)
+	?trUtf8@ServiceDatabase@QtMobility@@SA?AVQString@@PBD0H@Z @ 209 NONAME ; class QString QtMobility::ServiceDatabase::trUtf8(char const *, char const *, int)
+	?transformVersion@ServiceMetaData@QtMobility@@ABEXABVQString@@PAH1@Z @ 210 NONAME ; void QtMobility::ServiceMetaData::transformVersion(class QString const &, int *, int *) const
+	?unregisterService@DatabaseManager@QtMobility@@QAE_NABVQString@@W4DbScope@12@@Z @ 211 NONAME ; bool QtMobility::DatabaseManager::unregisterService(class QString const &, enum QtMobility::DatabaseManager::DbScope)
+	?unregisterService@ServiceDatabase@QtMobility@@QAE_NABVQString@@0@Z @ 212 NONAME ; bool QtMobility::ServiceDatabase::unregisterService(class QString const &, class QString const &)
+	?staticMetaObject@DatabaseFileWatcher@QtMobility@@2UQMetaObject@@B @ 213 NONAME ; struct QMetaObject const QtMobility::DatabaseFileWatcher::staticMetaObject
+	?staticMetaObject@DatabaseManager@QtMobility@@2UQMetaObject@@B @ 214 NONAME ; struct QMetaObject const QtMobility::DatabaseManager::staticMetaObject
+	?staticMetaObject@ServiceDatabase@QtMobility@@2UQMetaObject@@B @ 215 NONAME ; struct QMetaObject const QtMobility::ServiceDatabase::staticMetaObject
 

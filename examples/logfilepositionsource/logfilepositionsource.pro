@@ -27,7 +27,7 @@ symbian|wince* {
         DEPLOYMENT += addFiles
     }
 } else {
-    logfileexample.path = $$QT_MOBILITY_EXAMPLES
+    logfileexample.path = $$QT_MOBILITY_PREFIX/bin
     logfileexample.files = simplelog.txt
     INSTALLS += logfileexample
 }

@@ -122,46 +122,4 @@ EXPORTS
 	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 121 NONAME
 	_ZN10QtMobility18QSystemNetworkInfo13connectNotifyEPKc @ 122 NONAME
 	_ZN10QtMobility18QSystemNetworkInfo16disconnectNotifyEPKc @ 123 NONAME
-	_ZN10QtMobility11QSystemInfo13connectNotifyEPKc @ 124 NONAME
-	_ZN10QtMobility11QSystemInfo16disconnectNotifyEPKc @ 125 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo13connectNotifyEPKc @ 126 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo16disconnectNotifyEPKc @ 127 NONAME
-	_ZN10QtMobility17QSystemDeviceInfo26currentBluetoothPowerStateEv @ 128 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo11getDPIWidthEi @ 129 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo12getDPIHeightEi @ 130 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo13physicalWidthEi @ 131 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo14getOrientationEi @ 132 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 133 NONAME
-	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 134 NONAME
-	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 135 NONAME
-	_ZTI10CPhoneInfo @ 136 NONAME ; #<TI>#
-	_ZTI12CBatteryInfo @ 137 NONAME ; #<TI>#
-	_ZTI14CTelephonyInfo @ 138 NONAME ; #<TI>#
-	_ZTI15CChargingStatus @ 139 NONAME ; #<TI>#
-	_ZTI15CSubscriberInfo @ 140 NONAME ; #<TI>#
-	_ZTI16CCellNetworkInfo @ 141 NONAME ; #<TI>#
-	_ZTI23CCellSignalStrengthInfo @ 142 NONAME ; #<TI>#
-	_ZTI28CCellNetworkRegistrationInfo @ 143 NONAME ; #<TI>#
-	_ZTI9CWlanInfo @ 144 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemInfoPrivateE @ 145 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QSystemDeviceInfoPrivateE @ 146 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemDisplayInfoPrivateE @ 147 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemNetworkInfoPrivateE @ 148 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemScreenSaverPrivateE @ 149 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemStorageInfoPrivateE @ 150 NONAME ; #<TI>#
-	_ZTV10CPhoneInfo @ 151 NONAME ; #<VT>#
-	_ZTV12CBatteryInfo @ 152 NONAME ; #<VT>#
-	_ZTV14CTelephonyInfo @ 153 NONAME ; #<VT>#
-	_ZTV15CChargingStatus @ 154 NONAME ; #<VT>#
-	_ZTV15CSubscriberInfo @ 155 NONAME ; #<VT>#
-	_ZTV16CCellNetworkInfo @ 156 NONAME ; #<VT>#
-	_ZTV23CCellSignalStrengthInfo @ 157 NONAME ; #<VT>#
-	_ZTV28CCellNetworkRegistrationInfo @ 158 NONAME ; #<VT>#
-	_ZTV9CWlanInfo @ 159 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemInfoPrivateE @ 160 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QSystemDeviceInfoPrivateE @ 161 NONAME ; #<VT>#
-	_ZTVN10QtMobility25QSystemDisplayInfoPrivateE @ 162 NONAME ; #<VT>#
-	_ZTVN10QtMobility25QSystemNetworkInfoPrivateE @ 163 NONAME ; #<VT>#
-	_ZTVN10QtMobility25QSystemScreenSaverPrivateE @ 164 NONAME ; #<VT>#
-	_ZTVN10QtMobility25QSystemStorageInfoPrivateE @ 165 NONAME ; #<VT>#
 

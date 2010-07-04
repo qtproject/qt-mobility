@@ -47,7 +47,7 @@
 // implementation detail. This header file may change from version to
 // version without notice, or even be removed.
 //
-// INTERNAL USE ONLY: Do NOT use for any other purpose.
+// We mean it.
 //
 
 #include "qsoundeffect_qmedia_p.h"

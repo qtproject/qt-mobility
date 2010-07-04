@@ -6,17 +6,12 @@ include(../../common.pri)
 
 symbian {
     SUBDIRS += symbian
-
-    ## temporarily disable building symbian-specific unit tests.
-    #contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
+    contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
     
     # SIM backend depends on etel MM APIs
     contains(symbiancntsim_enabled, yes) {
         SUBDIRS += symbiansim
-
-        ## temporarily disable building symbian-specific unit tests.
-        #contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
-
+        contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
         message("Symbian SIM backend enabled")
     } else {
         message("Symbian SIM backend disabled")

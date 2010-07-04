@@ -50,8 +50,7 @@
 
 #include "qgstreamerbushelper.h"
 
-#include "qcamera.h"
-
+QT_USE_NAMESPACE
 
 class QGstreamerMessage;
 class QGstreamerBusHelper;
@@ -63,7 +62,6 @@ class QGstreamerMediaContainerControl;
 class QGstreamerCameraExposureControl;
 class QGstreamerCameraFocusControl;
 class QGstreamerImageProcessingControl;
-class QGstreamerCameraLocksControl;
 
 class QGstreamerElementFactory
 {
@@ -85,11 +83,10 @@ class QGstreamerCaptureSession : public QObject, public QGstreamerSyncEventFilte
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_ENUMS(State)
     Q_ENUMS(CaptureMode)
-    Q_ENUMS(CameraMode)
+
 public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
-    enum CameraMode { ImageMode, VideoMode};
 
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
@@ -102,10 +99,6 @@ public:
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
-    QGstreamerCameraExposureControl *cameraExposureControl() const  { return m_cameraExposureControl; }
-    QGstreamerCameraFocusControl *cameraFocusControl() const  { return m_cameraFocusControl; }
-    QGstreamerImageProcessingControl *imageProcessingControl() const { return m_imageProcessingControl; }
-    QGstreamerCameraLocksControl *cameraLocksControl() const { return m_cameraLocksControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
@@ -121,32 +114,21 @@ public:
 
     QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
-
-    void captureImage(int requestId, const QString &fileName);
-
+    
     State state() const;
     qint64 duration() const;
 
-    bool isMuted() const;
-
     bool processSyncMessage(const QGstreamerMessage &message);
-    void processSavedImage(const QString &filename);
 
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
-    void imageExposed(int requestId);
-    void imageCaptured(int requestId, const QImage &img);
-    void imageSaved(int requestId, const QString &fileName);
-    void focusStatusChanged(QCamera::LockStatus status, QCamera::LockChangeReason reason);
-    void mutedChanged(bool);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
     void setCaptureDevice(const QString &deviceName);
     void setMetaData(const QMap<QByteArray, QVariant>&);
-    void setMuted(bool);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -162,7 +144,6 @@ private:
     QString m_captureDevice;
     State m_state;
     State m_pendingState;
-    bool m_muted;
     bool m_waitingForEos;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
@@ -181,7 +162,6 @@ private:
     QGstreamerCameraExposureControl *m_cameraExposureControl;
     QGstreamerCameraFocusControl *m_cameraFocusControl;
     QGstreamerImageProcessingControl *m_imageProcessingControl;
-    QGstreamerCameraLocksControl *m_cameraLocksControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;
@@ -197,7 +177,6 @@ private:
     GstElement *m_muxer;
 public:
     QString m_imageFileName;
-    int m_requestId;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_MAEMO_H

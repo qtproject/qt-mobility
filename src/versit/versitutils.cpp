@@ -40,8 +40,6 @@
 ****************************************************************************/
 
 #include "versitutils_p.h"
-#include "qversitdocument.h"
-#include "qversitproperty.h"
 #include "qmobilityglobal.h"
 
 #include <QMap>
@@ -107,20 +105,4 @@ void VersitUtils::changeCodec(QTextCodec* codec) {
     m_newlineList->append(QByteArrayMatcher(encode("\r", codec)));
 
     m_previousCodec = codec;
-}
-
-/*!
- * Finds a property in the \a document with the given \a propertyName, adds it to \a toBeRemoved,
- * and returns it.
- */
-QVersitProperty VersitUtils::takeProperty(const QVersitDocument& document,
-                                          const QString& propertyName,
-                                          QList<QVersitProperty>* toBeRemoved) {
-    foreach (const QVersitProperty& currentProperty, document.properties()) {
-        if (currentProperty.name() == propertyName) {
-            *toBeRemoved << currentProperty;
-            return currentProperty;
-        }
-    }
-    return QVersitProperty();
 }

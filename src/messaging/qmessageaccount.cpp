@@ -45,8 +45,6 @@
 
     \brief The QMessageAccount class represents a messaging account in the messaging store.
     
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageAccount is a logical entity that groups messages according to the 

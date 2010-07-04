@@ -60,8 +60,6 @@ public:
 
 private slots:
     void details();
-    void actions();
-    void preferences();
     void relationships();
     void displayName();
     void type();
@@ -207,15 +205,6 @@ void tst_QContact::details()
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), p);
     QVERIFY(c.removeDetail(&p2));
-
-    // now try removing a detail for which we've set a preference
-    QContactEmailAddress pref;
-    pref.setEmailAddress("test@test");
-    c.saveDetail(&pref);
-    c.setPreferredDetail("SendEmail", pref);
-    QVERIFY(c.isPreferredDetail(QString(), pref));
-    QVERIFY(c.removeDetail(&pref));
-    QVERIFY(!c.isPreferredDetail(QString(), pref));
 
     // Now try adding a detail to multiple contacts
 
@@ -370,226 +359,6 @@ void tst_QContact::details()
     QCOMPARE(c.detail(QContactName::DefinitionName).value(QContactName::FieldCustomLabel), QString());
     QVERIFY(c.isEmpty());
     QCOMPARE(c.id(), oldId); // id shouldn't change.
-}
-
-void tst_QContact::actions()
-{
-    QContact c;  // empty contact.
-    QContact c2; // contact with email saved.
-    QContact c3; // two emails
-    QContact c4; // two emails, plus a preference
-    QContact c5; // two emails, plus a preference for an unsupported detail
-    QContactEmailAddress e2;
-    QContactEmailAddress e;
-    e.setEmailAddress("test@nokia.com");
-    c2.saveDetail(&e);
-    e2.setEmailAddress("secondtest@nokia.com");
-
-    c3.saveDetail(&e);
-    c3.saveDetail(&e2);
-    c4.saveDetail(&e);
-    c4.saveDetail(&e2);
-    c5.saveDetail(&e2); // reverse order for c5
-    c5.saveDetail(&e);
-
-    c4.setPreferredDetail("SendEmail", e2);
-    c5.setPreferredDetail("SendEmail", c5.detail<QContactDisplayLabel>());
-
-    // Prior to plugin loading:
-    // first, the empty contact
-    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    QList<QContactDetail> dets = c.detailsWithAction(0);
-    QVERIFY(dets.isEmpty());
-    QVERIFY(c.detailWithAction(0).isEmpty());
-    // then, the email contact
-    availableActions = c2.availableActions(QString());
-    QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
-    QVERIFY(availableActions.isEmpty());
-
-    // set the correct path to look for plugins and load them
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
-    QApplication::addLibraryPath(path);
-
-    // Get our descriptor
-    QContactActionDescriptor descriptor = QContactAction::actionDescriptors("SendEmail").value(0);
-    QVERIFY(descriptor.actionName() == "SendEmail");
-
-    // available actions - should be one there now.
-    // empty contact
-    availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    // contact with email
-    availableActions = c2.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // try various combinations of version and name
-    availableActions = c2.availableActions();
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test");
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test", 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test", 5);
-    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
-    availableActions = c2.availableActions(QString(), 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // Again with c3
-    availableActions = c3.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-    // try various combinations of version and name
-    availableActions = c3.availableActions();
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test");
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test", 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test", 5);
-    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
-    availableActions = c3.availableActions(QString(), 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-
-
-    // detail with action:
-    // empty contact
-    QContactAction* action = QContactAction::action(c2.availableActions().first());
-    QVERIFY(action->actionDescriptor().actionName() == "SendEmail");
-    dets = c.detailsWithAction(action);
-    QVERIFY(dets.isEmpty());
-    QVERIFY(c.detailsWithAction(action).isEmpty());
-
-    // contact with email
-    dets = c2.detailsWithAction(action);
-    QVERIFY(dets.count() == 1);
-    QVERIFY(dets.first() == e);
-    QVERIFY(c2.detailWithAction(action) == e);
-
-    // contact with two emails
-    dets = c3.detailsWithAction(action);
-    QVERIFY(dets.count() == 2);
-    QVERIFY(dets.first() == e);
-    QVERIFY(dets.last() == e2);
-    QVERIFY(c3.detailWithAction(action) == e);
-
-    // contact with two emails, preference set
-    dets = c4.detailsWithAction(action);
-    QVERIFY(dets.count() == 2);
-    QVERIFY(dets.first() == e2);
-    QVERIFY(dets.last() == e);
-    QVERIFY(c4.detailWithAction(action) == e2);
-
-    // contact with two emails
-    dets = c5.detailsWithAction(action);
-    QVERIFY(dets.count() == 2);
-    QVERIFY(dets.first() == e2);
-    QVERIFY(dets.last() == e);
-    QVERIFY(c5.detailWithAction(action) == e2);
-
-    // remove the library path.
-    QApplication::removeLibraryPath(path);
-
-    delete action;
-}
-
-void tst_QContact::preferences()
-{
-    QContact c;
-
-    // test first set
-    QContactDetail det("TestId");
-    det.setValue("test", QVariant("test1"));
-    c.saveDetail(&det);
-    QCOMPARE(c.isPreferredDetail("testAction", det), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", det), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det), true);
-
-    QCOMPARE(c.isPreferredDetail(QString(), det), true);
-
-    QCOMPARE(c.preferredDetail("testAction"), det);
-
-    // test replacement
-    QContactDetail det2("TestId");
-    det2.setValue("test", QVariant("test2"));
-    c.saveDetail(&det2);
-    QCOMPARE(c.isPreferredDetail("testAction", det2), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", det2), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det2), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2);
-
-    // test for detail that is not part of the contact
-    QContactDetail det3("TestId");
-    det3.setValue("test", QVariant("test3"));
-    QCOMPARE(c.setPreferredDetail("testAction", det3), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
-
-    // test invalid set
-    QCOMPARE(c.setPreferredDetail(QString(), det3), false);
-
-    QCOMPARE(c.setPreferredDetail(QString(), QContactDetail()), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", QContactDetail()), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
-
-    // test invalid query
-    QContactDetail det4;
-    det4.setValue("test", QVariant("test4"));
-    c.saveDetail(&det4);
-    QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
-
-    QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
-
-    QCOMPARE(c.isPreferredDetail("testAction", QContactDetail()), false);
-
-    // test retrieving preferred details
-    QContactDetail pd = c.preferredDetail(QString());
-    QVERIFY(pd.isEmpty());
-    pd = c.preferredDetail("testAction");
-    QVERIFY(pd == det2); // shouldn't have changed.
-
-    // test for preference for action that hasn't been added
-    QVERIFY(c.preferredDetail("NonexistentAction").isEmpty());
-
-    // Remove a non preferred detail
-    QContactDetail det2copy("TestId");
-    det2copy.setValue("test", QVariant("test2"));
-    QVERIFY(c.saveDetail(&det2copy));
-
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-    QVERIFY(c.removeDetail(&det2copy));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-
-    // Add it again
-    QVERIFY(c.saveDetail(&det2copy));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-
-    // Remove the preferred detail (the copy should not become preferred)
-    QVERIFY(c.removeDetail(&det2));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == false);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
 }
 
 void tst_QContact::relationships()
@@ -760,7 +529,6 @@ void tst_QContact::hash()
     QContact contact5; // preferred details and relationships shouldn't affect the hash
     contact5.setId(id);
     contact5.saveDetail(&detail1);
-    contact5.setPreferredDetail("action", detail1);
     QContactRelationship rel;
     QContactManagerEngine::setContactRelationships(&contact5, QList<QContactRelationship>() << rel);
     QVERIFY(qHash(contact1) == qHash(contact2));

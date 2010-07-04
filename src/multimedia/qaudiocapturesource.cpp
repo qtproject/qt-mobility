@@ -48,7 +48,6 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QAudioCaptureSource
     \brief The QAudioCaptureSource class provides an interface to query and select an audio input endpoint.
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

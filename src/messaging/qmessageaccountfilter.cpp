@@ -48,9 +48,6 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAccountFilter class defines the parameters used for querying a subset of
     all available accounts from the messaging store.
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageAccountFilter is composed of an account property, an optional comparison operator

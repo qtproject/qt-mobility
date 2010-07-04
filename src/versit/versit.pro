@@ -8,19 +8,14 @@ include(../../common.pri)
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
 CONFIG += mobility
-MOBILITY = contacts organizer
+MOBILITY = contacts
 
 # Contacts Includepath
 INCLUDEPATH += . \
                ../contacts \
                ../contacts/requests \
                ../contacts/filters \
-               ../contacts/details \
-               ../organizer \
-               ../organizer/requests \
-               ../organizer/filters \
-               ../organizer/details \
-               ../organizer/items
+               ../contacts/details
 
 # Input
 PUBLIC_HEADERS +=  \
@@ -30,13 +25,11 @@ PUBLIC_HEADERS +=  \
     qversitwriter.h \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
-    qversitorganizerexporter.h \
-    qversitorganizerimporter.h \
     qversitresourcehandler.h
 
 # Private Headers
 PRIVATE_HEADERS += \
-    qvcardbackuphandlers_p.h \
+    qversitdefaultresourcehandler_p.h \
     qversitdocument_p.h \
     qversitdocumentwriter_p.h \
     qversitproperty_p.h \
@@ -46,10 +39,7 @@ PRIVATE_HEADERS += \
     qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
-    qversitorganizerexporter_p.h \
-    qversitorganizerimporter_p.h \
     qversitdefs_p.h \
-    qversitorganizerdefs_p.h \
     versitutils_p.h
 
 # Implementation
@@ -67,11 +57,6 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
-    qversitorganizerexporter.cpp \
-    qversitorganizerexporter_p.cpp \
-    qversitorganizerimporter.cpp \
-    qversitorganizerimporter_p.cpp \
-    qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     versitutils.cpp
 

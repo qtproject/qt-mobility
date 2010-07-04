@@ -41,7 +41,6 @@
 
 #include "qversitdefs_p.h"
 #include "tst_qversit.h"
-#include "qversitwriter.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "qversitcontactexporter.h"
@@ -84,6 +83,101 @@ public:
     QMap<QString, QByteArray> mObjects;
 };
 
+
+class MyDetailHandler : public QVersitContactExporterDetailHandler {
+public:
+    MyDetailHandler() : detailNumber(0) {}
+    bool preProcessDetail(const QContact& contact, const QContactDetail& detail,
+                          QVersitDocument* document) {
+        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
+        return false;
+    }
+    /* eg. a detail with definition name "Detail" and fields "Field1"="Value1" and
+     * "Field2"="Value2" will be exported to the vCard properties:
+     * G0.DETAIL-FIELD1:Value1
+     * G0.DETAIL-FIELD2:Value2
+     * And the next detail (say, "Detail" with a field "Field1"="Value3" will generate:
+     * G1.DETAIL-FIELD1:Value3
+     * ie. Different details will have different vCard groups.
+     */
+    bool postProcessDetail(const QContact& contact, const QContactDetail& detail,
+                           bool alreadyProcessed, QVersitDocument* document) {
+        Q_UNUSED(contact)
+        // beware: if the base implementation exports some but not all fields, alreadyProcessed
+        // will be true and the unprocessed fields won't be exported
+        if (alreadyProcessed)
+            return false;
+        if (detail.definitionName() == QContactType::DefinitionName)
+            return false; // special case of an unhandled detail that we don't export
+        QVersitProperty property;
+        QVariantMap fields = detail.variantValues();
+        // fields from the same detail have the same group so the importer can collate them
+        QString detailGroup = QLatin1String("G") + QString::number(detailNumber++);
+        for (QVariantMap::const_iterator it = fields.constBegin();
+                it != fields.constEnd();
+                it++) {
+            property.setGroups(QStringList(detailGroup));
+            // beware: detail.definitionName and the field name will be made uppercase on export
+            property.setName(QLatin1String("X-QCONTACTDETAIL-")
+                             + detail.definitionName()
+                             + QLatin1String("-")
+                             + it.key());
+            // beware: this might not handle nonstring values properly:
+            property.setValue(it.value());
+            document->addProperty(property);
+        }
+        return true;
+    }
+private:
+    int detailNumber;
+};
+
+class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
+public:
+    bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
+                            int contactIndex, QContact* contact) {
+        Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
+        return false;
+    }
+    /* eg. if the document has the properties:
+     * G0.DETAIL-FIELD1:Value1
+     * G0.DETAIL-FIELD2:Value2
+     * G1.DETAIL-FIELD1:Value3
+     * This will generate two details - the first with fields "FIELD1"="Value1" and
+     * "FIELD2"="Value2" and the second with "FIELD1"="Value3"
+     * ie. the vCard groups determine which properties form a single detail.
+     */
+    bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
+                             bool alreadyProcessed, int contactIndex, QContact* contact) {
+        Q_UNUSED(document) Q_UNUSED(contactIndex)
+        const QString prefix = QLatin1String("X-QCONTACTDETAIL-");
+        if (alreadyProcessed)
+            return false;
+        if (!property.name().startsWith(prefix))
+            return false;
+        QString detailAndField = property.name().mid(prefix.size());
+        QStringList detailAndFieldParts = detailAndField.split(QLatin1Char('-'),
+                                                               QString::SkipEmptyParts);
+        if (detailAndFieldParts.size() != 2)
+            return false;
+        QString definitionName = detailAndFieldParts.at(0);
+        QString fieldName = detailAndFieldParts.at(1);
+        if (property.groups().size() != 1)
+            return false;
+        QString group = property.groups().first();
+        // find a detail generated from the a property with the same group
+        QContactDetail detail = handledDetails.value(group);
+        // make sure the the existing detail has the same definition name
+        if (detail.definitionName() != definitionName)
+            detail = QContactDetail(definitionName);
+        detail.setValue(fieldName, property.value());
+        contact->saveDetail(&detail);
+        handledDetails.insert(group, detail);
+        return false;
+    }
+    QMap<QString, QContactDetail> handledDetails; // map from group name to detail
+};
+
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -115,6 +209,8 @@ void tst_QVersit::testImportFiles()
     QVersitContactImporter importer;
     MyQVersitResourceHandler resourceHandler;
     importer.setResourceHandler(&resourceHandler);
+    MyPropertyHandler propertyHandler;
+    importer.setPropertyHandler(&propertyHandler);
     QVERIFY(importer.importDocuments(documents));
     QList<QContact> contacts = importer.contacts();
 
@@ -248,131 +344,49 @@ void tst_QVersit::testImportFiles_data()
 
 void tst_QVersit::testExportImport()
 {
-    // Test that using the backup handler, a contact, when exported and imported again, is unaltered.
+    // Test that a contact, when exported, then imported again, is unaltered
     QFETCH(QContact, contact);
 
     QVersitContactExporter exporter;
-    exporter.setDetailHandler(QVersitContactExporterDetailHandlerV2::createBackupHandler());
+    MyDetailHandler detailHandler;
+    exporter.setDetailHandler(&detailHandler);
     QVERIFY(exporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = exporter.documents();
     QCOMPARE(documents.size(), 1);
 
-    QByteArray documentBytes;
-    QVersitWriter writer(&documentBytes);
-    writer.startWriting(documents);
-    writer.waitForFinished();
-
-    QVersitReader reader(documentBytes);
-    reader.startReading();
-    reader.waitForFinished();
-    QList<QVersitDocument> parsedDocuments = reader.results();
-    QCOMPARE(parsedDocuments.size(), 1);
-
     QVersitContactImporter importer;
-    importer.setPropertyHandler(QVersitContactImporterPropertyHandlerV2::createBackupHandler());
-    QVERIFY(importer.importDocuments(parsedDocuments));
+    MyPropertyHandler propertyHandler;
+    importer.setPropertyHandler(&propertyHandler);
+    QVERIFY(importer.importDocuments(documents));
     QList<QContact> contacts = importer.contacts();
     QCOMPARE(contacts.size(), 1);
-    if (contacts.first().details() != contact.details()) {
-        qDebug() << "Versit documents:" << documentBytes;
-        qDebug() << "Actual:" << contacts.first();
-        qDebug() << "Expected:" << contact;
-        QCOMPARE(contacts.first().details(), contact.details());
-    }
+    // We can't do a deep compare because detail ids are different
+    QCOMPARE(contacts.first().details().count(), contact.details().count());
 }
-
-enum Color { RED, GREEN, BLUE };
 
 void tst_QVersit::testExportImport_data()
 {
     QTest::addColumn<QContact>("contact");
 
-    // The test contacts need at least a name (so the resulting vCard is valid and a display label (because
-    // otherwise, the imported display label will be set from the name or something)
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("just a name") << contact;
-    }
-
-    {
-        QContact contact;
-        QContactName name;
-        name.setFirstName(QLatin1String("first"));
-        name.setLastName(QLatin1String("last"));
-        name.setCustomLabel(QLatin1String("custom"));
-        name.setValue(QLatin1String("RandomField1"), QLatin1String("RandomValue1"));
-        name.setValue(QLatin1String("RandomField2"), QLatin1String("RandomValue1"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail1("CustomDetail");
-        customDetail1.setValue(QLatin1String("CustomField11"), QLatin1String("Value11"));
-        customDetail1.setValue(QLatin1String("CustomField12"), QLatin1String("Value12"));
-        contact.saveDetail(&customDetail1);
-        QContactDetail customDetail2("CustomDetail");
-        customDetail2.setValue(QLatin1String("CustomField21"), QLatin1String("Value21"));
-        contact.saveDetail(&customDetail2);
-        contact.setType(QContactType::TypeContact);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
-        QTest::newRow("custom detail grouping") << contact;
-    }
-
-    // Test of some non-string fields
     QContact contact;
     QContactName name;
-    name.setCustomLabel(QLatin1String("name"));
+    name.setFirstName(QLatin1String("first"));
+    name.setLastName(QLatin1String("last"));
+    name.setCustomLabel(QLatin1String("custom"));
     contact.saveDetail(&name);
-    QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-    QContactDetail customDetail("CustomDetail");
-    customDetail.setValue(QLatin1String("CustomField"), QByteArray("blob"));
-    contact.saveDetail(&customDetail);
-    QTest::newRow("binary field") << contact;
+    // detail definition/field names are encoded as vCard property names, which must be uppercase,
+    // so only uppercase definition/field names work.
+    QContactDetail customDetail1("CUSTOMDETAIL");
+    customDetail1.setValue(QLatin1String("CUSTOMFIELD11"), QLatin1String("Value11"));
+    customDetail1.setValue(QLatin1String("CUSTOMFIELD12"), QLatin1String("Value12"));
+    contact.saveDetail(&customDetail1);
+    QContactDetail customDetail2("CUSTOMDETAIL");
+    customDetail2.setValue(QLatin1String("CUSTOMFIELD21"), QLatin1String("Value21"));
+    customDetail2.setValue(QLatin1String("CUSTOMFIELD22"), QLatin1String("Value22"));
+    contact.saveDetail(&customDetail2);
+    contact.setType(QContactType::TypeContact);
 
-    customDetail.setValue(QLatin1String("CustomField"), QDate(2010, 5, 18));
-    contact.saveDetail(&customDetail);
-    QTest::newRow("date field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), QTime(11, 25));
-    contact.saveDetail(&customDetail);
-    QTest::newRow("time field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), QDateTime(QDate(2010, 5, 18), QTime(11, 25)));
-    contact.saveDetail(&customDetail);
-    QTest::newRow("datetime field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), (int)42);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("integer field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), UINT_MAX);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("unsigned integer field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), QUrl(QLatin1String("http://www.nokia.com/")));
-    contact.saveDetail(&customDetail);
-    QTest::newRow("url field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), (bool)true);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("bool field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), (bool)false);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("false bool field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), (double)3.14159265);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("double field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), (float)3.14159265);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("float field") << contact;
-
-    customDetail.setValue(QLatin1String("CustomField"), RED);
-    contact.saveDetail(&customDetail);
-    QTest::newRow("enum field") << contact;
+    QTest::newRow("custom detail") << contact;
 }
 
 QTEST_MAIN(tst_QVersit)

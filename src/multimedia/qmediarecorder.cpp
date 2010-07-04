@@ -61,7 +61,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorder
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

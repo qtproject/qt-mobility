@@ -79,7 +79,6 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   \class QContactDetail
  
   \brief The QContactDetail class represents a single, complete detail about a contact.
-  \inmodule QtContacts
   \ingroup contacts-main
  
   All of the information for a contact is stored in one or more QContactDetail objects.
@@ -480,28 +479,6 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
     return dbg.maybeSpace();
 }
 #endif
-
-/*!
- * \deprecated
- * Sets the preferred actions for this detail to be the given list of \a preferredActions.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
- */
-void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
-{
-    d->m_preferredActions = preferredActions;
-}
-
-/*!
- * \deprecated
- * Returns the list of preferred actions for this detail.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
- */
-QList<QContactActionDescriptor> QContactDetail::preferredActions() const
-{
-    return d->m_preferredActions;
-}
 
 /*!
     Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.

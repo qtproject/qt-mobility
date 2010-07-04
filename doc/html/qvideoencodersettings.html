@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaencodersettings.cpp -->
 <head>
-  <title>Qt Mobility Project 1.1: QVideoEncoderSettings Class Reference</title>
+  <title>Qt Mobility Project 1.0: QVideoEncoderSettings Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -74,9 +74,9 @@
 <p>Returns the video codec.</p>
 <p>See also <a href="qvideoencodersettings.html#setCodec">setCodec</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/encodingMode"></a>
-<h3 class="fn"><a name="encodingMode"></a>QtMultimediaKit::EncodingMode QVideoEncoderSettings::encodingMode () const</h3>
+<h3 class="fn"><a name="encodingMode"></a><a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a> QVideoEncoderSettings::encodingMode () const</h3>
 <p>Returns the video encoding mode.</p>
-<p>See also <a href="qvideoencodersettings.html#setEncodingMode">setEncodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
+<p>See also <a href="qvideoencodersettings.html#setEncodingMode">setEncodingMode</a>() and <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a>.</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/frameRate"></a>
 <h3 class="fn"><a name="frameRate"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QVideoEncoderSettings::frameRate () const</h3>
 <p>Returns the video frame rate.</p>
@@ -86,7 +86,7 @@
 <p>Identifies if a video encoder settings object is uninitalized.</p>
 <p>Returns true if the settings are null, and false if they are not.</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/quality"></a>
-<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QVideoEncoderSettings::quality () const</h3>
+<h3 class="fn"><a name="quality"></a><a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> QVideoEncoderSettings::quality () const</h3>
 <p>Returns the video encoding quality.</p>
 <p>See also <a href="qvideoencodersettings.html#setQuality">setQuality</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/resolution"></a>
@@ -102,21 +102,21 @@
 <p>Sets the video <i>codec</i>.</p>
 <p>See also <a href="qvideoencodersettings.html#codec">codec</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setEncodingMode"></a>
-<h3 class="fn"><a name="setEncodingMode"></a>void QVideoEncoderSettings::setEncodingMode ( QtMultimediaKit::EncodingMode <i>mode</i> )</h3>
+<h3 class="fn"><a name="setEncodingMode"></a>void QVideoEncoderSettings::setEncodingMode ( <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a> <i>mode</i> )</h3>
 <p>Sets the video encoding <i>mode</i>.</p>
-<p>If QtMultimediaKit::ConstantQualityEncoding is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
+<p>If <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::ConstantQualityEncoding</a> is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
 <p>The rest of encoding settings are respected regardless of encoding mode.</p>
-<p>See also <a href="qvideoencodersettings.html#encodingMode">encodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
+<p>See also <a href="qvideoencodersettings.html#encodingMode">encodingMode</a>() and <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a>.</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setFrameRate"></a>
 <h3 class="fn"><a name="setFrameRate"></a>void QVideoEncoderSettings::setFrameRate ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )</h3>
 <p>Sets the video frame <i>rate</i>.</p>
 <p>A value of 0 indicates the encoder should make an optimal choice based on what is available from the video source and the limitations of the codec.</p>
 <p>See also <a href="qvideoencodersettings.html#frameRate">frameRate</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setQuality"></a>
-<h3 class="fn"><a name="setQuality"></a>void QVideoEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3>
+<h3 class="fn"><a name="setQuality"></a>void QVideoEncoderSettings::setQuality ( <a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> <i>quality</i> )</h3>
 <p>Sets the video encoding <i>quality</i>.</p>
 <p>Setting the video quality parameter allows backend to choose the balanced set of encoding parameters to achieve the desired quality level.</p>
-<p>The <i>quality</i> settings parameter is only used in the constant quality <a href="qvideoencodersettings.html#encodingMode">encoding mode</a>. The <i>quality</i> settings parameter is only used in the constant quality <a href="qvideoencodersettings.html#encodingMode">encoding mode</a>.</p>
+<p>The <i>quality</i> settings parameter is only used in the <a href="qtmultimediakit.html#EncodingMode-enum">constant quality</a> <a href="qvideoencodersettings.html#encodingMode">encoding mode</a>. The <i>quality</i> settings parameter is only used in the <a href="qtmultimediakit.html#EncodingMode-enum">constant quality</a> <a href="qvideoencodersettings.html#encodingMode">encoding mode</a>.</p>
 <p>See also <a href="qvideoencodersettings.html#quality">quality</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setResolution"></a>
 <h3 class="fn"><a name="setResolution"></a>void QVideoEncoderSettings::setResolution ( const <a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> &amp; <i>resolution</i> )</h3>
@@ -141,6 +141,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

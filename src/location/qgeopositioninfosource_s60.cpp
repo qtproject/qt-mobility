@@ -707,7 +707,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp = NULL;
+    CQMLBackendAO *temp= NULL;
 
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())

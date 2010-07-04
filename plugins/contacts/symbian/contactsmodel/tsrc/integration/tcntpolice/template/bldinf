@@ -1,9 +1,0 @@
-// BLD.INF
-//
-// Copyright (c) 1999 Symbian Ltd.  All rights reserved.
-//
-
-PRJ_TESTMMPFILES
-
-PARAM_SVR_SUITENAME.mmp
-

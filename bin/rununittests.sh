@@ -63,11 +63,6 @@ cd $shell_path/../build/tests/bin
 ./tst_qservicefilter
 ./tst_qservicemanager
 ./tst_qabstractsecuritysession
-./tst_qservicecontext
-./tst_icheck
-./tst_qmetaobjectbuilder
-./tst_qremoteserviceclassregister
-./tst_qservicemanager_ipc
 
 #BearerManagement
 ./tst_qnetworkconfiguration
@@ -87,10 +82,6 @@ cd $shell_path/../build/tests/bin
 ./tst_qnmeapositioninfosource_realtime_generic
 ./tst_qnmeapositioninfosource_simulation
 ./tst_qnmeapositioninfosource_simulation_generic
-
-#Landmarks
-./tst_qlandmark
-./tst_qlandmarkcategory
 
 #Publish and Subscribe
 ./tst_qmallocpool
@@ -148,8 +139,6 @@ a
 ./tst_qversitcontactexporter
 ./tst_qversitcontactimporter
 ./tst_qversitdocument
-./tst_qversitorganizerexporter
-./tst_qversitorganizerimporter
 ./tst_qversitproperty
 ./tst_qversitreader
 ./tst_qversitwriter
@@ -158,9 +147,6 @@ a
 ./tst_qmessage
 ./tst_qmessagestore
 ./tst_qmessagestorekeys
-
-#QOrganizer
-./tst_qorganizeritemmanager
 
 cd $SAVED_PWD
 

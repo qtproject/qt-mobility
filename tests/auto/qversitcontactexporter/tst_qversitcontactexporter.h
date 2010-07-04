@@ -70,7 +70,6 @@ private slots:
 
     void testConvertContact();
     void testContactDetailHandler();
-    void testContactDetailHandlerV2();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
@@ -99,13 +98,13 @@ private slots:
 private:
     // Test Utility Functions
     QContact createContactWithName(QString name);
-    int countProperties(const QVersitDocument& document);
-    QContactDetail findDetailByName(QList<QContactDetail> details, QString search);
+    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
     QVersitProperty findPropertyByName(const QVersitDocument& document,const QString& propertyName);
 
 private: // Data
     QVersitContactExporter* mExporter;
     MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
 #endif // tst_QVERSITCONTACTEXPORTER_H

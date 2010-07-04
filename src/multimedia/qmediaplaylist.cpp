@@ -64,7 +64,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 /*!
     \class QMediaPlaylist
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

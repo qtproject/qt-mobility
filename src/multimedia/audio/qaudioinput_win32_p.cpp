@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// INTERNAL USE ONLY: Do NOT use for any other purpose.
+// We mean it.
 //
 
 
@@ -147,7 +147,7 @@ void QAudioInputPrivate::freeBlocks(WAVEHDR* blockArray)
 
     for(int i = 0; i < count; i++) {
         waveInUnprepareHeader(hWaveIn,blocks, sizeof(WAVEHDR));
-        blocks++;
+        blocks+=sizeof(WAVEHDR);
     }
     HeapFree(GetProcessHeap(), 0, blockArray);
 }

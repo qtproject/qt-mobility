@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include <qsysteminfo.h>
 #include <qsysteminfo_linux_p.h>
 
 #include <unistd.h> // for getppid
@@ -228,6 +228,70 @@ void QSystemNetworkInfoPrivate::primaryModeChanged()
 }
 
 
+QString QSystemNetworkInfoPrivate::getNmNetName(QSystemNetworkInfo::NetworkMode mode)
+{
+    QString devPath;
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        devicepath = i.value();
+        QScopedPointer<QNetworkManagerInterfaceDevice> devIface;
+        devIface.reset(new QNetworkManagerInterfaceDevice(devicepath));
+
+        if(deviceTypeToMode(devIface->deviceType()) == mode) {
+            devPath = i.value();
+
+            if(mode == QSystemNetworkInfo::WlanMode
+               && devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
+
+                QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
+                devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(devPath, this);
+                if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
+                    QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
+                    accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path(), this);
+                    QString ssid =  accessPointIfaceL->ssid();
+
+                    if(ssid.isEmpty()) {
+                        ssid = QLatin1String("Hidden Network");
+                    }
+                    return ssid;
+                }
+            } else {
+                QDBusObjectPath ip4Path = devIface->ip4config();
+
+                QNetworkManagerIp4Config *ip4ConfigInterface;
+                ip4ConfigInterface = new QNetworkManagerIp4Config(ip4Path.path(),this);
+
+                QStringList domains = ip4ConfigInterface->domains();
+
+                if(!domains.isEmpty()) {
+                    return domains.at(0);
+                }
+            }
+        }
+    }
+    return getNetworkNameForConnectionPath(devPath);
+}
+
+QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString &path)
+{
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+        if(i.value() == path) {
+            QScopedPointer<QNetworkManagerSettingsConnection> settingsConIface;
+            settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
+            if(settingsConIface->isValid()) {
+                return settingsConIface->getId();
+            }
+        }
+    }
+    return QLatin1String("");
+}
 
 void QSystemNetworkInfoPrivate::updateActivePaths()
 {
