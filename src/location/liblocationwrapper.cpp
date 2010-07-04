@@ -41,6 +41,8 @@
 
 #include "liblocationwrapper_p.h"
 
+#include <QDateTime>
+
 using namespace std;
 
 QTM_BEGIN_NAMESPACE
@@ -212,9 +214,33 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
        
     posInfo.setCoordinate(coordinate);
 
-    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET || posInfo.attribute(QGeoPositionInfo::HorizontalAccuracy) >= 0) && 
+/*
+    Invalid fixes have NaN for horizontal accuracy regardless of 
+    whether they come from satellite or non-satellite position methods.
+
+    After the inital fix, satellite methods will always have 
+    LOCATION_GPS_DEVICE_TIME_SET.  If this is not set and we have a 
+    numeric value for horizontal accuracy then we are dealing with 
+    a non-satellite based positioning method.
+
+    Since QGeoPositionInfo instances are only considered valid if 
+    they have a valid coordinate and a valid timestamp, we use 
+    the current date and time as the timestamp for the network based 
+    positioning.  This will help in the case where someone wants to 
+    reply a journey from a log file.
+
+    Based on some logging it looks like satellite and non-satellite 
+    methods can be distinguished (after the initial fix) by whether 
+    the time has been set and / or whether the horizontal accuracy 
+    is above or below around 500 metres.  Using the timestamp 
+    appears to be more definitive than using the accuracy.
+*/
+
+    if ((posInfo.attribute(QGeoPositionInfo::HorizontalAccuracy) >= 0) && 
         ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
          (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
+        if (!(device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))
+            posInfo.setTimestamp(QDateTime::currentDateTime());
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);
