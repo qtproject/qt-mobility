@@ -135,6 +135,8 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule(const QOrgani
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule(rule);
 
+    qDebug() << icalRule;
+
     // Store the new rule to the rule vector
     CRecurrenceRule *crecrule = new CRecurrenceRule();
     crecrule->setRuleType(RECURRENCE_RULE);

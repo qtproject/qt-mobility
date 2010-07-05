@@ -103,6 +103,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     }
 
     CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
+
+    // set GUID mapper to use the current calendar
+    d->m_guidMapper.setCalendar(cal);
+
     std::string nativeId = QString::number(generator.localId()).toStdString();
 
     if (generator.type() == QOrganizerItemType::TypeEvent)
@@ -763,6 +767,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::NoError;
 
+    // Set guid mapper to use the current calendar
+    d->m_guidMapper.setCalendar(cal);
+
     // Check item validity
     checkItemIdValidity(item, error);
     if (*error != QOrganizerItemManager::NoError)
@@ -819,7 +826,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         // Update GUID mapping
-        d->m_guidMapper.setCalendar(cal);
         d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cevent->getId()), QOrganizerItemType::TypeEvent);
 
         delete cevent;
@@ -834,7 +840,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         qDebug() << "Occurrence original date: " << eventOccurrence->originalDate();
         qDebug() << "Occurrence disp label: " << eventOccurrence->displayLabel();
 
-        QOrganizerItem parentItem = parentOf(eventOccurrence, error);
+        QOrganizerItem parentItem = parentOf(cal, eventOccurrence, error);
         if (*error == QOrganizerItemManager::NoError) {
 
             qDebug() << "Parent is " << parentItem.localId();
@@ -847,7 +853,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 qDebug() << "Parent disp label: " << parentEvent->displayLabel();
 
                 // save the event occurrence
-                //calError = saveEventOccurrence(eventOccurrence, parentEvent, error);
+                calError = saveEventOccurrence(eventOccurrence, parentEvent, error);
             }
             else {
                 // Event occurrence without a parent item fails,
@@ -897,7 +903,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         // Update GUID mapping
-        d->m_guidMapper.setCalendar(cal);
         d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(ctodo->getId()), QOrganizerItemType::TypeTodo);
 
         delete ctodo;
@@ -948,7 +953,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         // Update GUID mapping
-        d->m_guidMapper.setCalendar(cal);
         d->m_guidMapper.addMapping(item->guid(),QString::fromStdString(cjournal->getId()), QOrganizerItemType::TypeJournal);
 
         delete cjournal;
@@ -971,16 +975,18 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(QOrganizerEventOccurrence *o
         QDate occurrenceStart = occurrence->startDateTime().date();
         QDate occurrenceEnd = occurrence->endDateTime().date();
 
+        QList<QDate> newExceptinoDates = parent->exceptionDates();
         QDate exceptionDate = occurrenceStart;
         while (exceptionDate <= occurrenceEnd) {
-            if (parent->exceptionDates().indexOf(exceptionDate) == -1)
-                parent->exceptionDates() << exceptionDate;
+            if (newExceptinoDates.indexOf(exceptionDate) == -1)
+                newExceptinoDates << exceptionDate;
             exceptionDate = exceptionDate.addDays(1);
         }
+        parent->setExceptionDates(newExceptinoDates);
 
-        // then set a new exception rule for parent
+        // then set a new exception rule for the parent
 
-        // TODO...
+
     }
 
 }
@@ -1013,7 +1019,7 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
     }
 }
 
-QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(QOrganizerItem *occurrence, QOrganizerItemManager::Error *error)
+QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerItem *occurrence, QOrganizerItemManager::Error *error)
 {
     // the occurrence is supposed be valid when this method becomes called
     QOrganizerItemLocalId parentId;
@@ -1025,6 +1031,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(QOrganizerItem *occurrence, 
         }
         else {
             // fetch with [GUID,originalDate]
+            d->m_guidMapper.setCalendar(cal);
             QList<QString> ids = d->m_guidMapper.itemIds(eventOccurrence->guid(), QOrganizerItemType::TypeEvent);
             foreach (QString id, ids) {
                 QOrganizerItemLocalId parentLocalId = id.toUInt();

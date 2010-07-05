@@ -184,7 +184,7 @@ private:
     void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
 
     // getting parent items
-    QOrganizerItem parentOf(QOrganizerItem *occurence, QOrganizerItemManager::Error *error);
+    QOrganizerItem parentOf(CCalendar *cal, QOrganizerItem *occurence, QOrganizerItemManager::Error *error);
 
     // identifying native item as an occurrence
     bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
