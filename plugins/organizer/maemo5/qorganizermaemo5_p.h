@@ -178,8 +178,17 @@ private:
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
+    // saving the occurrences
+    int saveEventOccurrence(QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
+    //int saveTodoOccurrence(QOrganizerTodoOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
+    void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
+
     // getting parent items
     QOrganizerItem parentOf(QOrganizerItem *occurence, QOrganizerItemManager::Error *error);
+
+    // identifying native item as an occurrence
+    bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
+    bool containsRecurrenceInformation(CComponent *ccomponent) const;
 
     // returns a fetch hint for fetching minimal amount of information
     QOrganizerItemFetchHint fetchMinimalData() const;

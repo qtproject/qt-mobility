@@ -109,7 +109,7 @@ QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
     return retn;
 }
 
-QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate)
+QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceStartDate, const QDateTime &instanceEndDate)
 {
     QOrganizerEventOccurrence retn;
 
@@ -124,14 +124,20 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
         retn.setLocationGeoCoordinates(tempstr);
 
     // Start time
+    retn.setStartDateTime(instanceStartDate);
+    /*
     QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
     if (!tempdt.isNull())
         retn.setStartDateTime(tempdt);
+        */
 
     // End time
+    retn.setEndDateTime(instanceEndDate);
+    /*
     tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
     if (!tempdt.isNull())
         retn.setEndDateTime(tempdt);
+        */
 
     // Set parent id
     QString idString = QString::fromStdString( cevent->getId() );
@@ -139,7 +145,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
     retn.setParentLocalId(localId);
 
     // Set original event date
-    retn.setOriginalDate( instanceDate.date() );
+    retn.setOriginalDate(instanceStartDate.date());
 
     return retn;
 }
