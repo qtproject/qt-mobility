@@ -318,7 +318,7 @@ public:
         // Is there default access point, use it
         QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
-            m_networkSetupError = QString(tr("This example requires networking, and no avaliable networks or access points could be found."));
+            m_networkSetupError = QString(tr("This example requires networking, and no available networks or access points could be found."));
             QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;
         }
