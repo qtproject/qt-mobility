@@ -741,3 +741,5 @@ void InputPrivate::trigger()
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qaudioinput_alsa_p.cpp"
