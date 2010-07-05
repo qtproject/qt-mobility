@@ -143,11 +143,6 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-  \fn int QVersitContactExporterDetailHandlerV2::version() const
-  Returns the version of the handler.  Currently, always returns 2.
-*/
-
-/*!
   \class QVersitContactExporter
   \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
   \l {QVersitDocument}{QVersitDocuments}.
@@ -346,8 +341,7 @@ void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandle
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandlerV2* handler)
 {
-    if (handler)
-        d->mDetailHandlerVersion = handler->version();
+    d->mDetailHandlerVersion = 2;
     d->mDetailHandler = 0;
     d->mDetailHandler2 = handler;
 }

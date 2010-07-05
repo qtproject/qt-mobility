@@ -81,7 +81,6 @@ public:
                                  QList<QVersitProperty>* toBeAdded) = 0;
     virtual void contactProcessed(const QContact& contact,
                                   QVersitDocument* document) = 0;
-    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter
