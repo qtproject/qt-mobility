@@ -177,8 +177,7 @@ void AudioRecorder::toggleRecord()
 {
     if (capture->state() == QMediaRecorder::StoppedState) {
 #ifdef Q_OS_SYMBIAN
-        if (!paused)
-            capture->setOutputLocation(recordPathAudio(destination));
+        capture->setOutputLocation(recordPathAudio(destination));
 #endif
         audiosource->setAudioInput(boxValue(ui->audioDeviceBox).toString());
 
