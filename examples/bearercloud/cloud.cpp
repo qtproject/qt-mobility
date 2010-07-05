@@ -245,6 +245,9 @@ void Cloud::stateChanged(QNetworkSession::State state)
     else
         finalOpacity = 1.0;
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6) && \
+    !defined(Q_OS_SYMBIAN) && !defined(Q_OS_WINCE)
+#error doing tooltip
     QString tooltip;
 
     if (configuration.name().isEmpty())
@@ -300,6 +303,9 @@ void Cloud::stateChanged(QNetworkSession::State state)
     tooltip += tr("<br>Sent data: %1 bytes").arg(session->bytesWritten());
 
     setToolTip(tooltip);
+#else
+    Q_UNUSED(state);
+#endif
 }
 //! [2]
 
