@@ -352,6 +352,8 @@ void QGeoMapWidget::removeMapObject(QGeoMapObject *mapObject)
     // TODO update display if visible?
     if (d_ptr->mapData)
         d_ptr->mapData->removeMapObject(mapObject);
+
+    this->update();
 }
 
 /*!

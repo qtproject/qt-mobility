@@ -243,12 +243,20 @@ void MainWindow::createMenus()
     QAction* menuItem;
     m_popupMenu = new QMenu(this);
 
+    QMenu* subMenuItem = new QMenu(tr("Marker"), this);
+    m_popupMenu->addMenu(subMenuItem);
+
     menuItem = new QAction(tr("Set marker"), this);
-    m_popupMenu->addAction(menuItem);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawMarker(bool)));
 
-    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    menuItem = new QAction(tr("Remove markers"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(removeMarkers()));
+
+    subMenuItem = new QMenu(tr("Draw"), this);
     m_popupMenu->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Rectangle"), this);
@@ -292,7 +300,6 @@ void MainWindow::drawRect(bool /*checked*/)
     }
 
     markers.clear();
-    removeMarkers();
 }
 
 void MainWindow::drawPolyline(bool /*checked*/)
@@ -310,8 +317,6 @@ void MainWindow::drawPolyline(bool /*checked*/)
     polyline->setPen(pen);
     polyline->setPath(path);
     m_mapWidget->addMapObject(polyline);
-
-    removeMarkers();
 }
 
 void MainWindow::drawPolygon(bool /*checked*/)
@@ -332,8 +337,6 @@ void MainWindow::drawPolygon(bool /*checked*/)
     polygon->setBrush(QBrush(fill));
     polygon->setPath(path);
     m_mapWidget->addMapObject(polygon);
-
-    removeMarkers();
 }
 
 void MainWindow::drawMarker(bool /*checked*/)
@@ -347,9 +350,12 @@ void MainWindow::drawMarker(bool /*checked*/)
 
 void MainWindow::removeMarkers()
 {
+    markers.clear();
+
     while (markerObjects.size() > 0) {
         QGeoMapMarkerObject *marker = markerObjects.takeFirst();
         m_mapWidget->removeMapObject(marker);
+        marker->deleteLater();
     }
 }
 
@@ -405,8 +411,6 @@ void MainWindow::calcRoute(bool /*checked*/)
 
     QObject::connect(reply, SIGNAL(finished()),
                      this, SLOT(routeFinished()));
-
-    //removeMarkers();
 }
 
 void MainWindow::routeFinished()

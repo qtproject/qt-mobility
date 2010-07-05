@@ -103,7 +103,6 @@ private:
     void setProvider(QString providerId);
     void createMenus();
     void createMarkerIcon();
-    void removeMarkers();
 
 private slots:
     void delayedInit();
@@ -114,6 +113,7 @@ private slots:
     void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
+    void removeMarkers();
 
 private:
     QGeoServiceProvider *m_serviceProvider;
