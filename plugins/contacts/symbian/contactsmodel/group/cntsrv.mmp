@@ -1,0 +1,83 @@
+/*
+* Copyright (c) 1997-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* cntsrv.exe Contacts server (no external interfaces)
+*
+*/
+
+
+#include "cntmodel.mmh"
+
+TARGET        cntsrv.exe
+TARGETTYPE    exe
+
+CAPABILITY   readuserdata  writeuserdata   protserv
+
+UID				0x10004019 0x10003A73
+VENDORID 		0x70000001
+EPOCSTACKSIZE	0x14000
+
+//MACRO __VERBOSE_DEBUG__
+//MACRO __STATE_MACHINE_DEBUG__
+//MACRO __PROFILE_DEBUG__
+
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+USERINCLUDE ../src
+USERINCLUDE ../cntmodel/inc // For CCntPackager.h
+USERINCLUDE	../cntsrv/inc
+USERINCLUDE	../inc
+
+SOURCEPATH  ../cntsrv/src
+SOURCE		ccntsession.cpp
+SOURCE		ccntserver.cpp
+SOURCE		main.cpp
+SOURCE		ccntdbmanager.cpp
+SOURCE		ccntdbmanagercontroller.cpp
+SOURCE		ccntstatemachine.cpp
+SOURCE		ccntrequest.cpp
+SOURCE		cactiveloop.cpp
+SOURCE		cviewsubsessions.cpp
+SOURCE		ccnteventqueue.cpp
+SOURCE		cntcurrentitemmap.cpp
+SOURCE		cinifilemanager.cpp
+SOURCE		cntspeeddials.cpp
+SOURCE		ccntbackuprestoreagent.cpp
+SOURCE		ccntlowdiskmanager.cpp
+SOURCE		ccntpermanentdata.cpp
+SOURCE		ccntmsghandler.cpp
+SOURCE		ccntitemmsghandler.cpp
+SOURCE		ccnteventmsghandler.cpp
+SOURCE		ccnttransactionmsghandler.cpp
+SOURCE		ccntfilemanagermsghandler.cpp
+SOURCE		ccntpropertiesmsghandler.cpp
+SOURCE		ccntviewmsghandler.cpp
+
+
+SOURCEPATH	../src
+SOURCE		debug.cpp
+
+
+LIBRARY		euser.lib
+LIBRARY		efsrv.lib
+LIBRARY		estor.lib
+LIBRARY		cntmodel.lib
+LIBRARY		bafl.lib
+LIBRARY		charconv.lib
+
+#ifdef BUILD_SQL
+LIBRARY		cntplsql.lib
+#else
+LIBRARY		cntpldbms.lib
+#endif

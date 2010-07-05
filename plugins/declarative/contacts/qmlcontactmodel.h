@@ -81,6 +81,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE QList<QObject*> details(int id) const;
+    Q_INVOKABLE QList<QObject*> detailFields(int id) const;
+    Q_INVOKABLE QMLContact* detailModel(int id) const;
     Q_INVOKABLE void importContacts(const QString& file);
     Q_INVOKABLE void exportContacts(const QString& file);
 signals:

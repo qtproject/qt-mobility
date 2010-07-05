@@ -1,0 +1,32 @@
+/*
+* Copyright (c) 2008-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*
+*/
+
+
+target          t_contactdbevent.EXE
+targettype      EXE
+CAPABILITY   ReadUserData WriteUserData
+UID		0
+VENDORID 0x70000001
+
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+library         EUSER.LIB  cntmodel.LIB CNTVIEW.LIB EFSRV.LIB PIMTestClient.lib
+
+SOURCEPATH .
+SOURCE t_contactdbevent.cpp
+
+SMPSAFE

@@ -1,0 +1,79 @@
+// This file is exported to c:/filtering/test_data.txt
+//
+// Usage [FilterType: Definition, Field, Value, MatchFlag, Results, Error expected]
+//
+// Match flags: 0 = MatchExactly;
+//        		1 = MatchContains;
+//				2 = MatchStartsWith;
+//        		3 = MatchEndsWith;
+//				default = MatchFixedString;;  ---> This not supporeted.
+//												It represents a failing case
+//
+// Error expected:	0 = NoError (default)
+//					9 = NotSupportedError
+//					10 = BadArgumentError
+//
+// ************************************************************************************
+
+//Name  First ,Last 
+// Contact created in code.
+// Stefann Fedrernn +02644424423 ste.Fed@nokia.com
+// Johnn Lenonn +026434234423 Len.Jo@nokia.com
+// Joronn Bondnn  29143225214423 Joronn.Bondnn@nokia.com
+// Micheal Jack  +358035022423 micheal.jack@nokia.com
+// Susan Daniel  +044035022423 dan.susa@nokia.com
+//-----------------------------------------------------------------------
+//Name - Match exactly
+[ContactDetailFilter1: Name, FirstName, Stefann,MatchExactly, 1, 0]
+[ContactDetailFilter2: Name, LastName, Daniel,MatchExactly, 1, 0]
+         //Name - MatchContains
+[ContactDetailFilter3: Name, FirstName, nn,MatchContains, 3, 0]
+[ContactDetailFilter4: Name, LastName, n,MatchContains, 4, 0]
+         //Name - MatchStartsWith
+[ContactDetailFilter5: Name, FirstName, Jo,MatchStartsWith, 2, 0]
+[ContactDetailFilter6: Name, LastName, Len,MatchStartsWith, 1, 0]
+         //Name - MatchEndsWith
+[ContactDetailFilter7: Name, FirstName, nn,MatchEndsWith, 3, 0]
+[ContactDetailFilter8: Name, LastName, ack,MatchEndsWith, 1, 0]
+         //Name - No results search
+[ContactDetailFilter9: Name, FirstName, King,MatchEndsWith, 0, 0]
+[ContactDetailFilter10: Name, LastName, Queen,MatchEndsWith, 0, 0]
+//-----------------------------------------------------------------------
+//Email - Match exactly
+[ContactDetailFilter11: EmailAddress, EmailAddress, ste.Fed@nokia.com,MatchExactly, 1, 0]
+//Email - MatchContains
+[ContactDetailFilter12: EmailAddress, EmailAddress, nokia,MatchContains, 5, 0]
+//Email - MatchStartsWith
+[ContactDetailFilter13: EmailAddress, EmailAddress, Joronn,MatchStartsWith, 1, 0]
+//Email - MatchEndsWith
+[ContactDetailFilter14: EmailAddress, EmailAddress, com,MatchEndsWith, 5, 0]
+//Email - No results search
+[ContactDetailFilter15: EmailAddress, EmailAddress, andrewf,MatchEndsWith, 0, 0]
+//-----------------------------------------------------------------------
+//Phonenumber - Match number
+[ContactDetailFilter16: PhoneNumber, PhoneNumber, +026434234423,MatchPhoneNumber, 1, 0]
+[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423,MatchPhoneNumber, 2, 0]
+[ContactDetailFilter18: PhoneNumber, PhoneNumber, 35891,MatchPhoneNumber, 1, 0]
+//Phonenumber - No results search
+[ContactDetailFilter19: PhoneNumber, PhoneNumber, 225214,MatchPhoneNumber, 0, 0]
+[ContactDetailFilter20: PhoneNumber, PhoneNumber, +358,MatchPhoneNumber, 0, 0]
+[ContactDetailFilter21: PhoneNumber, PhoneNumber, 52252361425342322,MatchPhoneNumber, 0, 0]
+
+//-----------------------------------------------------------------------
+// [ActionFilter: ActionName, Value, Vendor, 20]
+
+// [ContactDetailRangeFilter: ActionName, Value, Vendor, 20]
+
+// [ChangeLogFilter: Name, Fieldtype, Kiki ]
+
+// [RelationshipFilter: ActionName, Value, Vendor, 20]
+
+// [IntersectionFilter: (Name, First, Kiki, 1, 20) || ()]
+
+// [UnionFilter: (Name, First, Kiki, 1, 20) && ()]
+
+// [LocalIdFilter: Name, Fieldtype, Kiki, 1, 20]
+
+// [DefaultFilter: Name, Fieldtype, Kiki, 1, 20]
+
+// [InvalidFilter: Name, Fieldtype, Kiki, 1, 20]

@@ -1,84 +1,83 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- contacts.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Contacts</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- contacts.qdoc -->
+  <title>Qt Mobility Project 1.1: Contacts</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Contacts<br /><span class="subtitle"></span>
-</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Contacts</li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#introduction">Introduction</a></li>
+<li class="level1"><a href="#overview">Overview</a></li>
+<li class="level1"><a href="#client-facing-api">Client-Facing API</a></li>
+<li class="level2"><a href="#container-classes">Container Classes</a></li>
+<li class="level3"><a href="#contact">Contact</a></li>
+<li class="level3"><a href="#detail">Detail</a></li>
+<li class="level3"><a href="#detail-definition">Detail Definition</a></li>
+<li class="level3"><a href="#relationships">Relationships</a></li>
+<li class="level2"><a href="#manager">Manager</a></li>
+<li class="level3"><a href="#meta-data-api">Meta Data API</a></li>
+<li class="level3"><a href="#asynchronous-api">Asynchronous API</a></li>
+<li class="level3"><a href="#synchronous-api">Synchronous API</a></li>
+<li class="level1"><a href="#non-client-facing-api">Non-Client-Facing API</a></li>
+<li class="level2"><a href="#manager-engine">Manager Engine</a></li>
+<li class="level1"><a href="#using-the-api">Using the API</a></li>
+<li class="level1"><a href="#building-and-compiling">Building and compiling</a></li>
+<li class="level1"><a href="#reference-documentation">Reference documentation</a></li>
+<li class="level2"><a href="#main-classes">Main classes</a></li>
+<li class="level2"><a href="#contact-details-leaf-classes">&quot;Contact Details&quot; Leaf Classes</a></li>
+<li class="level2"><a href="#asynchronous-requests">Asynchronous Requests</a></li>
+<li class="level2"><a href="#contact-selection">Contact Selection</a></li>
+<li class="level2"><a href="#implementing-backends">Implementing Backends</a></li>
+<li class="level2"><a href="#synchronization-and-serialization">Synchronization and Serialization</a></li>
+<li class="level2"><a href="#examples">Examples</a></li>
+</ul>
+</div>
+<h1 class="title">Contacts</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <p>The Contacts API enables a client to request contact data from local or remote backends. This is part of the Qt Mobility Project.</p>
-<ul><li><a href="#introduction">Introduction</a></li>
-<li><a href="#overview">Overview</a></li>
-<li><a href="#client-facing-api">Client-Facing API</a></li>
-<ul><li><a href="#container-classes">Container Classes</a></li>
-<ul><li><a href="#contact">Contact</a></li>
-<li><a href="#detail">Detail</a></li>
-<li><a href="#detail-definition">Detail Definition</a></li>
-<li><a href="#relationships">Relationships</a></li>
-</ul>
-<li><a href="#manager">Manager</a></li>
-<ul><li><a href="#meta-data-api">Meta Data API</a></li>
-<li><a href="#asynchronous-api">Asynchronous API</a></li>
-<li><a href="#synchronous-api">Synchronous API</a></li>
-</ul>
-</ul>
-<li><a href="#non-client-facing-api">Non-Client-Facing API</a></li>
-<ul><li><a href="#manager-engine">Manager Engine</a></li>
-</ul>
-<li><a href="#using-the-api">Using the API</a></li>
-<li><a href="#building-and-compiling">Building and compiling</a></li>
-<li><a href="#reference-documentation">Reference documentation</a></li>
-<ul><li><a href="#main-classes">Main classes</a></li>
-<li><a href="#contact-details-leaf-classes">&quot;Contact Details&quot; Leaf Classes</a></li>
-<li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
-<li><a href="#contact-selection">Contact Selection</a></li>
-<li><a href="#implementing-backends">Implementing Backends</a></li>
-<li><a href="#synchronization-and-serialization">Synchronization and Serialization</a></li>
-<li><a href="#examples">Examples</a></li>
-</ul>
-</ul>
 <a name="introduction"></a>
-<h3>Introduction</h3>
+<h2>Introduction</h2>
 <p>The Contacts API provides clients with the ability to access contact data in a platform-independent and datastore-agnostic manner. This is achieved by defining generic personal information data abstractions which can sufficiently describe contact data stored on any platform. Due to the cross-platform nature of the API, and the ability for developers to write platform-independent implementations of a <a href="qcontactmanager.html">QContactManager</a> which may unify one or more platform-specific contact backends, it is intended that the semantics and quirks of the underlying datastores on any platform may be entirely opaque from the perspective of Qt-based, cross-platform client applications.</p>
 <a name="overview"></a>
-<h3>Overview</h3>
+<h2>Overview</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <p>Contact information is stored in datastores whose functionality is exposed via a <a href="qcontactmanager.html">manager</a>. The Contacts API models a <a href="qcontact.html">contact</a> as a collection of distinct details. Each <a href="qcontactdetail.html">detail</a> conforms to a particular <a href="qcontactdetaildefinition.html">definition</a> (or template), which may be extensible or otherwise modifiable by clients. Individual contacts may be related to one other, and these <a href="qcontactrelationship.html">relationships</a> are stored separately from contacts themselves and may be manipulated directly by clients.</p>
 <p><a href="qcontact.html">Contact</a>, <a href="qcontactdetaildefinition.html">detail definition</a>, and <a href="qcontactrelationship.html">relationship</a> information may all be retrieved, modified or deleted by clients using either <a href="contactsasync.html">synchronous</a> or <a href="contactsasync.html">asynchronous</a> API.</p>
 <a name="client-facing-api"></a>
-<h3>Client-Facing API</h3>
+<h2>Client-Facing API</h2>
 <p>The client-facing API allows retrieval, modification and deletion of contacts, detail definitions and relationships, and access to manager meta data and capability reporting.</p>
 <a name="container-classes"></a>
-<h4>Container Classes</h4>
+<h3>Container Classes</h3>
 <p>Contact information is stored in container (value) classes. These classes are not derived from <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>, and hence can be used in lists, do not have parents, do not emit signals, and so on. They represent data which may be manipulated and retrieved from a <a href="#manager">manager</a>.</p>
 <a name="contact"></a>
-<h5>Contact</h5>
+<h4>Contact</h4>
 <p>A <a href="qcontact.html">contact</a> is the digital representation of a person, group or entity, which is stored in a platform-specific manner. Information pertaining to a single contact may be located across several different datastores, and each datum (or detail) may or may not pertain to a particular context in which that information is valid. A contact may include semantically identical pieces of information that are relevant in different contexts. For example, a contact may have a phone number that is relevant to their &quot;home&quot; context, and another phone number that is relevant to their &quot;work&quot; context. It can be seen that the context of information defines its validity to the user, depending on the context of usage; and as such, the sum of information in a given context can be considered equivalent to a &quot;contextual identity&quot;. This allows great flexibility when consolidating data from various sources into a single, cohesive contact.</p>
 <p>Each contact stored in a manager is identified by an <a href="qcontactid.html">id</a> which consists of a manager identifier (URI) and the <a href="qcontactid.html#QContactLocalId-typedef">manager-local id</a> which is used to identify the contact in that manager. Note that a contact stored in one manager may have the same local id as a different contact stored in another manager; please see the <a href="qcontactid.html">QContactId</a> documentation for more information.</p>
 <a name="detail"></a>
-<h5>Detail</h5>
+<h4>Detail</h4>
 <p>A <a href="qcontactdetail.html">detail</a> is a single, cohesive unit of information that is stored in a contact. As explained previously, it is valid for a particular context or set of contexts, and conforms to a particular definition. A detail may have specific metadata associated with it, such as its sub-type, context, and arbitrary, user-defined metadata, as well as access constraints which may apply to the the detail (such as read-only, irremovable, etc).</p>
 <p>There are a number of common details defined in the API which are intended for use by clients, as listed <a href="#contact-details-leaf-classes">here</a>.</p>
 <a name="detail-definition"></a>
-<h5>Detail Definition</h5>
+<h4>Detail Definition</h4>
 <p>Each detail stored in a contact has defined semantics of usage and storage. The Qt Contacts API allows per-datastore contact <a href="qcontactdetaildefinition.html">detail definitions</a>, allowing a manager to provide clients with this information on demand, and allowing third-party developers to register detail definitions for use by clients. A detail definition includes the fields (and value-types of those fields) which make up the detail, and per-contact uniqueness constraints on details of the definition.</p>
 <p>Most clients can safely ignore this class entirely, since they will most likely want to use the predefined details listed <a href="#contact-details-leaf-classes">here</a>. In some cases, however, a manager will not support all of the fields of a particular predefined detail leaf class; in that case, it may be necessary for the client to inspect the supported detail definition for that leaf class and modify its behavior accordingly (for example, if the <tt>CustomLabel</tt> field of the <a href="qcontactname.html">QContactName</a> leaf detail is not supported in a particular manager).</p>
 <a name="relationships"></a>
-<h5>Relationships</h5>
+<h4>Relationships</h4>
 <p>Contacts may participate in <a href="qcontactrelationship.html">relationships</a> with other contacts. The details of any such relationship is stored by the manager which contains the contact. There are several standard relationship types supported by the default schema, and arbitrary relationship types are also allowed if the manager supports that feature. One important relationship is that of group membership; membership of a contact in a group can be modeled as that group contact participating in a <tt>HasMember</tt> relationship with the contact.</p>
 <a name="manager"></a>
-<h4>Manager</h4>
+<h3>Manager</h3>
 <p>Access to contacts is provided by implementations of the Qt Contacts <a href="qcontactmanager.html">manager</a> API. A manager provides access to zero or more platform-specific datastores. Each datastore may support different capabilities (for example, the ability to store certain datatypes, the ability to natively filter on different details or details of different definitions, the provision of locking mechanisms, the provision of changelog information, etc) which are reported by the manager on request. The manager therefore provides access to detail definitions, contacts, and relationships stored in different datastores, in a platform and datastore independent manner.</p>
 <a name="meta-data-api"></a>
-<h5>Meta Data API</h5>
+<h4>Meta Data API</h4>
 <p>The API offered by the <a href="qcontactmanager.html">QContactManager</a> exposes functionality which is implemented by plugins. These plugins may be platform specific, and may be provided by Nokia or by third party developers. As described above, each plugin will have different capabilities and implement the functionality exposed by the Contacts API to a different degree.</p>
 <p>The <a href="qcontactmanager.html">QContactManager</a> class provides a static function <a href="qcontactmanager.html#availableManagers">QContactManager::availableManagers</a>() which allows clients of the API to determine (at run time) which plugins (managers) are available for use.</p>
 <p>Clients of the API also need to be able to determine (at run time) what the capabilities of a given plugin (contact manager) are. The <a href="qcontactmanager.html">QContactManager</a> class provides API to query the capabilities of a given manager with the following synchronous functions:</p>
@@ -101,127 +100,128 @@
 </ul>
 <p>The functionality that the above functions provide is only available through synchronous API.</p>
 <a name="asynchronous-api"></a>
-<h5>Asynchronous API</h5>
+<h4>Asynchronous API</h4>
 <p>The asynchronous API provides a way to access or modify the contact information managed by a particular backend via non-blocking, asynchronous requests. It is recommended for most applications that the asynchronous API be used where possible.</p>
 <p>The asynchronous API is offered through various classes derived from the <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> class, including <a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a>, <a href="qcontactfetchrequest.html">QContactFetchRequest</a>, <a href="qcontactsaverequest.html">QContactSaveRequest</a>, <a href="qcontactremoverequest.html">QContactRemoveRequest</a>, <a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a>, <a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a>, <a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a>, <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a>, <a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a>, and <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a>.</p>
 <p>The asynchronous API allows manipulation of <a href="qcontact.html">contacts</a>, <a href="qcontactrelationship.html">contact relationships</a>, and <a href="qcontactdetaildefinition.html">schema definitions</a>, but does not provide manager capability or meta data information reporting.</p>
 <p>For more detailed documentation on the asynchronous API, see the <a href="contactsasync.html">Contacts Asynchronous API</a>.</p>
 <a name="synchronous-api"></a>
-<h5>Synchronous API</h5>
+<h4>Synchronous API</h4>
 <p>The synchronous API provides the simplest way to access or modify the contact information managed by a particular backend. It has the disadvantage that calls block the current thread of execution until completion and is therefore most suitable only for applications which interact with local, high-speed datastores, or for applications which do not require a responsive user interface.</p>
 <p>The synchronous API is offered through the <a href="qcontactmanager.html">QContactManager</a> class, and includes manipulation of <a href="qcontact.html">contacts</a>, <a href="qcontactrelationship.html">contact relationships</a>, and <a href="qcontactdetaildefinition.html">schema definitions</a>. As previously described, the meta data reporting and manipulation functions are also provided via synchronous API only.</p>
 <p>For more detailed documentation on the synchronous API, see the <a href="contactssync.html">Contacts Synchronous API</a>.</p>
 <a name="non-client-facing-api"></a>
-<h3>Non-Client-Facing API</h3>
+<h2>Non-Client-Facing API</h2>
 <p>The non-client-facing API allows third party developers to implement a manager engine plugin from which clients may request data.</p>
 <a name="manager-engine"></a>
-<h4>Manager Engine</h4>
+<h3>Manager Engine</h3>
 <p>The functionality exposed by the <a href="qcontactmanager.html">QContactManager</a> class may be implemented by <a href="qcontactmanagerengine.html">engine</a> plugins which interface directly to a platform-specific backend or provide their own data storage backend. As such, the terms &quot;manager&quot;, &quot;plugin&quot; and &quot;backend&quot; are used interchangeably in this documentation to refer to any engine plugin which implements the functionality exposed by the <a href="qcontactmanager.html">QContactManager</a> interface. The plugin architecture allows dynamic loading of different manager engines at runtime.</p>
 <p>A manager backend may be implemented by subclassing <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, and providing a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a> which can instantiate it when required.</p>
 <p>See <a href="contactsengines.html">Qt Contacts Manager Engines</a> for more information on available engines and how to write your own engine.</p>
 <a name="using-the-api"></a>
-<h3>Using the API</h3>
+<h2>Using the API</h2>
 <p>Some examples of common usage of the API may be found <a href="contactsusage.html">here</a>.</p>
 <a name="building-and-compiling"></a>
-<h3>Building and compiling</h3>
+<h2>Building and compiling</h2>
 <p>This library requires Qt 4.6 to be installed.</p>
 <p>To build the library, see the Qt Mobility installation instructions.</p>
 <a name="reference-documentation"></a>
-<h3>Reference documentation</h3>
+<h2>Reference documentation</h2>
 <a name="main-classes"></a>
-<h4>Main classes</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcontact.html">QContact</a></th><td>Represents an addressbook contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactabstractrequest.html">QContactAbstractRequest</a></th><td>Mechanism for asynchronous requests to be made of a manager if it supports them</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactdetail.html">QContactDetail</a></th><td>Represents a single, complete detail about a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactfilter.html">QContactFilter</a></th><td>Used to select contacts made available through a QContactManager</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactmanager.html">QContactManager</a></th><td>Interface which allows clients with access to contact information stored in a particular backend</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactrelationship.html">QContactRelationship</a></th><td>Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact</td></tr>
-</table></p>
+<h3>Main classes</h3>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qcontact.html">QContact</a></p></td><td><p>Represents an addressbook contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactabstractrequest.html">QContactAbstractRequest</a></p></td><td><p>Mechanism for asynchronous requests to be made of a manager if it supports them</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetail.html">QContactDetail</a></p></td><td><p>Represents a single, complete detail about a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactfilter.html">QContactFilter</a></p></td><td><p>Used to select contacts made available through a QContactManager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactmanager.html">QContactManager</a></p></td><td><p>Interface which allows clients with access to contact information stored in a particular backend</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactrelationship.html">QContactRelationship</a></p></td><td><p>Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact</p></td></tr>
+</table>
 <a name="contact-details-leaf-classes"></a>
-<h4>&quot;Contact Details&quot; Leaf Classes</h4>
+<h3>&quot;Contact Details&quot; Leaf Classes</h3>
 <p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Project Contacts API. They are general in design but are intended to fulfill specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcontactaddress.html">QContactAddress</a></th><td>Contains an address of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactanniversary.html">QContactAnniversary</a></th><td>Contains an anniversary of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactavatar.html">QContactAvatar</a></th><td>Contains the avatar of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactbirthday.html">QContactBirthday</a></th><td>Contains a birthday of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></th><td>The (possibly synthesized) display label of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactemailaddress.html">QContactEmailAddress</a></th><td>Contains an email address of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactfamily.html">QContactFamily</a></th><td>Contains names of family members of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactgender.html">QContactGender</a></th><td>Contains the gender of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeoLocation</a></th><td>Contains a global location coordinate associated with a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactglobalpresence.html">QContactGlobalPresence</a></th><td>Aggregated presence information for a contact, synthesized or supplied by the backend</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactguid.html">QContactGuid</a></th><td>Contains a globally unique Id of a contact, for use in synchronization with other datastores</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactname.html">QContactName</a></th><td>Contains a name of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactnickname.html">QContactNickname</a></th><td>Contains a nickname of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactnote.html">QContactNote</a></th><td>Contains a note associated with a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></th><td>Online account, which the contact uses to communicate with friends and family</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactorganization.html">QContactOrganization</a></th><td>Details about an organization that the contact is either a part of, or stands for</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactphonenumber.html">QContactPhoneNumber</a></th><td>Phone number of a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactpresence.html">QContactPresence</a></th><td>Presence information for an online account of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactringtone.html">QContactRingtone</a></th><td>Ringtone associated with a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactsynctarget.html">QContactSyncTarget</a></th><td>Sync target for a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontacttag.html">QContactTag</a></th><td>Contains a tag associated with a contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactthumbnail.html">QContactThumbnail</a></th><td>Contains a thumbnail used in display lists to represent the contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontacttimestamp.html">QContactTimestamp</a></th><td>Contains the creation and last-modified timestamp associated with the contact</td></tr>
-<tr valign="top" class="even"><th><a href="qcontacttype.html">QContactType</a></th><td>Describes the type of the contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontacturl.html">QContactUrl</a></th><td>Contains a url associated with a contact</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qcontactaddress.html">QContactAddress</a></p></td><td><p>Contains an address of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactanniversary.html">QContactAnniversary</a></p></td><td><p>Contains an anniversary of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactavatar.html">QContactAvatar</a></p></td><td><p>Contains the avatar of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactbirthday.html">QContactBirthday</a></p></td><td><p>Contains a birthday of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdisplaylabel.html">QContactDisplayLabel</a></p></td><td><p>The (possibly synthesized) display label of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactemailaddress.html">QContactEmailAddress</a></p></td><td><p>Contains an email address of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactfamily.html">QContactFamily</a></p></td><td><p>Contains names of family members of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactgender.html">QContactGender</a></p></td><td><p>Contains the gender of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactgeolocation.html">QContactGeoLocation</a></p></td><td><p>Contains a global location coordinate associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactglobalpresence.html">QContactGlobalPresence</a></p></td><td><p>Aggregated presence information for a contact, synthesized or supplied by the backend</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactguid.html">QContactGuid</a></p></td><td><p>Contains a globally unique Id of a contact, for use in synchronization with other datastores</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactname.html">QContactName</a></p></td><td><p>Contains a name of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactnickname.html">QContactNickname</a></p></td><td><p>Contains a nickname of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactnote.html">QContactNote</a></p></td><td><p>Contains a note associated with a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactonlineaccount.html">QContactOnlineAccount</a></p></td><td><p>Online account, which the contact uses to communicate with friends and family</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactorganization.html">QContactOrganization</a></p></td><td><p>Details about an organization that the contact is either a part of, or stands for</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactphonenumber.html">QContactPhoneNumber</a></p></td><td><p>Phone number of a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactpresence.html">QContactPresence</a></p></td><td><p>Presence information for an online account of a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactringtone.html">QContactRingtone</a></p></td><td><p>Ringtone associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactsynctarget.html">QContactSyncTarget</a></p></td><td><p>Sync target for a contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontacttag.html">QContactTag</a></p></td><td><p>Contains a tag associated with a contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactthumbnail.html">QContactThumbnail</a></p></td><td><p>Contains a thumbnail used in display lists to represent the contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontacttimestamp.html">QContactTimestamp</a></p></td><td><p>Contains the creation and last-modified timestamp associated with the contact</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontacttype.html">QContactType</a></p></td><td><p>Describes the type of the contact</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontacturl.html">QContactUrl</a></p></td><td><p>Contains a url associated with a contact</p></td></tr>
+</table>
 <p>Each of these subclasses provide access to information stored in fields which may have certain constraints, as listed in the <a href="contactsschema.html">schema</a>.</p>
 <a name="asynchronous-requests"></a>
-<h4>Asynchronous Requests</h4>
+<h3>Asynchronous Requests</h3>
 <p>Clients may use either the <a href="contactssync.html">synchronous</a> or <a href="contactsasync.html">asynchronous</a> API to access functionality provided by a manager backend. The <a href="contactsasync.html">asynchronous</a> API is offered through subclasses of the <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> class:</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></th><td>Allows a client to asynchronously request detail definitions from a contacts store manager</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a></th><td>Allows a client to asynchronously request that certain detail definitions be removed from a contacts store</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></th><td>Allows a client to asynchronously request that certain detail definitions be saved in a contacts store</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactfetchrequest.html">QContactFetchRequest</a></th><td>Allows a client to asynchronously request contacts from a contacts store manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of contact ids from a contacts store manager</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a></th><td>Allows a client to asynchronously request relationships from a contacts store manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a></th><td>Allows a client to asynchronously request that certain relationships be removed from a contacts store</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a></th><td>Allows a client to asynchronously request that certain groups be saved to a contacts store</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactremoverequest.html">QContactRemoveRequest</a></th><td>Allows a client to asynchronously request that certain contacts be removed from a contacts store</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactsaverequest.html">QContactSaveRequest</a></th><td>Allows a client to asynchronously request that certain contacts be saved to a contacts store</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a></p></td><td><p>Allows a client to asynchronously request detail definitions from a contacts store manager</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be removed from a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain detail definitions be saved in a contacts store</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactfetchrequest.html">QContactFetchRequest</a></p></td><td><p>Allows a client to asynchronously request contacts from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a></p></td><td><p>Allows a client to asynchronously request a list of contact ids from a contacts store manager</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a></p></td><td><p>Allows a client to asynchronously request relationships from a contacts store manager</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain relationships be removed from a contacts store</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain groups be saved to a contacts store</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactremoverequest.html">QContactRemoveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be removed from a contacts store</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactsaverequest.html">QContactSaveRequest</a></p></td><td><p>Allows a client to asynchronously request that certain contacts be saved to a contacts store</p></td></tr>
+</table>
 <a name="contact-selection"></a>
-<h4>Contact Selection</h4>
+<h3>Contact Selection</h3>
 <p>Clients may select a contact by specifying a unique contact id, or by supplying a <a href="qcontactfilter.html">QContactFilter</a> which matches the contact or contacts they wish to select. The various derivatives of <a href="qcontactfilter.html">QContactFilter</a> allow for fine-grained and flexible selection of contacts according to various criteria:</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></th><td>Filter based around a contact timestamp criterion</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactdetailfilter.html">QContactDetailFilter</a></th><td>Filter based around a detail value criterion</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></th><td>Filter based around a detail value range criterion</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></th><td>Filter which intersects the results of other filters</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></th><td>Matches no contacts</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a></th><td>Filter based around a list of contact ids</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a></th><td>Filter based around relationship criteria</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactunionfilter.html">QContactUnionFilter</a></th><td>Filter which unions the results of other filters</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qcontactchangelogfilter.html">QContactChangeLogFilter</a></p></td><td><p>Filter based around a contact timestamp criterion</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactdetailfilter.html">QContactDetailFilter</a></p></td><td><p>Filter based around a detail value criterion</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a></p></td><td><p>Filter based around a detail value range criterion</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a></p></td><td><p>Filter which intersects the results of other filters</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></p></td><td><p>Matches no contacts</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactlocalidfilter.html">QContactLocalIdFilter</a></p></td><td><p>Filter based around a list of contact ids</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a></p></td><td><p>Filter based around relationship criteria</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactunionfilter.html">QContactUnionFilter</a></p></td><td><p>Filter which unions the results of other filters</p></td></tr>
+</table>
 <p>A client can also request that the results of such a selection be sorted, by passing a <a href="qcontactsortorder.html">QContactSortOrder</a> (or list of sort orders) to the manager.</p>
 <a name="implementing-backends"></a>
-<h4>Implementing Backends</h4>
+<h3>Implementing Backends</h3>
 <p>A backend implementor must implement the following interfaces:</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcontactmanagerengine.html">QContactManagerEngine</a></th><td>The interface for all implementations of the contact manager backend functionality</td></tr>
-<tr valign="top" class="even"><th><a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a></th><td>The interface for plugins that implement QContactManagerEngine functionality</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qcontactmanagerengine.html">QContactManagerEngine</a></p></td><td><p>The interface for all implementations of the contact manager backend functionality</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a></p></td><td><p>The interface for plugins that implement QContactManagerEngine functionality</p></td></tr>
+</table>
 <p>For more information on this topic, see please see the documentation on <a href="contactsengines.html">implementing manager engines</a>.</p>
 <a name="synchronization-and-serialization"></a>
-<h4>Synchronization and Serialization</h4>
+<h3>Synchronization and Serialization</h3>
 <p>The contacts API is used by another Qt Mobility module: the <a href="versit.html">Versit</a>* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
 <p>[*] Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="examples"></a>
-<h4>Examples</h4>
+<h3>Examples</h3>
 <p>The following sample applications show examples of API usage:</p>
 <ul>
 <li><a href="samplephonebook.html">Sample Phonebook</a></li>
 <li><a href="qmlcontacts.html">QML-based Sample Phonebook</a></li>
 </ul>
 <p>See also: <a href="contactsusage.html">Contacts API Usage</a></p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
