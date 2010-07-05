@@ -134,19 +134,4 @@ EXPORTS
 	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 133 NONAME
 	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 134 NONAME
 	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 135 NONAME
-	_ZTI10CPhoneInfo @ 136 NONAME ; #<TI>#
-	_ZTI12CBatteryInfo @ 137 NONAME ; #<TI>#
-	_ZTI14CTelephonyInfo @ 138 NONAME ; #<TI>#
-	_ZTI15CChargingStatus @ 139 NONAME ; #<TI>#
-	_ZTI15CSubscriberInfo @ 140 NONAME ; #<TI>#
-	_ZTI16CCellNetworkInfo @ 141 NONAME ; #<TI>#
-	_ZTI23CCellSignalStrengthInfo @ 142 NONAME ; #<TI>#
-	_ZTI28CCellNetworkRegistrationInfo @ 143 NONAME ; #<TI>#
-	_ZTI9CWlanInfo @ 144 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemInfoPrivateE @ 145 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QSystemDeviceInfoPrivateE @ 146 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemDisplayInfoPrivateE @ 147 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemNetworkInfoPrivateE @ 148 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemScreenSaverPrivateE @ 149 NONAME ; #<TI>#
-	_ZTIN10QtMobility25QSystemStorageInfoPrivateE @ 150 NONAME ; #<TI>#
 
