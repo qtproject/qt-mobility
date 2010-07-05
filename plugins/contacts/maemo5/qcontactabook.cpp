@@ -874,7 +874,8 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, Q
     rtn = A_CONTACT(osso_abook_self_contact_get_default());
   } else {
     GList* c = osso_abook_aggregator_lookup(m_abookAgregator, m_localIds[contactId]);
-    rtn = A_CONTACT(c->data);
+    if (c)
+      rtn = A_CONTACT(c->data);
     *error = rtn ? QContactManager::NoError : QContactManager::DoesNotExistError;
     return rtn;
   }
@@ -938,14 +939,15 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
     // Set Address Values
     GList *v = NULL;
     v =e_vcard_attribute_get_values(attr);
-    if (!v)
-      qFatal("ADR attribute data is corrupted"); 
-    if (g_list_length(v) != 7){
-      g_list_free(v);
-      qCritical() << "ADR attribute data is corrupted"; 
+    if (!v) {
+      // ADR attribute data is corrupted.  Skipping.
+      g_list_free(attrList);
+      return rtnList;
     }
+
     int i = 0;
-    while (v){
+    while (v && i < 7) {
+      // we only deal with the first 7 fields: pobox, extension, street, locality, region, postcode, country.
       map[addressFields[i]] = QString::fromUtf8(CONST_CHAR(v->data));
       i++;
       v = v->next;
@@ -958,7 +960,6 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   }
   
   g_list_free(attrList);
-  
   return rtnList;
 }
 
