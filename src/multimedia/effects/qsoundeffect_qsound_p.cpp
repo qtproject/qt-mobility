@@ -129,3 +129,5 @@ void QSoundEffectPrivate::play()
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qsoundeffect_qsound_p.cpp"

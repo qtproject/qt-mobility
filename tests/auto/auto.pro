@@ -3,8 +3,7 @@ TEMPLATE = subdirs
 include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+    SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
@@ -15,6 +14,8 @@ contains(mobility_modules,serviceframework) {
            qservicemanager_ipc \
            qremoteserviceclassregister \
            servicedatabase
+         # databasemanager # disabled from auto builds
+
 }
 
 contains(mobility_modules,bearer) {

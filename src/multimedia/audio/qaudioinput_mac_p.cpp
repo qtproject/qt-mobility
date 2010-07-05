@@ -987,4 +987,3 @@ OSStatus QAudioInputPrivate::inputCallback(void* inRefCon,
 QT_END_NAMESPACE
 
 #include "qaudioinput_mac_p.moc"
-

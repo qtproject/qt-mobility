@@ -603,3 +603,5 @@ QAudio::State QAudioInputPrivate::initializingState() const
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qaudioinput_symbian_p.cpp"
