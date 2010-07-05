@@ -1,0 +1,119 @@
+/*
+* Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* cntplsql.dll
+* cntplsql.dll Contacts engine persistence layer (no client interface)
+*
+*/
+
+#include <platform_paths.hrh>
+#include "cntmodel.mmh"
+
+target          cntplsql.dll
+targettype      DLL
+CAPABILITY		All -TCB
+UID				0x1027976B
+VENDORID 		0x70000001
+
+//MACRO __PROFILE_DEBUG__
+
+APP_LAYER_SYSTEMINCLUDE
+
+
+
+// These two SYSTEMINCLUDES are needed as QT headers are used
+SYSTEMINCLUDE		/epoc32/include/mw/QtCore
+SYSTEMINCLUDE		/epoc32/include/stdapis/stlportv5
+
+// Orbit
+SYSTEMINCLUDE		/epoc32/include/mw/hb/hbcore
+SYSTEMINCLUDE		/epoc32/include/mw/hb/hbinput
+
+userinclude ../src //for cntstd.h 
+userinclude ../cntsrv/inc //for persistencelayer.h 
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+
+userinclude 	../cntplsql/inc 
+userinclude 	../inc			//for ccontactprivate.h
+
+// Qt Macros
+MACRO		UNICODE
+MACRO		QT_KEYPAD_NAVIGATION
+MACRO		QT_SOFTKEYS_ENABLED
+MACRO		HB_EFFECTS
+MACRO		QT_NO_DEBUG
+MACRO		QT_SVG_LIB
+MACRO		QT_GUI_LIB
+MACRO		QT_NETWORK_LIB
+MACRO		QT_CORE_LIB
+MACRO		QT_WARNING_FILE_OUTPUT
+
+SOURCEPATH	../cntplsql/src
+source		cntsqlprovider.cpp 
+source		cntpersistenceutility.cpp
+
+source		cpplcontacttable.cpp
+source		cpplgroupstable.cpp
+source		cpplcommaddrtable.cpp
+source		cpplpredictivesearchtable.cpp
+source		c12keypredictivesearchtable.cpp
+source		cqwertypredictivesearchtable.cpp
+source		cpredictivesearchsettingstable.cpp
+source		cpredictivesearchsynchronizer.cpp
+
+source 		pplcontactitemmanager.cpp
+source		rpplicccontactstore.cpp
+source		pplpreferencespersistor.cpp
+source		clplcontactproperties.cpp
+source		cplcollectioniterator.cpp
+source		cplplugins.cpp
+
+source		cntfilesearch.cpp
+source		cplcontactsfile.cpp
+source		cplpersistencebroker.cpp
+
+source 		clplanalyserproxy.cpp
+source		clplgenericproxy.cpp
+
+source      cntpplviewmanager.cpp
+source      cntpplviewsession.cpp
+
+source		cpcskeymap.cpp
+source		c12keykeymap.cpp
+source		cqwertykeymap.cpp
+//source		cntmetadataoperation.cpp
+source		cpplpresencetable.cpp
+source    cntsqlsearch.cpp
+
+LIBRARY         euser.lib 
+LIBRARY         efsrv.lib 
+LIBRARY         estor.lib 
+LIBRARY         ecom.lib 
+LIBRARY         bafl.lib
+LIBRARY         cntmodel.lib
+LIBRARY			sqldb.lib
+LIBRARY			HbCore.lib
+LIBRARY			qtcore.lib
+LIBRARY     	libstdcppv5.lib
+LIBRARY     	libc.lib
+LIBRARY     	libm.lib
+
+OPTION ARMCC --visibility_inlines_hidden
+
+
+EPOCALLOWDLLDATA
+STDCPP
+SMPSAFE
+
+

@@ -45,6 +45,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAbstractSecuritySession
+    \inmodule QtServiceFramework
     \ingroup servicefw
     \brief The QAbstractSecuritySession class provides a generic mechanism to enable
     permission checks for services.

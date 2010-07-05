@@ -1,0 +1,30 @@
+EXPORTS
+	?Close@RPackagerTestClient@@QAEXXZ @ 1 NONAME ; void RPackagerTestClient::Close(void)
+	?ConnectL@RPackagerTestClient@@QAEXXZ @ 2 NONAME ; void RPackagerTestClient::ConnectL(void)
+	?DoUnpackCntContentTypeLC@RPackagerTestClient@@ABEPAVCContentType@@HAAVTIpcArgs@@@Z @ 3 NONAME ; class CContentType * RPackagerTestClient::DoUnpackCntContentTypeLC(int, class TIpcArgs &) const
+	?DoUnpackCntFilterLC@RPackagerTestClient@@ABEPAVCCntFilter@@HAAVTIpcArgs@@@Z @ 4 NONAME ; class CCntFilter * RPackagerTestClient::DoUnpackCntFilterLC(int, class TIpcArgs &) const
+	?DoUnpackCntIdArrayLC@RPackagerTestClient@@ABEPAVCContactIdArray@@HAAVTIpcArgs@@@Z @ 5 NONAME ; class CContactIdArray * RPackagerTestClient::DoUnpackCntIdArrayLC(int, class TIpcArgs &) const
+	?DoUnpackCntItemLC@RPackagerTestClient@@ABEPAVCContactItem@@HAAVTIpcArgs@@@Z @ 6 NONAME ; class CContactItem * RPackagerTestClient::DoUnpackCntItemLC(int, class TIpcArgs &) const
+	?DoUnpackCntItemViewDefLC@RPackagerTestClient@@ABEPAVCContactItemViewDef@@HAAVTIpcArgs@@@Z @ 7 NONAME ; class CContactItemViewDef * RPackagerTestClient::DoUnpackCntItemViewDefLC(int, class TIpcArgs &) const
+	?DoUnpackCntTextDefLC@RPackagerTestClient@@ABEPAVCContactTextDef@@HAAVTIpcArgs@@@Z @ 8 NONAME ; class CContactTextDef * RPackagerTestClient::DoUnpackCntTextDefLC(int, class TIpcArgs &) const
+	?DoUnpackCntViewDefLC@RPackagerTestClient@@ABEPAVCContactViewDef@@HAAVTIpcArgs@@@Z @ 9 NONAME ; class CContactViewDef * RPackagerTestClient::DoUnpackCntViewDefLC(int, class TIpcArgs &) const
+	?DoUnpackDesCArrayLC@RPackagerTestClient@@ABEPAVCDesC16Array@@HAAVTIpcArgs@@@Z @ 10 NONAME ; class CDesC16Array * RPackagerTestClient::DoUnpackDesCArrayLC(int, class TIpcArgs &) const
+	?DoUnpackViewCntLC@RPackagerTestClient@@ABEPAVCViewContact@@HAAVTIpcArgs@@@Z @ 11 NONAME ; class CViewContact * RPackagerTestClient::DoUnpackViewCntLC(int, class TIpcArgs &) const
+	?GetAndUnpackCntContentTypeLC@RPackagerTestClient@@QBEPAVCContentType@@XZ @ 12 NONAME ; class CContentType * RPackagerTestClient::GetAndUnpackCntContentTypeLC(void) const
+	?GetAndUnpackCntFilterLC@RPackagerTestClient@@QBEPAVCCntFilter@@XZ @ 13 NONAME ; class CCntFilter * RPackagerTestClient::GetAndUnpackCntFilterLC(void) const
+	?GetAndUnpackCntIdArrayLC@RPackagerTestClient@@QBEPAVCContactIdArray@@XZ @ 14 NONAME ; class CContactIdArray * RPackagerTestClient::GetAndUnpackCntIdArrayLC(void) const
+	?GetAndUnpackCntItemLC@RPackagerTestClient@@QBEPAVCContactItem@@XZ @ 15 NONAME ; class CContactItem * RPackagerTestClient::GetAndUnpackCntItemLC(void) const
+	?GetAndUnpackCntItemViewDefLC@RPackagerTestClient@@QBEPAVCContactItemViewDef@@XZ @ 16 NONAME ; class CContactItemViewDef * RPackagerTestClient::GetAndUnpackCntItemViewDefLC(void) const
+	?GetAndUnpackCntTextDefLC@RPackagerTestClient@@QBEPAVCContactTextDef@@XZ @ 17 NONAME ; class CContactTextDef * RPackagerTestClient::GetAndUnpackCntTextDefLC(void) const
+	?GetAndUnpackCntViewDefLC@RPackagerTestClient@@QBEPAVCContactViewDef@@XZ @ 18 NONAME ; class CContactViewDef * RPackagerTestClient::GetAndUnpackCntViewDefLC(void) const
+	?GetAndUnpackDesCArrayLC@RPackagerTestClient@@QBEPAVCDesC16Array@@XZ @ 19 NONAME ; class CDesC16Array * RPackagerTestClient::GetAndUnpackDesCArrayLC(void) const
+	?GetAndUnpackViewCntLC@RPackagerTestClient@@QBEPAVCViewContact@@XZ @ 20 NONAME ; class CViewContact * RPackagerTestClient::GetAndUnpackViewCntLC(void) const
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCCntFilter@@AAVTRequestStatus@@@Z @ 21 NONAME ; void RPackagerTestClient::PackAndSendL(class CCntFilter const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContactIdArray@@AAVTRequestStatus@@@Z @ 22 NONAME ; void RPackagerTestClient::PackAndSendL(class CContactIdArray const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContactItem@@AAVTRequestStatus@@@Z @ 23 NONAME ; void RPackagerTestClient::PackAndSendL(class CContactItem const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContactItemViewDef@@AAVTRequestStatus@@@Z @ 24 NONAME ; void RPackagerTestClient::PackAndSendL(class CContactItemViewDef const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContactTextDef@@AAVTRequestStatus@@@Z @ 25 NONAME ; void RPackagerTestClient::PackAndSendL(class CContactTextDef const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContactViewDef@@AAVTRequestStatus@@@Z @ 26 NONAME ; void RPackagerTestClient::PackAndSendL(class CContactViewDef const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCContentType@@AAVTRequestStatus@@@Z @ 27 NONAME ; void RPackagerTestClient::PackAndSendL(class CContentType const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCDesC16Array@@AAVTRequestStatus@@@Z @ 28 NONAME ; void RPackagerTestClient::PackAndSendL(class CDesC16Array const &, class TRequestStatus &)
+	?PackAndSendL@RPackagerTestClient@@QAEXABVCViewContact@@AAVTRequestStatus@@@Z @ 29 NONAME ; void RPackagerTestClient::PackAndSendL(class CViewContact const &, class TRequestStatus &)

@@ -1260,4 +1260,3 @@ EXPORTS
 	?removeInterval@QMediaTimeRange@@QAEX_J0@Z @ 1259 NONAME ; void QMediaTimeRange::removeInterval(long long, long long)
 	?qt_metacast@QAbstractAudioOutput@@UAEPAXPBD@Z @ 1260 NONAME ; void * QAbstractAudioOutput::qt_metacast(char const *)
 	??1QVideoSurfaceFormat@@QAE@XZ @ 1261 NONAME ; QVideoSurfaceFormat::~QVideoSurfaceFormat(void)
-
