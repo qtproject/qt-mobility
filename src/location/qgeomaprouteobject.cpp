@@ -100,6 +100,7 @@ QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMa
     : QGeoMapObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::GeoRouteType;
+    detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
 }
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other)

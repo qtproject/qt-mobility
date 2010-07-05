@@ -107,12 +107,13 @@ public:
     void calculateMapRouteInfo(QGeoMapRouteObject *route);
     void addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const;
 
-    bool intersects(QGeoMapObject *mapObject, const QRectF &rect) const;
+    bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
 
     void paintMapObject(QPainter &painter, QGeoMapObject *mapObject);
     void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle);
     void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker);
     void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline);
+    void paintMapRoute(QPainter &painter, QGeoMapRouteObject *route);
 
     void clearObjInfo();
 

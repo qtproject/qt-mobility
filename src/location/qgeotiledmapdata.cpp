@@ -710,13 +710,13 @@ qulonglong QGeoTiledMapDataPrivate::tileKey(int row, int col, int zoomLevel)
     return result;
 }
 
-bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF &rect) const
+bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF &rect)
 {
     if (!mapObject)
         return false;
 
     if (!objInfo.contains(mapObject))
-        return false;
+        calculateInfo(mapObject);
 
     //TODO: consider dateline wrapping
     return rect.intersects(objInfo[mapObject]->boundingBox);
@@ -737,6 +737,8 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *m
     else if (mapObject->type() == QGeoMapObject::PolylineType ||
              mapObject->type() == QGeoMapObject::PolygonType)
         paintMapPolyline(painter, static_cast<QGeoMapPolylineObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::GeoRouteType)
+        paintMapRoute(painter, static_cast<QGeoMapRouteObject*>(mapObject));
 }
 
 void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle)
@@ -780,6 +782,41 @@ void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylin
     painter.setBrush(oldBrush);
 }
 
+void QGeoTiledMapDataPrivate::paintMapRoute(QPainter &painter, QGeoMapRouteObject *route)
+{
+    QSet<int> alreadyPainted;
+    QPainterPath path;
+    QGeoTiledMapRouteInfo* info = static_cast<QGeoTiledMapRouteInfo*>(objInfo.value(route));
+    //TODO: add some type check
+    QGeoTiledMappingManagerEngine *tiledEngine = static_cast<QGeoTiledMappingManagerEngine*>(q_ptr->engine());
+    QGeoTileIterator it(screenRect, tiledEngine->tileSize(), qRound(q_ptr->zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (info->intersectedTiles.contains(key)) {
+            QListIterator<QPair<int, QLineF> > segments(info->intersectedTiles[key]);
+
+            while (segments.hasNext()) {
+                const QPair<int, QLineF> &currSegment = segments.next();
+
+                if (!alreadyPainted.contains(currSegment.first)) {
+                    path.moveTo(currSegment.second.p1());
+                    path.lineTo(currSegment.second.p2());
+                    alreadyPainted.insert(currSegment.first);
+                }
+            }
+        }
+    }
+
+    path.translate(-(screenRect.topLeft()));
+    QPen oldPen = painter.pen();
+    painter.setPen(route->pen());
+    painter.drawPath(path);
+    painter.setPen(oldPen);
+}
+
 void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
 {
     if (!mapObject)
@@ -792,8 +829,11 @@ void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
         calculateMapRectangleInfo(static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         calculateMapMarkerInfo(static_cast<QGeoMapMarkerObject*>(mapObject));
-    else if (mapObject->type() == QGeoMapObject::PolylineType || mapObject->type() == QGeoMapObject::PolygonType)
+    else if (mapObject->type() == QGeoMapObject::PolylineType || 
+             mapObject->type() == QGeoMapObject::PolygonType)
         calculateMapPolylineInfo(static_cast<QGeoMapPolylineObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::GeoRouteType)
+        calculateMapRouteInfo(static_cast<QGeoMapRouteObject*>(mapObject));
 }
 
 void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle)
@@ -914,7 +954,6 @@ void QGeoTiledMapDataPrivate::calculateMapRouteInfo(QGeoMapRouteObject *route)
         QLineF line = connectShortest(here, last);
         addRouteSegmentInfo(info, line, lineIndex++);
     }
-
 }
 
 QLineF QGeoTiledMapDataPrivate::connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const
