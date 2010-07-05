@@ -48,9 +48,6 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageFilter class defines the parameters used for querying a subset of
     all available messages from the messaging store.
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageFilter is composed of a message property, an optional comparison operator

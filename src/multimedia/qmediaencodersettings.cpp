@@ -85,7 +85,6 @@ private:
     \preliminary
     \brief The QAudioEncoderSettings class provides a set of audio encoder settings.
 
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     A audio encoder settings object is used to specify the audio encoder
@@ -626,10 +625,10 @@ private:
     settings.
 
     A image encoder settings object is used to specify the image encoder
-    settings used by QCameraImageCapture.  Image encoder settings are selected
+    settings used by QStillImageCapture.  Image encoder settings are selected
     by constructing a QImageEncoderSettings object, setting the desired
-    properties and then passing it to a QCameraImageCapture instance using the
-    QCameraImageCapture::setImageSettings() function.
+    properties and then passing it to a QStillImageCapture instance using the
+    QStillImageCapture::setImageSettings() function.
 
     \code
     QImageEncoderSettings imageSettings;

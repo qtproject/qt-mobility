@@ -48,7 +48,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTunerControl
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

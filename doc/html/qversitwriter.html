@@ -1,89 +1,79 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qversitwriter.cpp -->
-  <title>Qt Mobility Project 1.1: QVersitWriter Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
+<head>
+  <title>Qt Mobility Project 1.0: QVersitWriter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QVersitWriter"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QVersitWriter</li>
-<div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#public-types">Public Types</a></li>
-<li class="level1"><a href="#public-functions">Public Functions</a></li>
-<li class="level1"><a href="#public-slots">Public Slots</a></li>
-<li class="level1"><a href="#signals">Signals</a></li>
-<li class="level1"><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QVersitWriter Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitWriter Class Reference</h1>
 <p>The QVersitWriter class writes Versit documents such as vCards to a device. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QVersitWriter&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QVersitWriter&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qversitwriter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#Error-enum">Error</a></b> { NoError, UnspecifiedError, IOError, OutOfMemoryError, NotReadyError }</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#Error-enum">Error</a></b> { NoError, UnspecifiedError, IOError, OutOfMemoryError, NotReadyError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#QVersitWriter">QVersitWriter</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#QVersitWriter-2">QVersitWriter</a></b> ( QIODevice * <i>outputDevice</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#QVersitWriter-3">QVersitWriter</a></b> ( QByteArray * <i>outputBytes</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#dtor.QVersitWriter">~QVersitWriter</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QTextCodec * </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#defaultCodec">defaultCodec</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QIODevice * </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#device">device</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> Error </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#error">error</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#setDefaultCodec">setDefaultCodec</a></b> ( QTextCodec * <i>codec</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#state">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#waitForFinished">waitForFinished</a></b> ( int <i>msec</i> = -1 )</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter">QVersitWriter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter-2">QVersitWriter</a></b> ( QIODevice * <i>outputDevice</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter-3">QVersitWriter</a></b> ( QByteArray * <i>outputBytes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#dtor.QVersitWriter">~QVersitWriter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QTextCodec * </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#defaultCodec">defaultCodec</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#setDefaultCodec">setDefaultCodec</a></b> ( QTextCodec * <i>codec</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#state">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#waitForFinished">waitForFinished</a></b> ( int <i>msec</i> = -1 )</td></tr>
 </table>
 <ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#cancel">cancel</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#startWriting">startWriting</a></b> ( const QList&lt;QVersitDocument&gt; &amp; <i>input</i> )</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#cancel">cancel</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#startWriting">startWriting</a></b> ( const QList&lt;QVersitDocument&gt; &amp; <i>input</i> )</td></tr>
 </table>
 <ul>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitwriter.html#stateChanged">stateChanged</a></b> ( QVersitWriter::State <i>state</i> )</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#stateChanged">stateChanged</a></b> ( QVersitWriter::State <i>state</i> )</td></tr>
 </table>
 <ul>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitWriter class writes Versit documents such as vCards to a device.</p>
 <p>QVersitWriter converts a <a href="qversitdocument.html">QVersitDocument</a> into its textual representation. QVersitWriter supports writing to an abstract I/O device which can be for example a file or a memory buffer. The writing can be done asynchronously and the <a href="qversitwriter.html#waitForFinished">waitForFinished</a>() function can be used to implement a blocking write.</p>
@@ -93,70 +83,90 @@
 <li><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArrays</a> are assumed to be binary data and are serialized as base-64 encoded values.</li>
 <li><a href="qversitdocument.html">QVersitDocuments</a> are serialized as a nested document (eg. as per the AGENT property in vCard).</li>
 </ul>
-</div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QVersitWriter/Error"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/NoError"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/UnspecifiedError"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/IOError"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/OutOfMemoryError"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/NotReadyError"></a>
 <h3 class="fn"><a name="Error-enum"></a>enum QVersitWriter::Error</h3>
 <p>This enum specifies an error that occurred during the most recent operation:</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The most recent operation was successful</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::UnspecifiedError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The most recent operation failed for an undocumented reason</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::IOError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The most recent operation failed because of a problem with the device</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::OutOfMemoryError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The most recent operation failed due to running out of memory</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::NotReadyError</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The most recent operation failed because there is an operation in progress</td></tr>
-</table>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QVersitWriter::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::UnspecifiedError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed for an undocumented reason</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::IOError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The most recent operation failed because of a problem with the device</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The most recent operation failed due to running out of memory</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::NotReadyError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because there is an operation in progress</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QVersitWriter/State"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/InactiveState"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/ActiveState"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/CanceledState"></a>
+<a name="//apple_ref/cpp/econst/QVersitWriter/FinishedState"></a>
 <h3 class="fn"><a name="State-enum"></a>enum QVersitWriter::State</h3>
 <p>Enumerates the various states that a reader may be in at any given time</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::InactiveState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Write operation not yet started</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::ActiveState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Write operation started, not yet finished</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::CanceledState</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Write operation is finished due to cancelation</td></tr>
-<tr><td  class="topAlign"><tt>QVersitWriter::FinishedState</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Write operation successfully completed</td></tr>
-</table>
-</div>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QVersitWriter::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Write operation not yet started</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Write operation started, not yet finished</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Write operation is finished due to cancelation</td></tr>
+<tr><td valign="top"><tt>QVersitWriter::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Write operation successfully completed</td></tr>
+</table></p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QVersitWriter/QVersitWriter"></a>
 <h3 class="fn"><a name="QVersitWriter"></a>QVersitWriter::QVersitWriter ()</h3>
 <p>Constructs a new writer.</p>
 <h3 class="fn"><a name="QVersitWriter-2"></a>QVersitWriter::QVersitWriter ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>outputDevice</i> )</h3>
 <p>Constructs a new writer that writes to <i>outputDevice</i>.</p>
 <h3 class="fn"><a name="QVersitWriter-3"></a>QVersitWriter::QVersitWriter ( <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> * <i>outputBytes</i> )</h3>
 <p>Constructs a new writer that appends to <i>outputBytes</i>.</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/~QVersitWriter"></a>
 <h3 class="fn"><a name="dtor.QVersitWriter"></a>QVersitWriter::~QVersitWriter ()</h3>
 <p>Frees the memory used by the writer. Waits until a pending asynchronous writing has been completed.</p>
-<h3 class="fn"><a name="cancel"></a>void QVersitWriter::cancel ()<tt> [slot]</tt></h3>
+<a name="//apple_ref/cpp/instm/QVersitWriter/cancel"></a>
+<h3 class="fn"><a name="cancel"></a>void QVersitWriter::cancel ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to asynchronously cancel the write request.</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/defaultCodec"></a>
 <h3 class="fn"><a name="defaultCodec"></a><a href="http://qt.nokia.com/doc/4.6/qtextcodec.html">QTextCodec</a> * QVersitWriter::defaultCodec () const</h3>
 <p>Returns the document's codec.</p>
 <p>See also <a href="qversitwriter.html#setDefaultCodec">setDefaultCodec</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/device"></a>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QVersitWriter::device () const</h3>
 <p>Returns the device used for writing, or 0 if no device has been set.</p>
 <p>See also <a href="qversitwriter.html#setDevice">setDevice</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qversitwriter.html#Error-enum">Error</a> QVersitWriter::error () const</h3>
 <p>Returns the error encountered by the last operation.</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/setDefaultCodec"></a>
 <h3 class="fn"><a name="setDefaultCodec"></a>void QVersitWriter::setDefaultCodec ( <a href="http://qt.nokia.com/doc/4.6/qtextcodec.html">QTextCodec</a> * <i>codec</i> )</h3>
 <p>Sets the default codec for the writer to use for writing the entire output.</p>
 <p>If <i>codec</i> is NULL, the writer uses the codec according to the specification prescribed default. (for vCard 2.1, ASCII; for vCard 3.0, UTF-8).</p>
 <p>See also <a href="qversitwriter.html#defaultCodec">defaultCodec</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/setDevice"></a>
 <h3 class="fn"><a name="setDevice"></a>void QVersitWriter::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the device used for writing to <i>device</i>. Does not take ownership of the device.</p>
 <p>See also <a href="qversitwriter.html#device">device</a>().</p>
-<h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )<tt> [slot]</tt></h3>
+<a name="//apple_ref/cpp/instm/QVersitWriter/startWriting"></a>
+<h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> when the writing has finished.</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qversitwriter.html#State-enum">State</a> QVersitWriter::state () const</h3>
 <p>Returns the state of the writer.</p>
-<h3 class="fn"><a name="stateChanged"></a>void QVersitWriter::stateChanged ( <a href="qversitwriter.html#State-enum">QVersitWriter::State</a> <i>state</i> )<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QVersitWriter/stateChanged"></a>
+<h3 class="fn"><a name="stateChanged"></a>void QVersitWriter::stateChanged ( <a href="qversitwriter.html#State-enum">QVersitWriter::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>The signal is emitted by the writer when its state has changed (eg. when it has finished writing to the device). <i>state</i> is the new state of the writer.</p>
+<a name="//apple_ref/cpp/instm/QVersitWriter/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QVersitWriter::waitForFinished ( int <i>msec</i> = -1 )</h3>
 <p>If the state is <a href="qversitwriter.html#State-enum">ActiveState</a>, blocks until the writer has finished writing or <i>msec</i> milliseconds has elapsed, returning true if it successfully finishes or is cancelled by the user. If the state is <a href="qversitwriter.html#State-enum">FinishedState</a>, returns true immediately. Otherwise, returns false immediately.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

@@ -53,7 +53,6 @@ QT_BEGIN_NAMESPACE
     \class QMediaService
     \brief The QMediaService class provides a common base class for media
     service implementations.
-    \inmodule QtMultimediaKit
     \ingroup multimedia
     \preliminary
 

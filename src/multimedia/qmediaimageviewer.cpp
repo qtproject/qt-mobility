@@ -131,7 +131,6 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 /*!
     \class QMediaImageViewer
     \brief The QMediaImageViewer class provides a means of viewing image media.
-    \inmodule QtMultimediaKit
     \ingroup multimedia
     \preliminary
 

@@ -107,35 +107,6 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
-#Camera
-PUBLIC_HEADERS += \
-    qcamera.h \
-    qcameraviewfinder.h \
-    qcameraimagecapture.h \
-    qcameraimagecapturecontrol.h \
-    qcameraexposure.h \
-    qcamerafocus.h \
-    qcameraimageprocessing.h \
-    qcameracontrol.h \
-    qcameralockscontrol.h \
-    qcameraexposurecontrol.h \
-    qcamerafocuscontrol.h \
-    qcameraimageprocessingcontrol.h
-
-SOURCES += \
-    qcamera.cpp \
-    qcameraviewfinder.cpp \
-    qcameraexposure.cpp \
-    qcamerafocus.cpp \
-    qcameraimageprocessing.cpp \
-    qcameraimagecapture.cpp \
-    qcameraimagecapturecontrol.cpp \
-    qcameracontrol.cpp \
-    qcameralockscontrol.cpp \
-    qcameraexposurecontrol.cpp \
-    qcamerafocuscontrol.cpp \
-    qcameraimageprocessingcontrol.cpp
-
 include(audio/audio.pri)
 include(video/video.pri)
 include(effects/effects.pri)

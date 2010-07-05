@@ -131,10 +131,12 @@ private:
 
     void setupNmConnections();
     bool isDefaultConnectionPath(const QString &path);
+    QString getNetworkNameForConnectionPath(const QString &path);
 
     QMap <QString, QString> activePaths;
     void updateActivePaths();
     
+    QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
 

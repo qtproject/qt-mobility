@@ -1,26 +1,19 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- battery-charge.qdoc -->
-  <title>Qt Mobility Project 1.1: Accessing Publish and Subscribe from QML</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
+<head>
+  <title>Qt Mobility Project 1.0: Accessing Publish and Subscribe from QML</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="all-examples.html">Examples</a></li>              <li><a href="examples-battery-charge.html"></a></li>              <li>Accessing Publish and Subscribe from QML</li><div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#battery-subscriber">Battery Subscriber</a></li>
-<li class="level2"><a href="#qml">QML</a></li>
-</ul>
-</div>
-<h1 class="title">Accessing Publish and Subscribe from QML</h1>
-<span class="subtitle"></span>
-<div class="descr"/>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Accessing Publish and Subscribe from QML<br /><span class="subtitle"></span>
+</h1>
 <p>Files:</p>
 <ul>
 <li><a href="battery-charge-battery-publisher-batterypublisher-cpp.html">battery-charge/battery-publisher/batterypublisher.cpp</a></li>
@@ -30,20 +23,20 @@
 <li><a href="battery-charge-battery-publisher-battery-publisher-pro.html">battery-charge/battery-publisher/battery-publisher.pro</a></li>
 </ul>
 <p>This examples shows how to access published context values from within QML. The example consists of two programs. The first, battery-publisher, is a standard Qt GUI application that is used to emulate a battery for the sole purpose of demonstrating the second program. It publishes the keys</p>
-<pre class="highlightedCode brush: cpp">    /power/battery/charge
+<pre>    /power/battery/charge
     /power/battery/charging</pre>
 <p>and provides controls for modifying their values.</p>
-<p class="centerAlign"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
+<p align="center"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
 <p>The user interface of the battery subscriber program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
-<p class="centerAlign"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
+<p align="center"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
 <p>The <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class is available from within QML through the use of a plugin which is parsed by the QML engine. This means that simply using the QML element 'ValueSpaceSubscriber' allows access to the valuespace, which is demonstrated below.</p>
 <a name="qml"></a>
 <h3>QML</h3>
 <p>Firstly, import the plugin library that provides the ValueSpaceSubscriber QML element.</p>
-<pre class="highlightedCode brush: cpp">    import QtMobility.publishsubscribe 1.0</pre>
+<pre>    import QtMobility.publishsubscribe 1.0</pre>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>
-<pre class="highlightedCode brush: cpp">        ValueSpaceSubscriber {
+<pre>        ValueSpaceSubscriber {
             id: batteryCharge
             path: &quot;/power/battery/charge&quot;
         }
@@ -52,7 +45,7 @@
             path: &quot;/power/battery/charging&quot;
         }</pre>
 <p>The default state of the rectangle used to visualize the battery charge uses the <i>charge</i> property of our BatteryCharge class in the expression for its height.</p>
-<pre class="highlightedCode brush: cpp">            id: visualCharge
+<pre>            id: visualCharge
             x: 12
             y: 22 + 196 - height
             width: 76
@@ -61,7 +54,7 @@
             color: &quot;green&quot;</pre>
 <p>When the battery charge changes the height of the rectangle will automatically change.</p>
 <p>Next we define two additional states. The <i>low</i> state is entered when the battery charge drops below 25% and the battery is not being recharged. When in this state the color is set to red.</p>
-<pre class="highlightedCode brush: cpp">            State {
+<pre>            State {
                 name: &quot;low&quot;
                 when: batteryCharge.value &lt; 25 &amp;&amp; !batteryCharging.value
                 PropertyChanges {
@@ -70,7 +63,7 @@
                 }
             }</pre>
 <p>The <i>charging</i> state is entered when the battery is being recharged. When in this state a particle effect animation is enabled.</p>
-<pre class="highlightedCode brush: cpp">            State {
+<pre>            State {
                 name: &quot;charging&quot;
                 when: batteryCharging.value
                 PropertyChanges {
@@ -79,11 +72,10 @@
                     emissionRate: 5
                 }
             },</pre>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

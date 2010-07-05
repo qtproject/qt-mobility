@@ -42,17 +42,6 @@
 #ifndef QGEOPOSITIONINFOSOURCEMAEMO5_H
 #define QGEOPOSITIONINFOSOURCEMAEMO5_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
 #include <QTimer>
 #include "qgeopositioninfosource.h"
 
@@ -94,7 +83,7 @@ private:
 
     void activateTimer();
     void startLocationDaemon();
-
+    
     enum PositionInfoState {
         Undefined = 0,
         Started = 1,
@@ -103,10 +92,10 @@ private:
         PowersaveActive = 8
     };
     int positionInfoState;
-
+    
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
-
+    
 public slots:
     void startUpdates();
     void stopUpdates();

@@ -24,6 +24,6 @@ symbian {
     TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }
 
-xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = bluetoothtransferservice.xml
 INSTALLS += xml

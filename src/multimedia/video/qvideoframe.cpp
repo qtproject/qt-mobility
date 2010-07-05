@@ -103,7 +103,6 @@ private:
     \class QVideoFrame
     \brief The QVideoFrame class provides a representation of a frame of video data.
     \since 4.6
-    \inmodule QtMultimediaKit
 
     A QVideoFrame encapsulates the data of a video frame, and information about the frame.
 

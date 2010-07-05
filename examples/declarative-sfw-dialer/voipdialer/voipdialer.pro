@@ -19,6 +19,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-xml.path = $$QT_MOBILITY_EXAMPLES/xmldata
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = voipdialerservice.xml
 INSTALLS += xml

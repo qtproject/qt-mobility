@@ -47,7 +47,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistControl
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

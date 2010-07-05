@@ -31,7 +31,7 @@ symbian|wince* {
         DEPLOYMENT += addFiles
     }
 } else {
-    logfile.path = $$QT_MOBILITY_EXAMPLES
+    logfile.path = $$QT_MOBILITY_PREFIX/bin
     logfile.files = nmealog.txt
     INSTALLS += logfile
 }

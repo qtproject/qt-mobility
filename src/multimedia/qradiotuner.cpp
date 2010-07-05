@@ -53,7 +53,6 @@ QT_BEGIN_NAMESPACE
     \class QRadioTuner
     \brief The QRadioTuner class provides an interface to the systems analog radio device.
 
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     You can control the systems analog radio device using this interface, for example:

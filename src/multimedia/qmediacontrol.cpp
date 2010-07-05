@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaControl
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

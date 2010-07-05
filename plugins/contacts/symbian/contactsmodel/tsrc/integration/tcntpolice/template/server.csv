@@ -1,2 +1,0 @@
-Name,MajorName,MinorName,BuildName,ListHeaderFile,Panic,SuiteName,SourceDirectory,TemplateDirectory,MessageFile,TemplateFile,Libraries,UserInclude,SystemInclude,BuildOK,ConnectCapability,CapExcept,AllNegative
-CNTSRV,KLockSrvMajorVersionNumber,KLockSrvMinorVersionNumber,KLockSrvBuildVersionNumber,CCntServer.h ccntipccodes.h,CNTMODEL,TE_Cntsrv_API_Policing,..\Te_Police\group,.,Message.csv,Template.csv,euser.lib ,.\  ..\..\..\..\..\cntsrv\inc\,\epoc32\include,yes,,,

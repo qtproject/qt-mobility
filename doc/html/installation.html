@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- installation.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.1: Installation Guide</title>
+  <title>Qt Mobility Project 1.0: Installation Guide</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -46,8 +46,7 @@
 <tr valign="top" class="odd"><td>Location</td><td>The Symbian backend uses the LBT (Location Based Triggering) library for area notifications. Area notifications will be disabled at compile time if the LBT library is not found.<p>The LBT library is not publicly available at the time of writing. The developer documentation for <a href="http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html">S60 Location Services</a> is probably the best source for LBT availability updates, as it will be updated when the library is released.</p>
 </td><td>N(Y)</td><td>N</td></tr>
 <tr valign="top" class="even"><td>Messaging</td><td>On Linux, QtMessaging depends on qtopiamail from <a href="http://labs.trolltech.com/blogs/category/qtmessaging">QMF</a>.<p>The Windows Mobile backend depends on ActiveSync version 4.5&#x2e;</p>
-<p>While not supported for this release the desktop Windows backend requires that a MAPI subsystem is installed. Note that messaging functionality will not work if you are using the MinGW compiler. Additionally note that CE MAPI is available on Windows Mobile and does not need to be installed separately.</p>
-<p>For more detailed instructions on installation on Windows Mobile see <a href="messaging-installation-on-windows-mobile.html">Messaging Installation On Windows Mobile</a></p>
+<p>While not supported for this release the desktop Windows backend requires that a MAPI subsystem is installed. Note that messaging functionality will not work if you are using the MinGW compiler.</p>
 <p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilities. Email functionality requires that an email account is available on the platform.</p>
 </td><td>N</td><td>Y</td></tr>
 <tr valign="top" class="odd"><td>Multimedia</td><td>On all platforms, <a href="qtmultimediakit.html">QtMultimediaKit</a> depends on <a href="http://qt.nokia.com/doc/4.6/qtgui.html">QtGui</a> and <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On all platforms, QML elements for sound effects and music and video playing are exported if <a href="http://qt.nokia.com/doc/4.6/qtdeclarative.html">QtDeclarative</a> (auto-detected) is available.</p>
@@ -63,7 +62,7 @@
 <tr valign="top" class="even"><td>Sensors</td><td>The QtSensors s60_sensor_api plugin for S60 3.1 depends on the <a href="http://www.forum.nokia.com/info/sw.nokia.com/id/4284ae69-d37a-4319-bdf0-d4acdab39700/Sensor_plugin_S60_3rd_ed.html">Sensor API Plug-in</a></td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td></td><td>The QtSensors symbian plugin for S60 3.2 depends on the backported <a href="http://www.forum.nokia.com/info/sw.nokia.com/id/8059e8ae-8c22-4684-be6b-d40d443d7efc/Sensor_API_Plug_in_S60_3rd_FP2.html">Sensor API Plug-in</a></td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="even"><td>Service Framework</td><td>On all platforms, QtServiceFramework depends on <a href="http://qt.nokia.com/doc/4.6/qtsql.html">QtSql</a>. <a href="http://qt.nokia.com/doc/4.6/qtsql.html">QtSql</a> also needs the SQLite 3 driver (enabled by default) at runtime.</td><td>N</td><td>Y</td></tr>
-<tr valign="top" class="odd"><td>System Information</td><td>On all platforms, QtSystemInfo depends on <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On Linux, it depends on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> (auto-detected), HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality. It also depends on <a href="http://qt.nokia.com/doc/4.6/qtgui.html">QtGui</a>, and on libbluetooth development headers.</p>
+<tr valign="top" class="odd"><td>System Information</td><td>On all platforms, QtSystemInfo depends on <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On Linux, it depends on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> (auto-detected), HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality. It also depends on <a href="http://qt.nokia.com/doc/4.6/qtgui.html">QtGui</a>.</p>
 <p>On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile with older SSDKsbut there will be reduced functionality.</p>
 <p>On Maemo, it depends on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> (auto-detected). <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> is used to communicate with HAL, and functionality will be reduced if either is unavailable.</p>
 <p>On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at <a href="http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in">http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in</a> For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.</p>
@@ -167,6 +166,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

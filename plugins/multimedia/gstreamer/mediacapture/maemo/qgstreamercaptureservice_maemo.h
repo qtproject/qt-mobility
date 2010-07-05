@@ -60,7 +60,6 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetaDataControl;
 class QGstreamerImageCaptureControl;
-class QGstreamerCaptureMetaDataControl;
 
 class QGstreamerCaptureService : public QMediaService
 {
@@ -77,7 +76,7 @@ private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
-    QGstreamerCameraControl *m_cameraControl;    
+    QGstreamerCameraControl *m_cameraControl;
     QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
     QAudioEndpointSelector *m_audioInputEndpointSelector;

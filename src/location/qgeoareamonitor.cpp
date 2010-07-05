@@ -50,9 +50,6 @@
     \class QGeoAreaMonitor
     \brief The QGeoAreaMonitor class enables the detection of proximity
     changes for a specified set of coordinates.
-
-    \inmodule QtLocation
-    
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in

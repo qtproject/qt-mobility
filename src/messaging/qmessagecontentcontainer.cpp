@@ -56,9 +56,6 @@ QTM_BEGIN_NAMESPACE
     and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 
     partially retrieved.
 
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageContentContainer object can either directly contain media such as text, 

@@ -49,9 +49,6 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageSortOrder class defines the parameters used for sorting a subset of 
     queried messages from the messaging store.
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageSortOrder is composed of a message property to sort and a sort order. 

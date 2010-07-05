@@ -52,8 +52,6 @@ QVersitDocumentPrivate::QVersitDocumentPrivate()
 QVersitDocumentPrivate::QVersitDocumentPrivate(const QVersitDocumentPrivate& other)
     : QSharedData(other),
     mVersitType(other.mVersitType),
-    mComponentType(other.mComponentType),
-    mProperties(other.mProperties),
-    mSubDocuments(other.mSubDocuments)
+    mProperties(other.mProperties)
 {
 }

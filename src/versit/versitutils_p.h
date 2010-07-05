@@ -64,8 +64,6 @@
 #include <QMultiHash>
 
 QTM_BEGIN_NAMESPACE
-class QVersitDocument;
-class QVersitProperty;
 
 class Q_AUTOTEST_EXPORT VersitUtils
 {
@@ -74,9 +72,6 @@ public:
     static QByteArray encode(char ch, QTextCodec* codec);
     static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);
     static void changeCodec(QTextCodec* codec);
-    static QVersitProperty takeProperty(const QVersitDocument& document,
-                                        const QString& propertyName,
-                                        QList<QVersitProperty>* toBeRemoved);
 
 private:
     // These are caches for performance:

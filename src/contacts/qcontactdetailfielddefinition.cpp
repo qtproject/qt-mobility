@@ -48,12 +48,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailFieldDefinition
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
  
-  \inmodule QtContacts
-  
   Encapsulates information about a particular datum which may be part of a
-  QContactDetail, including the type and allowable values.
+  QContactDetail, including the type, allowable values and access constraints.
  */
-
 
 /*!
  * Constructs a new field with no constraints and an invalid data type.
@@ -118,7 +115,6 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 {
     d->m_allowableValues = values;
 }
-
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field

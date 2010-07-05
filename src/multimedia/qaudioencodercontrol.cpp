@@ -47,7 +47,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QAudioEncoderControl
-    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

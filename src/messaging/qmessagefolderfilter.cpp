@@ -48,9 +48,6 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageFolderFilter class defines the parameters used for querying a subset of
     all available folders from the messaging store.
-    
-    \inmodule QtMessaging
-    
     \ingroup messaging
 
     A QMessageFolderFilter is composed of a folder property, an optional comparison operator

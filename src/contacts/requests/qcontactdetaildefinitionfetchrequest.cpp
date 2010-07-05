@@ -57,9 +57,6 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
-  
-  \inmodule QtContacts
-  
   \ingroup contacts-requests
  */
 
@@ -68,14 +65,6 @@ QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest(QObje
     : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate, parent)
 {
 }
-
-
-/*! Frees any memory used by this request */
-QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
-{
-    QContactAbstractRequestPrivate::notifyEngine(this);
-}
-
 
 /*! Sets the name of the detail definition to retrieve to \a definitionName.
     Equivalent to calling

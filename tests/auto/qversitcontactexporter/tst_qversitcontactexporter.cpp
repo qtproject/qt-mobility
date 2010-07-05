@@ -121,46 +121,6 @@ public:
     QList<QContactDetail> mPostProcessedDetails;
 };
 
-/* This class just logs the arguments to the last call to postProcessDetail */
-class MyQVersitContactExporterDetailHandlerV2 : public QVersitContactExporterDetailHandlerV2
-{
-public:
-    MyQVersitContactExporterDetailHandlerV2()
-    {
-    }
-
-    void detailProcessed(const QContact& contact,
-                         const QContactDetail& detail,
-                         const QSet<QString>& processedFields,
-                         const QVersitDocument& document,
-                         QList<QVersitProperty>* toBeRemoved,
-                         QList<QVersitProperty>* toBeAdded)
-    {
-        mContact = contact;
-        mDetail = detail;
-        mProcessedFields = processedFields;
-        mDocument = document;
-        mToBeRemoved = *toBeRemoved;
-        mToBeAdded = *toBeAdded;
-    }
-
-    void contactProcessed(const QContact& contact, QVersitDocument* document)
-    {
-        mEndContact = contact;
-        mEndDocument = *document;
-    }
-
-    QContact mContact;
-    QContactDetail mDetail;
-    QSet<QString> mProcessedFields;
-    QVersitDocument mDocument;
-    QList<QVersitProperty> mToBeRemoved;
-    QList<QVersitProperty> mToBeAdded;
-
-    QContact mEndContact;
-    QVersitDocument mEndDocument;
-};
-
 class MyQVersitResourceHandler : public QVersitResourceHandler
 {
 public:
@@ -228,12 +188,17 @@ const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 void tst_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
+    mDetailHandler = new MyQVersitContactExporterDetailHandler;
+    mExporter->setDetailHandler(mDetailHandler);
     mResourceHandler = new MyQVersitResourceHandler;
     mExporter->setResourceHandler(mResourceHandler);
 }
 
 void tst_QVersitContactExporter::cleanup()
 {
+    QVERIFY(mExporter->detailHandler() == mDetailHandler);
+    mExporter->setDetailHandler(0);
+    delete mDetailHandler;
     QVERIFY(mExporter->resourceHandler() == mResourceHandler);
     mExporter->setResourceHandler(0);
     delete mResourceHandler;
@@ -266,21 +231,19 @@ void tst_QVersitContactExporter::testConvertContact()
 
 void tst_QVersitContactExporter::testContactDetailHandler()
 {
-    MyQVersitContactExporterDetailHandler detailHandler;;
-    mExporter->setDetailHandler(&detailHandler);
-
     // Test1: Un-supported Avatar Test
     QContact contact(createContactWithName(QLatin1String("asdf")));
+    QVersitDocument document;
     QContactDetail unknownDetail;
     unknownDetail.setValue(QLatin1String("Unknown"), QLatin1String("Detail"));
     contact.saveDetail(&unknownDetail);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
-    QList<QContactDetail> unknownDetails = detailHandler.mUnknownDetails;
+    document = mExporter->documents().first();
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
+    QList<QContactDetail> unknownDetails = mDetailHandler->mUnknownDetails;
     QVERIFY(unknownDetails.size() > 0);
     QString definitionName = unknownDetail.definitionName();
-    QContactDetail detail = findDetailByName(unknownDetails,definitionName);
+    QContactDetail detail = searchDetail(unknownDetails,definitionName);
     QCOMPARE(definitionName, detail.definitionName());
 
     // Test2: Un-supported Online Account
@@ -289,14 +252,14 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     onlineAccount.setAccountUri(testUri);
     onlineAccount.setSubTypes(QString::fromAscii("unsupported"));
     contact.saveDetail(&onlineAccount);
-    detailHandler.clear();
+    mDetailHandler->clear();
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
-    unknownDetails = detailHandler.mUnknownDetails;
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
+    unknownDetails = mDetailHandler->mUnknownDetails;
     QVERIFY(unknownDetails.size() > 0);
     definitionName = onlineAccount.definitionName();
-    detail = findDetailByName(unknownDetails, definitionName);
+    detail = searchDetail(unknownDetails, definitionName);
     QCOMPARE(definitionName, detail.definitionName());
 
     // Test that preProcessDetail returns true stops the exporter from doing anything.
@@ -304,44 +267,18 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     QContactName contactName;
     contactName.setFirstName(QLatin1String("John"));
     contact.saveDetail(&contactName);
-    detailHandler.clear();
-    detailHandler.mPreProcess = true;
+    mDetailHandler->clear();
+    mDetailHandler->mPreProcess = true;
     // Fails, with NoNameError
     QVERIFY(!mExporter->exportContacts(QList<QContact>() << contact,
             QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = mExporter->documents();
     QCOMPARE(documents.size(), 0);
-    QVERIFY(detailHandler.mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
-    QCOMPARE(detailHandler.mPostProcessedDetails.count(), 0);
-    QCOMPARE(detailHandler.mUnknownDetails.count(), 0);
+    QVERIFY(mDetailHandler->mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
+    QCOMPARE(mDetailHandler->mPostProcessedDetails.count(), 0);
+    QCOMPARE(mDetailHandler->mUnknownDetails.count(), 0);
 
-    QVERIFY(mExporter->detailHandler() == &detailHandler);
-    mExporter->setDetailHandler(static_cast<QVersitContactExporterDetailHandler*>(0));
-}
-
-void tst_QVersitContactExporter::testContactDetailHandlerV2()
-{
-    MyQVersitContactExporterDetailHandlerV2 detailHandler;
-    mExporter->setDetailHandler(&detailHandler);
-
-    QContact contact(createContactWithName(QLatin1String("asdf")));
-    QContactPhoneNumber phone;
-    phone.setNumber(QLatin1String("1234"));
-    phone.setValue(QLatin1String("ExtraField"), QLatin1String("Value"));
-    contact.saveDetail(&phone);
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-
-    QCOMPARE(detailHandler.mProcessedFields.size(), 3);
-    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldContext)));
-    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldSubTypes)));
-    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldNumber)));
-    QVersitProperty expectedProperty;
-    expectedProperty.setName(QLatin1String("TEL"));
-    expectedProperty.setValue(QLatin1String("1234"));
-    QCOMPARE(detailHandler.mToBeAdded.size(), 1);
-    QCOMPARE(detailHandler.mToBeAdded.first(), expectedProperty);
-
-    mExporter->setDetailHandler(static_cast<QVersitContactExporterDetailHandlerV2*>(0));
+    QVERIFY(mExporter->detailHandler() == mDetailHandler);
 }
 
 void tst_QVersitContactExporter::testEncodeName()
@@ -354,6 +291,7 @@ void tst_QVersitContactExporter::testEncodeName()
     name.setLastName(QString::fromAscii("HH"));
     name.setMiddleName(QString::fromAscii("A"));
     name.setPrefix(QString::fromAscii("Mr."));
+    name.setContexts(QContactDetail::ContextHome);
     contact.saveDetail(&name);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QVersitDocument document = mExporter->documents().first();
@@ -362,13 +300,13 @@ void tst_QVersitContactExporter::testEncodeName()
     // if some value exists for the Label or if value for Name exists.
     QCOMPARE(document.properties().count(), 2);
 
-    QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
+    QVersitProperty displayProperty = document.properties().at(0);
     // Check name
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     // Check value
     QCOMPARE(displayProperty.value(), QString::fromAscii("He;ido HH"));
 
-    QVersitProperty nameProperty = findPropertyByName(document, QLatin1String("N"));
+    QVersitProperty nameProperty = document.properties().at(1);
     // Check parameters, contexts not allowed for N property
     QCOMPARE(nameProperty.parameters().count(), 0);
     // Check name
@@ -388,7 +326,7 @@ void tst_QVersitContactExporter::testEncodePhoneNumber()
     contact.saveDetail(&phoneNumber);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("TEL"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -407,7 +345,7 @@ void tst_QVersitContactExporter::testEncodePhoneNumber()
     contact.saveDetail(&assistantNumber);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = findPropertyByName(document, QLatin1String("X-ASSISTANT-TEL"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 1);
@@ -425,7 +363,7 @@ void tst_QVersitContactExporter::testEncodeEmailAddress()
     contact.saveDetail(&email);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("EMAIL"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -452,7 +390,7 @@ void tst_QVersitContactExporter::testEncodeStreetAddress()
     contact.saveDetail(&address);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("ADR"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -479,7 +417,7 @@ void tst_QVersitContactExporter::testEncodeUrl()
     contact.saveDetail(&url);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("URL"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -500,7 +438,7 @@ void tst_QVersitContactExporter::testEncodeUid()
     contact.saveDetail(&guid);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("UID"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -527,7 +465,7 @@ void tst_QVersitContactExporter::testEncodeRev()
     contact.saveDetail(&timeStamp);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("REV"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
@@ -541,7 +479,7 @@ void tst_QVersitContactExporter::testEncodeRev()
     contact.saveDetail(&timeStamp);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("REV"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.value(), expectedValueUTCEncoded);
@@ -555,7 +493,7 @@ void tst_QVersitContactExporter::testEncodeRev()
     contact.saveDetail(&timeStamp);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("REV"));
     QVERIFY(!property.isEmpty());
     QString expectedValueEncoded = QString::fromAscii("2009-01-01T06:01:02");
@@ -567,7 +505,7 @@ void tst_QVersitContactExporter::testEncodeRev()
     contact.saveDetail(&timeStamp);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 }
 
 void tst_QVersitContactExporter::testEncodeBirthDay()
@@ -581,7 +519,7 @@ void tst_QVersitContactExporter::testEncodeBirthDay()
     contact.saveDetail(&birthDay);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("BDAY"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
@@ -598,7 +536,7 @@ void tst_QVersitContactExporter::testEncodeNote()
     contact.saveDetail(&note);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("NOTE"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
@@ -618,7 +556,7 @@ void tst_QVersitContactExporter::testEncodeGeoLocation()
     contact.saveDetail(&geoLocation);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("GEO"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
@@ -640,7 +578,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("TITLE"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.value(), title);
@@ -651,7 +589,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList(QLatin1String("Nokia")));
@@ -664,7 +602,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList()
@@ -675,7 +613,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
     CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList()
@@ -686,7 +624,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = findPropertyByName(document, QLatin1String("TITLE"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.value(), title);
@@ -750,7 +688,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("X-ASSISTANT"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.value(), QString::fromAscii("myAssistant"));
@@ -762,7 +700,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("ROLE"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.value(), QString::fromAscii("Executive"));
@@ -879,7 +817,7 @@ void tst_QVersitContactExporter::testEncodeEmbeddedContent()
     contact.saveDetail(&contactAvatar);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 
     mExporter->setResourceHandler(mResourceHandler);
 }
@@ -921,7 +859,7 @@ void tst_QVersitContactExporter::testEncodeParameters()
     contact.saveDetail(&phoneNumber);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("TEL"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 2);
@@ -940,7 +878,7 @@ void tst_QVersitContactExporter::testEncodeGender()
     contact.saveDetail(&gender);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("X-GENDER"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.parameters().count(), 0);
@@ -962,7 +900,7 @@ void tst_QVersitContactExporter::testEncodeNickName()
     contact.saveDetail(&firstNickname);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QLatin1String("X-NICKNAME"));
     CHECK_VALUE(property, QVersitProperty::ListType, QStringList(QLatin1String("Homie")));
@@ -976,7 +914,7 @@ void tst_QVersitContactExporter::testEncodeNickName()
     contact.saveDetail(&secondNickname);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = findPropertyByName(document, QLatin1String("X-NICKNAME"));
     QVERIFY(!property.isEmpty());
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
@@ -999,7 +937,7 @@ void tst_QVersitContactExporter::testEncodeTag()
     contact.saveDetail(&firstTag);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QLatin1String("CATEGORIES"));
     CHECK_VALUE(property, QVersitProperty::ListType, QStringList(QLatin1String("red")));
@@ -1013,7 +951,7 @@ void tst_QVersitContactExporter::testEncodeTag()
     contact.saveDetail(&secondTag);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QString::fromAscii("CATEGORIES"));
     CHECK_VALUE(property, QVersitProperty::ListType,
@@ -1031,7 +969,7 @@ void tst_QVersitContactExporter::testEncodeAnniversary()
     contact.saveDetail(&anniversary);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("X-ANNIVERSARY"));
     QVERIFY(!property.isEmpty());
     // The contexts and subtypes are not defined for X-ANNIVERSARY property
@@ -1054,7 +992,7 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     contact.saveDetail(&onlineAccount);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty property = findPropertyByName(document, QLatin1String("X-SIP"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -1072,7 +1010,7 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     contact.saveDetail(&onlineAccount);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("X-SIP"));
     QVERIFY(!property.isEmpty());
     // Check parameters
@@ -1090,7 +1028,7 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     contact.saveDetail(&onlineAccount);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("X-SIP"));
     QVERIFY(!property.isEmpty());
     // Check parameters, SIP not added as a TYPE parameter
@@ -1106,7 +1044,7 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     contact.saveDetail(&onlineAccount);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = findPropertyByName(document, QLatin1String("X-IMPP"));
     QVERIFY(!property.isEmpty());
     // Check parameters, SIP not added as a TYPE parameter
@@ -1121,7 +1059,7 @@ void tst_QVersitContactExporter::testEncodeOnlineAccount()
     contact.saveDetail(&onlineAccount);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 }
 
 void tst_QVersitContactExporter::testEncodeFamily()
@@ -1134,7 +1072,7 @@ void tst_QVersitContactExporter::testEncodeFamily()
     contact.saveDetail(&family);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QVersitDocument document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 0);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 
     // Only spouse present
     QString spouce = QString::fromAscii("ABC");
@@ -1142,7 +1080,7 @@ void tst_QVersitContactExporter::testEncodeFamily()
     contact.saveDetail(&family);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 1);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     QVersitProperty spouseProperty = findPropertyByName(document, QLatin1String("X-SPOUSE"));
     QVERIFY(!spouseProperty.isEmpty());
     QCOMPARE(spouseProperty.parameters().count(), 0);
@@ -1156,7 +1094,7 @@ void tst_QVersitContactExporter::testEncodeFamily()
     contact.saveDetail(&family);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
-    QCOMPARE(countProperties(document), 2);
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     spouseProperty = findPropertyByName(document, QLatin1String("X-SPOUSE"));
     QVERIFY(!spouseProperty.isEmpty());
     QCOMPARE(spouseProperty.parameters().count(), 0);
@@ -1182,10 +1120,10 @@ void tst_QVersitContactExporter::testEncodeDisplayLabel()
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard21Type));
     QVersitDocument document = mExporter->documents().first();
     QCOMPARE(document.properties().count(), 2);
-    QVersitProperty displayProperty = findPropertyByName(document, QLatin1String("FN"));
+    QVersitProperty displayProperty = document.properties().at(0);
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     QCOMPARE(displayProperty.value(), QString::fromAscii("First Last"));
-    QVersitProperty nameProperty = findPropertyByName(document, QLatin1String("N"));
+    QVersitProperty nameProperty = document.properties().at(1);
     QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
     CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
                 << QLatin1String("Last") << QLatin1String("First") << QLatin1String("Middle")
@@ -1215,22 +1153,7 @@ QContact tst_QVersitContactExporter::createContactWithName(QString name)
     return contact;
 }
 
-/* Counts the properties, excluding the ones generated by a
- * "createContactWithName" contact and excluding default-generated properties
- */
-int tst_QVersitContactExporter::countProperties(const QVersitDocument& document)
-{
-    int count = 0;
-    foreach (const QVersitProperty& property, document.properties()) {
-        if (property.name() != QLatin1String("FN")
-            && property.name() != QLatin1String("N")
-            && property.name() != QLatin1String("X-NOKIA-QCONTACTFIELD"))
-            count++;
-    }
-    return count;
-}
-
-QContactDetail tst_QVersitContactExporter::findDetailByName(
+QContactDetail tst_QVersitContactExporter::searchDetail(
     QList<QContactDetail> details,
     QString search)
 {

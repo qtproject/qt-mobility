@@ -42,15 +42,15 @@
 #include "qgeoareamonitor_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
-
+        
 #define UPDATE_INTERVAL_5S  5000
 #define TO_METERS           1000
-
-QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent)
+        
+QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent) 
 {
     insideArea = false;
     location = QGeoPositionInfoSource::createDefaultSource(this);
-    if (location) {
+    if(location) {
         location->setUpdateInterval(UPDATE_INTERVAL_5S);
         connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -60,34 +60,34 @@ QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(pa
 
 QGeoAreaMonitorMaemo::~QGeoAreaMonitorMaemo()
 {
-    if (location)
+    if(location)
         location->stopUpdates();
-
+    
 }
 
-void QGeoAreaMonitorMaemo::setCenter(const QGeoCoordinate& coordinate)
+void QGeoAreaMonitorMaemo::setCenter(const QGeoCoordinate& coordinate) 
 {
     if (coordinate.isValid())
         QGeoAreaMonitor::setCenter(coordinate);
 }
 
-void QGeoAreaMonitorMaemo::setRadius(qreal radius)
+void QGeoAreaMonitorMaemo::setRadius(qreal radius) 
 {
     QGeoAreaMonitor::setRadius(radius);
 }
 
-void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info)
+void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info) 
 {
-    double distance =
-        location_distance_between(info.coordinate().latitude(),
-                                  info.coordinate().longitude(),
-                                  QGeoAreaMonitor::center().latitude(),
-                                  QGeoAreaMonitor::center().longitude());
-
+    double distance = 
+            location_distance_between(info.coordinate().latitude(),
+                                      info.coordinate().longitude(),
+                                      QGeoAreaMonitor::center().latitude(),
+                                      QGeoAreaMonitor::center().longitude());
+    
     distance = distance * TO_METERS;
-
+    
     if (distance <= QGeoAreaMonitor::radius()) {
-        if (!insideArea)
+        if(!insideArea)
             emit areaEntered(info);
         insideArea = true;
     } else if (insideArea) {

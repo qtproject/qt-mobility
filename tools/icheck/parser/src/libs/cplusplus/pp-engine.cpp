@@ -135,24 +135,9 @@ struct Value
     PP_DEFINE_BIN_OP(op_bit_and, &)
     PP_DEFINE_BIN_OP(op_bit_or, |)
     PP_DEFINE_BIN_OP(op_bit_xor, ^)
-    inline Value operator&&(const Value &other) const 
-    { 
-        Value v = *this; 
-        if (v.is_ulong () || other.is_ulong ()) 
-            v.set_ulong (v.ul && other.ul); 
-        else 
-            v.set_long (v.l && other.l);
-        return v; 
-    }
-    inline Value operator||(const Value &other) const 
-    { 
-        Value v = *this; 
-        if (v.is_ulong () || other.is_ulong ()) 
-            v.set_ulong (v.ul || other.ul); 
-        else 
-            v.set_long (v.l || other.l);
-        return v; 
-    }
+    PP_DEFINE_BIN_OP(op_and, &&)
+    PP_DEFINE_BIN_OP(op_or, ||)
+
 #undef PP_DEFINE_BIN_OP
 };
 

@@ -54,7 +54,6 @@
 //
 
 #include "qcontactmanager.h"
-#include "qcontactmanager_p.h"
 #include "qcontactabstractrequest.h"
 
 #include <QList>
@@ -80,20 +79,6 @@ public:
     virtual QContactAbstractRequest::RequestType type() const
     {
         return QContactAbstractRequest::InvalidRequest;
-    }
-
-    static void notifyEngine(QContactAbstractRequest* request)
-    {
-        Q_ASSERT(request);
-        QContactAbstractRequestPrivate* d = request->d_ptr;
-        if (d) {
-            QMutexLocker ml(&d->m_mutex);
-            QContactManagerEngine *engine = QContactManagerData::engine(d->m_manager);
-            ml.unlock();
-            if (engine) {
-                engine->requestDestroyed(request);
-            }
-        }
     }
 
     QContactManager::Error m_error;

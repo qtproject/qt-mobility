@@ -55,9 +55,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoPositionInfoSource
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
-
-    \inmodule QtLocation
-    
     \ingroup location
 
     The static function QGeoPositionInfoSource::createDefaultSource() creates a default
@@ -142,9 +139,9 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
     interval is less than the minimumUpdateInterval(),
     the minimum interval is used instead.
 
-    Changes to the update interval will happen as soon as is practical, however the
-    time the change takes may vary between implementations.  Whether or not the elapsed
-    time from the previous interval is counted as part of the new interval is also
+    Changes to the update interval will happen as soon as is practical, however the 
+    time the change takes may vary between implementations.  Whether or not the elapsed 
+    time from the previous interval is counted as part of the new interval is also 
     implementation dependent.
 
     The default value for this property is 0.

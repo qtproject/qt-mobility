@@ -156,7 +156,7 @@ QVersitDocumentWriter* QVersitWriterPrivate::writerForType(QVersitDocument::Vers
         case QVersitDocument::VCard30Type:
             return new QVCard30Writer;
         default:
-            return new QVCard30Writer;
+            return new QVCard21Writer;
     }
 }
 

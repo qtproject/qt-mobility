@@ -57,7 +57,6 @@ class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
-class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
 
@@ -82,21 +81,19 @@ class QGstreamerCaptureSession : public QObject, public QGstreamerSyncEventFilte
     Q_ENUMS(State)
     Q_ENUMS(CaptureMode)
 public:
-    enum CaptureMode { Audio = 1, Video = 2, Image=4, AudioAndVideo = Audio | Video };
+    enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
 
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
     CaptureMode captureMode() const { return m_captureMode; }
-    void setCaptureMode(CaptureMode);
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
-    QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
@@ -113,11 +110,8 @@ public:
     QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
 
-    void captureImage(int requestId, const QString &fileName);
-
     State state() const;
     qint64 duration() const;
-    bool isMuted() const { return m_muted; }
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
@@ -125,10 +119,6 @@ signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
-    void imageExposed(int requestId);
-    void imageCaptured(int requestId, const QImage &img);
-    void imageSaved(int requestId, const QString &path);
-    void mutedChanged(bool);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
@@ -137,7 +127,6 @@ public slots:
     void dumpGraph(const QString &fileName);
 
     void setMetaData(const QMap<QByteArray, QVariant>&);
-    void setMuted(bool);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -150,7 +139,6 @@ private:
     GstElement *buildAudioPreview();
     GstElement *buildVideoSrc();
     GstElement *buildVideoPreview();
-    GstElement *buildImageCapture();
 
     void waitForStopped();
     bool rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
@@ -171,7 +159,6 @@ private:
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
-    QGstreamerImageEncode *m_imageEncodeControl;
     QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaContainerControl *m_mediaContainerControl;
 
@@ -183,8 +170,6 @@ private:
     GstElement *m_audioTee;
     GstElement *m_audioPreviewQueue;
     GstElement *m_audioPreview;
-    GstElement *m_audioVolume;
-    bool m_muted;
 
     GstElement *m_videoSrc;
     GstElement *m_videoTee;
@@ -199,7 +184,6 @@ public:
     bool m_passImage;
     bool m_passPrerollImage;
     QString m_imageFileName;
-    int m_imageRequestId;
 };
 
 #endif // QGSTREAMERCAPTURESESSION_H

@@ -86,36 +86,6 @@ QHalInterface::~QHalInterface()
     delete d;
 }
 
-void QHalInterface::connectNotify(const char *signal)
-{
-    qWarning() << Q_FUNC_INFO << signal;
-   if (QLatin1String(signal) ==
-       QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                                          deviceAdded(QString))))) {
-
-      if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
-                               HAL_DBUS_MANAGER_PATH,
-                               QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                               QLatin1String("DeviceAdded"),
-                                 this,SIGNAL(deviceAdded(QString)))) {
-      }
-   }
-   if (QLatin1String(signal) ==
-       QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                                          deviceRemoved(QString))))) {
-      if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
-                               HAL_DBUS_MANAGER_PATH,
-                               QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
-                               QLatin1String("DeviceRemoved"),
-                                 this,SIGNAL(deviceRemoved(QString)))) {
-      }
-   }
-}
-
-void QHalInterface::disconnectNotify(const char *signal)
-{
-}
-
 bool QHalInterface::isValid()
 {
     return d->valid;

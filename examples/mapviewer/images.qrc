@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/marker">
-        <file>images/house.png</file>
-    </qresource>
-    <qresource prefix="/logo">
-        <file>images/qt.png</file>
-    </qresource>
-</RCC>
