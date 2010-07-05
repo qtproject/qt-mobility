@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QImageEncoderControl
     \preliminary
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \brief The QImageEncoderControl class provides access to the settings of a media service that
     performs image encoding.
@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QImageEncoderControl is \c com.nokia.Qt.QImageEncoderControl/1.0 as
     defined in QImageEncoderControl_iid.
 
-    \sa QImageEncoderSettings, QMediaService::control()
+    \sa QImageEncoderSettings, QMediaService::requestControl()
 */
 
 /*!

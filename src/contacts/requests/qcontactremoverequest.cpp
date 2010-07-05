@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,6 +53,9 @@ QTM_BEGIN_NAMESPACE
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
@@ -72,6 +75,7 @@ QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
 void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
 {
     Q_D(QContactRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactIds.clear();
     d->m_contactIds.append(contactId);
 }
@@ -80,6 +84,7 @@ void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {
     Q_D(QContactRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactIds = contactIds;
 }
 
@@ -87,6 +92,7 @@ void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactI
 QList<QContactLocalId> QContactRemoveRequest::contactIds() const
 {
     Q_D(const QContactRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactIds;
 }
 
@@ -94,6 +100,7 @@ QList<QContactLocalId> QContactRemoveRequest::contactIds() const
 QMap<int, QContactManager::Error> QContactRemoveRequest::errorMap() const
 {
     Q_D(const QContactRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

@@ -1,13 +1,17 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmedia_qt7engine)
-QT += opengl multimedia
+TARGET = $$qtLibraryTarget(qqt7engine)
+
+QT += opengl
 
 PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
+
+#DEFINES += QT_DEBUG_QT7
 
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \
@@ -23,28 +27,29 @@ contains(QMAKE_MAC_XARCH, no) {
     LIBS += -Xarch_i386 -framework QuickTime -Xarch_ppc -framework QuickTime
 }
 
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
 DEPENDPATH += .
 
 HEADERS += \
     qt7backend.h \
     qt7playercontrol.h \
-    qt7videooutputcontrol.h \
+    qt7videooutput.h \
     qt7movieviewoutput.h \
     qt7movievideowidget.h \
     qt7movieviewrenderer.h \
     qt7playersession.h \
     qt7playerservice.h \
-    qt7serviceplugin.h \    
+    qt7serviceplugin.h \
     qt7movierenderer.h \
+    qt7ciimagevideobuffer.h \
     qt7playermetadata.h \
     qcvdisplaylink.h
 
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
-    qt7playersession.mm \    
+    qt7playersession.mm \
     qt7serviceplugin.mm \
     qt7movieviewoutput.mm \
     qt7movievideowidget.mm \
@@ -52,10 +57,7 @@ OBJECTIVE_SOURCES += \
     qt7playermetadata.mm \
     qt7movierenderer.mm \
     qt7playercontrol.mm \
-    qt7videooutputcontrol.mm \
+    qt7videooutput.mm \
+    qt7ciimagevideobuffer.mm \
     qt7playerservice.mm \
     qcvdisplaylink.mm
-
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target

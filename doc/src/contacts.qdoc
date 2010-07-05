@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -69,8 +69,8 @@ applications.
 
 \section1 Overview 
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -154,7 +154,7 @@ likely want to use the predefined details listed
 \l{"Contact Details" Leaf Classes}{here}.  In some cases, however, a manager
 will not support all of the fields of a particular predefined detail leaf
 class; in that case, it may be necessary for the client to inspect the
-supported detail definition for that leaf class and modify its behaviour
+supported detail definition for that leaf class and modify its behavior
 accordingly (for example, if the \c CustomLabel field of the QContactName
 leaf detail is not supported in a particular manager).
 
@@ -256,7 +256,7 @@ contact information managed by a particular backend.  It has the
 disadvantage that calls block the current thread of execution until completion
 and is therefore most suitable only for applications which interact with
 local, high-speed datastores, or for applications which do not require a
-responsive UI.
+responsive user interface.
 
 The synchronous API is offered through the QContactManager class, and includes
 manipulation of \l{QContact}{contacts},
@@ -286,6 +286,9 @@ A manager backend may be implemented by subclassing
 \l{QContactManagerEngine}, and providing a \l{QContactManagerEngineFactory}
 which can instantiate it when required.
 
+See \l{Qt Contacts Manager Engines} for more information on available engines
+and how to write your own engine.
+
 \section1 Using the API
 
 Some examples of common usage of the API may be found
@@ -307,7 +310,7 @@ To build the library, see the Qt Mobility installation instructions.
 
 Several subclasses of \l{QContactDetail} are provided as part of the
 Qt Mobility Project Contacts API.  They are general in design but are intended
-to fulfil specific use-cases.  Please note that certain backends may
+to fulfill specific use-cases.  Please note that certain backends may
 choose not to support one or more of these subclasses as they appear here;
 they may offer their own which provide similar functionality.
 
@@ -346,9 +349,12 @@ A backend implementor must implement the following interfaces:
 
 \annotatedlist contacts-backends
 
+For more information on this topic, see please see the documentation on
+\l{Qt Contacts Manager Engines}{implementing manager engines}.
+
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit API (technology preview)} {Versit}* module.  It allows
+The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

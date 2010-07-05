@@ -6,6 +6,7 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 DEPENDPATH += .
 
@@ -80,7 +81,7 @@ maemo5 {
                qgeopositioninfosource_maemo5.cpp \
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
-    HEADERS += gconfitem.h  \
+    HEADERS += gconfitem_p.h  \
                liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \

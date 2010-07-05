@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,7 +97,6 @@ static void loadPlugins()
     \class QSensorManager
     \ingroup sensors_backend
 
-    \preliminary
     \brief The QSensorManager class handles registration and creation of sensor backends.
 
     Sensor plugins register backends using the registerBackend() function.
@@ -161,7 +160,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
         //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         sensor->setIdentifier(defaultIdentifier); // the factory requires this
         backend = factory->createBackend(sensor);
-        if (backend) goto gotbackend; // Got it!
+        if (backend) return backend; // Got it!
 
         // The default failed to instantiate so try any other registered sensors for this type
         Q_FOREACH (const QByteArray &identifier, factoryByIdentifier.keys()) {
@@ -171,7 +170,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
             //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
             sensor->setIdentifier(identifier); // the factory requires this
             backend = factory->createBackend(sensor);
-            if (backend) goto gotbackend; // Got it!
+            if (backend) return backend; // Got it!
         }
         SENSORLOG() << "FAILED";
         sensor->setIdentifier(QByteArray()); // clear the identifier
@@ -185,20 +184,11 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
         factory = factoryByIdentifier[sensor->identifier()];
         //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         backend = factory->createBackend(sensor);
-        if (backend) goto gotbackend; // Got it!
+        if (backend) return backend; // Got it!
     }
 
     SENSORLOG() << "no suitable backend found for requested identifier" << sensor->identifier() << "and type" << sensor->type();
     return 0;
-
-gotbackend:
-    if (sensor->availableDataRates().count() == 0) {
-        qWarning() << sensor->identifier() << "backend does not support any data rates. It cannot be used.";
-    }
-    if (sensor->dataRate() == 0) {
-        qWarning() << sensor->identifier() << "backend did not supply default data rate.";
-    }
-    return backend;
 }
 
 // =====================================================================
@@ -266,7 +256,6 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     \class QSensorBackendFactory
     \ingroup sensors_backend
 
-    \preliminary
     \brief The QSensorBackendFactory class instantiates instances of
            QSensorBackend.
 

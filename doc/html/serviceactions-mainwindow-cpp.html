@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -208,7 +208,7 @@
         <span class="comment">//        m_loader.start();</span>
 
     #else
-        if(!runonce)
+        <span class="comment">//    if(</span>!runonce)
              m_loader.start();
     #endif
         runonce = true;
@@ -394,7 +394,6 @@
 
     void RecentMessagesWidget::stateChanged(QMessageService::State newState)
     {
-        <span class="comment">//  qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();</span>
         if (newState == QMessageService::FinishedState) {
             if ((m_state != LoadFailed) &amp;&amp; (m_service-&gt;error() == QMessageManager::NoError)) {
                 m_state = LoadFinished;
@@ -515,7 +514,6 @@
         bool b;
 
         b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
-        <span class="comment">//    qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;</span>
     };
 
     void RecentMessagesWidget::processResults()
@@ -525,7 +523,7 @@
             QMessageId id = m_ids.takeFirst();
             QMessage message(id);
 
-            QListWidgetItem* newItem = new QListWidgetItem(message.subject());
+            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
             newItem-&gt;setData(MessageIdRole,id.toString());
             QFont itemFont = newItem-&gt;font();
             bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
@@ -890,7 +888,6 @@
 
     void MessageViewWidget::stateChanged(QMessageService::State newState)
     {
-        <span class="comment">//  qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();</span>
         if (m_state == LoadFailed)
             return;
 
@@ -1331,7 +1328,6 @@
 
     void MainWindow::serviceStateChanged(QMessageService::State newState)
     {
-        <span class="comment">//  qDebug() &lt;&lt; &quot;MainWindow::serviceStateChanged&quot;;</span>
         if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
             QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
     }
@@ -1368,8 +1364,8 @@
     #include &lt;mainwindow.moc&gt;</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

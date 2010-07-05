@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageManager
 
-    \preliminary
     \brief The QMessageManager class represents the main interface for storage and retrieval
     of messages, folders and accounts in the system message store.
 
@@ -505,7 +504,8 @@ bool QMessageManager::addMessage(QMessage *m)
 
     Using this function to explicitly set a size or date is not currently supported on some platforms.
     
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    On the Maemo 5 (Fremantle) platform this function may only be used to update the priority and 
+    status of email type messages.
     
     \sa addMessage(), removeMessage(), QMessageService::exportUpdates()
 */
@@ -581,9 +581,6 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
     
-    Currently on the Maemo 5 (Fremantle) platform this signal is not reported for messages in the 
-    inbox when the inbox is open in modest.
-
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */
 

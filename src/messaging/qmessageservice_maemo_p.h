@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -74,15 +74,14 @@ public:
                        EnginesToCall enginesToCall = EnginesToCallAll);
 
     void setFinished(bool successful);
-    void stateChanged(QMessageService::State state);
-    void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);
 
 public slots:
     void messagesFoundSlot();
     void messagesCountedSlot();
-
+    void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
+    void stateChanged(QMessageService::State state);
 public:
     QMessageService* q_ptr;
     QMessageService::State _state;

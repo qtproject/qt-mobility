@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,8 +47,6 @@
 
 #include <qmediaservice.h>
 
-#include "qgstreamervideooutputcontrol.h"
-
 QT_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
@@ -74,23 +72,19 @@ public:
     QGstreamerPlayerService(QObject *parent = 0);
     ~QGstreamerPlayerService();
 
-    //void setVideoOutput(QObject *output);
-
-    QMediaControl *control(const char *name) const;
-
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
 private:
     QGstreamerPlayerControl *m_control;
     QGstreamerPlayerSession *m_session;
     QGstreamerMetaDataProvider *m_metaData;
-    QGstreamerVideoOutputControl *m_videoOutput;
     QGstreamerStreamsControl *m_streamsControl;
 
-    QGstreamerVideoRenderer *m_videoRenderer;
-    QGstreamerVideoOverlay *m_videoWindow;
-    QGstreamerVideoWidgetControl *m_videoWidget;
+    QMediaControl *m_videoOutput;
+    QMediaControl *m_videoRenderer;
+    QMediaControl *m_videoWindow;
+    QMediaControl *m_videoWidget;
 };
 
 #endif

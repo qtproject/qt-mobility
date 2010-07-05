@@ -3,8 +3,7 @@ TEMPLATE = subdirs
 include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+    SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
@@ -12,6 +11,8 @@ contains(mobility_modules,serviceframework) {
            qservicecontext \
            icheck \
            servicedatabase
+         # databasemanager # disabled from auto builds
+
 }
 
 contains(mobility_modules,bearer) {
@@ -63,6 +64,10 @@ contains(mobility_modules,systeminfo) {
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+    maemo6: {
+          #maemo6 spesific autotests
+          SUBDIRS += maemo6
+    }
 }
 
 contains(mobility_modules,contacts) {
@@ -114,7 +119,13 @@ contains(mobility_modules,multimedia) {
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
-        qmediatimerange
+        qmediatimerange \
+        qaudiodeviceinfo \
+        qaudiooutput \
+        qaudioinput \
+        qaudioformat \
+        qvideoframe \
+        qvideosurfaceformat
 
     symbian: {
         #symbian spesific autotests

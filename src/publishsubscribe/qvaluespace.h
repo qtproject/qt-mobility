@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,7 +63,7 @@ namespace QValueSpace {
         // UnspecifiedLayerWriteability = 0x0000,
         // InvalidLayerWriteability = 0x000C,
     };
-    Q_DECLARE_FLAGS(LayerOptions, LayerOption);
+    Q_DECLARE_FLAGS(LayerOptions, LayerOption)
 
     Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 

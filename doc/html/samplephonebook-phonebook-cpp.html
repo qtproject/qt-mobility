@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -96,7 +96,9 @@
 
     void PhoneBook::activateEditor(QContactLocalId contactId)
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
         menuBar()-&gt;setVisible(false);
+    #endif
         m_editorPage-&gt;setCurrentContact(m_manager, contactId);
         m_stackedWidget-&gt;setCurrentIndex(1); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
@@ -121,7 +123,9 @@
 
     void PhoneBook::activateFind()
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
         menuBar()-&gt;setVisible(false);
+    #endif
         m_stackedWidget-&gt;setCurrentIndex(2); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
 
@@ -132,8 +136,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

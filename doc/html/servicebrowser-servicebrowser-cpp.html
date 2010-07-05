@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -91,7 +91,11 @@
 
         QServiceInterfaceDescriptor descriptor = current-&gt;data(Qt::UserRole).value&lt;QServiceInterfaceDescriptor&gt;();
         if (descriptor.isValid()) {
+    #if defined(Q_WS_MAEMO_5)
+            defaultInterfaceButton-&gt;setText(tr(&quot;Set as default implementation for \n%1&quot;)
+    #else
             defaultInterfaceButton-&gt;setText(tr(&quot;Set as default implementation for %1&quot;)
+    #endif
                     .arg(descriptor.interfaceName()));
             defaultInterfaceButton-&gt;setEnabled(true);
         }
@@ -203,7 +207,7 @@
         QStringList exampleXmlFiles;
         exampleXmlFiles &lt;&lt; &quot;filemanagerservice.xml&quot; &lt;&lt; &quot;bluetoothtransferservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
+            const QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }
     }
@@ -240,7 +244,7 @@
         attributesListWidget = new QListWidget;
         attributesListWidget-&gt;addItem(tr(&quot;(Select an interface implementation)&quot;));
 
-    #ifndef Q_OS_SYMBIAN
+    #if !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_WS_MAEMO_5)
         interfacesListWidget-&gt;setMinimumWidth(450);
     #endif
 
@@ -279,12 +283,22 @@
         attributesGroup = new QGroupBox(tr(&quot;Invokable attributes&quot;));
         QVBoxLayout *attributesLayout = new QVBoxLayout;
         attributesLayout-&gt;addWidget(attributesListWidget);
+    #if !defined(Q_WS_MAEMO_5)
+        <span class="comment">// No space on the screen to show following title in Maemo</span>
         attributesLayout-&gt;addWidget(new QLabel(tr(&quot;Show attributes for:&quot;)));
+    #endif
         attributesLayout-&gt;addWidget(selectedImplRadioButton);
         attributesLayout-&gt;addWidget(defaultImplRadioButton);
         attributesGroup-&gt;setLayout(attributesLayout);
 
-    #ifndef Q_OS_SYMBIAN
+    #if defined(Q_WS_MAEMO_5)
+        <span class="comment">// Maemo 5 style doesn't take group box titles into account.</span>
+        int spacingHack = QFontMetrics(QFont()).height();
+        interfacesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+        attributesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+        servicesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
+    #if !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_WS_MAEMO_5)
         QGridLayout *layout = new QGridLayout;
         layout-&gt;addWidget(servicesGroup, 0, 0);
         layout-&gt;addWidget(attributesGroup, 0, 1, 2, 1);
@@ -311,8 +325,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

@@ -120,4 +120,10 @@ EXPORTS
 	?networkStatus@QSystemNetworkInfo@QtMobility@@QAE?AW4NetworkStatus@12@W4NetworkMode@12@@Z @ 119 NONAME ; enum QtMobility::QSystemNetworkInfo::NetworkStatus QtMobility::QSystemNetworkInfo::networkStatus(enum QtMobility::QSystemNetworkInfo::NetworkMode)
 	?staticMetaObject@QSystemStorageInfo@QtMobility@@2UQMetaObject@@B @ 120 NONAME ; struct QMetaObject const QtMobility::QSystemStorageInfo::staticMetaObject
 	?screenSaverInhibited@QSystemScreenSaver@QtMobility@@QAE_NXZ @ 121 NONAME ; bool QtMobility::QSystemScreenSaver::screenSaverInhibited(void)
+	?connectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 122 NONAME ; void QtMobility::QSystemNetworkInfo::connectNotify(char const *)
+	?disconnectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 123 NONAME ; void QtMobility::QSystemNetworkInfo::disconnectNotify(char const *)
+	?connectNotify@QSystemDeviceInfo@QtMobility@@MAEXPBD@Z @ 124 NONAME ; void QtMobility::QSystemDeviceInfo::connectNotify(char const *)
+	?connectNotify@QSystemInfo@QtMobility@@MAEXPBD@Z @ 125 NONAME ; void QtMobility::QSystemInfo::connectNotify(char const *)
+	?disconnectNotify@QSystemDeviceInfo@QtMobility@@MAEXPBD@Z @ 126 NONAME ; void QtMobility::QSystemDeviceInfo::disconnectNotify(char const *)
+	?disconnectNotify@QSystemInfo@QtMobility@@MAEXPBD@Z @ 127 NONAME ; void QtMobility::QSystemInfo::disconnectNotify(char const *)
 

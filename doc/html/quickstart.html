@@ -30,11 +30,7 @@
 <pre>    #include &lt;QApplication&gt;
     #include &lt;QLabel&gt;
 
-    #ifdef Q_OS_SYMBIAN
-    #include &lt;qsysteminfo.h&gt;
-    #else
     #include &lt;QSystemInfo&gt; <span class="comment">//(1)</span>
-    #endif
 
     QTM_USE_NAMESPACE <span class="comment">//(2)</span>
 
@@ -47,7 +43,7 @@
         label-&gt;resize(100,30);
         return app.exec();
     }</pre>
-<p>This example uses the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within a Qt Mobility namespace and thus developers need to use the QTM_USE_NAMESPACE macro. (<b>Note</b>: If you are on the Symbian platform you will need to define the actual header file, in this case &lt;qsysteminfo.h&gt; rather than using the standard header form &lt;<a href="qsysteminfo.html">QSystemInfo</a>&gt;, this is a known bug that is to be addressed in a future release)</p>
+<p>This example uses the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within a Qt Mobility namespace and thus developers need to use the QTM_USE_NAMESPACE macro.</p>
 <p>In step 3, to specify that our project is using System Information we declare in the project file:</p>
 <pre>    CONFIG += mobility
     MOBILITY += systeminfo</pre>
@@ -62,25 +58,28 @@
 <tr valign="top" class="odd"><td><a href="messaging.html">Messaging</a></td><td>messaging</td></tr>
 <tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>publishsubscribe</td></tr>
 <tr valign="top" class="odd"><td><a href="service-frameworks.html">Service Framework</a></td><td>serviceframework</td></tr>
-<tr valign="top" class="even"><td><a href="systeminfo.html">System Information</a></td><td>systeminfo</td></tr>
-<tr valign="top" class="odd"><td><a href="future.html">Versit</a></td><td>versit</td></tr>
+<tr valign="top" class="even"><td><a href="preview.html#sensor-api">Sensor API</a></td><td>sensors</td></tr>
+<tr valign="top" class="odd"><td><a href="systeminfo.html">System Information</a></td><td>systeminfo</td></tr>
+<tr valign="top" class="even"><td><a href="versit.html">Versit</a></td><td>versit</td></tr>
 </table></p>
-<p>When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model:</p>
-<pre>    symbian {
-        TARGET.CAPABILITIES = LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
-    }</pre>
+<p>When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model. This can be achieved with a line such as the following:</p>
+<pre>    TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B</pre>
+<p>CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian capabilities and their availability to application developers can be found in the <a href="http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)">Symbian capability documentation</a>.</p>
+<p>The subsequent table provides an overview of possibily required capabilities for each Mobility library. Note that not all capabilities are always required when using a particular API. The exact list depends on which parts of an API is utilized by an application.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Domain</th><th>Symbian Capabilities</th></tr></thead>
 <tr valign="top" class="odd"><td><a href="bearer-management.html">Bearer Management</a></td><td>ReadUserData NetworkServices (NetworkControl for <a href="qnetworksession.html#stop">QNetworkSession::stop</a>())</td></tr>
-<tr valign="top" class="even"><td><a href="contacts.html">Contacts</a></td><td>ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData</td></tr>
+<tr valign="top" class="even"><td><a href="contacts.html">Contacts</a></td><td>ReadUserData WriteUserData</td></tr>
 <tr valign="top" class="odd"><td><a href="location-overview.html">Location</a></td><td>Location</td></tr>
 <tr valign="top" class="even"><td><a href="multimedia.html">Multimedia</a></td><td>UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData</td></tr>
 <tr valign="top" class="odd"><td><a href="messaging.html">Messaging</a></td><td>LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData</td></tr>
-<tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>ReadDeviceData WriteDeviceData</td></tr>
+<tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>Capability depends on P&amp;S value being read/written. API itself doesn't require any capability.</td></tr>
 <tr valign="top" class="odd"><td><a href="service-frameworks.html">Service Framework</a></td><td>No capabilities requried by itself, the plugins may have capability requirements.</td></tr>
-<tr valign="top" class="even"><td><a href="systeminfo.html">System Information</a></td><td>LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData</td></tr>
-<tr valign="top" class="odd"></tr>
+<tr valign="top" class="even"><td><a href="preview.html#sensor-api">Sensor API</a></td><td>ReadDeviceData</td></tr>
+<tr valign="top" class="odd"><td><a href="systeminfo.html">System Information</a></td><td>LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData</td></tr>
+<tr valign="top" class="even"><td><a href="versit.html">Versit API</a></td><td>No additional capabilities required.</td></tr>
 </table></p>
+<p>The complete list of all Symbian capabilities and how they can be obtained can be found in the <a href="http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F">Symbian developer documentation</a>.</p>
 <p>And we're done. If you are using the command line simply enter:</p>
 <pre>    qmake
     make <span class="comment">//or nmake on Windows</span></pre>
@@ -96,8 +95,8 @@
 <p>For further details on how to build applications for Symbian see <a href="http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html">The Symbian Platform - Introduction to Qt</a> and <a href="http://developer.symbian.org/wiki/index.php/Qt_Quick_Start">Qt Quick Start</a></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

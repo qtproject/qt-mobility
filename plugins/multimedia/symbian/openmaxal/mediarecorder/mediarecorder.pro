@@ -1,8 +1,9 @@
 TEMPLATE = lib
-CONFIG += plugin
-TARGET = qtmedia_xarecordservice
+CONFIG += plugin mobility
+TARGET = $$qtLibraryTarget(qtmultimediakit_xarecordservice)
 
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
+MOBILITY = multimedia
 
 include (../../../../../common.pri)
 
@@ -12,8 +13,8 @@ symbian {
 
 # Input parameters for qmake to make the dll a qt plugin
 # ------------------------------------------------------
-pluginstub.sources = qmakepluginstubs/qtmedia_xarecordservice.dll
-pluginstub.path = /resource/qt/plugins/mediaservice
+pluginstub.sources = qmakepluginstubs/qtmultimediakit_xarecordservice.dll
+pluginstub.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginstub
 
 # Input parameters for the generated bld.inf file
@@ -65,7 +66,7 @@ SOURCES += \
     xarecordsessionimpl.cpp
 
 LIBS += \
-    -lQtMedia \
+    -lQtMultimediaKit \
     -lopenmaxal \
     -lbafl
 

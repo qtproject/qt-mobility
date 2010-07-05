@@ -170,6 +170,7 @@
 <a name="//apple_ref/cpp/instm/QContactDetail/key"></a>
 <h3 class="fn"><a name="key"></a>int QContactDetail::key () const</h3>
 <p>Returns the key of this detail.</p>
+<p>Be aware that if a contact is retrieved (or reloaded) from the backend, the keys of any details it contains may have been changed by the backend, or other threads may have modified the contact details in the backend. Therefore, clients should reload the detail that they wish to save in or remove from a contact after retrieving the contact from the backend, in order to ascertain the keys of any such details.</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/linkedDetailUris"></a>
 <h3 class="fn"><a name="linkedDetailUris"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactDetail::linkedDetailUris () const</h3>
 <p>This is a convenience function to return the <tt>Context</tt> field of this detail.</p>
@@ -304,8 +305,8 @@
     };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

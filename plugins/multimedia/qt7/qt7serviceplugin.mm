@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,11 +56,14 @@ QStringList QT7ServicePlugin::keys() const
 
 QMediaService* QT7ServicePlugin::create(QString const& key)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7ServicePlugin::create" << key;
+#endif
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QT7PlayerService;
 
-    qDebug() << "unsupported key:" << key;
+    qWarning() << "unsupported key:" << key;
+
     return 0;
 }
 
