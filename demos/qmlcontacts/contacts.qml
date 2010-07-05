@@ -86,151 +86,150 @@ Rectangle {
                 anchors.centerIn: parent;
                 onClicked: { littleDetailsMode = !littleDetailsMode; mainList.currentIndex = index; }
             }
+            Column {
+                Row {
+                    spacing: 2
+                    Item {
+                        id: mainAvatar;
+                        height: wrapper.height;
+                        width: height;
 
-            Row {
-                spacing: 2
-                Item {
-                    id: mainAvatar;
-                    height: wrapper.height;
-                    width: height;
-
-                    Rectangle {
-                        border.width: 2;
-                        radius: 4;
-                        anchors.fill: parent;
-                        anchors.margins: 2;
-
-                        Image {
-                            id: avatar
+                        Rectangle {
+                            border.width: 2;
+                            radius: 4;
                             anchors.fill: parent;
                             anchors.margins: 2;
 
-                            pixmap: model.decoration
-                            source: model.avatar;
-                            fillMode: Image.PreserveAspectFit
-                        }
-                    }
-                }
+                            Image {
+                                id: avatar
+                                anchors.fill: parent;
+                                anchors.margins: 2;
 
-                Column {
-                    Item {
-                        id: mainLabel;
-                        width: nameTxt.width
-                        height: nameTxt.height + 16;
-                        Text {
-                            id: nameTxt
-                            y: 8;
-                            text: display
-                            color: "white"
-                        }
-                    }
-
-                    Item {
-                        id: details
-                        property color textColor: "#ffffdd";
-                        opacity: wrapper.detailsOpacity
-                        height: childrenRect.height + 6;
-                        width: childrenRect.width;
-                        
-                        Column {
-                            Text {
-                                text: model.interestLabel + ": " + model.interest
-                                color: details.textColor;
+                                pixmap: model.decoration
+                                source: model.avatar;
+                                fillMode: Image.PreserveAspectFit
                             }
-                            Text {
-                                text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
-                                color: details.textColor;
-                            }
-                            ListView {
-                                width: details.width; 
-                                highlightFollowsCurrentItem: false
-                                focus: true
-                                //anchors.fill: parent
-                                keyNavigationWraps: true
-
-                                model:contactModel.details(contactId)
-                                delegate: Component {
-                                    Item {
-                                        width: details.width;
-                                        property QtObject contactDetail : model.modelData;
-                                        Column {
-                                            Text {
-                                                width:  details.width;
-                                                height: 20;
-                                                text: contactDetail.name;
-                                                color:details.textColor;
-                                            }
-                                            ListView {
-                                                width:  details.width;
-                                                model:contactDetail.fields();
-                                                delegate: Component {
-                                                    Item {
-                                                        property QtObject field: model.modelData;
-                                                        Row {
-                                                          Text {
-                                                             text:field.key;
-                                                             color:details.textColor;
-                                                             width: details.width;
-                                                             height: 20;
-                                                          }
-                                                          TextInput {
-                                                              width: details.width;
-                                                              height: 20;
-                                                              text:field.value;
-                                                              color:details.textColor;
-                                                          }
-                                                        }
-                                                    }
-                                                }//delegate
-
-                                            }//detail fields view
-
-                                        }
-                                    }
-
-                                }//delegate
-                            }//detail list view
                         }
                     }
-                }
 
-                Item {
-                    id: buttonBox
-                    x: wrapper.width - 6 - childrenRect.width;
-                    y: 4;
-                    height:childrenRect.height
-                    opacity: details.opacity;
                     Column {
-                        // Buttons
-                        MediaButton {
-                            id: dialButton;
-                            text: "Dial";
-                        }
-                        MediaButton {
-                            id: textButton
-                            text: "Send Text";
-                        }
                         Item {
-                            height:childrenRect.height
-                            width: childrenRect.width
+                            id: mainLabel;
+                            width: nameTxt.width
+                            height: nameTxt.height + 16;
+                            Text {
+                                id: nameTxt
+                                y: 8;
+                                text: display
+                                color: "white"
+                            }
+                        }
+
+                        Item {
+                            id: details
+                            property color textColor: "#ffffdd";
+                            opacity: wrapper.detailsOpacity
+                            height: childrenRect.height + 6;
+                            width: childrenRect.width;
+
+                            Column {
+                                Text {
+                                    text: model.interestLabel + ": " + model.interest
+                                    color: details.textColor;
+                                }
+                                Text {
+                                    text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
+                                    color: details.textColor;
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: buttonBox
+                        x: wrapper.width - 6 - childrenRect.width;
+                        y: 4;
+                        height:childrenRect.height
+                        opacity: details.opacity;
+                        Column {
+                            // Buttons
                             MediaButton {
-                                id: viewButton
-                                text: "More..."
-                                opacity: 0;
-                                onClicked: wrapper.bigDetailsMode = 1;
+                                id: dialButton;
+                                text: "Dial";
                             }
                             MediaButton {
-                                id: smallAgainButton
-                                text: "Back";
-                                anchors.top:viewButton.top;
-                                opacity: 0;
-                                onClicked: wrapper.bigDetailsMode = 0;
+                                id: textButton
+                                text: "Send Text";
+                            }
+                            Item {
+                                height:childrenRect.height
+                                width: childrenRect.width
+                                MediaButton {
+                                    id: viewButton
+                                    text: "More..."
+                                    opacity: 0;
+                                    onClicked: wrapper.bigDetailsMode = 1;
+                                }
+                                MediaButton {
+                                    id: smallAgainButton
+                                    text: "Back";
+                                    anchors.top:viewButton.top;
+                                    opacity: 0;
+                                    onClicked: wrapper.bigDetailsMode = 0;
+                                }
                             }
                         }
                     }
                 }
-            }
+                ListView {
+                    id: detailView
+                    width: wrapper.width;
+                    focus: true
+                    opacity: 0
+                    keyNavigationWraps: true
 
+
+                    //detail section header
+                    section.property:  "detailName"
+                    section.criteria: ViewSection.FullString
+                    section.delegate: Rectangle {
+                        color: "lightsteelblue"
+                        width:detailView.width
+                        height: 20
+                        Text {
+                            x: 2; height: 20
+                            verticalAlignment: Text.AlignVCenter
+                            text: section
+                            font.bold: true
+                            color:"white"
+                        }
+                    }
+                    model:contactModel.detailModel(contactId)
+                    delegate: Component {
+                        Item {
+                            width: detailView.width;
+                            height: 25;
+
+                            Row {
+                                spacing: 5
+                                Text {
+                                   text:  key;
+                                   color:"white";
+                                   width: detailView.width * 0.5;
+                                   height: 20;
+                                }
+                                TextEdit {
+                                  width: detailView.width * 0.5;
+                                   height: 20;
+                                   text: field.value;
+                                   color:"yellow";
+                                   //onTextChanged: {field.value = text;}
+                                }
+                            }
+                        }
+                    }//delegate
+                }//detail list view
+            }
             states: [
                     State {
                         name: "List";
@@ -239,6 +238,7 @@ Rectangle {
                         PropertyChanges { target: wrapper; topColor: "#333333"; }
                         PropertyChanges { target: wrapper; bottomColor: "#111111"; }
                         PropertyChanges { target: buttonBox; x: wrapper.width + 6; }
+                        PropertyChanges { target: detailView; opacity:0 }
                     },
                     State {
                         name: "MiniDetails"
@@ -247,6 +247,7 @@ Rectangle {
                         PropertyChanges { target: smallAgainButton; opacity: 0; }
                         PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y } // XXX I don't think this should be here
+                        PropertyChanges { target: detailView; opacity:0 }
                     },
                     State {
                         name: "Details"
@@ -257,6 +258,8 @@ Rectangle {
                         PropertyChanges { target: mainAvatar; height: 96; }
                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
                         PropertyChanges { target: mainList; interactive: false; }
+                        PropertyChanges { target: detailView; opacity:1;}
+                        PropertyChanges { target: detailView; height:wrapper.height - 100;}
                     }
             ]
 

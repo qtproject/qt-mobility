@@ -29,9 +29,23 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog
+               satellitedialog 
+
+    !symbian:!wince* {
+        SUBDIRS += landmarkbrowser
+    }
+
+    !symbian|contains(mobility_modules,bearer) {
+    	SUBDIRS += qgeoapiui \
+                   mapviewer
+
+    }
+
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
+                   #mapviewer (disable for now) 
+                   #qgeoapiui
+        
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
@@ -62,6 +76,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
+        camera \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -95,10 +110,29 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        mediabrowser
+
+    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
+}
+
+# Organizer API examples
+contains(mobility_modules, organizer) {
+    SUBDIRS += calendardemo
+}
+
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    SUBDIRS += telephony
+    !mac:SUBDIRS += telephony
+}
+
+# Feedback API examples
+contains(mobility_modules, feedback) {
+    SUBDIRS += hapticsplayer
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
+
 INSTALLS += sources
+

@@ -282,3 +282,5 @@ void QAbstractVideoSurface::setError(Error error)
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qabstractvideosurface.cpp"

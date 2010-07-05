@@ -47,7 +47,7 @@
 // implementation detail. This header file may change from version to
 // version without notice, or even be removed.
 //
-// Do not use this file directly.
+// INTERNAL USE ONLY: Do NOT use for any other purpose.
 //
 
 #include "qsoundeffect_qsound_p.h"
@@ -129,3 +129,5 @@ void QSoundEffectPrivate::play()
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qsoundeffect_qsound_p.cpp"

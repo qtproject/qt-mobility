@@ -52,9 +52,37 @@ QTM_BEGIN_NAMESPACE
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
 
-  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
-  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+  A vCard is represented in abstract form as a QVersitDocument that consists of a number of
+  properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for
+  instance.  Each of these properties is stored as an instance of a QVersitProperty in a
+  QVersitDocument.
+
+  In addition to the list of properties, QVersitDocument also records the type of the Versit
+  document in two ways.  The VersitType enum describes the format in which the document is to be
+  serialized by QVersitWriter (or the format from which it was read by QVersitReader), and should
+  not be used to infer any semantics about the document data.  The componentType field is a string
+  corresponding directly to the value of the BEGIN line in a document.  For example, for a vCard,
+  this will always be the string "VCARD"; for an iCalendar, it could be "VCALENDAR", "VEVENT",
+  "VTODO", "VJOURNAL", "VALARM" or "VTIMEZONE".
+
+  As well as properties, a QVersitDocument can hold other documents.  For iCalendar, this is how
+  a single VCALENDAR document can compose documents of type VEVENT, VTODO, etc.
+
+  For example, for the following iCalendar:
+  \code
+  BEGIN:VCALENDAR
+  VERSION:2.0
+  BEGIN:VEVENT
+  SUMMARY:Christmas
+  DTSTART:20001225
+  END:VEVENT
+  END:VCALENDAR
+  \endcode
+
+  This can be represented as a QVersitDocument of with componentType VCALENDAR and versitType
+  ICalendar20Type.  It contains no properties (note: the VERSION property is not stored explicitly
+  as a property) and one sub-document.  The sub-document has componentType VEVENT and versitType
+  ICalendar20Type, and contains two properties.
 
   QVersitDocument supports implicit sharing.
 
@@ -63,10 +91,11 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \enum QVersitDocument::VersitType
-  This enum describes a versit document type and version.
+  This enum describes a Versit document serialization format and version.
   \value InvalidType No type specified or a document with an invalid type was parsed
   \value VCard21Type vCard version 2.1
   \value VCard30Type vCard version 3.0
+  \value ICalendar20Type iCalendar version 2.0
  */
 
 /*! Constructs a new empty document */
@@ -103,7 +132,9 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 bool QVersitDocument::operator==(const QVersitDocument& other) const
 {
     return d->mVersitType == other.d->mVersitType &&
-            d->mProperties == other.d->mProperties;
+            d->mProperties == other.d->mProperties &&
+            d->mSubDocuments == other.d->mSubDocuments &&
+            d->mComponentType == other.d->mComponentType;
 }
 
 /*! Returns true if this is not equal to \a other; false otherwise. */
@@ -116,8 +147,12 @@ bool QVersitDocument::operator!=(const QVersitDocument& other) const
 uint qHash(const QVersitDocument &key)
 {
     int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
+    hash += QT_PREPEND_NAMESPACE(qHash)(key.componentType());
     foreach (const QVersitProperty& property, key.properties()) {
         hash += qHash(property);
+    }
+    foreach (const QVersitDocument& nested, key.subDocuments()) {
+        hash += qHash(nested);
     }
     return hash;
 }
@@ -125,16 +160,20 @@ uint qHash(const QVersitDocument &key)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QVersitDocument& document)
 {
-    dbg.nospace() << "QVersitDocument(" << document.type() << ')';
+    dbg.nospace() << "QVersitDocument(" << document.type() << ", " << document.componentType() << ')';
     foreach (const QVersitProperty& property, document.properties()) {
         dbg.space() << '\n' << property;
+    }
+    foreach (const QVersitDocument& nested, document.subDocuments()) {
+        dbg.space() << '\n' << nested;
     }
     return dbg.maybeSpace();
 }
 #endif
 
 /*!
- * Sets the versit document type to \a type.
+ * Sets the versit document type to \a type.  This determines the format in which the document is
+ * to be serialized.
  */
 void QVersitDocument::setType(VersitType type)
 {
@@ -147,6 +186,22 @@ void QVersitDocument::setType(VersitType type)
 QVersitDocument::VersitType QVersitDocument::type() const
 {
     return d->mVersitType;
+}
+
+/*!
+ * Sets the versit component type to \a componentType (eg. VCARD, VCALENDAR, VEVENT, etc.)
+ */
+void QVersitDocument::setComponentType(QString componentType)
+{
+    d->mComponentType = componentType;
+}
+
+/*!
+ * Gets the versit component type
+ */
+QString QVersitDocument::componentType() const
+{
+    return d->mComponentType;
 }
 
 /*!
@@ -185,7 +240,32 @@ void QVersitDocument::removeProperties(const QString& name)
 void QVersitDocument::clear()
 {
     d->mProperties.clear();
+    d->mSubDocuments.clear();
     d->mVersitType = QVersitDocument::InvalidType;
+}
+
+/*!
+ * Adds \a subdocument to the Versit document.
+ */
+void QVersitDocument::addSubDocument(const QVersitDocument& subdocument)
+{
+    d->mSubDocuments.append(subdocument);
+}
+
+/*!
+ * Sets the list of subdocuments to \a documents.
+ */
+void QVersitDocument::setSubDocuments(const QList<QVersitDocument>& documents)
+{
+    d->mSubDocuments = documents;
+}
+
+/*!
+ * Returns the list of subdocuments contained within this Versit document.
+ */
+QList<QVersitDocument> QVersitDocument::subDocuments() const
+{
+    return d->mSubDocuments;
 }
 
 /*!
@@ -202,7 +282,9 @@ QList<QVersitProperty> QVersitDocument::properties() const
  */
 bool QVersitDocument::isEmpty() const
 {
-    return d->mProperties.count() == 0 && d->mVersitType == QVersitDocument::InvalidType;
+    return d->mProperties.isEmpty()
+        && d->mSubDocuments.isEmpty()
+        && d->mVersitType == QVersitDocument::InvalidType;
 }
 
 QTM_END_NAMESPACE

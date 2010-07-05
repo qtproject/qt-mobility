@@ -43,18 +43,16 @@
 #include "qtelephonycallinfo_p.h"
 
 
-#if defined(Q_WS_MAEMO5)
-# include "qtelephonycalllist_maemo_p.h"
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+# include "qtelephonycalllist_unsupported_p.h" // TODO change back to maemo when support is added
+#elif defined(Q_OS_LINUX)
+# include "linux/qtelephonycalllist_linux_p.h"
+#elif defined(Q_OS_WIN)
+# include "qtelephonycalllist_win_p.h"
+#elif defined(Q_OS_SYMBIAN)
+# include "qtelephonycalllist_symbian_p.h"
 #else
-# ifdef Q_OS_LINUX
-#  include "linux/qtelephonycalllist_linux_p.h"
-# endif
-# ifdef Q_OS_WIN
-#  include "qtelephonycalllist_win_p.h"
-# endif
-# ifdef Q_OS_SYMBIAN
-#  include "qtelephonycalllist_symbian_p.h"
-# endif
+# include "qtelephonycalllist_unsupported_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
