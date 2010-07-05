@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,46 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMTYPE_H
-#define QORGANIZERITEMTYPE_H
+#include "qmobilityglobal.h"
+#include <qfeedbackactuator.h>
+#include <qfeedbackeffect.h>
 
-#include <QString>
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
-#include "qorganizeritem.h"
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+void completeExample();
 
-/* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemType : public QOrganizerItemDetail
+void completeExample()
 {
-public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldType;
-    const char* TypeEvent;
-    const char* TypeTodo;
-    const char* TypeJournal;
-    const char* TypeNote;
-    const char* TypeEventOccurrence;
-    const char* TypeTodoOccurrence;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemType, "Type")
-    Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");
-    Q_DECLARE_LATIN1_CONSTANT(TypeEvent, "Event");
-    Q_DECLARE_LATIN1_CONSTANT(TypeEventOccurrence, "EventOccurrence");
-    Q_DECLARE_LATIN1_CONSTANT(TypeTodo, "Todo");
-    Q_DECLARE_LATIN1_CONSTANT(TypeTodoOccurrence, "TodoOccurrence");
-    Q_DECLARE_LATIN1_CONSTANT(TypeJournal, "Journal");
-    Q_DECLARE_LATIN1_CONSTANT(TypeNote, "Note");
-#endif
-
-    void setType(const QString& type) {setValue(FieldType, type);}
-    QString type() const {return value(FieldType);}
-};
-
-QTM_END_NAMESPACE
-
-#endif
-
+    //TODO..
+    //! [Complete example]
+}

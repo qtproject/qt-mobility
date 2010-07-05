@@ -132,8 +132,8 @@ public:
 
     bool importLandmarks(QIODevice *device, const QByteArray &format= QByteArray());
     bool importLandmarks(const QString &fileName, const QByteArray &format = QByteArray());
-    bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
-    bool exportLandmarks(const QString &, const QByteArray &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool exportLandmarks(QIODevice *device, const QByteArray &format = QByteArray(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool exportLandmarks(const QString &, const QByteArray &format = QByteArray(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
 
     Error error() const;
     QString errorString() const;

@@ -54,9 +54,9 @@ QTM_BEGIN_NAMESPACE
 
    This class can be utilised by backend implementations to ensure
    correct emission of the \l QOrganizerItemManagerEngine::dataChanged(), \l
-   QOrganizerItemManagerEngine::organizeritemsAdded(), \l
-   QOrganizerItemManagerEngine::organizeritemsChanged() and \l
-   QOrganizerItemManagerEngine::organizeritemsRemoved().
+   QOrganizerItemManagerEngine::itemsAdded(), \l
+   QOrganizerItemManagerEngine::itemsChanged() and \l
+   QOrganizerItemManagerEngine::itemsRemoved().
 
    \sa QOrganizerItemManagerEngine
  */

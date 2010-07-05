@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemIntersectionFilter
   \brief The QOrganizerItemIntersectionFilter class provides a filter which intersects the results of other filters.
-   \ingroup organizeritems-filters
+   \ingroup organizer-filters
  
   It may be used to select organizeritems which match all of the filters in the intersection
  */

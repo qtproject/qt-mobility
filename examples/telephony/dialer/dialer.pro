@@ -22,7 +22,7 @@ symbian: {
     HEADERS += dialer_symbian.h
 
 } else {
-    unix: {
+    unix:!mac {
         !maemo* {
             QT += dbus
             DEPENDPATH += /linux

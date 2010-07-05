@@ -78,6 +78,7 @@ public:
         }
         setValue(FieldRecurrenceRules, saveList);
     }
+
     QList<QOrganizerItemRecurrenceRule> recurrenceRules() const
     {
         QList<QOrganizerItemRecurrenceRule> retn;
@@ -97,6 +98,7 @@ public:
         }
         setValue(FieldRecurrenceDates, saveList);
     }
+
     QList<QDate> recurrenceDates() const
     {
         QList<QDate> retn;
@@ -115,6 +117,7 @@ public:
         }
         setValue(FieldExceptionRules, saveList);
     }
+
     QList<QOrganizerItemRecurrenceRule> exceptionRules() const
     {
         QList<QOrganizerItemRecurrenceRule> retn;
@@ -134,6 +137,7 @@ public:
         }
         setValue(FieldExceptionDates, saveList);
     }
+
     QList<QDate> exceptionDates() const
     {
         QList<QDate> retn;

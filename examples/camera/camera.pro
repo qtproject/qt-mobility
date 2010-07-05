@@ -23,6 +23,6 @@ FORMS += \
     videosettings.ui \
     imagesettings.ui
 
-symbian: {
+symbian {
     TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
 }

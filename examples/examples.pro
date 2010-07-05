@@ -124,7 +124,7 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    SUBDIRS += telephony
+    !mac:SUBDIRS += telephony
 }
 
 # Feedback API examples

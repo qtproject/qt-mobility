@@ -55,8 +55,8 @@ else: DEFINES += QT_DOCUMENT_GALLERY_NULL
 
 symbian {
     load(data_caging_paths)
-    QtMediaDeployment.sources = QtGallery.dll
-    QtMediaDeployment.path = /sys/bin
+    QtGalleryDeployment.sources = QtGallery.dll
+    QtGalleryDeployment.path = /sys/bin
     DEPLOYMENT += QtGalleryDeployment
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
