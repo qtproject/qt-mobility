@@ -350,6 +350,7 @@ void MainWindow::removeMarkers()
     while (markerObjects.size() > 0) {
         QGeoMapMarkerObject *marker = markerObjects.takeFirst();
         m_mapWidget->removeMapObject(marker);
+        marker->deleteLater();
     }
 }
 
@@ -406,7 +407,7 @@ void MainWindow::calcRoute(bool /*checked*/)
     QObject::connect(reply, SIGNAL(finished()),
                      this, SLOT(routeFinished()));
 
-    //removeMarkers();
+    removeMarkers();
 }
 
 void MainWindow::routeFinished()
