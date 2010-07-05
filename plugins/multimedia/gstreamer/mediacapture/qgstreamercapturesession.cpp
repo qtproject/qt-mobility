@@ -181,7 +181,10 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
     else {
-#ifdef QT_QWS_N810
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        audioSrc = gst_element_factory_make("pulsesrc", "audio_src");
+#elif defined(QT_QWS_N810)
         audioSrc = gst_element_factory_make("dsppcmsrc", "audio_src");
 #else
         QString elementName = "alsasrc";
