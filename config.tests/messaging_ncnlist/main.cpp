@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,32 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <MNcnNotification.h>
 
-#include "maemo6proximitysensor.h"
-
-char const * const maemo6proximitysensor::id("maemo6.proximity");
-bool maemo6proximitysensor::m_initDone = false;
-
-maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+int main(int, char**)
 {
-    const QString sensorName = "proximitysensor";
-    initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
-
-    if (m_sensorInterface){
-        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
-                               this, SLOT(slotDataAvailable(const Unsigned&)))))
-            qWarning() << "Unable to connect "<< sensorName;
-    }
-    else
-        qWarning() << "Unable to initialize "<<sensorName;
-    setReading<QProximityReading>(&m_reading);
-
-}
-
-void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
-{
-    m_reading.setClose(data.x()? true: false);
-    m_reading.setTimestamp(data.UnsignedData().timestamp_);
-    newReadingAvailable();
+    return 0;
 }

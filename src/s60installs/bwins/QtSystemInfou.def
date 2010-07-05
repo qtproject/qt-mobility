@@ -122,4 +122,8 @@ EXPORTS
 	?screenSaverInhibited@QSystemScreenSaver@QtMobility@@QAE_NXZ @ 121 NONAME ; bool QtMobility::QSystemScreenSaver::screenSaverInhibited(void)
 	?connectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 122 NONAME ; void QtMobility::QSystemNetworkInfo::connectNotify(char const *)
 	?disconnectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 123 NONAME ; void QtMobility::QSystemNetworkInfo::disconnectNotify(char const *)
+	?connectNotify@QSystemDeviceInfo@QtMobility@@MAEXPBD@Z @ 124 NONAME ; void QtMobility::QSystemDeviceInfo::connectNotify(char const *)
+	?connectNotify@QSystemInfo@QtMobility@@MAEXPBD@Z @ 125 NONAME ; void QtMobility::QSystemInfo::connectNotify(char const *)
+	?disconnectNotify@QSystemDeviceInfo@QtMobility@@MAEXPBD@Z @ 126 NONAME ; void QtMobility::QSystemDeviceInfo::disconnectNotify(char const *)
+	?disconnectNotify@QSystemInfo@QtMobility@@MAEXPBD@Z @ 127 NONAME ; void QtMobility::QSystemInfo::disconnectNotify(char const *)
 
