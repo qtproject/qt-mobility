@@ -63,7 +63,7 @@ namespace QValueSpace {
         // UnspecifiedLayerWriteability = 0x0000,
         // InvalidLayerWriteability = 0x000C,
     };
-    Q_DECLARE_FLAGS(LayerOptions, LayerOption);
+    Q_DECLARE_FLAGS(LayerOptions, LayerOption)
 
     Q_PUBLISHSUBSCRIBE_EXPORT void initValueSpaceServer();
 

@@ -1400,8 +1400,6 @@
         <keyword ref="qgraphicsvideoitem.html#boundingRect">boundingRect</keyword>
         <keyword ref="qgraphicsvideoitem.html#nativeSizeChanged">nativeSizeChanged</keyword>
         <keyword ref="qgraphicsvideoitem.html#paint">paint</keyword>
-        <keyword ref="qgraphicsvideoitem.html#setMediaObject">setMediaObject</keyword>
-        <keyword ref="qgraphicsvideoitem.html#timerEvent">timerEvent</keyword>
         <section ref="qgraphicsvideoitem-members.html" title="List of all members"/>
     </section>
     <section ref="qimageencodercontrol.html" title="QImageEncoderControl Class Reference">
@@ -1704,7 +1702,6 @@
         <keyword ref="qmediaplaylist.html#previousIndex">previousIndex</keyword>
         <keyword ref="qmediaplaylist.html#removeMedia">removeMedia</keyword>
         <keyword ref="qmediaplaylist.html#save">save</keyword>
-        <keyword ref="qmediaplaylist.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediaplaylist.html#shuffle">shuffle</keyword>
         <section ref="qmediaplaylist-members.html" title="List of all members"/>
     </section>
@@ -1842,7 +1839,6 @@
         <keyword ref="qmediarecorder.html#record">record</keyword>
         <keyword ref="qmediarecorder.html#setEncodingSettings">setEncodingSettings</keyword>
         <keyword ref="qmediarecorder.html#setExtendedMetaData">setExtendedMetaData</keyword>
-        <keyword ref="qmediarecorder.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediarecorder.html#setMetaData">setMetaData</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>
         <keyword ref="qmediarecorder.html#stateChanged">stateChanged</keyword>
@@ -3485,7 +3481,6 @@
         <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
         <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
-        <keyword ref="qvideowidget.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
         <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
@@ -3699,6 +3694,9 @@
     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
         <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
     </section>
+    <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
+        <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
+    </section>
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
@@ -3708,8 +3706,11 @@
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
     </section>
-    <section ref="lightmaps.html" title="LightMap Example">
-        <keyword ref="lightmaps.html">LightMap Example</keyword>
+    <section ref="lightmaps.html" title="LightMaps Example">
+        <keyword ref="lightmaps.html">LightMaps Example</keyword>
+    </section>
+    <section ref="logfilepositionsource.html" title="Log File Position Source Example">
+        <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>

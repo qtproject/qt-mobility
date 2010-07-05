@@ -38,26 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QTMESSAGING_H
-#define QTMESSAGING_H
 
-#include "qmessageglobal.h"
-#include "qmessageaccount.h"
-#include "qmessageaccountfilter.h"
-#include "qmessageaccountid.h"
-#include "qmessageaccountsortorder.h"
-#include "qmessagefolder.h"
-#include "qmessagefolderfilter.h"
-#include "qmessagefolderid.h"
-#include "qmessagefoldersortorder.h"
-#include "qmessage.h"
-#include "qmessagefilter.h"
-#include "qmessageid.h"
-#include "qmessagesortorder.h"
-#include "qmessagecontentcontainer.h"
-#include "qmessagecontentcontainerid.h"
-#include "qmessageaddress.h"
-#include "qmessageservice.h"
-#include "qmessagemanager.h"
+/*!
+    \example fetchgooglemaps
+    \title Fetch Google Maps Example
 
-#endif
+    This example displays an image from Google Maps based on the 
+    current position of the user as detected by the Location API.  If 
+    the platform does not have support the Location API then position 
+    information from a log file will be replayed.
+*/

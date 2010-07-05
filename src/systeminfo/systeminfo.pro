@@ -43,6 +43,7 @@ win32 {
 unix: {
     QT += gui
     maemo5|maemo6|linux-*: {
+        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
@@ -113,7 +114,7 @@ unix: {
         contains(S60_VERSION, 3.1){
             DEFINES += SYMBIAN_3_1
         }        
-        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE        
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
@@ -131,8 +132,7 @@ unix: {
             -lsysutil \
             -lcentralrepository \
             -lcenrepnotifhandler \
-            -lefsrv \
-            -lptiengine \
+            -lefsrv \            
             -lfeatdiscovery \
             -lhwrmvibraclient \
             -lavkon \    #Used by AknLayoutUtils::PenEnabled(). Try to remove this dependency.
@@ -142,8 +142,17 @@ unix: {
             -lprofileengine \
             -lbluetooth \
             -lgdi \
-            -lecom
+            -lecom \
 
+	    contains(hb_symbian_enabled,yes) {	    	
+	    		CONFIG += qt hb        
+	        	DEFINES += HB_SUPPORTED        
+	        	message("s60_HbKeymap enabled")	            	            
+	        	LIBS += -lhbcore	        
+    	} else {
+            LIBS += -lptiengine 
+        }
+        
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
