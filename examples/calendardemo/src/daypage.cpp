@@ -104,6 +104,8 @@ DayPage::DayPage(QWidget *parent)
     connect(removeAction, SIGNAL(triggered(bool)), this, SLOT(removeItem()));
     QAction* addEventAction = optionsMenu->addAction("Add Event");
     connect(addEventAction, SIGNAL(triggered(bool)), this, SLOT(addNewEvent()));
+    QAction* addTodoAction = optionsMenu->addAction("Add Todo");
+    connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
 }
 
 DayPage::~DayPage()
@@ -121,17 +123,30 @@ void DayPage::refresh()
     QList<QOrganizerItem> items = m_manager->items();
     foreach (const QOrganizerItem &item, items)
     {
-        QOrganizerEventTimeRange timeRange = item.detail<QOrganizerEventTimeRange>();
-        if (!timeRange.isEmpty()) {
-            if (timeRange.startDateTime().date() == m_day) {
-                QString time = timeRange.startDateTime().time().toString("hh:mm");
+        QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
+        if (!eventTimeRange.isEmpty()) {
+            if (eventTimeRange.startDateTime().date() == m_day) {
+                QString time = eventTimeRange.startDateTime().time().toString("hh:mm");
                 QListWidgetItem* listItem = new QListWidgetItem();
-                listItem->setText(QString("%1-%2").arg(time).arg(item.displayLabel()));
+                listItem->setText(QString("Event:%1-%2").arg(time).arg(item.displayLabel()));
                 QVariant data = QVariant::fromValue<QOrganizerItem>(item);
                 listItem->setData(ORGANIZER_ITEM_ROLE, data);
                 m_itemList->addItem(listItem);
             }
         }
+        
+        QOrganizerTodoTimeRange todoTimeRange = item.detail<QOrganizerTodoTimeRange>();
+        if (!todoTimeRange.isEmpty()) {
+            if (todoTimeRange.startDateTime().date() == m_day) {
+                QString time = todoTimeRange.startDateTime().time().toString("hh:mm");
+                QListWidgetItem* listItem = new QListWidgetItem();
+                listItem->setText(QString("Todo:%1-%2").arg(time).arg(item.displayLabel()));
+                QVariant data = QVariant::fromValue<QOrganizerItem>(item);
+                listItem->setData(ORGANIZER_ITEM_ROLE, data);
+                m_itemList->addItem(listItem);
+            }
+        }        
+        
         // TODO: other item types
     }
 
@@ -187,12 +202,24 @@ void DayPage::removeItem()
 
 void DayPage::addNewEvent()
 {
+    // TODO: move this to CalendarDemo::addNewEvent() slot
     QOrganizerEvent newEvent;
     QDateTime time(m_day);
     newEvent.setStartDateTime(time);
-    time = time.addSecs(60*30); // add 30 minutes to endtime
+    time = time.addSecs(60*30); // add 30 minutes to end time
     newEvent.setEndDateTime(time);
     emit showEditPage(m_manager, newEvent);
+}
+
+void DayPage::addNewTodo()
+{
+    // TODO: move this to CalendarDemo::addNewTodo() slot
+    QOrganizerTodo newTodo;
+    QDateTime time(m_day);
+    newTodo.setStartDateTime(time);
+    time = time.addSecs(60*30); // add 30 minutes to due time
+    newTodo.setDueDateTime(time);
+    emit showEditPage(m_manager, newTodo);
 }
 
 void DayPage::showEvent(QShowEvent *event)

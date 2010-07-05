@@ -62,7 +62,7 @@
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include "qhalservice_linux_p.h"
+#include <qhalservice_linux_p.h>
 
 typedef enum
 {
@@ -273,22 +273,15 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isScreenLockEnabled();
-    bool isScreenSaverActive();
 
 private Q_SLOTS:
-    void display_blanking_pause();
+    void wakeUpDisplay();
 
-private:    //data
-    bool m_screenSaverInhibited;
+private:
     QTimer *ssTimer;
-
-protected:
-    QString screenPath;
-    QString settingsPath;
-    bool screenSaverSecure;
-    uint currentPid;
-
+#if !defined(QT_NO_DBUS)
+    QDBusInterface *mceConnectionInterface;
+#endif
 };
 
 QTM_END_NAMESPACE

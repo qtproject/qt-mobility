@@ -9,7 +9,7 @@ isEmpty(QT_LIBINFIX):symbian {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
 
-    VERSION = 1.0.1
+    VERSION = 1.1.0
 
     vendorinfo = \
         "; Localised Vendor name" \
@@ -48,8 +48,13 @@ isEmpty(QT_LIBINFIX):symbian {
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
 
-    contains(mobility_modules, location): qtmobilitydeployment.sources += \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
+
+    contains(mobility_modules, location) {
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtgeoservices_nokia.dll
+        pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/geoservices/nokia/qmakepluginstubs/qtgeoservices_nokia.qtplugin\" - \"!:\\resource\\qt\\plugins\\geoservices\\qtgeoservices_nokia.qtplugin\""
+    }
+
 
     contains(mobility_modules, systeminfo): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
@@ -61,6 +66,8 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
 
+    contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
 
     contains(mobility_modules, bearer) {
         bearer = \

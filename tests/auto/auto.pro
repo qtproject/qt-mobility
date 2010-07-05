@@ -10,7 +10,10 @@ contains(mobility_modules,serviceframework) {
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext \
+           qmetaobjectbuilder \
            icheck \
+           qservicemanager_ipc \
+           qremoteserviceclassregister \
            servicedatabase
 }
 
@@ -22,19 +25,30 @@ contains(mobility_modules,bearer) {
 
 contains(mobility_modules,location) {
     SUBDIRS += qgeocoordinate \                 #Location
+          qgeoboundingbox \
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource
+          qnmeapositioninfosource \
+          #qlandmarkmanagerplugins \
+          qlandmarkmanagerengine
 
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
+
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
+contains(mobility_modules,landmarks) {
+    SUBDIRS += qlandmark \                      #Landmark
+            qlandmarkcategory
+}
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
@@ -108,6 +122,10 @@ contains(mobility_modules,versit) {
             qversitwriter
 }
 
+contains(mobility_modules,telephony) {
+    SUBDIRS += qtelephony
+}
+
 contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \
@@ -124,6 +142,7 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qcamera \
         qpaintervideosurface \
         qvideowidget \
         qmediatimerange \
@@ -159,3 +178,28 @@ contains(mobility_modules,messaging) {
 contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
+
+#Document Gallery
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        qdocumentgallery \
+        qgalleryabstractrequest \
+        qgalleryabstractresponse \
+        qgallerybaseresponse \
+        qgallerycountrequest \
+        qgalleryitemlist \
+        qgalleryitemlistmodel \
+        qgalleryitemrequest \
+        qgalleryqueryrequest \
+        qgalleryremoverequest \
+        qgalleryresource \
+        qgalleryurlrequest
+
+    !unix: SUBDIRS += qgalleryfilter
+
+    unix: contains(QT_CONFIG, dbus) {
+        SUBDIRS += \
+                qgallerytrackeritemlist_maemo5
+    }
+}
+

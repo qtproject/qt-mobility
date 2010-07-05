@@ -45,6 +45,8 @@
 #include <QObject>
 
 class CntSqlSearch;
+class C12keyKeyMap;
+class CQwertyKeyMap;
 
 class UT_CntSqlSearch : public QObject                 
 {
@@ -95,7 +97,9 @@ private slots: //test methods
     
 private:
  
-    CntSqlSearch* mCntSqlSearch;  
+    C12keyKeyMap* m12KeyKeyMap;
+    CQwertyKeyMap* mQwertyKeyMap;
+    CntSqlSearch* mCntSqlSearch; 
 };
 
 #endif // UT_CNTSQLSEARCH_H

@@ -57,6 +57,7 @@ class QStackedWidget;
 class MonthPage;
 class DayPage;
 class EventEditPage;
+class TodoEditPage;
 
 class CalendarDemo : public QMainWindow
 {
@@ -78,6 +79,7 @@ private:
     MonthPage *m_monthPage;
     DayPage *m_dayPage;
     EventEditPage *m_eventEditPage;
+    TodoEditPage *m_todoEditPage;
 };
 
 #endif // CALENDARDEMO_H

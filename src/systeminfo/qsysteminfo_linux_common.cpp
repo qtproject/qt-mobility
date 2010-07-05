@@ -44,7 +44,7 @@
 #include <QDir>
 
 #if !defined(QT_NO_DBUS)
-#include "qhalservice_linux_p.h"
+#include <qhalservice_linux_p.h>
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
@@ -68,10 +68,13 @@
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
-
+#include <X11/extensions/Xrandr.h>
 #endif
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/bnep.h>
+
+#ifdef BLUEZ_SUPPORTED
+# include <bluetooth/bluetooth.h>
+# include <bluetooth/bnep.h>
+#endif
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -191,7 +194,16 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::FmradioFeature :
          {
-             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("radio*")).empty());
+             const QString sysPath = "/sys/class/video4linux/";
+             const QDir sysDir(sysPath);
+             QStringList filters;
+             filters << "*";
+             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+             foreach(const QString dir, sysList) {
+                if (dir.contains("radio")) {
+                    featureSupported = true;
+                }
+            }
          }
          break;
      case QSystemInfo::IrFeature :
@@ -275,7 +287,14 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VideoOutFeature :
          {
-             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("video*")).empty());
+             const QString sysPath = "/sys/class/video4linux/";
+             const QDir sysDir(sysPath);
+             QStringList filters;
+             filters << "*";
+             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+             if(sysList.contains("video")) {
+                 featureSupported = true;
+             }
          }
          break;
      case QSystemInfo::HapticsFeature:
@@ -586,6 +605,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
+#ifdef BLUEZ_SUPPORTED
     int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
     if (ctl < 0) {
         qDebug() << "Cannot open bnep socket";
@@ -608,6 +628,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         }
     }
     close(ctl);
+#endif
 
     return QSystemNetworkInfo::UndefinedStatus;
 }
@@ -953,14 +974,179 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
+
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+    XRRScreenConfiguration *sc;
+    Rotation cur_rotation;
+    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    if (!sc) {
+        return orientation;
+    }
+    XRRConfigRotations(sc, &cur_rotation);
+
+    if(screen < 16 && screen > -1) {
+        switch(cur_rotation) {
+        case RR_Rotate_0:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case RR_Rotate_90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case RR_Rotate_180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case RR_Rotate_270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
+
+
+float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+{
+    int height=0;
+    XRRScreenResources *sr;
+
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           height = output->mm_height;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
+    return height;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+{
+    int width=0;
+    XRRScreenResources *sr;
+
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           width = output->mm_width;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
+
+    return width;
+}
+
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+
+#if !defined(QT_NO_DBUS)
+    halIface = new QHalInterface();
+#endif
+    logicalDrives();
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 {
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+    }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+    }
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        delete mtabWatcherA;
+        mtabWatcherA = 0;
+
+    }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+        delete mtabWatcherB;
+        mtabWatcherB = 0;
+    }
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
+{
+    Q_UNUSED(path);
+    QMap<QString, QString> oldDrives = mountEntriesMap;
+    mountEntries();
+
+    if(mountEntriesMap.count() < oldDrives.count()) {
+        QMapIterator<QString, QString> i(oldDrives);
+        while (i.hasNext()) {
+            i.next();
+            if(!mountEntriesMap.contains(i.key())) {
+                delete mtabWatcherA;
+                mtabWatcherA = 0;
+                mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+                connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                        this,SLOT(deviceChanged(const QString &)));
+                emit logicalDriveChanged(false, i.key());
+            }
+        }
+    } else if(mountEntriesMap.count() > oldDrives.count()) {
+        QMapIterator<QString, QString> i(mountEntriesMap);
+        while (i.hasNext()) {
+            i.next();
+
+            if(oldDrives.contains(i.key()))
+                continue;
+            delete mtabWatcherB;
+            mtabWatcherB = 0;
+            mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+            connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                    this,SLOT(deviceChanged(false, const QString &)));
+            emit logicalDriveChanged(true,i.key());
+        }
+    }
 }
 
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
@@ -1586,6 +1772,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
       // Pairable Name Class Discoverable
   }
  #endif
+
+ bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
+ {
+     return false;
+ }
 
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {

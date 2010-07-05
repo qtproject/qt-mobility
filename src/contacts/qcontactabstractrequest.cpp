@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
+  \inmodule QtContacts
+
   \ingroup contacts-main
 
   It allows a client to asynchronously request some functionality of a

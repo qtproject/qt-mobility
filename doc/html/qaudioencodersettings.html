@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaencodersettings.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QAudioEncoderSettings Class Reference</title>
+  <title>Qt Mobility Project 1.1: QAudioEncoderSettings Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAudioEncoderSettings Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAudioEncoderSettings Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
 <p>The QAudioEncoderSettings class provides a set of audio encoder settings. <a href="#details">More...</a></p>
 <pre>    #include &lt;QAudioEncoderSettings&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
 <ul>
 <li><a href="qaudioencodersettings-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -77,15 +79,15 @@
 <p>Returns the audio codec.</p>
 <p>See also <a href="qaudioencodersettings.html#setCodec">setCodec</a>().</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/encodingMode"></a>
-<h3 class="fn"><a name="encodingMode"></a><a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a> QAudioEncoderSettings::encodingMode () const</h3>
+<h3 class="fn"><a name="encodingMode"></a>QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode () const</h3>
 <p>Returns the audio encoding mode.</p>
-<p>See also <a href="qaudioencodersettings.html#setEncodingMode">setEncodingMode</a>() and <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a>.</p>
+<p>See also <a href="qaudioencodersettings.html#setEncodingMode">setEncodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/isNull"></a>
 <h3 class="fn"><a name="isNull"></a>bool QAudioEncoderSettings::isNull () const</h3>
 <p>Identifies if an audio settings object is initialized.</p>
 <p>Returns true if the settings object is null, and false if it is not.</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/quality"></a>
-<h3 class="fn"><a name="quality"></a><a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> QAudioEncoderSettings::quality () const</h3>
+<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality () const</h3>
 <p>Returns the audio encoding quality.</p>
 <p>See also <a href="qaudioencodersettings.html#setQuality">setQuality</a>().</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/sampleRate"></a>
@@ -106,16 +108,16 @@
 <p>Sets the audio <i>codec</i>.</p>
 <p>See also <a href="qaudioencodersettings.html#codec">codec</a>().</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/setEncodingMode"></a>
-<h3 class="fn"><a name="setEncodingMode"></a>void QAudioEncoderSettings::setEncodingMode ( <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a> <i>mode</i> )</h3>
+<h3 class="fn"><a name="setEncodingMode"></a>void QAudioEncoderSettings::setEncodingMode ( QtMultimediaKit::EncodingMode <i>mode</i> )</h3>
 <p>Sets the audio encoding <i>mode</i> setting.</p>
-<p>If <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::ConstantQualityEncoding</a> is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
+<p>If QtMultimediaKit::ConstantQualityEncoding is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
 <p>The audio codec, channels count and sample rate settings are used in all the encoding modes.</p>
-<p>See also <a href="qaudioencodersettings.html#encodingMode">encodingMode</a>() and <a href="qtmultimediakit.html#EncodingMode-enum">QtMultimediaKit::EncodingMode</a>.</p>
+<p>See also <a href="qaudioencodersettings.html#encodingMode">encodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/setQuality"></a>
-<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderSettings::setQuality ( <a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> <i>quality</i> )</h3>
+<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3>
 <p>Set the audio encoding <i>quality</i>.</p>
 <p>Setting the audio quality parameter allows backend to choose the balanced set of encoding parameters to achieve the desired quality level.</p>
-<p>The <i>quality</i> settings parameter is only used in the <a href="qtmultimediakit.html#EncodingMode-enum">constant quality</a> <a href="qaudioencodersettings.html#encodingMode">encoding mode</a>.</p>
+<p>The <i>quality</i> settings parameter is only used in the constant quality <a href="qaudioencodersettings.html#encodingMode">encoding mode</a>.</p>
 <p>See also <a href="qaudioencodersettings.html#quality">quality</a>().</p>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/setSampleRate"></a>
 <h3 class="fn"><a name="setSampleRate"></a>void QAudioEncoderSettings::setSampleRate ( int <i>rate</i> )</h3>
@@ -137,6 +139,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

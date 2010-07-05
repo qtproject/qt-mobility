@@ -139,10 +139,18 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
                 QOrganizerEventOccurrence* event = static_cast<QOrganizerEventOccurrence*>(&instance);
                 event->setType(QOrganizerItemType::TypeEventOccurrence);
                 event->setStartDateTime(incidenceDateTime);
+                event->setParentLocalId(generatorId);
             } else if (instance.type() == QOrganizerItemType::TypeTodo) {
                 QOrganizerTodoOccurrence* todo = static_cast<QOrganizerTodoOccurrence*>(&instance);
                 todo->setType(QOrganizerItemType::TypeTodo);
                 todo->setStartDateTime(incidenceDateTime);
+                todo->setParentLocalId(generatorId);
+            }
+            if (incidence == generatorIncidence) {
+                QOrganizerItemId id;
+                id.setManagerUri(managerUri());
+                id.setLocalId(0);
+                instance.setId(id);
             }
             instances << instance;
         }
@@ -466,7 +474,9 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaem
                         it.key() == QOrganizerItemDescription::DefinitionName ||
                         it.key() == QOrganizerItemDisplayLabel::DefinitionName ||
                         it.key() == QOrganizerItemRecurrence::DefinitionName ||
-                        it.key() == QOrganizerEventTimeRange::DefinitionName) {
+                        it.key() == QOrganizerEventTimeRange::DefinitionName ||
+                        it.key() == QOrganizerItemGuid::DefinitionName ||
+                        it.key() == QOrganizerItemInstanceOrigin::DefinitionName) {
                         supportedDefinitions.insert(it.key(), it.value());
                     }
                 }
@@ -494,37 +504,76 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
 {
     bool itemIsNew = (managerUri() != item->id().managerUri()
             || item->localId() == 0);
-    Incidence* incidence = 0;
+    bool itemIsOccurrence = (item->type() == QOrganizerItemType::TypeEventOccurrence) ||
+                            (item->type() == QOrganizerItemType::TypeTodoOccurrence);
+    Incidence* newIncidence = 0;
+
+    // valid iff itemIsOccurrence (hack!)
+    QOrganizerItemLocalId parentLocalId;
+    QDate originalDate;
+
     if (item->type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEvent* event = static_cast<QOrganizerEvent*>(item);
-        incidence = createKEvent(*event);
+        newIncidence = createKEvent(*event);
     } else if (item->type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodo* todo = static_cast<QOrganizerTodo*>(item);
-        incidence = createKTodo(*todo);
+        newIncidence = createKTodo(*todo);
+    } else if (item->type() == QOrganizerItemType::TypeEventOccurrence) {
+        QOrganizerEvent* event = static_cast<QOrganizerEvent*>(item);
+        newIncidence = createKEvent(*event);
+        QOrganizerEventOccurrence* eventOccurrence = static_cast<QOrganizerEventOccurrence*>(item);
+        parentLocalId = eventOccurrence->parentLocalId();
+        originalDate = eventOccurrence->originalDate();
+    } else if (item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>(item);
+        newIncidence = createKTodo(*todo);
+        QOrganizerTodoOccurrence* todoOccurrence = static_cast<QOrganizerTodoOccurrence*>(item);
+        parentLocalId = todoOccurrence->parentLocalId();
+        originalDate = todoOccurrence->originalDate();
     } else if (item->type() == QOrganizerItemType::TypeNote) {
         QOrganizerNote* note = static_cast<QOrganizerNote*>(item);
-        incidence = createKNote(*note);
+        newIncidence = createKNote(*note);
     } else if (item->type() == QOrganizerItemType::TypeJournal) {
         QOrganizerJournal* journal = static_cast<QOrganizerJournal*>(item);
-        incidence = createKJournal(*journal);
+        newIncidence = createKJournal(*journal);
     } else {
         *error = QOrganizerItemManager::InvalidItemTypeError;
         return 0;
     }
-    if (!itemIsNew) {
-        if (!d->m_QIdToKId.contains(item->localId())) {
-            *error = QOrganizerItemManager::DoesNotExistError;
-            return 0;
+    if (itemIsNew) {
+        if (itemIsOccurrence) {
+            Incidence* parentIncidence = incidence(parentLocalId);
+            if (!parentIncidence) {
+                qDebug() << parentLocalId;
+                qDebug() << d->m_QIdToKId;
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return 0;
+            }
+            Incidence* detachedIncidence = d->m_calendarBackend.dissociateOccurrence(
+                    parentIncidence, originalDate, KDateTime::LocalZone, true);
+            *detachedIncidence = *newIncidence;
+            newIncidence = detachedIncidence;
+        } else {
+            // nothing needs to be done
         }
-        QString uid = d->m_QIdToKId.value(item->localId());
-        Incidence* oldIncidence = d->m_calendarBackend.incidence(uid);
-        Q_ASSERT(oldIncidence);
-        d->m_calendarBackend.deleteIncidence(oldIncidence);
-        incidence->setUid(uid);
+    } else {
+        if (itemIsOccurrence) {
+            // TODO
+        } else {
+            Incidence* oldIncidence = incidence(item->localId());
+            if (!oldIncidence) {
+                *error = QOrganizerItemManager::DoesNotExistError;
+                return 0;
+            }
+            QString uid = oldIncidence->uid();
+            // is this right?  shouldn't we modify oldIncidence inplace rather than delete/add?
+            d->m_calendarBackend.deleteIncidence(oldIncidence);
+            newIncidence->setUid(uid);
+        }
     }
-    d->m_calendarBackend.addIncidence(incidence);
+    d->m_calendarBackend.addIncidence(newIncidence);
     *error = QOrganizerItemManager::NoError;
-    return incidence;
+    return newIncidence;
 }
 
 /*!
@@ -727,5 +776,6 @@ void QOrganizerItemMaemo6Engine::IncidenceToItemConverter::convertCommonDetails(
     item->setId(id);
     item->setDisplayLabel(incidence->summary());
     item->setDescription(incidence->description());
+    item->setGuid(incidence->uid());
 }
 

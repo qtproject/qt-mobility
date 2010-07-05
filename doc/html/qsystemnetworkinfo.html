@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qsysteminfo.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QSystemNetworkInfo Class Reference</title>
+  <title>Qt Mobility Project 1.1: QSystemNetworkInfo Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,6 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#NetworkMode-enum">NetworkMode</a></b> { UnknownMode, GsmMode, CdmaMode, WcdmaMode, ..., WimaxMode }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#NetworkMode-enum">NetworkModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#NetworkStatus-enum">NetworkStatus</a></b> { UndefinedStatus, NoNetworkAvailable, EmergencyOnly, Searching, ..., Roaming }</td></tr>
 </table>
 <hr />
@@ -61,6 +60,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkInterface </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode-prop">locationAreaCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#macAddress">macAddress</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkName">networkName</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::NetworkStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatus">networkStatus</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 </table>
 <ul>
@@ -80,20 +81,11 @@
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
-<hr />
-<a name="static-public-members"></a>
-<h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkName">networkName</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
@@ -112,8 +104,7 @@
 <a name="//apple_ref/cpp/econst/QSystemNetworkInfo/EthernetMode"></a>
 <a name="//apple_ref/cpp/econst/QSystemNetworkInfo/BluetoothMode"></a>
 <a name="//apple_ref/cpp/econst/QSystemNetworkInfo/WimaxMode"></a>
-<a name="//apple_ref/cpp/tdef/QSystemNetworkInfo/NetworkModes"></a>
-<h3 class="flags"><a name="NetworkMode-enum"></a>enum QSystemNetworkInfo::NetworkMode<br />flags QSystemNetworkInfo::NetworkModes</h3>
+<h3 class="fn"><a name="NetworkMode-enum"></a>enum QSystemNetworkInfo::NetworkMode</h3>
 <p>This enum describes the type of network:</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
@@ -126,7 +117,6 @@
 <tr><td valign="top"><tt>QSystemNetworkInfo::BluetoothMode</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Bluetooth network.</td></tr>
 <tr><td valign="top"><tt>QSystemNetworkInfo::WimaxMode</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Wimax network.</td></tr>
 </table></p>
-<p>The NetworkModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;NetworkMode&gt;. It stores an OR combination of NetworkMode values.</p>
 <a name="//apple_ref/cpp/tag/QSystemNetworkInfo/NetworkStatus"></a>
 <a name="//apple_ref/cpp/econst/QSystemNetworkInfo/UndefinedStatus"></a>
 <a name="//apple_ref/cpp/econst/QSystemNetworkInfo/NoNetworkAvailable"></a>
@@ -155,7 +145,7 @@
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/cellId"></a>
 <h3 class="fn"><a name="cellId-prop"></a>cellId : const int</h3>
-<p>This property holds the devices Cell ID Returns the Cell ID of the connected tower or based station, or 0 if not connected.</p>
+<p>This property holds the devices Cell ID Returns the Cell ID of the connected tower or based station.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>cellId</b> ()</td></tr>
@@ -164,7 +154,7 @@
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileCountryCodeChanged"></a>
 <h3 class="fn"><a name="currentMobileCountryCode-prop"></a>currentMobileCountryCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current MCC.</p>
-<p>Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.</p>
+<p>Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string. /</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentMobileCountryCode</b> ()</td></tr>
@@ -177,7 +167,7 @@
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileNetworkCodeChanged"></a>
 <h3 class="fn"><a name="currentMobileNetworkCode-prop"></a>currentMobileNetworkCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current MNC.</p>
-<p>Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.</p>
+<p>Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentMobileNetworkCode</b> ()</td></tr>
@@ -195,7 +185,7 @@
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/homeMobileCountryCode"></a>
 <h3 class="fn"><a name="homeMobileCountryCode-prop"></a>homeMobileCountryCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the home MNC.</p>
-<p>Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.</p>
+<p>Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>homeMobileCountryCode</b> ()</td></tr>
@@ -203,7 +193,7 @@
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/homeMobileNetworkCode"></a>
 <h3 class="fn"><a name="homeMobileNetworkCode-prop"></a>homeMobileNetworkCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the home MCC.</p>
-<p>Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned. Note: Some platforms don't support retrieving this info. In this case the Network Code is returned only when the device is registered on home network.</p>
+<p>Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string. Note: Some platforms don't support retrieving this info. In this case the Network Code is returned only when the device is registered on home network.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>homeMobileNetworkCode</b> ()</td></tr>
@@ -211,7 +201,7 @@
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/locationAreaCode"></a>
 <h3 class="fn"><a name="locationAreaCode-prop"></a>locationAreaCode : const int</h3>
 <p>This property holds the LAC.</p>
-<p>Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.</p>
+<p>Returns the Location Area Code. In the case of none such as a Desktop, an empty string.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>locationAreaCode</b> ()</td></tr>
@@ -232,21 +222,21 @@
 <p>This signal is emitted whenever the network Mobile Network Code changes, specified by <i>mnc</i>.</p>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/interfaceForMode"></a>
 <h3 class="fn"><a name="interfaceForMode"></a><a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> QSystemNetworkInfo::interfaceForMode ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
-<p>Returns the first found <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> for type <i>mode</i>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a>, if none is found.</p>
+<p>Returns the first found <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> for type <i>mode</i>.</p>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/macAddress"></a>
 <h3 class="fn"><a name="macAddress"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QSystemNetworkInfo::macAddress ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the MAC address for the interface servicing the network <i>mode</i>.</p>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/networkModeChanged"></a>
 <h3 class="fn"><a name="networkModeChanged"></a>void QSystemNetworkInfo::networkModeChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever the network mode changes, specified by <i>mode</i>.</p>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/networkName"></a>
-<h3 class="fn"><a name="networkName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QSystemNetworkInfo::networkName ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/networkName"></a>
+<h3 class="fn"><a name="networkName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QSystemNetworkInfo::networkName ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the name of the operator for the network <i>mode</i>. For wlan this returns the network's current SSID. In the case of no network such as a desktop, an empty string.</p>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/networkNameChanged"></a>
 <h3 class="fn"><a name="networkNameChanged"></a>void QSystemNetworkInfo::networkNameChanged ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>netName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever the network <i>mode</i> name changes, specified by <i>netName</i>.</p>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/networkSignalStrength"></a>
-<h3 class="fn"><a name="networkSignalStrength"></a>int QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/networkSignalStrength"></a>
+<h3 class="fn"><a name="networkSignalStrength"></a>int QSystemNetworkInfo::networkSignalStrength ( <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a> <i>mode</i> )</h3>
 <p>Returns the strength of the network signal, per network <i>mode</i> , 0 - 100 linear scaling, or -1 in the case of unknown network mode or error.</p>
 <p>In the case of QSystemNetworkInfo::EthMode, it will either be 100 for carrier active, or 0 for when there is no carrier or cable connected.</p>
 <a name="//apple_ref/cpp/instm/QSystemNetworkInfo/networkSignalStrengthChanged"></a>
@@ -262,6 +252,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

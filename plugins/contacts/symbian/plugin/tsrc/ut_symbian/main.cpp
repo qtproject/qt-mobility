@@ -46,7 +46,6 @@
 #include "ut_cntrelationship.h"
 #include "ut_cntsymbiandatabase.h"
 #include "ut_transformcontactdata.h"
-#include "ut_cntsqlsearch.h"
 #include "mt_cntsqlsort.h"
 
 #include <QtTest/QtTest>
@@ -81,12 +80,6 @@ int main(int argc, char *argv[])
     
     TestCntTransformContactData ut_transformContactData;
     testRunner.runTests(ut_transformContactData);
-    
-    UT_CntSqlSearch ut_sqlSearch;
-    testRunner.runTests(ut_sqlSearch);
-    
-    MT_CntSqlSort mt_sqlSort;
-    testRunner.runTests(mt_sqlSort);
     
     testRunner.printResults();
 

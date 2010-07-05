@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplaylistsourcecontrol.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlaylistSourceControl Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaPlaylistSourceControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistSourceControl Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistSourceControl Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
 <p>The QMediaPlaylistSourceControl class provides access to the playlist playback functionality of a <a href="qmediaservice.html">QMediaService</a>. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaPlaylistSourceControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
 <li><a href="qmediaplaylistsourcecontrol-members.html">List of all members, including inherited members</a></li>
@@ -35,7 +37,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsourcecontrol.html#playlistChanged">playlistChanged</a></b> ( QMediaPlaylist * )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistsourcecontrol.html#playlistChanged">playlistChanged</a></b> ( QMediaPlaylist * <i>playlist</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
@@ -84,8 +86,8 @@
 <p>Returns the current playlist. Should return a null pointer if no playlist is assigned.</p>
 <p>See also <a href="qmediaplaylistsourcecontrol.html#setPlaylist">setPlaylist</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistSourceControl/playlistChanged"></a>
-<h3 class="fn"><a name="playlistChanged"></a>void QMediaPlaylistSourceControl::playlistChanged ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emited when the playlist has changed.</p>
+<h3 class="fn"><a name="playlistChanged"></a>void QMediaPlaylistSourceControl::playlistChanged ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emited when the playlist has changed to <i>playlist</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistSourceControl/setPlaylist"></a>
 <h3 class="fn"><a name="setPlaylist"></a>void QMediaPlaylistSourceControl::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the playlist of this media player to <i>playlist</i>. If a null pointer is passed, the playlist source should be disabled.</p>
@@ -101,6 +103,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -182,14 +182,19 @@ CContactIdArray& CLplContactProperties::GroupIdListL()
 
 CBufSeg* CLplContactProperties::DetailsListL(const TDesC& aSearchQuery) const 
     {
-	return iContactItemManager->DetailsListL(aSearchQuery);
+    return iContactItemManager->DetailsListL(aSearchQuery);
     }   
 
 
+CBufSeg* CLplContactProperties::DetailsListPredictiveL(const TDesC& aSearchPattern) const
+    {
+    return iContactItemManager->DetailsListPredictiveL(aSearchPattern);
+    }   
+
 TInt64 CLplContactProperties::MachineIdL() const
-	{
-	return iContactItemManager->PreferencesPersitor().MachineIdL();
-	}
+    {
+    return iContactItemManager->PreferencesPersitor().MachineIdL();
+    }
 
 	
 void CLplContactProperties::SetMachineIdL(TInt64 aMachineId)
@@ -216,9 +221,9 @@ TContactItemId CLplContactProperties::OwnCardIdL()
 	}
 
 
-void CLplContactProperties::SetOwnCardIdL(TContactItemId aId)
+void CLplContactProperties::SetOwnCardIdL(TContactItemId aId, TBool aPersist)
 	{
-	iContactItemManager->SetOwnCardIdL(aId);
+	iContactItemManager->SetOwnCardIdL(aId, aPersist);
 	}
 
 

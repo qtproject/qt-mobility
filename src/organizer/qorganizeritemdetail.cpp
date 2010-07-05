@@ -71,7 +71,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   \class QOrganizerItemDetail
 
   \brief The QOrganizerItemDetail class represents a single, complete detail about a organizeritem.
-  \ingroup organizeritems-main
+  \ingroup organizer-main
 
   All of the information for a organizeritem is stored in one or more QOrganizerItemDetail objects.
 
@@ -94,20 +94,20 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   a organizeritem has to have - like a QOrganizerItemType.
 
   It is possible to inherit from QOrganizerItemDetail to provide convenience or
-  standardized access to values.  For example, \l QOrganizerItemRsvpInfo provides
-  a convenient API for manipulating a QOrganizerItemDetail as the best way to contact the sender
-  of an invitation, according to the schema.
+  standardized access to values.  For example, \l QOrganizerEventTimeRange provides
+  a convenient API for manipulating a QOrganizerItemDetail to describe the start and end time
+  of an event, according to the schema.
 
-  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerItemRsvpInfo) provide
-  constants for the names of fields (like \l QOrganizerItemRsvpInfo::FieldRsvpByDateTime).
+  In general, QOrganizerItemDetail and the built in subclasses (like \l QOrganizerEventTimeRange) provide
+  constants for the names of fields (like \l QOrganizerEventTimeRange::FieldStartDateTime).
   Typically the constants for field names start with \c Field, and the constants for predefined values
     of a field start with the name of that field
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
 
   If you wish to create your own, customized organizeritem detail, you should use
-  the \l Q_DECLARE_CUSTOM_CONTACT_DETAIL macro in order to ensure proper
+  the \l Q_DECLARE_CUSTOM_ORGANIZER_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
-  See the predefined detail subclasses (like \l QOrganizerItemRsvpInfo,
+  See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
   \l QOrganizerItemType) for more information.
 
   QOrganizerItemDetail objects act like type checked values.  In general, you can assign them
@@ -115,35 +115,35 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 
   \code
 
-  QOrganizerItemPhoneNumber number;
-  number.setNumber("555-1212");
-  // number.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // number.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription description;
+  description.setDescription("Some descriptive text");
+  // description.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // description.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemDetail detail = number;
-  // detail.value(QOrganizerItemPhoneNumber::FieldNumber) == "555-1212";
-  // detail.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDetail detail = description;
+  // detail.value(QOrganizerItemDescription::FieldDescription) == "Some descriptive text";
+  // detail.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemPhoneNumber otherNumber = detail;
-  // otherNumber.number() == "555-1212";
-  // otherNumber.definitionName() == QOrganizerItemPhoneNumber::DefinitionName
+  QOrganizerItemDescription otherDescription = detail;
+  // otherDescription.description() == "Some descriptive text";
+  // otherDescription.definitionName() == QOrganizerItemDescription::DefinitionName
 
-  QOrganizerItemAddress address = detail;
-  // address is now a default constructed QOrganizerItemAddress
-  // address.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // address.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel label = detail;
+  // label is now a default constructed QOrganizerItemDisplayLabel
+  // label.value(QOrganizerItemDescription::FieldDescription) is empty
+  // label.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
 
-  QOrganizerItemAddress otherAddress = number;
-  // otherAddress is now a default constructed QOrganizerItemAddress
-  // otherAddress.value(QOrganizerItemPhoneNumber::FieldNumber) is empty
-  // otherAddress.definitionName() == QOrganizerItemAddress::DefinitionName
+  QOrganizerItemDisplayLabel otherLabel = description;
+  // otherLabel is now a default constructed QOrganizerItemDisplayLabel
+  // otherLabel.value(QOrganizerItemDescription::FieldDescription) is empty
+  // otherLabel.definitionName() == QOrganizerItemDisplayLabel::DefinitionName
   \endcode
 
-  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \sa QOrganizerItem, QOrganizerItemDetailDefinition, QOrganizerItemDetailFilter, QOrganizerItemDetailRangeFilter, Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
  */
 
 /*!
-  \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_DETAIL
   \relates QOrganizerItemDetail
 
   Macro for simplifying declaring custom (leaf) detail classes.
@@ -155,104 +155,12 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   you should use this macro when declaring your class to ensure that
   it interoperates with other organizeritem functionality.
 
-  Here is an example of a class (\l QOrganizerItemPhoneNumber) using this macro.
+  Here is an example of a class (\l QOrganizerItemDescription) using this macro.
   Note that the class provides some predefined constants
   and some convenience methods that return values associated with schema
   fields.
-
-  \snippet ../../src/organizeritems/details/qorganizeritemphonenumber.h 0
  */
 
-/*!
-    \class QLatin1Constant
-    \headerfile
-    \brief The QLatin1Constant class holds a Latin 1 string constant
-
-*/
-
-/*!
-    \fn QLatin1Constant::operator QString() const
-    \internal
- */
-/*!
-    \fn QLatin1Constant::operator QLatin1String() const
-    \internal
- */
-/*!
-    \fn QLatin1Constant::operator QVariant() const
-    \internal
- */
-/*!
-    \fn bool QLatin1Constant::operator ==(const QLatin1Constant& other) const
-
-    Returns true if this QLatin1Constant is the same as \a other (either same object or
-    same string literal), and false otherwise.
- */
-/*!
-    \fn bool QLatin1Constant::operator !=(const QLatin1Constant& other) const
-
-    Returns false if this QLatin1Constant is the same as \a other (either same object or
-    same string literal), and true otherwise.
-*/
-/*!
-    \fn inline const char * QLatin1Constant::latin1() const
-
-    Returns the value of this literal as a C style string (null terminated).
-*/
-
-
-/*!
-  \macro Q_DECLARE_LATIN1_CONSTANT
-  \relates QLatin1Constant
-
-  This macro, along with the related Q_DEFINE_LATIN1_CONSTANT macro,
-  allows you to describe a "Latin 1 string constant".
-
-  The resulting constant can be passed to functions accepting a
-  QLatin1String, a QString, or a QVariant.
-
-  The first parameter is the name of the variable to declare.  The
-  second parameter is the value of the constant, as a string literal.
-
-  For example:
-  \code
-  // in a header file
-  Q_DECLARE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-  \endcode
-
-  The declaration should be paired with a matching Q_DEFINE_LATIN1_CONSTANT
-  with the same arguments to actually define the constant.
-
-  \sa Q_DEFINE_LATIN1_CONSTANT
-*/
-
-/*!
-  \macro Q_DEFINE_LATIN1_CONSTANT
-  \relates QLatin1Constant
-
-  This macro, along with the related Q_DECLARE_LATIN1_CONSTANT macro,
-  allows you to describe a "Latin 1 string constant".
-
-  The resulting constant can be passed to functions accepting a
-  QLatin1String, a QString, or a QVariant.
-
-  The first parameter is the name of the variable to define.  The
-  second parameter is the value of the constant, as a string literal.
-
-  For example:
-  \code
-  // in a header file
-  Q_DECLARE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-
-  // in source file
-  Q_DEFINE_LATIN1_CONSTANT(MyConstant, "MYCONSTANT");
-  \endcode
-
-  You can use this macro without the matching DECLARE macro if
-  you are using the constant only in a single compilation unit.
-
-  \sa Q_DECLARE_LATIN1_CONSTANT
-*/
 
 /*!
   \fn QOrganizerItemDetail::operator!=(const QOrganizerItemDetail& other) const

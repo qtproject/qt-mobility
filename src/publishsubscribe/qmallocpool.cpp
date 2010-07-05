@@ -46,7 +46,7 @@ struct malloc_state;
 
 QTM_BEGIN_NAMESPACE
 
-static void* qmallocpool_sbrk(intptr_t increment);
+static void* qmallocpool_sbrk(qptrdiff increment);
 
 #define USE_DL_PREFIX
 #define MORECORE QTM_NAMESPACE::qmallocpool_sbrk
@@ -109,7 +109,7 @@ static struct malloc_state * qmallocpool_state(QMallocPoolPrivate *d)
     return d->mstate;
 }
 
-static void* qmallocpool_sbrk(intptr_t increment)
+static void* qmallocpool_sbrk(qptrdiff increment)
 {
     Q_ASSERT(qmallocpool_instance);
     QMallocPoolPrivate * const d = qmallocpool_instance;

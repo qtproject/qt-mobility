@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactActionFilter class provides a filter based around an
   action availability criterion.
  
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-filters
     
   It may be used to select contacts for which a particular action is

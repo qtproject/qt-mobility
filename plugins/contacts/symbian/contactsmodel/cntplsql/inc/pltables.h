@@ -132,7 +132,7 @@ public:
 	TBool IsTableEmptyL();
 	CContactIdArray& CardTemplateIdsL();
 	TContactItemId OwnCardIdL();
-    void SetOwnCardIdL(TContactItemId aId);	
+    void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);	
     
 	~CPplContactTable();
 	
@@ -158,6 +158,7 @@ private:
 	RSqlDatabase&  iDatabase;
 	
 	CContactIdArray* iCardTemplateIds;
+	TContactItemId iOwnCardId;
 	};
 
 /**
@@ -337,6 +338,8 @@ private: // New virtual functions
 							   TBool& aMandatoryFieldsPresent) const;
 
 public:
+	const CPcsKeyMap* KeyMap() const;
+
 	// Return next table's name, ownership is transferred
 	HBufC* GetNextTableNameL(QList<QChar>& aTables) const;
 

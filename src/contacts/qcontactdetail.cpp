@@ -79,6 +79,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   \class QContactDetail
  
   \brief The QContactDetail class represents a single, complete detail about a contact.
+  \inmodule QtContacts
   \ingroup contacts-main
  
   All of the information for a contact is stored in one or more QContactDetail objects.

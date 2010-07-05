@@ -5,7 +5,7 @@ CONFIG += qtestlib
 
 maemo5:
 {
-    include(../../../../../config.pri)
+    include(../../../../../common.pri)
     INCLUDEPATH += .\inc
     #INCLUDEPATH += $$MAEMO5_PATHS
     #INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE

@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemChangeLogFilter
   \brief The QOrganizerItemChangeLogFilter class provides a filter based around a
   organizeritem timestamp criterion.
-   \ingroup organizeritems-filters
+   \ingroup organizer-filters
  
   It may be used to select organizeritems which have been updated or created
   within a certain period of time.

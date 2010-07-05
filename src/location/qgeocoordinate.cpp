@@ -85,6 +85,9 @@ public:
 /*!
     \class QGeoCoordinate
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.
@@ -269,6 +272,9 @@ double QGeoCoordinate::latitude() const
 */
 void QGeoCoordinate::setLatitude(double latitude)
 {
+    if (latitude < -90.0 || latitude > 90.0) {
+        qWarning() << "Maps/Nav merge: latitude out of range, would have been adjusted by other implementation.";
+    }
     d->lat = latitude;
 }
 
@@ -296,6 +302,9 @@ double QGeoCoordinate::longitude() const
 */
 void QGeoCoordinate::setLongitude(double longitude)
 {
+    if (longitude < -180.0 || longitude > 180.0) {
+        qWarning() << "Maps/Nav merge: longitude out of range, would have been adjusted by other implementation.";
+    }
     d->lng = longitude;
 }
 

@@ -175,6 +175,8 @@ public:
 	virtual CContactIdArray& CardTemplateIdsL() = 0;
 	virtual CContactIdArray& GroupIdListL() = 0;
     virtual CBufSeg* DetailsListL(const TDesC& aSearchQuery) const = 0;
+    virtual CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const = 0;
+    
 	virtual void SetMachineIdL(TInt64 aMachineId) = 0;
 	virtual TPtrC UniqueIdL() = 0; 
 	
@@ -183,7 +185,7 @@ public:
 	virtual void RecreateSystemTemplateL() = 0;
 
 	virtual TContactItemId OwnCardIdL() = 0;
-	virtual void SetOwnCardIdL(TContactItemId aId) = 0;
+	virtual void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue) = 0;
 
 	virtual const CArrayFix<CContactDatabase::TSortPref>& SortPrefsL() =0;
 	virtual void SetSortPrefsL(CArrayFix<CContactDatabase::TSortPref>* aPrefs) =0;

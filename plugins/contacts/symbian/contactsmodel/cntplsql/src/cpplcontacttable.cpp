@@ -637,6 +637,11 @@ CContactItem* CPplContactTable::DeleteLC(TContactItemId  aItemId, TBool& aLowDis
 	// You can't delete the system template, because you couldn't read any cards otherwise.
 	__ASSERT_ALWAYS(aItemId != KGoldenTemplateId, User::Leave(KErrNotSupported) );
 
+    // the contact assigned to own card is being deleted, so set cached own card id to "not found"
+    if (iOwnCardId == aItemId) {
+        iOwnCardId = KErrNotFound;
+    }
+
 	// select the relevant bits from the contact table for the contact item 
 	// and put them in a new contact item
 	RSqlStatement selectStmnt;
@@ -1037,8 +1042,12 @@ Utility method used to retrieve own card id
 */
 TContactItemId CPplContactTable::OwnCardIdL()
 	{
-	TContactItemId ownCardId = 0;
-	
+	if (iOwnCardId != 0)
+	    {
+    	RDebug::Print(_L("CPplContactTable::OwnCardIdL() exit %d"), iOwnCardId);
+	    return iOwnCardId;
+	    }
+	    
 	HBufC* selectString = HBufC::NewLC(KOneTypeField().Length() + KContactId().Length() + 
 						KSqlContactTableName().Length() + KContactTypeFlags().Length() + 3); 
 	TPtr ptrSelectString = selectString->Des();
@@ -1053,32 +1062,37 @@ TContactItemId CPplContactTable::OwnCardIdL()
 	TInt err;
 	if((err = selectStmnt.Next()) == KSqlAtRow)
 		{
-		ownCardId = selectStmnt.ColumnInt(idIndex);	
+		iOwnCardId = selectStmnt.ColumnInt(idIndex);	
 		}
 	else
 		{
 		User::LeaveIfError(err);
-		ownCardId = KErrNotFound;		
+		iOwnCardId = KErrNotFound;
 		}
 	
-	CleanupStack::PopAndDestroy(2,selectString);
+	CleanupStack::PopAndDestroy(2, selectString);
 	
-	return ownCardId;
+	return iOwnCardId;
 	}
 	
 /**
 Utility method used to set own card id
 */	
-void CPplContactTable::SetOwnCardIdL(TContactItemId aId)
+void CPplContactTable::SetOwnCardIdL(TContactItemId aId, TBool aPersist)
 	{
-	TContactItemId oldOwnCardId = OwnCardIdL();
-	
-	if(oldOwnCardId != aId)
+	if (iOwnCardId != aId)
 	    {
-	    //Change old own card to be contact card.
-        ChangeTypeL(oldOwnCardId, KUidContactCard);	    
+	    if (aPersist)
+	        {
+	        //Change old own card to be contact card.
+            ChangeTypeL(iOwnCardId, KUidContactCard);
+			iOwnCardId = KErrNotFound;
         
-	    //set given card as own card.
-    	ChangeTypeL(aId, KUidContactOwnCard);
+	        //set given card as own card.
+    	    ChangeTypeL(aId, KUidContactOwnCard);
+    	    }
+
+	    //update cached own card id
+    	iOwnCardId = aId;
 	    }
 	}

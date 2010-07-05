@@ -42,13 +42,13 @@
 #define QMOBILITYGLOBAL_H
 
 
-#define QTM_VERSION_STR   "1.0.1"
+#define QTM_VERSION_STR   "1.1.0"
 /*
    QTM_VERSION is (major << 16) + (minor << 8) + patch.
 */
-#define QTM_VERSION 0x010001
+#define QTM_VERSION 0x010100
 /*
-   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 0, 1))
+   can be used like #if (QTM_VERSION >= QTM_VERSION_CHECK(1, 1, 0))
 */
 #define QTM_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
 
@@ -102,7 +102,12 @@
 #    else
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #    endif
-#      if defined(QT_BUILD_MULTIMEDIA_LIB)
+#    if defined(QT_BUILD_TELEPHONY_LIB)
+#      define Q_TELEPHONY_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_TELEPHONY_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_MULTIMEDIA_LIB)
 #        define Q_MULTIMEDIA_EXPORT Q_DECL_EXPORT
 #    else
 #        define Q_MULTIMEDIA_EXPORT Q_DECL_IMPORT
@@ -122,6 +127,16 @@
 #    else
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
+#    if defined(QT_BUILD_FEEDBACK_LIB)
+#      define Q_FEEDBACK_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_GALLERY_LIB)
+#      define Q_GALLERY_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_GALLERY_EXPORT Q_DECL_IMPORT
+#    endif
 #    if defined(QT_BUILD_ORGANIZER_LIB)
 #      define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #    else
@@ -133,8 +148,9 @@
 #    define Q_CONTACTS_EXPORT Q_DECL_IMPORT
 #    define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #    define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#      define Q_MULTIMEDIA_EXPORT Q_DECL_IMPORT
+#    define Q_MULTIMEDIA_EXPORT Q_DECL_IMPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
+#    define Q_TELEPHONY_EXPORT Q_DECL_IMPORT
 #    if QTM_SERVICEFW_SYMBIAN_DATABASEMANAGER_SERVER
 #      define Q_SERVICEFW_EXPORT
 #    else
@@ -142,6 +158,8 @@
 #    endif
 #    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #    define Q_SENSORS_EXPORT Q_DECL_IMPORT
+#    define Q_FEEDBACK_EXPORT Q_DECL_IMPORT
+#    define Q_GALLERY_EXPORT Q_DECL_IMPORT
 #    define Q_ORGANIZER_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
@@ -155,9 +173,12 @@
 #    define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #    define Q_MULTIMEDIA_EXPORT Q_DECL_EXPORT
 #    define Q_MESSAGING_EXPORT Q_DECL_EXPORT
+#    define Q_TELEPHONY_EXPORT Q_DECL_EXPORT
 #    define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #    define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #    define Q_SENSORS_EXPORT Q_DECL_EXPORT
+#    define Q_FEEDBACK_EXPORT Q_DECL_EXPORT
+#    define Q_GALLERY_EXPORT Q_DECL_EXPORT
 #    define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #  else
 #    define Q_BEARER_EXPORT
@@ -167,9 +188,12 @@
 #    define Q_LOCATION_EXPORT
 #    define Q_MULTIMEDIA_EXPORT
 #    define Q_MESSAGING_EXPORT
+#    define Q_TELEPHONY_EXPORT
 #    define Q_SERVICEFW_EXPORT
 #    define Q_SYSINFO_EXPORT
 #    define Q_SENSORS_EXPORT
+#    define Q_FEEDBACK_EXPORT
+#    define Q_GALLERY_EXPORT
 #    define Q_ORGANIZER_EXPORT
 #  endif
 #endif
@@ -206,3 +230,4 @@
 QT_USE_NAMESPACE
 
 #endif // QMOBILITYGLOBAL_H
+

@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
  
   \brief The QContact class represents an addressbook contact.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
 
   Individual contacts, groups, and other types of contacts are represented with

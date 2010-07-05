@@ -774,6 +774,8 @@ public:
 	IMPORT_C static CContactDatabase* CreateL(const TDesC& aFileName,TThreadAccess aAccess=ESingleThread);
 	IMPORT_C static CContactDatabase* ReplaceL(TThreadAccess aAccess=ESingleThread);
 	IMPORT_C static CContactDatabase* ReplaceL(const TDesC& aFileName,TThreadAccess aAccess=ESingleThread);
+	IMPORT_C static CContactDatabase* OpenV2L(TThreadAccess aAccess=ESingleThread);
+	IMPORT_C static CContactDatabase* CreateV2L(TThreadAccess aAccess=ESingleThread);
 	// asynchronous Open
 	IMPORT_C static CContactOpenOperation* Open(TRequestStatus& aStatus, TThreadAccess aAccess=ESingleThread);
 	IMPORT_C static CContactOpenOperation* Open(const TDesC& aFileName, TRequestStatus& aStatus, TThreadAccess aAccess=ESingleThread);

@@ -1,42 +1,42 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- contactsengines.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Qt Contacts Manager Engines</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- contactsengines.qdoc -->
+  <title>Qt Mobility Project 1.1: Qt Contacts Manager Engines</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Contacts Manager Engines<br /><span class="subtitle"></span>
-</h1>
-<ul><li><a href="#introduction">Introduction</a></li>
-<li><a href="#information-for-clients">Information For Clients</a></li>
-<ul><li><a href="#where-is-the-data-stored">Where Is The Data Stored?</a></li>
-<li><a href="#schema-differences">Schema Differences</a></li>
-<li><a href="#provided-engines">Provided Engines</a></li>
-<ul><li><a href="#in-memory-example-engine">In-Memory Example Engine</a></li>
-<li><a href="#symbian-engine">Symbian Engine</a></li>
-<li><a href="#symbian-sim-engine">Symbian Sim Engine</a></li>
-<li><a href="#maemo-5-fremantle-engine">Maemo 5 (Fremantle) Engine</a></li>
-<li><a href="#windows-ce-engine">Windows CE Engine</a></li>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Qt Contacts Manager Engines</li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#introduction">Introduction</a></li>
+<li class="level1"><a href="#information-for-clients">Information For Clients</a></li>
+<li class="level2"><a href="#where-is-the-data-stored">Where Is The Data Stored?</a></li>
+<li class="level2"><a href="#schema-differences">Schema Differences</a></li>
+<li class="level2"><a href="#provided-engines">Provided Engines</a></li>
+<li class="level3"><a href="#in-memory-example-engine">In-Memory Example Engine</a></li>
+<li class="level3"><a href="#symbian-engine">Symbian Engine</a></li>
+<li class="level3"><a href="#symbian-sim-engine">Symbian Sim Engine</a></li>
+<li class="level3"><a href="#maemo-5-fremantle-engine">Maemo 5 (Fremantle) Engine</a></li>
+<li class="level3"><a href="#windows-ce-engine">Windows CE Engine</a></li>
+<li class="level1"><a href="#information-for-engine-implementors">Information For Engine Implementors</a></li>
+<li class="level2"><a href="#which-functions-do-i-need-to-implement">Which Functions Do I Need To Implement</a></li>
+<li class="level3"><a href="#mandatory-functions">Mandatory Functions</a></li>
+<li class="level3"><a href="#optional-functionality">Optional Functionality</a></li>
+<li class="level3"><a href="#optional-implementation">Optional Implementation</a></li>
+<li class="level2"><a href="#which-signals-do-i-need-to-emit">Which Signals Do I Need To Emit</a></li>
+<li class="level2"><a href="#other-considerations">Other Considerations</a></li>
+<li class="level2"><a href="#example-implementation">Example Implementation</a></li>
 </ul>
-</ul>
-<li><a href="#information-for-engine-implementors">Information For Engine Implementors</a></li>
-<ul><li><a href="#which-functions-do-i-need-to-implement">Which Functions Do I Need To Implement</a></li>
-<ul><li><a href="#mandatory-functions">Mandatory Functions</a></li>
-<li><a href="#optional-functionality">Optional Functionality</a></li>
-<li><a href="#optional-implementation">Optional Implementation</a></li>
-</ul>
-<li><a href="#which-signals-do-i-need-to-emit">Which Signals Do I Need To Emit</a></li>
-<li><a href="#other-considerations">Other Considerations</a></li>
-<li><a href="#example-implementation">Example Implementation</a></li>
-</ul>
-</ul>
+</div>
+<h1 class="title">Qt Contacts Manager Engines</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The <a href="qcontactmanager.html">QContactManager</a> interface provided to clients to allow access to contact information depends on an implementation of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> existing. This engine provides the methods which are called by the manager. An engine is identified by its URI, which is the name reported to clients through the <a href="qcontactmanager.html#managerUri">QContactManager::managerUri</a>() function. The URI of a manager is built by combining its name, version and relevant construction parameters.</p>
@@ -215,10 +215,11 @@
 <a name="example-implementation"></a>
 <h3>Example Implementation</h3>
 <p>There are several implementations of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> available in the Qt Mobility source code repository. In particular, the &quot;memory&quot; engine provides an implementation of an in-memory, anonymous datastore which supports every feature in the API, and therefore is useful for demonstration purposes. Be aware, however, that the implementation of all functionality in the &quot;memory&quot; engine is naive and not performant, and should not be copied in any real engine implementation (e.g&#x2e;, to perform filtering, it reads all contacts from the (in-memory) database, and checks one by one for matches; a real engine, on the other hand, might perform a database query to return the results directly, rather than performing n-reads).</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

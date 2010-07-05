@@ -66,6 +66,7 @@ public:
 
 /*!
     \class QServiceFilter
+    
     \ingroup servicefw
     \brief The QServiceFilter class defines criteria for defining a sub-set of 
     all available services.
@@ -481,7 +482,7 @@ QDataStream &operator>>(QDataStream &in, QServiceFilter &sf)
     quint32 storedMagicNumber;
     in >> storedMagicNumber;
     if (storedMagicNumber != magicNumber) {
-        qWarning() << "Datastream doesn't provide searialized QServiceFilter";
+        qWarning() << "Datastream doesn't provide serialized QServiceFilter";
         return in;
     }
 

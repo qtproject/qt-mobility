@@ -59,6 +59,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactMemoryEngine
+  
+  \inmodule QtContacts
+  
   \brief The QContactMemoryEngine class provides an in-memory implementation
   of a contacts backend.
  

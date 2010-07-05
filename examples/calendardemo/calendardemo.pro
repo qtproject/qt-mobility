@@ -16,12 +16,14 @@ SOURCES += src/main.cpp \
            src/calendardemo.cpp \
            src/monthpage.cpp \
            src/daypage.cpp \
-           src/eventeditpage.cpp
+           src/eventeditpage.cpp \
+           src/todoeditpage.cpp
            
 HEADERS += src/calendardemo.h \
            src/monthpage.h \
            src/daypage.h \
-           src/eventeditpage.h
+           src/eventeditpage.h \
+           src/todoeditpage.h
 
 INCLUDEPATH += . \
     ../../include \

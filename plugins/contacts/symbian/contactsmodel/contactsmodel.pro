@@ -53,7 +53,6 @@ headers.sources = inc/cntdef.h\
                   inc/cntmodel.rh\
                   inc/cntdef.hrh\
                   inc/cntviewstore.h\
-                  inc/cntpredictivesearch.h\
                   cntvcard/cntvcard.h\
                  
 

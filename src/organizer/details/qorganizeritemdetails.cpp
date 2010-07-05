@@ -50,53 +50,10 @@ QTM_BEGIN_NAMESPACE
 
 
 
-/* ==================== QOrganizerItemAttendee ======================= */
-// XXX TODO: attendees can also have participation status / role.
-/*!
-   \class QOrganizerItemAttendee
-   \brief The QOrganizerItemAttendee class contains the information of an attendee of the event to which the organizer item corresponds.
- */
-
-/*!
-   \variable QOrganizerItemAttendee::DefinitionName
-   The constant string which identifies the definition of details which contain the information about an attendee.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeDisplayLabel
-
-   The constant key for which the display label value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeContactUri
-
-   The constant key for which the contact URI value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "AttendeeContactUri");
-
-/*!
-   \variable QOrganizerItemAttendee::FieldAttendeeParticipationStatus
-
-   The constant key for which the participation status value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.  XXX TODO: detail linking instead?
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
-
-
-
-
-
-
-
-
 /* ==================== QOrganizerItemDescription ======================= */
 /*!
    \class QOrganizerItemDescription
+   \ingroup organizer-details
    \brief The QOrganizerItemDescription class contains some arbitrary information which is relevant to the organizer item.
  */
 
@@ -133,11 +90,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 /* ==================== QOrganizerItemDisplayLabel ======================= */
 /*!
    \class QOrganizerItemDisplayLabel
+   \ingroup organizer-details
    \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
 */
 
 /*!
-   \fn QOrganizerItemDisplayLabel::label() const
+   \fn void QOrganizerItemDisplayLabel::setLabel(const QString& label)
+   Sets the display label of the organizer item to \a label.
+ */
+
+/*!
+   \fn QString QOrganizerItemDisplayLabel::label() const
    Returns the display label of the organizer item.
  */
 
@@ -166,6 +129,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 /* ==================== QOrganizerEventTimeRange ======================= */
 /*!
    \class QOrganizerEventTimeRange
+   \ingroup organizer-details
    \brief The QOrganizerEventTimeRange class contains the start and end dates and times of a recurring event series,
           or occurrence of an event.
 */
@@ -195,16 +159,31 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldEndDateTime, "EndDateTim
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDateTime");
 
 
+/*!
+    \fn QOrganizerEventTimeRange::startDateTime() const
+    Returns the event timerange's start date and time as QDateTime.
+ */
 
+/*!
+    \fn QOrganizerEventTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    Sets the event timerange's start date and time to \a startDateTime.
+ */
 
+/*!
+    \fn QOrganizerEventTimeRange::endDateTime() const
+    Returns the event timerange's due date and time as QDateTime.
+ */
 
-
-
+/*!
+    \fn QOrganizerEventTimeRange::setEndDateTime(const QDateTime& dueDateTime)
+    Sets the event timerange's due date and time to \a dueDateTime.
+ */
 
 /* ==================== QOrganizerItemGuid ======================= */
 
 /*!
    \class QOrganizerItemGuid
+   \ingroup organizer-details
    \brief The QOrganizerItemGuid class contains the globally unique identifier of the organizer item, which can be used for synchronization purposes.
  */
 
@@ -241,6 +220,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 /* ==================== QOrganizerItemInstanceOrigin.h ======================= */
 /*!
    \class QOrganizerItemInstanceOrigin
+   \ingroup organizer-details
    \brief The QOrganizerItemInstanceOrigin class contains information about when and from where or whom the organizer item originated.
  */
 
@@ -268,16 +248,32 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "Pare
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "OriginalDate");
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::parentLocalId() const
+    Returns the local id of the item instance origin's parent item.
+ */
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::setParentLocalId(QOrganizerItemLocalId parentId)
+    Sets the parent id of this instance origin item to \a parentId.
+ */
 
+/*!
+   \fn QOrganizerItemInstanceOrigin::originalDate() const
+    Returns the original date of this instance origin item.
+ */
 
-
+/*!
+   \fn QOrganizerItemInstanceOrigin::setOriginalDate(const QDate& date)
+    Sets the origin date to \a date.
+ */
 
 
 /* ==================== QOrganizerJournalTimeRange ======================= */
 // XXX TODO: time range or just single instant in time?
 /*!
    \class QOrganizerJournalTimeRange
+   \ingroup organizer-details
 
    \brief The QOrganizerJournalTimeRange class contains information about
    the date and time for which a journal entry has been created.
@@ -299,6 +295,15 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::DefinitionName, "JournalTim
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryDateTime");
 
+/*!
+   \fn QOrganizerJournalTimeRange::entryDateTime() const
+   Returns the journal entry date and time as QDateTime.
+ */
+
+/*!
+   \fn QOrganizerJournalTimeRange::setEntryDateTime(const QDateTime& entryDateTime)
+   Sets the journal entry date and time to \a entryDateTime.
+ */
 
 /* ==================== QOrganizerItemLocation ======================= */
 // XXX TODO: do we include all three pieces of data into a single detail
@@ -306,6 +311,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
 // Or, do we have three separate detail types?
 /*!
    \class QOrganizerItemLocation
+   \ingroup organizer-details
 
    \brief The QOrganizerItemLocation class contains information about a location which is related to the organizer item in some manner.
  */
@@ -342,11 +348,40 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
 
+/*!
+    \fn QOrganizerItemLocation::geoLocation() const
+    Returns a string of geolication value.
+ */
 
+/*!
+    \fn QOrganizerItemLocation::setGeoLocation(const QString& stringCoords)
+    Sets geolication value to \a stringCoords.
+ */
+
+/*!
+    \fn QOrganizerItemLocation::locationName() const
+    Returns a string of location name.
+ */
+
+/*!
+   \fn QOrganizerItemLocation::setLocationName(const QString& locationName)
+   Sets location name to \a locationName.
+ */
+
+/*!
+    \fn QOrganizerItemLocation::address() const
+    Returns a string of address name.
+ */
+
+/*!
+   \fn QOrganizerItemLocation::setAddress(const QString& address)
+   Sets address name to \a address.
+ */
 
 /* ==================== QOrganizerItemComment ======================= */
 /*!
    \class QOrganizerItemComment
+   \ingroup organizer-details
    \brief The QOrganizerItemComment class contains some arbitrary information which is relevant to the organizer item.
  */
 
@@ -374,48 +409,26 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    Returns a string for a comment associated with an organizer item.
  */
 
-
-
-
-
-/* ==================== QOrganizerItemParticipationRole ======================= */
-// XXX TODO: is participation a detail?  or status/role?  Attendees can have a participation role/status
-// so how do we implement that?
-// my personal opinion is that this participation detail should be for the "self" person
-// ie, the owner of the calendar.  other attendee participation should be listed in the attendee detail.
-/*!
-   \class QOrganizerItemParticipation
-   \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the
-        calendar will participate in the event or appointment described by the organizer item.
- */
-
-/*!
-   \variable QOrganizerItemParticipation::DefinitionName
-   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::DefinitionName, "Participation");
-
-/*!
-   \variable QOrganizerItemParticipation::FieldParticipationRole
-
-   The constant key for which the participation role value is stored in details of
-   the QOrganizerItemParticipation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "ParticipationRole");
-
-/*!
-   \variable QOrganizerItemParticipation::FieldParticipationStatus
-
-   The constant key for which the participation status value is stored in details of
-   the QOrganizerItemParticipation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationStatus, "ParticipationStatus");
-
 /* ==================== QOrganizerItemPriority ======================= */
 /*!
    \class QOrganizerItemPriority
+   \ingroup organizer-details
    \brief The QOrganizerItemPriority class contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
  */
+
+/*!
+   \enum QOrganizerItemPriority::Priority
+   \value UnknownPriority
+   \value HighestPriority
+   \value ExtremelyHighPriority
+   \value VeryHighPriority
+   \value HighPriority
+   \value MediumPriority
+   \value LowPriority
+   \value VeryLowPriority
+   \value ExtremelyLowPriority
+   \value LowestPriority
+*/
 
 /*!
    \variable QOrganizerItemPriority::DefinitionName
@@ -431,43 +444,17 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::DefinitionName, "Priority");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
 
-
-
-
-
-
-
-
-/* ==================== QOrganizerItemProvenance ======================= */
 /*!
-   \class QOrganizerItemProvenance
-   \brief The QOrganizerItemProvenance class contains information about when and from where or whom the organizer item originated.
+   \fn QOrganizerItemPriority::setPriority(Priority priority)
+
+   Sets the priority associated with an organizer item to \a priority.
  */
 
 /*!
-   \variable QOrganizerItemProvenance::DefinitionName
-   The constant string which identifies the definition of details which contain the provenance of an organizer item.
+   \fn Priority QOrganizerItemPriority::priority() const
+
+   Returns the priority associated with an organizer item.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance");
-
-/*!
-   \variable QOrganizerItemProvenance::FieldReceivedFrom
-
-   The constant key for which the contact URI from whom the item was received from is stored in details of
-   the QOrganizerItemProvenance type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFrom");
-
-/*!
-   \variable QOrganizerItemProvenance::FieldTimestamp
-
-   The constant key for which the receipt timestamp is stored in details of
-   the QOrganizerItemProvenance type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
-
-
-
 
 
 
@@ -476,65 +463,103 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
 /* ==================== QOrganizerItemRecurrence ======================= */
 /*!
    \class QOrganizerItemRecurrence
+   \ingroup organizer-details
    \brief The QOrganizerItemRecurrence class contains a list of rules and dates on which the recurrent item occurs,
           and a list of rules and dates on which exceptions occur.
  */
+
+/*!
+   \variable QOrganizerItemRecurrence::DefinitionName
+   The constant string which identifies the definition of details which are organizer item recurrence specifications.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::DefinitionName, "Recurrence");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldRecurrenceRules
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the rules for when an
+   item should recur.
+
+   When multiple rules are specified, the list of recurrence dates are
+   calculated separately for each rule and the results are unioned.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceRules, "RecurrenceRules");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldRecurrenceDates
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the dates on which an
+   item should recur.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldRecurrenceDates, "RecurrenceDates");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldExceptionRules
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the rules for when an
+   item should not recur.
+
+   If a recurrence rule or the recurrence dates list specifies that an item should occur on a
+   particular date and any of the exception rules include that date, the item should not occur on
+   that date.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionRules, "ExceptionRules");
+
+/*!
+   \variable QOrganizerItemRecurrence::FieldExceptionDates
+
+   The constant key for the value which is stored in details of the
+   QOrganizerItemRecurrence type which describes the dates on which an
+   item should not recur.
+
+   If a recurrence rule or the recurrence dates list specifies that an item should occur on a
+   particular date and that date appears in the exception dates list, the item should not occur on
+   that date.
+ */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "ExceptionDates");
 
-
-
-
-
-
-
-
-
-
-
-/* ==================== QOrganizerItemRsvpInfo ======================= */
 /*!
-   \class QOrganizerItemRsvpInfo
-   \brief The QOrganizerItemRsvpInfo class contains information about when, where and to whom a person should RSVP or has RSVP'ed in order to signify their intention to attend the event or appointment described by the organizer item.
+   \fn QOrganizerItemRecurrence::recurrenceDates() const
+   Returns a list of recurrence dates.
  */
 
 /*!
-   \variable QOrganizerItemRsvpInfo::DefinitionName
-   The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
+   \fn QOrganizerItemRecurrence::setRecurrenceDates(const QList<QDate>& rdates)
+   Sets a list of recurrence dates to \a rdates.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
 
 /*!
-   \variable QOrganizerItemRsvpInfo::FieldDeadline
-
-   The constant key for which the deadline timestamp is stored in details of
-   the QOrganizerItemRsvpInfo type.
+   \fn QOrganizerItemRecurrence::exceptionRules() const
+   Returns a list of exception rules.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
 
 /*!
-   \variable QOrganizerItemRsvpInfo::FieldResponseDate
-
-   The constant key for which the response date timestamp is stored in details of
-   the QOrganizerItemRsvpInfo type.
+   \fn QOrganizerItemRecurrence::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& xrules)
+   Sets a list of exception rules to \a xrules.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate");
 
 /*!
-   \variable QOrganizerItemRsvpInfo::FieldContactUri
-
-   The constant key for which the contact URI to whom the RSVP must be sent is stored in details of
-   the QOrganizerItemRsvpInfo type.
+   \fn QOrganizerItemRecurrence::recurrenceRules() const
+   Returns a list of recurrence rules.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
 
+/*!
+   \fn QOrganizerItemRecurrence::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+   Sets a list of recurrence rules to \a rrules.
+ */
 
+/*!
+   \fn QOrganizerItemRecurrence::exceptionDates() const
+   Returns a list of exception dates.
+ */
 
-
-
+/*!
+   \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
+   Sets a list of exception dates to \a exdates.
+ */
 
 
 
@@ -544,6 +569,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
 /* ==================== QOrganizerItemTimestamp ======================= */
 /*!
    \class QOrganizerItemTimestamp
+   \ingroup organizer-details
    \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
  */
 
@@ -598,6 +624,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creat
 /* ==================== QOrganizerTodoProgress ======================= */
 /*!
    \class QOrganizerTodoProgress
+   \ingroup organizer-details
    \brief The QOrganizerTodoProgress class contains information about the progress of a todo item.
  */
 
@@ -631,13 +658,47 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldPercentageComplete, "Perce
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "FinishedDateTime");
 
+/*!
+  \enum QOrganizerTodoProgress::Status
+  Enumerates the various possible types of todo item status
+  \value StatusNotStarted The todo item hasn't been started yet
+  \value StatusInProgress The todo item is current in progress
+  \value StatusComplete The todo item has finished
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::status() const
+  Returns the todo progress item's current status as QOrganizerTodoProgress::Status.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::setStatus(Status status)
+  Sets the todo progress item's current status to \a status.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::finishedDateTime() const
+  Returns the todo progress item's finished date and timeas QDateTime.
+ */
 
+/*!
+  \fn QOrganizerTodoProgress::setFinishedDateTime(const QDateTime& finishedDateTime)
+  Sets the todo progress item's finished date and time to \a finishedDateTime.
+ */
+
+/*!
+  \fn QOrganizerTodoProgress::percentageComplete() const
+  Returns the todo progress item's completion percentage.
+ */
+
+/*!
+  \fn QOrganizerTodoProgress::setPercentageComplete(int percentage)
+  Sets the todo progress item's completion percentage to \a percentage.
+ */
 /* ==================== QOrganizerTodoTimeRange ======================= */
 /*!
    \class QOrganizerTodoTimeRange
+   \ingroup organizer-details
    \brief The QOrganizerTodoTimeRange class contains information about the time range of a todo item.
  */
 
@@ -663,10 +724,30 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDate
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime");
 
+/*!
+    \fn QOrganizerTodoTimeRange::startDateTime() const
+    Returns the todo timerange's start date and time as QDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::setStartDateTime(const QDateTime& startDateTime)
+    Sets the todo timerange's start date and time to \a startDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::dueDateTime() const
+    Returns the todo timerange's due date and time as QDateTime.
+ */
+
+/*!
+    \fn QOrganizerTodoTimeRange::setDueDateTime(const QDateTime& dueDateTime)
+    Sets the todo timerange's due date and time to \a dueDateTime.
+ */
 
 /* ==================== QOrganizerItemType ======================= */
 /*!
    \class QOrganizerItemType
+   \ingroup organizer-details
    \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
  */
 

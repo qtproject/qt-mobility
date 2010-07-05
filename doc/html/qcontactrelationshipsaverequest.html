@@ -1,80 +1,85 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qcontactrelationshipsaverequest.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactRelationshipSaveRequest Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QContactRelationshipSaveRequest"></a>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qcontactrelationshipsaverequest.cpp -->
+  <title>Qt Mobility Project 1.1: QContactRelationshipSaveRequest Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactRelationshipSaveRequest Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QContactRelationshipSaveRequest</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QContactRelationshipSaveRequest Class Reference</h1>
 <p>The QContactRelationshipSaveRequest class allows a client to asynchronously request that certain groups be saved to a contacts store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactRelationshipSaveRequest&gt;</pre><p>Inherits <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>.</p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QContactRelationshipSaveRequest&gt;</pre><p>Inherits <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>.</p>
 <ul>
 <li><a href="qcontactrelationshipsaverequest-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest">QContactRelationshipSaveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#relationships">relationships</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#setRelationship">setRelationship</a></b> ( const QContactRelationship &amp; <i>contactRelationship</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>contactRelationships</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest">QContactRelationshipSaveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationshipsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QContactRelationship&gt; </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationshipsaverequest.html#relationships">relationships</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationshipsaverequest.html#setRelationship">setRelationship</a></b> ( const QContactRelationship &amp; <i>contactRelationship</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>contactRelationships</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">9 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactRelationshipSaveRequest class allows a client to asynchronously request that certain groups be saved to a contacts store.</p>
 <p>For a QContactRelationshipSaveRequest, the <a href="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either the individual item errors (which may be retrieved by calling <a href="qcontactrelationshipsaverequest.html#errorMap">errorMap</a>()), or the resultant relationships (which may be retrieved by calling <a href="qcontactrelationshipsaverequest.html#relationships">relationships</a>()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qcontactabstractrequest.html#error">error</a>()) is updated.</p>
 <p>Please see the class documentation of <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> for more information about the usage of request classes and ownership semantics.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/QContactRelationshipSaveRequest"></a>
 <h3 class="fn"><a name="QContactRelationshipSaveRequest"></a>QContactRelationshipSaveRequest::QContactRelationshipSaveRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a new relationship save request whose parent is the specified <i>parent</i></p>
-<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactRelationshipSaveRequest::errorMap () const</h3>
 <p>Returns the map of input relationship list indices to errors which occurred</p>
-<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/relationships"></a>
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipSaveRequest::relationships () const</h3>
 <p>Returns the list of relationships that will be saved if called prior to calling <tt>start()</tt>, otherwise returns the list of relationships as they were saved in the contacts store</p>
 <p>See also <a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/setRelationship"></a>
 <h3 class="fn"><a name="setRelationship"></a>void QContactRelationshipSaveRequest::setRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>contactRelationship</i> )</h3>
 <p>Sets the relationship to save to be <i>contactRelationship</i>. Equivalent to calling:</p>
-<pre>    setRelationships(QList&lt;QContactRelationship&gt;() &lt;&lt; contactRelationships);</pre>
-<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/setRelationships"></a>
+<pre class="highlightedCode brush: cpp">    setRelationships(QList&lt;QContactRelationship&gt;() &lt;&lt; contactRelationships);</pre>
 <h3 class="fn"><a name="setRelationships"></a>void QContactRelationshipSaveRequest::setRelationships ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>contactRelationships</i> )</h3>
 <p>Sets the relationships to save to be <i>contactRelationships</i></p>
 <p>See also <a href="qcontactrelationshipsaverequest.html#relationships">relationships</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

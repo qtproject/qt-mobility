@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactManager
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.

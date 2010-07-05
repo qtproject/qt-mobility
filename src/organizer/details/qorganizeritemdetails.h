@@ -46,18 +46,14 @@
 // provided by the Qt Organizer API.
 
 #include "qorganizereventtimerange.h"
-#include "qorganizeritemattendee.h"
 #include "qorganizeritemcomment.h"
 #include "qorganizeritemdescription.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemguid.h"
 #include "qorganizeriteminstanceorigin.h"
 #include "qorganizeritemlocation.h"
-#include "qorganizeritemparticipation.h"
 #include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
 #include "qorganizeritemrecurrence.h"
-#include "qorganizeritemrsvpinfo.h"
 #include "qorganizeritemtimestamp.h"
 #include "qorganizeritemtype.h"
 #include "qorganizerjournaltimerange.h"
