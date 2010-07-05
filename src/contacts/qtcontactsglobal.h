@@ -165,12 +165,6 @@ template<int N> bool operator!=(const QString& b, const QLatin1Constant<N>& a)
 #define Q_DECLARE_LATIN1_CONSTANT(varname, str) static const QLatin1Constant<sizeof(str)> varname
 #define Q_DEFINE_LATIN1_CONSTANT(varname, str) const QLatin1Constant<sizeof(str)> varname = {str}
 
-/* XXX - deprecation stuff */
-#define Q_DECLARE_LATIN1_LITERAL(v, s) Q_DECLARE_LATIN1_CONSTANT(v, s)
-#define Q_DEFINE_LATIN1_LITERAL(v, s) Q_DEFINE_LATIN1_CONSTANT(v, s)
-template <int N> struct Latin1Literal : public QLatin1Constant<N>
-{ };
-
 QTM_END_NAMESPACE
 #endif // QLATIN1CONSTANT_DEFINED
 

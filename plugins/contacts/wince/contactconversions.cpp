@@ -1440,9 +1440,8 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
 
                     QContactFilter d = action->contactFilter(af.value());
                     delete action; // clean up.
-                    if (!QContactManagerEngine::validateActionFilter(d))
-                        return QString();
-                    
+                    //if (!QContactManagerEngine::validateActionFilter(d))
+                    //    return QString();
                     str = convertFilterToQueryString(d);
                     if (str.isEmpty())
                         return QString();
