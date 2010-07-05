@@ -134,8 +134,4 @@ EXPORTS
 	?staticMetaObject@QGeoPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 133 NONAME ; struct QMetaObject const QtMobility::QGeoPositionInfoSource::staticMetaObject
 	?staticMetaObject@QNmeaPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 134 NONAME ; struct QMetaObject const QtMobility::QNmeaPositionInfoSource::staticMetaObject
 	?staticMetaObject@QGeoSatelliteInfoSource@QtMobility@@2UQMetaObject@@B @ 135 NONAME ; struct QMetaObject const QtMobility::QGeoSatelliteInfoSource::staticMetaObject
-	?getNmeaLatLong@QLocationUtils@QtMobility@@SA_NABVQByteArray@@D0DPAN1@Z @ 136 NONAME ; bool QtMobility::QLocationUtils::getNmeaLatLong(class QByteArray const &, char, class QByteArray const &, char, double *, double *)
-	?getNmeaTime@QLocationUtils@QtMobility@@SA_NABVQByteArray@@PAVQTime@@@Z @ 137 NONAME ; bool QtMobility::QLocationUtils::getNmeaTime(class QByteArray const &, class QTime *)
-	?getPosInfoFromNmea@QLocationUtils@QtMobility@@SA_NPBDHPAVQGeoPositionInfo@2@PA_N@Z @ 138 NONAME ; bool QtMobility::QLocationUtils::getPosInfoFromNmea(char const *, int, class QtMobility::QGeoPositionInfo *, bool *)
-	?hasValidNmeaChecksum@QLocationUtils@QtMobility@@SA_NPBDH@Z @ 139 NONAME ; bool QtMobility::QLocationUtils::hasValidNmeaChecksum(char const *, int)
 
