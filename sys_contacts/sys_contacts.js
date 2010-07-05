@@ -90,6 +90,20 @@ function automatedTestEnvironment(){
 }
 
 
+// not ideal, there is need to programaticly check that 
+//  the contact details dialog is not longer showing, ie no "Save" button
+function waitForSave(){
+    for (var loop=0; loop < 5; loop++){
+        if (getLabels().contains("&Save"))
+            wait(1000); // wait to try again
+        else
+            break;
+    }
+    
+    // should not happen
+    verify(!getLabels().contains("&Save"));
+}
+
 testcase = {
 
 
@@ -97,7 +111,10 @@ testcase = {
     {
         startApplication("samplephonebook");
 
-        if (!automatedTestEnvironment()){
+        if (automatedTestEnvironment()){
+            var contactList = findWidget( { className: "QListWidget" } );
+            verify(getValue(contactList).length == 0, "There must be zero contacts prior to running test, there are the following contacts:" + getValue(contactList));
+        }else{
             prompt(twiki('---+++ Initialize Contacts Test case
     1. Start the *samplephonebook* application on target and select a *Store:* value to suit !QtContacts Backend Engine for this test
                 '));
@@ -125,7 +142,8 @@ testcase = {
             enter(avatar, "File name:");
             // need to accept entry due to autocompletion
             keyClick(Qt.Key_Enter);
-            select("&Save");
+            select("Save");
+            waitForSave();
         }else{
             prompt(twiki('---+++ Verify Add Contact
     1. Click the *Add* button in *samplephonebook* application and in dialog that presents press the *Add Contact* button
@@ -156,8 +174,10 @@ testcase = {
     checkAddedContactName: function(name)
     {
         if (automatedTestEnvironment()){
+            waitForSave();
             var contactList = findWidget( { className: "QListWidget" } );
-            select(name, contactList[0]);
+            mouseClick(contactList[0]);
+            select(name);
         }else{
             prompt(twiki('---+++ Verify Added Contact
     1. *Verify* that the Contact List contains added contact, eg: =' + name +'=
@@ -168,7 +188,7 @@ testcase = {
     },
 
 
-    checkContactDetails_data : {
+    checkUpdateContactDetails_data : {
         Name1 : ["Name1", "Phone1", "Email1", "Address1", "testdata/avatar1.png"],
         Name2 : ["Name2", "Phone2", "Email2", "Address2", "testdata/avatar2.png"],
         Name3 : ["Name3", "Phone3", "Email3", "Address3", "testdata/avatar3.png"]
@@ -176,20 +196,23 @@ testcase = {
 
     /* Requirement: Verify the contact details and confirm that it can be updated */
     /* verify added contact details and update contact name */
-    checkContactDetails : function (name, phone, email, address, avatar)
+    checkUpdateContactDetails : function (name, phone, email, address, avatar)
     {
         if (automatedTestEnvironment()){
+            waitForSave();
             var contactList = findWidget( { className: "QListWidget" } );
-            select(name, contactList[0]);
-            select("&Edit");
+            mouseClick(contactList[0]);
+            select(name);
+            select("Edit");
             compare(getText("Name"), name);
             enter(name + ' 1', "Name");
             compare(getText("Phone"), phone);
             compare(getText("Email"), email);
             compare(getText("Address"), address);
-            select("&Save");
+            select("Save");
+            waitForSave();
         }else{
-            prompt(twiki('---+++ Verify View Contact Details
+            prompt(twiki('---+++ Verify View/Update Contact Details
     1. In *samplephonebook* application select contact *' + name + '* from Contact List
     1. Click the *Edit* button
     1. For all text fields shown in Contact Details dialog *Verify* they match the values entered ealier, eg:
@@ -199,7 +222,7 @@ testcase = {
     | Email   | ' + email   + ' |
     | Address | ' + address + ' |
     1. *Verify* Avatar displayed looks like *'  + avatar + '*
-    1. Click the *Cancel* button
+    1. Click the *Save* button
                 '));
         }
     },
@@ -237,13 +260,23 @@ testcase = {
     /* Test the "Apply &Filter" function */
     filterCheck : function(name, exists, partialMatch, message) {
         if (automatedTestEnvironment()){
-            var menuItemName = "Apply &Filter...";
-            var menuItem = contactsMenuItem(menuItemName);
-            verify(menuItem != undefined, "No such \"" + menuItemName + "\" menu");
-            select(menuItem, menuBar());
-            enter(name, "Name");
-            select("&Filter");
-            verify(contactFind(name, partialMatch) == exists, "Apply filter failed: " +name + ":" + exists + " " + message);
+            if (checkOS("maemo")){
+                skip("Maemo menus not supported yet", SkipAll);
+                /* mouseClick(400,10); // raise menu manually
+                var maemoMenuBar = findByProperty({ className : "QMaemo5ApplicationMenu" });
+                print("Maemo menu = " + maemoMenuBar);
+                print("filterCheck:" + activeWidgetInfo());
+                */
+            }else{
+                print("filterCheck:" + activeWidgetInfo());
+                var menuItemName = "Apply &Filter...";
+                var menuItem = contactsMenuItem(menuItemName);
+                verify(menuItem != undefined, "No such \"" + menuItemName + "\" menu");
+                select(menuItem, menuBar());
+                enter(name, "Name");
+                select("&Filter");
+                verify(contactFind(name, partialMatch) == exists, "Apply filter failed: " +name + ":" + exists + " " + message);
+            }
         }else{
             if (exists){ 
                 prompt(twiki('---+++ Verify Contact Filter
@@ -271,8 +304,12 @@ testcase = {
     /* Test the "Clear Filter" function, this is pre-requisite for deleteContact(name) */
     clearFilterCheck : function(name){
         if (automatedTestEnvironment()){
-            select(contactsMenuItem("&Clear Filter"), menuBar());
-            verify(contactFind(name), "Clear filter failed: Looking for " + name);
+            if (checkOS("maemo")){
+                skip("Maemo menus not supported yet", SkipAll);
+            }else{
+                select(contactsMenuItem("&Clear Filter"), menuBar());
+                verify(contactFind(name), "Clear filter failed: Looking for " + name);
+            }
         }else{
             prompt(twiki('---+++ Verify Clearing Contact filter
     1. Select menu *Clear Filter*
@@ -292,8 +329,15 @@ testcase = {
     deleteContact : function(name){
         if (automatedTestEnvironment()){
             var contactList = findWidget( { className: "QListWidget" } );
-            select(name, contactList[0]);
-            select("&Delete");
+            mouseClick(contactList[0]);
+            select(name);
+            select("Delete");
+            for (var loop=0; loop < 5;loop++){
+                if (contactFind(name))
+                    wait(1000); // wait to try again
+                else
+                    break;
+            }
             verify(!contactFind(name), "Delete contact failed on " + name);
         } else {
             prompt(twiki('---+++ Verify remove Contact
