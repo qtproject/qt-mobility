@@ -92,111 +92,19 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const
 {
-    *error = QOrganizerItemManager::NoError;
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    QList<QOrganizerItem> retn;
+    // find item instances
+    QList<QOrganizerItem> retn = doFindItemInstances(generator, periodStart, periodEnd, maxCount, error);
 
-    if (periodStart > periodEnd)
-    {
-        *error = QOrganizerItemManager::BadArgumentError;
-        return retn;
+    QOrganizerItemId instanceId;
+    instanceId.setManagerUri(managerUri());
+    instanceId.setLocalId(QOrganizerItemLocalId());
+
+    // clear local ids
+    for( int i = 0; i < retn.count(); ++i) {
+        QOrganizerItem curr = retn.at(i);
+        curr.setId(instanceId);
+        retn.replace(i, curr);
     }
-
-    CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
-
-    // set GUID mapper to use the current calendar
-    d->m_guidMapper.setCalendar(cal);
-
-    std::string nativeId = QString::number(generator.localId()).toStdString();
-
-    if (generator.type() == QOrganizerItemType::TypeEvent)
-    {
-        CEvent *cevent = cal->getEvent(nativeId, calError);
-        *error = d->m_itemTransformer.calErrorToManagerError(calError);
-        if (cevent && *error == QOrganizerItemManager::NoError)
-        {
-            // Get event instance times
-            std::vector< std::time_t > eventInstanceDates;
-            cevent->generateInstanceTimes(periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceDates);
-
-            // Calculate the generator event duration (the occurrences will have the same duration)
-            time_t generatorDuration = cevent->getDateEnd() - cevent->getDateStart();
-
-            // Generate the event occurrences
-            std::vector< std::time_t >::const_iterator i;
-            for (i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i)
-            {
-                QDateTime instanceStartDate = QDateTime::fromTime_t(*i);
-                QDateTime instanceEndDate = QDateTime::fromTime_t(*i + generatorDuration);
-
-                // Ensure that the instance is within the period.
-                // CEvent::generateInstanceTimes seems to sometime return erroneous dates.
-                if (instanceStartDate >= periodStart && instanceEndDate <= periodEnd) {
-                    QOrganizerEventOccurrence eventOcc =
-                            d->m_itemTransformer.convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate);
-                    d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, cevent, false); // false = do not set ids
-                    retn << eventOcc;
-                }
-            }
-
-            // Now we have got the simple occurrences that are generated with the recurrence rules
-            // But events can have also occurrence that are not generated with rules, but saved as
-            // events (because they have become modified). Those occurrences are saved with GUID set
-            // equal to the generator event's GUID.
-            QString eventType = QOrganizerItemType::TypeEvent;
-            QList<QString> occurrenceCandidateIds =
-                    d->m_guidMapper.itemIds(QString::fromStdString(cevent->getGUid()), eventType);
-
-            foreach(QString occurrenceCandidateId, occurrenceCandidateIds) {
-                if (occurrenceCandidateId != QString::fromStdString(cevent->getId())) {
-                    // for all other events than the generator itself
-                    CEvent *coccurenceCandidate = cal->getEvent(occurrenceCandidateId.toStdString(), calError);
-                    if (coccurenceCandidate && *error == QOrganizerItemManager::NoError) {
-                        QDateTime instanceStartDate = QDateTime::fromTime_t(coccurenceCandidate->getDateStart());
-                        QDateTime instanceEndDate = QDateTime::fromTime_t(coccurenceCandidate->getDateEnd());
-
-                        // instance must be within the period
-                        if (instanceStartDate >= periodStart && instanceEndDate <= periodEnd) {
-                            QOrganizerEventOccurrence eventOcc =
-                                    d->m_itemTransformer.convertCEventToQEventOccurrence(coccurenceCandidate, instanceStartDate, instanceEndDate);
-                            d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, coccurenceCandidate, false); // false = do not set ids
-
-                            // change the parent local id, now it must be the generator event, not the occurrence
-                            QString idString = QString::fromStdString(cevent->getId());
-                            QOrganizerItemLocalId localId = idString.toUInt();
-                            eventOcc.setParentLocalId(localId);
-
-                            // insert occurrence to the result list in right position
-                            insertOccurenceSortedByStartDate(&eventOcc, retn);
-                        }
-                    }
-                }
-            }
-
-            // finally the result list might need to be resized
-            if (maxCount > 0) {
-                while (retn.size() > maxCount)
-                    retn.removeLast();
-            }
-        }
-    }
-    else if (generator.type() == QOrganizerItemType::TypeTodo)
-    {
-        CTodo* ctodo = cal->getTodo(nativeId, calError);
-        *error = d->m_itemTransformer.calErrorToManagerError(calError);
-        if (ctodo && *error == QOrganizerItemManager::NoError)
-        {
-            // TODO
-            // Note that in Maemo5 todos can't have occurrences
-        }
-    }
-    else
-    {
-        // Other item types can't have occurrences
-        *error = QOrganizerItemManager::BadArgumentError;
-    }
-
-    cleanupCal( cal );
 
     return retn;
 }
@@ -663,6 +571,117 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
     return retn;
 }
 
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::doFindItemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItem> retn;
+
+    if (periodStart > periodEnd)
+    {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return retn;
+    }
+
+    CCalendar *cal = d->m_mcInstance->getDefaultCalendar();
+
+    // set GUID mapper to use the current calendar
+    d->m_guidMapper.setCalendar(cal);
+
+    std::string nativeId = QString::number(generator.localId()).toStdString();
+
+    if (generator.type() == QOrganizerItemType::TypeEvent)
+    {
+        CEvent *cevent = cal->getEvent(nativeId, calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (cevent && *error == QOrganizerItemManager::NoError)
+        {
+            // Get event instance times
+            std::vector< std::time_t > eventInstanceDates;
+            cevent->generateInstanceTimes(periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceDates);
+
+            // Calculate the generator event duration (the occurrences will have the same duration)
+            time_t generatorDuration = cevent->getDateEnd() - cevent->getDateStart();
+
+            // Generate the event occurrences
+            std::vector< std::time_t >::const_iterator i;
+            for (i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i)
+            {
+                QDateTime instanceStartDate = QDateTime::fromTime_t(*i);
+                QDateTime instanceEndDate = QDateTime::fromTime_t(*i + generatorDuration);
+
+                // Ensure that the instance is within the period.
+                // CEvent::generateInstanceTimes seems to sometime return erroneous dates.
+                if (instanceStartDate >= periodStart && instanceEndDate <= periodEnd) {
+                    QOrganizerEventOccurrence eventOcc =
+                            d->m_itemTransformer.convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate);
+                    d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, cevent, false); // false = do not set ids
+                    retn << eventOcc;
+                }
+            }
+
+            // Now we have got the simple occurrences that are generated with the recurrence rules
+            // But events can have also occurrence that are not generated with rules, but saved as
+            // events (because they have become modified). Those occurrences are saved with GUID set
+            // equal to the generator event's GUID.
+            QString eventType = QOrganizerItemType::TypeEvent;
+            QList<QString> occurrenceCandidateIds =
+                    d->m_guidMapper.itemIds(QString::fromStdString(cevent->getGUid()), eventType);
+
+            foreach(QString occurrenceCandidateId, occurrenceCandidateIds) {
+                if (occurrenceCandidateId != QString::fromStdString(cevent->getId())) {
+                    // for all other events than the generator itself
+                    CEvent *coccurenceCandidate = cal->getEvent(occurrenceCandidateId.toStdString(), calError);
+                    if (coccurenceCandidate && *error == QOrganizerItemManager::NoError) {
+                        QDateTime instanceStartDate = QDateTime::fromTime_t(coccurenceCandidate->getDateStart());
+                        QDateTime instanceEndDate = QDateTime::fromTime_t(coccurenceCandidate->getDateEnd());
+
+                        // instance must be within the period
+                        if (instanceStartDate >= periodStart && instanceEndDate <= periodEnd) {
+                            QOrganizerEventOccurrence eventOcc =
+                                    d->m_itemTransformer.convertCEventToQEventOccurrence(coccurenceCandidate, instanceStartDate, instanceEndDate);
+                            d->m_itemTransformer.fillInCommonCComponentDetails(&eventOcc, coccurenceCandidate);
+
+                            // change the parent local id, now it must be the generator event, not the occurrence
+                            QString idString = QString::fromStdString(cevent->getId());
+                            QOrganizerItemLocalId localId = idString.toUInt();
+                            eventOcc.setParentLocalId(localId);
+
+                            // insert occurrence to the result list in right position
+                            insertOccurenceSortedByStartDate(&eventOcc, retn);
+                        }
+                    }
+                }
+            }
+
+            // finally the result list might need to be resized
+            if (maxCount > 0) {
+                while (retn.size() > maxCount)
+                    retn.removeLast();
+            }
+        }
+    }
+    else if (generator.type() == QOrganizerItemType::TypeTodo)
+    {
+        CTodo* ctodo = cal->getTodo(nativeId, calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (ctodo && *error == QOrganizerItemManager::NoError)
+        {
+            // TODO
+            // Note that in Maemo5 todos can't have occurrences
+        }
+    }
+    else
+    {
+        // Other item types can't have occurrences
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+
+    cleanupCal( cal );
+
+    return retn;
+}
+
 void QOrganizerItemMaemo5Engine::checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error)
 {
     *error = QOrganizerItemManager::NoError;
@@ -853,7 +872,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
                 qDebug() << "Parent disp label: " << parentEvent->displayLabel();
 
                 // save the event occurrence
-                calError = saveEventOccurrence(eventOccurrence, parentEvent, error);
+                calError = saveEventOccurrence(cal, eventOccurrence, parentEvent, error);
             }
             else {
                 // Event occurrence without a parent item fails,
@@ -965,13 +984,14 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     return calError;
 }
 
-int QOrganizerItemMaemo5Engine::saveEventOccurrence(QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error)
+int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error)
 {
     // set occurrence GUID equal to the parent GUID
     occurrence->setGuid(parent->guid());
 
     if (!parent->recurrenceRules().isEmpty() || !parent->recurrenceDates().isEmpty()) {
         // add dates that the occurrence covers as exception dates to the parent item
+
         QDate occurrenceStart = occurrence->startDateTime().date();
         QDate occurrenceEnd = occurrence->endDateTime().date();
 
@@ -988,6 +1008,13 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(QOrganizerEventOccurrence *o
 
 
     }
+
+
+    // resolve occurrence's local id (if it has any)
+    QList<QOrganizerItem> parentOcc = itemInstances(
+            *parent, occurrence->startDateTime(), occurrence->endDateTime(), 0, error);
+
+
 
 }
 

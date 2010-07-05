@@ -47,6 +47,8 @@
 
 QTM_USE_NAMESPACE
 
+const QString managerName("maemo5");
+
 class tst_Maemo5Om : public QObject
 {
     Q_OBJECT
@@ -56,7 +58,37 @@ private slots:  // Init & cleanup
     void cleanupTestCase();
 
 private slots:  // Test cases
+
+    //void addSimpleItem();
+    //void addSimpleEvent();
+    //void addSimpleTodo();
+    //void addSimpleJournal();
+    //void removeSimpleItem();
+
+
+    //void addSimpleEvent();
+    //void addEventWithSimpleRecurrence();
+
+    //void tmp();
+    //void tmp2();
+    void tmp3();
+
+private:
+
+    void tmp();
+    void tmp2();
+    //void tmp3();
+
+    void addSimpleItem();
     void addSimpleEvent();
+    void addSimpleTodo();
+    void addSimpleJournal();
+    void removeSimpleItem();
+
+
+    void addEventWithSimpleRecurrence();
+
+
     void addWithIllegalParameters();
     //void fetchSimpleEvent();
     void addItem_data();
@@ -75,31 +107,294 @@ private:
 
 void tst_Maemo5Om::initTestCase()
 {
-    m_om = new QOrganizerItemManager("maemo5");
-    //m_om = new QOrganizerItemManager("symbian");
-    //m_om = new QOrganizerItemManager("memory");
+    m_om = new QOrganizerItemManager(managerName);
     // Remove all organizer items first (Note: ignores possible errors)
     //m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_Maemo5Om::cleanupTestCase()
 {
-    //m_om->remove
     delete m_om;
 }
 
-void tst_Maemo5Om::addSimpleEvent()
+void tst_Maemo5Om::tmp()
 {
-    // Create item and set it's details
-    QOrganizerItem item;
-    item.setType(QOrganizerItemType::TypeEvent);
+    /*
+    QOrganizerItemFilter filter;
+    QOrganizerItemSortOrder sorder;
+    QList<QOrganizerItemSortOrder> solist; solist.append(sorder);
+    QOrganizerItemFetchHint fetchHint;
+    m_om->items( filter, solist, fetchHint );
+    */
+
+    QOrganizerEvent event;
+
+    QDate date1( 2010, 6, 15 );
+    QDate date2( 2010, 6, 15 );
+    QTime startTime( 11, 13, 2 );
+    QTime endTime( 12, 58, 4 );
+    QDateTime eventStartTime( date1, startTime );
+    QDateTime eventEndTime( date2, endTime );
+
+    QString displayLabel("Simple event display label");
+    QString description("This is a simple test event");
+
+    event.setStartDateTime( eventStartTime );
+    event.setEndDateTime( eventEndTime );
+    event.setDisplayLabel( displayLabel );
+    event.setDescription( description );
+    event.setGuid(QString("eventti"));
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rule;
+    rule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    rule.setInterval(2);
+    rrules << rule;
+    event.setRecurrenceRules(rrules);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+
+    QOrganizerEvent event2;
+    event2.setStartDateTime(QDateTime(QDate(2010,6,12),QTime(9,0,0)));
+    event2.setEndDateTime(QDateTime(QDate(2010,6,12),QTime(10,0,0)));;
+    event2.setGuid(QString("eventti"));
+    QVERIFY(m_om->saveItem(&event2));
+
+    // Get occs
+    QList<QOrganizerItem> instances = m_om->itemInstances(event,
+                                                          QDateTime(QDate(2010,6,10), QTime(10,0,0)),
+                                                          QDateTime(QDate(2010,6,29),QTime(23,0,0)), 4);
+    for (int i = 0; i < instances.count(); ++i) {
+        QOrganizerEventOccurrence o = static_cast<QOrganizerEventOccurrence>(instances[i]);
+        qDebug() << o.startDateTime();
+        qDebug() << o.endDateTime();
+        qDebug() << o.originalDate();
+        qDebug() << o.localId();
+        qDebug() << o.parentLocalId();
+        qDebug() << o.guid();
+    }
+
+    QOrganizerEventOccurrence occ = static_cast<QOrganizerEventOccurrence>(instances[2]);
+    occ.setDescription("Muutettu");
+    //occ.setOriginalDate(QDate(2009,1,1));
+    occ.setParentLocalId(0);
+    m_om->saveItem(&occ);
+
+
+/*
+    QOrganizerEventOccurrence eventOccurrence;
+
+    QDate date2( 2010, 6, 12 );
+    QDateTime eventStartTime2( date2, startTime );
+    QDateTime eventEndTime2( date2, endTime );
+
+    QString displayLabel2("Occurrence");
+    QString description2("Occurrence");
+
+    eventOccurrence.setStartDateTime( eventStartTime2 );
+    eventOccurrence.setEndDateTime( eventEndTime2 );
+    eventOccurrence.setDisplayLabel( displayLabel2 );
+    eventOccurrence.setDescription( description2 );
+    eventOccurrence.setGuid(QString("eventti"));
+    eventOccurrence.setOriginalDate(date);
+
+    QVERIFY(m_om->saveItem(&eventOccurrence));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+*/
+}
+
+void tst_Maemo5Om::tmp2()
+{
+    QOrganizerEvent event;
+
+    QDate date1( 2010, 7, 10 );
+    QDate date2( 2010, 7, 10 );
+    QTime startTime( 11, 13, 2 );
+    QTime endTime( 12, 58, 4 );
+    QDateTime eventStartTime( date1, startTime );
+    QDateTime eventEndTime( date2, endTime );
+
+    QString displayLabel("Blaa blaa");
+    QString description("Blah blah");
+
+    event.setStartDateTime( eventStartTime );
+    event.setEndDateTime( eventEndTime );
+    event.setDisplayLabel( displayLabel );
+    event.setDescription( description );
+    event.setGuid(QString("joopajoo"));
+
+    /*
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rule;
+    rule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    rule.setInterval(1);
+    rrules << rule;
+    event.setRecurrenceRules(rrules);
+    QList<QDate> dateList;
+    dateList << QDate(event.startDateTime().date());
+    event.setRecurrenceDates(dateList);
+    */
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QOrganizerItemRecurrenceRule rule;
+    rule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rule.setInterval(2);
+    QList<QOrganizerItemRecurrenceRule::Month> months;
+    months << QOrganizerItemRecurrenceRule::August;
+    rule.setMonths(months);
+    QList<int> daysOfMonth;
+    daysOfMonth << 5 << 6 << 10 << 21;
+    rule.setDaysOfMonth(daysOfMonth);
+
+    rrules << rule;
+    event.setRecurrenceRules(rrules);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+
+    /*
+    QOrganizerEvent event2;
+    event2.setStartDateTime(QDateTime(QDate(2010,7,20),QTime(9,0,0)));
+    event2.setEndDateTime(QDateTime(QDate(2010,7,20),QTime(10,0,0)));;
+    event2.setGuid(QString("joopajoo"));
+    QVERIFY(m_om->saveItem(&event2));
+
+
+    QOrganizerItemFetchHint::OptimizationHints optimizationHints(QOrganizerItemFetchHint::NoBinaryBlobs);
+    optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
+    QOrganizerItemFetchHint fetchHints;
+    fetchHints.setOptimizationHints(optimizationHints);
+
+    QOrganizerItem fetchItem = m_om->item(event2.id().localId(), fetchHints);
+    qDebug() << fetchItem.localId();
+    qDebug() << fetchItem.guid();
+    */
+
+
+    /*
+    // Get occs
+    QList<QOrganizerItem> instances = m_om->itemInstances(event,
+                                                          QDateTime(QDate(2010,7,1), QTime(1,0,0)),
+                                                          QDateTime(QDate(2010,7,31),QTime(23,59,59)), 0);
+    for (int i = 0; i < instances.count(); ++i) {
+        QOrganizerEventOccurrence o = static_cast<QOrganizerEventOccurrence>(instances[i]);
+        qDebug() << "From test:";
+        qDebug() << o.startDateTime();
+        qDebug() << o.endDateTime();
+        qDebug() << o.originalDate();
+        qDebug() << o.localId();
+        qDebug() << o.parentLocalId();
+        qDebug() << o.guid();
+    }
+
+    QOrganizerEventOccurrence o = static_cast<QOrganizerEventOccurrence>(instances[4]);
+    o.setParentLocalId(0);
+    o.setStartDateTime(QDateTime(QDate(2010,7,1),QTime(9,0,0)));
+    o.setEndDateTime(QDateTime(QDate(2010,7,1),QTime(10,0,0)));
+    m_om->saveItem(&o);
+    */
+}
+
+void tst_Maemo5Om::tmp3 ()
+{
+
+}
+
+void tst_Maemo5Om::addSimpleItem()
+{
+    /*
+    QOrganizerItemLocalId fetchId;
+    m_om->item(fetchId);*/
+
+     //REMOVED TEMPORALLY
+    QDate date( 2010, 6, 15 );
+    QTime dueTime1( 11, 13, 2 );
+    QTime dueTime2( 12, 58, 4 );
+    QTime dueTime3( 13, 58, 4 );
+
+    QDateTime dateTime1( date, dueTime1 );
+    QDateTime dateTime2( date, dueTime2 );
+    QDateTime dateTime3( date, dueTime3 );
+
+    // Save
+    QOrganizerTodo todo;
+    todo.setDueDateTime(dateTime1);
+    QVERIFY(m_om->saveItem(&todo));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(todo.id().localId() != 0);
+    QVERIFY(todo.id().managerUri().contains(managerName));
+
+    // Save with list parameter
+    QOrganizerTodo todo2;
+    todo2.setDueDateTime( dateTime2 );
+    QList<QOrganizerItem> items;
+    items.append(todo2);
+    QVERIFY(m_om->saveItems(&items,0));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    foreach ( QOrganizerItem item, items ) {
+        QVERIFY(item.id().localId() != 0);
+        QVERIFY(item.id().managerUri().contains(managerName));
+    }
+
+    // Save with list parameter and error map parameter
+    QOrganizerTodo todo3;
+    todo3.setDueDateTime( dateTime3 );
+    QList<QOrganizerItem> items2;
+    items2.append(todo3);
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QVERIFY(m_om->saveItems(&items2, &errorMap));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(errorMap.count() == 0);
+    foreach ( QOrganizerItem item2, items ) {
+        QVERIFY( item2.id().localId() != 0 );
+        QVERIFY( item2.id().managerUri().contains(managerName));
+    }
+
+
+
+
+    /*
+    // Create item and set its details
+    QOrganizerEvent item;
+    QDate d(2010,6,14);
+    QTime t1(11,0,0);
+    QTime t2(12,0,0);
+    QDateTime dt1(d,t1);
+    QDateTime dt2(d,t2);
+   
+    item.setStartDateTime(dt1);
+    item.setEndDateTime(dt2);
+    item.setDisplayLabel("Oma itemi");
+    item.setDescription("Kuvaus");
 
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(item.id() != QOrganizerItemId());
 
+    QOrganizerItemLocalId test = item.localId();
+    QOrganizerEvent returned = m_om->item( test );
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(returned.startDateTime() == dt1);
+    */
+
+    /*
+    QOrganizerItemId iid;
+    iid.setLocalId(5454);
+    item.setId(iid);
+    QVERIFY(m_om->removeItem(item.localId()));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    */
+
     // Save with list parameter
+/*
     QList<QOrganizerItem> items;
     items.append(item);
     QVERIFY(m_om->saveItems(&items, 0));
@@ -110,6 +405,256 @@ void tst_Maemo5Om::addSimpleEvent()
     QVERIFY(m_om->saveItems(&items, &errorMap));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
+    */
+}
+
+void tst_Maemo5Om::addSimpleEvent() {
+    // Create event and set its details
+    QOrganizerEvent event;
+
+    QDate date( 2010, 6, 15 );
+    QTime startTime( 11, 13, 2 );
+    QTime endTime( 12, 58, 4 );
+    QDateTime eventStartTime( date, startTime );
+    QDateTime eventEndTime( date, endTime );
+
+    QString displayLabel("Simple event display label");
+    QString description("This is a simple test event");
+
+    event.setStartDateTime( eventStartTime );
+    event.setEndDateTime( eventEndTime );
+    event.setDisplayLabel( displayLabel );
+    event.setDescription( description );
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+
+    // Fetch back event
+    QOrganizerEvent fetchEvent;
+    QOrganizerItemLocalId fetchId = event.id().localId();
+    fetchEvent = static_cast<QOrganizerEvent>(m_om->item(fetchId));
+    QCOMPARE( fetchEvent.id(), event.id() );
+    QCOMPARE( fetchEvent.startDateTime(), event.startDateTime() );
+    QCOMPARE( fetchEvent.endDateTime(), event.endDateTime() );
+    QCOMPARE( fetchEvent.displayLabel(), event.displayLabel() );
+    QCOMPARE( fetchEvent.description(), event.description() );
+}
+
+void tst_Maemo5Om::addSimpleTodo() {
+    // Create todo and set its details
+    QOrganizerTodo todo;
+
+    QDate date( 2010, 6, 16 );
+    QTime time( 11, 13, 2 );
+    QDateTime todoDueDateTime( date, time );
+
+    QString displayLabel("Simple todo display label");
+    QString description("This is a simple test todo");
+
+    todo.setDueDateTime( todoDueDateTime );
+    todo.setDisplayLabel( displayLabel );
+    todo.setDescription( description );
+
+    // Save todo
+    QVERIFY(m_om->saveItem(&todo));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(todo.id().localId() != 0);
+    QVERIFY(todo.id().managerUri().contains(managerName));
+
+    // Fetch back todo
+    QOrganizerTodo fetchTodo;
+    QOrganizerItemLocalId fetchId = todo.id().localId();
+    fetchTodo = static_cast<QOrganizerTodo>(m_om->item(fetchId));
+
+    // TODO: For some reason the following does not work with todos and journals
+    // TODO: The manager uri disappears in conversion => test case fails.
+    // TODO: Is this a problem in the API ? The backend seems to work fine (15th June 2010)
+    qDebug() << "addSimpleTodo() fails, but see the test case! URI: " << m_om->item(fetchId).id().managerUri();
+    qDebug() << "Converted URI: " << static_cast<QOrganizerTodo>(m_om->item(fetchId)).id().managerUri();
+
+    QCOMPARE( fetchTodo.id(), todo.id() );
+    QCOMPARE( fetchTodo.dueDateTime(), todo.dueDateTime() );
+    QCOMPARE( fetchTodo.displayLabel(), todo.displayLabel() );
+    QCOMPARE( fetchTodo.description(), todo.description() );
+}
+
+void tst_Maemo5Om::addSimpleJournal() {
+    // Create journal and set its details
+    QOrganizerJournal journal;
+
+    QDate date( 2010, 6, 17 );
+    QTime time( 11, 13, 2 );
+    QDateTime dateTime( date, time );
+
+    QString displayLabel("Simple todo display label");
+    QString description("This is a simple test todo");
+
+    journal.setDateTime( dateTime );
+    journal.setDisplayLabel( displayLabel );
+    journal.setDescription( description );
+
+    // Save journal
+    QVERIFY(m_om->saveItem(&journal));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(journal.id().localId() != 0);
+    QVERIFY(journal.id().managerUri().contains(managerName));
+
+    // Fetch back journal
+    QOrganizerJournal fetchJournal;
+    QOrganizerItemLocalId fetchId = journal.id().localId();
+    fetchJournal = static_cast<QOrganizerJournal>(m_om->item(fetchId));
+    QCOMPARE( fetchJournal.id(), journal.id() );
+    QCOMPARE( fetchJournal.dateTime(), journal.dateTime() );
+    QCOMPARE( fetchJournal.displayLabel(), journal.displayLabel() );
+    QCOMPARE( fetchJournal.description(), journal.description() );
+}
+
+void tst_Maemo5Om::removeSimpleItem() {
+    QDate date( 2010, 6, 15 );
+    QTime dueTime1( 11, 58, 2 );
+    QTime dueTime2( 12, 58, 4 );
+    QTime dueTime3( 13, 58, 4 );
+    QDateTime todoDueDateTime1( date, dueTime1 );
+    QDateTime todoDueDateTime2( date, dueTime2 );
+    QDateTime todoDueDateTime3( date, dueTime3 );
+
+    // Create item
+    QOrganizerTodo item;
+    item.setDueDateTime( todoDueDateTime1 );
+
+    // Save
+    QVERIFY(m_om->saveItem(&item));
+    QVERIFY(item.id().localId() != 0 );
+    QVERIFY(item.id().managerUri().contains(managerName));
+
+    // Remove
+    QVERIFY(m_om->removeItem(item.localId()));
+
+    /* // Temporary commented out
+    // Remove list
+    QOrganizerTodo item2;
+    item2.setDueDateTime( todoDueDateTime2 );
+    QOrganizerTodo item3;
+    item3.setDueDateTime( todoDueDateTime3 );
+    QVERIFY(m_om->saveItem(&item2));
+    QVERIFY(m_om->saveItem(&item3));
+    QList<QOrganizerItemLocalId> itemIds;
+    itemIds.append(item2.localId());
+    itemIds.append(item3.localId());
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QVERIFY(m_om->removeItems(itemIds, &errorMap));
+    QVERIFY(errorMap.count() == 0);*/
+}
+
+void tst_Maemo5Om::addEventWithSimpleRecurrence()
+{
+    // Create event and set its details
+    QOrganizerEvent event;
+
+    QDate date( 2010, 6, 23 );
+    QTime startTime( 11, 0, 0 );
+    QTime endTime( 12, 0, 0 );
+    QDateTime eventStartTime( date, startTime );
+    QDateTime eventEndTime( date, endTime );
+
+    QString displayLabel("Recurring event display label");
+    QString description("This event repeats");
+
+    event.setStartDateTime( eventStartTime );
+    event.setEndDateTime( eventEndTime );
+    event.setDisplayLabel( displayLabel );
+    event.setDescription( description );
+
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency( QOrganizerItemRecurrenceRule::Daily );
+    //rrule.setCount( 10 );
+    rrule.setInterval( 1 );
+    //rrule.setWeekStart(Qt::Sunday);
+
+    /*
+    QList<int> daysOfMonth;
+    daysOfMonth << 1 << 5 << 7 << 10;
+    rrule.setDaysOfMonth( daysOfMonth );
+    */
+
+
+    /*
+    QList<Qt::DayOfWeek> weekDays;
+    weekDays << Qt::Sunday << Qt::Monday << Qt::Wednesday;
+    rrule.setDaysOfWeek( weekDays );
+    */
+
+
+    //rrule.setEndDate( QDate( 2010, 12, 31 ) );
+
+
+    /*
+    QList<Qt::DayOfWeek> weekDays;
+    weekDays << Qt::Thursday << Qt::Tuesday;
+    rrule.setDaysOfWeek( weekDays );
+    */
+
+    rrules << rrule;
+    event.setRecurrenceRules( rrules );
+
+    QList<QDate> excDates;
+    excDates << QDate(2010,6,25);
+    event.setExceptionDates(excDates);
+
+    /*
+    qDebug() << rrules[0].interval();
+    qDebug() << rrules[0].count();
+    qDebug() << event.recurrenceRules()[0].interval();
+    qDebug() << event.recurrenceRules()[0].count();
+    */
+
+
+    /*
+    qDebug() << event.recurrenceRules()[0].interval();
+    QOrganizerEvent* original = static_cast<QOrganizerEvent*>( &event );
+    qDebug() << original->recurrenceRules()[0].interval();
+
+    QList<QOrganizerItem> list;
+    list.append( event );
+
+    QOrganizerEvent* retrieved = static_cast<QOrganizerEvent*>( &list[0] );
+    qDebug() << retrieved->recurrenceRules()[0].interval();
+    */
+
+    //event.setExceptionRules( rrules );
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+
+
+    QOrganizerEvent fetchEvent;
+    QOrganizerItemLocalId fetchId = event.id().localId();
+    fetchEvent = static_cast<QOrganizerEvent>(m_om->item(fetchId));
+
+    /*
+    QOrganizerItemId emptyId;
+    fetchEvent.setId(emptyId);
+    fetchEvent.setDisplayLabel(QString("This is a copy"));
+    m_om->saveItem(&fetchEvent);
+    */
+
+
+
+    /*
+    QList<QOrganizerItem> result = m_om->itemInstances( event, QDateTime( QDate( 2010, 1, 1)), QDateTime(QDate(2010,12,31)), 10 );
+    qDebug() << result.count();
+    */
+
+    // TODO: Verify recurrence when possible
 }
 
 void tst_Maemo5Om::addWithIllegalParameters()
@@ -121,6 +666,8 @@ void tst_Maemo5Om::addWithIllegalParameters()
     QVERIFY(!m_om->saveItems(0, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
 
+    // TODO: Should this be that way? Personally I don't consider it as an
+    // error if there's just nothing to save. -MarkoJM
     QList<QOrganizerItem> items;
     QVERIFY(!m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
@@ -155,16 +702,21 @@ void tst_Maemo5Om::addItem_data()
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
+
+    // Commented out, QOrganizerItemNote is not declared
+    /*
     QTest::newRow("Item type Event; details: description, note")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
             << detailToQString(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment, QString("Remember to wear blue jeans")));
+
     QTest::newRow("Item type Note; details: description, note")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
             << detailToQString(QOrganizerItemComment::DefinitionName, QOrganizerItemComment::FieldComment, QString("Remember to wear blue jeans")));
+    */
 
     // TODO: recurrence and exceptions
     // TODO: timestamps
@@ -219,6 +771,9 @@ void tst_Maemo5Om::fetchItem_data()
 
 void tst_Maemo5Om::fetchItem()
 {
+    QFAIL("SKIPPED");
+    return;
+
     // Create item
     QOrganizerItem item;
     item.setType(QString("Event"));
