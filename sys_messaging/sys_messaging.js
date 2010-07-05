@@ -39,47 +39,104 @@
 **
 ****************************************************************************/
 
+// returns true if automated testing can be done, false manual testing is to be done
+function automatedTestEnvironment(){
+      //Automated testing not supported for this test case yet
+
+      return false;
+
+      //return (checkOS("symbian") || checkOS("maemo"));
+      //return (checkOS("symbian") || checkOS("maemo") || checkOS("linux"));
+}
 
 testcase = {
 
-  send_message: function()
-  {
-      prompt(twiki('---++++ SendMessage
-   1 Launch Debug/bin/sendmessage
-   1 Fill in To, Subject, Content, and Attachment
-   1 Click on Send
-   1 Check if the mail has been sent to the desired mailbox'));
-  },
+    serviceAction_sendplainTextMessage: function (){
+        if (automatedTestEnvironment()){
+        }else{
+        prompt(twiki('---++++ ServiceAction: Send Message in Plain Text
+    1. Launch *serviceeaction* application
+    1. Fill in To, Subject, Content
+    1. Click "Add attachment" menu item and select file(s) to attach
+    1. Click on "Send" menu entry
+    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
+        '));
+        }
+    },
 
-  query_messages: function()
-  {
-      prompt(twiki('---++++ QueryMessages
-   1 Send an email to the test account
-   1 Launch Debug/bin/querymessages
-   1 Verify that the message is retrieved'));
-  },
+    serviceAction_sendHTMLMessage : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ ServiceAction: Send Message in HTML
+    1. Launch *serviceaction* application
+    1. Fill in To, Subject, Content
+    1. Click "Add attachment" menu item and select file(s) to attach
+    1. Click on "Send as HTML" menu entry
+    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
+        '));
+        }
+    },
 
-  compose_send: function()
-  {
-      prompt(twiki('---++++ ComposeAndSend
-   1 Launch Debug/bin/serviceactions
-   1 Fill in Account, To, Subject, Content, Attachment
-   1 Click on Send
-   1 Verify the mail has been sent to the desired mailbox correctly
-   1 Note: Show and Compose functions are not implemented yet'));
-  },
 
-  keep_in_touch: function()
-  {
-      prompt(twiki('---++++ KeepInTouch
-   1 Send messages using !SendMessage
-   1 Change system date to other months and years, and send more messages
-   1 Repeat 1, 2 for several times
-   1 Launch Debug/bin/keepintouch
-   1 Select an item from "Contacted within the last" combo box
-   1 Click on Search
-   1 Select from Addresses list box
-   1 Verify the correct messages are shown in Messages list box'));
-  }
+    serviceAction_composeAndSend : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ ServiceAction: Compose and Send 
+    1. Launch *serviceaction* application
+    1. Fill in To, Subject, Content
+    1. Click "Add attachment" menu item and select file(s) to attach
+    1. Click on "Compose" menu entry
+    1. Confirm that the Outlook mail client for Windows is now showing
+    1. Click on the "Send" menu button in Outlook client
+    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
+        '));
+        }
+    },
 
+    write_message : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Write Message 
+    1. Launch *writemessage* application
+    1. Fill in To, Subject, Content
+    1. Click "Add attachment" menu item and select file(s) to attach
+    1. Click on "Send" menu entry
+    1. Check if the mail has been sent to the desired mailbox with the correct subject, body and complete attachment(s) 
+        '));
+        }
+    },
+
+
+    query_messages : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Query Messages
+    For WinCE start the example in Visual Studio since query messages only produces output to the console.
+
+    1. Send an email to the test account
+    1. Launch querymessages
+    1. Verify that the message is retrieved and displayed to the console. 
+        '));
+        }
+    },
+
+    keep_in_touch : function() {
+        if (automatedTestEnvironment()){
+        }else{
+            prompt(twiki('---++++ Keep In Touch
+    For WinCE ensure that Microsoft Active Sync has enabled the syncing of the Inbox and Sent Email folders
+
+    1. Send messages using SendMessage
+    1. Change system date to other months and years, and send more messages
+    1. Repeat 1, 2 for several times
+    1. Launch keepintouch
+    1. Select an item from *Contacted within the last* combo box
+    1. Click on Search
+    1. Select from Addresses list box
+    1. Verify the correct messages are shown in Messages list box 
+        '));
+        }
+    }
 }
+
+
