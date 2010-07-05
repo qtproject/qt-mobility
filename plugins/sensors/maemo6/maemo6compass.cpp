@@ -59,10 +59,6 @@ maemo6compass::maemo6compass(QSensor *sensor)
         qWarning() << "Unable to initialize "<<sensorName;
 
     setReading<QCompassReading>(&m_reading);
-    // metadata
-    addDataRate(1, 130); // 43 Hz
-    addOutputRange(0, 359, 1);
-    setDescription(QLatin1String("Measures compass north in degrees"));
 }
 
 void maemo6compass::slotDataAvailable(const Compass& data)

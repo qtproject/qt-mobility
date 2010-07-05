@@ -308,7 +308,7 @@ private slots:
         QTest::newRow("too short") << trimmed.mid(0, trimmed.length()-1) << false;
         QTest::newRow("no asterisk") << s.replace("*", "") << false; // modifies test data!
     }
-
+#ifdef QT_BUILD_INTERNAL
     void getNmeaTime()
     {
         QFETCH(QString, str);
@@ -408,6 +408,7 @@ private slots:
                 << "2734.7964,S,15306.0124,W" 
                 << -lat << -lng << true;
     }
+#endif
 
 };
 
