@@ -52,7 +52,7 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QProximityReading>(&m_reading);
-    //addDataRate(100, 100); // 100Hz
+    addDataRate(100, 100); // 100Hz
 }
 
 void n900proximitysensor::start()
