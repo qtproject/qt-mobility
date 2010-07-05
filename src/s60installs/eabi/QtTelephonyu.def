@@ -1,0 +1,30 @@
+EXPORTS
+	_ZN10QtMobility18QTelephonyCallInfoC1ERKS0_ @ 1 NONAME
+	_ZN10QtMobility18QTelephonyCallInfoC1Ev @ 2 NONAME
+	_ZN10QtMobility18QTelephonyCallInfoC2ERKS0_ @ 3 NONAME
+	_ZN10QtMobility18QTelephonyCallInfoC2Ev @ 4 NONAME
+	_ZN10QtMobility18QTelephonyCallInfoD1Ev @ 5 NONAME
+	_ZN10QtMobility18QTelephonyCallInfoD2Ev @ 6 NONAME
+	_ZN10QtMobility18QTelephonyCallList11qt_metacallEN11QMetaObject4CallEiPPv @ 7 NONAME
+	_ZN10QtMobility18QTelephonyCallList11qt_metacastEPKc @ 8 NONAME
+	_ZN10QtMobility18QTelephonyCallList15activeCallAddedERKNS_18QTelephonyCallInfoE @ 9 NONAME
+	_ZN10QtMobility18QTelephonyCallList16staticMetaObjectE @ 10 NONAME DATA 16
+	_ZN10QtMobility18QTelephonyCallList17activeCallRemovedERKNS_18QTelephonyCallInfoE @ 11 NONAME
+	_ZN10QtMobility18QTelephonyCallList19getStaticMetaObjectEv @ 12 NONAME
+	_ZN10QtMobility18QTelephonyCallList23activeCallStatusChangedERKNS_18QTelephonyCallInfoE @ 13 NONAME
+	_ZN10QtMobility18QTelephonyCallListC1EP7QObject @ 14 NONAME
+	_ZN10QtMobility18QTelephonyCallListC2EP7QObject @ 15 NONAME
+	_ZN10QtMobility18QTelephonyCallListD0Ev @ 16 NONAME
+	_ZN10QtMobility18QTelephonyCallListD1Ev @ 17 NONAME
+	_ZN10QtMobility18QTelephonyCallListD2Ev @ 18 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo14callIdentifierEv @ 19 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo4typeEv @ 20 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo5valueERK7QString @ 21 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo6statusEv @ 22 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo6subTypEv @ 23 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo8contactsEv @ 24 NONAME
+	_ZNK10QtMobility18QTelephonyCallList10metaObjectEv @ 25 NONAME
+	_ZNK10QtMobility18QTelephonyCallList11activeCallsERKNS_18QTelephonyCallInfo8CallTypeE @ 26 NONAME
+	_ZTIN10QtMobility18QTelephonyCallListE @ 27 NONAME
+	_ZTVN10QtMobility18QTelephonyCallListE @ 28 NONAME
+

@@ -39,4 +39,3 @@ symbian: {
 FORMS    += dialog.ui
 include(../../examples.pri)
 CONFIG += mobility
-MOBILITY = telephony
