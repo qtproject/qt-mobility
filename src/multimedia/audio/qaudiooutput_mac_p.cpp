@@ -734,4 +734,3 @@ OSStatus QAudioOutputPrivate::renderCallback(void* inRefCon,
 QT_END_NAMESPACE
 
 #include "qaudiooutput_mac_p.moc"
-#include "moc_qaudioutput_mac_p.cpp"
