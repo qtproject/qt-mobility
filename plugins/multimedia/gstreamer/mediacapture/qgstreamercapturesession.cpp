@@ -115,9 +115,13 @@ GstElement *QGstreamerCaptureSession::buildEncodeBin()
     GstElement *encodeBin = gst_bin_new("encode-bin");
 
     GstElement *muxer = gst_element_factory_make( m_mediaContainerControl->formatElementName().constData(), "muxer");
-    GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
+    if (!muxer) {
+        gst_object_unref(encodeBin);
+        encodeBin = 0;
+        return 0;
+    }
 
-    ok &= muxer != 0;
+    GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
 
     g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 
@@ -177,7 +181,10 @@ GstElement *QGstreamerCaptureSession::buildAudioSrc()
     if (m_audioInputFactory)
         audioSrc = m_audioInputFactory->buildElement();
     else {
-#ifdef QT_QWS_N810
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        audioSrc = gst_element_factory_make("pulsesrc", "audio_src");
+#elif defined(QT_QWS_N810)
         audioSrc = gst_element_factory_make("dsppcmsrc", "audio_src");
 #else
         QString elementName = "alsasrc";
@@ -353,10 +360,9 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
                 m_audioSrc = buildAudioSrc();
                 m_audioPreview = buildAudioPreview();
 
-                ok &= m_audioSrc != 0;
-                ok &= m_audioPreview != 0;
+                ok &= m_audioSrc && m_audioPreview;
 
-                if (m_audioSrc && m_audioPreview) {
+                if (ok) {
                     gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioPreview, NULL);
                     ok &= gst_element_link(m_audioSrc, m_audioPreview);
                 }
@@ -405,39 +411,49 @@ bool QGstreamerCaptureSession::rebuildGraph(QGstreamerCaptureSession::PipelineMo
             break;
         case PreviewAndRecordingPipeline:
             m_encodeBin = buildEncodeBin();
-            gst_bin_add(GST_BIN(m_pipeline), m_encodeBin);
+            if (m_encodeBin)
+                gst_bin_add(GST_BIN(m_pipeline), m_encodeBin);
 
             ok &= m_encodeBin != 0;
 
-            if (m_captureMode & Audio) {
+            if (ok && m_captureMode & Audio) {
                 m_audioSrc = buildAudioSrc();
                 m_audioPreview = buildAudioPreview();
                 m_audioTee = gst_element_factory_make("tee", NULL);
                 m_audioPreviewQueue = gst_element_factory_make("queue", NULL);
-                gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
-                                 m_audioPreviewQueue, m_audioPreview, NULL);
-                ok &= gst_element_link(m_audioSrc, m_audioTee);
-                ok &= gst_element_link(m_audioTee, m_audioPreviewQueue);
-                ok &= gst_element_link(m_audioPreviewQueue, m_audioPreview);
-                ok &= gst_element_link(m_audioTee, m_encodeBin);
+
+                ok &= m_audioSrc && m_audioPreview && m_audioTee && m_audioPreviewQueue;
+
+                if (ok) {
+                    gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioTee,
+                                     m_audioPreviewQueue, m_audioPreview, NULL);
+                    ok &= gst_element_link(m_audioSrc, m_audioTee);
+                    ok &= gst_element_link(m_audioTee, m_audioPreviewQueue);
+                    ok &= gst_element_link(m_audioPreviewQueue, m_audioPreview);
+                    ok &= gst_element_link(m_audioTee, m_encodeBin);
+                }
             }
 
-            if (m_captureMode & Video) {
+            if (ok && (m_captureMode & Video)) {
                 m_videoSrc = buildVideoSrc();
                 m_videoPreview = buildVideoPreview();
                 m_videoTee = gst_element_factory_make("tee", NULL);
                 m_videoPreviewQueue = gst_element_factory_make("queue", NULL);
-                gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoTee,
+
+                ok &= m_videoSrc && m_videoPreview && m_videoTee && m_videoPreviewQueue;
+
+                if (ok) {
+                    gst_bin_add_many(GST_BIN(m_pipeline), m_videoSrc, m_videoTee,
                                  m_videoPreviewQueue, m_videoPreview, NULL);
-                ok &= gst_element_link(m_videoSrc, m_videoTee);
-                ok &= gst_element_link(m_videoTee, m_videoPreviewQueue);
-                ok &= gst_element_link(m_videoPreviewQueue, m_videoPreview);
-                ok &= gst_element_link(m_videoTee, m_encodeBin);
+                    ok &= gst_element_link(m_videoSrc, m_videoTee);
+                    ok &= gst_element_link(m_videoTee, m_videoPreviewQueue);
+                    ok &= gst_element_link(m_videoPreviewQueue, m_videoPreview);
+                    ok &= gst_element_link(m_videoTee, m_encodeBin);
+                }
             }
 
             if (!m_metaData.isEmpty())
                 setMetaData(m_metaData);
-
 
             break;
     }

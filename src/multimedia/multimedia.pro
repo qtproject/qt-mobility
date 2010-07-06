@@ -123,7 +123,7 @@ maemo5 {
     HEADERS += qxvideosurface_maemo5_p.h
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp
-    LIBS += -lXv
+    LIBS += -lXv  -lX11 -lXext
 } else {
     SOURCES += qgraphicsvideoitem.cpp
 }

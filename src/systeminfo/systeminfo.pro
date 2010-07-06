@@ -43,6 +43,7 @@ win32 {
 unix: {
     QT += gui
     maemo5|maemo6|linux-*: {
+        contains(bluez_enabled, yes):DEFINES += BLUEZ_SUPPORTED
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
