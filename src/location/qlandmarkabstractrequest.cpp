@@ -61,7 +61,7 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality
@@ -259,9 +259,8 @@ bool QLandmarkAbstractRequest::cancel()
 
     if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
         return engine->cancelRequest(this);
-    else {
+    else
         return true;
-    }
 }
 
 /*!
