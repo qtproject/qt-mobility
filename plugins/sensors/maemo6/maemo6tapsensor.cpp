@@ -59,12 +59,6 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
         qWarning() << "Unable to initialize "<<sensorName;
 
     setReading<QTapReading>(&m_reading);
-    // metadata
-    addDataRate(130, 130);
-    addDataRate(1, 130); // TODO: this is for testing only
-    addOutputRange(0, 9, 1);
-    setDescription(QLatin1String("Measures either single or double taps and gives tap direction"));
-
 }
 
 

@@ -1,5 +1,4 @@
-INCLUDEPATH += audio \
-               ./
+INCLUDEPATH += audio
 
 PUBLIC_HEADERS += audio/qaudio.h \
            audio/qaudioformat.h \

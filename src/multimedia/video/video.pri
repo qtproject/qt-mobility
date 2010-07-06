@@ -1,6 +1,5 @@
 
-INCLUDEPATH += video \ 
-		./
+INCLUDEPATH += video
 
 PUBLIC_HEADERS += \
    video/qabstractvideobuffer.h \

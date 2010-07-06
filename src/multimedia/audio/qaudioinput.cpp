@@ -441,3 +441,5 @@ QAudio::State QAudioInput::state() const
 
 QT_END_NAMESPACE
 
+#include "moc_qaudioinput.cpp"
+
