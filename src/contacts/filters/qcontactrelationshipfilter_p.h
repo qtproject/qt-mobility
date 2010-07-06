@@ -97,7 +97,7 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream) const
     {
-        return stream << m_relationshipType << m_relatedContactId << (quint32)m_relatedContactRole;
+        return stream << m_relationshipType << m_relatedContactId << static_cast<quint32>(m_relatedContactRole);
     }
 
     QDataStream& inputFromStream(QDataStream& stream)

@@ -144,7 +144,7 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
 {
-    return out << (quint32)definition.dataType() << definition.allowableValues();
+    return out << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
 }
 
 /*!

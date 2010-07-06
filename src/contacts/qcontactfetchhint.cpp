@@ -200,7 +200,7 @@ QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
 {
     return out << hint.detailDefinitionsHint()
         << hint.relationshipTypesHint()
-        << (quint32)hint.optimizationHints();
+        << static_cast<quint32>(hint.optimizationHints());
 }
 
 QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)

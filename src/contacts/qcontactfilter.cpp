@@ -162,7 +162,7 @@ bool QContactFilter::operator==(const QContactFilter& other) const
  */
 QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
 {
-    out << (quint32)filter.type();
+    out << static_cast<quint32>(filter.type());
     if (filter.d_ptr)
         filter.d_ptr->outputToStream(out);
     return out;

@@ -95,7 +95,7 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream) const
     {
-        return stream << m_defId << m_fieldId << m_exactValue << (quint32)m_flags;
+        return stream << m_defId << m_fieldId << m_exactValue << static_cast<quint32>(m_flags);
     }
 
     QDataStream& inputFromStream(QDataStream& stream)

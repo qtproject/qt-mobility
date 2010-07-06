@@ -90,7 +90,7 @@ public:
 
     QDataStream& outputToStream(QDataStream& stream) const
     {
-        return stream << (quint32)m_eventType << m_since;
+        return stream << static_cast<quint32>(m_eventType) << m_since;
     }
 
     QDataStream& inputFromStream(QDataStream& stream)

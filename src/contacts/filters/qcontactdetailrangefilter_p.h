@@ -105,7 +105,8 @@ public:
     QDataStream& outputToStream(QDataStream& stream) const
     {
         return stream << m_defId << m_fieldId << m_minValue << m_maxValue
-            << (quint32)m_flags << (quint32)m_rangeflags;
+            << static_cast<quint32>(m_flags)
+            << static_cast<quint32>(m_rangeflags);
     }
 
     QDataStream& inputFromStream(QDataStream& stream)

@@ -487,7 +487,9 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 {
-    out << detail.definitionName() << (quint32)detail.accessConstraints() << detail.variantValues();
+    out << detail.definitionName()
+        << static_cast<quint32>(detail.accessConstraints())
+        << detail.variantValues();
     return out;
 }
 

@@ -137,9 +137,9 @@ QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
 {
     return out << sortOrder.detailDefinitionName()
         << sortOrder.detailFieldName()
-        << (quint32)sortOrder.blankPolicy()
-        << (quint32)sortOrder.direction()
-        << (quint32)sortOrder.caseSensitivity();
+        << static_cast<quint32>(sortOrder.blankPolicy())
+        << static_cast<quint32>(sortOrder.direction())
+        << static_cast<quint32>(sortOrder.caseSensitivity());
 }
 
 /*!
