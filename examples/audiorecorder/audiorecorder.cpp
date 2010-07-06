@@ -163,14 +163,13 @@ void AudioRecorder::updateState(QMediaRecorder::State state)
         ui->statusbar->showMessage(statusMessage);
 }
 
-template <typename T>
-static T boxValue(const QComboBox *box)
+static QVariant boxValue(const QComboBox *box)
 {
     int idx = box->currentIndex();
     if (idx == -1)
-        return T();
+        return QVariant();
 
-    return box->itemData(idx).value<T>();
+    return box->itemData(idx);
 }
 
 
@@ -178,22 +177,21 @@ void AudioRecorder::toggleRecord()
 {
     if (capture->state() == QMediaRecorder::StoppedState) {
 #ifdef Q_OS_SYMBIAN
-        if (!paused)
-            capture->setOutputLocation(recordPathAudio(destination));
+        capture->setOutputLocation(recordPathAudio(destination));
 #endif
-        audiosource->setAudioInput(boxValue<QString>(ui->audioDeviceBox));
+        audiosource->setAudioInput(boxValue(ui->audioDeviceBox).toString());
 
 
         QAudioEncoderSettings settings;
-        settings.setCodec(boxValue<QString>(ui->audioCodecBox));
-        settings.setSampleRate(boxValue<int>(ui->sampleRateBox));
-        settings.setBitRate(boxValue<int>(ui->bitrateBox));
+        settings.setCodec(boxValue(ui->audioCodecBox).toString());
+        settings.setSampleRate(boxValue(ui->sampleRateBox).toInt());
+        settings.setBitRate(boxValue(ui->bitrateBox).toInt());
         settings.setQuality(QtMultimediaKit::EncodingQuality(ui->qualitySlider->value()));
         settings.setEncodingMode(ui->constantQualityRadioButton->isChecked() ?
                                  QtMultimediaKit::ConstantQualityEncoding :
                                  QtMultimediaKit::ConstantBitRateEncoding);
 
-        QString container = boxValue<QString>(ui->containerBox);
+        QString container = boxValue(ui->containerBox).toString();
 
         capture->setEncodingSettings(settings, QVideoEncoderSettings(), container);
         capture->record();
