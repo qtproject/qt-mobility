@@ -340,14 +340,14 @@ is part of Qt Mobility.
 \code
     QGeoMappingManager *mappingManager = 0;
     QGeoRoutingManager *routingManager = 0;
-    QGeoPlacesManager *placesManager = 0;
+    QGeoSearchManager *searchManager = 0;
 
     QGeoServiceProvider serviceProvider("nokia");
 
     if (serviceProvider.error() == QGeoServiceProvider::NoError) {
         mappingManager = serviceProvider.mappingManager();
         routingManager = serviceProvider.routingManager();
-        placesManager = serviceProvider.placesManager();
+        searchManager = serviceProvider.searchManager();
     }
 \endcode
 
@@ -402,9 +402,9 @@ instruction text describing how the next QGeoRouteSegment should be reached.
 
 \annotatedlist maps-routing
 
-\section2 Places
+\section2 Geocoding and searching for places
 
-QGeoPlacesManager handles geocoding, reverse geocoding and free-text 
+QGeoSearchManager handles geocoding, reverse geocoding and free-text 
 search for places.  
 
 The free-text search will attempt to geocode text that looks like an 
@@ -424,7 +424,7 @@ many of the ManagerEngine classes as they want to provide implementations for.
 Subclassing QGeoServiceProviderFactory will only involve exposing a name and 
 a version by overriding QGeoServiceProviderFactory::providerName() and 
 QGeoServiceProviderFactory::providerVersion(), and overriding 
-QGeoServiceProviderFactory::createPlacesManagerEngine(), 
+QGeoServiceProviderFactory::createSearchManagerEngine(), 
 QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
