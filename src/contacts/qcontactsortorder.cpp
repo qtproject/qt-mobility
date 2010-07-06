@@ -130,6 +130,9 @@ bool QContactSortOrder::operator ==(const QContactSortOrder& other) const
 
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a sortOrder to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
 {
     return out << sortOrder.detailDefinitionName()
@@ -139,6 +142,9 @@ QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
         << (quint32)sortOrder.caseSensitivity();
 }
 
+/*!
+ * Reads a sort order from stream \a in into \a sortOrder.
+ */
 QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
 {
     QString definitionName;

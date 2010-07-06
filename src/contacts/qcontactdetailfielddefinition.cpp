@@ -139,11 +139,17 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
 }
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a definition to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
 {
     return out << (quint32)definition.dataType() << definition.allowableValues();
 }
 
+/*!
+ * Reads a detail field definition from stream \a in into \a definition.
+ */
 QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
 {
     quint32 dataType;

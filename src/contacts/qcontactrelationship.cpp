@@ -191,11 +191,17 @@ QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a rel to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
 {
     return out << rel.first() << rel.relationshipType() << rel.second();
 }
 
+/*!
+ * Reads a contact relationship from stream \a in into \a rel.
+ */
 QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
 {
     QContactId first;

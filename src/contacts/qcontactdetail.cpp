@@ -482,12 +482,18 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a detail to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 {
     out << detail.definitionName() << (quint32)detail.accessConstraints() << detail.variantValues();
     return out;
 }
 
+/*!
+ * Reads a contact detail from stream \a in into \a detail.
+ */
 QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 {
     QString definitionName;

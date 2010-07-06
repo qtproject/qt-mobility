@@ -659,6 +659,9 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
 #endif
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a contact to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContact& contact)
 {
     out << contact.id();
@@ -666,6 +669,9 @@ QDataStream& operator<<(QDataStream& out, const QContact& contact)
     return out;
 }
 
+/*!
+ * Reads a contact from stream \a in into \a contact.
+ */
 QDataStream& operator>>(QDataStream& in, QContact& contact)
 {
     contact.clearDetails();

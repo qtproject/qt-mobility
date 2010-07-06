@@ -106,11 +106,17 @@ bool QContactDetailDefinition::isEmpty() const
 }
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a definition to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& definition)
 {
     return out << definition.name() << definition.isUnique() << definition.fields();
 }
 
+/*!
+ * Reads a detail definition from stream \a in into \a definition.
+ */
 QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
 {
     QString name;

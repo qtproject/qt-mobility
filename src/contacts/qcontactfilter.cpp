@@ -157,6 +157,9 @@ bool QContactFilter::operator==(const QContactFilter& other) const
 }
 
 #ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a filter to the stream \a out.
+ */
 QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
 {
     out << (quint32)filter.type();
@@ -165,6 +168,9 @@ QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
     return out;
 }
 
+/*!
+ * Reads a contact filter from stream \a in into \a filter.
+ */
 QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
 {
     quint32 type;
