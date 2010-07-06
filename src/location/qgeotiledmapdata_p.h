@@ -109,11 +109,11 @@ public:
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
 
-    void paintMapObject(QPainter &painter, const QRectF &viewPort, QGeoMapObject *mapObject);
-    void paintMapRectangle(QPainter &painter, const QRectF &viewPort, QGeoMapRectangleObject *rectangle);
-    void paintMapMarker(QPainter &painter, const QRectF &viewPort, QGeoMapMarkerObject *marker);
-    void paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline);
-    void paintMapRoute(QPainter &painter, const QRectF &viewPort, QGeoMapRouteObject *route);
+    void paintMapObject(QPainter &painter, const QRectF &viewPort, QGeoMapObject *mapObject, bool hitDetection = false);
+    void paintMapRectangle(QPainter &painter, const QRectF &viewPort, QGeoMapRectangleObject *rectangle, bool hitDetection);
+    void paintMapMarker(QPainter &painter, const QRectF &viewPort, QGeoMapMarkerObject *marker, bool hitDetection);
+    void paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline, bool hitDetection);
+    void paintMapRoute(QPainter &painter, const QRectF &viewPort, QGeoMapRouteObject *route, bool hitDetection);
 
     void clearObjInfo();
 

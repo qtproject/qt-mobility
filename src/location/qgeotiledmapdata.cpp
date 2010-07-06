@@ -55,11 +55,14 @@
 #include "qgeoroutesegment.h"
 
 #include <QTimer>
+#include <QImage>
 
 #include <QDebug>
 
 #define DEFAULT_ZOOMLEVEL 8
 #define PI 3.14159265
+#define HIT_DETECTION_COLOR qRgba(0, 0, 255, 127) //semi-transparent blue
+
 #include <math.h>
 
 uint qHash(const QRectF& key)
@@ -593,8 +596,58 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
     return QList<QGeoMapObject*>();
 }
 
+/*!
+    Returns the list of map objects managed by this map which are visible and
+    which are displayed at least partially within the on screen rectangle
+    \a screenRect. The returned map objects are ordered ascendingly on their zIndices.
+
+    Note that this method takes into consideration potentially set QPen widths of map objects.
+    It therefore needs to operate on a pixel comparison and can potentially be slow.
+*/
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {
+    QSize imgSize = screenRect.size().toSize();
+    QList<QGeoMapObject*> mapObjs;
+    QList<QGeoMapObject*> queue(this->mapObjects());
+
+    //iterate through all map objects as defined by their (composite) zValues
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+
+        if (obj->isVisible()) {
+            //prepend children to queue
+            QList<QGeoMapObject*> children = obj->childObjects();
+            int sz = children.size();
+
+            for (int i = 0; i < sz; ++i)
+                queue.prepend(children.at(i));
+
+            //now test whether map object intersects screenRect pixel-wise
+            QImage buffer(imgSize, QImage::Format_Mono);
+            buffer.setColor(0, qRgba(0, 0, 0, 0));
+            buffer.setColor(1, HIT_DETECTION_COLOR);
+            buffer.fill(0);
+            QPainter painter(&buffer);
+            d_ptr->paintMapObject(painter, screenRect, obj, true);
+
+            //now test whether any pixels in buffer have been painted
+            for (int x = 0; x < imgSize.width(); x++) {
+                bool pixelSet = false;
+
+                for (int y = 0; y < imgSize.height(); y++)
+
+                    if (buffer.pixelIndex(x, y) == 1) {
+                        mapObjs.append(obj);
+                        pixelSet = true;
+                        break;
+                    }
+
+                if (pixelSet)
+                    break;
+            }
+        }
+    }
+
     return QList<QGeoMapObject*>();
 }
 
@@ -740,7 +793,7 @@ bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF 
     return rect.intersects(objInfo[mapObject]->boundingBox);
 }
 
-void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, const QRectF &viewPort, QGeoMapObject *mapObject)
+void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, const QRectF &viewPort, QGeoMapObject *mapObject, bool hitDetection)
 {
     if (!mapObject)
         return;
@@ -749,22 +802,32 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, const QRectF &vi
         calculateInfo(mapObject);
 
     if (mapObject->type() == QGeoMapObject::RectangleType)
-        paintMapRectangle(painter, viewPort, static_cast<QGeoMapRectangleObject*>(mapObject));
+        paintMapRectangle(painter, viewPort, static_cast<QGeoMapRectangleObject*>(mapObject), hitDetection);
     else if (mapObject->type() == QGeoMapObject::MarkerType)
-        paintMapMarker(painter, viewPort, static_cast<QGeoMapMarkerObject*>(mapObject));
+        paintMapMarker(painter, viewPort, static_cast<QGeoMapMarkerObject*>(mapObject), hitDetection);
     else if (mapObject->type() == QGeoMapObject::PolylineType ||
              mapObject->type() == QGeoMapObject::PolygonType)
-        paintMapPolyline(painter, viewPort, static_cast<QGeoMapPolylineObject*>(mapObject));
+        paintMapPolyline(painter, viewPort, static_cast<QGeoMapPolylineObject*>(mapObject), hitDetection);
     else if (mapObject->type() == QGeoMapObject::GeoRouteType)
-        paintMapRoute(painter, viewPort, static_cast<QGeoMapRouteObject*>(mapObject));
+        paintMapRoute(painter, viewPort, static_cast<QGeoMapRouteObject*>(mapObject), hitDetection);
 }
 
-void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, const QRectF &viewPort, QGeoMapRectangleObject *rectangle)
+void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, const QRectF &viewPort, QGeoMapRectangleObject *rectangle, bool hitDetection)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
-    painter.setPen(rectangle->pen());
-    painter.setBrush(rectangle->brush());
+
+    if (!hitDetection) {
+        painter.setPen(rectangle->pen());
+        painter.setBrush(rectangle->brush());
+    }
+    else {
+        QPen pen(rectangle->pen());
+        pen.setColor(QColor(HIT_DETECTION_COLOR));
+        painter.setPen(pen);
+        painter.setBrush(QColor(HIT_DETECTION_COLOR));
+    }
+
     QGeoTiledMapObjectInfo* info = objInfo.value(rectangle);
     QRectF rect = info->boundingBox.translated(-(viewPort.topLeft()));
     painter.drawRect(rect);
@@ -772,7 +835,7 @@ void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, const QRectF 
     painter.setBrush(oldBrush);
 }
 
-void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, const QRectF &viewPort, QGeoMapMarkerObject *marker)
+void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, const QRectF &viewPort, QGeoMapMarkerObject *marker, bool hitDetection)
 {
     QPixmap icon = marker->icon();
 
@@ -781,17 +844,30 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, const QRectF &vi
 
     QGeoTiledMapObjectInfo* info = objInfo.value(marker);
     QRectF rect = info->boundingBox.translated(-(viewPort.topLeft()));
+    painter.setPen(QPen(QColor(Qt::black)));
+    painter.setBrush(QBrush(Qt::black));
     painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
 }
 
-void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline)
+void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline, bool hitDetection)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
-    painter.setPen(polyline->pen());
+    
+    if (!hitDetection)
+        painter.setPen(polyline->pen());
+    else {
+        QPen pen(polyline->pen());
+        pen.setColor(QColor(HIT_DETECTION_COLOR));
+        painter.setPen(pen);
+    }
 
-    if (polyline->type() == QGeoMapObject::PolygonType)
-        painter.setBrush(static_cast<QGeoMapPolygonObject*>(polyline)->brush());
+    if (polyline->type() == QGeoMapObject::PolygonType) {
+        if (!hitDetection)
+            painter.setBrush(static_cast<QGeoMapPolygonObject*>(polyline)->brush());
+        else
+            painter.setBrush(QColor(HIT_DETECTION_COLOR));
+    }
 
     QGeoTiledMapPolylineInfo* info = static_cast<QGeoTiledMapPolylineInfo*>(objInfo.value(polyline));
     QPainterPath path = info->path.translated(-(viewPort.topLeft()));
@@ -800,7 +876,7 @@ void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, const QRectF &
     painter.setBrush(oldBrush);
 }
 
-void QGeoTiledMapDataPrivate::paintMapRoute(QPainter &painter, const QRectF &viewPort, QGeoMapRouteObject *route)
+void QGeoTiledMapDataPrivate::paintMapRoute(QPainter &painter, const QRectF &viewPort, QGeoMapRouteObject *route, bool hitDetection)
 {
     QSet<int> alreadyPainted;
     QPainterPath path;
@@ -830,7 +906,15 @@ void QGeoTiledMapDataPrivate::paintMapRoute(QPainter &painter, const QRectF &vie
 
     path.translate(-(viewPort.topLeft()));
     QPen oldPen = painter.pen();
-    painter.setPen(route->pen());
+
+    if (!hitDetection)
+        painter.setPen(route->pen());
+    else {
+        QPen pen(route->pen());
+        pen.setColor(QColor(HIT_DETECTION_COLOR));
+        painter.setPen(pen);
+    }
+
     painter.drawPath(path);
     painter.setPen(oldPen);
 }
