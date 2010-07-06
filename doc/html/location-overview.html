@@ -220,8 +220,7 @@
 <tr valign="top" class="even"><th><a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a></th><td>Abstract base class for the distribution of positional updates</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a></th><td>Contains basic information about a satellite</td></tr>
 <tr valign="top" class="even"><th><a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a></th><td>Abstract base class for the distribution of satellite information updates</td></tr>
-<tr valign="top" class="odd"><th><a href="qgeotiledmapreply.html">QGeoTiledMapReply</a></th><td>Represents the response from a geocoding service</td></tr>
-<tr valign="top" class="even"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
+<tr valign="top" class="odd"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
 </table></p>
 <a name="landmarks"></a>
 <h3>Landmarks</h3>
@@ -308,8 +307,7 @@
 <h4>Common classes</h4>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeoboundingbox.html">QGeoBoundingBox</a></th><td>Defines a rectangular geographic area</td></tr>
-<tr valign="top" class="even"><th><a href="qgeodistance.html">QGeoDistance</a></th><td>Represents a geographical distance</td></tr>
-<tr valign="top" class="odd"><th><a href="qgeoserviceprovider.html">QGeoServiceProvider</a></th><td>Aggregates access to services which provide geographical information</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoserviceprovider.html">QGeoServiceProvider</a></th><td>Aggregates access to services which provide geographical information</td></tr>
 </table></p>
 <a name="mapping"></a>
 <h4>Mapping</h4>
@@ -333,8 +331,6 @@
 <p>The requests are created as <a href="qgeorouterequest.html">QGeoRouteRequest</a> instances, which are passed to <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(). The returned <a href="qgeoroutereply.html">QGeoRouteReply</a> instance will contain the result of the request when it is completed.</p>
 <p>The <a href="qgeoroute.html">QGeoRoute</a> class describes the resulting route. Each route is broken up into a number of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> instances, with the division usually occurring at either user specified waypoints or at changes in the mode of transport, like when changing from a train to a bus.</p>
 <p>Each <a href="qgeoroutesegment.html">QGeoRouteSegment</a> has a <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> instance which describes the instructions that would be issued to a user attempting to follow a route. These instructions a location, which is typically somewhere near the end of the associated <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, and instruction text describing how the next <a href="qgeoroutesegment.html">QGeoRouteSegment</a> should be reached.</p>
-<p>Several <a href="qgeoroutesegment.html">QGeoRouteSegment</a> subclasses exist and can be used to provide additional data about the segment, like the route number of a bus or the speed limit of a road.</p>
-<p>Similarly, subclasses of <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> can be used to access data structures describing the intruction in more detail than the usual instruction text and location.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represents a navigation instruction</td></tr>
 <tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Represents a route between two points</td></tr>

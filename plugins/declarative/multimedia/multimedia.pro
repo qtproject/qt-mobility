@@ -1,13 +1,13 @@
-include(../../../staticconfig.pri)
-
 INCLUDEPATH += ../../../src/multimedia \
                ../../../src/multimedia/effects \
                ../../../src/multimedia/video
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_multimedia
+TARGET  = $$qtLibraryTarget(declarative_multimedia)
+TEMPLATE = lib
+CONFIG += plugin
 TARGETPATH = Qt/multimedia
-include(../../qimportbase.pri)
+PLUGIN_TYPE = declarative
 include(../../../common.pri)
 
 QT += declarative
@@ -28,10 +28,11 @@ SOURCES += \
 CONFIG += mobility
 MOBILITY += multimedia
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
+
+symbian:TARGET.EPOCALLOWDLLDATA=1

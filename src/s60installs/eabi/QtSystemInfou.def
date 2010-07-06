@@ -122,4 +122,16 @@ EXPORTS
 	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 121 NONAME
 	_ZN10QtMobility18QSystemNetworkInfo13connectNotifyEPKc @ 122 NONAME
 	_ZN10QtMobility18QSystemNetworkInfo16disconnectNotifyEPKc @ 123 NONAME
+	_ZN10QtMobility11QSystemInfo13connectNotifyEPKc @ 124 NONAME
+	_ZN10QtMobility11QSystemInfo16disconnectNotifyEPKc @ 125 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo13connectNotifyEPKc @ 126 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo16disconnectNotifyEPKc @ 127 NONAME
+	_ZN10QtMobility17QSystemDeviceInfo26currentBluetoothPowerStateEv @ 128 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo11getDPIWidthEi @ 129 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo12getDPIHeightEi @ 130 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo13physicalWidthEi @ 131 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo14getOrientationEi @ 132 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo14physicalHeightEi @ 133 NONAME
+	_ZN10QtMobility18QSystemDisplayInfo8contrastEi @ 134 NONAME
+	_ZN10QtMobility18QSystemStorageInfo19logicalDriveChangedEbRK7QString @ 135 NONAME
 

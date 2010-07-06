@@ -127,13 +127,13 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    //None of symbian players supports this.
+    // TODO: Add Symbian^3 support
     return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    //None of symbian players supports this.
+    // TODO: Add Symbian^3 support
     m_mediaSettings.setPlaybackRate(rate);
     emit playbackRateChanged(playbackRate());
     
@@ -239,9 +239,7 @@ S60MediaPlayerSession* S60MediaPlayerControl::session()
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
-    S60MediaPlayerSession *session = NULL;
-    session = m_mediaPlayerResolver.VideoPlayerSession();
-    session->setVideoRenderer(output);
+    m_mediaPlayerResolver.VideoPlayerSession()->setVideoRenderer(output);
 }
 
 bool S60MediaPlayerControl::isAudioAvailable() const

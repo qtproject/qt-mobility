@@ -44,9 +44,10 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent),
-                                                                              running(false)
+                                                                              running(false), satInViewSeen(false)
 {
-    registered = false;
+    requestTimer = new QTimer(this);
+    QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
 }
 
 
@@ -72,35 +73,66 @@ int QGeoSatelliteInfoSourceMaemo::init()
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-    dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
     running = true;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
     running = false;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
-    dbusComm->sendConfigRequest(DBusComm::CommandSatOneShot, 0, timeout);
+    if ( !running )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
+
+    requestTimer->start(timeout);
+    satInViewSeen = false;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::newSatellitesInView(const QList<QGeoSatelliteInfo> &update)
 {
-    emit satellitesInViewUpdated(update);
+    if ( requestTimer->isActive() && satInViewSeen ) {
+        requestTimer->stop();
+        if ( !running )
+            dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+        else 
+            emit satellitesInViewUpdated(update);
+    } else {
+        emit satellitesInViewUpdated(update);
+    }
+
+    satInViewSeen = true;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::newSatellitesInUse(const QList<QGeoSatelliteInfo> &update)
 {
+    if ( requestTimer->isActive() ) {
+        requestTimer->stop();
+        if ( !running )
+            dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+    }
+
     emit satellitesInUseUpdated(update);
 }
 
+void QGeoSatelliteInfoSourceMaemo::requestTimerExpired()
+{
+    requestTimer->stop();
+
+    if ( !running )
+        dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
+
+    emit requestTimeout();
+}
 
 void QGeoSatelliteInfoSourceMaemo::onServiceDisconnect()
 {

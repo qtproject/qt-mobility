@@ -1,0 +1,1786 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE TestContactSuite -SharedData
+//!@file
+START_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-CONTACTTESTCASES-add_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_zero_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_zero_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_zero_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_zero_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_asst-0001
+
+
+START_TESTCASE PIM-CONTACTTESTCASES-add_field_boundary_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_asst-tel
+
+
+END_TESTCASE PIM-CONTACTTESTCASES-add_field_boundary_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_class-0001
+
+
+START_TESTCASE PIM-CONTACTTESTCASES-add_field_boundary_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_boundary_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_boundary_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_boundary_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_couple_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_couple_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_couple_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_all_with_data_fields-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_all_with_data_fields-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_all_with_data_fields
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_all_with_data_fields-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_all_without_data_fields-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_all_without_data_fields-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_all_without_data_fields
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_all_without_data_fields-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_field_class
+
+
+END_TESTCASE PIM-CONTACTTESTCASES-open_exist_add_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_fieldt_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-open_exist_add_fieldt_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini open_exist_add_fieldt_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-open_exist_add_fieldt_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-update_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-update_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini update_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-update_field_dept-0001
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_anni-0001
+
+
+START_TESTCASE PIM-CONTACTTESTCASES-delete_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini delete_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-delete_exist_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini delete_exist_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-delete_exist_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_add_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddMultipleContactsStep C:\ContactTestCases.ini multiple_contact_add_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_add_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_class-0001
+
+ 
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_update_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateMultipleContactsStep C:\ContactTestCases.ini multiple_contact_update_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_update_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-multiple_contact_delete_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteMultipleContactsStep C:\ContactTestCases.ini multiple_contact_delete_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-multiple_contact_delete_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-performance_add_all_fields-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-performance_add_all_fields-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestContactPerformanceStep C:\ContactTestCases.ini performance_add_all_fields
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-performance_add_all_fields-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-performance_update_all_fields-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-performance_update_all_fields-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestContactPerformanceStep C:\ContactTestCases.ini performance_update_all_fields
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-performance_update_all_fields-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-performance_delete_all_fields-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-performance_delete_all_fields-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestContactPerformanceStep C:\ContactTestCases.ini performance_delete_all_fields
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-performance_delete_all_fields-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_add_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini template_add_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_add_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_asst-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_asst-tel-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_zero_anni-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_zero_anni-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_zero_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_zero_anni-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_spouse-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_spouse-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_spouse-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_children-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_children-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_children-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_class-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_class-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_class-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_dept-0002
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-add_field_blank_dept-0002
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestAddFieldsStep C:\ContactTestCases.ini add_field_blank_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-add_field_blank_dept-0002
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_update_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestUpdateFieldsStep C:\ContactTestCases.ini template_update_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_update_field_dept-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_asst-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_asst-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_asst
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_asst-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_asst-tel-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_asst-tel-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_asst-tel
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_asst-tel-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_anni-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_anni-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_anni
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_anni-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_spouse-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_spouse-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_spouse
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_spouse-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_children-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_children-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_children
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_children-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_class-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_class-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_class
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_class-0001
+
+
+START_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_dept-0001
+
+//! @SYMTestCaseID PIM-CONTACTTESTCASES-template_delete_field_dept-0001
+//! @SYMTestCaseDesc 
+//! @SYMPREQ 
+//! @SYMTestStatus Implemented
+//! @SYMTestPriority 
+//! @SYMTestActions   
+//! @SYMTestExpectedResults 
+//! @SYMTestType CIT
+RUN_TEST_STEP 100 TestContactSuite TestDeleteFieldsStep C:\ContactTestCases.ini template_delete_field_dept
+
+
+END_TESTCASE  PIM-CONTACTTESTCASES-template_delete_field_dept-0001
+
+
+
+// Cleanup database files
+PREFIX RUN_UTILS
+DeleteFile c:\private\10003a73\contactexist.cdb
+DeleteFile c:\private\10003a73\contactmultiple.cdb
+DeleteFile c:\private\10003a73\mytemplate.cdb
+DeleteFile c:\private\10003a73\mytemplate1.cdb
+REMOVE_PREFIX
+// --------------------

@@ -1,0 +1,124 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+/*!
+
+\page organizerschema.html
+
+\title Qt Organizer Schema
+
+\tableofcontents
+
+\section1 Introduction
+
+The \l{Organizer}{Qt Organizer API} makes use of detail leaf classes
+which provide certain well-known functionality.  In order to develop a backend engine which
+can service clients or provide synchronization to other backends, the schema must be
+known.
+
+\section1 Schema Definition
+
+Different backends have different capabilities.  Some backends may not be able to implement
+certain definitions in the default schema (for example, some backends might not have support for
+storing location information), while other backends may not be able to implement some aspects
+of a particular definition in the default schema.
+
+In order to be useful for clients, however, all backends should attempt to support the default
+schema.  Furthermore, no backend should support a schema definition of a modified form where
+those modifications change the semantics of the data.  A client should be able to request details
+of the QOrganizerItemDescription type (that is, details whose definition name is "Description") with
+reasonable certainty that the data returned describes the item in which it is saved.
+
+By implementing the default schema, the backend developer ensures that client code written against
+the default schema will work without source modification against their backend.
+
+\section1 Default Schema
+
+The leaf details that form the default schema are as follows:
+\annotatedlist organizer-details
+
+
+\section2 Detail Definition Uniqueness
+
+A uniqueness constraint on a detail definition means that for any \l{QOrganizerItem}, only one detail of that
+definition may be saved.
+
+The leaf classes which have a uniqueness constraint in the default schema are as follows:
+\list
+    \o \l{QOrganizerItemDisplayLabel}
+    \o \l{QOrganizerItemDescription}
+    \o \l{QOrganizerItemType}
+    \o \l{QOrganizerItemGuid}
+\endlist
+
+\section2 Detail Access Constraints
+
+Some details in an item retrieved from a manager may have access constraints set.
+An access constraint on a detail means that the detail may not be removed (if the access constraint is \c QOrganizerItemDetail::Irremovable)
+or updated (if the access constraint is \c QOrganizerItemDetail::ReadOnly) by the client.  If the client attempts to save an updated
+version of a read-only detail in an item, or remove a detail which is irremovable from an item, the operation will succeed;
+however those updates to the item will be ignored by the manager when the item is saved there.
+
+There are three possible detail access constraints: read-only, irremovable and no constraint.
+A read-only constraint ensures that clients cannot modify the values stored in such details in the persistent
+copy of the item (that is, the item as it is stored in the manager); the irremovable constaint ensures
+that a particular detail may not be removed by clients.  In general, most details which are read only will
+also be irremovable, and vice versa.  One exception to this is the \l{QOrganizerItemType} detail, which is
+irremovable but may be updated by clients as desired in the default schema.
+Details with no constraint may be added, updated and removed as desired by the client.  Changes to such details
+in an item will be persisted in the manager when the client calls \l{QOrganizerItemManager::saveItem()}.
+
+Please see the documentation of \l{QOrganizerItemDetail} for more information on access constraints.
+
+The leaf classes which have access constraints in the default schema are as follows:
+\list
+    \o \l{QOrganizerItemGuid} is \c QOrganizerItemDetail::ReadOnly and \c QOrganizerItemDetail::Irremovable
+    \o \l{QOrganizerItemTimestamp} is \c QOrganizerItemDetail::ReadOnly and \c QOrganizerItemDetail::Irremovable
+    \o \l{QOrganizerItemDisplayLabel} is \c QOrganizerItemDetail::Irremovable
+    \o \l{QOrganizerItemDescription} is \c QOrganizerItemDetail::Irremovable
+    \o \l{QOrganizerItemType} is \c QOrganizerItemDetail::Irremovable
+\endlist
+
+Furthermore, in the default schema, every item is required to have at least three details by default: a \l{QOrganizerItemType} which describes
+the type of information which the item represents (for example, an event or an agenda), a \l{QOrganizerItemDisplayLabel} which holds
+the display label of the item, and a \l{QOrganizerItemDescription} which describes the item in a human-readable manner.
+
+\section2 Backend-provided Details
+
+As described in the section on detail access constraints, some details are provided by the backend.
+When the client attempts to save a \l{QOrganizerItem}
+that contains these details, these details will be ignored by the backend (since any values in this field
+are synthesized by the backend).  This means that while clients may (for example) add a
+\l{QOrganizerItemTimestamp} detail to a \l{QOrganizerItem}, it will not be persisted in the manager when the
+client attempts to save that item.
+
+Precisely which details are backend-provided is backend specific; some backends provide more details
+than others.
+
+
+*/

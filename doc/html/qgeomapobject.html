@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapObject Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapObject Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoMapObject class is graphical item for display in <a href="qgeomapwidget.html">QGeoMapWidget</a> instancse, that is specified in terms of coordinates and distances. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoMapObject&gt;</pre><p>Inherited by <a href="qgeomapcircleobject.html">QGeoMapCircleObject</a>.</p>
+<pre>    #include &lt;QGeoMapObject&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherited by <a href="qgeomapcircleobject.html">QGeoMapCircleObject</a>.</p>
 <ul>
 <li><a href="qgeomapobject-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -42,12 +44,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#setZValue">setZValue</a></b> ( int <i>zValue</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#zValue">zValue</a></b> () const</td></tr>
-</table>
-<hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#QGeoMapObject-2">QGeoMapObject</a></b> ( QGeoMapObjectPrivate * <i>dd</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -79,7 +75,6 @@
 <a name="//apple_ref/cpp/instm/QGeoMapObject/QGeoMapObject"></a>
 <h3 class="fn"><a name="QGeoMapObject"></a>QGeoMapObject::QGeoMapObject ( QGeoMapObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new map object with the specified <i>parent</i>.</p>
-<h3 class="fn"><a name="QGeoMapObject-2"></a>QGeoMapObject::QGeoMapObject ( QGeoMapObjectPrivate * <i>dd</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <a name="//apple_ref/cpp/instm/QGeoMapObject/~QGeoMapObject"></a>
 <h3 class="fn"><a name="dtor.QGeoMapObject"></a>QGeoMapObject::~QGeoMapObject ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys this map object.</p>
@@ -87,6 +82,7 @@
 <h3 class="fn"><a name="addChildObject"></a>void QGeoMapObject::addChildObject ( QGeoMapObject * <i>childObject</i> )</h3>
 <p>Adds <i>childObject</i> to the list of children of this map object.</p>
 <p>If <i>childObject</i> is 0 it will not be added.</p>
+<p>The map object will take ownership of <i>childObject</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapObject/boundingBox"></a>
 <h3 class="fn"><a name="boundingBox"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoMapObject::boundingBox () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns a bounding box which contains this map object.</p>
@@ -110,6 +106,7 @@
 <h3 class="fn"><a name="removeChildObject"></a>void QGeoMapObject::removeChildObject ( QGeoMapObject * <i>childObject</i> )</h3>
 <p>Removes <i>childObject</i> from the list of children of this map object.</p>
 <p>This method does nothing if <i>childObject</i> is not contained in this map objects list of children.</p>
+<p>The map object will release ownership of <i>childObject</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapObject/setVisible"></a>
 <h3 class="fn"><a name="setVisible"></a>void QGeoMapObject::setVisible ( bool <i>visible</i> )</h3>
 <p>Sets whether this map object is <i>visible</i>.</p>
@@ -118,7 +115,8 @@
 <a name="//apple_ref/cpp/instm/QGeoMapObject/setZValue"></a>
 <h3 class="fn"><a name="setZValue"></a>void QGeoMapObject::setZValue ( int <i>zValue</i> )</h3>
 <p>Sets the z-value of this map object to <i>zValue</i>.</p>
-<p>TODO describe the z-value semantics - see <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a> in the meantime</p>
+<p>The z-value determines the order in which the objects are drawn on the screen. Objects with the same value will be drawn in the order that they were added to the map or map object.</p>
+<p>This is the same behaviour as <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a>.</p>
 <p>See also <a href="qgeomapobject.html#zValue">zValue</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapObject/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qgeomapobject.html#Type-enum">Type</a> QGeoMapObject::type () const</h3>
@@ -126,7 +124,8 @@
 <a name="//apple_ref/cpp/instm/QGeoMapObject/zValue"></a>
 <h3 class="fn"><a name="zValue"></a>int QGeoMapObject::zValue () const</h3>
 <p>Returns the z-value of this map object.</p>
-<p>TODO describe the z-value semantics - see <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a> in the meantime</p>
+<p>The z-value determines the order in which the objects are drawn on the screen. Objects with the same value will be drawn in the order that they were added to the map or map object.</p>
+<p>This is the same behaviour as <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a>.</p>
 <p>See also <a href="qgeomapobject.html#setZValue">setZValue</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

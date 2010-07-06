@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Qt Mobility Project 1.1: mapwindow.cpp Example File (fetchgooglemaps/mapwindow.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">mapwindow.cpp Example File<br /><span class="small-subtitle">fetchgooglemaps/mapwindow.cpp</span>
-</h1>
-<pre><span class="comment">    /****************************************************************************
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">mapwindow.cpp Example File</h1>
+<span class="small-subtitle">fetchgooglemaps/mapwindow.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
     **
     ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
@@ -69,7 +69,7 @@
     QTM_USE_NAMESPACE
 
 <span class="comment">    // Use the special 'localhost' key for the Google Maps key</span>
-    const QString GMAPS_STATICMAP_URL_TEMPLATE =  &quot;http:<span class="comment">//maps.google.com/staticmap?center=%1,%2&amp;zoom=14&amp;size=%3x%4&amp;map type=mobile&amp;markers=%1,%2&amp;key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&amp;sensor=false&quot;;</span>
+    const QString GMAPS_STATICMAP_URL_TEMPLATE =  &quot;http://maps.google.com/staticmap?center=%1,%2&amp;zoom=14&amp;size=%3x%4&amp;map type=mobile&amp;markers=%1,%2&amp;key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&amp;sensor=false&quot;;
 
     MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
             : QMainWindow(parent, flags),
@@ -261,6 +261,7 @@
         loading = false;
         webView-&gt;setUpdatesEnabled(true);
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

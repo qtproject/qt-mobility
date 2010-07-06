@@ -7,7 +7,8 @@ QT += testlib
 include(../../../common.pri)
 include(../support/support.pri)
 
-qtAddLibrary(QtMessaging)
+CONFIG += mobility
+MOBILITY = messaging
 INCLUDEPATH += ../../../src/messaging
 
 symbian|wince*|maemo5|win32|mac {

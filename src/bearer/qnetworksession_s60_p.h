@@ -175,7 +175,6 @@ private: // data
     bool iFirstSync;
     bool iStoppedByUser;
     bool iClosedByUser;
-    TUint32 iDeprecatedConnectionId;
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
     CActiveCommsMobilityApiExt* iMobility;
@@ -190,6 +189,8 @@ private: // data
     
     TUint32 iOldRoamingIap;
     TUint32 iNewRoamingIap;
+
+    bool isOpening;
 
     friend class QNetworkSession;
     friend class ConnectionProgressNotifier;

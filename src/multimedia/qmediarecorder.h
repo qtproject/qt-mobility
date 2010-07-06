@@ -174,6 +174,8 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
+    Q_PRIVATE_SLOT(d_func(), void _q_notify())
+    Q_PRIVATE_SLOT(d_func(), void _q_updateNotifyInterval(int))
 };
 
 QT_END_NAMESPACE

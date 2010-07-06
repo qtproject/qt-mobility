@@ -131,6 +131,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 /*!
     \class QMediaImageViewer
     \brief The QMediaImageViewer class provides a means of viewing image media.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
     \preliminary
 
@@ -143,7 +144,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    viewer->addVideoOutput(display);
+    viewer->setVideoOutput(display);
     display->show();
     \endcode
 
@@ -295,6 +296,9 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     emit mediaChanged(d->media);
 }
 
+/*!
+  Use \a playlist as the source of images to be displayed in the viewer.
+*/
 void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
 {
     Q_D(QMediaImageViewer);
@@ -303,6 +307,8 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        QMediaObject::unbind(playlist);
     }
 
     d->playlist = playlist;
@@ -312,10 +318,20 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
                 this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
 
+        QMediaObject::bind(d->playlist);
+
         setMedia(d->playlist->currentMedia());
     } else {
         setMedia(QMediaContent());
     }
+}
+
+/*!
+  Returns the current playlist, or 0 if none.
+*/
+QMediaPlaylist *QMediaImageViewer::playlist() const
+{
+    return d_func()->playlist;
 }
 
 /*!
@@ -385,7 +401,13 @@ int QMediaImageViewer::elapsedTime() const
 */
 bool QMediaImageViewer::bind(QObject *object)
 {
-    return QMediaObject::bind(object);
+    if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
+        setPlaylist(playlist);
+
+        return true;
+    } else {
+        return QMediaObject::bind(object);
+    }
 }
 
 /*!
@@ -393,7 +415,10 @@ bool QMediaImageViewer::bind(QObject *object)
  */
 void QMediaImageViewer::unbind(QObject *object)
 {
-    QMediaObject::unbind(object);
+    if (object == d_func()->playlist)
+        setPlaylist(0);
+    else
+        QMediaObject::unbind(object);
 }
 
 /*!

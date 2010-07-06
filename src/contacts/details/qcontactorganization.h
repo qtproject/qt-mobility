@@ -64,6 +64,8 @@ public:
     static const QLatin1Constant FieldRole;
     static const QLatin1Constant FieldTitle;
     static const QLatin1Constant FieldAssistantName;
+
+    static const QLatin1Constant FieldLogo; // deprecated
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
     Q_DECLARE_LATIN1_CONSTANT(FieldName, "Name");
@@ -73,6 +75,10 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldRole, "Role");
     Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
     Q_DECLARE_LATIN1_CONSTANT(FieldAssistantName, "AssistantName");
+
+    // deprecated keys:
+    Q_DECLARE_LATIN1_CONSTANT(FieldLogo, "Logo");
+
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}
@@ -88,7 +94,11 @@ public:
     void setTitle(const QString& title) {setValue(FieldTitle, title);}
     QString title() const {return value(FieldTitle);}
     void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
-    QString assistantName() const {return value(FieldAssistantName);}
+    QString assistantName() const {return value(FieldAssistantName);} 
+
+    // old, deprecated API: to be removed after the transition period has elapsed.
+    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
+    QString logo() const {return value(FieldLogo);}
 };
 
 QTM_END_NAMESPACE
