@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qcameraimagecapturecontrol.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QCameraImageCaptureControl Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QCameraImageCaptureControl"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCameraImageCaptureControl Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
+<p>The QCameraImageCaptureControl class provides a control interface for image capture services. <a href="#details">More...</a></p>
+<pre>    #include &lt;QCameraImageCaptureControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
+<ul>
+<li><a href="qcameraimagecapturecontrol-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#dtor.QCameraImageCaptureControl">~QCameraImageCaptureControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#cancelCapture">cancelCapture</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#capture">capture</a></b> ( const QString &amp; <i>fileName</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCameraImageCapture::DriveMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#driveMode">driveMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#isReadyForCapture">isReadyForCapture</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#setDriveMode">setDriveMode</a></b> ( QCameraImageCapture::DriveMode <i>mode</i> ) = 0</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#imageCaptured">imageCaptured</a></b> ( int <i>requestId</i>, const QImage &amp; <i>preview</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#imageExposed">imageExposed</a></b> ( int <i>requestId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#imageSaved">imageSaved</a></b> ( int <i>requestId</i>, const QString &amp; <i>fileName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#QCameraImageCaptureControl">QCameraImageCaptureControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameraimagecapturecontrol.html#QCameraImageCaptureControl_iid">QCameraImageCaptureControl_iid</a></b></td></tr>
+</table>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QCameraImageCaptureControl class provides a control interface for image capture services.</p>
+<p>The interface name of QCameraImageCaptureControl is <tt>com.nokia.Qt.QCameraImageCaptureControl/1.0</tt> as defined in <a href="qcameraimagecapturecontrol.html#QCameraImageCaptureControl_iid">QCameraImageCaptureControl_iid</a>.</p>
+<p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
+<p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
+<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/QCameraImageCaptureControl"></a>
+<h3 class="fn"><a name="QCameraImageCaptureControl"></a>QCameraImageCaptureControl::QCameraImageCaptureControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Constructs a new image capture control object with the given <i>parent</i></p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/~QCameraImageCaptureControl"></a>
+<h3 class="fn"><a name="dtor.QCameraImageCaptureControl"></a>QCameraImageCaptureControl::~QCameraImageCaptureControl ()</h3>
+<p>Destroys an image capture control.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/cancelCapture"></a>
+<h3 class="fn"><a name="cancelCapture"></a>void QCameraImageCaptureControl::cancelCapture ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Cancel pending capture requests.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/capture"></a>
+<h3 class="fn"><a name="capture"></a>int QCameraImageCaptureControl::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Initiates the capture of an image to <i>fileName</i>. The <i>fileName</i> can be relative or empty, in this case the service should use the system specific place and file naming scheme.</p>
+<p>Returns the capture request id number, which is used later with <a href="qcameraimagecapturecontrol.html#imageExposed">imageExposed</a>(), <a href="qcameraimagecapturecontrol.html#imageCaptured">imageCaptured</a>() and <a href="qcameraimagecapturecontrol.html#imageSaved">imageSaved</a>() signals.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/driveMode"></a>
+<h3 class="fn"><a name="driveMode"></a><a href="qcameraimagecapture.html#DriveMode-enum">QCameraImageCapture::DriveMode</a> QCameraImageCaptureControl::driveMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qcameraimagecapturecontrol.html#setDriveMode">setDriveMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/error"></a>
+<h3 class="fn"><a name="error"></a>void QCameraImageCaptureControl::error ( int <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/imageCaptured"></a>
+<h3 class="fn"><a name="imageCaptured"></a>void QCameraImageCaptureControl::imageCaptured ( int <i>requestId</i>, const <a href="http://qt.nokia.com/doc/4.6/qimage.html">QImage</a> &amp; <i>preview</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that an image with it <i>requestId</i> has been captured and a <i>preview</i> is available.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/imageExposed"></a>
+<h3 class="fn"><a name="imageExposed"></a>void QCameraImageCaptureControl::imageExposed ( int <i>requestId</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that an image with it <i>requestId</i> has just been exposed. This signal can be used for the shutter sound or other indicaton.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/imageSaved"></a>
+<h3 class="fn"><a name="imageSaved"></a>void QCameraImageCaptureControl::imageSaved ( int <i>requestId</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a captured image with a <i>requestId</i> has been saved to <i>fileName</i>.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/isReadyForCapture"></a>
+<h3 class="fn"><a name="isReadyForCapture"></a>bool QCameraImageCaptureControl::isReadyForCapture () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Identifies if a capture control is ready to perform a capture immediately (all the resources necessary for image capture are allocated, hardware initialized, flash is charged, etc).</p>
+<p>Returns true if the camera is ready for capture; and false if it is not.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/readyForCaptureChanged"></a>
+<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCameraImageCaptureControl::readyForCaptureChanged ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a capture control's <i>ready</i> state has changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageCaptureControl/setDriveMode"></a>
+<h3 class="fn"><a name="setDriveMode"></a>void QCameraImageCaptureControl::setDriveMode ( <a href="qcameraimagecapture.html#DriveMode-enum">QCameraImageCapture::DriveMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qcameraimagecapturecontrol.html#driveMode">driveMode</a>().</p>
+<hr />
+<h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//QCameraImageCaptureControl_iid"></a>
+<h3 class="fn"><a name="QCameraImageCaptureControl_iid"></a>QCameraImageCaptureControl_iid</h3>
+<p><tt>com.nokia.Qt.QCameraImageCaptureControl/1.0</tt></p>
+<p>Defines the interface name of the <a href="qcameraimagecapturecontrol.html">QCameraImageCaptureControl</a> class.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

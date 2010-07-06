@@ -92,6 +92,7 @@ private:
     QLandmarkCategoryRemoveRequest *catRemoveRequest;
     QLandmarkRemoveRequest *lmRemoveRequest;
 
+    QLandmarkManager *landmarkManager;
     QLandmarkCategoryId categoryId;
     int previousLastIndex;
 };

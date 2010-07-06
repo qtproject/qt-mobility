@@ -66,6 +66,8 @@ isEmpty(QT_LIBINFIX):symbian {
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
 
+    contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
 
     contains(mobility_modules, bearer) {
         bearer = \

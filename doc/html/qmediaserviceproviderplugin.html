@@ -1,21 +1,27 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediaserviceprovider.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediaserviceprovider.cpp -->
   <title>Qt Mobility Project 1.1: QMediaServiceProviderPlugin Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QMediaServiceProviderPlugin"></a>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaServiceProviderPlugin Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QMediaServiceProviderPlugin</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMediaServiceProviderPlugin Class Reference</h1>
 <p>The QMediaServiceProviderPlugin class interface provides an interface for <a href="qmediaservice.html">QMediaService</a> plug-ins. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMediaServiceProviderPlugin&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QMediaServiceProviderPlugin&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediaserviceproviderplugin-members.html">List of all members, including inherited members</a></li>
@@ -23,46 +29,47 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderplugin.html#create">create</a></b> ( const QString &amp; <i>key</i> ) = 0</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaService * </td><td class="memItemRight bottomAlign"><b><a href="qmediaserviceproviderplugin.html#create">create</a></b> ( const QString &amp; <i>key</i> ) = 0</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderplugin.html#keys">keys</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderplugin.html#release">release</a></b> ( QMediaService * <i>service</i> ) = 0</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QStringList </td><td class="memItemRight bottomAlign"><b><a href="qmediaserviceproviderplugin.html#keys">keys</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaserviceproviderplugin.html#release">release</a></b> ( QMediaService * <i>service</i> ) = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaServiceProviderPlugin class interface provides an interface for <a href="qmediaservice.html">QMediaService</a> plug-ins.</p>
 <p>A media service provider plug-in may implement one or more of <a href="qmediaservicesupportedformatsinterface.html">QMediaServiceSupportedFormatsInterface</a>, <a href="qmediaservicesupporteddevicesinterface.html">QMediaServiceSupportedDevicesInterface</a>, and <a href="qmediaservicefeaturesinterface.html">QMediaServiceFeaturesInterface</a> to identify the features it supports.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaServiceProviderPlugin/create"></a>
-<h3 class="fn"><a name="create"></a><a href="qmediaservice.html">QMediaService</a> * QMediaServiceProviderPlugin::create ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="create"></a><a href="qmediaservice.html">QMediaService</a> * QMediaServiceProviderPlugin::create ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )<tt> [pure virtual]</tt></h3>
 <p>Constructs a new instance of the <a href="qmediaservice.html">QMediaService</a> identified by <i>key</i>.</p>
 <p>The <a href="qmediaservice.html">QMediaService</a> returned must be destroyed with <a href="qmediaserviceproviderplugin.html#release">release</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaServiceProviderPlugin/keys"></a>
-<h3 class="fn"><a name="keys"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaServiceProviderPlugin::keys () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="keys"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaServiceProviderPlugin::keys () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of keys for media services a plug-in can create.</p>
-<a name="//apple_ref/cpp/instm/QMediaServiceProviderPlugin/release"></a>
-<h3 class="fn"><a name="release"></a>void QMediaServiceProviderPlugin::release ( <a href="qmediaservice.html">QMediaService</a> * <i>service</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="release"></a>void QMediaServiceProviderPlugin::release ( <a href="qmediaservice.html">QMediaService</a> * <i>service</i> )<tt> [pure virtual]</tt></h3>
 <p>Destroys a media <i>service</i> constructed with <a href="qmediaserviceproviderplugin.html#create">create</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

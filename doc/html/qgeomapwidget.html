@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapWidget Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapWidget Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoMapWidget class is used to display a map and manager the interactions between the user and the map. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoMapWidget&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<pre>    #include &lt;QGeoMapWidget&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
 <ul>
 <li><a href="qgeomapwidget-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -114,10 +116,7 @@
 <p>Most of the functionality is provided by <a href="qgeomappingmanager.html">QGeoMappingManager</a>, which handles most aspects of the display.</p>
 <p>The map viewport can be panned, the zoom level can be changed and the center coordinate of the viewport can be set explicitly.</p>
 <p>The <a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a>() and coordinateToScreenPoisition() functions can be used to convert between positions on the screen and global coordinates.</p>
-<p>TODO describe map objects</p>
 <p>Mouse and keyboard events should be handled by subclassing QGeoMapWidget and providing implementations of the event handling functions present in <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
-<p>TODO example code</p>
-<p>DESIGN TODO do we need a signal for when the user pans the map?</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoMapWidget/MapType"></a>
@@ -152,6 +151,7 @@
 <h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Adds <i>mapObject</i> to the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will display the map object immediately.</p>
+<p>The widget will take ownership of the <i>mapObject</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/center"></a>
 <h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3>
 <p>Returns the coordinate of the point in the center of the map viewport.</p>
@@ -199,6 +199,7 @@
 <h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Removes <i>mapObject</i> from the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will stop displaying the map object immediately.</p>
+<p>The widget will release ownership of the <i>mapObject</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/resizeEvent"></a>
 <h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicssceneresizeevent.html">QGraphicsSceneResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#resizeEvent">QGraphicsWidget::resizeEvent</a>().</p>

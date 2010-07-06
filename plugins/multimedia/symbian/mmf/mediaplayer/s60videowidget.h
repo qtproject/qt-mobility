@@ -110,18 +110,19 @@ public:
     void setHue(int hue);
     int saturation() const;
     void setSaturation(int saturation);
-
     // from QObject
     bool eventFilter(QObject *object, QEvent *event);
 
     //new methods
     WId videoWidgetWId();
     QSize videoWidgetSize();
+
 private:
     void initializeVideoOutput();
     
 signals:
     void widgetUpdated();
+    void widgetResized();
     void beginVideoWindowNativePaint();
     void endVideoWindowNativePaint();
     
@@ -131,6 +132,7 @@ private slots:
 private:
     QAbstractVideoWidget *m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
+    bool m_fullScreenEnabled;
 };
 
 #endif // S60VIDEOWIDGET_H

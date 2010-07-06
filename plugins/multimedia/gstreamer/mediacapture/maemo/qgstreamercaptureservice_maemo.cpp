@@ -45,8 +45,15 @@
 #include "qgstreamermediacontainercontrol_maemo.h"
 #include "qgstreameraudioencode_maemo.h"
 #include "qgstreamervideoencode_maemo.h"
+#include "qgstreamerimageencode_maemo.h"
 #include "qgstreamerbushelper.h"
+#include "qgstreamercameracontrol_maemo.h"
+#include "qgstreamercameralockscontrol_maemo.h"
 #include "qgstreamercapturemetadatacontrol_maemo.h"
+#include "qgstreamercameraexposurecontrol_maemo.h"
+#include "qgstreamercamerafocuscontrol_maemo.h"
+#include "qgstreamerimagecapturecontrol_maemo.h"
+#include "qgstreamerimageprocessingcontrol_maemo.h"
 
 #include "qgstreameraudioinputendpointselector.h"
 #include "qgstreamervideoinputdevicecontrol.h"
@@ -59,6 +66,7 @@
 #include <qmediaserviceprovider.h>
 
 #include <QtCore/qdebug.h>
+
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
 {
@@ -136,6 +144,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_audioInputEndpointSelector = 0;
     m_videoInputDevice = 0;
 
+    m_videoOutput = 0;
     m_videoRenderer = 0;
     m_videoRendererFactory = 0;
     m_videoWindow = 0;
@@ -149,18 +158,18 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
     }
 
-    bool captureVideo = false;
-    
-    if (captureVideo) {
+   if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
-        //TODO:m_captureSession->setVideoInput(m_cameraControl);
+        m_cameraControl = new QGstreamerCameraControl(m_captureSession);
+        m_captureSession->setVideoInput(m_cameraControl);
         m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
+        m_imageCaptureControl = new QGstreamerImageCaptureControl(m_captureSession);
 
-        //TODO:connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
-        //        m_cameraControl, SLOT(setDevice(QString)));
+        connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
+                m_cameraControl, SLOT(setDevice(QString)));
 
-        //TODO:if (m_videoInputDevice->deviceCount())
-        //    m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+        if (m_videoInputDevice->deviceCount())
+            m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
@@ -194,14 +203,24 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 
 QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
 {
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRenderer;
+    if (!m_captureSession)
+        return 0;
 
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWindow;
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+            m_videoOutput = m_videoRenderer;
+            m_captureSession->setVideoPreview(m_videoRendererFactory);
+        } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+            m_videoOutput = m_videoWindow;
+            m_captureSession->setVideoPreview(m_videoWindowFactory);
+        } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+            m_captureSession->setVideoPreview(m_videoWidgetFactory);
+            m_videoOutput = m_videoWidgetControl;
+        }
 
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidgetControl;
+        if (m_videoOutput)
+            return m_videoOutput;
+    }
 
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
         return m_audioInputEndpointSelector;
@@ -218,11 +237,33 @@ QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
     if (qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_captureSession->videoEncodeControl();
 
+    if (qstrcmp(name,QImageEncoderControl_iid) == 0)
+        return m_captureSession->imageEncodeControl();
+
+
     if (qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_captureSession->mediaContainerControl();
 
+    if (qstrcmp(name,QCameraControl_iid) == 0)
+        return m_cameraControl;
+
     if (qstrcmp(name,QMetaDataWriterControl_iid) == 0)
         return m_metaDataControl;
+
+    if (qstrcmp(name, QCameraImageCaptureControl_iid) == 0)
+        return m_imageCaptureControl;
+
+    if (qstrcmp(name, QCameraExposureControl_iid) == 0)
+        return m_captureSession->cameraExposureControl();
+
+    if (qstrcmp(name, QCameraFocusControl_iid) == 0)
+        return m_captureSession->cameraFocusControl();
+
+    if (qstrcmp(name, QCameraImageProcessingControl_iid) == 0)
+        return m_captureSession->imageProcessingControl();
+
+    if (qstrcmp(name, QCameraLocksControl_iid) == 0)
+        return m_captureSession->cameraLocksControl();
 
     return 0;
 }
@@ -234,5 +275,4 @@ void QGstreamerCaptureService::releaseControl(QMediaControl *control)
         m_captureSession->setVideoPreview(0);
     }
 }
-
 

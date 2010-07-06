@@ -13,9 +13,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteReply Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteReply Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
 <p>The QGeoRouteReply class manages an operation started by an instance of <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoRouteReply&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QGeoRouteReply&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qgeoroutereply-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -84,6 +86,8 @@
 <p>The QGeoRouteReply class manages an operation started by an instance of <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <p>Instances of QGeoRouteReply manage the state and results of these operations.</p>
 <p>The <a href="qgeoroutereply.html#isFinished">isFinished</a>(), <a href="qgeoroutereply.html#error">error</a>() and <a href="qgeoroutereply.html#errorString">errorString</a>() methods provide information on whether the operation has completed and if it completed succesfully.</p>
+<p>The <a href="qgeoroutereply.html#finished">finished</a>() and error(<a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::Error</a>,<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>) signals can be used to monitor the progress of the operation.</p>
+<p>It is possible that a newly created QGeoRouteReply may be in a finished state, most commonly because an error has occurred. Since such an instance will never emit the <a href="qgeoroutereply.html#finished">finished</a>() or error(<a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::Error</a>,<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>) signals, it is important to check the result of <a href="qgeoroutereply.html#isFinished">isFinished</a>() before making the connections to the signals. The documentation for <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> demonstrates how this might be carried out.</p>
 <p>If the operation completes successfully the results will be able to be accessed with <a href="qgeoroutereply.html#routes">routes</a>().</p>
 <hr />
 <h2>Member Type Documentation</h2>

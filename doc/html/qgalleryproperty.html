@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgalleryproperty.cpp -->
+  <title>Qt Mobility Project 1.1: QGalleryProperty Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QGalleryProperty</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGalleryProperty Class Reference</h1>
+<p>The QGalleryProperty class provides an identifier for a gallery property. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QGalleryProperty&gt;</pre><ul>
+<li><a href="qgalleryproperty-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#Attribute-enum">Attribute</a></b> { CanRead, CanWrite, CanSort, CanFilter }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#Attribute-enum">Attributes</a></b></td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#QGalleryProperty">QGalleryProperty</a></b> ( const char * <i>name</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#ascending">ascending</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#descending">descending</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#isInRange">isInRange</a></b> ( const QVariant &amp; <i>minimum</i>, const QVariant &amp; <i>maximum</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#matches">matches</a></b> ( const QVariant &amp; <i>value</i>, Qt::MatchFlags <i>flags</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#name">name</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-QString">operator QString</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-lt">operator&lt;</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-lt-eq">operator&lt;=</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-eq-eq">operator==</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-gt">operator&gt;</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-gt-eq">operator&gt;=</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<div class="descr"/>
+<h2>Detailed Description</h2>
+<p>The QGalleryProperty class provides an identifier for a gallery property.</p>
+</div>
+<hr />
+<div class="types"/>
+<h2>Member Type Documentation</h2>
+<h3 class="flags"><a name="Attribute-enum"></a>enum QGalleryProperty::Attribute<br/>flags QGalleryProperty::Attributes</h3>
+<p>This enumeration describes the attributes of a property.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryProperty::CanRead</tt></td><td class=" topAlign"><tt>0x01</tt></td><td  class="topAlign">The value of this property can be read.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryProperty::CanWrite</tt></td><td class=" topAlign"><tt>0x02</tt></td><td  class="topAlign">The value of this property can be written.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryProperty::CanSort</tt></td><td class=" topAlign"><tt>0x04</tt></td><td  class="topAlign">The value of this property can be used to sort items.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryProperty::CanFilter</tt></td><td class=" topAlign"><tt>0x08</tt></td><td  class="topAlign">The value of this property can be used in a filter.</td></tr>
+</table>
+<p>The Attributes type is a typedef for <a href="qflags.html">QFlags</a>&lt;Attribute&gt;. It stores an OR combination of Attribute values.</p>
+</div>
+<hr />
+<div class="func"/>
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QGalleryProperty"></a>QGalleryProperty::QGalleryProperty ( const char * <i>name</i> )</h3>
+<p>Constructs a property from a string literal <i>name</i>.</p>
+<h3 class="fn"><a name="ascending"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryProperty::ascending () const</h3>
+<p>Returns a sort key which indicating items should be sorted a property in ascending order.</p>
+<h3 class="fn"><a name="descending"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryProperty::descending () const</h3>
+<p>Returns a sort key which indicating items should be sorted a property in descending order.</p>
+<h3 class="fn"><a name="isInRange"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::isInRange ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>minimum</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>maximum</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is in a range between a <i>minimum</i> and <i>maximum</i> value.</p>
+<h3 class="fn"><a name="matches"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::matches ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i>, <a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> = 0 ) const</h3>
+<p>Returns a gallery filter which tests if a property matches a <i>value</i>. The match <i>flags</i> identify the criteria for a match.</p>
+<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryProperty::name () const</h3>
+<p>Returns the name of a property.</p>
+<h3 class="fn"><a name="operator-QString"></a>QGalleryProperty::operator QString () const</h3>
+<p>Returns the name of a property.</p>
+<h3 class="fn"><a name="operator-lt"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::operator&lt; ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is less than a <i>value</i>.</p>
+<h3 class="fn"><a name="operator-lt-eq"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::operator&lt;= ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is less than or equal to a <i>value</i>.</p>
+<h3 class="fn"><a name="operator-eq-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator== ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is equal to a <i>value</i>.</p>
+<h3 class="fn"><a name="operator-gt"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::operator&gt; ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is greater than a <i>value</i>.</p>
+<h3 class="fn"><a name="operator-gt-eq"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::operator&gt;= ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
+<p>Returns a gallery filter which tests if a property is greater than or equal to a <i>value</i>.</p>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

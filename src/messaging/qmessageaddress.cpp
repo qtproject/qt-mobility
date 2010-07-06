@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAddress class provides an interface for a message address.
 
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
    
     A message address consists of an addressee string and a type.

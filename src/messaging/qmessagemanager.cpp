@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QMessageManager class represents the main interface for storage and retrieval
     of messages, folders and accounts in the system message store.
 
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     The system contains a single store for messages, which is accessed via the handle

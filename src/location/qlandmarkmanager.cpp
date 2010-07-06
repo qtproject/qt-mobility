@@ -65,6 +65,66 @@ QTM_USE_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-main
+
+    The QLandmarkManager is the starting class to use when working with landmarks.
+    If effectively represents a landmark datastore and it provides the synchronous operations for the
+    creation, retrieval, updating and deletion of both landmarks and categories.  For asynchronous operations
+    use the \l {Asynchronous Landmark Requests} {request classes} which use the manager as a parameter.
+    The manager provides notifications whenever landmarks or categories are added, updated or removed.
+    These are important for the cases where another process is making modifications to the same manager/datastore.
+
+    Each manager is identified by a manager name which typically takes the form of a reverse domain string
+    such as \c com.nokia.qt.landmarks.engines.sqlite.  However every supported platform provides a default
+    manager which may be instantiated without having to provide a name like so:
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Instantiate default QLandmarkManager
+
+    \section1 Retrieval operations
+    To retrieve a set of landmarks we provide may provide a QLandmarkFilter, QLandmarkSortOrder and QLandmarkFetchHint as necessary.
+    The QLandmarkFilter defines the criteria for selecting landmarks e.g. a QLandmarkCategoryFilter may be used
+    to choose landmarks that belong to a certain category or a QLandmarkProximityFilter to choose landmarks
+    within a certain range from a given location.  A QLandmarkSortOrder order defines how the results should
+    be sorted and the QLandmarkFetchHint allows specification of the maximum number of items to
+    return and an offset to facilitate paging.  The following demonstrates how to search for the 5 nearest
+    landmarks to a given coordinate.
+
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks by proximity synchronously
+
+    The set of parameters described above are not always necessary as defaults are provided, if we wanted to retrieve
+    all landmarks, then the appropriate call is:
+
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve all landmarks synchronously
+    \bold {Note:} Landmark retrieval is potentially a long operation, the synchronous API provided by the manager
+    is subject to blocking.  It is generally recommended that the QLandmarkFetchRequest be used because
+    it behaves asynchronously.
+
+    Categories may be retrieved in a similar manner:
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously simple
+
+    \section2 Saving and deleting
+    Saving and deleting landmarks and categories are fairly straightforward.  To add a new landmark or category
+    simply instantiate a QLandmark or QLandmarkCategory, set its data fields(e.g name, coordiante etc) and pass
+    a pointer to the appropriate save operation.  For example:
+
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark synchronously simple
+
+    We pass the landmark by pointer bcause it will be assigned a new QLandmarkId when the function call is done.
+    Saving a landmark with a valid id already set will update the existing landmark.
+
+    Removal of landmark may be done as follows:
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously simple
+
+    \section2 Importing and exporting
+    Import and exporting are potentially long operations, to perform these operations asynchronously
+    see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
+    operations is to specify a filename:
+
+    \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp ImportExport landmark simple
+
+    \i {At the time of the QtMobility 1.1 tech preview, only importing of landmarks by supplying a
+       file format is functional.  For the supported platforms, the file format that may be supplied
+       is "GpxV1.1" which means only Gpx version 1.1 files are known to work.  Exporting is still
+       under development and so are notifications.}
+
 */
 
 /*!
@@ -235,10 +295,9 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
     The \l QLandmarkManager::error() function will only return \c
     QLandmarkManager::NoError if all landmarks were saved successfully.
 
-    For each newly saved landmark that was successful, the identifier
-    of the landmark will be updated with a new value.  If a failure
-    occurs when saving a new landmark, the identifier will be cleared
-    (and become an invalid identifier).
+
+    For each new landmark that was successfully saved, a landmark identifier
+    is assigned to that landmark.
 */
 bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks,
                                      QMap<int, QLandmarkManager::Error> *errorMap)
@@ -645,6 +704,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of
     landmarks are imported.
+
+    The current default managers for the maemo and desktop platforms
+    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &format)
 {
@@ -671,6 +733,9 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of landmarks
     are imported.
+
+    The current default managers for the maemo and desktop platforms
+    support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
 {

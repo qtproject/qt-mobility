@@ -35,7 +35,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#isFinished">isFinished</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QPixmap </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#mapImage">mapImage</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#mapImageData">mapImageData</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#mapImageFormat">mapImageFormat</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoTiledMapRequest </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#request">request</a></b> () const</td></tr>
 </table>
 <ul>
@@ -66,7 +67,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#setError">setError</a></b> ( Error <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#setFinished">setFinished</a></b> ( bool <i>finished</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#setMapImage">setMapImage</a></b> ( const QPixmap &amp; <i>image</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#setMapImageData">setMapImageData</a></b> ( const QByteArray &amp; <i>data</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeotiledmapreply.html#setMapImageFormat">setMapImageFormat</a></b> ( const QString &amp; <i>format</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -112,10 +114,12 @@
 <p>See also <a href="qgeotiledmapreply.html#setFinished">setFinished</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoTiledMapReply/isFinished"></a>
 <h3 class="fn"><a name="isFinished"></a>bool QGeoTiledMapReply::isFinished () const</h3>
-<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/mapImage"></a>
-<h3 class="fn"><a name="mapImage"></a><a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> QGeoTiledMapReply::mapImage () const</h3>
-<p>Returns a list of places corresponding to the request.</p>
-<p>See also <a href="qgeotiledmapreply.html#setMapImage">setMapImage</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/mapImageData"></a>
+<h3 class="fn"><a name="mapImageData"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QGeoTiledMapReply::mapImageData () const</h3>
+<p>See also <a href="qgeotiledmapreply.html#setMapImageData">setMapImageData</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/mapImageFormat"></a>
+<h3 class="fn"><a name="mapImageFormat"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoTiledMapReply::mapImageFormat () const</h3>
+<p>See also <a href="qgeotiledmapreply.html#setMapImageFormat">setMapImageFormat</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoTiledMapReply/request"></a>
 <h3 class="fn"><a name="request"></a>QGeoTiledMapRequest QGeoTiledMapReply::request () const</h3>
 <a name="//apple_ref/cpp/instm/QGeoTiledMapReply/setError"></a>
@@ -124,10 +128,12 @@
 <a name="//apple_ref/cpp/instm/QGeoTiledMapReply/setFinished"></a>
 <h3 class="fn"><a name="setFinished"></a>void QGeoTiledMapReply::setFinished ( bool <i>finished</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>See also <a href="qgeotiledmapreply.html#finished">finished</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/setMapImage"></a>
-<h3 class="fn"><a name="setMapImage"></a>void QGeoTiledMapReply::setMapImage ( const <a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> &amp; <i>image</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the list of places in the reply to <i>places</i>.</p>
-<p>See also <a href="qgeotiledmapreply.html#mapImage">mapImage</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/setMapImageData"></a>
+<h3 class="fn"><a name="setMapImageData"></a>void QGeoTiledMapReply::setMapImageData ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>See also <a href="qgeotiledmapreply.html#mapImageData">mapImageData</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoTiledMapReply/setMapImageFormat"></a>
+<h3 class="fn"><a name="setMapImageFormat"></a>void QGeoTiledMapReply::setMapImageFormat ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>format</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>See also <a href="qgeotiledmapreply.html#mapImageFormat">mapImageFormat</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

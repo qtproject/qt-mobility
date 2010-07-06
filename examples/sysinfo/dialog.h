@@ -77,7 +77,9 @@ private:
     QSystemInfo *systemInfo;
     QSystemDeviceInfo *di;
     QSystemNetworkInfo *ni;
-
+    QSystemStorageInfo *sti;
+    void updateStorage();
+    
 private slots:
     void tabChanged(int index);
     void getVersion(int index);
@@ -98,6 +100,9 @@ private slots:
      void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
      void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
      void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+    void storageChanged(bool added,const QString &vol);
+    void bluetoothChanged(bool);
 
 };
 
