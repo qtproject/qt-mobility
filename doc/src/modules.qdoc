@@ -63,6 +63,17 @@ to change notifications.
 
 */
 
+
+/*!
+    \module QtOrganizer
+
+    \title QtOrganizer Module
+
+    \brief The QtOrganizer module offers classes that allow
+    you to manage calendar, scheduling and personal data.
+
+*/
+
 /*!
     \module QtLocation
     \title  QtLocation Module

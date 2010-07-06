@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemId class provides information that uniquely identifies
   a organizeritem in a particular manager.
 
+  \inmodule QtOrganizer
+
   It consists of a manager URI which identifies the manager which contains the organizeritem,
   and the local id of the organizeritem in that manager.
 
