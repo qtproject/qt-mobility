@@ -1149,7 +1149,14 @@ void QSystemDeviceInfoPrivate::chargingStatusChanged()
 
 bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
 {
-    return BluetoothPowerStateL();
+    TInt btPowerState = EBTPowerOff;
+    TRAP_IGNORE(
+    CRepository* crep = CRepository::NewLC(KCRUidBluetoothPowerState);
+    User::LeaveIfError(crep->Get(KBTPowerState, btPowerState));
+    CleanupStack::PopAndDestroy(crep);
+    )
+
+    return btPowerState == EBTPowerOn;
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
