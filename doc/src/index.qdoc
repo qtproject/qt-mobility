@@ -257,6 +257,12 @@
     An API to manage Versit \reg documents, such as vCards.
 
     For more details see the \l{Versit API}{Versit API overview}.
+
+    \section2 Feedback
+
+    An API to manage tactile feedback and device vibration programmatically.
+
+    For more details see the \l{Feedback}{Feedback API overview}.
     
     \section1 The QtMobility Namespace 
 

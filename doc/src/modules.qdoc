@@ -63,7 +63,6 @@ to change notifications.
 
 */
 
-
 /*!
     \module QtOrganizer
 
@@ -72,6 +71,13 @@ to change notifications.
     \brief The QtOrganizer module offers classes that allow
     you to manage calendar, scheduling and personal data.
 
+*/
+
+/*!
+    \module QtFeedback
+    \title QtFeedback Module
+    \brief The QtFeedback module offers classes that allow
+    you to manage tactile feedback and device vibration.
 */
 
 /*!
