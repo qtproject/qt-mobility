@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemDetailFieldDefinition
   \brief The QOrganizerItemDetailFieldDefinition class provides a field in a QOrganizerItemDetail.
 
+  \inmodule QtOrganizer
+
   Encapsulates information about a particular datum which may be part of a
   QOrganizerItemDetail, including the type, allowable values and access constraints.
  */

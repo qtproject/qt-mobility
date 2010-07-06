@@ -62,6 +62,8 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemManagerEngine
   \brief The QOrganizerItemManagerEngine class provides the interface for all
   implementations of the organizer item manager backend functionality.
+
+  \inmodule QtOrganizer
   \ingroup organizer-backends
 
   Instances of this class are usually provided by a

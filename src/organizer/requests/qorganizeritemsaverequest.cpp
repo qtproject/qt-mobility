@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemSaveRequest
   \brief The QOrganizerItemSaveRequest class allows a client to asynchronously
     request that certain organizeritems be saved to a organizeritems store.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemSaveRequest, the resultsAvailable() signal will be emitted when
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
