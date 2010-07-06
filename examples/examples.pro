@@ -76,6 +76,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
+        camera \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -109,6 +110,13 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        mediabrowser
+
+    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
+}
+
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
@@ -116,8 +124,15 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    SUBDIRS += telephony
+    !mac:SUBDIRS += telephony
+}
+
+# Feedback API examples
+contains(mobility_modules, feedback) {
+    SUBDIRS += hapticsplayer
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
+
 INSTALLS += sources
+

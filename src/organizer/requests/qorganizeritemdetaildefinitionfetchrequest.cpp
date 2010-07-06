@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new detail definition fetch request whose parent is the specified \a parent */

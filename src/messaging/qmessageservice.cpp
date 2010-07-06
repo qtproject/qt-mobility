@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageService
 
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     \brief The QMessageService class provides the interface for requesting 

@@ -25,13 +25,7 @@
 **
 ****************************************************************************/
 
-/*!
-    \module QtLocation
-    \title  QtLocation Module
-    \brief  The QtLocation module provides geographical support for position
-    and map use.
 
-*/
 
 
 /*!
@@ -276,7 +270,7 @@ A landmark is a location of some significance, also known as a point of interest
 
 \section2 Landmark Examples
 
-For more details see the \l {landmarks} {Landmark Examples} page.
+For more details see the \l {Landmark Examples} {Landmark Examples} page.
 
 \section2 Landmark classes
 
@@ -300,6 +294,7 @@ for (asynchronous landmark selection)
 
 \annotatedlist landmarks-sort
 
+\target Asynchronous Landmark Requests
 \section3 Asynchronous Requests
 Asynchronous operations are facilitates by the request classes listed below:
 

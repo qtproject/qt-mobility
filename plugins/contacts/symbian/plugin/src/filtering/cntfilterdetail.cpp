@@ -75,10 +75,10 @@ QList<QContactLocalId> CntFilterDetail::contacts(
         bool &filterSupportedflag,
         QContactManager::Error* error)
 {
-    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if (!filterSupported(filter) ) {
         *error =  QContactManager::NotSupportedError;
+        filterSupportedflag = false;
         return QList<QContactLocalId>();
     }
     QList<QContactLocalId> idList;
@@ -117,7 +117,11 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
 {
     bool result = false;
     if (QContactFilter::ContactDetailFilter == filter.type()) {
-        result = true;
+        QContactDetailFilter detailFilter = static_cast<QContactFilter>(filter);
+        if (m_dbInfo.SupportsDetail(detailFilter.detailDefinitionName(),
+                detailFilter.detailFieldName())) {
+            result = true;
+        }
     }
     return result;
 }

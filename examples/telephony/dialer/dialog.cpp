@@ -41,7 +41,7 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 
-#if defined(Q_WS_MAEMO5)
+#if defined(Q_WS_MAEMO_5)
 # include "dialer_maemo.h"
 #else
 # ifdef Q_OS_LINUX
@@ -64,6 +64,7 @@ Dialog::Dialog(QWidget *parent) :
     dialer = new Dialer;
 
     ui->setupUi(this);
+    this->setWindowTitle("Dialer");
 
     connect(ui->pushButtonDial, SIGNAL(released()), SLOT(dial()));
     connect(ui->pushButton0, SIGNAL(released()), SLOT(button0()));

@@ -64,6 +64,7 @@ class UniqueService : public QObject
 {
     Q_OBJECT
     Q_SERVICE(UniqueService, "RemoteServiceClasRegisterService", "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
+
 public:
     UniqueService() {}
     static int counter;
@@ -73,6 +74,7 @@ class SharedService : public QObject
 {
     Q_OBJECT
     Q_SERVICE(SharedService,  "RemoteServiceClasRegisterService","com.nokia.qt.iremoteserviceclassregistertest", "2.2");
+
 public:
     SharedService() { }
     static int counter;
@@ -82,6 +84,7 @@ class DefaultService : public QObject
 {
     Q_OBJECT
     Q_SERVICE(DefaultService, "RemoteServiceClasRegisterService", "com.nokia.qt.iremoteserviceclassregistertest", "2.3");
+
 public:
     DefaultService() { }
     static int counter;
@@ -91,6 +94,7 @@ class DuplicateService : public QObject
 {
     Q_OBJECT
     Q_SERVICE(DuplicateService, "RemoteServiceClasRegisterService",  "com.nokia.qt.iremoteserviceclassregistertest", "2.1");
+
 public:
     DuplicateService() { }
     static int counter;
