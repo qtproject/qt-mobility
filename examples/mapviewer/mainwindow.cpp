@@ -55,6 +55,8 @@
 #include <qgeomapmarkerobject.h>
 #include <qgeomappolylineobject.h>
 #include <qgeomappolygonobject.h>
+#include <qgeomaprouteobject.h>
+#include <qgeorouterequest.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
@@ -77,16 +79,20 @@ MapWidget::~MapWidget() {}
 void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton) {
         panActive = true;
+        startPanning();
+    }
 
     event->accept();
 }
 
 void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton) {
         panActive = false;
+        stopPanning();
+    }
 
     event->accept();
 }
@@ -210,6 +216,7 @@ void MainWindow::setProvider(QString providerId)
     }
 
     m_mapManager = m_serviceProvider->mappingManager();
+    m_routingManager = m_serviceProvider->routingManager();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -236,13 +243,21 @@ void MainWindow::createMenus()
     QAction* menuItem;
     m_popupMenu = new QMenu(this);
 
-    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    QMenu* subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
 
-    menuItem = new QAction(tr("Marker"), this);
+    menuItem = new QAction(tr("Set marker"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawMarker(bool)));
+
+    menuItem = new QAction(tr("Remove markers"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(removeMarkers()));
+
+    subMenuItem = new QMenu(tr("Draw"), this);
+    m_popupMenu->addMenu(subMenuItem);
 
     menuItem = new QAction(tr("Rectangle"), this);
     subMenuItem->addAction(menuItem);
@@ -258,6 +273,14 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
+
+    subMenuItem = new QMenu(tr("Route"), this);
+    m_popupMenu->addMenu(subMenuItem);
+
+    menuItem = new QAction(tr("Calculate route"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(calcRoute(bool)));
 }
 
 void MainWindow::drawRect(bool /*checked*/)
@@ -318,9 +341,22 @@ void MainWindow::drawPolygon(bool /*checked*/)
 
 void MainWindow::drawMarker(bool /*checked*/)
 {
-    m_mapWidget->addMapObject(new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked), 
-                              QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon));
+    QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked), 
+                                                          QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
+    m_mapWidget->addMapObject(marker);
     markers.append(lastClicked);
+    markerObjects.append(marker);
+}
+
+void MainWindow::removeMarkers()
+{
+    markers.clear();
+
+    while (markerObjects.size() > 0) {
+        QGeoMapMarkerObject *marker = markerObjects.takeFirst();
+        m_mapWidget->removeMapObject(marker);
+        marker->deleteLater();
+    }
 }
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
@@ -357,3 +393,43 @@ void MainWindow::createMarkerIcon()
     painter.setBrush(brush);
     painter.drawEllipse(ellipse);
 }
+
+void MainWindow::calcRoute(bool /*checked*/)
+{
+    if (markers.count() < 2)
+        return;
+
+    QList<QGeoCoordinate> waypoints;
+
+    while (markers.count() >= 1) {
+        QPoint p = markers.takeFirst();
+        waypoints.append(m_mapWidget->screenPositionToCoordinate(p));
+    }
+
+    QGeoRouteRequest req(waypoints);
+    QGeoRouteReply *reply = m_routingManager->calculateRoute(req);
+
+    QObject::connect(reply, SIGNAL(finished()),
+                     this, SLOT(routeFinished()));
+}
+
+void MainWindow::routeFinished()
+{
+    QGeoRouteReply *reply = static_cast<QGeoRouteReply*>(sender());
+
+    if (!reply)
+        return;
+
+    if (reply->routes().size() < 1)
+        return;
+
+    QGeoMapRouteObject *route = new QGeoMapRouteObject(reply->routes().at(0));
+    QColor routeColor(Qt::blue);
+    routeColor.setAlpha(127); //semi-transparent
+    QPen pen(routeColor);
+    pen.setWidth(7);
+    pen.setCapStyle(Qt::RoundCap);
+    route->setPen(pen);
+    m_mapWidget->addMapObject(route);
+}
+

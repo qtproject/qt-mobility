@@ -116,11 +116,11 @@ public:
     void setExcludeAreas(const QList<QGeoBoundingBox> &areas);
     QList<QGeoBoundingBox> excludeAreas() const;
 
-    // default to 0
+    // defaults to 0
     void setNumberAlternativeRoutes(int alternatives);
     int numberAlternativeRoutes() const;
 
-    // default to TravelByCar
+    // defaults to TravelByCar
     void setTravelModes(TravelModes travelModes);
     TravelModes travelModes() const;
 
@@ -136,7 +136,7 @@ public:
     void setSegmentDetail(SegmentDetail segmentDetail);
     SegmentDetail segmentDetail() const;
 
-    // default to BasicInstructions
+    // defaults to BasicInstructions
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
 

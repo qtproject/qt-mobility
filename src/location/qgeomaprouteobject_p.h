@@ -39,54 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINE_H
-#define QGEOTILEDMAPPINGMANAGERENGINE_H
+#ifndef QGEOMAPROUTEOBJECT_P_H
+#define QGEOMAPROUTEOBJECT_P_H
 
-#include "qgeomappingmanagerengine.h"
-#include "qgeotiledmapreply.h"
+#include "qgeomapobject_p.h"
+#include "qgeoroute.h"
 
-#include <QMap>
-
-class QNetworkAccessManager;
-class QNetworkProxy;
+#include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapRequest;
-class QGeoTiledMapData;
-
-class QGeoTiledMappingManagerThread;
-class QGeoTiledMappingManagerEnginePrivate;
-
-class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
+class QGeoMapRouteObjectPrivate : public QGeoMapObjectPrivate
 {
-    Q_OBJECT
 public:
-    virtual ~QGeoTiledMappingManagerEngine();
+    QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other);
+    ~QGeoMapRouteObjectPrivate();
+    QGeoMapRouteObjectPrivate& operator= (const QGeoMapRouteObjectPrivate &other);
 
-    virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
-
-    virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
-    virtual void removeMapData(QGeoMapData* mapData);
-
-    virtual QPoint screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const;
-
-    QList<QString> supportedImageFormats() const;
-    QSize tileSize() const;
-
-protected:
-    QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
-
-    void setSupportedImageFormats(const QList<QString> &imageFormats);
-    void setTileSize(const QSize &tileSize);
-
-private:
-    Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
-    Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)
+    QPen pen;
+    QGeoRoute route;
+    quint32 detailLevel;
 };
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapReply::Error))
 
 #endif

@@ -39,53 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERTHREAD_H
-#define QGEOTILEDMAPPINGMANAGERTHREAD_H
+#ifndef QGEOMAPROUTEOBJECT_H
+#define QGEOMAPROUTEOBJECT_H
 
-#include "qgeomapwidget.h"
-#include "qgeotiledmapreply.h"
-#include "qgeotiledmaprequest.h"
+#include "qgeomapobject.h"
+#include "qgeoroute.h"
 
-#include <QThread>
+#include <QPen>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapData;
-class QGeoTiledMappingManagerEngine;
+class QGeoMapRouteObjectPrivate;
+class QGeoRoute;
+class QGeoCoordinate;
 
-class QGeoTiledMappingManagerThreadPrivate;
-
-class Q_LOCATION_EXPORT QGeoTiledMappingManagerThread : public QThread
+class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
 {
-    Q_OBJECT
 public:
-    QGeoTiledMappingManagerThread(QGeoTiledMappingManagerEngine* engine, QObject *parent = 0);
-    virtual ~QGeoTiledMappingManagerThread();
+    QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent = 0);
+    ~QGeoMapRouteObject();
 
-    virtual void initialize();
+    QPen pen() const;
+    void setPen(const QPen &aPen);
 
-    virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
-    void removeMapData(QGeoTiledMapData* mapData);
+    QGeoRoute route() const;
 
-protected:
-    void run();
-
-public slots:
-    void setRequests(QGeoTiledMapData* mapData, const QList<QGeoTiledMapRequest> &requests);
-
-signals:
-    void tileFinished(QGeoTiledMapReply *reply);
-    void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
+    void setDetailLevel(quint32 pixels);
+    quint32 detailLevel() const;
 
 private:
-    QGeoTiledMappingManagerThreadPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMappingManagerThread)
+    Q_DECLARE_PRIVATE(QGeoMapRouteObject)
+    Q_DISABLE_COPY(QGeoMapRouteObject)
 };
 
 QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapRequest))
-Q_DECLARE_METATYPE(QList < QTM_PREPEND_NAMESPACE(QGeoTiledMapRequest >))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapReply::Error))
 
 #endif
