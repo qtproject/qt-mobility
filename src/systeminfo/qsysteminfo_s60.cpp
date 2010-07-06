@@ -1149,7 +1149,7 @@ void QSystemDeviceInfoPrivate::chargingStatusChanged()
 
 bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
 {
-    return false;
+    return BluetoothPowerStateL();
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
