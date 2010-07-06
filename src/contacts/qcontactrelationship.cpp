@@ -98,13 +98,6 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasMember, "HasMember");
 Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Aggregates, "Aggregates");
 
 /*!
- * \variable QContactRelationship::Is
- * \deprecated
- * Deprecated - use QContactRelationship::IsSameAs instead.
- */
-Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Is, "IsSameAs");
-
-/*!
  * \variable QContactRelationship::IsSameAs
  * The relationship type which identifies the first contact as being the same contact as the second contact
  */

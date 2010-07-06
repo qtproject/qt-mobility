@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
    \class QOrganizerItemDescription
    \ingroup organizer-details
    \brief The QOrganizerItemDescription class contains some arbitrary information which is relevant to the organizer item.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -92,6 +93,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
    \class QOrganizerItemDisplayLabel
    \ingroup organizer-details
    \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
+   \inmodule QtOrganizer
 */
 
 /*!
@@ -132,6 +134,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
    \ingroup organizer-details
    \brief The QOrganizerEventTimeRange class contains the start and end dates and times of a recurring event series,
           or occurrence of an event.
+   \inmodule QtOrganizer
 */
 
 /*!
@@ -185,6 +188,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerEventTimeRange::FieldStartDateTime, "StartDat
    \class QOrganizerItemGuid
    \ingroup organizer-details
    \brief The QOrganizerItemGuid class contains the globally unique identifier of the organizer item, which can be used for synchronization purposes.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -222,6 +226,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
    \class QOrganizerItemInstanceOrigin
    \ingroup organizer-details
    \brief The QOrganizerItemInstanceOrigin class contains information about when and from where or whom the organizer item originated.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -277,6 +282,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "Origi
 
    \brief The QOrganizerJournalTimeRange class contains information about
    the date and time for which a journal entry has been created.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -314,6 +320,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerJournalTimeRange::FieldEntryDateTime, "EntryD
    \ingroup organizer-details
 
    \brief The QOrganizerItemLocation class contains information about a location which is related to the organizer item in some manner.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -383,6 +390,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
    \class QOrganizerItemComment
    \ingroup organizer-details
    \brief The QOrganizerItemComment class contains some arbitrary information which is relevant to the organizer item.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -414,6 +422,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    \class QOrganizerItemPriority
    \ingroup organizer-details
    \brief The QOrganizerItemPriority class contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -466,6 +475,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
    \ingroup organizer-details
    \brief The QOrganizerItemRecurrence class contains a list of rules and dates on which the recurrent item occurs,
           and a list of rules and dates on which exceptions occur.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -571,6 +581,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
    \class QOrganizerItemTimestamp
    \ingroup organizer-details
    \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -626,6 +637,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creat
    \class QOrganizerTodoProgress
    \ingroup organizer-details
    \brief The QOrganizerTodoProgress class contains information about the progress of a todo item.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -700,6 +712,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "Finishe
    \class QOrganizerTodoTimeRange
    \ingroup organizer-details
    \brief The QOrganizerTodoTimeRange class contains information about the time range of a todo item.
+   \inmodule QtOrganizer
  */
 
 /*!
@@ -749,6 +762,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldDueDateTime, "DueDateTime
    \class QOrganizerItemType
    \ingroup organizer-details
    \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
+   \inmodule QtOrganizer
  */
 
 /*!
