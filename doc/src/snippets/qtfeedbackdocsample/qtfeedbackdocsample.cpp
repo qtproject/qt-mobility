@@ -53,5 +53,5 @@ void completeExample()
     //TODO..
 //! [Complete example]
     // Coming soon...
-//! [COMPLETE example]
+//! [Complete example]
 }
