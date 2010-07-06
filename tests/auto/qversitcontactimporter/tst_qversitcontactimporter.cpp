@@ -1213,6 +1213,16 @@ void tst_QVersitContactImporter::testTag()
     QContactTag tagDetail = contact.detail<QContactTag>();
     QCOMPARE(tagDetail.tag(), QLatin1String("red"));
 
+    // X-CATEGORIES property
+    document.clear();
+    document.setType(QVersitDocument::VCard30Type);
+    tagProperty.setName(QLatin1String("X-CATEGORIES"));
+    document.addProperty(tagProperty);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    tagDetail = contact.detail<QContactTag>();
+    QCOMPARE(tagDetail.tag(), QLatin1String("red"));
+
     // multiple values
     document.clear();
     document.setType(QVersitDocument::VCard30Type);

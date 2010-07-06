@@ -137,6 +137,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactOrganization::FieldAssistantName.latin1()},
     {"X-ASSISTANT-TEL", QContactPhoneNumber::DefinitionName.latin1(),
                       QContactPhoneNumber::SubTypeAssistant.latin1()},
+    {"X-CATEGORIES",  QContactTag::DefinitionName.latin1(),
+                      QContactTag::FieldTag.latin1()},
     {"X-CHILDREN",    QContactFamily::DefinitionName.latin1(),
                       QContactFamily::FieldChildren.latin1()},
     {"X-EPOCSECONDNAME",QContactNickname::DefinitionName.latin1(),
