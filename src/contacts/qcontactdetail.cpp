@@ -499,6 +499,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
  */
 QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 {
+    detail = QContactDetail();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

@@ -207,6 +207,7 @@ QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
 
 QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
 {
+    hint = QContactFetchHint();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

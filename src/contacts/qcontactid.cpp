@@ -167,6 +167,7 @@ QDataStream& operator<<(QDataStream& out, const QContactId& id)
 
 QDataStream& operator>>(QDataStream& in, QContactId& id)
 {
+    id = QContactId();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

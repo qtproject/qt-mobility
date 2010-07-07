@@ -123,6 +123,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& defini
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
 {
+    definition = QContactDetailDefinition();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

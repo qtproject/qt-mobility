@@ -205,6 +205,7 @@ QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
  */
 QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
 {
+    rel = QContactRelationship();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

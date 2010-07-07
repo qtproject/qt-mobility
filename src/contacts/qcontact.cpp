@@ -673,17 +673,15 @@ QDataStream& operator<<(QDataStream& out, const QContact& contact)
  */
 QDataStream& operator>>(QDataStream& in, QContact& contact)
 {
+    contact = QContact();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {
-        contact = QContact();
         QContactId id;
         QList<QContactDetail> details;
         QMap<QString, int> preferences;
-        in >> id >> details >> preferences;
+        in >> id >> contact.d->m_details >> contact.d->m_preferences;
         contact.setId(id);
-        contact.d->m_details = details;
-        contact.d->m_preferences = preferences;
     } else {
         in.setStatus(QDataStream::ReadCorruptData);
     }

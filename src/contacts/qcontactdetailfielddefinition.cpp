@@ -153,6 +153,7 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& d
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
 {
+    definition = QContactDetailFieldDefinition();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

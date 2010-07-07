@@ -149,6 +149,7 @@ QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
  */
 QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
 {
+    sortOrder = QContactSortOrder();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {

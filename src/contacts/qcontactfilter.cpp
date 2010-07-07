@@ -174,6 +174,7 @@ QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
  */
 QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
 {
+    filter = QContactFilter();
     quint8 formatVersion;
     in >> formatVersion;
     if (formatVersion == 1) {
