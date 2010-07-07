@@ -57,11 +57,7 @@ AudioRecorder::AudioRecorder(QWidget *parent)
     capture = new QMediaRecorder(audiosource, this);
 
     // set a default file
-#ifdef Q_OS_SYMBIAN
-    capture->setOutputLocation(recordPathAudio(QUrl()));
-#else
     capture->setOutputLocation(QUrl("test.raw"));
-#endif
 
     //audio devices
     ui->audioDeviceBox->addItem(tr("Default"), QVariant(QString()));
@@ -100,26 +96,6 @@ AudioRecorder::AudioRecorder(QWidget *parent)
     connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
     connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateState(QMediaRecorder::State)));
     connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayErrorMessage()));
-}
-
-QUrl AudioRecorder::recordPathAudio(QUrl filePath)
-{
-    if (!filePath.isEmpty())
-        return filePath;
-
-    QDir outputDir(QDir::rootPath());
-
-    int lastImage = 0;
-    int fileCount = 0;
-    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {
-        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
-        lastImage = qMax(lastImage, imgNumber);
-        if (outputDir.exists(fileName))
-            fileCount+=1;
-    }
-    lastImage+=fileCount;
-    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
-    return location;
 }
 
 AudioRecorder::~AudioRecorder()
@@ -176,9 +152,6 @@ static QVariant boxValue(const QComboBox *box)
 void AudioRecorder::toggleRecord()
 {
     if (capture->state() == QMediaRecorder::StoppedState) {
-#ifdef Q_OS_SYMBIAN
-        capture->setOutputLocation(recordPathAudio(destination));
-#endif
         audiosource->setAudioInput(boxValue(ui->audioDeviceBox).toString());
 
 
@@ -212,11 +185,7 @@ void AudioRecorder::setOutputLocation()
 {
     QString fileName = QFileDialog::getSaveFileName();
 
-#ifdef Q_OS_SYMBIAN
-    destination = QUrl(fileName);
-#else
     capture->setOutputLocation(QUrl(fileName));
-#endif
 }
 
 void AudioRecorder::displayErrorMessage()
