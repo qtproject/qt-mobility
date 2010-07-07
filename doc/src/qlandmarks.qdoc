@@ -45,6 +45,7 @@
 \title Landmark Examples
 
 \ingroup navigation
+\ingroup mobility
 
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.

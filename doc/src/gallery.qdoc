@@ -77,6 +77,8 @@
 
     \title Document Gallery
 
+    \ingroup mobility
+
     \brief Provides an API for navigating and managing collections of documents
     and media.
 

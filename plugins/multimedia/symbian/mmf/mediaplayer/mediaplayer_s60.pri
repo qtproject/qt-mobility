@@ -77,7 +77,7 @@ contains(S60_VERSION, 3.1) {
 
 }
 
-exists($$[QT_INSTALL_HEADERS]\QtGui\private\qwidget_p.h) {
+exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
     message("Enabling use of private QWidget methods")
 }

@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "qversitdefs_p.h"
 #include "tst_qversit.h"
 #include "qversitwriter.h"
@@ -94,6 +96,19 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QContact>)
 Q_DECLARE_METATYPE(QContact)
+
+class tst_QVersit : public QObject
+{
+    Q_OBJECT
+
+private slots: // Tests
+    void testImportFiles();
+    void testImportFiles_data();
+    void testExportImport();
+    void testExportImport_data();
+
+private:
+};
 
 void tst_QVersit::testImportFiles()
 {
