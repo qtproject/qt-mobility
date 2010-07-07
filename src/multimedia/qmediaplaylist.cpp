@@ -64,6 +64,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
 /*!
     \class QMediaPlaylist
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -146,12 +147,17 @@ QMediaPlaylist::~QMediaPlaylist()
     delete d_ptr;
 }
 
+/*!
+  Returns the QMediaObject instance that this QMediaPlaylist is bound too,
+  or 0 otherwise.
+*/
 QMediaObject *QMediaPlaylist::mediaObject() const
 {
     return d_func()->mediaObject;
 }
 
 /*!
+  \internal
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
 */

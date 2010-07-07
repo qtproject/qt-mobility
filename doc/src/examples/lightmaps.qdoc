@@ -41,7 +41,7 @@
 
 /*!
     \example lightmaps
-    \title LightMap Example
+    \title LightMaps Example
 
     This demo shows a lookup of the local street map based on the users
     location as determined by GPS. If no GPS is detected a default location

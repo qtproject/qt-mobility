@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactLocalIdFilter
   \brief The QContactLocalIdFilter class provides a filter based around a list of contact ids
  
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-filters
   
   It may be used to select contacts whose ids are contained in the given list of ids.

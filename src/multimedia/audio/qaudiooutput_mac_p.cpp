@@ -47,7 +47,7 @@
 // of other Qt classes.  This header file may change from version to
 // version without notice, or even be removed.
 //
-// We mean it.
+// INTERNAL USE ONLY: Do NOT use for any other purpose.
 //
 
 #include <CoreServices/CoreServices.h>
@@ -357,17 +357,7 @@ bool QAudioOutputPrivate::open()
     // Set stream format
     streamFormat = toAudioStreamBasicDescription(audioFormat);
 
-    UInt32 size = sizeof(deviceFormat);
-    if (AudioUnitGetProperty(audioUnit,
-                                kAudioUnitProperty_StreamFormat,
-                                kAudioUnitScope_Input,
-                                0,
-                                &deviceFormat,
-                                &size) != noErr) {
-        qWarning() << "QAudioOutput: Unable to retrieve device format";
-        return false;
-    }
-
+    UInt32 size = sizeof(streamFormat);
     if (AudioUnitSetProperty(audioUnit,
                                 kAudioUnitProperty_StreamFormat,
                                 kAudioUnitScope_Input,
@@ -391,8 +381,7 @@ bool QAudioOutputPrivate::open()
         return false;
     }
 
-    periodSizeBytes = (numberOfFrames * streamFormat.mSampleRate / deviceFormat.mSampleRate) * 
-                        streamFormat.mBytesPerFrame;
+    periodSizeBytes = numberOfFrames * streamFormat.mBytesPerFrame;
     if (internalBufferSize < periodSizeBytes * 2)
         internalBufferSize = periodSizeBytes * 2;
     else
@@ -745,4 +734,3 @@ OSStatus QAudioOutputPrivate::renderCallback(void* inRefCon,
 QT_END_NAMESPACE
 
 #include "qaudiooutput_mac_p.moc"
-

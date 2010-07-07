@@ -78,7 +78,9 @@ public:
     }
 
     QVersitDocument::VersitType mVersitType;
+    QString mComponentType;
     QList<QVersitProperty> mProperties;
+    QList<QVersitDocument> mSubDocuments;
 };
 
 QTM_END_NAMESPACE

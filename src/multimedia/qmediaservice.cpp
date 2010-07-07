@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QMediaService
     \brief The QMediaService class provides a common base class for media
     service implementations.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
     \preliminary
 
@@ -114,7 +115,7 @@ QMediaService::~QMediaService()
 }
 
 /*!
-    \fn QMediaService::requestControl(const char *interface)
+    \fn QMediaControl* QMediaService::requestControl(const char *interface)
 
     Returns a pointer to the media control implementing \a interface.
 
@@ -126,7 +127,7 @@ QMediaService::~QMediaService()
 */
 
 /*!
-    \fn QMediaService::requestControl() const
+    \fn T QMediaService::requestControl()
 
     Returns a pointer to the media control of type T implemented by a media service.
 
@@ -138,7 +139,7 @@ QMediaService::~QMediaService()
 */
 
 /*!
-    \fn QMediaService::releaseControl(QMediaControl *control);
+    \fn void QMediaService::releaseControl(QMediaControl *control);
 
     Releases a \a control back to the service.
 */

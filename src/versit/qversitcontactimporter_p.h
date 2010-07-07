@@ -55,11 +55,13 @@
 
 #include "qmobilityglobal.h"
 #include "qversitcontactimporter.h"
+#include "qvcardbackuphandlers_p.h"
 
 #include <QList>
 #include <QDateTime>
 #include <QHash>
 #include <QPair>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 class QContact;
@@ -76,44 +78,43 @@ public:
 
     bool importContact(const QVersitDocument& versitDocument, int contactIndex,
                        QContact* contact, QVersitContactImporter::Error* error);
-    QList<QVersitProperty> unconvertedVersitProperties();
 
     static QString synthesizedDisplayLabel(const QContact& contact);
 
 private:
-    void importProperty(const QVersitDocument& document, const QVersitProperty& property,
-                        int contactIndex, QContact* contact) const;
-    bool createName(const QVersitProperty& property, QContact* contact) const;
-    bool createPhone(const QVersitProperty& property, QContact* contact) const;
-    bool createAddress(const QVersitProperty& property, QContact* contact) const;
-    bool createOrganization(const QVersitProperty& property, QContact* contact) const;
+    void importProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact);
+    bool createName(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createPhone(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createAddress(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createOrganization(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
     void setOrganizationNames(QContactOrganization& org, const QVersitProperty& property) const;
     void setOrganizationLogo(QContactOrganization& org, const QVersitProperty& property) const;
-    bool createTimeStamp(const QVersitProperty& property, QContact* contact) const;
-    bool createAnniversary(const QVersitProperty& property, QContact* contact) const;
-    bool createBirthday(const QVersitProperty& property, QContact* contact) const;
-    bool createNicknames(const QVersitProperty& property, QContact* contact) const;
-    bool createTags(const QVersitProperty& property, QContact* contact) const;
-    bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
-    bool createRingtone(const QVersitProperty& property, QContact* contact) const;
-    bool createThumbnail(const QVersitProperty& property, QContact* contact) const;
-    bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
-    bool createFamily(const QVersitProperty& property, QContact* contact) const;
-    bool createNameValueDetail(const QVersitProperty& property, QContact* contact) const;
-    bool createCustomLabel(const QVersitProperty& property, QContact* contact) const;
+    bool createTimeStamp(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createAnniversary(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createBirthday(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createNicknames(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createTags(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createOnlineAccount(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createRingtone(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createThumbnail(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createGeoLocation(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createFamily(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createNameValueDetail(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createCustomLabel(const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QString>& list) const;
     QDateTime parseDateTime(const QString& text, const QString& format) const;
     QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
     bool saveDataFromProperty(const QVersitProperty& property, QString* location, QByteArray* data) const;
-    void saveDetailWithContext(
-            QContact* contact, QContactDetail* detail, const QStringList& contexts) const;
+    void saveDetailWithContext(QList<QContactDetail>* updatedDetails, QContactDetail detail, const QStringList& contexts);
 
 public: // Data
     QList<QContact> mContacts;
     QMap<int, QVersitContactImporter::Error> mErrors;
     QVersitContactImporterPropertyHandler* mPropertyHandler;
+    QVersitContactImporterPropertyHandlerV2* mPropertyHandler2;
+    int mPropertyHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 

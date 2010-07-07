@@ -38,7 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
+
+#include "qsysteminfocommon.h"
 #include "qsysteminfo_mac_p.h"
 
 #include <QStringList>
@@ -73,6 +74,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
 #include <ScreenSaver/ScreenSaverDefaults.h>
+#include <DiskArbitration/DiskArbitration.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include <DiskArbitration/DASession.h>
+
 #include <dns_sd.h>
 
 #include <QTKit/QTKit.h>
@@ -100,6 +105,7 @@
 #include <QEventLoop>
 
 #ifdef MAC_SDK_10_6
+
 #include <CoreLocation/CLLocation.h>
 #include <CoreLocation/CLLocationManager.h>
 #include <CoreWLAN/CWInterface.h>
@@ -243,7 +249,7 @@ bool hasIOServiceMatching(const QString &classstr)
 
 -(void)dealloc
 {
-    [center release];
+//    [center release];
     [super dealloc];
 }
 
@@ -293,10 +299,10 @@ bool hasIOServiceMatching(const QString &classstr)
     Q_UNUSED(device);
 
     if ((error != kIOReturnSuccess) || (info == NULL)) {
-        qWarning() << "ERROR: readRSSIForDeviceComplete return error";
+        qDebug() << "ERROR: readRSSIForDeviceComplete return error";
 
     } else if (info->handle == kBluetoothConnectionHandleNone) {
-        qWarning() << "ERROR: readRSSIForDeviceComplete no connection";
+        qDebug() << "ERROR: readRSSIForDeviceComplete no connection";
     } else {
         NSLog(@"Rssi value: %@", info->RSSIValue);
     }
@@ -312,7 +318,7 @@ Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, qsystemDeviceInfoPrivate)
 QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
+ : QObject(parent),langloopThread(0),langThreadOk(0)
 {
     if(!self)
         self = this;
@@ -320,8 +326,8 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-    if(langloopThread->isRunning()) {
-        langloopThread->quit();
+    if(langThreadOk && langloopThread->isRunning()) {
+        langloopThread->stop();
     }
 }
 
@@ -362,6 +368,7 @@ void QSystemInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         langloopThread = new QLangLoopThread(this);
         langloopThread->start();
+        langThreadOk = true;
     }
 }
 
@@ -369,8 +376,7 @@ void QSystemInfoPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         if(langloopThread->isRunning()) {
-            langloopThread->quit();
-            langloopThread->wait();
+            langloopThread->stop();
         }
     }
 }
@@ -538,33 +544,36 @@ QLangLoopThread::~QLangLoopThread()
 {
 }
 
-void QLangLoopThread::quit()
+void QLangLoopThread::stop()
 {
-    mutex.lock();
     keepRunning = false;
-    CFRunLoopStop(CFRunLoopGetCurrent());
 #ifdef MAC_SDK_10_6
     [langListener release];
 #endif
-    mutex.unlock();
+    if(currentThread() != this) {
+        QMetaObject::invokeMethod(this, "quit",
+                                  Qt::QueuedConnection);
+    } else {
+        quit();
+    }
     wait();
 }
 
 void QLangLoopThread::run()
 {
 #ifdef MAC_SDK_10_6
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+    locker.unlock();
     keepRunning = true;
-    mutex.unlock();
+    locker.relock();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     langListener = [[QtMLangListener alloc] init];
-
-    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    SInt32 result;
     while (keepRunning &&
-        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
-        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,2, YES))) {
     }
+    CFRunLoopStop(CFRunLoopGetCurrent());
     [pool release];
 #endif
 }
@@ -584,13 +593,16 @@ QRunLoopThread::~QRunLoopThread()
 
 void QRunLoopThread::stop()
 {
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+    locker.unlock();
+
     keepRunning = false;
-    mutex.unlock();
+    locker.relock();
 #ifdef MAC_SDK_10_6
     [listener release];
     [delegate release];
 #endif
+    mutex.unlock();
     if(currentThread() != this) {
         QMetaObject::invokeMethod(this, "quit",
                                   Qt::QueuedConnection);
@@ -617,7 +629,7 @@ void QRunLoopThread::run()
 
     SInt32 result;
     while (keepRunning &&
-           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,5, YES))) {
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,1, YES))) {
     }
     CFRunLoopStop(CFRunLoopGetCurrent());
     [pool release];
@@ -634,7 +646,7 @@ void QRunLoopThread::startNetworkChangeLoop()
                                  networkChangeCallback,
                                  &dynStoreContext);
     if (!storeSession ) {
-        qWarning() << "could not open dynamic store: error:" << SCErrorString(SCError());
+        qDebug()<< "could not open dynamic store: error:" << SCErrorString(SCError());
         return;
     }
 
@@ -685,7 +697,7 @@ void QRunLoopThread::startNetworkChangeLoop()
     CFRelease(storeKey);
 
     if (!SCDynamicStoreSetNotificationKeys(storeSession , notificationKeys, patternsArray)) {
-        qWarning() << "register notification error:"<< SCErrorString(SCError());
+        qDebug()<< "register notification error:"<< SCErrorString(SCError());
         CFRelease(storeSession );
         CFRelease(notificationKeys);
         CFRelease(patternsArray);
@@ -696,7 +708,7 @@ void QRunLoopThread::startNetworkChangeLoop()
 
     runloopSource = SCDynamicStoreCreateRunLoopSource(NULL, storeSession , 0);
     if (!runloopSource) {
-        qWarning() << "runloop source error:"<< SCErrorString(SCError());
+        qDebug()<< "runloop source error:"<< SCErrorString(SCError());
         CFRelease(storeSession);
         return;
     }
@@ -707,6 +719,53 @@ void QRunLoopThread::startNetworkChangeLoop()
     return;
 }
 
+
+QDASessionThread::QDASessionThread(QObject *parent)
+    :QThread(parent), session(NULL)
+{
+    if(session == NULL)
+        session = DASessionCreate(kCFAllocatorDefault);
+}
+
+QDASessionThread::~QDASessionThread()
+{
+}
+
+void QDASessionThread::stop()
+{
+    mutex.lock();
+    keepRunning = false;
+    mutex.unlock();
+    if(currentThread() != this) {
+        QMetaObject::invokeMethod(this, "quit",
+                                  Qt::QueuedConnection);
+    } else {
+        quit();
+    }
+    wait();
+}
+
+void QDASessionThread::run()
+{
+#ifdef MAC_SDK_10_6
+
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    DASessionScheduleWithRunLoop(session,CFRunLoopGetCurrent(),kCFRunLoopDefaultMode);
+
+    SInt32 result;
+    while (keepRunning &&
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,5, YES))) {
+    }
+
+    DASessionUnscheduleFromRunLoop(session, CFRunLoopGetCurrent(),kCFRunLoopDefaultMode);
+    CFRunLoopStop(CFRunLoopGetCurrent());
+    [pool release];
+#endif
+}
 
 static bool isBtPowerOn()
 {
@@ -737,6 +796,7 @@ void btPowerStateChange(void *ref, io_service_t /*service*/, natural_t messageTy
     }
 }
 
+
 QBluetoothListenerThread::QBluetoothListenerThread(QObject *parent)
     :QThread(parent)
 {
@@ -745,10 +805,6 @@ QBluetoothListenerThread::QBluetoothListenerThread(QObject *parent)
 
 QBluetoothListenerThread::~QBluetoothListenerThread()
 {
-    if(isRunning()) {
-        terminate();
-        wait();
-    }
 }
 
 void QBluetoothListenerThread::stop()
@@ -756,13 +812,6 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
-
-    if(CFRunLoopContainsSource(rl,rls,kCFRunLoopDefaultMode)) {
-        CFRunLoopRemoveSource(rl,
-                              rls,
-                              kCFRunLoopDefaultMode);
-        CFRunLoopStop(rl);
-    }
     if(currentThread() != this) {
         QMetaObject::invokeMethod(this, "quit",
                                   Qt::QueuedConnection);
@@ -772,6 +821,7 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     IONotificationPortDestroy(port);
     mutex.unlock();
+    wait();
 }
 
 void QBluetoothListenerThread::run()
@@ -849,20 +899,21 @@ void QBluetoothListenerThread::emitBtPower(bool b)
     Q_EMIT bluetoothPower(b);
 }
 
-
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent), signalStrengthCache(0)
+        : QObject(parent), signalStrengthCache(0),networkThreadOk(0)
 {
-     defaultInterface = "";
+    defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 
 #ifdef MAC_SDK_10_6
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 if([[CWInterface supportedInterfaces] count] > 0 ) {
         hasWifi = true;
     } else {
         hasWifi = false;
     }
+ [pool release];
 #endif
     rssiTimer = new QTimer(this);
 
@@ -874,9 +925,9 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi && runloopThread->isRunning()) {
+    if(hasWifi && /* networkThreadOk &&*/ runloopThread->isRunning()) {
         runloopThread->stop();
-    }
+   }
 #endif
 }
 
@@ -897,6 +948,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
         if(hasWifi) {
             runloopThread = new QRunLoopThread(this);
             runloopThread->start();
+            networkThreadOk = true;
         }
 #endif
     }
@@ -912,7 +964,7 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
 #ifdef MAC_SDK_10_6
         if(hasWifi && runloopThread->isRunning()) {
-            runloopThread->quit();
+            runloopThread->stop();
             runloopThread->wait();
             [delegate release];
         }
@@ -952,6 +1004,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::modeForInterface(QStr
 
 QString QSystemNetworkInfoPrivate::getDefaultInterface()
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     SCDynamicStoreRef storeSession2;
     CFStringRef key;
     CFDictionaryRef	globalDict;
@@ -959,8 +1012,8 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
     QString interfaceName;
 
     storeSession2 = SCDynamicStoreCreate(NULL, CFSTR("getPrimary"), NULL, NULL);
-    if (!storeSession2) {
-    }
+//    if (!storeSession2) {
+//    }
     key = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL, kSCDynamicStoreDomainState,kSCEntNetIPv4);
     globalDict = (const __CFDictionary*)SCDynamicStoreCopyValue(storeSession2, key);
     CFRelease(key);
@@ -982,7 +1035,7 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
-
+    [pool release];
     return interfaceName;
 }
 
@@ -1158,13 +1211,13 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 NSArray *devices = [IOBluetoothDevice recentDevices:0];
                 for ( IOBluetoothDevice *btDevice in devices ) {
                     if([btDevice isConnected]) {
-                        qWarning() <<"IOBluetoothDevice connected"<< nsstringToQString([btDevice getName]);
+                        qDebug()<<"IOBluetoothDevice connected"<< nsstringToQString([btDevice getName]);
 //                        delegate = [[RemoteDeviceRSSIHostControllerDelegate alloc] init];
                         [delegate retain];
                         [controller setDelegate:delegate];
                         IOReturn rc = [controller readRSSIForDevice:btDevice];
                         if (rc != noErr) {
-                            qWarning() << "ERROR: call readRSSIForDevice failed";
+                            qDebug()<< "ERROR: call readRSSIForDevice failed";
                         }
 //[delegate release];
                     }
@@ -1237,10 +1290,13 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     case QSystemNetworkInfo::WlanMode:
         {
             QString name = interfaceForMode(mode).name();
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #ifdef MAC_SDK_10_6
             if(hasWifi) {
                 CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
-                return nsstringToQString([wifiInterface ssid]);
+                QString netname = nsstringToQString([wifiInterface ssid]);
+                [pool release];
+                return netname;
             }
 #else
             SCDynamicStoreRef theDynamicStore;
@@ -1252,8 +1308,9 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             CFDictionaryRef airportPlist = (const __CFDictionary*)SCDynamicStoreCopyValue(theDynamicStore, (CFStringRef)airportPath);
 
             CFRelease(theDynamicStore);
-
-            return nsstringToQString([(NSDictionary *)airportPlist valueForKey:@"SSID_STR"]);
+            QString netname = nsstringToQString([(NSDictionary *)airportPlist valueForKey:@"SSID_STR"]);
+            [pool release];
+            return netname;
 #endif
         }
         break;
@@ -1281,6 +1338,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QNetworkInterface netInterface;
     CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
     CFStringRef iName;
@@ -1317,6 +1375,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
         }
     }
     CFRelease(interfaceArray);
+    [autoreleasepool release];
     return netInterface;
 }
 
@@ -1365,49 +1424,199 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
 
+CGDirectDisplayID getCGId(int screen)
+{
+    CGDirectDisplayID displayId[16];
+    CGDisplayCount count;
+    CGDisplayErr error = CGGetOnlineDisplayList(16,displayId, & count);
+    if(error == kCGErrorSuccess) {
+        return displayId[screen];
+    }
+    return CGMainDisplayID();
+}
+
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    int macScreens = 4;
     CGDisplayErr dErr;
     io_service_t service;
     CFStringRef key = CFSTR(kIODisplayBrightnessKey);
 
-    float brightness = HUGE_VALF;
+    float brightness = 0.0;
     int displayBrightness = -1;
-    CGDirectDisplayID screensArray[macScreens]; //support 4 screens
-    CGDisplayCount numberScreens;
-    CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
-    if(numberScreens >= (uint)screen) {
-        service = CGDisplayIOServicePort(screensArray[screen]);
-        dErr = IODisplayGetFloatParameter(service, kNilOptions, key, &brightness);
-        if (dErr == kIOReturnSuccess) {
-            displayBrightness = (int)(brightness * 100);
-        }
-    }
+    service = CGDisplayIOServicePort(getCGId(screen));
+    dErr = IODisplayGetFloatParameter(service, kNilOptions, key, &brightness);
+    displayBrightness = (int)(brightness * 100);
     return displayBrightness;
 }
 
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
-    int macScreens = 4;
-    CGDirectDisplayID screensArray[macScreens]; //support 4 screens
-    CGDisplayCount numberScreens;
     long bitsPerPixel = 0;
-    CGGetActiveDisplayList(macScreens, screensArray, &numberScreens);
-    if(numberScreens >= (uint)screen) {
-        bitsPerPixel = CGDisplayBitsPerPixel (screensArray[screen]);
-    }
+    bitsPerPixel = CGDisplayBitsPerPixel(getCGId(screen));
     return (int)bitsPerPixel;
 }
 
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
 {
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    if(screen < 16 && screen > -1) {
+        int rotation = (int)CGDisplayRotation(getCGId(screen));
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
+
+
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+    QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
+    QSettings accessSettings(accessplist, QSettings::NativeFormat);
+    accessSettings.value("contrast").toFloat();
+    return accessSettings.value("contrast").toFloat();
+}
+
+static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
+{
+    CFNumberRef value;
+    int resultNumber = 0;
+    if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
+            || CFGetTypeID(value) != CFNumberGetTypeID())
+        return 0;
+    CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
+    return resultNumber;
+}
+
+CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
+    double *horizontalDPI, double *verticalDPI)
+{
+    CGDisplayErr displayError = kCGErrorFailure;
+    io_connect_t ioPort;
+    CFDictionaryRef displayDict;
+
+    ioPort = CGDisplayIOServicePort(displayID);
+    if (ioPort != MACH_PORT_NULL) {
+        displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
+        if (displayDict != NULL) {
+            const double mmPerInch = 25.4;
+            double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
+            double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
+
+            CFRelease(displayDict);
+
+            *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
+            *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
+            displayError = CGDisplayNoErr;
+        }
+    }
+    return displayError;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        double horizontalDPI, verticalDPI;
+
+        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+        if (displayError == CGDisplayNoErr) {
+            dpi = horizontalDPI;
+        }
+    }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+        double horizontalDPI, verticalDPI;
+
+        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+        if (displayError == CGDisplayNoErr) {
+            dpi = verticalDPI;
+        }
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+    if(screen < 16 && screen > -1) {
+        CGSize size = CGDisplayScreenSize(getCGId(screen));
+        height = size.height;
+    }
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+    if(screen < 16 && screen > -1) {
+        CGSize size = CGDisplayScreenSize(getCGId(screen));
+        width = size.width;
+    }
+    return width;
+}
+
+
+DAApprovalSessionRef session = NULL;
+
+void mountCallback(DADiskRef disk, void *context)
+{
+    QString name = DADiskGetBSDName(disk);
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
+}
+
+void unmountCallback(DADiskRef disk, void *context)
+{
+    QString name = DADiskGetBSDName(disk);
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false,name);
+}
+
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
+        : QObject(parent), daSessionThread(0)
+{
+    updateVolumesMap();
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
+    if(daSessionThread) {
+        if(daSessionThread->isRunning()) {
+            daSessionThread->stop();
+            daSessionThread->wait();
+        }
+    }
+}
+
+void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
+{
+    if(mountEntriesHash.contains("/dev/"+vol)) {
+        // removing
+    } else {
+        //adding
+        updateVolumesMap();
+    }
+    Q_EMIT logicalDriveChanged(added, mountEntriesHash["/dev/"+vol]);
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1415,9 +1624,12 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     struct statfs64 *buf = NULL;
     unsigned i, count = 0;
 
+    mountEntriesHash.clear();
+
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
+
         mountEntriesHash.insert(buf[i].f_mntfromname,volName);
     }
     return true;
@@ -1426,42 +1638,28 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
     qint64 totalFreeBytes=0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(driveVolume == QString(volName)) {
-            totalFreeBytes = (buf[i].f_bavail * (buf[i].f_bsize/512));
-        }
-    }
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    totalFreeBytes = [[attr objectForKey:NSFileSystemFreeSize] doubleValue];
+    [pool release];
 
     return  totalFreeBytes;
 }
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
     qint64 totalBytes=0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(driveVolume == QString(volName)) {
-            totalBytes = (buf[i].f_blocks * (buf[i].f_bsize/512));
-            return totalBytes;
-        }
-    }
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    totalBytes = [[attr objectForKey:NSFileSystemSize] doubleValue];
+    [pool release];
 
     return totalBytes;
 }
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    updateVolumesMap();
     OSStatus osstatusResult = noErr;
     ItemCount volumeIndex;
 
@@ -1535,15 +1733,56 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     return drivesList;
 }
 
-void powerInfoChanged(void* runLoopInfo)
+bool QSystemStorageInfoPrivate::sessionThread()
 {
-    Q_UNUSED(runLoopInfo)
-    QSystemDeviceInfoPrivate::instance()->batteryLevel();
-    QSystemDeviceInfoPrivate::instance()->currentPowerState();
+    if(!daSessionThread)
+        daSessionThread = new QDASessionThread(this);
+
+    if(!daSessionThread->isRunning())
+        daSessionThread->start();
+
+    return true;
+}
+
+
+void QSystemStorageInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString&))))) {
+        sessionThread();
+        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
+//        connect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
+//                 this,SIGNAL(logicalDriveChanged(bool,const QString &)));
+    }
+}
+
+
+void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
+{
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString &))))) {
+#ifdef MAC_SDK_10_6
+        DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
+#else
+        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
+#endif
+//        disconnect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
+//                   this,SIGNAL(logicalDriveChanged(bool,const QString &)));
+    }
+}
+
+
+void powerInfoChanged(void* context)
+{
+    QSystemDeviceInfoPrivate *sys = reinterpret_cast<QSystemDeviceInfoPrivate *>(context);
+    sys->batteryLevel();
+    sys->currentPowerState();
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent),btThread(0)
+        : QObject(parent), btThreadOk(0) ,btThread(0)
 {
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
@@ -1552,7 +1791,8 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    btThread->stop();
+    if( btThreadOk && btThread->isRunning())
+        btThread->stop();
 }
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
@@ -1567,15 +1807,19 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
             btThread = new QBluetoothListenerThread(this);
             btThread->start();
             connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
+             btThreadOk = true;
         }
     }
 
     if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))) {
+        NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
         CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
         if (runLoopSource) {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
             CFRelease(runLoopSource);
         }
+        [autoreleasepool release];
     }
 }
 
@@ -1617,6 +1861,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QSystemDeviceInfo::PowerState state = QSystemDeviceInfo::UnknownPower;
 
     CFDictionaryRef powerSourceDict = NULL;
@@ -1656,6 +1901,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         currentPowerStateCache = state;
         Q_EMIT powerStateChanged(state);
     }
+    [autoreleasepool release];
     return state;
 }
 
@@ -1687,12 +1933,17 @@ QString QSystemDeviceInfoPrivate::model()
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-    return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductName"]);
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+    QString name = nsstringToQString([[[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductName"]autorelease]);
+    [autoreleasepool release];
+    return name ;
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel()
 {
     float level = 0;
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
     CFDictionaryRef powerSourceDict = NULL;
     CFTypeRef powerSourcesInfoBlob = IOPSCopyPowerSourcesInfo();
     CFArrayRef powerSourcesList = IOPSCopyPowerSourcesList(powerSourcesInfoBlob);
@@ -1737,6 +1988,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
         Q_EMIT batteryStatusChanged(batteryStatusCache);
     }
 
+    [autoreleasepool release];
     return (int)level;
 }
 
@@ -1764,6 +2016,13 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     } else {
         return false;
     }
+}
+
+bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
+{
+    if(isBtPowerOn())
+        return true;
+    return false;
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

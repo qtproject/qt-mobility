@@ -60,15 +60,7 @@ maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
         qWarning() << "Unable to initialize "<<sensorName;
 
     setReading<QAccelerometerReading>(&m_reading);
-    // adding metadata
-    addDataRate(1, 130); // 130 Hz
-    //addDataRate(400, 400); // 400Hz
 
-    // accuracy - or resolution???
-    // 2^8 = 256    256/2 - 1 = 127
-    addOutputRange(-2*GRAVITY_EARTH, 2*GRAVITY_EARTH, 2*GRAVITY_EARTH/127); // 2G
-    //addOutputRange(-8*GRAVITY_EARTH, 8*GRAVITY_EARTH, 8*GRAVITY_EARTH/127); // 8G
-    setDescription(QLatin1String("Measures x, y, and z axes accelerations in m/s^2"));
 }
 
 void maemo6accelerometer::slotDataAvailable(const XYZ& data)

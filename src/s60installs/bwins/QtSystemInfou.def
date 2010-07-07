@@ -122,4 +122,3 @@ EXPORTS
 	?screenSaverInhibited@QSystemScreenSaver@QtMobility@@QAE_NXZ @ 121 NONAME ; bool QtMobility::QSystemScreenSaver::screenSaverInhibited(void)
 	?connectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 122 NONAME ; void QtMobility::QSystemNetworkInfo::connectNotify(char const *)
 	?disconnectNotify@QSystemNetworkInfo@QtMobility@@MAEXPBD@Z @ 123 NONAME ; void QtMobility::QSystemNetworkInfo::disconnectNotify(char const *)
-

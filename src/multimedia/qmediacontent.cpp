@@ -75,6 +75,7 @@ private:
     \preliminary
     \brief The QMediaContent class provides access to the resources relating to a media content.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     QMediaContent is used within the multimedia framework as the logical handle

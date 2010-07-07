@@ -600,6 +600,20 @@ QVideoWidget::QVideoWidget(QWidget *parent)
 }
 
 /*!
+  \internal
+*/
+QVideoWidget::QVideoWidget(QVideoWidgetPrivate &dd, QWidget *parent)
+    : QWidget(parent, 0)
+    , d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
+
+    QPalette palette = QWidget::palette();
+    palette.setColor(QPalette::Background, Qt::black);
+    setPalette(palette);
+}
+
+/*!
     Destroys a video widget.
 */
 QVideoWidget::~QVideoWidget()
@@ -619,6 +633,9 @@ QMediaObject *QVideoWidget::mediaObject() const
     return d_func()->mediaObject;
 }
 
+/*!
+    \internal
+*/
 bool QVideoWidget::setMediaObject(QMediaObject *object)
 {
     Q_D(QVideoWidget);

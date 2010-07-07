@@ -48,8 +48,8 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "matroska" << "ogg" << "mp4" << "quicktime" << "avi" << "3gpp";
-    formatCandidates << "flv" << "wav" << "amr" << "asf" << "dv" << "gif";
+    formatCandidates << "matroska" << "ogg" << "mp4" << "wav" << "quicktime" << "avi" << "3gpp";
+    formatCandidates << "flv" << "amr" << "asf" << "dv" << "gif";
     formatCandidates << "mpeg" << "vob" << "mpegts" << "3g2" << "3gp";
     formatCandidates << "raw";
 

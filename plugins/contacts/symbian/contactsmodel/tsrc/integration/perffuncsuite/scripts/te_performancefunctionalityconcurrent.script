@@ -1,0 +1,152 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//
+PRINT Run all te_PerformanceFunctionality Suite Tests
+
+//
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+CONSECUTIVE
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentInitilizerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81150
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81150
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple Client Notification Test
+//! @SYMTestActions Start X number of listener threads
+//! Make a modification (that generates some type of notification Y) in initial thread
+//! All X threads should note the type of notification received
+//! If threads do not receive any notification after Z seconds they should fail
+//! Repeat test for various types of modification/notification
+//! @SYMTestExpectedResults The type of notification received should equal Y
+CONCURRENT
+SHARED_DATA c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini shared
+//
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Update
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Commit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Add
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Delete
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CloseOpenTables
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini OwncardAddDelete
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Speeddial
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81150
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81151
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81151
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Long transaction multiple Client Notification Test
+//! @SYMTestActions Start X number of listener threads
+//! Start a transaction in initial thread
+//! Perform a variety of CUD operations on D contacts
+//! Commit transaction, which should generate of list of notifications Y
+//! All X threads should note the types of notification received
+//! If threads do not receive any notification after Z seconds they should fail
+//! Repeat test where transaction is reverted
+//! Repeat test where transaction is empty
+//! @SYMTestExpectedResults The list of notifications received should equal Y
+//! No notifications should be received when transaction is empty or reverted
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini TransactionCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini TransactionRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CUDTransactionCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CUDTransactionRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyTransactionCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyTransactionRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81151
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81160
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81160
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple client unknown change Transaction notification test
+//! @SYMTestActions Start transaction in client A
+//! Performs  X number of updates where X equals the event queue +1
+//! Commit transaction
+//! In client B the event handler check received event(s)
+//! @SYMTestExpectedResults event handler in client B should receive UnkownChanges event only
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 5000 Te_PerformanceFunctionalitySuite ConcurrentNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini UnknownChange
+RUN_TEST_STEP 5000 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+RUN_TEST_STEP 5000 Te_PerformanceFunctionalitySuite ConcurrentListenerStep
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81160
+
+PRINT Complete_te_PerformanceFunctionality_Tests

@@ -59,6 +59,9 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -67,6 +70,12 @@ QTM_BEGIN_NAMESPACE
 QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* parent)
     : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*! Sets the source contact criterion of the fetch request to \a firstId.
@@ -128,6 +137,7 @@ QContactId QContactRelationshipFetchRequest::second() const
     QMutexLocker ml(&d->m_mutex);
     return d->m_second;
 }
+
 
 /*! Returns the list of relationships that was the result of the request
  */
