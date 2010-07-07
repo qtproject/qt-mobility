@@ -52,9 +52,8 @@ QTM_BEGIN_NAMESPACE
 
 class QDeclarativePosition : public QObject {
     Q_OBJECT
-    // Q_INTERFACES(QDeclarativePosition)
 
-    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource)
+    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
     Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(double latitude READ latitude NOTIFY latitudeChanged)
@@ -102,6 +101,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void positionUpdated();
     void timestampChanged(QDateTime timestamp);
+    void nmeaSourceChanged(QUrl nmeaSource);
     void latitudeChanged(double latitude);
     void longtitudeChanged(double longtitude);
     void speedChanged(double speed);
@@ -125,6 +125,7 @@ private:
     QGeoPositionInfo m_positionInfo;
     QUrl m_nmeaSource;
     QDateTime m_timestamp;
+    PositioningMethod m_positioningMethod;
     double m_latitude;
     double m_longtitude;
     double m_altitude;
@@ -138,8 +139,6 @@ private:
 
 
 QTM_END_NAMESPACE
-
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePosition));
-Q_DECLARE_INTERFACE(QtMobility::QDeclarativePosition, "QtMobility.location/1.0")
 
 #endif

@@ -42,6 +42,7 @@
 #include "qdeclarativeposition.h"
 #include "qdeclarative.h"
 #include <qnmeapositioninfosource.h>
+#include <QFile>
 #include <QApplication>
 
 // Define this to get usefuld debug messages
@@ -135,7 +136,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativePosition::QDeclarativePosition()
-    : m_positionSource(0), m_latitude(0), m_longtitude(0), m_altitude(0), m_speed(0),
+    : m_positionSource(0), m_positioningMethod(QDeclarativePosition::NoPositioningMethod),
+      m_latitude(0), m_longtitude(0), m_altitude(0), m_speed(0),
       m_updatesOngoing(false), m_positionLatest(false), m_altitudeLatest(false),
       m_speedLatest(false), m_updateInterval(0)
 {
@@ -146,6 +148,7 @@ QDeclarativePosition::QDeclarativePosition()
 #endif
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
+        m_positioningMethod = positioningMethod();
     }
     else {
 #ifdef QDECLARATIVE_POSITION_DEBUG
@@ -161,6 +164,9 @@ QDeclarativePosition::~QDeclarativePosition()
 
 void QDeclarativePosition::setNmeaSource(const QUrl& nmeaSource)
 {
+    if (nmeaSource == m_nmeaSource) {
+        return;
+    }
     // The current position source needs to be deleted in any case,
     // because QNmeaPositionInfoSource can be bound only to a one file.
     if (m_positionSource) {
@@ -169,7 +175,7 @@ void QDeclarativePosition::setNmeaSource(const QUrl& nmeaSource)
     }
     m_nmeaSource = nmeaSource;
     // Create the NMEA source based on the given data. A fine feature in QML:
-    // it automatically sets QUrl type to point to correct path.
+    // it has automatically set QUrl type to point to correct path.
     QFile* file = new QFile(nmeaSource.toLocalFile());
     if (file->exists()) {
 #ifdef QDECLARATIVE_POSITION_DEBUG
@@ -181,10 +187,27 @@ void QDeclarativePosition::setNmeaSource(const QUrl& nmeaSource)
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
     } else {
 #ifdef QDECLARATIVE_POSITION_DEBUG
-        qDebug("QDeclarativePosition NMEA File was not found, creating default source.");
+        qDebug("QDeclarativePosition NMEA File was not found.");
 #endif
-        m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
+        // Expire possible data
+        if (m_positionLatest) {
+            m_positionLatest = false;
+            emit positionLatestChanged(m_positionLatest);
+        }
+        if (m_speedLatest) {
+            m_speedLatest = false;
+            emit speedLatestChanged(m_speedLatest);
+        }
+        if (m_altitudeLatest) {
+            m_altitudeLatest = false;
+            emit altitudeLatestChanged(m_altitudeLatest);
+        }
     }
+    if (m_positioningMethod != positioningMethod()) {
+        m_positioningMethod == positioningMethod();
+        emit positioningMethodChanged(m_positioningMethod);
+    }
+    emit this->nmeaSourceChanged(m_nmeaSource);
 }
 
 void QDeclarativePosition::setUpdateInterval(int updateInterval)
@@ -199,9 +222,17 @@ void QDeclarativePosition::setUpdateInterval(int updateInterval)
     \qmlproperty url Position::nmeaSource
 
     This property holds the source for NMEA data (file). One purpose of this
-    property is to be of development convinience. Setting this property
-    will override any other position source. If source is changed, all previous
-    data is invalidated.
+    property is to be of development convinience.
+
+    Setting this property will override any other position source. Currently only
+    files local to the .qml
+    -file are supported. Nmea source is created in simulation mode, meaning that
+    the data and time information in the NMEA source data is used to provide positional
+    updates at the rate at which the data was originally recorded.
+
+    If the source is changed, all possible previous data is expired. Also \l update and
+    \l startUpdates need to be issued again. If \l nmeaSource has been set for a Position
+    element, there is no way to revert back to non-file sources.
 
     For example if there is a file called "nmealog.txt" in the same folder as the .qml file:
 
@@ -293,7 +324,8 @@ double QDeclarativePosition::speed() const {
     \qmlproperty bool Position::positionLatest
 
     This property is true if \l latitude and \l longtitude data were
-    updated at current \l timestamp.
+    updated at current \l timestamp,
+    i.e. an update was received during previous update from source.
 
 */
 
@@ -305,7 +337,8 @@ bool QDeclarativePosition::isPositionLatest() const
 /*!
     \qmlproperty bool Position::altitudeLatest
 
-    This property is true if \l altitude has been updated at current \l timestamp.
+    This property is true if \l altitude has been updated at current \l timestamp,
+    i.e. an update was received during previous update from source.
 
 */
 
@@ -317,7 +350,8 @@ bool QDeclarativePosition::isAltitudeLatest() const
 /*!
     \qmlproperty bool Position::speedLatest
 
-    This property is true if \l speed has been updated at current \l timestamp.
+    This property is true if \l speed has been updated at current \l timestamp,
+    i.e. an update was received during previous update from source.
 
 */
 
@@ -347,7 +381,7 @@ int QDeclarativePosition::updateInterval() const
     current source.
 
     \list
-    \o NoPositioningMethod - No positioning methods supported.
+    \o NoPositioningMethod - No positioning methods supported (no source).
     \o SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
     \o NonSatellitePositioningMethod - Non satellite methods are supported.
     \o AllPositioningMethods - Combination of methods are supported.
@@ -403,7 +437,7 @@ void QDeclarativePosition::update() {
 /*!
     \qmlmethod Position::stopUpdates()
 
-    Stops updates from the location source. Does not invalidate any
+    Stops updates from the location source. Does not expire any
     previously received data.
 
     \sa startUpdates

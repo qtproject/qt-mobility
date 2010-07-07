@@ -71,11 +71,17 @@ Rectangle {
         text: "Locate & update"
         anchors {left: parent.left; leftMargin: 5}
         y: 3; height: 32; width: parent.width - 10
-        onClicked: {position.update();}
+        onClicked: {
+            if (position.positioningMethod == Position.NoPositioningMethod) {
+                position.nmeaSource = "nmealog.txt";
+                sourceText.text = "(filesource): " + printableMethod(position.positioningMethod);
+                position.update();
+            }
+        }
     }
     Position {
         id: position
-        nmeaSource: "nmealog.txt"
+        //nmeaSource: "nmealog.txt"
         onPositionUpdated: {planet.source = "images/sun.png";}
     }
     function printableMethod(method) {

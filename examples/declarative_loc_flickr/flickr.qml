@@ -88,7 +88,6 @@ Item {
         Mobile.TitleBar { id: titleBar; z: 5; width: parent.width; height: 40; opacity: 0.9 }
         Mobile.GeoTab {
             id: geoTab;
-            // width: parent.width / 2; height: titleBar.height * 3
             x: 15; y:50;
         }
         Mobile.ToolBar {

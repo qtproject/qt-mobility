@@ -14,6 +14,7 @@ headerdirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
+	     ../../plugins/declarative/location \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -27,6 +28,7 @@ sourcedirs = ../../src/bearer \
              ../../src/contacts \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
+	     ../../plugins/declarative/location \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
