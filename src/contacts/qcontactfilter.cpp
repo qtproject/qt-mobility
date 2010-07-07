@@ -213,6 +213,8 @@ QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
         }
         if (filter.d_ptr)
             filter.d_ptr->inputFromStream(in, formatVersion);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

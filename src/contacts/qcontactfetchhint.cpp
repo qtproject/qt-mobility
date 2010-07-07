@@ -217,6 +217,8 @@ QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
         hint.setDetailDefinitionsHint(detailDefinitionHints);
         hint.setRelationshipTypesHint(relationshipTypeHints);
         hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

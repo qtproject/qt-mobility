@@ -175,6 +175,8 @@ QDataStream& operator>>(QDataStream& in, QContactId& id)
         in >> managerUri >> localId;
         id.setManagerUri(managerUri);
         id.setLocalId(localId);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

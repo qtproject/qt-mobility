@@ -161,6 +161,8 @@ QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definiti
         in >> dataType >> allowableValues;
         definition.setDataType(QVariant::Type(dataType));
         definition.setAllowableValues(allowableValues);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

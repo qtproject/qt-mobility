@@ -516,6 +516,8 @@ QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
             it.next();
             detail.setValue(it.key(), it.value());
         }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

@@ -684,6 +684,8 @@ QDataStream& operator>>(QDataStream& in, QContact& contact)
         contact.setId(id);
         contact.d->m_details = details;
         contact.d->m_preferences = preferences;
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

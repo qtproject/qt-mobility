@@ -133,6 +133,8 @@ QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
         definition.setName(name);
         definition.setUnique(unique);
         definition.setFields(fields);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

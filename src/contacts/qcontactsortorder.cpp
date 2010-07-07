@@ -162,6 +162,8 @@ QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
         sortOrder.setBlankPolicy(QContactSortOrder::BlankPolicy(blankPolicy));
         sortOrder.setDirection(Qt::SortOrder(direction));
         sortOrder.setCaseSensitivity(Qt::CaseSensitivity(caseSensitivity));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }

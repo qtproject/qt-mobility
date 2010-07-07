@@ -215,6 +215,8 @@ QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
         rel.setFirst(first);
         rel.setRelationshipType(relationshipType);
         rel.setSecond(second);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
     }
     return in;
 }
