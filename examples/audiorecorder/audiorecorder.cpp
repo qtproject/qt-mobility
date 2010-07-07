@@ -56,9 +56,6 @@ AudioRecorder::AudioRecorder(QWidget *parent)
     audiosource = new QAudioCaptureSource(this);
     capture = new QMediaRecorder(audiosource, this);
 
-    // set a default file
-    capture->setOutputLocation(QUrl("test.raw"));
-
     //audio devices
     ui->audioDeviceBox->addItem(tr("Default"), QVariant(QString()));
     foreach(const QString &device, audiosource->audioInputs()) {
@@ -106,10 +103,10 @@ AudioRecorder::~AudioRecorder()
 
 void AudioRecorder::updateProgress(qint64 duration)
 {
-    if (capture->error() != QMediaRecorder::NoError)
+    if (capture->error() != QMediaRecorder::NoError || duration < 2000)
         return;
 
-    ui->statusbar->showMessage(tr("Recorded %1 sec").arg(duration/1000));
+    ui->statusbar->showMessage(tr("Recorded %1 sec").arg(qRound(duration/1000)));
 }
 
 void AudioRecorder::updateState(QMediaRecorder::State state)
@@ -120,7 +117,10 @@ void AudioRecorder::updateState(QMediaRecorder::State state)
         case QMediaRecorder::RecordingState:
             ui->recordButton->setText(tr("Stop"));
             ui->pauseButton->setText(tr("Pause"));
-            statusMessage = tr("Recording");
+            if (capture->outputLocation().isEmpty())
+                statusMessage = tr("Recording");
+            else
+                statusMessage = tr("Recording to %1").arg(capture->outputLocation().toString());
             break;
         case QMediaRecorder::PausedState:
             ui->recordButton->setText(tr("Stop"));
