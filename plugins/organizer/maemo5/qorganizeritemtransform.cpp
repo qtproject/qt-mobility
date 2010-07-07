@@ -140,7 +140,7 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
         */
 
     // Set parent id
-    QString idString = QString::fromStdString( cevent->getId() );
+    QString idString = QString::fromStdString(cevent->getId());
     QOrganizerItemLocalId localId = idString.toUInt();
     retn.setParentLocalId(localId);
 

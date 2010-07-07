@@ -117,6 +117,7 @@ private:
 
     // common methods
     QMap<QString, Qt::DayOfWeek> icalRecurrenceWeekDayQdayOfWeekMapping() const;
+    QString createSingleDayRuleFor(const QDate& date) const;
 
 private:
     // QRecurrence -> CRecurrence

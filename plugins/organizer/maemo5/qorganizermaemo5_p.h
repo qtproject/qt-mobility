@@ -151,10 +151,6 @@ public:
     QList<QOrganizerItem> itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const;
 
-    // TODO: This is temporary just to reset the calendar in error situations,
-    // use only for debugging & remove this finally!
-    void removeAllForDebug() const;
-
     QList<QOrganizerItem> items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
     QOrganizerItem item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const;
 
@@ -182,7 +178,7 @@ private:
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
     // saving the occurrences
-    int saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
+    int saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
     //int saveTodoOccurrence(QOrganizerTodoOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
     void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
 
