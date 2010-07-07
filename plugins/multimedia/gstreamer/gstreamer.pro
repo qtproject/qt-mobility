@@ -71,5 +71,5 @@ SOURCES += \
         qx11videosurface.cpp \
         qgstxvimagebuffer.cpp
 }
-
+include(mediaplayer/mediaplayer.pri)
 include(mediacapture/mediacapture.pri)
