@@ -161,17 +161,21 @@ QDebug operator<<(QDebug dbg, const QContactId& id)
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator<<(QDataStream& out, const QContactId& id)
 {
-    return out << id.managerUri() << id.localId();
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactId
+    return out << formatVersion << id.managerUri() << id.localId();
 }
 
 QDataStream& operator>>(QDataStream& in, QContactId& id)
 {
-    QString managerUri;
-    in >> managerUri;
-    id.setManagerUri(managerUri);
-    QContactLocalId localId;
-    in >> localId;
-    id.setLocalId(localId);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString managerUri;
+        QContactLocalId localId;
+        in >> managerUri >> localId;
+        id.setManagerUri(managerUri);
+        id.setLocalId(localId);
+    }
     return in;
 }
 #endif

@@ -192,6 +192,8 @@ private:
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QContact& contact);
+    friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
 };

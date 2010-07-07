@@ -198,20 +198,26 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
 #ifndef QT_NO_DATASTREAM
 QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
 {
-    return out << hint.detailDefinitionsHint()
-        << hint.relationshipTypesHint()
-        << static_cast<quint32>(hint.optimizationHints());
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactFetchHint
+    return out << formatVersion
+               << hint.detailDefinitionsHint()
+               << hint.relationshipTypesHint()
+               << static_cast<quint32>(hint.optimizationHints());
 }
 
 QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
 {
-    QStringList detailDefinitionHints;
-    QStringList relationshipTypeHints;
-    quint32 optimizations;
-    in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
-    hint.setDetailDefinitionsHint(detailDefinitionHints);
-    hint.setRelationshipTypesHint(relationshipTypeHints);
-    hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QStringList detailDefinitionHints;
+        QStringList relationshipTypeHints;
+        quint32 optimizations;
+        in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
+        hint.setDetailDefinitionsHint(detailDefinitionHints);
+        hint.setRelationshipTypesHint(relationshipTypeHints);
+        hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    }
     return in;
 }
 

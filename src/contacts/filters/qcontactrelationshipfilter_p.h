@@ -95,16 +95,21 @@ public:
         return true;
     }
 
-    QDataStream& outputToStream(QDataStream& stream) const
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        return stream << m_relationshipType << m_relatedContactId << static_cast<quint32>(m_relatedContactRole);
+        if (formatVersion == 1) {
+            stream << m_relationshipType << m_relatedContactId << static_cast<quint32>(m_relatedContactRole);
+        }
+        return stream;
     }
 
-    QDataStream& inputFromStream(QDataStream& stream)
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        quint32 role;
-        stream >> m_relationshipType >> m_relatedContactId >> role;
-        m_relatedContactRole = QContactRelationship::Role(role);
+        if (formatVersion == 1) {
+            quint32 role;
+            stream >> m_relationshipType >> m_relatedContactId >> role;
+            m_relatedContactRole = QContactRelationship::Role(role);
+        }
         return stream;
     }
 

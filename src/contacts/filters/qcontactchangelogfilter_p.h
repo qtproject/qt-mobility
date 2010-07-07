@@ -88,16 +88,21 @@ public:
         return true;
     }
 
-    QDataStream& outputToStream(QDataStream& stream) const
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        return stream << static_cast<quint32>(m_eventType) << m_since;
+        if (formatVersion == 1) {
+            stream << static_cast<quint32>(m_eventType) << m_since;
+        }
+        return stream;
     }
 
-    QDataStream& inputFromStream(QDataStream& stream)
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        quint32 eventType;
-        stream >> eventType >> m_since;
-        m_eventType = (QContactChangeLogFilter::EventType)eventType;
+        if (formatVersion == 1) {
+            quint32 eventType;
+            stream >> eventType >> m_since;
+            m_eventType = (QContactChangeLogFilter::EventType)eventType;
+        }
         return stream;
     }
 

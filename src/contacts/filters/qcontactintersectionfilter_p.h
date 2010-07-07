@@ -84,14 +84,20 @@ public:
         return true;
     }
 
-    QDataStream& outputToStream(QDataStream& stream) const
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        return stream << m_filters;
+        if (formatVersion == 1) {
+            stream << m_filters;
+        }
+        return stream;
     }
 
-    QDataStream& inputFromStream(QDataStream& stream)
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        return stream >> m_filters;
+        if (formatVersion == 1) {
+            stream >> m_filters;
+        }
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactIntersectionFilter, QContactFilter::IntersectionFilter)

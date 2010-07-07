@@ -93,14 +93,20 @@ public:
         return true;
     }
 
-    QDataStream& outputToStream(QDataStream& stream) const
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        return stream << m_action << m_value << m_vendorName << m_implementationVersion;
+        if (formatVersion == 1) {
+            stream << m_action << m_value << m_vendorName << m_implementationVersion;
+        }
+        return stream;
     }
 
-    QDataStream& inputFromStream(QDataStream& stream)
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        return stream >> m_action >> m_value >> m_vendorName >> m_implementationVersion;
+        if (formatVersion == 1) {
+            stream >> m_action >> m_value >> m_vendorName >> m_implementationVersion;
+        }
+        return stream;
     }
 
 

@@ -111,7 +111,11 @@ bool QContactDetailDefinition::isEmpty() const
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& definition)
 {
-    return out << definition.name() << definition.isUnique() << definition.fields();
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailDefinition
+    return out << formatVersion
+               << definition.name()
+               << definition.isUnique()
+               << definition.fields();
 }
 
 /*!
@@ -119,13 +123,17 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& defini
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
 {
-    QString name;
-    bool unique;
-    QMap<QString, QContactDetailFieldDefinition> fields;
-    in >> name >> unique >> fields;
-    definition.setName(name);
-    definition.setUnique(unique);
-    definition.setFields(fields);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString name;
+        bool unique;
+        QMap<QString, QContactDetailFieldDefinition> fields;
+        in >> name >> unique >> fields;
+        definition.setName(name);
+        definition.setUnique(unique);
+        definition.setFields(fields);
+    }
     return in;
 }
 #endif

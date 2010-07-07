@@ -135,11 +135,13 @@ bool QContactSortOrder::operator ==(const QContactSortOrder& other) const
  */
 QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
 {
-    return out << sortOrder.detailDefinitionName()
-        << sortOrder.detailFieldName()
-        << static_cast<quint32>(sortOrder.blankPolicy())
-        << static_cast<quint32>(sortOrder.direction())
-        << static_cast<quint32>(sortOrder.caseSensitivity());
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactSortOrder
+    return out << formatVersion
+               << sortOrder.detailDefinitionName()
+               << sortOrder.detailFieldName()
+               << static_cast<quint32>(sortOrder.blankPolicy())
+               << static_cast<quint32>(sortOrder.direction())
+               << static_cast<quint32>(sortOrder.caseSensitivity());
 }
 
 /*!
@@ -147,16 +149,20 @@ QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder)
  */
 QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder)
 {
-    QString definitionName;
-    QString fieldName;
-    quint32 blankPolicy;
-    quint32 direction;
-    quint32 caseSensitivity;
-    in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
-    sortOrder.setDetailDefinitionName(definitionName, fieldName);
-    sortOrder.setBlankPolicy(QContactSortOrder::BlankPolicy(blankPolicy));
-    sortOrder.setDirection(Qt::SortOrder(direction));
-    sortOrder.setCaseSensitivity(Qt::CaseSensitivity(caseSensitivity));
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        QString fieldName;
+        quint32 blankPolicy;
+        quint32 direction;
+        quint32 caseSensitivity;
+        in >> definitionName >> fieldName >> blankPolicy >> direction >> caseSensitivity;
+        sortOrder.setDetailDefinitionName(definitionName, fieldName);
+        sortOrder.setBlankPolicy(QContactSortOrder::BlankPolicy(blankPolicy));
+        sortOrder.setDirection(Qt::SortOrder(direction));
+        sortOrder.setCaseSensitivity(Qt::CaseSensitivity(caseSensitivity));
+    }
     return in;
 }
 #endif

@@ -144,7 +144,8 @@ bool QContactDetailFieldDefinition::operator!=(const QContactDetailFieldDefiniti
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition)
 {
-    return out << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailFieldDefinition
+    return out << formatVersion << static_cast<quint32>(definition.dataType()) << definition.allowableValues();
 }
 
 /*!
@@ -152,11 +153,15 @@ QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& d
  */
 QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition)
 {
-    quint32 dataType;
-    QVariantList allowableValues;
-    in >> dataType >> allowableValues;
-    definition.setDataType(QVariant::Type(dataType));
-    definition.setAllowableValues(allowableValues);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 dataType;
+        QVariantList allowableValues;
+        in >> dataType >> allowableValues;
+        definition.setDataType(QVariant::Type(dataType));
+        definition.setAllowableValues(allowableValues);
+    }
     return in;
 }
 #endif

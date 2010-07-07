@@ -664,9 +664,8 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
  */
 QDataStream& operator<<(QDataStream& out, const QContact& contact)
 {
-    out << contact.id();
-    out << contact.details();
-    return out;
+    quint8 formatVersion = 1; // Version of QDataStream format for QContact
+    return out << formatVersion << contact.id() << contact.details() << contact.d->m_preferences;
 }
 
 /*!
@@ -674,14 +673,17 @@ QDataStream& operator<<(QDataStream& out, const QContact& contact)
  */
 QDataStream& operator>>(QDataStream& in, QContact& contact)
 {
-    contact.clearDetails();
-    QContactId id;
-    in >> id;
-    contact.setId(id);
-    QList<QContactDetail> details;
-    in >> details;
-    foreach (QContactDetail detail, details) {
-        contact.saveDetail(&detail);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        contact = QContact();
+        QContactId id;
+        QList<QContactDetail> details;
+        QMap<QString, int> preferences;
+        in >> id >> details >> preferences;
+        contact.setId(id);
+        contact.d->m_details = details;
+        contact.d->m_preferences = preferences;
     }
     return in;
 }

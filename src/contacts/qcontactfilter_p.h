@@ -87,8 +87,8 @@ public:
     }
 
     virtual bool compare(const QContactFilterPrivate* other) const = 0;
-    virtual QDataStream& outputToStream(QDataStream& stream) const = 0;
-    virtual QDataStream& inputFromStream(QDataStream& stream) = 0;
+    virtual QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const = 0;
+    virtual QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion) = 0;
     virtual QContactFilterPrivate* clone() const = 0;
     virtual QContactFilter::FilterType type() const = 0;
 

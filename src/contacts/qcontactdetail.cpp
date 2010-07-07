@@ -487,10 +487,11 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
  */
 QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 {
-    out << detail.definitionName()
-        << static_cast<quint32>(detail.accessConstraints())
-        << detail.variantValues();
-    return out;
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetail
+    return out << formatVersion
+               << detail.definitionName()
+               << static_cast<quint32>(detail.accessConstraints())
+               << detail.variantValues();
 }
 
 /*!
@@ -498,21 +499,23 @@ QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
  */
 QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 {
-    QString definitionName;
-    in >> definitionName;
-    detail = QContactDetail(definitionName);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        quint32 accessConstraintsInt;
+        QVariantMap values;
+        in >> definitionName >> accessConstraintsInt >> values;
 
-    quint32 accessConstraintsInt;
-    in >> accessConstraintsInt;
-    QContactDetail::AccessConstraints accessConstraints(accessConstraintsInt);
-    detail.d->m_access = accessConstraints;
+        detail = QContactDetail(definitionName);
+        QContactDetail::AccessConstraints accessConstraints(accessConstraintsInt);
+        detail.d->m_access = accessConstraints;
 
-    QVariantMap values;
-    in >> values;
-    QMapIterator<QString, QVariant> it(values);
-    while (it.hasNext()) {
-        it.next();
-        detail.setValue(it.key(), it.value());
+        QMapIterator<QString, QVariant> it(values);
+        while (it.hasNext()) {
+            it.next();
+            detail.setValue(it.key(), it.value());
+        }
     }
     return in;
 }

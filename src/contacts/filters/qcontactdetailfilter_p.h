@@ -93,16 +93,21 @@ public:
         return true;
     }
 
-    QDataStream& outputToStream(QDataStream& stream) const
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
-        return stream << m_defId << m_fieldId << m_exactValue << static_cast<quint32>(m_flags);
+        if (formatVersion == 1) {
+            stream << m_defId << m_fieldId << m_exactValue << static_cast<quint32>(m_flags);
+        }
+        return stream;
     }
 
-    QDataStream& inputFromStream(QDataStream& stream)
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
-        quint32 flags;
-        stream >> m_defId >> m_fieldId >> m_exactValue >> flags;
-        m_flags = QContactFilter::MatchFlags(flags);
+        if (formatVersion == 1) {
+            quint32 flags;
+            stream >> m_defId >> m_fieldId >> m_exactValue >> flags;
+            m_flags = QContactFilter::MatchFlags(flags);
+        }
         return stream;
     }
 

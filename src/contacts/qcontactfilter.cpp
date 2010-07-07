@@ -162,9 +162,10 @@ bool QContactFilter::operator==(const QContactFilter& other) const
  */
 QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
 {
-    out << static_cast<quint32>(filter.type());
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailFilter
+    out << formatVersion << static_cast<quint32>(filter.type());
     if (filter.d_ptr)
-        filter.d_ptr->outputToStream(out);
+        filter.d_ptr->outputToStream(out, formatVersion);
     return out;
 }
 
@@ -173,42 +174,46 @@ QDataStream& operator<<(QDataStream& out, const QContactFilter& filter)
  */
 QDataStream& operator>>(QDataStream& in, QContactFilter& filter)
 {
-    quint32 type;
-    in >> type;
-    switch (type) {
-        case QContactFilter::InvalidFilter:
-            filter = QContactInvalidFilter();
-            break;
-        case QContactFilter::ContactDetailFilter:
-            filter = QContactDetailFilter();
-            break;
-        case QContactFilter::ContactDetailRangeFilter:
-            filter = QContactDetailRangeFilter();
-            break;
-        case QContactFilter::ChangeLogFilter:
-            filter = QContactChangeLogFilter();
-            break;
-        case QContactFilter::ActionFilter:
-            filter = QContactActionFilter();
-            break;
-        case QContactFilter::RelationshipFilter:
-            filter = QContactRelationshipFilter();
-            break;
-        case QContactFilter::IntersectionFilter:
-            filter = QContactIntersectionFilter();
-            break;
-        case QContactFilter::UnionFilter:
-            filter = QContactUnionFilter();
-            break;
-        case QContactFilter::LocalIdFilter:
-            filter = QContactLocalIdFilter();
-            break;
-        case QContactFilter::DefaultFilter:
-            filter = QContactFilter();
-            break;
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        quint32 type;
+        in >> type;
+        switch (type) {
+            case QContactFilter::InvalidFilter:
+                filter = QContactInvalidFilter();
+                break;
+            case QContactFilter::ContactDetailFilter:
+                filter = QContactDetailFilter();
+                break;
+            case QContactFilter::ContactDetailRangeFilter:
+                filter = QContactDetailRangeFilter();
+                break;
+            case QContactFilter::ChangeLogFilter:
+                filter = QContactChangeLogFilter();
+                break;
+            case QContactFilter::ActionFilter:
+                filter = QContactActionFilter();
+                break;
+            case QContactFilter::RelationshipFilter:
+                filter = QContactRelationshipFilter();
+                break;
+            case QContactFilter::IntersectionFilter:
+                filter = QContactIntersectionFilter();
+                break;
+            case QContactFilter::UnionFilter:
+                filter = QContactUnionFilter();
+                break;
+            case QContactFilter::LocalIdFilter:
+                filter = QContactLocalIdFilter();
+                break;
+            case QContactFilter::DefaultFilter:
+                filter = QContactFilter();
+                break;
+        }
+        if (filter.d_ptr)
+            filter.d_ptr->inputFromStream(in, formatVersion);
     }
-    if (filter.d_ptr)
-        filter.d_ptr->inputFromStream(in);
     return in;
 }
 

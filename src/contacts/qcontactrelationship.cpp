@@ -196,7 +196,8 @@ QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
  */
 QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
 {
-    return out << rel.first() << rel.relationshipType() << rel.second();
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactRelationship
+    return out << formatVersion << rel.first() << rel.relationshipType() << rel.second();
 }
 
 /*!
@@ -204,15 +205,17 @@ QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
  */
 QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
 {
-    QContactId first;
-    in >> first;
-    rel.setFirst(first);
-    QString relationshipType;
-    in >> relationshipType;
-    rel.setRelationshipType(relationshipType);
-    QContactId second;
-    in >> second;
-    rel.setSecond(second);
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QContactId first;
+        QString relationshipType;
+        QContactId second;
+        in >> first >> relationshipType >> second;
+        rel.setFirst(first);
+        rel.setRelationshipType(relationshipType);
+        rel.setSecond(second);
+    }
     return in;
 }
 #endif
