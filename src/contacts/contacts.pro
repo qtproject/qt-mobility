@@ -110,7 +110,7 @@ symbian {
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
+    CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 

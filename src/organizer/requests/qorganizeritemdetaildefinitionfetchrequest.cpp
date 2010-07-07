@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemDetailDefinitionFetchRequest
   \brief The QOrganizerItemDetailDefinitionFetchRequest class allows a client to
     asynchronously request detail definitions from a organizeritems store manager.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemDetailDefinitionFetchRequest, the resultsAvailable() signal will be emitted when
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant

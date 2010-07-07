@@ -1,7 +1,7 @@
 TEMPLATE=app
 TARGET=orientation
 include(../../examples.pri)
-QT+=declarative
+QT+=declarative script network
 CONFIG+=mobility
 MOBILITY+=sensors
 INCLUDEPATH += ../../../src/sensors

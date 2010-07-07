@@ -43,14 +43,20 @@ namespace impacts on application development.
 
 \section1 Overview
 Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
-encode/write (\l{QVersitWriter}) Versit \reg documents such as vCards
-(\l http://www.imc.org/pdi/).
+encode/write (\l{QVersitWriter}) Versit \reg documents such as vCard and iCal
+documents (\l http://www.imc.org/pdi/).
 Currently \l{QVersitReader} and \l{QVersitWriter} support
-reading and writing vCard 2.1 and 3.0 formats.
+reading and writing vCard 2.1, vCard 3.0 and iCal 2.0 format documents.
 
 Versit API also provides utilities to import (\l{QVersitContactImporter})
 QContacts from Versit documents and export (\l{QVersitContactExporter})
-QContacts to Versit documents.
+QContacts to Versit documents, and to import (\l{QVersitOrganizerImporter})
+QOrganizerItems from Versit documents and export (\lQVersitOrganizerExporter})
+QOrganizerItems to Versit documents.
+
+Please note that the Qt Mobility Organizer API is still under development, so
+the Qt Versit API classes related to importing and exporting organizer items
+is subject to change.
 
 Versit \reg is a trademark of the Internet Mail Consortium.
 
@@ -62,8 +68,10 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitProperty}
     \o \l{QVersitDocument}    
     \o \l{QVersitReader}
-    \o \l{QVersitWriter}    
+    \o \l{QVersitWriter}
     \o \l{QVersitContactImporter}
     \o \l{QVersitContactExporter}
+    \o \l{QVersitOrganizerImporter}
+    \o \l{QVersitOrganizerExporter}
 \endlist
 */

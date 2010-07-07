@@ -2492,7 +2492,6 @@ void tst_QContactManagerFiltering::actionFiltering()
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
         QContactActionFilter af;
         af.setActionName(actionName);
-        af.setValue(value);
         af.setVendor(vendorName, version);
 
         QList<QContactLocalId> ids = cm->contactIds(af);
@@ -3359,12 +3358,11 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
         return df;
     }
     bool isDetailSupported(const QContactDetail &detail, const QContact &) const
@@ -3389,11 +3387,10 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-        df.setValue(value);
         return df;
     }
     bool isDetailSupported(const QContactDetail& detail, const QContact&) const
@@ -3418,12 +3415,11 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Date");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
         return df;
     }
 
@@ -3448,17 +3444,15 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Double");
         df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df.setValue(value);
 
         QContactDetailFilter df2;
         defAndFieldName = defAndFieldNamesForTypeForActions.value("Integer");
         df2.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-        df2.setValue(value);
 
         /* We like either doubles or integers */
         return df | df2;
@@ -3496,18 +3490,13 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        if (value.isNull() || (value.type() == QVariant::Bool && value.toBool() == true)) {
-            /* This only likes bools that are true */
-            QContactDetailFilter df;
-            QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
-            df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
-            df.setValue(true);
-            return df;
-        } else {
-            return QContactInvalidFilter();
-        }
+        /* This only likes bool fields */
+        QContactDetailFilter df;
+        QPair<QString, QString> defAndFieldName = defAndFieldNamesForTypeForActions.value("Bool");
+        df.setDetailDefinitionName(defAndFieldName.first, defAndFieldName.second);
+        return df;
     }
     bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
@@ -3530,13 +3519,12 @@ public:
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
         /* Return a filter that selects us again.. */
         QContactActionFilter af;
         af.setActionName("Recursive");
         af.setVendor("RecursiveCo", 3);
-        af.setValue(value);
         return af;
     }
     bool isDetailSupported(const QContactDetail&, const QContact&) const
@@ -3554,9 +3542,8 @@ class AnotherRecursiveAction : public RecursiveAction {
 
 public:
     int implementationVersion() const {return 4;}
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("Recursive");
@@ -3576,9 +3563,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("AnotherPairRecursive");
@@ -3597,9 +3583,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
@@ -3618,9 +3603,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");
@@ -3639,9 +3623,8 @@ public:
         return ret;
     }
 
-    QContactFilter contactFilter(const QVariant& value) const
+    QContactFilter contactFilter() const
     {
-        Q_UNUSED(value);
         /* Slightly looser filter */
         QContactActionFilter af;
         af.setActionName("PairRecursive");

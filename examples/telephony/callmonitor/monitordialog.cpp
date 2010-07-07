@@ -75,7 +75,7 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::activeCallAdded(const QTelephonyCallInfo& call)
 {
-    QString newentry = "call Added: " + call.callIdentifier();
+    QString newentry = "call Added: " + call.remotePartyIdentifier();
     QStringList vl = m_rxDBusMsg.stringList();
     vl.append(newentry);
     m_rxDBusMsg.setStringList(vl);

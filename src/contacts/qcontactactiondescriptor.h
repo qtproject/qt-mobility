@@ -61,7 +61,6 @@ public:
     bool isEmpty() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
-    bool operator<(const QContactActionDescriptor& other) const;
 
     void setActionName(const QString& actionName);
     void setVendorName(const QString& vendorName);

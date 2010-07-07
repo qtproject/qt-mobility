@@ -6,7 +6,7 @@ CONFIG += qtestlib
 include(../tsrc.pri)
 
 symbian: {
-    INCLUDEPATH += .\inc
+    INCLUDEPATH += ./inc
     INCLUDEPATH += $$SYMBIAN_PATHS
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     

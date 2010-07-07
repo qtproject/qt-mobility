@@ -359,7 +359,6 @@ void tst_QContactFilter::actionFilter()
     /* Test initial conditions */
     QVERIFY(af.type() == QContactFilter::ActionFilter);
     QVERIFY(af.actionName().isEmpty());
-    QVERIFY(af.value().isNull());
     QVERIFY(af.vendorName().isEmpty());
     QVERIFY(af.implementationVersion() == -1);
 
@@ -368,12 +367,6 @@ void tst_QContactFilter::actionFilter()
 
     af.setActionName(QString());
     QVERIFY(af.actionName().isEmpty());
-
-    af.setValue(5);
-    QVERIFY(af.value() == 5);
-
-    af.setValue("This is a string");
-    QVERIFY(af.value() == "This is a string");
 
     af.setVendor("Vendor");
     QVERIFY(af.vendorName() == "Vendor");

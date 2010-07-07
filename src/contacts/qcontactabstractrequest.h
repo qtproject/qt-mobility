@@ -56,7 +56,6 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
 public:
     ~QContactAbstractRequest();
 
-    QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
     enum State {
         InactiveState = 0,   // operation not yet started
         ActiveState,         // operation started, not yet finished
