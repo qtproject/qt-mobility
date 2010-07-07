@@ -114,6 +114,7 @@ private slots:
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
     void removeMarkers();
+    void selectObjects();
 
 private:
     QGeoServiceProvider *m_serviceProvider;
@@ -123,7 +124,6 @@ private:
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
     QPoint lastClicked;
-    QList<QPoint> markers;
     QList<QGeoMapMarkerObject*> markerObjects;
 
     QGraphicsView* qgv;

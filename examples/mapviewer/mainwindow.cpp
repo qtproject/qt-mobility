@@ -243,6 +243,7 @@ void MainWindow::createMenus()
     QAction* menuItem;
     m_popupMenu = new QMenu(this);
 
+    //**************************************************************
     QMenu* subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
 
@@ -256,6 +257,12 @@ void MainWindow::createMenus()
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(removeMarkers()));
 
+    menuItem = new QAction(tr("Select objects"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(selectObjects()));
+
+    //**************************************************************
     subMenuItem = new QMenu(tr("Draw"), this);
     m_popupMenu->addMenu(subMenuItem);
 
@@ -274,6 +281,7 @@ void MainWindow::createMenus()
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
 
+    //**************************************************************
     subMenuItem = new QMenu(tr("Route"), this);
     m_popupMenu->addMenu(subMenuItem);
 
@@ -285,30 +293,27 @@ void MainWindow::createMenus()
 
 void MainWindow::drawRect(bool /*checked*/)
 {
-    while (markers.count() >= 2) {
-        QPoint p1 = markers.takeFirst();
-        QPoint p2 = markers.takeFirst();
+    if (markerObjects.count() >= 2) {
+        QGeoMapMarkerObject* p1 = markerObjects.at(0);
+        QGeoMapMarkerObject* p2 = markerObjects.at(1);
         QPen pen(Qt::white);
         pen.setWidth(2);
         QColor fill(Qt::black);
         fill.setAlpha(65);
-        QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(m_mapWidget->screenPositionToCoordinate(p1),
-                                                             m_mapWidget->screenPositionToCoordinate(p2));
+        QGeoMapRectangleObject *rectangle = new QGeoMapRectangleObject(p1->coordinate(), p2->coordinate());
         rectangle->setPen(pen);
         rectangle->setBrush(QBrush(fill));
         m_mapWidget->addMapObject(rectangle);
     }
-
-    markers.clear();
 }
 
 void MainWindow::drawPolyline(bool /*checked*/)
 {
     QList<QGeoCoordinate> path;
 
-    while (markers.count() >= 1) {
-        QPoint p = markers.takeFirst();
-        path.append(m_mapWidget->screenPositionToCoordinate(p));
+    for (int i = 0; i < markerObjects.size(); i++) {
+        QGeoMapMarkerObject* p = markerObjects.at(i);
+        path.append(p->coordinate());
     }
 
     QPen pen(Qt::white);
@@ -323,9 +328,9 @@ void MainWindow::drawPolygon(bool /*checked*/)
 {
     QList<QGeoCoordinate> path;
 
-    while (markers.count() >= 1) {
-        QPoint p = markers.takeFirst();
-        path.append(m_mapWidget->screenPositionToCoordinate(p));
+    for (int i = 0; i < markerObjects.size(); i++) {
+        QGeoMapMarkerObject* p = markerObjects.at(i);
+        path.append(p->coordinate());
     }
 
     QPen pen(Qt::white);
@@ -344,14 +349,11 @@ void MainWindow::drawMarker(bool /*checked*/)
     QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked), 
                                                           QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
     m_mapWidget->addMapObject(marker);
-    markers.append(lastClicked);
     markerObjects.append(marker);
 }
 
 void MainWindow::removeMarkers()
 {
-    markers.clear();
-
     while (markerObjects.size() > 0) {
         QGeoMapMarkerObject *marker = markerObjects.takeFirst();
         m_mapWidget->removeMapObject(marker);
@@ -396,14 +398,14 @@ void MainWindow::createMarkerIcon()
 
 void MainWindow::calcRoute(bool /*checked*/)
 {
-    if (markers.count() < 2)
+    if (markerObjects.count() < 2)
         return;
 
     QList<QGeoCoordinate> waypoints;
 
-    while (markers.count() >= 1) {
-        QPoint p = markers.takeFirst();
-        waypoints.append(m_mapWidget->screenPositionToCoordinate(p));
+    for (int i = 0; i < markerObjects.count(); i++) {
+        QGeoMapMarkerObject* p = markerObjects.at(i);
+        waypoints.append(p->coordinate());
     }
 
     QGeoRouteRequest req(waypoints);
@@ -433,3 +435,17 @@ void MainWindow::routeFinished()
     m_mapWidget->addMapObject(route);
 }
 
+void MainWindow::selectObjects()
+{
+    if (markerObjects.count() < 2)
+        return;
+
+    QGeoMapMarkerObject* bottomRight = markerObjects.takeLast();
+    QGeoMapMarkerObject* topLeft = markerObjects.takeLast();
+    m_mapWidget->removeMapObject(topLeft);
+    m_mapWidget->removeMapObject(bottomRight);
+    QList<QGeoMapObject*> mapObjects = m_mapWidget->mapObjectsInScreenRect(
+                                        QRectF(m_mapWidget->coordinateToScreenPosition(topLeft->coordinate()),
+                                               m_mapWidget->coordinateToScreenPosition(bottomRight->coordinate()))
+                                       );
+}

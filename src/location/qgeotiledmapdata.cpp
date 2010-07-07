@@ -675,7 +675,8 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {
-    QSize imgSize = screenRect.size().toSize();
+    QRectF worldRect = screenRect.translated(d_ptr->screenRect.topLeft());
+    QSize imgSize = worldRect.size().toSize();
     QList<QGeoMapObject*> mapObjs;
     QList<QGeoMapObject*> queue(this->mapObjects());
 
@@ -697,27 +698,26 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
             buffer.setColor(1, HIT_DETECTION_COLOR);
             buffer.fill(0);
             QPainter painter(&buffer);
-            d_ptr->paintMapObject(painter, screenRect, obj, true);
+            d_ptr->paintMapObject(painter, worldRect, obj, true);
 
             //now test whether any pixels in buffer have been painted
             for (int x = 0; x < imgSize.width(); x++) {
                 bool pixelSet = false;
 
-                for (int y = 0; y < imgSize.height(); y++)
-
+                for (int y = 0; y < imgSize.height(); y++) {
                     if (buffer.pixelIndex(x, y) == 1) {
                         mapObjs.append(obj);
                         pixelSet = true;
                         break;
                     }
-
+                }
                 if (pixelSet)
                     break;
             }
         }
     }
 
-    return QList<QGeoMapObject*>();
+    return mapObjs;
 }
 
 QPixmap QGeoTiledMapData::mapObjectsOverlay()
@@ -924,9 +924,13 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, const QRectF &vi
 
     QGeoTiledMapObjectInfo* info = objInfo.value(marker);
     QRectF rect = info->boundingBox.translated(-(viewPort.topLeft()));
-    painter.setPen(QPen(QColor(Qt::black)));
-    painter.setBrush(QBrush(Qt::black));
-    painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
+
+    if (!hitDetection)
+        painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
+    else {
+        painter.setPen(QPen(QColor(HIT_DETECTION_COLOR)));
+        painter.drawRect(rect);
+    }
 }
 
 void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline, bool hitDetection)
