@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <qmediapluginloader_p.h>
 #include <qmediaserviceproviderplugin.h>
 

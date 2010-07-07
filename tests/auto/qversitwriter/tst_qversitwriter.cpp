@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qversitwriter.h"
 #include "qversitwriter.h"
 #include "qversitdocument.h"
