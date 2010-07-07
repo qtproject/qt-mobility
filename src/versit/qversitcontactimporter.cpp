@@ -335,14 +335,3 @@ QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 {
     return d->mResourceHandler;
 }
-
-// Deprecated:
-
-/*! \deprecated
-  Use the version of the function that returns a bool instead.
-    */
-QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument> &documents)
-{
-    importDocuments(documents);
-    return contacts();
-}

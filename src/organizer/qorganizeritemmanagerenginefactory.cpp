@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemManagerEngineFactory
   \brief The QOrganizerItemManagerEngineFactory class provides the interface for
  plugins that implement QOrganizerItemManagerEngine functionality.
+
+  \inmodule QtOrganizer
   \ingroup organizer-backends
 
   This class provides a simple interface for the creation of
