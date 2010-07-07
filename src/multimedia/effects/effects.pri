@@ -1,5 +1,4 @@
-INCLUDEPATH += effects \
-               ./
+INCLUDEPATH += effects
 
 unix:!mac:!symbian {
    contains(QT_CONFIG, pulseaudio) {

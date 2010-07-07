@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemRemoveRequest
   \brief The QOrganizerItemRemoveRequest class allows a client to asynchronously
     request that certain organizeritems be removed from a organizeritems store.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall

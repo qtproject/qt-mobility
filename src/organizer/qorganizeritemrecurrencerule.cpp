@@ -66,6 +66,8 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStar
  * \class QOrganizerItemRecurrenceRule
  *
  * \brief The QOrganizerItemRecurrenceRule class describes the a rule by which a QOrganizerItem repeats.
+
+  \inmodule QtOrganizer
  *
  * This class is a mapping of a subset of the iCalendar RRULE property value, and each field in this
  * class corresponds to a fragment of iCalendar's RRULE.  This class supports the same fragments as

@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemInstanceFetchRequest
   \brief The QOrganizerItemInstanceFetchRequest class allows a client to asynchronously
     request organizeritems from a organizeritems store manager.
+  \inmodule QtOrganizer
 
 
   For a QOrganizerItemInstanceFetchRequest, the resultsAvailable() signal will be emitted when the resultant

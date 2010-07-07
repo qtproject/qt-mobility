@@ -28,7 +28,7 @@
 /*!
 
 \page feedback.html
-\title QtFeedback Module
+\title Feedback
 
 \brief An API enabling a client to control the vibration of the device (when a vibrator is used)
  or the piezo feedback from the screen.

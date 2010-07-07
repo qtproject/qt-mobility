@@ -286,9 +286,9 @@ symbian {
     TARGET.UID3 = 0x2002AC83
     MMP_RULES += EXPORTUNFROZEN
 
-    INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
-                   $${EPOCROOT}epoc32\include\LBTHeaders \
-                   $${EPOCROOT}epoc32\include\platform
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions \
+                   $${EPOCROOT}epoc32/include/LBTHeaders \
+                   $${EPOCROOT}epoc32/include/platform
     LIBS += -llbs
     LIBS += -lefsrv
     contains(lbt_enabled, yes) {

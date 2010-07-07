@@ -96,10 +96,6 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
-    /* deprecated */
-    QContactDetail Q_DECL_DEPRECATED detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> Q_DECL_DEPRECATED detailsWithAction(const QString& actionName) const;
-
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
@@ -173,9 +169,6 @@ public:
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
-    QList<QContactId> Q_DECL_DEPRECATED relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const;
-    void Q_DECL_DEPRECATED setRelationshipOrder(const QList<QContactRelationship>& reordered);
-    QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;

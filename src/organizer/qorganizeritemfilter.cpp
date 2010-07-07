@@ -54,6 +54,8 @@
   \brief The QOrganizerItemFilter class is used to select organizer items made available
   through a QOrganizerItemManager.
 
+  \inmodule QtOrganizer
+
   \ingroup organizer-main
 
   This class is used as a parameter to various functions offered by QOrganizerItemManager, to allow
