@@ -188,15 +188,6 @@ private:
                                 QString *errorString,
                                 bool *removed);
 
-    bool exportLandmarksLmx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-    bool exportLandmarksGpx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-
     QString m_dbFilename;
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;

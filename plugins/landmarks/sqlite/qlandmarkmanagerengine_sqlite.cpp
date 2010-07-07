@@ -2091,6 +2091,116 @@ bool importLandmarks(const QString &connectionName,
     }
 }
 
+bool exportLandmarksGpx(const QString &connectionName,
+                        QIODevice *device,
+                        QList<QLandmarkId> landmarkIds,
+                        QLandmarkManager::Error *error,
+                        QString *errorString,
+                        const QString &managerUri)
+{
+    QLandmarkFileHandlerGpx gpxHandler;
+
+    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
+    QList<QLandmarkSortOrder> sortOrders;
+    QLandmarkFetchHint fetchHint;
+    QList<QLandmark> lms = ::landmarks(connectionName,idFilter, sortOrders, fetchHint, error, errorString, managerUri);
+
+    if (error && *error != QLandmarkManager::NoError)
+        return false;
+
+    gpxHandler.setWaypoints(lms);
+
+    bool result = gpxHandler.exportData(device);
+
+    if (!result) {
+        if (errorString)
+            *errorString = gpxHandler.errorString();
+        // TODO set error code
+    } else {
+        if (error)
+            *error = QLandmarkManager::NoError;
+        if (errorString)
+            *errorString = "";
+    }
+
+    return result;
+}
+
+bool exportLandmarksLmx(const QString &connectionName,
+                        QIODevice *device,
+                        QList<QLandmarkId> landmarkIds,
+                        QLandmarkManager::Error *error,
+                        QString *errorString,
+                        const QString &managerUri)
+{
+    QLandmarkFileHandlerLmx lmxHandler;
+
+    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
+    QList<QLandmarkSortOrder> sortOrders;
+    QLandmarkFetchHint fetchHint;
+    QList<QLandmark> lms = ::landmarks(connectionName, idFilter, sortOrders, fetchHint, error, errorString, managerUri);
+
+    if (error && *error != QLandmarkManager::NoError)
+        return false;
+
+    lmxHandler.setLandmarks(lms);
+
+    bool result = lmxHandler.exportData(device);
+
+    if (!result) {
+        if (errorString)
+            *errorString = lmxHandler.errorString();
+        // TODO set error code
+    } else {
+        if (error)
+            *error = QLandmarkManager::NoError;
+        if (errorString)
+            *errorString = "";
+    }
+
+    return result;
+}
+
+bool exportLandmarks(const QString &connectionName,
+                     QIODevice *device,
+                     const QByteArray &format,
+                     QList<QLandmarkId> landmarkIds,
+                     QLandmarkManager::Error *error,
+                     QString *errorString,
+                     const QString &managerUri)
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    QFile *file = qobject_cast<QFile *>(device);
+    if (file)
+    {
+        if (!file->exists()) {
+            *error = QLandmarkManager::DoesNotExistError;
+            *errorString = QString("Import operation failed, file does not exist: %1").arg(file->fileName());
+            return false;
+        }
+    }
+
+    if (!device->open(QIODevice::ReadOnly)) {
+        *error = QLandmarkManager::PermissionsError;
+        *errorString = "Unable to open io device for importing landmarks";
+        return false;
+    }
+
+    if (format ==  "LmxV1.0") {
+            return exportLandmarksLmx(connectionName, device, landmarkIds, error, errorString, managerUri);
+    } else if (format == "GpxV1.1") {
+        return exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
+    } else {
+        if (error)
+            *error = QLandmarkManager::NotSupportedError;
+        if (errorString)
+            *errorString = "The given format is not supported at this time";
+        return false;
+    }
+}
+
 QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
     : request(req),
       error(QLandmarkManager::NoError),
@@ -3106,9 +3216,9 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    QString *errorString)
 {
     if (format ==  "LmxV1.0") {
-            return exportLandmarksLmx(device, landmarkIds, error, errorString);
+            return ::exportLandmarksLmx(m_dbConnectionName, device, landmarkIds, error, errorString, managerUri());
     } else if (format == "GpxV1.1") {
-        return exportLandmarksGpx(device, landmarkIds, error, errorString);
+        return ::exportLandmarksGpx(m_dbConnectionName, device, landmarkIds, error, errorString, managerUri());
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -3116,72 +3226,6 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
             *errorString = "The given format is not supported at this time";
         return false;
     }
-}
-
-bool QLandmarkManagerEngineSqlite::exportLandmarksLmx(QIODevice *device,
-                                                      QList<QLandmarkId> landmarkIds,
-                                                      QLandmarkManager::Error *error,
-                                                      QString *errorString)
-{
-    QLandmarkFileHandlerLmx lmxHandler;
-
-    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
-    QList<QLandmarkSortOrder> sortOrders;
-    QLandmarkFetchHint fetchHint;
-    QList<QLandmark> lms = ::landmarks(m_dbConnectionName, idFilter, sortOrders, fetchHint, error, errorString, managerUri());
-
-    if (error && *error != QLandmarkManager::NoError)
-        return false;
-
-    lmxHandler.setLandmarks(lms);
-
-    bool result = lmxHandler.exportData(device);
-
-    if (!result) {
-        if (errorString)
-            *errorString = lmxHandler.errorString();
-        // TODO set error code
-    } else {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    }
-
-    return result;
-}
-
-bool QLandmarkManagerEngineSqlite::exportLandmarksGpx(QIODevice *device,
-                                                      QList<QLandmarkId> landmarkIds,
-                                                      QLandmarkManager::Error *error,
-                                                      QString *errorString)
-{
-    QLandmarkFileHandlerGpx gpxHandler;
-
-    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
-    QList<QLandmarkSortOrder> sortOrders;
-    QLandmarkFetchHint fetchHint;
-    QList<QLandmark> lms = ::landmarks(m_dbConnectionName,idFilter, sortOrders, fetchHint, error, errorString, managerUri());
-
-    if (error && *error != QLandmarkManager::NoError)
-        return false;
-
-    gpxHandler.setWaypoints(lms);
-
-    bool result = gpxHandler.exportData(device);
-
-    if (!result) {
-        if (errorString)
-            *errorString = gpxHandler.errorString();
-        // TODO set error code
-    } else {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    }
-
-    return result;
 }
 
 QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const
