@@ -41,14 +41,17 @@
 #ifndef AUDIORECORDER_H
 #define AUDIORECORDER_H
 
-#include <QtGui>
-#include <QPair>
+#include <QtCore/qurl.h>
+#include <QtGui/qmainwindow.h>
 
 #include <qmediarecorder.h>
 
+
 QT_BEGIN_NAMESPACE
-class QComboBox;
-class QLabel;
+
+namespace Ui {
+    class AudioRecorder;
+}
 
 class QAudioCaptureSource;
 QT_END_NAMESPACE
@@ -59,51 +62,30 @@ class AudioRecorder : public QMainWindow
 {
     Q_OBJECT
 public:
-    AudioRecorder();
+    AudioRecorder(QWidget *parent = 0);
     ~AudioRecorder();
 
 private:
     QUrl recordPathAudio(QUrl filePath);
-    void updateSamplerates(int idx);
-    void updateChannelCount(int idx);
-    void updateQuality(int idx);
-    static inline void swap(QString& a, QString& b){qSwap(a,b);}
-    
+
 private slots:
-    void deviceChanged(int idx);
-    void containerChanged(int idx);
-    void codecChanged(int idx);
-    void qualityChanged(int idx);
-    void sampleRateChanged(int idx);
-    void channelCountChanged(int idx);
-    void encmodeChanged(int idx);
-    void selectOutputFile();
+    void setOutputLocation();
     void togglePause();
     void toggleRecord();
-    void stateChanged(QMediaRecorder::State);
+
+    void updateState(QMediaRecorder::State);
     void updateProgress(qint64 pos);
-    void errorChanged(QMediaRecorder::Error);
+    void displayErrorMessage();
 
 private:
+    Ui::AudioRecorder *ui;
+
     QAudioCaptureSource* audiosource;
     QMediaRecorder* capture;
 
-    QComboBox*     deviceBox;
-    QComboBox*     containersBox;
-    QComboBox*     codecsBox;
-    QComboBox*     qualityBox;
-    QComboBox*     sampleRateBox; 
-    QComboBox*     channelBox;
-    QComboBox*     encModeBox;
-    QLabel*        recTime;
-    QLabel*        statusLabel;
-    QPushButton*   button;
-    QPushButton*   fileButton;
-    QPushButton*   pauseButton;
-    bool           active;
-    int            currentTime;
-    QUrl           destination;
-    bool           paused; 
+    QAudioEncoderSettings  audioSettings;
+
+    QUrl destination;
 };
 
 #endif

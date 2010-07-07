@@ -43,4 +43,13 @@
 
 QTM_USE_NAMESPACE
 
-// well... this class is boring.
+/*!
+  \class QOrganizerNote
+  \brief A note which is not associated with any particular point in time
+  \inmodule QtOrganizer
+  \ingroup organizer-items
+
+  A note is a convenience facade for a QOrganizerItem
+  that has its type set to TypeNote.  It contains information which is
+  not associated with a particular point in time.
+ */

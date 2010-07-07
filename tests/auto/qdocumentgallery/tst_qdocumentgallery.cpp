@@ -142,6 +142,10 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::duration
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
+            << QDocumentGallery::thumbnailImage
+            << QDocumentGallery::thumbnailPixmap
+            << QDocumentGallery::previewImage
+            << QDocumentGallery::previewPixmap
 #endif
         );
 }

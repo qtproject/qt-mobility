@@ -49,8 +49,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemDetailFilter
   \brief The QOrganizerItemDetailFilter class provides a filter based around a detail value criterion
- 
-  \ingroup organizeritems-filters
+  \inmodule QtOrganizer
+  \ingroup organizer-filters
   
   It may be used to select organizeritems which contain a detail of a particular definition with a particular value
  */

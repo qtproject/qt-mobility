@@ -8,3 +8,4 @@ contains(mobility_modules,organizer): SUBDIRS += qtorganizerdocsample
 
 contains(mobility_modules,location): SUBDIRS += qtlandmarksdocsample
 contains(mobility_modules,sensors): SUBDIRS += sensors
+contains(mobility_modules,feedback): SUBDIRS += qtfeedbackdocsample

@@ -51,24 +51,27 @@
 
 /*!
   \class QOrganizerItemFilter
-  \brief The QOrganizerItemFilter class is used to select organizeritems made available
+  \brief The QOrganizerItemFilter class is used to select organizer items made available
   through a QOrganizerItemManager.
 
-  \ingroup organizeritems-main
+  \inmodule QtOrganizer
+
+  \ingroup organizer-main
 
   This class is used as a parameter to various functions offered by QOrganizerItemManager, to allow
-  selection of organizeritems which have certain details or properties.
+  selection of items which have certain details or properties.
  */
 
 /*!
   \enum QOrganizerItemFilter::FilterType
   Describes the type of the filter
   \value InvalidFilter An invalid filter which matches nothing
-  \value OrganizerItemDetailFilter A filter which matches organizeritems containing one or more details of a particular definition with a particular value
-  \value OrganizerItemDetailRangeFilter A filter which matches organizeritems containing one or more details of a particular definition whose values are within a particular range
-  \value ChangeLogFilter A filter which matches organizeritems whose timestamps have been updated since some particular date and time
-  \omitvalue ActionFilter A filter which matches organizeritems for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
-  \value IntersectionFilter A filter which matches all organizeritems that are matched by all filters it includes
+  \value OrganizerItemDetailFilter A filter which matches items containing one or more details of a particular definition with a particular value
+  \value OrganizerItemDetailRangeFilter A filter which matches items containing one or more details of a particular definition whose values are within a particular range
+  \value OrganizerItemDateTimePeriodFilter A filter which matches items which occur in a given date/time period
+  \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
+  \omitvalue ActionFilter A filter which matches items for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+  \value IntersectionFilter A filter which matches all items that are matched by all filters it includes
   \value UnionFilter A filter which matches any organizeritem that is matched by any of the filters it includes
   \value LocalIdFilter A filter which matches any organizeritem whose local id is contained in a particular list of organizeritem local ids
   \value DefaultFilter A filter which matches everything

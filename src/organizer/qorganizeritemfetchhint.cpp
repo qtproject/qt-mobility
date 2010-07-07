@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
 
+  \inmodule QtOrganizer
+
   All of the hints may be ignored at the discretion of the manager, however if a manager
   is able to optimize retrieval of organizeritems due to hints, it may do so.  If a manager
   ignores a hint, it must retrieve the full set of data that the hint refers to.

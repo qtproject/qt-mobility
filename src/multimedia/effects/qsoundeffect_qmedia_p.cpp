@@ -130,3 +130,4 @@ void QSoundEffectPrivate::stateChanged(QMediaPlayer::State state)
 
 QT_END_NAMESPACE
 
+#include "moc_qsoundeffect_qmedia_p.cpp"

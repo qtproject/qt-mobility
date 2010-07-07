@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Call Monitor</string>
   </property>
   <widget class="QListView" name="lstRxMsg">
    <property name="geometry">

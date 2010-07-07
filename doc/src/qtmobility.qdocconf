@@ -84,6 +84,7 @@ language                = Cpp
 imagedirs = images
 
 headerdirs = ../../src/bearer \
+             ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
              ../../src/publishsubscribe \
@@ -99,9 +100,11 @@ headerdirs = ../../src/bearer \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
              ../../src/camera \
+             ../../src/organizer \
              .
 
 sourcedirs = ../../src/bearer \
+             ../../src/feedback \
              ../../src/serviceframework \
              ../../src/location \
              ../../src/publishsubscribe \
@@ -117,6 +120,7 @@ sourcedirs = ../../src/bearer \
              ../../src/gallery \
              ../../plugins/declarative/gallery \
              ../../src/camera \
+             ../../src/organizer \
              .
 
 excludedirs = ../../src/messaging/win32wce \

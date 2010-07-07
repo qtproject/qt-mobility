@@ -48,13 +48,14 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemFetchRequest
   \brief The QOrganizerItemFetchRequest class allows a client to asynchronously
     request organizeritems from a organizeritems store manager.
+  \inmodule QtOrganizer
 
 
   For a QOrganizerItemFetchRequest, the resultsAvailable() signal will be emitted when the resultant
   organizeritems (which may be retrieved by calling organizeritems()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */

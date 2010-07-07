@@ -497,3 +497,5 @@ void QSoundEffectPrivate::play_callback(pa_context *c, int success, void *userda
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qsoundeffect_pulse_p.cpp"

@@ -49,13 +49,14 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemDetailDefinitionSaveRequest class allows a client to
   asynchronously request that certain detail definitions be saved in a
   organizeritems store.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemDetailDefinitionSaveRequest, the resultsAvailable() signal will be emitted when
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
   
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new detail definition save request whose parent is the specified \a parent */

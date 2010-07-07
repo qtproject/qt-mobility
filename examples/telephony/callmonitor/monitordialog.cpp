@@ -48,6 +48,7 @@ Dialog::Dialog(QWidget *parent) :
     m_rxDBusMsg()
 {
     ui->setupUi(this);
+    this->setWindowTitle("Call Monitor");
     ui->lstRxMsg->setModel(&m_rxDBusMsg);
     telephonyCallList = new QTelephonyCallList(this);
     connect(telephonyCallList, SIGNAL(activeCallAdded(QTelephonyCallInfo)), SLOT(activeCallAdded(QTelephonyCallInfo)));

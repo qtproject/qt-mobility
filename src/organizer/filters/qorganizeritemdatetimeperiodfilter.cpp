@@ -49,8 +49,9 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemDateTimePeriodFilter
   \brief The QOrganizerItemDateTimePeriodFilter class provides a filter based around
-  a datetime period between start and end datetime .
-  \ingroup organizeritems-filters
+  a datetime period between start and end datetime.
+  \inmodule QtOrganizer
+  \ingroup organizer-filters
  
   It may be used to select organizeritems between given start and end periods
  */
@@ -73,7 +74,7 @@ QOrganizerItemDateTimePeriodFilter::QOrganizerItemDateTimePeriodFilter()
 
 
 /*!
- * Sets the value of start period
+ * Sets the end date of the period to \a start
  * \sa startPeriod()
  */
 void QOrganizerItemDateTimePeriodFilter::setStartPeriod(const QDateTime& start)
@@ -83,7 +84,7 @@ void QOrganizerItemDateTimePeriodFilter::setStartPeriod(const QDateTime& start)
 }
 
 /*!
- * Returns the value of start period
+ * Returns the start date of the period.
  * \sa setStartPeriod()
  */
 QDateTime QOrganizerItemDateTimePeriodFilter::startPeriod() const
@@ -93,7 +94,7 @@ QDateTime QOrganizerItemDateTimePeriodFilter::startPeriod() const
 }
 
 /*!
- * Sets the value of end period
+ * Sets the end date of the period to \a end
  * \sa endPeriod()
  */
 void QOrganizerItemDateTimePeriodFilter::setEndPeriod(const QDateTime& end)
@@ -104,7 +105,7 @@ void QOrganizerItemDateTimePeriodFilter::setEndPeriod(const QDateTime& end)
 
 
 /*!
- * Returns the value of end period
+ * Returns the end date of the period
  * \sa setEndPeriod()
  */
 QDateTime QOrganizerItemDateTimePeriodFilter::endPeriod() const

@@ -52,7 +52,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QFeedbackEffect
-    \brief This is the abstract base class for the feedback framework.
+    \brief The QFeedbackEffect class is the abstract base class for the feedback framework.
+    \inmodule QtFeedback
 
     It has the concepts of duration and state. 
 */
@@ -88,6 +89,55 @@ QTM_BEGIN_NAMESPACE
 
     \sa error()
 */
+
+/*!
+    \enum QFeedbackEffect::ThemeEffect
+
+    This enum describes all possible theme effect types.
+
+    \value ThemeBasic
+    \value ThemeSensitive
+    \value ThemeBasicButton
+    \value ThemeSensitiveButton
+    \value ThemeBasicKeypad
+    \value ThemeSensitiveKeypad
+    \value ThemeBasicSlider
+    \value ThemeSensitiveSlider
+    \value ThemeBasicItem
+    \value ThemeSensitiveItem
+    \value ThemeItemScroll
+    \value ThemeItemPick
+    \value ThemeItemDrop
+    \value ThemeItemMoveOver
+    \value ThemeBounceEffect
+    \value ThemeCheckBox
+    \value ThemeMultipleCheckBox
+    \value ThemeEditor
+    \value ThemeTextSelection
+    \value ThemeBlankSelection
+    \value ThemeLineSelection
+    \value ThemeEmptyLineSelection
+    \value ThemePopUp
+    \value ThemePopupOpen
+    \value ThemePopupClose
+    \value ThemeFlick
+    \value ThemeStopFlick  PopUp -> Popup
+    \value ThemeMultitouchActivate
+    \value ThemeRotateStep
+    \value ThemeLongPress
+    \value ThemePositiveTacticon
+    \value ThemeNeutralTacticon
+    \value ThemeNegativeTacticon
+    \value NumberOfThemeEffects
+    \value ThemeUser
+ */
+
+/*!
+    \enum QFeedbackEffect::Duration
+    This enum describes the possible effect duration types.
+
+    \value INFINITE Infinite effect duration
+  */
 
 /*!
     \property QFeedbackEffect::state
@@ -146,8 +196,7 @@ void QFeedbackEffect::pause()
 }
 
 /*!
-    \fn void QFeedbackEffect::playThemeEffect(InstantEffect effect)
-
+    \fn QFeedbackEffect::playThemeEffect(ThemeEffect effect)
     plays instant feedback and return true if the effect could be played.
 
     That feedback is defined by the theme of the system.
@@ -160,9 +209,9 @@ bool QFeedbackEffect::playThemeEffect(ThemeEffect effect)
 }
 
 /*!
-    \fn void bool QFeedbackEffect::supportsThemeEffect()
+    \fn QFeedbackEffect::supportsThemeEffect()
 
-    Allows the user to know if playing themed feedback is available.
+    Returns if playing themed feedback is available.
 
 */
 bool QFeedbackEffect::supportsThemeEffect()
@@ -173,7 +222,7 @@ bool QFeedbackEffect::supportsThemeEffect()
 
 /*!
     \class QFeedbackHapticsEffect
-    \brief The QFeedbackHapticsEffect allows to play a haptics feedback on an actuator.
+    \brief The QFeedbackHapticsEffect class allows to play a haptics feedback on an actuator.
 
     It is possible to set the duration, intensity, envelope and period of the effect.
     It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
@@ -375,7 +424,7 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 
 /*!
     \class QFeedbackFileEffect
-    \brief The QFeedbackFileEffect allows to play a haptics feedback from a file.
+    \brief The QFeedbackFileEffect class allows to play a haptics feedback from a file.
 
     You can load and unload the file at will to free resources or be as fast as possible.
     It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
@@ -422,7 +471,7 @@ int QFeedbackFileEffect::duration() const
 }
 
 /*!
-    \property QFeedbackFileEffect::filename
+    \property QFeedbackFileEffect::fileName
     \brief the name of the file that is loaded.
 
     Setting that property will automatically unload the previous file and load the new one.

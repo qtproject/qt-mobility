@@ -41,20 +41,30 @@
 #include "organizeritemprioritytransform.h"
 #include "qorganizeritempriority.h"
 
+#define MINIMUM_PRIORITY 0
+#define MAXIMUM_PRIORITY 255
+#define PRIORITY_RESOLUTION 25
+
 void OrganizerItemPriorityTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     QOrganizerItemPriority priority;
-    // TODO: do we need some kind of conversion?
     // Item has range from 0-9 and entry has range from 0 - 255.
-    priority.setPriority((QOrganizerItemPriority::Priority) entry.PriorityL());
+	int entryPriority = entry.PriorityL();
+	entryPriority = entryPriority / PRIORITY_RESOLUTION;
+	entryPriority = (entryPriority > QOrganizerItemPriority::LowestPriority) ?
+										QOrganizerItemPriority::LowestPriority : entryPriority;
+    priority.setPriority((QOrganizerItemPriority::Priority) entryPriority);
     item->saveDetail(&priority);
 }
 
 void OrganizerItemPriorityTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    QOrganizerItemPriority priority = item.detail<QOrganizerItemPriority>();
-    if (!priority.isEmpty())
-        entry->SetPriorityL(priority.priority()); // allowed values between 0 and 255.
+    QOrganizerItemPriority itemPriority = item.detail<QOrganizerItemPriority>();
+    if (!itemPriority.isEmpty()) {
+        int priority = itemPriority.priority();
+        priority *= PRIORITY_RESOLUTION;
+        entry->SetPriorityL(priority);
+    }
 }
 
 QString OrganizerItemPriorityTransform::detailDefinitionName()

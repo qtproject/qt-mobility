@@ -190,3 +190,6 @@ void QAudioDeviceInfoInternal::getSupportedFormats() const
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qaudiodeviceinfo_symbian_p.cpp"
+

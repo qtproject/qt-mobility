@@ -49,12 +49,13 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemDetailDefinitionRemoveRequest class allows a client to
   asynchronously request that certain detail definitions be removed from
   a organizeritems store.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
   
-  \ingroup organizeritems-requests
+  \ingroup organizer-requests
  */
 
 /*! Constructs a new detail definition remove request whose parent is the specified \a parent */
@@ -66,13 +67,13 @@ QOrganizerItemDetailDefinitionRemoveRequest::QOrganizerItemDetailDefinitionRemov
 /*!
   Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different organizeritem types, and so attempting to remove definitions with certain names may fail if no such
-  definitions exist for organizeritems of the given organizeritem type, specified via setOrganizerItemType().
+  definitions exist for organizeritems of the given organizeritem type, specified via setItemType().
   Equivalent to calling:
   \code
       setDefinitionNames(QStringList(definitionName));
   \endcode
 
-  \sa setOrganizerItemType()
+  \sa setItemType()
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
@@ -84,8 +85,8 @@ void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionName(const QStrin
 /*!
   Sets the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different organizeritem types, and so attempting to remove definitions with certain names may fail if no such
-  definitions exist for organizeritems of the given organizeritem type, specified via setOrganizerItemType().
-  \sa setOrganizerItemType()
+  definitions exist for organizeritems of the given organizeritem type, specified via setItemType().
+  \sa setItemType()
  */
 void QOrganizerItemDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {

@@ -149,3 +149,5 @@ void WaveDecoder::handleData()
 }
 
 QT_END_NAMESPACE
+
+#include "moc_wavedecoder_p.cpp"
