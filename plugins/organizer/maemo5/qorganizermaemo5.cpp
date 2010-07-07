@@ -1044,7 +1044,7 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     occurrence->setGuid(parent->guid());
 
     // create a CComponent from occurrence
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence);
     if (!component) {
         // TODO: Here we should rollback the parent change
