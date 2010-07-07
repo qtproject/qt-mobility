@@ -87,8 +87,7 @@ public:
 
     virtual QPixmap mapObjectsOverlay();
 
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
 protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
@@ -96,6 +95,9 @@ protected:
 
     virtual void updateMapImage();
     void clearRequests();
+
+    void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintMapOverlay(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
 private slots:
     void processRequests();
@@ -105,6 +107,8 @@ private slots:
     void mapObjectRemoved(QGeoMapObject *mapObject);
 
 private:
+    void cleanupCaches();
+
     QGeoTiledMapDataPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;

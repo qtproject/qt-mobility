@@ -162,11 +162,13 @@ QPainterPath QGeoMapWidget::shape() const
 */
 void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-    painter->drawPixmap(d_ptr->mapData->mapImage().rect(), d_ptr->mapData->mapImage(), d_ptr->mapData->mapImage().rect());
-    QPixmap objOverlay = d_ptr->mapData->mapObjectsOverlay();
+    if (d_ptr->mapData)
+        d_ptr->mapData->paint(painter, option);
+//    painter->drawPixmap(d_ptr->mapData->mapImage().rect(), d_ptr->mapData->mapImage(), d_ptr->mapData->mapImage().rect());
+//    QPixmap objOverlay = d_ptr->mapData->mapObjectsOverlay();
 
-    if (!objOverlay.isNull())
-        painter->drawPixmap(objOverlay.rect(), objOverlay, objOverlay.rect());
+//    if (!objOverlay.isNull())
+//        painter->drawPixmap(objOverlay.rect(), objOverlay, objOverlay.rect());
 }
 
 /*!

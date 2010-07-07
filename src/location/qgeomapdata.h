@@ -87,17 +87,19 @@ public:
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-    virtual QPixmap mapObjectsOverlay() = 0;
+    //virtual QPixmap mapObjectsOverlay() = 0;
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
-    void setImageChangesTriggerUpdates(bool trigger);
-    bool imageChangesTriggerUpdates() const;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    void setMapImage(const QPixmap &mapImage);
-    QPixmap& mapImage();
-    void imageChanged(const QRectF &updateRect = QRectF());
+//    void setImageChangesTriggerUpdates(bool trigger);
+//    bool imageChangesTriggerUpdates() const;
+
+//    void setMapImage(const QPixmap &mapImage);
+//    QPixmap& mapImage();
+//    void imageChanged(const QRectF &updateRect = QRectF());
 
 protected:
     QGeoMapWidget* widget() const;

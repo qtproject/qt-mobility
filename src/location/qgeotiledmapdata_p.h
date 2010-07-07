@@ -58,6 +58,7 @@
 
 #include <QRectF>
 #include <QHash>
+#include <QCache>
 #include <QMultiMap>
 #include <QString>
 #include <QPainterPath>
@@ -98,6 +99,8 @@ public:
     ~QGeoTiledMapDataPrivate();
     QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
 
+    void updateScreenRect();
+
     static qulonglong tileKey(int row, int col, int zoomLevel);
 
     void calculateInfo(QGeoMapObject *mapObject);
@@ -119,10 +122,12 @@ public:
 
     QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
+    QPoint maxZoomCenter;
+    QSize maxZoomSize;
+
     qulonglong width;
     qulonglong height;
 
-    QRectF protectRegion;
     QRectF screenRect;
 
     QSet<QRectF> requestRects;
@@ -130,6 +135,10 @@ public:
 
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
+
+    QCache<QGeoTiledMapRequest, QPixmap> cache;
+    QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
+    QPixmap emptyTile;
 
     QHash<QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
 

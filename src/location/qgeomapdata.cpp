@@ -327,48 +327,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
     or is not within the current viewport.
 */
 
-
-/*!
-    Sets whether changes to the map image will cause widget() to update to \a
-    trigger.
-*/
-void QGeoMapData::setImageChangesTriggerUpdates(bool trigger)
-{
-    d_ptr->imageChangesTriggerUpdates = trigger;
-}
-
-/*!
-    Returns whether changes to the map image will case widget() to update.
-*/
-bool QGeoMapData::imageChangesTriggerUpdates() const
-{
-    return d_ptr->imageChangesTriggerUpdates;
-}
-
-/*!
-    Sets the image that will be displayed in the viewport of widget() to \a
-    mapImage.
-*/
-void QGeoMapData::setMapImage(const QPixmap &mapImage)
-{
-    d_ptr->mapImage = mapImage;
-    if (d_ptr->imageChangesTriggerUpdates)
-        d_ptr->widget->update();
-}
-
-/*!
-    Returns the image that will be displayed in the viewport of widget().
-*/
-QPixmap& QGeoMapData::mapImage()
-{
-    return d_ptr->mapImage;
-}
-
-void QGeoMapData::imageChanged(const QRectF &updateRect)
-{
-    if (d_ptr->imageChangesTriggerUpdates)
-        d_ptr->widget->update(updateRect);
-}
+void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option) {}
 
 /*******************************************************************************
 *******************************************************************************/
