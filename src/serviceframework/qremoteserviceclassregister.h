@@ -55,8 +55,6 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-//typedef QPair<QByteArray, QByteArray> QRemoteServiceIdentifier;
-
 struct QRemoteServiceIdentifier
 {
     QByteArray name;
@@ -79,32 +77,31 @@ struct QRemoteServiceIdentifier
     inline bool operator!=(const QRemoteServiceIdentifier& other ) { return !operator==(other); }
 };
 
-    inline uint qHash(const QRemoteServiceIdentifier& key) { 
-        return ( qHash(key.name) + qHash(key.interface) + qHash(key.version) );
-    }
+inline uint qHash(const QRemoteServiceIdentifier& key) { 
+    return ( qHash(key.name) + qHash(key.interface) + qHash(key.version) );
+}
 
 #ifndef QT_NO_DATASTREAM
-    inline QDataStream& operator>>(QDataStream& s, QRemoteServiceIdentifier& ident) {
-        s >> ident.name >> ident.interface >> ident.version;
-        return s;
-    }
+inline QDataStream& operator>>(QDataStream& s, QRemoteServiceIdentifier& ident) {
+    s >> ident.name >> ident.interface >> ident.version;
+    return s;
+}
 
-    inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& ident) {
-        s << ident.name << ident.interface << ident.version;
-        return s;
-    }
+inline QDataStream& operator<<(QDataStream& s, const QRemoteServiceIdentifier& ident) {
+    s << ident.name << ident.interface << ident.version;
+    return s;
+}
 #endif
 
 #ifndef QT_NO_DEBUG_STREAM
-    inline QDebug operator<<(QDebug dbg, const QRemoteServiceIdentifier& ident) {
-        dbg.nospace() << "QRemoteServiceIdentifier(" 
-                      << ident.name << ", "
-                      << ident.interface << ", "
-                      << ident.version << ")";
-        return dbg.space();
-    }
+inline QDebug operator<<(QDebug dbg, const QRemoteServiceIdentifier& ident) {
+    dbg.nospace() << "QRemoteServiceIdentifier(" 
+                  << ident.name << ", "
+                  << ident.interface << ", "
+                  << ident.version << ")";
+    return dbg.space();
+}
 #endif
-
 
 class Q_SERVICEFW_EXPORT QRemoteServiceClassRegister 
 {

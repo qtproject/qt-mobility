@@ -56,6 +56,7 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactA
 
 public:
     QContactDetailDefinitionRemoveRequest(QObject* parent = 0);
+    ~QContactDetailDefinitionRemoveRequest();
 
     /* Selection */
     void setDefinitionName(const QString& definitionName);

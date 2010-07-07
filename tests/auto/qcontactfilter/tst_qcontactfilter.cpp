@@ -70,6 +70,7 @@ private slots:
     void detailFilter();
     void detailRangeFilter();
     void changeLogFilter();
+    void actionFilter();
     void relationshipFilter();
     void boringFilters();
     void idListFilter();
@@ -350,6 +351,79 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf3.filters().at(1) == df2);
     QVERIFY(bf3.filters().at(2) == df);
     QVERIFY(bf3.filters().at(3) == df3);
+}
+
+void tst_QContactFilter::actionFilter()
+{
+    QContactActionFilter af;
+
+    /* Test initial conditions */
+    QVERIFY(af.type() == QContactFilter::ActionFilter);
+    QVERIFY(af.actionName().isEmpty());
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setActionName("Action Name");
+    QVERIFY(af.actionName() == "Action Name");
+
+    af.setActionName(QString());
+    QVERIFY(af.actionName().isEmpty());
+
+    af.setVendor("Vendor");
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor(QString());
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor(QString(), 10);
+    QVERIFY(af.vendorName().isEmpty());
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor("Vendor", 10);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == 10);
+
+    af.setVendor("Vendor", -1);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    af.setVendor("Vendor", 10);
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == 10);
+
+    af.setVendor("Vendor");
+    QVERIFY(af.vendorName() == "Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    // Make sure there isn't a shadow copy
+    af.setVendor("Vendor", 10);
+    af.setVendor(QString());
+    QVERIFY(af.implementationVersion() == -1);
+    af.setVendor("Vendor");
+    QVERIFY(af.implementationVersion() == -1);
+
+    /* Test op= */
+    QContactFilter f = af;
+    QVERIFY(f == af);
+
+    QContactActionFilter af2 = f;
+    QVERIFY(af2 == af);
+
+    /* Self assignment should do nothing */
+    af2 = af2;
+    QVERIFY(af2 == af);
+
+    QContactDetailFilter dfil;
+    QContactActionFilter af3(dfil);
+    QVERIFY(af3.type() == QContactFilter::ActionFilter);
+    QContactActionFilter af4(af);
+    QVERIFY(af4 == af);
+    af = dfil;
+    QVERIFY(af == af3);
+    af = af3;
+    af.setActionName("test"); // should force a detach
 }
 
 void tst_QContactFilter::changeLogFilter()

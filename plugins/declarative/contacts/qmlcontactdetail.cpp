@@ -65,13 +65,14 @@ QDeclarativePropertyMap* QMLContactDetail::propertyMap() const
 void QMLContactDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
 {
     m_map = map;
-    qWarning() << "detail:" << m_detailName << " has " << m_map->count() << " fields.";
+
     foreach (const QString& key, m_map->keys()) {
         QMLContactDetailField* field = new QMLContactDetailField(this);
         field->setDetailPropertyMap(m_map);
         field->setKey(key);
+        field->setDetailName(m_detailName);
         m_fields.append(field);
-        qWarning() << "    detail field:" << key  << "='" << m_map->value(key) << "'";
+
     }
 }
 

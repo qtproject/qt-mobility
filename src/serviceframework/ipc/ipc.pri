@@ -5,8 +5,18 @@ symbian {
     SOURCES += ipc/qremoteservicecontrol_s60.cpp
 
 } else {
-    PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h
-    SOURCES += ipc/qremoteservicecontrol_p.cpp
+    contains(QT_CONFIG,dbus) {
+        QT += dbus network
+        
+        PRIVATE_HEADERS += ipc/qremoteservicecontrol_dbus_p.h
+        SOURCES += ipc/qremoteservicecontrol_dbus_p.cpp
+
+    } else {
+        QT += network
+
+        PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h
+        SOURCES += ipc/qremoteservicecontrol_p.cpp
+    }
 }
 
 PRIVATE_HEADERS += \
@@ -28,6 +38,3 @@ SOURCES += \
         ipc/objectendpoint.cpp \
         ipc/ipcendpoint.cpp \
         ipc/proxyobject.cpp
-
-!symbian:QT+=network #for QLocalServer
-

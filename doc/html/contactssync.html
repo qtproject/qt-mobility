@@ -1,34 +1,35 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- contactssync.qdoc -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- contactssync.qdoc -->
   <title>Qt Mobility Project 1.1: Contacts Synchronous API</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Contacts Synchronous API<br /><span class="subtitle"></span>
-</h1>
-<ul><li><a href="#introduction">Introduction</a></li>
-<li><a href="#using-the-api">Using The API</a></li>
-<ul><li><a href="#error-reporting">Error Reporting</a></li>
-<li><a href="#contact-manipulation">Contact Manipulation</a></li>
-<li><a href="#relationship-manipulation">Relationship Manipulation</a></li>
-<li><a href="#schema-manipulation">Schema Manipulation</a></li>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Contacts Synchronous API</li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#introduction">Introduction</a></li>
+<li class="level1"><a href="#using-the-api">Using The API</a></li>
+<li class="level2"><a href="#error-reporting">Error Reporting</a></li>
+<li class="level2"><a href="#contact-manipulation">Contact Manipulation</a></li>
+<li class="level2"><a href="#relationship-manipulation">Relationship Manipulation</a></li>
+<li class="level2"><a href="#schema-manipulation">Schema Manipulation</a></li>
+<li class="level1"><a href="#examples-of-usage">Examples Of Usage</a></li>
+<li class="level2"><a href="#saving-a-new-contact-to-the-default-manager">Saving a new contact to the default manager</a></li>
+<li class="level2"><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
+<li class="level2"><a href="#installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail">Installing a plugin that modifies the definition of one type of detail</a></li>
+<li class="level3"><a href="#modifying-an-existing-contact-and-saving-the-modifications">Modifying an existing contact and saving the modifications</a></li>
 </ul>
-<li><a href="#examples-of-usage">Examples Of Usage</a></li>
-<ul><li><a href="#saving-a-new-contact-to-the-default-manager">Saving a new contact to the default manager</a></li>
-<li><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
-<li><a href="#installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail">Installing a plugin that modifies the definition of one type of detail</a></li>
-<ul><li><a href="#modifying-an-existing-contact-and-saving-the-modifications">Modifying an existing contact and saving the modifications</a></li>
-</ul>
-</ul>
-</ul>
+</div>
+<h1 class="title">Contacts Synchronous API</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The Contacts Synchronous API enables a client to synchronously fetch, update, or remove contact data from a contact manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or user interface responsiveness is not critical. Synchronous calls to a contact manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
@@ -53,8 +54,8 @@
 <p>A contact is identified by its <a href="qcontactid.html">QContactId</a>. This id consists of two parts: a URI which identifies the contact manager which stores the contact, and the local id of the contact in that manager. Some operations which take a pointer to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.</p>
 <p>The <a href="qcontactmanager.html">QContactManager</a> class provides API for accessing the IDs of contacts which are stored in the manager:</p>
 <ul>
-<li>contactIds(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
-<li>contactIds(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
+<li>contactIds(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
+<li>contactIds(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
 </ul>
 <p>The contact id retrieval functionality is also provided via asynchronous API through the <a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a> class.</p>
 <p>The synchronous, singular contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
@@ -68,8 +69,8 @@
 <p>Any error which occurs during such singular contact manipulation functions may be accessed by calling <a href="qcontactmanager.html#error">QContactManager::error</a>() directly after the original synchronous call.</p>
 <p>The synchronous, batch contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
 <ul>
-<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
-<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
 <li>saveContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt;* contacts, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 <li>removeContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt;* contactIds, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 </ul>
@@ -88,8 +89,8 @@
 <p>Some plugins support arbitrary relationship types. Clients can define custom relationships between contacts saved in such plugins. Any plugin which supports arbitrary relationship types should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ArbitraryRelationshipTypes</a> feature.</p>
 <p>The API which provides the relationship manipulation functionality consists of:</p>
 <ul>
-<li>relationships(const <a href="qcontactid.html">QContactId</a>&amp; participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
-<li>relationships(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; relationshipType = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QString</a>(), const <a href="qcontactid.html">QContactId</a>&amp; participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
+<li>relationships(const <a href="qcontactid.html">QContactId</a>&amp; participantId, <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> role = <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</a>) const;</li>
+<li>relationships(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; relationshipType = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QString</a>(), const <a href="qcontactid.html">QContactId</a>&amp; participantId = QContactId(), <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> role = <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</a>) const;</li>
 <li>saveRelationship(<a href="qcontactrelationship.html">QContactRelationship</a>* relationship);</li>
 <li>saveRelationships(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt;* relationships);</li>
 <li>removeRelationship(const <a href="qcontactrelationship.html">QContactRelationship</a>&amp; relationship);</li>
@@ -117,7 +118,7 @@
 <h3>Saving a new contact to the default manager</h3>
 <p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.</p>
 <p>We assume the existence of a specialized leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialized leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
-<pre>    void addContact(QContactManager* cm)
+<pre class="highlightedCode brush: cpp">    void addContact(QContactManager* cm)
     {
         QContact alice;
 
@@ -150,7 +151,7 @@
 <a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
 <p>The client utilizes a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
-<pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
+<pre class="highlightedCode brush: cpp">    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
         QContactDetailFilter phoneFilter;
         phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
@@ -170,7 +171,7 @@
 <a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
 <h3>Installing a plugin that modifies the definition of one type of detail</h3>
 <p>The client installs a plugin, which requires a new field to be added to details of the &quot;EmailAddress&quot; definition. It loads the definition from the default manager, modifies it (by adding the new field - a label field), and saves it back.</p>
-<pre>    void addPlugin(QContactManager* cm)
+<pre class="highlightedCode brush: cpp">    void addPlugin(QContactManager* cm)
     {
         <span class="comment">/* Find the definition that we are modifying */</span>
         QMap&lt;QString, QContactDetailDefinition&gt; definitions = cm-&gt;detailDefinitions();
@@ -194,7 +195,7 @@
 <a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
 <h4>Modifying an existing contact and saving the modifications</h4>
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
-<pre>    void editView(QContactManager* cm)
+<pre class="highlightedCode brush: cpp">    void editView(QContactManager* cm)
     {
         QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
         QContact a = cm-&gt;contact(contactIds.first());
@@ -219,6 +220,7 @@
         cm-&gt;saveContact(&amp;a);
         viewDetails(cm);
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

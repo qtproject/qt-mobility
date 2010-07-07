@@ -45,6 +45,8 @@
 
 \title Telephony API
 
+\ingroup telephony
+
 \brief The Telephony API enables access to the telephony event services.
 
 The Qt Telephony API enables access to the telephony event services to 

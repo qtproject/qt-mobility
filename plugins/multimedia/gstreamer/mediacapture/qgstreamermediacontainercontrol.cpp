@@ -48,8 +48,8 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "matroska" << "ogg" << "mp4" << "quicktime" << "avi" << "3gpp";
-    formatCandidates << "flv" << "wav" << "amr" << "asf" << "dv" << "gif";
+    formatCandidates << "matroska" << "ogg" << "mp4" << "wav" << "quicktime" << "avi" << "3gpp";
+    formatCandidates << "flv" << "amr" << "asf" << "dv" << "gif";
     formatCandidates << "mpeg" << "vob" << "mpegts" << "3g2" << "3gp";
     formatCandidates << "raw";
 
@@ -71,6 +71,11 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     m_elementNames["3g2"] = "ffmux_3g2";
     m_elementNames["3gp"] = "ffmux_3gp";
     m_elementNames["raw"] = "identity";
+
+    m_containerExtensions["matroska"] = "mkv";
+    m_containerExtensions["quicktime"] = "mov";
+    m_containerExtensions["mpegts"] = "m2t";
+    m_containerExtensions["mpeg"] = "mpg";
 
     QSet<QString> allTypes;
 
@@ -122,4 +127,9 @@ QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(GstElementFa
 QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(const QString &container) const
 {
     return m_streamTypes.value(container);
+}
+
+QString QGstreamerMediaContainerControl::containerExtension() const
+{
+    return m_containerExtensions.value(m_format, m_format);
 }

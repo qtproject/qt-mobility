@@ -48,30 +48,32 @@
 */
 
 /*!
-    \enum QTelephonyCallInfoWrapper::CallStatus
+    \enum QTelephonyCallInfo::CallStatus
 
     This enum type is used to describe the status of a call.
-    A QTelephonyCallInfoWrapper object can have a status of:
+    A QTelephonyCallInfo object can have a status of:
 
-    \value Undefined     The call status is not defined.
-    \value NoCall        The status of the call is not active.
-    \value Ringing       The status of the call is ringing.
-    \value InProgress    The status of the call is in progress.
+    \value Idle          The call status is not defined.
+    \value Dialing       The status of the call is dialing.
+    \value Alerting      The status of the call is alerting.
+    \value Connected     The status of the call is connected.
+    \value Disconnecting The status of the call is disconnected.
+    \value Incomming     The status of the call is incomming.
     \value OnHold        The status of the call is on hold.
-    \value Dropped       The call is dropped.
 */
 
 /*!
-    \enum QTelephonyCallInfoWrapper::CallType
+    \enum QTelephonyCallInfo::CallType
 
     This enum decribes the type of the call.
-    A QTelephonyCallInfoWrapper object can be a type of:
+    A QTelephonyCallInfo object can be a type of:
 
-    \value Unknown     The call type is not defined.
     \value Any         The call type can be any type.
-    \value Voip        The call is a Voip call.
-    \value Voice       The call is a Voice call.
-    \value Video       The call is a Video call.
+    \value Text        The call is a text base call.
+    \value Data        The call is a data based call.
+    \value Video       The call is a video based call.
+    \value Voice       The call is a voice based call.
+    \value Other       The call is a an unknown base call.
 */
 
 /*!
@@ -131,27 +133,15 @@ QTelephonyCallInfoWrapper& QTelephonyCallInfoWrapper::operator=(const QTelephony
 }
 
 /*!
-    \property QTelephonyCallInfoWrapper::callIdentifier
+    \property QTelephonyCallInfoWrapper::remotePartyIdentifier
     \brief the id of a call.
 
-    The callIdentifier contains the value dependend on the call CallType.
+    The remotePartyIdentifier contains the value dependend on the call CallType.
     It can be the phone number, IP address or something else.
 */
-QString QTelephonyCallInfoWrapper::callIdentifier() const
+QString QTelephonyCallInfoWrapper::remotePartyIdentifier() const
 {
-    return d->callIdentifier();
-}
-
-/*!
-    \property QTelephonyCallInfoWrapper::contacts
-    \brief a list of the contacts ids (can be used in QContact).
-
-    A contact id represent an id to find the contact in the system.
-    If you want to find the contact information for a QTelephonyCallInfoWrapper object then call this function.
-*/
-QList<quint32> QTelephonyCallInfoWrapper::contacts() const
-{
-    return d->contacts();
+    return d->remotePartyIdentifier();
 }
 
 /*!

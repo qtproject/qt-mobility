@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationship
   \brief The QContactRelationship class describes a one-to-one relationship
   between a locally-stored contact and another (possibly remote) contact.
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   Each relationship is uniquely identified by the combination of the first

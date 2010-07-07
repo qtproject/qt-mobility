@@ -70,6 +70,21 @@ public:
                                      QContact* contact) = 0;
 };
 
+class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandlerV2
+{
+public:
+    static QVersitContactImporterPropertyHandlerV2* createBackupHandler();
+    virtual ~QVersitContactImporterPropertyHandlerV2() {}
+    virtual void propertyProcessed(const QVersitDocument& document,
+                                   const QVersitProperty& property,
+                                   bool alreadyProcessed,
+                                   const QContact& contact,
+                                   QList<QContactDetail>* updatedDetails) = 0;
+    virtual void documentProcessed(const QVersitDocument& document,
+                                   QContact* contact) = 0;
+    virtual int version() const { return 2; }
+};
+
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
@@ -86,11 +101,14 @@ public:
     QList<QContact> contacts() const;
     QMap<int, Error> errors() const;
 
-    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
-    QVersitContactImporterPropertyHandler* propertyHandler() const;
+    void setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler);
 
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
+
+    /* deprecated and internal */
+    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
+    Q_DECL_DEPRECATED QVersitContactImporterPropertyHandler* propertyHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;

@@ -22,7 +22,7 @@ symbian: {
     HEADERS += dialer_symbian.h
 
 } else {
-    unix: {
+    unix:!mac {
         !maemo* {
             QT += dbus
             DEPENDPATH += /linux
@@ -37,7 +37,5 @@ symbian: {
 }
 
 FORMS    += dialog.ui
-
 include(../../examples.pri)
 CONFIG += mobility
-MOBILITY = telephony

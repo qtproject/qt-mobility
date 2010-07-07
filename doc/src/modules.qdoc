@@ -1,0 +1,141 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \group modules
+    \title All Modules
+    \startpage index.html Qt Mobility Reference Documentation
+    \nextpage QtServiceFramework
+    
+    \ingroup classlists
+
+    \brief Qt Mobility comprises several modules.
+
+    \table 80%
+    \header \o {2,1} \bold{Modules for Mobility software development}
+    \row \o \l{QtNetwork} \o Network, including Bearer Management
+    \row \o \l{QtServiceFramework} \o Classes for discovery and implementation of services.
+    \row \o \l{QtLocation} \o Classes for geographical information support.
+    \row \o \l{QtContacts} \o Classes for managing address books.
+    \row \o \l{QtMessaging} \o Classes for managing messages and attachments.
+    \row \o \l{QtMultimediaKit} \o Classes to to play and record media, and manage a collection of media content.
+    \row \o \l{QtSystemInfo} \o Provides system information.
+    \row \o \l{QtPublishSubscribe} \o Classes that enables applications to read item values, navigate through and subscribe
+to change notifications.
+    \endtable
+
+
+    \sa {Class and Function Documentation}
+*/
+
+
+/*!
+    \module QtContacts
+
+    \title QtContacts Module
+
+    \brief The QtContacts module offers classes that allow
+    you to manage addressbook contacts.
+
+*/
+
+/*!
+    \module QtOrganizer
+
+    \title QtOrganizer Module
+
+    \brief The QtOrganizer module offers classes that allow
+    you to manage calendar, scheduling and personal data.
+
+*/
+
+/*!
+    \module QtFeedback
+    \title QtFeedback Module
+    \brief The QtFeedback module offers classes that allow
+    you to manage tactile feedback and device vibration.
+*/
+
+/*!
+    \module QtLocation
+    \title  QtLocation Module
+    \brief  The QtLocation module provides geographical support for position
+    and map use.
+
+*/
+
+
+/*!
+    \module QtMessaging
+    \title  QtMessaging Module
+    \brief  The QtMessaging module provides access to messaging services.
+
+    The module enables access to messaging services to  search and sort
+    messages, send messages, retrieve message data, and launch the preferred
+    messaging client on the system to either display an existing message,
+    compose a new message, or respond to an existing message.
+*/
+
+
+/*!
+    \module QtMultimediaKit
+    \title  QtMultimediaKit Module
+    \brief  The QtMultimediaKit Module provides APIs to play and record media, and manage a collection of media content.
+    
+*/
+
+
+/*!
+\module QtPublishSubscribe
+\title  QtPublishSubscribe Module
+\brief  The Publish and Subscribe API, containing Value Space, enables
+applications to read item values, navigate through and subscribe
+to change notifications.
+
+*/
+
+/*!
+
+\module QtServiceFramework
+\title  QtServiceFramework Module
+\brief  A set of Qt APIs to that allows clients to discover and instantiate
+arbitrary services.
+
+*/
+
+/*!
+    \module QtSystemInfo
+    \title System Information Classes
+
+    A set of APIs that supplies that supplies system information.
+ */
+
+
+
+
+
+

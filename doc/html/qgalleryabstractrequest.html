@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgalleryabstractrequest.cpp -->
+  <title>Qt Mobility Project 1.1: QGalleryAbstractRequest Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QGalleryAbstractRequest</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGalleryAbstractRequest Class Reference</h1>
+<p>The QGalleryAbstractRequest class provides a base class for gallery requests. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QGalleryAbstractRequest&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherited by <a href="qgallerycountrequest.html">QGalleryCountRequest</a>, <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>, <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>, <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>, and <a href="qgalleryurlrequest.html">QGalleryUrlRequest</a>.</p>
+<ul>
+<li><a href="qgalleryabstractrequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b> { NoResult, Succeeded, Cancelled, NoGallery, ..., RequestError }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Scope-enum">Scope</a></b> { AllDescendants, DirectDescendants }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#State-enum">State</a></b> { Inactive, Active, Cancelling, Idle }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b> { Item, Url, Query, Count, Remove }</td></tr>
+</table>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> : const int</li>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> : QAbstractGallery *</li>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</a></b> : const int</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> : const int</li>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> : const State</li>
+<li class="fn"><b><a href="qgalleryabstractrequest.html#supported-prop">supported</a></b> : const bool</li>
+</ul>
+</td></tr>
+</table>
+<ul>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest">QGalleryAbstractRequest</a></b> ( Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest-2">QGalleryAbstractRequest</a></b> ( QAbstractGallery * <i>gallery</i>, Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#dtor.QGalleryAbstractRequest">~QGalleryAbstractRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QAbstractGallery * </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#supported-prop">isSupported</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> )</td></tr>
+</table>
+<ul>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#cancel">cancel</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#execute">execute</a></b> ()</td></tr>
+</table>
+<ul>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#cancelled">cancelled</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#failed">failed</a></b> ( int <i>result</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#finished">finished</a></b> ( int <i>result</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#succeeded">succeeded</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#supportedChanged">supportedChanged</a></b> ()</td></tr>
+</table>
+<ul>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#setResponse">setResponse</a></b> ( QGalleryAbstractResponse * <i>response</i> ) = 0</td></tr>
+</table>
+<ul>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<div class="descr"/>
+<h2>Detailed Description</h2>
+<p>The QGalleryAbstractRequest class provides a base class for gallery requests.</p>
+</div>
+<hr />
+<div class="types"/>
+<h2>Member Type Documentation</h2>
+<h3 class="fn"><a name="Result-enum"></a>enum QGalleryAbstractRequest::Result</h3>
+<p>Identifies the result of a gallery request.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::NoResult</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The request is still active and no result is available yet.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Succeeded</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request succeeded sucessfully.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Cancelled</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request was cancelled before it could finish.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::NoGallery</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The request cannot be executed because no <a href="qgalleryabstractrequest.html#gallery-prop">gallery</a> is set.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::NotSupported</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The request isn't supported by the <a href="qgalleryabstractrequest.html#gallery-prop">gallery</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::ConnectionError</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The request could not be executed due to a problem connecting to the gallery.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::InvalidItemError</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">The request could not be executed due to an invalid item ID.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::ItemTypeError</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">The request could not be executed due to an invalid item type.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::InvalidPropertyError</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">The request could not be executed because a filter referenced an invalid property.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::PropertyTypeError</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">The request could not be executed because a filter compared a property to an invalid variant type.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::UnsupportedFilterTypeError</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">The request could not be executed because a filter is not supported by the gallery.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::UnsupportedFilterOptionError</tt></td><td class=" topAlign"><tt>11</tt></td><td  class="topAlign">The request could not be executed because an option on a filter is not supported by the gallery.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::PermissionsError</tt></td><td class=" topAlign"><tt>12</tt></td><td  class="topAlign">The request could not be executed because the user has insufficient permissions.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::InvalidDestinationError</tt></td><td class=" topAlign"><tt>13</tt></td><td  class="topAlign">The request could not be executed because the given destination ID is invalid.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::InvalidUrlError</tt></td><td class=" topAlign"><tt>14</tt></td><td  class="topAlign">The request could not be executed due to an invalid URL.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::RequestError</tt></td><td class=" topAlign"><tt>100</tt></td><td  class="topAlign">A minimum value for request specific error results.</td></tr>
+</table>
+<h3 class="fn"><a name="Scope-enum"></a>enum QGalleryAbstractRequest::Scope</h3>
+<p>Identifies the scope of query.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::AllDescendants</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The query will return all descendents of the scope item.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::DirectDescendants</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The query will return only direct descendents of the scope item.</td></tr>
+</table>
+<h3 class="fn"><a name="State-enum"></a>enum QGalleryAbstractRequest::State</h3>
+<p>Identifies the state of a gallery request.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Inactive</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The request has not been executed, or has finished.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Active</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request is currently executing.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Cancelling</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request was cancelled, but hasn't yet returned to the Inactive state.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Idle</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The request has finished, and is monitoring its return values for changes.</td></tr>
+</table>
+<h3 class="fn"><a name="Type-enum"></a>enum QGalleryAbstractRequest::Type</h3>
+<p>Identifies the type of a request.</p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Item</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The request is a <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Url</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The request is a <a href="qgalleryurlrequest.html">QGalleryUrlRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Query</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The request is a <a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Count</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The request is a <a href="qgallerycountrequest.html">QGalleryCountRequest</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGalleryAbstractRequest::Remove</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The request is a <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</td></tr>
+</table>
+</div>
+<hr />
+<div class="prop"/>
+<h2>Property Documentation</h2>
+<h3 class="fn"><a name="currentProgress-prop"></a>currentProgress : const int</h3>
+<p>This property holds the current progress of a request.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>currentProgress</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a> *</h3>
+<p>This property holds the gallery service a request acts on.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QAbstractGallery * </td><td class="memItemRight bottomAlign"><b>gallery</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setGallery</b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="maximumProgress-prop"></a>maximumProgress : const int</h3>
+<p>This property holds the maximum value of currentProgress.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>maximumProgress</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="result-prop"></a>result : const int</h3>
+<p>This property holds the result of a request.</p>
+<p>This will be a value of <a href="qgalleryabstractrequest.html#Result-enum">Result</a>, or a request specific error value.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>result</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</td></tr>
+</table>
+<h3 class="fn"><a name="state-prop"></a>state : const <a href="qgalleryabstractrequest.html#State-enum">State</a></h3>
+<p>This property holds the state of a request.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> State </td><td class="memItemRight bottomAlign"><b>state</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State <i>state</i> )</td></tr>
+</table>
+<h3 class="fn"><a name="supported-prop"></a>supported : const bool</h3>
+<p>This property holds whether a request is supported by its current gallery.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isSupported</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractrequest.html#supportedChanged">supportedChanged</a></b> ()</td></tr>
+</table>
+</div>
+<hr />
+<div class="func"/>
+<h2>Member Function Documentation</h2>
+<h3 class="fn"><a name="QGalleryAbstractRequest"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qgalleryabstractrequest.html#Type-enum">Type</a> <i>type</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new gallery <i>type</i> request.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<h3 class="fn"><a name="QGalleryAbstractRequest-2"></a>QGalleryAbstractRequest::QGalleryAbstractRequest ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, <a href="qgalleryabstractrequest.html#Type-enum">Type</a> <i>type</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new <i>type</i> request for the given <i>gallery</i>.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<h3 class="fn"><a name="dtor.QGalleryAbstractRequest"></a>QGalleryAbstractRequest::~QGalleryAbstractRequest ()</h3>
+<p>Destroys a gallery request.</p>
+<h3 class="fn"><a name="cancel"></a>void QGalleryAbstractRequest::cancel ()<tt> [slot]</tt></h3>
+<p>Cancels the execution of a request. If the request is idle this will stop any future updates.</p>
+<h3 class="fn"><a name="cancelled"></a>void QGalleryAbstractRequest::cancelled ()<tt> [signal]</tt></h3>
+<p>Signals that a request was cancelled before it could finish.</p>
+<h3 class="fn"><a name="clear"></a>void QGalleryAbstractRequest::clear ()<tt> [slot]</tt></h3>
+<p>Clears the results of a request.</p>
+<p>If the request is active or idle it will be cancelled.</p>
+<h3 class="fn"><a name="execute"></a>void QGalleryAbstractRequest::execute ()<tt> [slot]</tt></h3>
+<p>Executes a request.</p>
+<p><b>Note</b>: A valid <a href="qgalleryabstractrequest.html#gallery-prop">gallery</a> must be set before a request can be executed.</p>
+<h3 class="fn"><a name="failed"></a>void QGalleryAbstractRequest::failed ( int <i>result</i> )<tt> [signal]</tt></h3>
+<p>Signals that a request failed with the given <i>result</i>.</p>
+<h3 class="fn"><a name="finished"></a>void QGalleryAbstractRequest::finished ( int <i>result</i> )<tt> [signal]</tt></h3>
+<p>Signals that a request has finished with the given <i>result</i>.</p>
+<h3 class="fn"><a name="progressChanged"></a>void QGalleryAbstractRequest::progressChanged ( int <i>current</i>, int <i>maximum</i> )<tt> [signal]</tt></h3>
+<p>Signals that the <i>current</i> or <i>maximum</i> progress value has changed.</p>
+<h3 class="fn"><a name="resultChanged"></a>void QGalleryAbstractRequest::resultChanged ()<tt> [signal]</tt></h3>
+<p>Signals that the result of a request has changed.</p>
+<h3 class="fn"><a name="setResponse"></a>void QGalleryAbstractRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )<tt> [pure virtual protected]</tt></h3>
+<p>Sets the <i>response</i> to an executed request.</p>
+<h3 class="fn"><a name="stateChanged"></a>void QGalleryAbstractRequest::stateChanged ( <a href="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::State</a> <i>state</i> )<tt> [signal]</tt></h3>
+<p>Signals that the <i>state</i> of a request has changed.</p>
+<h3 class="fn"><a name="succeeded"></a>void QGalleryAbstractRequest::succeeded ()<tt> [signal]</tt></h3>
+<p>Signals that a request has completed successfully.</p>
+<h3 class="fn"><a name="supportedChanged"></a>void QGalleryAbstractRequest::supportedChanged ()<tt> [signal]</tt></h3>
+<p>Signals the <a href="qgalleryabstractrequest.html#supported-prop">supported</a> property has changed.</p>
+<h3 class="fn"><a name="type"></a><a href="qgalleryabstractrequest.html#Type-enum">Type</a> QGalleryAbstractRequest::type () const</h3>
+<p>Returns the type of a request.</p>
+<h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractRequest::waitForFinished ( int <i>msecs</i> )</h3>
+<p>Waits for <i>msecs</i> for the a request to finish.</p>
+<p>Returns true if the request has finished on return, and returns false if the wait time expires or the request is inactive or idle.</p>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

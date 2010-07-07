@@ -61,7 +61,6 @@ public:
 #ifdef Q_QDOC
     static const QLatin1Constant HasMember;
     static const QLatin1Constant Aggregates;
-    static const QLatin1Constant Is;
     static const QLatin1Constant IsSameAs;
     static const QLatin1Constant HasAssistant;
     static const QLatin1Constant HasManager;

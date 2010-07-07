@@ -43,14 +43,13 @@
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
 #include "qserviceinterfacedescriptor_p.h"
-#ifdef Q_OS_SYMBIAN
+
+#if defined(Q_OS_SYMBIAN)
     #include "qremoteservicecontrol_s60_p.h"
-#else
-    #include "qremoteservicecontrol_p.h"
-/*#elif QT_NO_DBUS
+#elif defined(QT_NO_DBUS)
     #include "qremoteservicecontrol_p.h"
 #else
-    #include "qremoteservicecontrol_dbus_p.h"*/
+    #include "qremoteservicecontrol_dbus_p.h"
 #endif
 
 #ifdef Q_OS_SYMBIAN
@@ -67,7 +66,6 @@
 #include <QSystemSemaphore>
 
 QTM_BEGIN_NAMESPACE
-
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
@@ -300,6 +298,7 @@ QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
+    qRegisterMetaType<QService::UnrecoverableIPCError>("QService::UnrecoverableIPCError");
     d->scope = QService::UserScope;
 }
 

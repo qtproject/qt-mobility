@@ -46,6 +46,9 @@
     \brief The QMessageFolder class provides an interface for folders containing messages in the 
     messaging store.
     
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
  
     QMessageFolder represents a folder of messages, either fully or partially stored in the 

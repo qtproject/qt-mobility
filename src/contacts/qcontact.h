@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 class QContactManager;
 class QContactData;
 class QContactName;
+class QContactAction;
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -95,8 +96,11 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
+    /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
+    QContactDetail detailWithAction(QContactAction* action) const;
+    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -165,6 +169,15 @@ public:
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
+
+    /* Actions available to be performed on this contact */
+    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
+    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
+    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
+    QContactDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
     friend class QContactManager;

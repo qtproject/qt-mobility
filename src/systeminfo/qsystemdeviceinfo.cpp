@@ -86,6 +86,55 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 
 
 /*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemDeviceInfo::connectNotify(const char *signal)
+{
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemDeviceInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        disconnect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        disconnect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        disconnect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        disconnect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        disconnect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+}
+
+
+/*!
   \property QSystemDeviceInfo::inputMethodType
   \brief The supported inputmethods.
 

@@ -47,7 +47,7 @@
 // implementation detail. This header file may change from version to
 // version without notice, or even be removed.
 //
-// Do not use this file directly.
+// INTERNAL USE ONLY: Do NOT use for any other purpose.
 //
 
 #include <QtCore/qcoreapplication.h>
@@ -497,3 +497,5 @@ void QSoundEffectPrivate::play_callback(pa_context *c, int success, void *userda
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qsoundeffect_pulse_p.cpp"
