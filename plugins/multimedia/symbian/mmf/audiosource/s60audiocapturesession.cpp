@@ -222,6 +222,8 @@ qint64 S60AudioCaptureSession::position() const
 
 QString S60AudioCaptureSession::initializeSinkL()
 {
+    if (m_sink.isEmpty())
+        m_sink = generateAudioFilePath();
     QString sink = QDir::toNativeSeparators(m_sink.toString());
     int index = sink.lastIndexOf('.');
     if (index != -1)
@@ -586,3 +588,21 @@ TFourCC S60AudioCaptureSession::determinePCMFormat()
     }
     return fourCC;
 }
+
+QUrl S60AudioCaptureSession::generateAudioFilePath()
+{
+    QDir outputDir(QDir::rootPath());
+
+    int lastImage = 0;
+    int fileCount = 0;
+    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {
+        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+        if (outputDir.exists(fileName))
+            fileCount+=1;
+    }
+    lastImage+=fileCount;
+    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
+    return location;
+}
+
