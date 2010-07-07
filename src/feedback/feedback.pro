@@ -26,9 +26,9 @@ symbian {
     TARGET.CAPABILITY = ALL \
         -TCB
     
-    # # Need a new UID
-    # # TARGET.UID3 = 0x2002AC7A
-    # ## Feedback
+    # UID
+    TARGET.UID3 = 0x2002BFCE
+
     # Main library
     FEEDBACK_DEPLOYMENT.sources = QtFeedback.dll
     FEEDBACK_DEPLOYMENT.path = \sys\bin
