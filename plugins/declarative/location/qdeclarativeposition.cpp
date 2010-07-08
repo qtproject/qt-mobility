@@ -204,7 +204,7 @@ void QDeclarativePosition::setNmeaSource(const QUrl& nmeaSource)
         }
     }
     if (m_positioningMethod != positioningMethod()) {
-        m_positioningMethod == positioningMethod();
+        m_positioningMethod = positioningMethod();
         emit positioningMethodChanged(m_positioningMethod);
     }
     emit this->nmeaSourceChanged(m_nmeaSource);

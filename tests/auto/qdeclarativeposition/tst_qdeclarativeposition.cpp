@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
+#include <QtTest/QSignalSpy>
+#include <QMetaObject>
+#include <QDateTime>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
 #include "qdeclarativeposition.h"
@@ -112,7 +115,14 @@ public slots:
     void cleanupTestCase();
     
 private slots:
+
     void construction();
+    void construction_data();
+
+    void defaultProperties();
+
+    void basicNmeaSource();
+    void basicNmeaSource_data();
     
 private:
     // Engine is needed for instantiating declarative components
@@ -137,23 +147,26 @@ void tst_QDeclarativePosition::cleanupTestCase()
     qDebug("tst_QDeclarativePosition cleanupTestCase");
 }
 
+
 /*
-Tests Position element instantiating from plugin and as a c++ class.
+  Tests Position element instantiating from plugin.
 */
+
 
 void tst_QDeclarativePosition::construction()
 {
-    qDebug("tst_QDeclarativePosition construction");
-    QString componentStr("import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId }");
+    QFETCH(QString, componentString);
+    QFETCH(bool, shouldSucceed);
     // Component encapsulates one component description
     QDeclarativeComponent component(&engine);
-    component.setData(componentStr.toLatin1(), QUrl::fromLocalFile(""));
-
+    component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* obj = component.create();
-    QVERIFY(obj != 0);
-    qDebug() << "Class name: " << obj->metaObject()->className();
-    QCOMPARE(obj->metaObject()->className(), "QDeclarativePosition");
-    
+    if (shouldSucceed) {
+        QVERIFY(obj != 0);
+        QCOMPARE(obj->metaObject()->className(), "QDeclarativePosition");
+    } else {
+        QVERIFY(obj == 0);
+    }
     // The above check is a bit clumsy, but testing with qobject_cast<> will not work,
     // because the obj is instantiated from a aplugin _but_ also the header has been compiled in this
     // test binary --> static meta object addresses do not match. Test below indicates why the 
@@ -163,11 +176,120 @@ void tst_QDeclarativePosition::construction()
     // qDebug() << "Whereas the address of the metaobject compiled in this binary is: " << QString::number(uint(&((QDeclarativePosition*)0)->staticMetaObject));
     // QDeclarativePosition* position = qobject_cast<QDeclarativePosition*>(obj);
     // QVERIFY(position != 0);
-
-    // Check the default values: TODO
-    // TODO create _data function that creates with diffrent kind of strings
-    
     delete obj;
+}
+
+void tst_QDeclarativePosition::construction_data()
+{
+    QTest::addColumn<QString>("componentString");
+    QTest::addColumn<bool>("shouldSucceed");
+    QTest::newRow("No properties") <<   "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {}" << true;
+    QTest::newRow("Only id property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId}" << true;
+    QTest::newRow("All write properties") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; updateInterval: 1000; nmeaSource: \"nonexistentfile.txt\"}" << true;
+    QTest::newRow("Nonexistent property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; nonExistentProperty: 1980}" << false;
+    QTest::newRow("Non write property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; latitude: 20}" << false;
+}
+
+/*
+    Tests the default values of properties
+*/
+void tst_QDeclarativePosition::defaultProperties()
+{
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId}");
+    QDeclarativeComponent component(&engine);
+    component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
+    QObject* obj = component.create();
+    QVERIFY(obj != 0);
+    QCOMPARE(obj->property("nmeaSource").toUrl(), QUrl());
+    QCOMPARE(obj->property("timestamp").toDateTime(), QDateTime());
+    QCOMPARE(obj->property("updateInterval").toInt(), 0);
+    QCOMPARE(obj->property("latitude").toDouble(), static_cast<double>(0));
+    QCOMPARE(obj->property("longtitude").toDouble(), static_cast<double>(0));
+    QCOMPARE(obj->property("altitude").toDouble(), static_cast<double>(0));
+    QCOMPARE(obj->property("speed").toDouble(), static_cast<double>(0));
+    QCOMPARE(obj->property("positionLatest").toBool(), false);
+    QCOMPARE(obj->property("altitudeLatest").toBool(), false);
+    QCOMPARE(obj->property("speedLatest").toBool(), false);
+    QCOMPARE(obj->property("positioningMethod").toInt(), 0); // Ugly, improve to compare enum NoPositioningMethod
+    delete obj;
+}
+
+/*
+    Tests the nmea source basics
+*/
+
+void tst_QDeclarativePosition::basicNmeaSource()
+{
+    QFETCH(QString, updateMethod);
+    QFETCH(int, repeats);
+
+    qDebug() << "1. ----- Create Position with NMEA source and verify the file is found.";
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; nmeaSource: \"data/nmealog.txt\"}");
+    QDeclarativeComponent component(&engine);
+    component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
+    QObject* obj = component.create();
+    QVERIFY(obj != 0);
+    QVERIFY(obj->property("nmeaSource").toUrl().isValid());
+
+    qDebug() << "2. ----- Start updates and verify that relevant signals are received.";
+    QSignalSpy positionUpdatedSpy(obj, SIGNAL(positionUpdated()));
+    QSignalSpy latitudeChangedSpy(obj, SIGNAL(latitudeChanged(double)));
+    QSignalSpy longtitudeChangedSpy(obj, SIGNAL(longtitudeChanged(double)));
+    QSignalSpy positionLatestSpy(obj, SIGNAL(positionLatestChanged(bool)));
+    QSignalSpy altitudeChangedSpy(obj, SIGNAL(altitudeChanged(double)));
+    QSignalSpy altitudeLatestSpy(obj, SIGNAL(altitudeLatestChanged(bool)));
+    QSignalSpy speedChangedSpy(obj, SIGNAL(speedChanged(double)));
+    QSignalSpy speedLatestSpy(obj, SIGNAL(speedLatestChanged(bool)));
+    QSignalSpy timestampChangedSpy(obj, SIGNAL(timestampChanged(QDateTime)));
+
+    // For single shot update, try to get 'repeats' amount of updates
+    for (int i = 0; i < repeats; i++) {
+        qDebug() << i;
+        obj->metaObject()->invokeMethod(obj, updateMethod.toLatin1().constData(), Qt::DirectConnection);
+        QTRY_VERIFY(!positionUpdatedSpy.isEmpty());
+        positionUpdatedSpy.clear();
+    }
+    QTRY_VERIFY(!latitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(!longtitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(!altitudeChangedSpy.isEmpty());
+    QTRY_VERIFY(!speedChangedSpy.isEmpty());
+    QTRY_VERIFY(!timestampChangedSpy.isEmpty());
+    QVERIFY(!positionLatestSpy.isEmpty());
+    QVERIFY(!altitudeLatestSpy.isEmpty());
+    QVERIFY(!speedLatestSpy.isEmpty());
+    QCOMPARE(obj->property("updateInterval").toInt(), 0);
+
+    qDebug() << "3. ----- Stop updates and verify that signals are not received anymore.";
+    obj->metaObject()->invokeMethod(obj, "stopUpdates", Qt::DirectConnection);
+    positionUpdatedSpy.clear();
+    latitudeChangedSpy.clear();
+    longtitudeChangedSpy.clear();
+    positionLatestSpy.clear();
+    altitudeChangedSpy.clear();
+    altitudeLatestSpy.clear();
+    speedChangedSpy.clear();
+    speedLatestSpy.clear();
+    timestampChangedSpy.clear();
+    QTest::qWait(2000); // Wait a moment
+    QVERIFY(positionUpdatedSpy.isEmpty());
+    QVERIFY(positionUpdatedSpy.isEmpty());
+    QVERIFY(latitudeChangedSpy.isEmpty());
+    QVERIFY(longtitudeChangedSpy.isEmpty());
+    QVERIFY(positionLatestSpy.isEmpty());
+    QVERIFY(altitudeChangedSpy.isEmpty());
+    QVERIFY(altitudeLatestSpy.isEmpty());
+    QVERIFY(speedChangedSpy.isEmpty());
+    QVERIFY(speedLatestSpy.isEmpty());
+    QVERIFY(timestampChangedSpy.isEmpty());
+    delete obj;
+}
+
+void tst_QDeclarativePosition::basicNmeaSource_data()
+{
+    QTest::addColumn<QString>("updateMethod");
+    QTest::addColumn<int>("repeats");
+    QTest::newRow("periodic updates") << "startUpdates" << 1;
+    QTest::newRow("single shot update") << "update" << 10;
 }
 
 QTEST_MAIN(tst_QDeclarativePosition)
