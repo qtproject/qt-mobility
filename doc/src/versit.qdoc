@@ -29,7 +29,7 @@
 
 \page versit.html
 \title Versit API
-\brief An API to manage Versit documents such as vCard.
+\brief An API to import and export to the vCard and iCalendar formats.
 
 \ingroup mobility
 
