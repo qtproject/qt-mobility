@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include "qnmeapositioninfosourceproxyfactory.h"
 #include "../testqgeopositioninfosource_p.h"
 #include "../qlocationtestutils_p.h"

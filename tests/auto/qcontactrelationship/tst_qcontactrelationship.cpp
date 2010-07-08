@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/contacts
+
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"

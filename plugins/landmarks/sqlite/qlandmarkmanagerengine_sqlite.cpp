@@ -139,6 +139,7 @@ public:
     QString managerUri;
     volatile bool isCanceled;
     QLandmarkManagerEngineSqlite *engine;
+    QLandmarkFileHandlerGpx *gpxHandler;
 };
 
 /*
@@ -2009,25 +2010,44 @@ bool importLandmarksGpx(const QString &connectionName,
                         QIODevice *device,
                         QLandmarkManager::Error *error,
                         QString *errorString,
-                        const QString &managerUri)
+                        const QString &managerUri,
+                        QueryRun *queryRun =0)
 {
-    QLandmarkFileHandlerGpx gpxHandler;
-    bool result = gpxHandler.importData(device);
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
 
-    if (result) {
-        saveLandmarks(connectionName, &gpxHandler.waypoints(), 0, error, errorString, managerUri);
+    QLandmarkFileHandlerGpx *gpxHandler = new QLandmarkFileHandlerGpx;
+    if (queryRun) {
+        queryRun->gpxHandler = gpxHandler;
+        queryRun->gpxHandler->setAsync(true);
+    }
 
-        if (error && *error != QLandmarkManager::NoError) {
+    QLandmarkFileHandlerGpx::State state = gpxHandler->importData(device);
+    bool result;
+    if (state == QLandmarkFileHandlerGpx::DoneState) {
+            saveLandmarks(connectionName, &(gpxHandler->waypoints()), 0, error, errorString, managerUri);
+
+        if (*error != QLandmarkManager::NoError) {
             result = false;
         } else  {
             if (errorString)
                 *errorString = "";
+            result = true;
         }
-    } else {
+    } else if (state == QLandmarkFileHandlerGpx::ErrorState){
         if (errorString)
-            *errorString = gpxHandler.errorString();
-        // TODO set error code
+            *errorString = gpxHandler->errorString();
+        if (*error)
+            *error = QLandmarkManager::ParsingError;
+            result = false;
+    } else if (state == QLandmarkFileHandlerGpx::CanceledState) {
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
+        result = true;
     }
+    if (!queryRun)
+        delete gpxHandler;
+   //the query run will delete it's own gpx handler
 
     return result;
 }
@@ -2036,7 +2056,8 @@ bool importLandmarks(const QString &connectionName,
                      QIODevice *device,
                      const QByteArray &format,
                      QLandmarkManager::Error *error,
-                     QString *errorString, const QString &managerUri)
+                     QString *errorString, const QString &managerUri,
+                     QueryRun *queryRun = 0)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -2060,7 +2081,7 @@ bool importLandmarks(const QString &connectionName,
     if (format ==  "LmxV1.0") {
             return importLandmarksLmx(connectionName, device, error, errorString, managerUri);
     } else if (format == "GpxV1.1") {
-        return importLandmarksGpx(connectionName, device, error, errorString, managerUri);
+        return importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -2083,6 +2104,9 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
 
 QueryRun::~QueryRun()
 {
+    if (gpxHandler)
+        delete gpxHandler;
+    gpxHandler = 0;
 }
 
 void QueryRun::run()
@@ -2306,9 +2330,17 @@ void QueryRun::run()
         case QLandmarkAbstractRequest::ImportRequest :
             {
                 QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
-                ::importLandmarks(connectionName, importRequest->device(), importRequest->format(), &error, &errorString, managerUri);
+                QFile *file = qobject_cast<QFile *>(importRequest->device());
+
+                ::importLandmarks(connectionName, importRequest->device(), importRequest->format(), &error, &errorString, managerUri, this);
+                if (this->gpxHandler) {
+                    delete gpxHandler;
+                    gpxHandler = 0;
+                }
 
                 if (this->isCanceled) {
+                    error = QLandmarkManager::NoError;
+                    errorString ="";
                     QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
                                               Q_ARG(QLandmarkImportRequest *,importRequest),
                                               Q_ARG(QLandmarkManager::Error, error),
@@ -2416,6 +2448,9 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
 
 QLandmarkManagerEngineSqlite::~QLandmarkManagerEngineSqlite()
 {
+    QThreadPool *threadPool = QThreadPool::globalInstance();
+    threadPool->waitForDone();
+
     QSqlDatabase::database(m_dbConnectionName).close();
     QSqlDatabase::removeDatabase(m_dbConnectionName);
 }
@@ -3208,6 +3243,13 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
 bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* request)
 {
     m_requestRunHash.value(request)->isCanceled = true;
+    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
+        if (m_requestRunHash.value(request)->gpxHandler) {
+            m_requestRunHash.value(request)->gpxHandler->cancel();
+            QMetaObject::invokeMethod(m_requestRunHash.value(request)->gpxHandler,
+                                "cancel", Qt::QueuedConnection);
+        }
+    }
     return true;
 }
 

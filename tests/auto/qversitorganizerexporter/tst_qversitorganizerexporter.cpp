@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qversitorganizerexporter.h"
 #include <QtTest/QtTest>
 

@@ -120,7 +120,9 @@ QGeoMapObject::Type QGeoMapObject::type() const
 void QGeoMapObject::setZValue(int zValue)
 {
     Q_D(QGeoMapObject);
+    int oldZValue = d->zValue;
     d->zValue = zValue;
+    emit zValueChanged(zValue, oldZValue);
 }
 
 /*!
@@ -229,11 +231,34 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 {
     Q_D(QGeoMapObject);
 
-    // TODO check if already added?
+    if (!childObject)
+        return;
 
-    if (childObject) {
-        d->children.append(childObject);
+    childObject->d_ptr->parent = this;
+
+    //binary search for proper insert slot
+    int a = 0;
+    int b = d->children.size() - 1;
+
+    while (a <= b) {
+        int mid = a + ((b - a) / 2);
+
+        if (d->children.at(mid)->d_ptr->zValue <= childObject->d_ptr->zValue)
+            a = mid + 1;
+        else
+            b = mid - 1;
     }
+
+    d->children.insert(a, childObject);
+    connect(childObject, SIGNAL(destroyed(QObject*)),
+            this, SLOT(childObjectDestroyed(QObject*)));
+    emit childObjectAdded(childObject);
+}
+
+void QGeoMapObject::childObjectDestroyed(QObject *obj)
+{
+    Q_D(QGeoMapObject);
+    d->children.removeAll(static_cast<QGeoMapObject*>(obj));
 }
 
 /*!
@@ -248,13 +273,16 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
 {
     Q_D(QGeoMapObject);
     if (childObject) {
-        if (d->children.removeAll(childObject) > 0)
+        if (d->children.removeAll(childObject) > 0) {
             childObject->d_ptr->parent = 0;
+            emit childObjectRemoved(childObject);
+        }
     }
 }
 
 /*!
     Returns the children of this map object.
+    The children are ordered ascendingly on their zValues.
 */
 QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
@@ -305,5 +333,7 @@ QGeoMapObjectPrivate& QGeoMapObjectPrivate::operator= (const QGeoMapObjectPrivat
 
     return *this;
 }
+
+#include "moc_qgeomapobject.cpp"
 
 QTM_END_NAMESPACE

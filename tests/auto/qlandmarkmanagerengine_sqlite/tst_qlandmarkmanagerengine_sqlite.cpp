@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
 
@@ -125,7 +127,9 @@ public:
 private:
     QLandmarkManager *m_manager;
 
-    bool waitForAsync(QSignalSpy &spy, QLandmarkAbstractRequest *request, QLandmarkManager::Error error = QLandmarkManager::NoError, int ms=500) {
+    bool waitForAsync(QSignalSpy &spy, QLandmarkAbstractRequest *request,
+                    QLandmarkManager::Error error = QLandmarkManager::NoError,
+                    int ms=500, QLandmarkAbstractRequest::State state = QLandmarkAbstractRequest::FinishedState) {
         bool ret = true;
         QTest::qWait(ms);
         if (spy.count() != 2) {
@@ -146,8 +150,8 @@ private:
             ret = false;
         }
 
-        if (request->state() != QLandmarkAbstractRequest::FinishedState) {
-            qWarning() << "Request State mismatch, expected = " << QLandmarkAbstractRequest::FinishedState
+        if (request->state() != state) {
+            qWarning() << "Request State mismatch, expected = " << state
                                                << ", actual =" << request->state();
             ret = false;
         }
@@ -4286,7 +4290,6 @@ private slots:
 
         QList<QLandmark> landmarks = m_manager->landmarks(QLandmarkFilter());
 
-
         QLandmark lmFirst;
         lmFirst.setName("McDonald s Airlie Beac... (sample)");
         lmFirst.setCoordinate(QGeoCoordinate(-20.269213, 148.718128));
@@ -4332,6 +4335,16 @@ private slots:
         importRequest.start();
 
         QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
+
+        //try cancelling and impot halfway
+        importRequest.setFileName(":data/long.gpx");
+        importRequest.setFormat("GpxV1.1");
+        importRequest.start();
+        QTest::qWait(250);
+        importRequest.cancel();
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,
+                            3000, QLandmarkAbstractRequest::CanceledState));
+
     }
 
     /*

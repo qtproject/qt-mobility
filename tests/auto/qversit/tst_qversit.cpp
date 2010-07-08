@@ -391,3 +391,5 @@ void tst_QVersit::testExportImport_data()
 }
 
 QTEST_MAIN(tst_QVersit)
+
+#include "tst_qversit.moc"

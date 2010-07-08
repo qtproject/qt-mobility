@@ -67,8 +67,9 @@ RouteTab::RouteTab(QWidget *parent) :
     m_destLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_destLat = new QLineEdit("52.382306");
     m_destLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    QPushButton *requestBtn = new QPushButton(tr("Request Route"));
+    requestBtn = new QPushButton(tr("Request Route"));
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    requestBtn->setDisabled(true);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
     updateBtn = new QPushButton(tr("Update Route"));
@@ -112,6 +113,7 @@ RouteTab::~RouteTab()
 
 void RouteTab::initialize(QGeoRoutingManager *routingManager)
 {
+    m_resultTree->clear();
     m_routingManager = routingManager;
     if (m_routingManager) {
         QObject::connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)), this,
@@ -119,7 +121,10 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
         QObject::connect(m_routingManager,
                          SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)), this,
                          SLOT(resultsError(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
+        requestBtn->setDisabled(false);
     }
+    else
+        requestBtn->setDisabled(true);
 }
 
 void RouteTab::on_btnRequest_clicked()
