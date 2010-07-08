@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include "tst_qmediarecorder_xa.h"
 #include "tst_qmediarecorder_xa_macros.h"
 

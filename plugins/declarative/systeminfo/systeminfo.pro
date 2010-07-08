@@ -11,7 +11,10 @@ include(../../../common.pri)
 
 QT += declarative
 
-SOURCES += systeminfo.cpp
+SOURCES += systeminfo.cpp \
+    qdeclarativenetworkinfo.cpp
+HEADERS += \
+    qdeclarativenetworkinfo_p.h
 
 CONFIG += mobility
 MOBILITY += systeminfo

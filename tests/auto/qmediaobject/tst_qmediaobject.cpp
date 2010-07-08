@@ -47,6 +47,8 @@
 #include <qmediaservice.h>
 #include <qmetadatareadercontrol.h>
 
+//TESTED_COMPONENT=src/multimedia
+
 QT_USE_NAMESPACE
 class tst_QMediaObject : public QObject
 {
