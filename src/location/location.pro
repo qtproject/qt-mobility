@@ -24,6 +24,7 @@ PUBLIC_HEADERS += \
                     qgeomappolygonobject.h \
                     qgeomappolylineobject.h \
                     qgeomaprectangleobject.h \
+                    qgeomaprouteobject.h \
                     qgeomapwidget.h \
                     qgeonavigationinstruction.h \
                     qgeoplace.h \
@@ -44,7 +45,6 @@ PUBLIC_HEADERS += \
                     qgeoserviceproviderfactory.h \
                     qgeotiledmapdata.h \
                     qgeotiledmappingmanagerengine.h \
-                    qgeotiledmappingmanagerthread.h \
                     qgeotiledmapreply.h \
                     qgeotiledmaprequest.h \
                     qlandmark.h \
@@ -92,6 +92,7 @@ PRIVATE_HEADERS += \
                     qgeomappolygonobject_p.h \
                     qgeomappolylineobject_p.h \
                     qgeomaprectangleobject_p.h \
+                    qgeomaprouteobject_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
                     qgeoplace_p.h \
@@ -107,7 +108,6 @@ PRIVATE_HEADERS += \
                     qgeoserviceprovider_p.h \
                     qgeotiledmapdata_p.h \
                     qgeotiledmappingmanagerengine_p.h \
-                    qgeotiledmappingmanagerthread_p.h \
                     qgeotiledmapreply_p.h \
                     qgeotiledmaprequest_p.h \
                     qlandmark_p.h \
@@ -221,6 +221,7 @@ SOURCES += \
             qgeomappolygonobject.cpp \
             qgeomappolylineobject.cpp \
             qgeomaprectangleobject.cpp \
+            qgeomaprouteobject.cpp \
             qgeomapwidget.cpp \
             qgeonavigationinstruction.cpp \
             qgeoplace.cpp \
@@ -241,7 +242,6 @@ SOURCES += \
             qgeoserviceproviderfactory.cpp \
             qgeotiledmapdata.cpp \
             qgeotiledmappingmanagerengine.cpp \
-            qgeotiledmappingmanagerthread.cpp \
             qgeotiledmapreply.cpp \
             qgeotiledmaprequest.cpp \
             qlandmark.cpp \

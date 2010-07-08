@@ -61,13 +61,19 @@
 #include <QMultiMap>
 #include <QString>
 #include <QPainterPath>
+#include <QPair>
+#include <QList>
+#include <QLineF>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObject;
 class QGeoMapMarkerObject;
 class QGeoMapPolylineObject;
+class QGeoMapRouteObject;
 class QGeoTiledMapData;
+class QGeoTiledMapRequest;
+class QGeoTiledMapReply;
 
 struct QGeoTiledMapObjectInfo
 {
@@ -79,19 +85,10 @@ struct QGeoTiledMapPolylineInfo : public QGeoTiledMapObjectInfo
     QPainterPath path;
 };
 
-class QGeoCompositeZValue
+struct QGeoTiledMapRouteInfo : public QGeoTiledMapObjectInfo
 {
-public:
-    QGeoCompositeZValue();
-    QGeoCompositeZValue(const QGeoCompositeZValue &other);
-    QGeoCompositeZValue& operator=(const QGeoCompositeZValue &other);
-    bool operator==(const QGeoCompositeZValue &other) const;
-    bool operator<(const QGeoCompositeZValue &other) const;
-
-    QList<int> compZValue;
+    QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
 };
-
-uint qHash(const QGeoCompositeZValue &zValue);
 
 class QGeoTiledMapDataPrivate
 {
@@ -107,15 +104,20 @@ public:
     void calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle);
     void calculateMapMarkerInfo(QGeoMapMarkerObject *marker);
     void calculateMapPolylineInfo(QGeoMapPolylineObject *polyline);
+    void calculateMapRouteInfo(QGeoMapRouteObject *route);
+    void addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const;
 
-    bool intersects(QGeoMapObject *mapObject, const QRectF &rect) const;
+    bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
 
-    void paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const;
-    void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const;
-    void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const;
-    void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const;
+    void paintMapObject(QPainter &painter, QGeoMapObject *mapObject);
+    void paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle);
+    void paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker);
+    void paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline);
+    void paintMapRoute(QPainter &painter, QGeoMapRouteObject *route);
 
     void clearObjInfo();
+
+    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
     qulonglong width;
     qulonglong height;
@@ -123,12 +125,39 @@ public:
     QRectF protectRegion;
     QRectF screenRect;
 
-    QHash<QGeoMapObject*, QGeoCompositeZValue> objToCompZValue;
+    QSet<QRectF> requestRects;
+    QSet<QRectF> replyRects;
+
+    QList<QGeoTiledMapRequest> requests;
+    QSet<QGeoTiledMapReply*> replies;
+
     QHash<QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
-    QMultiMap<QGeoCompositeZValue, QGeoMapObject*> zOrderedObj;
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
+};
+
+class QGeoTileIterator
+{
+public:
+    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
+
+    bool hasNext();
+    void next();
+    int row() const;
+    int col() const;
+    int zoomLevel() const;
+    QRectF tileRect() const;
+
+private:
+    bool aHasNext;
+    int aRow;
+    int aCol;
+    QRectF aScreenRect;
+    QSize aTileSize;
+    int aZoomLevel;
+    QPointF currTopLeft;
+    QRectF aTileRect;
 };
 
 QTM_END_NAMESPACE

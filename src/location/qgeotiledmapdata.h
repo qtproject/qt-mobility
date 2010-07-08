@@ -43,6 +43,7 @@
 #define QGEOTILEDMAPDATA_H
 
 #include "qgeomapdata.h"
+#include "qgeotiledmapreply.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,6 +52,8 @@ class QGeoTiledMapDataPrivate;
 class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
 {
     friend class QGeoTiledMapDataPrivate;
+
+    Q_OBJECT
 
 public:
     QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
@@ -64,10 +67,16 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
+    void setMapType(QGeoMapWidget::MapType mapType);
+
     void addMapObject(QGeoMapObject *mapObject);
+    void removeMapObject(QGeoMapObject *mapObject);
 
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
+
+    void startPanning();
+    void stopPanning();
     void pan(int dx, int dy);
 
     QRectF screenRect() const;
@@ -76,7 +85,7 @@ public:
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
-    virtual QPixmap mapObjectsOverlay() const;
+    virtual QPixmap mapObjectsOverlay();
 
     QRectF protectedRegion() const;
     void clearProtectedRegion();
@@ -85,9 +94,20 @@ protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
     virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
 
+    virtual void updateMapImage();
+    void clearRequests();
+
+private slots:
+    void processRequests();
+    void tileFinished();
+    void tileError(QGeoTiledMapReply::Error error, QString errorString);
+
+    void mapObjectRemoved(QGeoMapObject *mapObject);
+
 private:
     QGeoTiledMapDataPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoTiledMapData)
+    friend class QGeoTiledMappingManagerEngine;
 };
 
 QTM_END_NAMESPACE
