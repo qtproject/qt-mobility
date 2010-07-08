@@ -1336,7 +1336,6 @@ void tst_QContactFilter::datastream_data()
     {
         QContactActionFilter filter;
         filter.setActionName("action name");
-        filter.setValue("value");
         filter.setVendor("vendor", 1);
         QTest::newRow("action") << (QContactFilter)filter;
     }

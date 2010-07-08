@@ -93,7 +93,7 @@ public:
     QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
     {
         if (formatVersion == 1) {
-            stream << m_action << m_value << m_vendorName << m_implementationVersion;
+            stream << m_action << m_vendorName << m_implementationVersion;
         }
         return stream;
     }
@@ -101,7 +101,7 @@ public:
     QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
     {
         if (formatVersion == 1) {
-            stream >> m_action >> m_value >> m_vendorName >> m_implementationVersion;
+            stream >> m_action >> m_vendorName >> m_implementationVersion;
         }
         return stream;
     }
