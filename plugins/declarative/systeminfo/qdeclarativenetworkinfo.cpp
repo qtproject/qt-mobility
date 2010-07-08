@@ -89,37 +89,37 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     \qmlsignal NetworkInfo::statusChanged()
 
     This handler is called when network status has changed.
-    Note: To use this notification signal, you must first call \a startStatusChanged.
+    Note: To receive this notification, you must first call \a startStatusChanged.
 */
 /*!
     \qmlsignal NetworkInfo::signalStrengthChanged()
 
     This handler is called when network signal strength has changed.
-    Note: To use this notification signal, you must first call \a startSignalStrengthChanged.
+    Note: To receive this notification, you must first call \a startSignalStrengthChanged.
 */
 /*!
     \qmlsignal NetworkInfo::nameChanged()
 
     This handler is called when network name has changed.
-    Note: To use this notification signal, you must first call \a startNameChanged.
+    Note: To receive this notification, you must first call \a startNameChanged.
 */
 /*!
     \qmlsignal NetworkInfo::modeChanged()
 
     This handler is called when the systems default network mode has changed.
-    Note: To use this notification signal, you must first call \a startModeChanged.
+    Note: To receive this notification, you must first call \a startModeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileCountryCodeChanged()
 
     This handler is called when network MCC has changed.
-    Note: To use this notification signal, you must first call \a startCurrentMobileCountryCodeChanged.
+    Note: To receive this notification, you must first call \a startCurrentMobileCountryCodeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged()
 
     This handler is called when network MNC has changed.
-    Note: To use this notification signal, you must first call \a startCurrentMobileNetworkCodeChanged.
+    Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
 */
 
 /*!
