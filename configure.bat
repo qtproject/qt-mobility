@@ -504,7 +504,7 @@ REM compile tests go here.
 for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
 if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
-goto noTests
+goto windowsTests
 
 :symbianTests
 
@@ -535,6 +535,17 @@ if "%SYSTEMINFO_SELECTED%" == "yes" (
 if "%LOCATION_SELECTED%" == "yes" (
     call :compileTest LBT lbt
 )
+goto noTests
+
+:windowsTests
+
+if "%MULTIMEDIA_SELECTED%" == "yes" (
+    call :compileTest DirectShow directshow
+    call :compileTest WindowsMediaSDK wmsdk
+    call :compileTest WindowMediaPlayer wmp
+    call :compileTest EnhancedVideoRenderer evr
+)
+
 :noTests
 
 echo End of compile tests
