@@ -71,12 +71,5 @@ SOURCES += \
         qx11videosurface.cpp \
         qgstxvimagebuffer.cpp
 }
-
 include(mediaplayer/mediaplayer.pri)
-!maemo* {
-    include(mediacapture/mediacapture.pri)
-} else {
-    INCLUDEPATH += mediacapture/maemo
-    include(mediacapture/maemo/mediacapture_maemo.pri)
-    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
-}
+include(mediacapture/mediacapture.pri)
