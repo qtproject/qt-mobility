@@ -273,6 +273,17 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
             item->saveDetail(&il);
         }
 
+        // Timestamps
+        time_t createdTime = component->getCreatedTime();
+        time_t lastModifiedTime = component->getLastModified();
+
+        if (createdTime || lastModifiedTime) {
+            QOrganizerItemTimestamp timeStamps = item->detail<QOrganizerItemTimestamp>();
+            timeStamps.setCreated(QDateTime::fromTime_t(createdTime));
+            timeStamps.setLastModified(QDateTime::fromTime_t(lastModifiedTime));
+            item->saveDetail(&timeStamps);
+        }
+
         // GUid
         QOrganizerItemGuid ig = item->detail<QOrganizerItemGuid>();
         tempstr = QString::fromStdString(component->getGUid());
