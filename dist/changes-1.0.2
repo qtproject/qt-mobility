@@ -1,0 +1,148 @@
+Qt Mobility 1.0.2 is a patch release. It contains a number of
+improvements and bug fixes since the Qt Mobility 1.0.1 release. For
+more details, please refer to the online documentation included in this
+distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - 
+
+Other changes/optimizations
+------
+
+ - 
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ - 
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - 
+
+QtContacts
+------
+
+ - Compiles against Qt/4.7
+ - Updated various areas of the Contacts API documentation [QTMOBILITY-361, QTMOBILITY-155]
+ - maemo5: fixed bug in thumbnail handling code where the image was cropped and returned with swapped RGB values [QTMOBILITY-307]
+ - maemo5: fixed bug in saving code where some details were duplicated on contact save [QTMOBILITY-310]
+ - maemo5: fixed bug in saving code where some details were updated incorrectly on contact save [QTMOBILITY-310]
+ - maemo5: fixed bug in loading code where certain contact addresses could cause a memory corruption leading to crash [QTMOBILITY-380]
+ - maemo5: fixed bug in schema reporting code; now report and enforce uniqueness constraints correctly [QTMOBILITY-325]
+ - maemo5: fixed bug in QContactOnlineAccount handling, where clients could not set the accountUri of an online account [QTMOBILITY-315]
+ - maemo5: added support for the QContactPresence detail [QTMOBILITY-315]
+ - maemo5: added support for QContactOnlineAccount capability reporting [QTMOBILITY-328]
+
+
+QtLocation
+------
+
+ - Various documentation fixes
+ - Packaging issue fixed for Symbian devices [QTMOBILITY-360]
+ - maemo5: fixed inaccurate reporting of horizontal accuracy [QTMOBILITY-313]
+ - maemo5: network based position sources now work [QTMOBILITY-311], although the preferred positioning methods are not working yet [QTMOBILITY-382]
+ - maemo6: requestUpdate is now working for both position and satellite sources [QTMOBILITY-366, QTMOBILITY-367, QTMOBILITY-368, QTMOBILITY-369]
+
+QtMessaging
+------
+
+ - Ensure id of sent message is available after QMessageService::send() [MOBILITY-1152]
+ - Document windows build process [MOBILITY-536]
+ - symbian: filter out unwanted indicator cleared messages [MOBILITY-1125]
+
+QtMedia/QtMultimediaKit
+------
+
+ -
+
+QtPublishSubscribe
+------
+
+ -
+
+QtSensors
+------
+
+ -
+
+QtServiceFramework
+------
+
+ -
+
+QtSystemInfo
+------
+
+ -
+
+
+Qt Mobility Plugins
+------
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+
+ -
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+Qt Mobility for Symbian
+------
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - tool
