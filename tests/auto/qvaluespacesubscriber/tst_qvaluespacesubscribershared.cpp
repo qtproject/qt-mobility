@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include "tst_qvaluespacesubscribershared.h"
 
 #include <qvaluespacesubscriber.h>
