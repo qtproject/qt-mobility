@@ -135,6 +135,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coo
 {
     Q_UNUSED(bounds)
 
+    if (!supportsGeocoding()) {
+        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/rgc/1.0?referer=localhost";

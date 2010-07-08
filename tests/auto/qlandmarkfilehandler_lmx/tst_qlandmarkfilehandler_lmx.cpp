@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 #include "qlandmarkcategory.h"

@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/systeminfo
+
 #include <QtTest/QtTest>
 #include "qsysteminfo.h"
 #include "../qsysteminfotestcommon.h"
