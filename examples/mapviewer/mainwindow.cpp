@@ -129,6 +129,11 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
         if (zoomLevel() < maximumZoomLevel()) {
             setZoomLevel(zoomLevel() + 1);
         }
+    } else if (event->key() == Qt::Key_T) {
+        if (mapType() == QGeoMapWidget::StreetMap)
+            setMapType(QGeoMapWidget::SatelliteMapDay);
+        else if (mapType() == QGeoMapWidget::SatelliteMapDay)
+            setMapType(QGeoMapWidget::StreetMap);
     }
 
     event->accept();

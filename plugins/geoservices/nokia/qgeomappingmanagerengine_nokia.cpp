@@ -66,6 +66,12 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);
 
+    QList<QGeoMapWidget::MapType> types;
+    types << QGeoMapWidget::StreetMap;
+    types << QGeoMapWidget::SatelliteMapDay;
+    types << QGeoMapWidget::TerrainMap;
+    setSupportedMapTypes(types);
+
     m_nam = new QNetworkAccessManager(this);
     m_cache = new QNetworkDiskCache(this);
 

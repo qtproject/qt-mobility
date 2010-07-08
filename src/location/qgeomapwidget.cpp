@@ -117,6 +117,7 @@ QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent)
         d_ptr(new QGeoMapWidgetPrivate(manager))
 {
     d_ptr->mapData = d_ptr->manager->createMapData(this);
+    setMapType(QGeoMapWidget::StreetMap);
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
