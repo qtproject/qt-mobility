@@ -153,7 +153,7 @@ imagedirs               = images \
 
 outputdir               = ../html
 tagfile                 = ../html/qt.tags
-base                    = file:./doc/html
+base                    = file:../../doc/html
 
 
 
