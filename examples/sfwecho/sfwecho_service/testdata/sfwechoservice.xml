@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service>
+    <name>EchoService</name>
+    <filepath>localsocket:qt_sfw_example_echo</filepath>
+    <description>Demo demonstrating a signal and slot connection</description>
+    <interface>
+        <name>com.nokia.qt.example.sfwecho</name>
+        <version>1.0</version>
+        <description>Unspecified</description>
+        <capabilities></capabilities>
+    </interface>
+</service>
