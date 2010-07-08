@@ -65,12 +65,13 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkManagerEngine;
 
-
 class Q_AUTOTEST_EXPORT QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT
 
 public:
+    enum State{DoneState, ErrorState, CanceledState};
+
     QLandmarkFileHandlerGpx();
     ~QLandmarkFileHandlerGpx();
 
@@ -83,15 +84,19 @@ public:
     QList<QList<QLandmark> > routes() const;
     void setRoutes(const QList<QList<QLandmark> > &routes);
 
-    bool importData(QIODevice *device);
+    State importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
+    void setAsync(bool async);
 
 signals:
     void error(const QString &error);
+    void canceled();
     void finishedImport();
     void finishedExport();
+public slots:
+    void cancel();
 
 private:
     bool readGpx();
@@ -116,6 +121,9 @@ private:
     QXmlStreamWriter *m_writer;
 
     QString m_error;
+    bool m_isAsync;
+public:
+    volatile bool m_isCanceled;
 };
 
 QTM_END_NAMESPACE
