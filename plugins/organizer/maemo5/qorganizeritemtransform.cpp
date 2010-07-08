@@ -48,6 +48,7 @@
 #include <CTodo.h>
 #include <CJournal.h>
 #include <CRecurrence.h>
+#include <CComponentDetails.h>
 
 QTM_USE_NAMESPACE
 
@@ -293,6 +294,17 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
             id.setLocalId(QOrganizerItemLocalId()); // no local id
         }
         item->setId(id);
+
+        // Set comments
+        CComponentDetails *componentDetails = dynamic_cast<CComponentDetails*>(component);
+        if (componentDetails) {
+            string comments = componentDetails->getComments();
+            if (!comments.empty()) {
+                QStringList commentList = QString::fromStdString(comments).split('\n', QString::SkipEmptyParts);
+                foreach(const QString comment, commentList)
+                    item->addComment(comment);
+            }
+        }
     }
 }
 
@@ -452,10 +464,16 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         if (!item->guid().isEmpty())
             retn->setGUid(item->guid().toStdString());
 
-        QStringList comments = item->comments();
-        if (!comments.isEmpty()) {
-            // TODO: Maemo5 has only a single string for comments,
-            // map the comment list to a string some way.
+        // Comments
+        QStringList commentList = item->comments();
+        if (!commentList.isEmpty()) {
+            string comments;
+            foreach(QString comment, commentList)
+                comments += comment.append('\n').toStdString();
+
+            CComponentDetails *componentDetails = dynamic_cast<CComponentDetails*>(retn);
+            if (componentDetails)
+                componentDetails->setComments(comments);
         }
     }
 
