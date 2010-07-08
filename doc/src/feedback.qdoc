@@ -28,15 +28,17 @@
 /*!
 
 \page feedback.html
-\title QtFeedback Module
+\title Feedback
 
 \brief An API enabling a client to control the vibration of the device (when a vibrator is used)
  or the piezo feedback from the screen.
 
 \ingroup mobility
 
-The Feedback API enables a client to control the vibration of the device (when a vibrator is used)
-or the piezo feedback from the screen. This is part of the Qt Mobility Project.
+The Feedback API enables a client to control the vibration of the device
+(when a vibrator is used) or the piezo feedback from the screen.
+
+This is part of the Qt Mobility Project.
 
 \tableofcontents
 

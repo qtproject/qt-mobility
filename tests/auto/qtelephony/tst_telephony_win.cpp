@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/telephony
+
 #include <qmobilityglobal.h>
 #include <qtelephonycalllist_win_p.h>
 #include <qtelephonycallinfo_p.h>

@@ -95,6 +95,7 @@ QTM_USE_NAMESPACE
 #define QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(params)  params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME)); \
                                                           params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))
 
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 

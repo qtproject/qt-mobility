@@ -7,7 +7,7 @@ win32:!win32-g++ {
     unixstyle = true
 }
 
-LINE_SEP=$$escape_expand(\n\t)
+LINE_SEP=$$escape_expand(\\n\\t)
 GENERATOR = $$[QT_INSTALL_BINS]/qhelpgenerator
 QDOC = $$[QT_INSTALL_BINS]/qdoc3
 MOBILITY_DOCUMENTATION = $$QDOC $${QT_MOBILITY_SOURCE_TREE}/doc/src/qtmobility.qdocconf $$LINE_SEP \

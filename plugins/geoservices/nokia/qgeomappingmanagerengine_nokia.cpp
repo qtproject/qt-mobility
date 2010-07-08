@@ -51,20 +51,21 @@
 #include <QDir>
 #include <QDateTime>
 
+#include <QDebug>
+
 #define LARGE_TILE_DIMENSION 256
 #define PI 3.14159265
 #include <math.h>
 
-QGeoMappingManagerThreadNokia::QGeoMappingManagerThreadNokia(QGeoMappingManagerEngineNokia* engine, const QMap<QString, QString> &parameters)
-        : QGeoTiledMappingManagerThread(engine),
-        m_engine(engine),
+QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+        : QGeoTiledMappingManagerEngine(parameters),
         m_parameters(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com") {}
-
-QGeoMappingManagerThreadNokia::~QGeoMappingManagerThreadNokia() {}
-
-void QGeoMappingManagerThreadNokia::initialize()
+        m_host("loc.desktop.maps.svc.ovi.com")
 {
+    setTileSize(QSize(128,128));
+    setMinimumZoomLevel(0.0);
+    setMaximumZoomLevel(18.0);
+
     m_nam = new QNetworkAccessManager(this);
     m_cache = new QNetworkDiskCache(this);
 
@@ -104,7 +105,9 @@ void QGeoMappingManagerThreadNokia::initialize()
     m_nam->setCache(m_cache);
 }
 
-QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMapRequest &request)
+QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
+
+QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
 {
     QString rawRequest = getRequestString(request);
 
@@ -121,7 +124,7 @@ QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMa
     return mapReply;
 }
 
-QString QGeoMappingManagerThreadNokia::getRequestString(const QGeoTiledMapRequest &request) const
+QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapRequest &request) const
 {
     QString requestString = "http://";
     requestString += m_host;
@@ -134,7 +137,7 @@ QString QGeoMappingManagerThreadNokia::getRequestString(const QGeoTiledMapReques
     requestString += '/';
     requestString += QString::number(request.row());
     requestString += '/';
-    requestString += sizeToStr(m_engine->tileSize());
+    requestString += sizeToStr(tileSize());
     requestString += '/';
     requestString += "png";
 
@@ -154,7 +157,7 @@ QString QGeoMappingManagerThreadNokia::getRequestString(const QGeoTiledMapReques
     return requestString;
 }
 
-QString QGeoMappingManagerThreadNokia::sizeToStr(const QSize &size)
+QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
 {
     if (size.height() >= LARGE_TILE_DIMENSION ||
             size.width() >= LARGE_TILE_DIMENSION)
@@ -163,7 +166,7 @@ QString QGeoMappingManagerThreadNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerThreadNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
 {
     if (type == QGeoMapWidget::StreetMap)
         return "normal.day";
@@ -174,25 +177,5 @@ QString QGeoMappingManagerThreadNokia::mapTypeToStr(QGeoMapWidget::MapType type)
         return "terrain.day";
     else
         return "normal.day";
-}
-
-QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : QGeoTiledMappingManagerEngine(parameters),
-        parameters(parameters)
-{
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
-    setTileSize(QSize(128, 128));
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
-}
-
-QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia()
-{
-}
-
-QGeoTiledMappingManagerThread* QGeoMappingManagerEngineNokia::createTileManagerThread()
-{
-    return new QGeoMappingManagerThreadNokia(this, parameters);
 }
 

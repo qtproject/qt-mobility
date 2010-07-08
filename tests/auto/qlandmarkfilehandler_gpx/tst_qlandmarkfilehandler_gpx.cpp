@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include "qgeocoordinate.h"
 
 #include <qtest.h>

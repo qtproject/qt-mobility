@@ -71,6 +71,7 @@ public:
     QGeoTiledMapReply::Error error;
     QString errorString;
     bool isFinished;
+    bool isCached;
 
     QGeoTiledMapRequest request;
     QByteArray mapImageData;

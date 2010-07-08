@@ -52,6 +52,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <qnumeric.h>
+#include <QCoreApplication>
 
 #include <QDebug>
 
@@ -59,8 +60,10 @@ QTM_BEGIN_NAMESPACE
 
 QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx()
     : QObject(),
+    m_reader(0),
     m_writer(0),
-    m_reader(0)
+    m_isAsync(false),
+    m_isCanceled(false)
 {
 }
 
@@ -102,9 +105,10 @@ void QLandmarkFileHandlerGpx::setRoutes(const QList<QList<QLandmark> > &routes)
     m_routes = routes;
 }
 
-bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
+QLandmarkFileHandlerGpx::State QLandmarkFileHandlerGpx::importData(QIODevice *device)
 {
     // rejects GPX 1.0, need add to docs that 1.1 is the only version supported
+    m_isCanceled = false;
 
     if (m_reader)
         delete m_reader;
@@ -112,23 +116,28 @@ bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
     m_reader = new QXmlStreamReader(device);
 
     if (!readGpx()) {
-        m_error = m_reader->errorString();
-        emit error(m_error);
-        return false;
+        if (!m_isCanceled) {
+            m_error = m_reader->errorString();
+            emit error(m_error);
+            return QLandmarkFileHandlerGpx::ErrorState;
+        } else {
+            emit canceled();
+            return QLandmarkFileHandlerGpx::CanceledState;
+        }
     } else {
         if(m_reader->atEnd()) {
             m_reader->readNextStartElement();
             if (!m_reader->name().isEmpty()) {
                 m_error = QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString());
                 emit error(m_error);
-                return false;
+                return QLandmarkFileHandlerGpx::ErrorState;
             }
         }
     }
 
     m_error = "";
     emit finishedImport();
-    return true;
+    return QLandmarkFileHandlerGpx::DoneState;
 }
 
 bool QLandmarkFileHandlerGpx::readGpx()
@@ -192,8 +201,17 @@ bool QLandmarkFileHandlerGpx::readGpx()
     while (m_reader->name() == "wpt") {
         QLandmark landmark;
 
-        if (!readWaypoint(landmark, "wpt"))
+
+        if (!readWaypoint(landmark, "wpt")) {
             return false;
+        }
+
+        if (m_isAsync) {
+            QCoreApplication::processEvents();
+        }
+        if (m_isCanceled == true) {
+            return false;
+        }
 
         m_waypoints.append(landmark);
 
@@ -209,6 +227,12 @@ bool QLandmarkFileHandlerGpx::readGpx()
         if (!readRoute(route))
             return false;
 
+        if (m_isAsync)
+            QCoreApplication::processEvents();
+        if (m_isCanceled == true) {
+            return false;
+        }
+
         m_routes.append(route);
 
         if(!m_reader->readNextStartElement()) {
@@ -222,6 +246,12 @@ bool QLandmarkFileHandlerGpx::readGpx()
 
         if (!readTrack(track))
             return false;
+
+        if (m_isAsync)
+            QCoreApplication::processEvents();
+        if (m_isCanceled == true) {
+            return false;
+        }
 
         m_tracks.append(track);
 
@@ -784,6 +814,16 @@ bool QLandmarkFileHandlerGpx::writeTrack(const QList<QLandmark> &track)
 QString QLandmarkFileHandlerGpx::errorString() const
 {
     return m_error;
+}
+
+void QLandmarkFileHandlerGpx::setAsync(bool async)
+{
+    m_isAsync = async;
+}
+
+void QLandmarkFileHandlerGpx::cancel()
+{
+    m_isCanceled = true;
 }
 
 #include "moc_qlandmarkfilehandler_gpx_p.cpp"
