@@ -56,7 +56,7 @@ to facilitate the future migration of Mobility APIs into Qt. See the
 namespace impacts on application development.
 
 \section1 Overview
-Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
+The Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
 encode/write (\l{QVersitWriter}) Versit \reg documents such as vCards
 (\l http://www.imc.org/pdi/).
 Currently \l{QVersitReader} and \l{QVersitWriter} support
@@ -80,4 +80,9 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitContactImporter}
     \o \l{QVersitContactExporter}
 \endlist
+
+\section1 Supported Features
+Please see the \l{vcardsupport}{Supported vCard Features} document for a list of vCard
+features that the Versit module
+supports.
 */
