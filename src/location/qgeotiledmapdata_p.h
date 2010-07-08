@@ -99,8 +99,6 @@ public:
     ~QGeoTiledMapDataPrivate();
     QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
 
-    void updateScreenRect();
-
     static qulonglong tileKey(int row, int col, int zoomLevel);
 
     void calculateInfo(QGeoMapObject *mapObject);
@@ -121,9 +119,6 @@ public:
     void clearObjInfo();
 
     QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
-
-    QPoint maxZoomCenter;
-    QSize maxZoomSize;
 
     qulonglong width;
     qulonglong height;
