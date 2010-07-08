@@ -824,6 +824,7 @@ void tst_QOrganizerItemManager::addExceptions()
     QCOMPARE(thirdEvent.localId(), (unsigned int)0);
     QCOMPARE(thirdEvent.parentLocalId(), event.localId());
     thirdEvent.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
+    thirdEvent.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
     QVERIFY(cm->saveItem(&thirdEvent));
 
     items =
@@ -833,14 +834,19 @@ void tst_QOrganizerItemManager::addExceptions()
     QOrganizerItem firstItem = items.at(0);
     // check that saving an exception doesn't change other items
     QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting"));
+    // item occurrences which are not exceptions should have zero localId
+    QVERIFY(first.localId() == 0);
+
     secondItem = items.at(1);
     // the exception's changes have been persisted
     QCOMPARE(secondItem.displayLabel(), QLatin1String("seminar"));
-    //QVERIFY(secondItem.localId() != 0);
+    // item occurrences which are exceptions should have non-zero localId
+    QVERIFY(secondItem.localId() != 0);
 
     thirdEvent = static_cast<QOrganizerEventOccurrence>(items.at(2));
     QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(2010, 1, 15), QTime(13, 0, 0)));
-    //QVERIFY(secondEvent.localId() != 0);
+    QCOMPARE(thirdEvent.endDateTime(), QDateTime(QDate(2010, 1, 15), QTime(14, 0, 0)));
+    QVERIFY(thirdEvent.localId() != 0);
 }
 
 void tst_QOrganizerItemManager::addExceptionsWithGuid()
@@ -891,6 +897,7 @@ void tst_QOrganizerItemManager::addExceptionsWithGuid()
     // with the guid set, it should work
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
+    QVERIFY(exception.localId() != 0);
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
     QCOMPARE(savedException.parentLocalId(), christmas.localId());
 
