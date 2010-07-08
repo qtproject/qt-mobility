@@ -64,15 +64,12 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.systeminfo"));
 
-        qmlRegisterType<QSystemInfo>(uri, 1, 0, "SystemInfo");
-        qmlRegisterType<QSystemDisplayInfo>(uri, 1, 0, "SystemDisplayInfo");
-        qmlRegisterType<QSystemDeviceInfo>(uri, 1, 0, "SystemDeviceInfo");
-        qmlRegisterType<QSystemScreenSaver>(uri, 1, 0, "SystemScreenSaver");
-        qmlRegisterType<QSystemStorageInfo>(uri, 1, 0, "SystemStorageInfo");
-
-        qmlRegisterType<QSystemNetworkInfo>(uri, 1, 0, "SystemNetworkInfo");
-        qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 0, "QDeclarativeNetworkInfo");
-
+        qmlRegisterType<QSystemInfo>(uri, 1, 0, "GeneralInfo");
+        qmlRegisterType<QSystemDisplayInfo>(uri, 1, 0, "DisplayInfo");
+        qmlRegisterType<QSystemDeviceInfo>(uri, 1, 0, "DeviceInfo");
+        qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 0, "NetworkInfo");
+        qmlRegisterType<QSystemScreenSaver>(uri, 1, 0, "ScreenSaver");
+        qmlRegisterType<QSystemStorageInfo>(uri, 1, 0, "StorageInfo");
     }
 };
 

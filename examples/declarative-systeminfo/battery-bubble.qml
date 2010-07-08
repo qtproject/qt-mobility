@@ -50,7 +50,7 @@ Rectangle{
 
     property int speed: 1000;
 
-    SystemDeviceInfo {
+    DeviceInfo {
         id: deviceinfo;
         //        onBatteryStatusChanged : doBatteryStatusChange(status);
         onPowerStateChanged : getPowerState(powerState);
@@ -91,19 +91,19 @@ Rectangle{
     function getPowerState(powerState) {
         console.log("get power state: "+powerState)
 
-        if(powerState == SystemDeviceInfo.UnknownPower) {
+        if(powerState == DeviceInfo.UnknownPower) {
             console.log("get power state: "+powerState)
         }
 
-        if(powerState == SystemDeviceInfo.BatteryPower) {
+        if(powerState == DeviceInfo.BatteryPower) {
             console.log("battery power state: "+powerState)
         }
 
-        if(powerState == SystemDeviceInfo.WallPower) {
+        if(powerState == DeviceInfo.WallPower) {
             console.log("wall state: "+powerState)
         }
 
-        if(powerState == SystemDeviceInfo.WallPowerChargingBattery) {
+        if(powerState == DeviceInfo.WallPowerChargingBattery) {
             console.log("charging power state: "+powerState)
         }
 
