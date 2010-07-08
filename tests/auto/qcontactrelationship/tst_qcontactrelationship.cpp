@@ -60,6 +60,7 @@ private slots:
     void operations();
     void emptiness();
     void hash();
+    void datastream();
 };
 
 tst_QContactRelationship::tst_QContactRelationship()
@@ -166,6 +167,30 @@ void tst_QContactRelationship::hash()
     QVERIFY(qHash(r1) == qHash(r2));
     QVERIFY(qHash(r1) != qHash(r3));
 
+}
+
+void tst_QContactRelationship::datastream()
+{
+    QByteArray buffer;
+    QDataStream stream1(&buffer, QIODevice::WriteOnly);
+    QContactRelationship relationshipIn;
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    relationshipIn.setFirst(id1);
+    QContactId id2;
+    id2.setManagerUri("b");
+    id2.setLocalId(2);
+    relationshipIn.setSecond(id2);
+    relationshipIn.setRelationshipType(QContactRelationship::HasMember);
+    stream1 << relationshipIn;
+
+    QVERIFY(buffer.size() > 0);
+
+    QDataStream stream2(buffer);
+    QContactRelationship relationshipOut;
+    stream2 >> relationshipOut;
+    QCOMPARE(relationshipOut, relationshipIn);
 }
 
 QTEST_MAIN(tst_QContactRelationship)

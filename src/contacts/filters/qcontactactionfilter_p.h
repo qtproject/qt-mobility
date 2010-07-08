@@ -78,7 +78,7 @@ public:
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactActionFilterPrivate *od = static_cast<const QContactActionFilterPrivate*>(other);
         if (m_action != od->m_action)
@@ -89,6 +89,23 @@ public:
             return false;
         return true;
     }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_action << m_value << m_vendorName << m_implementationVersion;
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            stream >> m_action >> m_value >> m_vendorName >> m_implementationVersion;
+        }
+        return stream;
+    }
+
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactActionFilter, QContactFilter::ActionFilter)
 

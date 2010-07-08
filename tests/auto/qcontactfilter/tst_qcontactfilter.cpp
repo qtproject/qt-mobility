@@ -78,6 +78,8 @@ private slots:
     void testFilter();
     void testFilter_data();
 
+    void datastream();
+    void datastream_data();
     void traits();
 
     void sortObject(); // should perhaps be in a different test :)
@@ -1303,6 +1305,87 @@ void tst_QContactFilter::testFilter_data()
                 << contact
                 << QContactEmailAddress::match("bar")
                 << false;
+    }
+}
+
+void tst_QContactFilter::datastream()
+{
+    QFETCH(QContactFilter, filterIn);
+
+    QByteArray buffer;
+    QDataStream stream1(&buffer, QIODevice::WriteOnly);
+    stream1 << filterIn;
+
+    QVERIFY(buffer.size() > 0);
+
+    QDataStream stream2(buffer);
+    QContactFilter filterOut;
+    stream2 >> filterOut;
+    QCOMPARE(filterOut, filterIn);
+}
+
+void tst_QContactFilter::datastream_data()
+{
+    QTest::addColumn<QContactFilter>("filterIn");
+
+    {
+        QContactFilter filter;
+        QTest::newRow("default") << filter;
+    }
+
+    {
+        QContactActionFilter filter;
+        filter.setActionName("action name");
+        filter.setValue("value");
+        filter.setVendor("vendor", 1);
+        QTest::newRow("action") << (QContactFilter)filter;
+    }
+
+    {
+        QContactChangeLogFilter filter;
+        filter.setEventType(QContactChangeLogFilter::EventAdded);
+        filter.setSince(QDateTime(QDate(2010, 6, 1), QTime(1, 2, 3)));
+        QTest::newRow("changelog") << (QContactFilter)filter;
+    }
+
+    {
+        QContactDetailFilter filter;
+        filter.setDetailDefinitionName("detail", "field");
+        filter.setMatchFlags(QContactFilter::MatchEndsWith);
+        filter.setValue("ski");
+        QTest::newRow("detail") << (QContactFilter)filter;
+    }
+
+    {
+        QContactIntersectionFilter filter;
+        QTest::newRow("intersection") << (QContactFilter)filter;
+    }
+
+    {
+        QContactInvalidFilter filter;
+        QTest::newRow("invalid") << (QContactFilter)filter;
+    }
+
+    {
+        QContactLocalIdFilter filter;
+        filter.setIds(QList<QContactLocalId>() << 1 << 2 << 3);
+        QTest::newRow("localid") << (QContactFilter)filter;
+    }
+
+    {
+        QContactRelationshipFilter filter;
+        filter.setRelationshipType("member");
+        QContactId id;
+        id.setManagerUri("a");
+        id.setLocalId(1);
+        filter.setRelatedContactId(id);
+        filter.setRelatedContactRole(QContactRelationship::First);
+        QTest::newRow("relationship") << (QContactFilter)filter;
+    }
+
+    {
+        QContactUnionFilter filter;
+        QTest::newRow("union") << (QContactFilter)filter;
     }
 }
 
