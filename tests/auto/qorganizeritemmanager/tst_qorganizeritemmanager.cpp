@@ -835,7 +835,7 @@ void tst_QOrganizerItemManager::addExceptions()
     // check that saving an exception doesn't change other items
     QCOMPARE(firstItem.displayLabel(), QLatin1String("meeting"));
     // item occurrences which are not exceptions should have zero localId
-    QVERIFY(first.localId() == 0);
+    QVERIFY(firstItem.localId() == 0);
 
     secondItem = items.at(1);
     // the exception's changes have been persisted
