@@ -79,6 +79,7 @@ private slots:
 
     void tst_currentPowerState();
 
+    void tst_currentBluetoothPowerState();
 
     //    void tst_powerState_data();
 //    void tst_powerState();
@@ -228,7 +229,12 @@ void tst_QSystemDeviceInfo::tst_currentPowerState()
              || state == QSystemDeviceInfo::WallPowerChargingBattery);
 }
 
-
+void tst_QSystemDeviceInfo::tst_currentBluetoothPowerState()
+{
+    QSystemDeviceInfo di;
+    bool state = di.currentPowerState();
+    QVERIFY(state || !state);
+}
 
 QTEST_MAIN(tst_QSystemDeviceInfo)
 #include "tst_qsystemdeviceinfo.moc"

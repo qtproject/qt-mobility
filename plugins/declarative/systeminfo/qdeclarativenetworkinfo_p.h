@@ -49,7 +49,7 @@ QTM_USE_NAMESPACE
 class QDeclarativeNetworkInfo : public QSystemNetworkInfo
 {
     Q_OBJECT
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode WRITE setMode NOTIFY networkModeChanged)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode useMode  WRITE useMode )
     Q_PROPERTY(QString networkStatus READ networkStatus NOTIFY statusChanged)
     Q_PROPERTY(QString networkName READ networkName NOTIFY nameChanged)
     Q_PROPERTY(int networkSignalStrength READ networkSignalStrength NOTIFY signalStrengthChanged)
@@ -60,12 +60,11 @@ public:
     virtual ~QDeclarativeNetworkInfo();
     int networkSignalStrength();
     QString networkName();
-
-signals:
+    QString macAddress();
+    QString networkStatus();
+    void useMode(QSystemNetworkInfo::NetworkMode curmode);
 
 public slots:
-    void setMode(QSystemNetworkInfo::NetworkMode curmode);
-    QString macAddress();
 
     QNetworkInterface interfaceForMode();
     void startStatusChanged();
@@ -75,7 +74,6 @@ public slots:
     void startCurrentMobileCountryCodeChanged();
     void startCurrentMobileNetworkCodeChanged();
     QList<QSystemNetworkInfo::NetworkMode> availableModes();
-    QString networkStatus();
 
 Q_SIGNALS:
    void statusChanged(const QString &newStatus);
@@ -87,7 +85,6 @@ Q_SIGNALS:
 
 private:
     QSystemNetworkInfo::NetworkMode m_mode;
-    QSystemNetworkInfo *d;
     QString statusToString(QSystemNetworkInfo::NetworkStatus);
     QString modeToString(QSystemNetworkInfo::NetworkMode);
 
@@ -96,10 +93,6 @@ private slots:
     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-
-protected:
-    virtual void connectNotify(const char *signal);
-    virtual void disconnectNotify(const char *signal);
 };
 
 
