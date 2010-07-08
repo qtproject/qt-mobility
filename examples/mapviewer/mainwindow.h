@@ -43,9 +43,10 @@
 #define MAINWINDOW_H
 
 #include <qgeomappingmanager.h>
+#include <qgeoroutingmanager.h>
 #include <qgeomapwidget.h>
 #include <qgeoserviceprovider.h>
-
+#include <qgeomapmarkerobject.h>
 #include <QMainWindow>
 #include <QResizeEvent>
 #include <QGraphicsView>
@@ -109,16 +110,21 @@ private slots:
     void drawMarker(bool checked);
     void drawPolyline(bool checked);
     void drawPolygon(bool checked);
+    void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
+    void routeFinished();
+    void removeMarkers();
 
 private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
+    QGeoRoutingManager *m_routingManager;
     MapWidget *m_mapWidget;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
     QPoint lastClicked;
     QList<QPoint> markers;
+    QList<QGeoMapMarkerObject*> markerObjects;
 
     QGraphicsView* qgv;
 

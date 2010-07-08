@@ -352,6 +352,10 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
     local file system locations but a network URL was passed. If the service
     does not support media recording this setting the output location will
     always fail.
+
+    The \a location can be relative or empty;
+    in this case the recorder uses the system specific place and file naming scheme.
+    After recording has stated, QMediaRecorder::outputLocation() returns the actual output location.
 */
 
 /*!

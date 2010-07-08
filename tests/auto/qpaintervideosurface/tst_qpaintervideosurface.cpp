@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
 
 #include <qpaintervideosurface_p.h>
 #include <QtTest/QtTest>

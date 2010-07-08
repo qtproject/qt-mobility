@@ -12,6 +12,7 @@ include (../../../../common.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
-testFiles.sources = testfiles\*
+testFiles.sources = testfiles/*
 testFiles.path = /Data/testfiles
 DEPLOYMENT += testFiles
+

@@ -40,9 +40,14 @@
     \page index.html
     \startpage index.html  Qt Reference Documentation
 
-    \title Qt Mobility Project APIs Overview
+    \title Qt Mobility Project APIs Overview (Technology Preview)
 
     \brief An overview of the Qt Mobility Project APIs.
+
+    \tableofcontents
+
+    This is a \bold {Technology Preview} and includes new APIs that are
+    included in order to encourage feedback from the community.
 
     Qt Mobility Project delivers a set of new APIs to Qt with features
     that are well known from the mobile device world, in particular phones.
@@ -52,13 +57,9 @@
     mobile experience, because it improves the use of these technologies,
     but has applicability beyond the mobile device arena.
 
-    \tableofcontents
-
-
-
     \section1 Overview
 
-    \section2 Introducing the New Qt APIs
+    \section2 Introducing the Qt Mobility APIs
 
     Qt Mobility covers a wide range of features and technologies so it best
     to regard it not as a single API but as a collection of APIs or frameworks.
@@ -118,7 +119,36 @@
 
     For a overview of Platform Compatibility see \l {Platform Compatibility}.
     
-    \section1 The New Qt APIs
+    \section1 The Qt Mobility APIs
+    
+    \section2 Service Framework
+
+    A platform independent method of finding Services. A 'service' is an
+    independent component that allows a client to perform a well-defined 
+    operation.
+
+    The services are implemented as plugins installed on the device and can
+    look for supporting external services running on a central server. E.g.
+    weather, local tourist attractions etc. Default applications can use
+    the layer to locate servers.
+
+    Since this is an abstraction layer then the app does not need to be
+    concerned with the underlying protocol, where the servers are, the
+    hardware peculiarities with networking and other low level details.
+    
+    For more details see the \l {Qt Service Framework} {Service Framework API overview}.
+
+    \section2 Messaging
+
+    A common interface for handling SMS, MMS, MIME Email and TNEF Email 
+    messages. Enables access to messaging services to search and sort 
+    messages, notify of changes to messages stored, send messages 
+    with or without attachments, retrieve message data, and launch the 
+    preferred messaging client to either display an existing message, 
+    or compose a message.
+
+    For more details see the \l {Messaging} {Messaging API overview}.
+
     \section2 Bearer Management
 
     Although not a network manager, this component manages the connectivity
@@ -157,23 +187,6 @@
     
     For more details, see the \l {Bearer management} {Bearer Management API overview}.
 
-    \section2 Contacts
-
-    The structure and retrieval of contact data from local or remote backends.
-    It includes the ability to create, edit, list, delete and lookup contact
-    information whether it is stored locally or remotely.
-
-    For more details, see the \l {Contacts} {Contacts API overview}.
-
-    \section2 Organizer
-
-    The structure and retrieval of calendar, scheduling and personal data
-    from local or remote backends.   It includes the ability to create,
-    edit, list, delete and lookup organizer information whether it is stored
-    locally or remotely.
-
-    For more details, see the \l {Organizer} {Organizer API overview}.
-
     \section2 Publish and Subscribe
 
     Will enable context sensitive access to information in future releases.
@@ -189,6 +202,14 @@
     
     For more details, see the \l {Publish and Subscribe} {Publish and Subscribe API overview}.
 
+    \section2 Contacts
+
+    The structure and retrieval of contact data from local or remote backends.
+    It includes the ability to create, edit, list, delete and lookup contact
+    information whether it is stored locally or remotely.
+
+    For more details, see the \l {Contacts} {Contacts API overview}.
+
     \section2 Location
 
     The C++ API is one layer of this feature. This API provides an easy to
@@ -199,17 +220,6 @@
     
     For more details, see the \l {Location} {Location API overview}.
 
-    \section2 Messaging
-
-    A common interface for handling SMS, MMS, MIME Email and TNEF Email 
-    messages. Enables access to messaging services to search and sort 
-    messages, notify of changes to messages stored, send messages 
-    with or without attachments, retrieve message data, and launch the 
-    preferred messaging client to either display an existing message, 
-    or compose a message.
-
-    For more details see the \l {Messaging} {Messaging API overview}.
-
     \section2 Multimedia
 
     An API to play audio and video of various formats. Record audio. The playing
@@ -218,31 +228,6 @@
 
     For more details see the \l {Multimedia} {Multimedia API overview}.
     
-    \section2 Sensors
-
-    An API for accessing hardware sensors. This covers both high-level
-    sensors such as screen orientation (portrait, landscape) and low-level,
-    real-time sensors such as accelerometer data.
-
-    For more details see the \l{Sensors API}{Sensors API overview}.
-
-    \section2 Service Framework
-
-    A platform independent method of finding Services. A 'service' is an
-    independent component that allows a client to perform a well-defined 
-    operation.
-
-    The services are implemented as plugins installed on the device and can
-    look for supporting external services running on a central server. E.g.
-    weather, local tourist attractions etc. Default applications can use
-    the layer to locate servers.
-
-    Since this is an abstraction layer then the app does not need to be
-    concerned with the underlying protocol, where the servers are, the
-    hardware peculiarities with networking and other low level details.
-    
-    For more details see the \l {Qt Service Framework} {Service Framework API overview}.
-
     \section2 System Information
 
     An API to discover system related information and capabilities. Information
@@ -252,17 +237,70 @@
     
     For more details see the \l {System Information} {System Information API overview}.
 
-    \section2 Versit
+    \section2 Sensors
+
+    An API for accessing hardware sensors. This covers both high-level
+    sensors such as screen orientation (portrait, landscape) and low-level,
+    real-time sensors such as accelerometer data.
+
+    For more details see the \l{Sensors API}{Sensors API overview}.
+
+    \section2 Versit (vCard)
 
     An API to manage Versit \reg documents, such as vCards.
 
     For more details see the \l{Versit API}{Versit API overview}.
 
+    \section1 Preview APIs
+
+    \section2 Organizer
+
+    The structure and retrieval of calendar, scheduling and personal data
+    from local or remote backends.   It includes the ability to create,
+    edit, list, delete and lookup organizer information whether it is stored
+    locally or remotely.
+
+    For more details, see the \l {Organizer} {Organizer API overview}.
+
+    \section2 Versit (Organizer)
+
+    Similar to Organizer above, this is a cross-platform solution.
+
+    \section2 Camera
+
+    The Camera API provides control of system camera devices. Providing
+    support for still or video image capture with sound support.
+
+    For more details, see the \l {Camera}{Camera Overview}.
+    
+    \section2 Landmarks
+
+    The Landmarks portion of the Location API facilitates the creation,
+    retrieval, updating and deletion of landmarks from arbitrary data stores.
+
+    For more details, see the \l {Landmark Examples}{Landmark examples}.
+
+    \section2 Document Gallery
+
+    The Document Gallery provides a meta-data focused API for managing
+    collections of documents and media.
+
+    For more details, see the \l {Document Gallery}{Document Gallery overview}.
+    
     \section2 Feedback
 
-    An API to manage tactile feedback and device vibration programmatically.
+    The Feedback API enables a client to control the vibration of the device
+    or the piezo feedback from the screen.
 
-    For more details see the \l{Feedback}{Feedback API overview}.
+    For more details, see the \l {Feedback}{Feedback API Overview}.
+
+    \section2 Telephony
+
+    The Qt Telephony API enables access to the telephony event services to 
+    provide telephony call notification that other applications can use to 
+    be notified.
+
+    For more details, see the \l {Telephony API}{Telephony Overview}.
     
     \section1 The QtMobility Namespace 
 
@@ -464,7 +502,7 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Versit(iCal)</td>
+    <td>Versit(Organizer)</td>
     <td>TP</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -555,7 +593,7 @@
     <td bgcolor="yellow"></td>
     </tr>
     <tr>
-    <td>Vibra</td>
+    <td>Feedback</td>
     <td>TP</td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>

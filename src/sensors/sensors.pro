@@ -11,7 +11,7 @@ symbian {
     ### Sensors
     # Main library
     SENSORS_DEPLOYMENT.sources = QtSensors.dll
-    SENSORS_DEPLOYMENT.path = \sys\bin
+    SENSORS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += SENSORS_DEPLOYMENT
     LIBS += -lefsrv
 }

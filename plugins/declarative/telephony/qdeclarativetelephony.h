@@ -53,27 +53,29 @@ QTM_USE_NAMESPACE
 class QTelephonyCallInfoWrapper : public QObject {
     Q_OBJECT
     Q_ENUMS(CallType CallStatus)
-    Q_PROPERTY(QString callIdentifier READ callIdentifier)
-    Q_PROPERTY(QList<quint32> contacts READ contacts)
+    Q_PROPERTY(QString remotePartyIdentifier READ remotePartyIdentifier)
     Q_PROPERTY(CallType type READ type)
     Q_PROPERTY(CallStatus status READ status)
 
 public:
+
     enum CallType {
-        Unknown = QTelephonyCallInfo::Unknown,
         Any = QTelephonyCallInfo::Any,
-        Voip = QTelephonyCallInfo::Voip,
+        Text = QTelephonyCallInfo::Text,
+        Data = QTelephonyCallInfo::Data,
+        Video = QTelephonyCallInfo::Video,
         Voice = QTelephonyCallInfo::Voice,
-        Video = QTelephonyCallInfo::Video
+        Other = QTelephonyCallInfo::Other,
     };
 
     enum CallStatus {
-        Undefined = QTelephonyCallInfo::Undefined,
-        NoCall = QTelephonyCallInfo::NoCall,
-        Ringing = QTelephonyCallInfo::Ringing,
-        InProgress = QTelephonyCallInfo::InProgress,
-        OnHold = QTelephonyCallInfo::OnHold,
-        Dropped = QTelephonyCallInfo::Dropped
+        Idle = QTelephonyCallInfo::Idle,
+        Dialing = QTelephonyCallInfo::Dialing,
+        Alerting = QTelephonyCallInfo::Alerting,
+        Connected = QTelephonyCallInfo::Connected,
+        Disconnecting = QTelephonyCallInfo::Disconnecting,
+        Incomming = QTelephonyCallInfo::Incomming,
+        OnHold = QTelephonyCallInfo::OnHold
     };
 
     QTelephonyCallInfoWrapper();
@@ -83,8 +85,7 @@ public:
     QTelephonyCallInfoWrapper& operator=(const QTelephonyCallInfoWrapper& other);
 
 
-    QString callIdentifier() const;
-    QList<quint32> contacts() const;
+    QString remotePartyIdentifier() const;
     CallType type() const;
     CallStatus status() const;
     QString subTyp() const;

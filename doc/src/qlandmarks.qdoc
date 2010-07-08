@@ -44,13 +44,28 @@
 
 \title Landmark Examples
 
+\brief Landmarks allows management of landmark data, these examples show
+how it is done.
+
 \ingroup navigation
+\ingroup mobility
+
+\note This API and documentation is a \bold {Technology Preview} and is still
+subject to change.
 
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 The following page demonstrates how to perform these operations.
 
 \tableofcontents
+
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 
 \section1 Creating categories and landmarks
 \section2 Synchronous

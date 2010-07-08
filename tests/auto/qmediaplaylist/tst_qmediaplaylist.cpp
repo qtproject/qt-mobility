@@ -49,6 +49,8 @@
 
 #include "qm3uhandler.h"
 
+//TESTED_COMPONENT=src/multimedia
+
 QT_USE_NAMESPACE
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
 {

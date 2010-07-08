@@ -45,6 +45,8 @@
 
 \title Telephony API
 
+\ingroup telephony
+
 \brief The Telephony API enables access to the telephony event services.
 
 The Qt Telephony API enables access to the telephony event services to 
@@ -55,6 +57,15 @@ existing calls.
 
 \tableofcontents
 
+\note This API and documentation is a \bold {Technology Preview} and is still
+subject to change.
+
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 

@@ -57,8 +57,10 @@ class QGeoMappingManagerEngine;
 class QGeoMapObject;
 class QGeoMapDataPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData
+class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
+    Q_OBJECT
+
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapData();
@@ -69,13 +71,15 @@ public:
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
 
+    virtual void startPanning();
+    virtual void stopPanning();
     virtual void pan(int dx, int dy);
 
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
+    virtual void setMapType(QGeoMapWidget::MapType mapType);
+    virtual QGeoMapWidget::MapType mapType() const;
 
     virtual void addMapObject(QGeoMapObject *mapObject);
     virtual void removeMapObject(QGeoMapObject *mapObject);
@@ -83,7 +87,7 @@ public:
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-    virtual QPixmap mapObjectsOverlay() const = 0;
+    virtual QPixmap mapObjectsOverlay() = 0;
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
@@ -92,7 +96,8 @@ public:
     bool imageChangesTriggerUpdates() const;
 
     void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage() const;
+    QPixmap& mapImage();
+    void imageChanged(const QRectF &updateRect = QRectF());
 
 protected:
     QGeoMapWidget* widget() const;

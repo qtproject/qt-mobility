@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/organizer
+
 #include <QtTest/QtTest>
 
 #include "qtorganizer.h"
