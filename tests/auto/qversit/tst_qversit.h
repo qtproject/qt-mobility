@@ -55,17 +55,4 @@ class QVersitReader;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class tst_QVersit : public QObject
-{
-    Q_OBJECT
-
-private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
-    void testExportImport();
-    void testExportImport_data();
-
-private:
-};
-
 #endif // tst_QVERSIT_H

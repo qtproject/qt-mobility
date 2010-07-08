@@ -65,9 +65,6 @@ public:
     AudioRecorder(QWidget *parent = 0);
     ~AudioRecorder();
 
-private:
-    QUrl recordPathAudio(QUrl filePath);
-
 private slots:
     void setOutputLocation();
     void togglePause();
@@ -85,7 +82,6 @@ private:
 
     QAudioEncoderSettings  audioSettings;
 
-    QUrl destination;
 };
 
 #endif

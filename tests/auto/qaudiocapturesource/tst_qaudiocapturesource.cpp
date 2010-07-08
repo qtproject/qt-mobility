@@ -49,6 +49,8 @@
 #include <qmediarecordercontrol.h>
 #include <qaudioendpointselector.h>
 
+//TESTED_COMPONENT=src/multimedia
+
 QT_USE_NAMESPACE
 class MockAudioEncoderControl : public QAudioEncoderControl
 {

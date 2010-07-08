@@ -28,7 +28,7 @@ qhp.projects            = QtMobility
 qhp.Qt.extraFiles          = index.html \
 			     images/bg_l.png \
 			     images/bg_l_blank.png \
-                             images/bg_r.png \
+                 images/bg_r.png \
 			     images/box_bg.png \
 			     images/breadcrumb.png \
 			     images/bullet_gt.png \
@@ -90,6 +90,7 @@ headerdirs = ../../src/bearer \
              ../../src/publishsubscribe \
              ../../src/systeminfo \
              ../../src/contacts \
+             ../../src/contacts/details \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
@@ -109,6 +110,7 @@ sourcedirs = ../../src/bearer \
              ../../src/publishsubscribe \
              ../../src/systeminfo \
              ../../src/contacts \
+             ../../src/contacts/details \
              ../../src/multimedia \
              ../../plugins/declarative/multimedia \
              ../../src/messaging \
@@ -141,7 +143,7 @@ imagedirs               = images \
 
 outputdir               = $QT_MOBILITY_SOURCE_TREE/doc/html
 tagfile                 = $QT_MOBILITY_SOURCE_TREE/doc/html/qt.tags
-base                    = file:$MOBILITY_SRC_DIR/doc/html
+base                    = file:$QT_MOBILITY_SOURCE_TREE/doc/html
 
 
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \

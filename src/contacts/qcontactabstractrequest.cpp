@@ -238,16 +238,6 @@ QContactManager::Error QContactAbstractRequest::error() const
 }
 
 /*!
-  \deprecated
-  Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
-  This function is deprecated and will be removed after the transition period has elapsed.  Use errorMap() instead.
- */
-QList<QContactManager::Error> QContactAbstractRequest::errors() const
-{
-    return QList<QContactManager::Error>();
-}
-
-/*!
   Returns the type of this asynchronous request
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const

@@ -58,7 +58,7 @@ QTM_USE_NAMESPACE
                                          fqdfr2.start(); \
                                          fqdfr3.start();
 
-
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 

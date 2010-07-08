@@ -52,8 +52,8 @@
     mobile experience, because it improves the use of these technologies,
     but has applicability beyond the mobile device arena.
 
-    \tableofcontents
 
+    \tableofcontents
 
 
     \section1 Overview
@@ -165,6 +165,15 @@
 
     For more details, see the \l {Contacts} {Contacts API overview}.
 
+    \section2 Organizer
+
+    The structure and retrieval of calendar, scheduling and personal data
+    from local or remote backends.   It includes the ability to create,
+    edit, list, delete and lookup organizer information whether it is stored
+    locally or remotely.
+
+    For more details, see the \l {Organizer} {Organizer API overview}.
+
     \section2 Publish and Subscribe
 
     Will enable context sensitive access to information in future releases.
@@ -248,6 +257,12 @@
     An API to manage Versit \reg documents, such as vCards.
 
     For more details see the \l{Versit API}{Versit API overview}.
+
+    \section2 Feedback
+
+    An API to manage tactile feedback and device vibration programmatically.
+
+    For more details see the \l{Feedback}{Feedback API overview}.
     
     \section1 The QtMobility Namespace 
 

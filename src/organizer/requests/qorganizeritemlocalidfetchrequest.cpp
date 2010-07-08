@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemLocalIdFetchRequest
   \brief The QOrganizerItemLocalIdFetchRequest class allows a client to asynchronously
     request a list of organizeritem ids from a organizeritems store manager.
+  \inmodule QtOrganizer
 
 
   For a QOrganizerItemLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant

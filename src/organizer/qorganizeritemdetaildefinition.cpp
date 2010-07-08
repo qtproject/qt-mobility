@@ -46,6 +46,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemDetailDefinition
+  \brief Provides the specification for fields in a detail
+  \inmodule QtOrganizer
 
   The QOrganizerItemDetailDefinition class provides the specification for
   a detail that can be included in any particular QOrganizerItem.

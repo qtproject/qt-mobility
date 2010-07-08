@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QFeedbackEffect
     \brief The QFeedbackEffect class is the abstract base class for the feedback framework.
+    \inmodule QtFeedback
 
     It has the concepts of duration and state. 
 */
