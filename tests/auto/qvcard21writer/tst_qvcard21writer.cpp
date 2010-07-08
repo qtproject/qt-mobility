@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qvcard21writer.h"
 #ifdef QT_BUILD_INTERNAL
 #include "qvcard21writer_p.h"

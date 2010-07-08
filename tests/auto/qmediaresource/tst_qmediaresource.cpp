@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <QtTest/QtTest>
 
 #include "qmediaresource.h"

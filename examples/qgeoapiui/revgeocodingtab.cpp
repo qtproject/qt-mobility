@@ -61,8 +61,9 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     m_locLat = new QLineEdit("52.51");
     m_locLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    QPushButton *requestBtn = new QPushButton(tr("Reverse Geocoding"));
+    requestBtn = new QPushButton(tr("Reverse Geocoding"));
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    requestBtn->setDisabled(true);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
@@ -94,6 +95,7 @@ ReverseGeocodingTab::~ReverseGeocodingTab()
 
 void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
 {
+    m_resultTree->clear();
     m_searchManager = searchManager;
     if (m_searchManager) {
         QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
@@ -101,7 +103,12 @@ void ReverseGeocodingTab::initialize(QGeoSearchManager *searchManager)
         QObject::connect(m_searchManager,
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+        if(m_searchManager->supportsGeocoding())
+            requestBtn->setDisabled(false);
     }
+    else
+        requestBtn->setDisabled(true);
+
 }
 
 void ReverseGeocodingTab::on_btnRequest_clicked()

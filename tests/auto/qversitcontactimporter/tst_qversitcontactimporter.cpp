@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "qversitdefs_p.h"
 #include "tst_qversitcontactimporter.h"
 #include "qversitcontactimporter.h"

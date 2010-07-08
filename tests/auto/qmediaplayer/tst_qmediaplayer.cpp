@@ -49,6 +49,7 @@
 #include <qmediaservice.h>
 #include <qmediastreamscontrol.h>
 
+//TESTED_COMPONENT=src/multimedia
 
 QT_USE_NAMESPACE
 class AutoConnection
