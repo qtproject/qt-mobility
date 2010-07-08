@@ -212,8 +212,6 @@ qint64 QT7PlayerSession::position() const
     if (!m_QTMovie || m_state == QMediaPlayer::PausedState)
         return m_currentTime;
 
-    AutoReleasePool pool;
-
     QTTime qtTime = [(QTMovie*)m_QTMovie currentTime];
     quint64 t = static_cast<quint64>(float(qtTime.timeValue) / float(qtTime.timeScale) * 1000.0f);
     m_currentTime = t;
@@ -225,8 +223,6 @@ qint64 QT7PlayerSession::duration() const
 {
     if (!m_QTMovie)
         return 0;
-
-    AutoReleasePool pool;
 
     QTTime qtTime = [(QTMovie*)m_QTMovie duration];
 
@@ -275,9 +271,10 @@ void QT7PlayerSession::setPlaybackRate(qreal rate)
 
     m_rate = rate;
 
-    if (m_QTMovie && m_state == QMediaPlayer::PlayingState) {        
+    if (m_QTMovie != 0 && m_state == QMediaPlayer::PlayingState) {
+        AutoReleasePool pool;
         float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
-        [(QTMovie*)m_QTMovie setRate:preferredRate*m_rate];
+        [(QTMovie*)m_QTMovie setRate:preferredRate * m_rate];
     }
 }
 
@@ -285,8 +282,6 @@ void QT7PlayerSession::setPosition(qint64 pos)
 {
     if ( !isSeekable() || pos == position())
         return;
-
-    AutoReleasePool pool;
 
     pos = qMin(pos, duration());
 
@@ -297,6 +292,7 @@ void QT7PlayerSession::setPosition(qint64 pos)
 
 void QT7PlayerSession::play()
 {
+    AutoReleasePool pool;
     if (m_videoOutput)
         m_videoOutput->setMovie(m_QTMovie);
 
@@ -492,6 +488,7 @@ void QT7PlayerSession::processLoadStateChange()
 
     signed long state = [[(QTMovie*)m_QTMovie attributeForKey:QTMovieLoadStateAttribute]
                          longValue];
+    AutoReleasePool pool;
 #ifdef QT_DEBUG_QT7
     qDebug() << "Moview load state changed:" << state;
 #endif
@@ -562,6 +559,7 @@ void QT7PlayerSession::processVolumeChange()
 
 void QT7PlayerSession::processNaturalSizeChange()
 {
+    AutoReleasePool pool;
     NSSize size = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
 #ifdef QT_DEBUG_QT7
     qDebug() << "Native size changed:" << QSize(size.width, size.height);
