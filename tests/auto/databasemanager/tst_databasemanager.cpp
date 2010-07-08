@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/serviceframework
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #define private public
