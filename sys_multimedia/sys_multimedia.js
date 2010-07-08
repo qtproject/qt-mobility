@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
 
 testcase = {
 
   preconditions: function()
   {
 
-      prompt(twiki('*Preconditoins to the Multimedia Player tests :*
+      prompt(twiki('*Preconditions to the Multimedia Player tests :*
 
    1. Have 2 test .mp4 file available on device (Such as the file available from here: http://camendesign.com/code/video_for_everybody/test.html) 
    1. Have 2 test .mp3 and .vaw file available on device 
