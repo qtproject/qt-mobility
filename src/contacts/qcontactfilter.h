@@ -59,6 +59,14 @@ QTM_BEGIN_NAMESPACE
     friend class Class##Private;
 
 class QContactFilterPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QContactFilter;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
+#endif
+
 class Q_CONTACTS_EXPORT QContactFilter
 {
 public:
@@ -114,10 +122,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFilter::MatchFlags);
 
 const Q_CONTACTS_EXPORT QContactFilter operator&(const QContactFilter& left, const QContactFilter& right);
 const Q_CONTACTS_EXPORT QContactFilter operator|(const QContactFilter& left, const QContactFilter& right);
-#ifndef QT_NO_DATASTREAM
-Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactFilter& filter);
-Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactFilter& filter);
-#endif
 
 QTM_END_NAMESPACE
 

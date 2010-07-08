@@ -55,6 +55,14 @@ class QDataStream;
 QTM_BEGIN_NAMESPACE
 
 class QContactDetailPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QContactDetail;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetail& detail);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
+#endif
+
 class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
@@ -215,10 +223,6 @@ private:
 Q_CONTACTS_EXPORT uint qHash(const QContactDetail& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetail& detail);
-#endif
-#ifndef QT_NO_DATASTREAM
-Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetail& detail);
-Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
 #endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
