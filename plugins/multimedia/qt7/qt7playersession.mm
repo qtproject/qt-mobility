@@ -380,7 +380,7 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     AutoReleasePool pool;
 
 #ifdef QT_DEBUG_QT7
-    qDebug() << "SetMedia" << content.canonicalUrl();
+    qDebug() << Q_FUNC_INFO << content.canonicalUrl();
 #endif
 
     if (m_QTMovie) {
@@ -436,7 +436,7 @@ void QT7PlayerSession::openMovie(bool tryAsync)
         requestUrl.setScheme(QLatin1String("file"));
 
 #ifdef QT_DEBUG_QT7
-    qDebug() << "Play" << requestUrl;
+    qDebug() << Q_FUNC_INFO << requestUrl;
 #endif
 
     NSError *err = 0;
@@ -476,6 +476,9 @@ void QT7PlayerSession::openMovie(bool tryAsync)
         QString description = QString::fromUtf8([[err localizedDescription] UTF8String]);
         emit error(QMediaPlayer::FormatError, description);
 
+#ifdef QT_DEBUG_QT7
+        qDebug() << Q_FUNC_INFO << description;
+#endif
     }
     else {
         [(QTMovie*)m_QTMovie retain];
@@ -512,6 +515,9 @@ bool QT7PlayerSession::isVideoAvailable() const
 
 void QT7PlayerSession::processEOS()
 {
+#ifdef QT_DEBUG_QT7
+    qDebug() << Q_FUNC_INFO;
+#endif
     m_mediaStatus = QMediaPlayer::EndOfMedia;
     if (m_videoOutput)
         m_videoOutput->setMovie(0);
@@ -529,7 +535,7 @@ void QT7PlayerSession::processLoadStateChange()
     long state = [[(QTMovie*)m_QTMovie attributeForKey:QTMovieLoadStateAttribute] longValue];
 
 #ifdef QT_DEBUG_QT7
-    qDebug() << "Moview load state changed:" << state;
+    qDebug() << Q_FUNC_INFO << state;
 #endif
 
 #ifndef QUICKTIME_C_API_AVAILABLE
@@ -615,7 +621,7 @@ void QT7PlayerSession::processNaturalSizeChange()
     AutoReleasePool pool;
     NSSize size = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
 #ifdef QT_DEBUG_QT7
-    qDebug() << "Native size changed:" << QSize(size.width, size.height);
+    qDebug() << Q_FUNC_INFO << QSize(size.width, size.height);
 #endif
 
     if (m_videoOutput)
