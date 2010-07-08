@@ -29,7 +29,8 @@
 
 \page versit.html
 \title Versit API
-\brief An API to manage Versit documents.
+\brief An API to manage Versit documents such as vCard.
+
 \ingroup mobility
 
 \tableofcontents
