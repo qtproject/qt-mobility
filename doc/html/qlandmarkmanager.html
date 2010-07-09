@@ -1,332 +1,431 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qlandmarkmanager.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QLandmarkManager Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QLandmarkManager"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkManager Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
-</h1>
-<p>The QLandmarkManager class provides an interface for storage and retrieval of landmarks from a landmark store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkManager&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qlandmarkmanager.cpp -->
+  <title>Qt 1.1: QLandmarkManager Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtlocation.html">QtLocation</a></li>
+              <li>QLandmarkManager</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
 <ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+<li class="level2"><a href="#retrieval-operations">Retrieval operations</a></li>
+<li class="level3"><a href="#saving-and-deleting">Saving and deleting</a></li>
+<li class="level3"><a href="#importing-and-exporting">Importing and exporting</a></li>
+</ul>
+</div>
+<h1 class="title">QLandmarkManager Class Reference</h1>
+<p>The QLandmarkManager class provides an interface for storage and retrieval of landmarks from a landmark store. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkManager&gt;</pre><ul>
 <li><a href="qlandmarkmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, LockedError, ..., UnknownError }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</a></b> { Native, Emulated, None }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a></b> { GenericAttributes }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, LockedError, ..., UnknownError }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</a></b> { Native, Emulated, None }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a></b> { GenericAttributes }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#QLandmarkManager">QLandmarkManager</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#QLandmarkManager-2">QLandmarkManager</a></b> ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#QLandmarkManager-3">QLandmarkManager</a></b> ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#dtor.QLandmarkManager">~QLandmarkManager</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categories-2">categories</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkCategory </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#category">category</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categoryIds">categoryIds</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#error">error</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#errorString">errorString</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#exportLandmarks">exportLandmarks</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i>, QList&lt;QLandmarkId&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#exportLandmarks-2">exportLandmarks</a></b> ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i>, QList&lt;QLandmarkId&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">FilterSupportLevel </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</a></b> ( const QLandmarkFilter &amp; <i>filter</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</a></b> ( LandmarkFeature <i>feature</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isReadOnly-2">isReadOnly</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isReadOnly-3">isReadOnly</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmark </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarkIds">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarkIds-2">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i> = QLandmarkFilter(), const QLandmarkSortOrder &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarks-2">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i> = QLandmarkFilter(), const QLandmarkSortOrder &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarks-3">landmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#managerName">managerName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#managerUri">managerUri</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#removeCategory">removeCategory</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#removeLandmark">removeLandmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#removeLandmarks">removeLandmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#saveCategory">saveCategory</a></b> ( QLandmarkCategory * <i>category</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#saveLandmark">saveLandmark</a></b> ( QLandmark * <i>landmark</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#saveLandmarks">saveLandmarks</a></b> ( QList&lt;QLandmark&gt; * <i>landmarks</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#QLandmarkManager">QLandmarkManager</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#QLandmarkManager-2">QLandmarkManager</a></b> ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#QLandmarkManager-3">QLandmarkManager</a></b> ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#dtor.QLandmarkManager">~QLandmarkManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categories-2">categories</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLandmarkCategory </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#category">category</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoryIds">categoryIds</a></b> ( const QLandmarkNameSort &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Error </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#errorString">errorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#exportLandmarks">exportLandmarks</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray(), QList&lt;QLandmarkId&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#exportLandmarks-2">exportLandmarks</a></b> ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i> = QByteArray(), QList&lt;QLandmarkId&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> FilterSupportLevel </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</a></b> ( const QLandmarkFilter &amp; <i>filter</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</a></b> ( LandmarkFeature <i>feature</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly-2">isReadOnly</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#isReadOnly-3">isReadOnly</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLandmark </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarkIds">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarkIds-2">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i> = QLandmarkFilter(), const QLandmarkSortOrder &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmark&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i>, const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmark&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarks-2">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i> = QLandmarkFilter(), const QLandmarkSortOrder &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const QLandmarkFetchHint &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmark&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarks-3">landmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerName">managerName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;QString, QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerUri">managerUri</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeCategory">removeCategory</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeLandmark">removeLandmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#removeLandmarks">removeLandmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveCategory">saveCategory</a></b> ( QLandmarkCategory * <i>category</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveLandmark">saveLandmark</a></b> ( QLandmark * <i>landmark</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#saveLandmarks">saveLandmarks</a></b> ( QList&lt;QLandmark&gt; * <i>landmarks</i>, QMap&lt;int, QLandmarkManager::Error&gt; * <i>errorMap</i> = 0 )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
-<hr />
-<a name="signals"></a>
+<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<hr />
-<a name="static-public-members"></a>
+<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#availableManagers">availableManagers</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#parseUri">parseUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#availableManagers">availableManagers</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#buildUri">buildUri</a></b> ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLandmarkManager * </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>storeUri</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanager.html#parseUri">parseUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
-</ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkManager class provides an interface for storage and retrieval of landmarks from a landmark store.</p>
-<hr />
+<p>The QLandmarkManager is the starting class to use when working with landmarks. If effectively represents a landmark datastore and it provides the synchronous operations for the creation, retrieval, updating and deletion of both landmarks and categories. For asynchronous operations use the <a href="location-overview.html#asynchronous-landmark-requests">request classes</a> which use the manager as a parameter. The manager provides notifications whenever landmarks or categories are added, updated or removed. These are important for the cases where another process is making modifications to the same manager/datastore.</p>
+<p>Each manager is identified by a manager name which typically takes the form of a reverse domain string such as <tt>com.nokia.qt.landmarks.engines.sqlite</tt>. However every supported platform provides a default manager which may be instantiated without having to provide a name like so:</p>
+<pre class="highlightedCode brush: cpp">     QLandmarkManager *landmarkManager = new QLandmarkManager();</pre>
+<a name="retrieval-operations"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3>Retrieval operations</h3>
+<p>To retrieve a set of landmarks we provide may provide a <a href="qlandmarkfilter.html">QLandmarkFilter</a>, <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> and <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> as necessary. The <a href="qlandmarkfilter.html">QLandmarkFilter</a> defines the criteria for selecting landmarks e.g&#x2e; a <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a> may be used to choose landmarks that belong to a certain category or a <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a> to choose landmarks within a certain range from a given location. A <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> order defines how the results should be sorted and the <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> allows specification of the maximum number of items to return and an offset to facilitate paging. The following demonstrates how to search for the 5 nearest landmarks to a given coordinate.</p>
+<pre class="highlightedCode brush: cpp">         QGeoCoordinate coordinate(54.0, 23.1);
+
+         QLandmarkProximityFilter filter;
+         filter.setCoordinate(coordinate);
+         filter.setRadius(5000);
+
+         QLandmarkDistanceSort distanceSort;
+         distanceSort.setCoordinate(coordinate);
+         distanceSort.setDirection(Qt::AscendingOrder);
+
+         QLandmarkFetchHint fetchHint;
+         fetchHint.setMaxItems(5);
+
+         landmarkManager-&gt;landmarks(filter, sortOrder, fetchHint);</pre>
+<p>The set of parameters described above are not always necessary as defaults are provided, if we wanted to retrieve all landmarks, then the appropriate call is:</p>
+<pre class="highlightedCode brush: cpp">         landmarkManager-&gt;landmarks();</pre>
+<p><b>Note:</b> Landmark retrieval is potentially a long operation, the synchronous API provided by the manager is subject to blocking. It is generally recommended that the <a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a> be used because it behaves asynchronously.</p>
+<p>Categories may be retrieved in a similar manner:</p>
+<pre class="highlightedCode brush: cpp">     QList&lt;QLandmarkCategory&gt; categories = landmarkManager-&gt;categories();</pre>
+<a name="saving-and-deleting"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h4>Saving and deleting</h4>
+<p>Saving and deleting landmarks and categories are fairly straightforward. To add a new landmark or category simply instantiate a <a href="qlandmark.html">QLandmark</a> or <a href="qlandmarkcategory.html">QLandmarkCategory</a>, set its data fields(e.g name, coordiante etc) and pass a pointer to the appropriate save operation. For example:</p>
+<pre class="highlightedCode brush: cpp">     QLandmark monks;
+     monks.setName(&quot;Monk's cafe&quot;);
+     <span class="comment">//..</span>
+     landmarkManager-&gt;saveLandmark(&amp;monks);</pre>
+<p>We pass the landmark by pointer bcause it will be assigned a new <a href="qlandmarkid.html">QLandmarkId</a> when the function call is done. Saving a landmark with a valid id already set will update the existing landmark.</p>
+<p>Removal of landmark may be done as follows:</p>
+<pre class="highlightedCode brush: cpp">     landmarkManager-&gt;removeLandmark(landmark.landmarkId());</pre>
+<a name="importing-and-exporting"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h4>Importing and exporting</h4>
+<p>Import and exporting are potentially long operations, to perform these operations asynchronously see <a href="qlandmarkimportrequest.html">QLandmarkImportRequest</a> and <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a>. The simplest way to perform import and export operations is to specify a filename:</p>
+<pre class="highlightedCode brush: cpp">     landmarkManager-&gt;importLandmarks(&quot;places.gpx&quot;);
+
+     landmarkManager-&gt;exportLandmarks(&quot;myplaces.gpx&quot;);</pre>
+<p><i>At the time of the QtMobility 1.1 tech preview, only importing of landmarks by supplying a file format is functional. For the supported platforms, the file format that may be supplied is &quot;GpxV1.1&quot; which means only Gpx version 1.1 files are known to work. Exporting is still under development and so are notifications.</i></p>
+</div>
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QLandmarkManager/Error"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/NoError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/DoesNotExistError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/AlreadyExistsError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/LockedError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/PermissionsError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/OutOfMemoryError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/VersionMismatchError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/NotSupportedError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/BadArgumentError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/InvalidManagerError"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/UnknownError"></a>
-<h3 class="fn"><a name="Error-enum"></a>enum QLandmarkManager::Error</h3>
+<h3 class="fn"><a name="Error-enum"></a>enum QLandmarkManager::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Defines the possible errors for the landmark manager.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkManager::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error occurred.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::DoesNotExistError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The most recent operation failed because the requested landmark or category does not exist.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::AlreadyExistsError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The most recent operation failed because the specified landmark or category already exists.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::LockedError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The most recent operation failed because the datastore specified is currently locked.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::PermissionsError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The most recent operation failed because the caller does not have permission to perform the operation.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::OutOfMemoryError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The most recent operation failed due to running out of memory.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::VersionMismatchError</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The most recent operation failed because the backend of the manager is not of the required version.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::NotSupportedError</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The most recent operation failed because the requested operation is not supported in the specified store.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::BadArgumentError</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The most recent operation failed because one or more of the parameters to the operation were invalid.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::InvalidManagerError</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The most recent operation failed because the manager failed to initialize correctly and is invalid. This could be due using a manager name that is not recognised/available. A landmark request object will return this error if if is assigned a null manager pointer.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::UnknownError</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">The most recent operation failed for an unknown reason.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QLandmarkManager/FilterSupportLevel"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/Native"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/Emulated"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/None"></a>
-<h3 class="fn"><a name="FilterSupportLevel-enum"></a>enum QLandmarkManager::FilterSupportLevel</h3>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No error occurred.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::DoesNotExistError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The most recent operation failed because the requested landmark or category does not exist.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::AlreadyExistsError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The most recent operation failed because the specified landmark or category already exists.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::LockedError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The most recent operation failed because the datastore specified is currently locked.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::PermissionsError</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The most recent operation failed because the caller does not have permission to perform the operation.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::OutOfMemoryError</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The most recent operation failed due to running out of memory.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::VersionMismatchError</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">The most recent operation failed because the backend of the manager is not of the required version.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::NotSupportedError</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">The most recent operation failed because the requested operation is not supported in the specified store.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::BadArgumentError</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">The most recent operation failed because one or more of the parameters to the operation were invalid.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::InvalidManagerError</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">The most recent operation failed because the manager failed to initialize correctly and is invalid. This could be due using a manager name that is not recognised/available. A landmark request object will return this error if if is assigned a null manager pointer.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::UnknownError</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">The most recent operation failed for an unknown reason.</td></tr>
+</table>
+<h3 class="fn"><a name="FilterSupportLevel-enum"></a>enum QLandmarkManager::FilterSupportLevel</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Defines the possible support levels the manager can provide for a given filter.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkManager::Native</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager natively supports the filter.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::Emulated</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager emulates the behaviour of the filter. An emulated filter will inherently be slower than a natively supported filter.</td></tr>
-<tr><td valign="top"><tt>QLandmarkManager::None</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager does not support the filter at all.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QLandmarkManager/LandmarkFeature"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkManager/GenericAttributes"></a>
-<h3 class="fn"><a name="LandmarkFeature-enum"></a>enum QLandmarkManager::LandmarkFeature</h3>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::Native</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The manager natively supports the filter.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::Emulated</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The manager emulates the behaviour of the filter. An emulated filter will inherently be slower than a natively supported filter.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::None</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The manager does not support the filter at all.</td></tr>
+</table>
+<h3 class="fn"><a name="LandmarkFeature-enum"></a>enum QLandmarkManager::LandmarkFeature</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Defines the possible features the landmark manager can support.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkManager::GenericAttributes</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports landmarks and categories which have generic attributes</td></tr>
-</table></p>
-<hr />
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QLandmarkManager::GenericAttributes</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The manager supports landmarks and categories which have generic attributes</td></tr>
+</table>
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/QLandmarkManager"></a>
-<h3 class="fn"><a name="QLandmarkManager"></a>QLandmarkManager::QLandmarkManager ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QLandmarkManager"></a>QLandmarkManager::QLandmarkManager ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a <a href="qlandmarkmanager.html">QLandmarkManager</a>. The default implementation for the platform will be used.</p>
-<p>The <i>parent</i> <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
-<h3 class="fn"><a name="QLandmarkManager-2"></a>QLandmarkManager::QLandmarkManager ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>managerName</i>, const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>parameters</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>The <i>parent</i> QObject will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
+<h3 class="fn"><a name="QLandmarkManager-2"></a>QLandmarkManager::QLandmarkManager ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a <a href="qlandmarkmanager.html">QLandmarkManager</a> whose implementation is identified by <i>managerName</i> with the given <i>parameters</i>.</p>
-<p>The <i>parent</i> <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
+<p>The <i>parent</i> QObject will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be used.</p>
-<h3 class="fn"><a name="QLandmarkManager-3"></a>QLandmarkManager::QLandmarkManager ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>managerName</i>, int <i>implementationVersion</i>, const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>parameters</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QLandmarkManager-3"></a>QLandmarkManager::QLandmarkManager ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a <a href="qlandmarkmanager.html">QLandmarkManager</a> whose backend has the name <i>managerName</i> and version <i>implementationVersion</i>, where the manager is constructed with the provided <i>parameters</i>.</p>
-<p>The <i>parent</i> <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
+<p>The <i>parent</i> QObject will be used as the parent of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be instantiated. If the specified implementation version is not available, the manager with the name <i>managerName</i> with the default implementation version is instantiated.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/~QLandmarkManager"></a>
-<h3 class="fn"><a name="dtor.QLandmarkManager"></a>QLandmarkManager::~QLandmarkManager ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QLandmarkManager"></a>QLandmarkManager::~QLandmarkManager ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Frees the memory used by the <a href="qlandmarkmanager.html">QLandmarkManager</a></p>
-<a name="//apple_ref/cpp/clm/QLandmarkManager/availableManagers"></a>
-<h3 class="fn"><a name="availableManagers"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QLandmarkManager::availableManagers ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="availableManagers"></a>QStringList QLandmarkManager::availableManagers ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of available manager names that can be used when constructing a <a href="qlandmarkmanager.html">QLandmarkManager</a></p>
-<a name="//apple_ref/cpp/clm/QLandmarkManager/buildUri"></a>
-<h3 class="fn"><a name="buildUri"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkManager::buildUri ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>managerName</i>, const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="buildUri"></a>QString QLandmarkManager::buildUri ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerName</i>, <i>params</i> and an optional <i>implementationVersion</i></p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/categories"></a>
-<h3 class="fn"><a name="categories"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkManager::categories ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> ) const</h3>
+<h3 class="fn"><a name="categories"></a>QList&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkManager::categories ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of categories identified by <i>categoryIds</i>.</p>
 <p>If any of the category ids cannot be found, no categories are returned and an error is set.</p>
-<h3 class="fn"><a name="categories-2"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkManager::categories ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</h3>
+<h3 class="fn"><a name="categories-2"></a>QList&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkManager::categories ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of all categories sorted according to the given <i>nameSort</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/categoriesAdded"></a>
-<h3 class="fn"><a name="categoriesAdded"></a>void QLandmarkManager::categoriesAdded ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="categoriesAdded"></a>void QLandmarkManager::categoriesAdded ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when categories (identified by <i>categoryIds</i>) have been added to the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a>() and <a href="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/categoriesChanged"></a>
-<h3 class="fn"><a name="categoriesChanged"></a>void QLandmarkManager::categoriesChanged ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="categoriesChanged"></a>void QLandmarkManager::categoriesChanged ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when categories (identified by <i>categoryIds</i>) have been modified in the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a>() and <a href="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/categoriesRemoved"></a>
-<h3 class="fn"><a name="categoriesRemoved"></a>void QLandmarkManager::categoriesRemoved ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="categoriesRemoved"></a>void QLandmarkManager::categoriesRemoved ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when categories (identified by <i>categoryIds</i>) have been removed from the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a>() and <a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/category"></a>
-<h3 class="fn"><a name="category"></a><a href="qlandmarkcategory.html">QLandmarkCategory</a> QLandmarkManager::category ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> ) const</h3>
+<h3 class="fn"><a name="category"></a><a href="qlandmarkcategory.html">QLandmarkCategory</a> QLandmarkManager::category ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the cateory in the database identified by <i>categoryId</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/categoryIds"></a>
-<h3 class="fn"><a name="categoryIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkManager::categoryIds ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</h3>
+<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkManager::categoryIds ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> = QLandmarkNameSort() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of all category identifiers. The identifiers are returned in order as designed by <i>nameSort</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/error"></a>
-<h3 class="fn"><a name="error"></a><a href="qlandmarkmanager.html#Error-enum">Error</a> QLandmarkManager::error () const</h3>
+<h3 class="fn"><a name="error"></a><a href="qlandmarkmanager.html#Error-enum">Error</a> QLandmarkManager::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the error code of the most recent operation. All functions will modify the error based on whether the operation successfully or not.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/errorString"></a>
-<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkManager::errorString () const</h3>
+<h3 class="fn"><a name="errorString"></a>QString QLandmarkManager::errorString () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a short human-readable description of the error that occurred in the most recent operation.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/exportLandmarks"></a>
-<h3 class="fn"><a name="exportLandmarks"></a>bool QLandmarkManager::exportLandmarks ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i>, <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</h3>
+<h3 class="fn"><a name="exportLandmarks"></a>bool QLandmarkManager::exportLandmarks ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray(), QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Writes landmarks to the given <i>device</i>. The landmarks will be written according to the specified <i>format</i>. If <i>landmarkIds</i> is empty, then all landmarks will be exported, otherwise only those landmarks that match <i>landmarkIds</i> will be exported.</p>
 <p>Returns true if all specified landmarks were successfully exported, otherwise returns false. It may be possible that only a subset of landmarks are exported.</p>
-<h3 class="fn"><a name="exportLandmarks-2"></a>bool QLandmarkManager::exportLandmarks ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i>, <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</h3>
-<p>Convenience function that will write landmarks to <i>fileName</i> in the expected <i>format</i>. Internally a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> is opened with <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::WriteOnly</a> permissions. If <i>landmarkIds</i> is empty, then all landmarks will be exported, otherwise only those landmarks that match <i>landmarkIds</i> will be exported.</p>
+<h3 class="fn"><a name="exportLandmarks-2"></a>bool QLandmarkManager::exportLandmarks ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i> = QByteArray(), QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Convenience function that will write landmarks to <i>fileName</i> in the expected <i>format</i>. Internally a QFile is opened with QIODevice::WriteOnly permissions. If <i>landmarkIds</i> is empty, then all landmarks will be exported, otherwise only those landmarks that match <i>landmarkIds</i> will be exported.</p>
 <p>Returns true if all specified landmarks were successfully exported, otherwise returns false. It may be possible that only a subset of landmarks are exported.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/filterSupportLevel"></a>
-<h3 class="fn"><a name="filterSupportLevel"></a><a href="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</a> QLandmarkManager::filterSupportLevel ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> ) const</h3>
+<h3 class="fn"><a name="filterSupportLevel"></a><a href="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</a> QLandmarkManager::filterSupportLevel ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the support level the manager provides for the given <i>filter</i>.</p>
-<a name="//apple_ref/cpp/clm/QLandmarkManager/fromUri"></a>
-<h3 class="fn"><a name="fromUri"></a>QLandmarkManager * QLandmarkManager::fromUri ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>storeUri</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="fromUri"></a>QLandmarkManager * QLandmarkManager::fromUri ( const QString &amp; <i>storeUri</i>, QObject * <i>parent</i> = 0 )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a <a href="qlandmarkmanager.html">QLandmarkManager</a> whose implementation, store and parameters are specified in the given <i>storeUri</i>, and whose parent object is <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/importLandmarks"></a>
-<h3 class="fn"><a name="importLandmarks"></a>bool QLandmarkManager::importLandmarks ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )</h3>
+<h3 class="fn"><a name="importLandmarks"></a>bool QLandmarkManager::importLandmarks ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Reads landmarks from the given <i>device</i> and saves them. The data from the <i>device</i> is expected to adhere to the provided <i>format</i>. If no <i>format</i> is provided, the manager tries to auto detect the <i>format</i>.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
 <p>The current default managers for the maemo and desktop platforms support GPX version 1.1, and the format to use is <tt>GpxV1.1</tt>.</p>
-<h3 class="fn"><a name="importLandmarks-2"></a>bool QLandmarkManager::importLandmarks ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )</h3>
-<p>Convenience function that will read landmarks from <i>fileName</i> in the expected <i>format</i>. If no <i>format</i> is provided, the manager tries to auto detect the <i>format</i>. Internally a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> is opened with <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::ReadOnly</a> permissions.</p>
+<h3 class="fn"><a name="importLandmarks-2"></a>bool QLandmarkManager::importLandmarks ( const QString &amp; <i>fileName</i>, const QByteArray &amp; <i>format</i> = QByteArray() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Convenience function that will read landmarks from <i>fileName</i> in the expected <i>format</i>. If no <i>format</i> is provided, the manager tries to auto detect the <i>format</i>. Internally a QFile is opened with QIODevice::ReadOnly permissions.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
 <p>The current default managers for the maemo and desktop platforms support GPX version 1.1, and the format to use is <tt>GpxV1.1</tt>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/isFeatureSupported"></a>
-<h3 class="fn"><a name="isFeatureSupported"></a>bool QLandmarkManager::isFeatureSupported ( <a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a> <i>feature</i> ) const</h3>
+<h3 class="fn"><a name="isFeatureSupported"></a>bool QLandmarkManager::isFeatureSupported ( <a href="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</a> <i>feature</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns whether the manager supports the given <i>feature</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/isReadOnly"></a>
-<h3 class="fn"><a name="isReadOnly"></a>bool QLandmarkManager::isReadOnly () const</h3>
+<h3 class="fn"><a name="isReadOnly"></a>bool QLandmarkManager::isReadOnly () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the manager is entirely read-only. Meaning landmarks and categories cannot be added, modified or removed.</p>
-<h3 class="fn"><a name="isReadOnly-2"></a>bool QLandmarkManager::isReadOnly ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> ) const</h3>
+<h3 class="fn"><a name="isReadOnly-2"></a>bool QLandmarkManager::isReadOnly ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the landmark identified by <i>landmarkId</i> considered read-only by the manager.</p>
 <p>If the <i>landmarkId</i> does not refer to an existing landmark, it is considered writable unless the manager is exclusively read-only.</p>
-<h3 class="fn"><a name="isReadOnly-3"></a>bool QLandmarkManager::isReadOnly ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> ) const</h3>
+<h3 class="fn"><a name="isReadOnly-3"></a>bool QLandmarkManager::isReadOnly ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the category identified by <i>categoryId</i> is considered read-only by the manager.</p>
 <p>If <i>categoryId</i> does not refer to an existing category, it is considered writable unless the manager is exclusively read-only.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmark"></a>
-<h3 class="fn"><a name="landmark"></a><a href="qlandmark.html">QLandmark</a> QLandmarkManager::landmark ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> ) const</h3>
+<h3 class="fn"><a name="landmark"></a><a href="qlandmark.html">QLandmark</a> QLandmarkManager::landmark ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the landmark in the database identified by <i>landmarkId</i></p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmarkIds"></a>
-<h3 class="fn"><a name="landmarkIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
+<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of landmark identifiers of landmarks that match the given <i>filter</i>, sorted according to the given <i>sortOrders</i>. Various fetch operation parameters may be specified by <i>fetchHint</i>.</p>
-<h3 class="fn"><a name="landmarkIds-2"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> = QLandmarkFilter(), const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
+<h3 class="fn"><a name="landmarkIds-2"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkManager::landmarkIds ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> = QLandmarkFilter(), const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Convenience function for returning a list of landmark identifiers of landmarks that match the given <i>filter</i>, sorted according to the given <i>sortOrder</i>. Various fetch operation parameters may be specified by <i>fetchHint</i>.</p>
 <p>This is a convenience function.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmarks"></a>
-<h3 class="fn"><a name="landmarks"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
+<h3 class="fn"><a name="landmarks"></a>QList&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of landmarks which match the given <i>filter</i> and are sorted according to the <i>sortOrders</i>. Various fetch operation parameters may be specified by <i>fetchHint</i>.</p>
-<h3 class="fn"><a name="landmarks-2"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> = QLandmarkFilter(), const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3>
+<h3 class="fn"><a name="landmarks-2"></a>QList&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> = QLandmarkFilter(), const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> = QLandmarkSortOrder(), const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> = QLandmarkFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of landmarks which match the given <i>filter</i> and are sorted according to the given <i>sortOrder</i>. Various fetch operation parameters may be specified by <i>fetchHint</i>.</p>
-<h3 class="fn"><a name="landmarks-3"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> ) const</h3>
+<h3 class="fn"><a name="landmarks-3"></a>QList&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkManager::landmarks ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of landmarks which match the given <i>landmarkIds</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmarksAdded"></a>
-<h3 class="fn"><a name="landmarksAdded"></a>void QLandmarkManager::landmarksAdded ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="landmarksAdded"></a>void QLandmarkManager::landmarksAdded ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when landmarks (identified by <i>landmarkIds</i>) have been added to the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a>() and <a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmarksChanged"></a>
-<h3 class="fn"><a name="landmarksChanged"></a>void QLandmarkManager::landmarksChanged ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="landmarksChanged"></a>void QLandmarkManager::landmarksChanged ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when landmarks (identified by <i>landmarkIds</i>) have been modified in the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a>() and <a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/landmarksRemoved"></a>
-<h3 class="fn"><a name="landmarksRemoved"></a>void QLandmarkManager::landmarksRemoved ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="landmarksRemoved"></a>void QLandmarkManager::landmarksRemoved ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when landmarks (identified by <i>landmarkIds</i>) have been removed from the datastore managed by this manager.</p>
 <p>See also <a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a>() and <a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/managerName"></a>
-<h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkManager::managerName () const</h3>
+<h3 class="fn"><a name="managerName"></a>QString QLandmarkManager::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the manager name for this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <p>The manager name usually takes the format of a reverse domain string. An example of a manager name is <tt>com.nokia.qt.landmarks.engines.sqlite</tt></p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/managerParameters"></a>
-<h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QLandmarkManager::managerParameters () const</h3>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QLandmarkManager::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Return the parameters relevant to the creation of this <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <p>The parameters may be viewed as a set of key-value pairs. Each manager may have a different set of parameters depending upon its backend implementation.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/managerUri"></a>
-<h3 class="fn"><a name="managerUri"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkManager::managerUri () const</h3>
+<h3 class="fn"><a name="managerUri"></a>QString QLandmarkManager::managerUri () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Return the uri describing this <a href="qlandmarkmanager.html">QLandmarkManager</a>, consisting of the manager name and any parameters.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/managerVersion"></a>
-<h3 class="fn"><a name="managerVersion"></a>int QLandmarkManager::managerVersion () const</h3>
+<h3 class="fn"><a name="managerVersion"></a>int QLandmarkManager::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the engine backend implementation version number.</p>
-<a name="//apple_ref/cpp/clm/QLandmarkManager/parseUri"></a>
-<h3 class="fn"><a name="parseUri"></a>bool QLandmarkManager::parseUri ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>uri</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>pManagerId</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; * <i>pParams</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="parseUri"></a>bool QLandmarkManager::parseUri ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/removeCategory"></a>
-<h3 class="fn"><a name="removeCategory"></a>bool QLandmarkManager::removeCategory ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
+<h3 class="fn"><a name="removeCategory"></a>bool QLandmarkManager::removeCategory ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Remove the category identified by <i>categoryId</i> from the database. The categoryId is cleared(and becomes invalid) on successful removal. An unsuccessful removal will leave the identifer alone.</p>
 <p>Returns true if the category was removed successfully, otherwise returnse false.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/removeLandmark"></a>
-<h3 class="fn"><a name="removeLandmark"></a>bool QLandmarkManager::removeLandmark ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> )</h3>
+<h3 class="fn"><a name="removeLandmark"></a>bool QLandmarkManager::removeLandmark ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Remove the landmark identified by <i>landmarkId</i> from the database.</p>
 <p>Returns true if the landmark was removed successfully, otherwise returnse false.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/removeLandmarks"></a>
-<h3 class="fn"><a name="removeLandmarks"></a>bool QLandmarkManager::removeLandmarks ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; * <i>errorMap</i> = 0 )</h3>
+<h3 class="fn"><a name="removeLandmarks"></a>bool QLandmarkManager::removeLandmarks ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i>, QMap&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; * <i>errorMap</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes every landmark whose identifier is contained in the list of <i>landmarkIds</i>. Returns true if all landmarks were removed successfully, otherwise false.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>landmarkIds</i> list to the error which occurred when saving the landmark at that index) for every index for which the landmark could not be removed. The <a href="qlandmarkmanager.html#error">QLandmarkManager::error</a>() function will only return <tt>QLandmarkManager::NoError</tt> if all landmarks were removed successfully.</p>
 <p>See also <a href="qlandmarkmanager.html#removeLandmark">QLandmarkManager::removeLandmark</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/saveCategory"></a>
-<h3 class="fn"><a name="saveCategory"></a>bool QLandmarkManager::saveCategory ( <a href="qlandmarkcategory.html">QLandmarkCategory</a> * <i>category</i> )</h3>
+<h3 class="fn"><a name="saveCategory"></a>bool QLandmarkManager::saveCategory ( <a href="qlandmarkcategory.html">QLandmarkCategory</a> * <i>category</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds the given <i>category</i> to the database if <i>category</i> has a default-constructed identifier, or an identifier with the manager URI set to the URI of this manager and an empty id.</p>
 <p>If the manager URI of the identifier of the <i>category</i> is neither empty nor equal to the URI of this manager, or the id member of the identifier is not empty, but does not exist in the manager, the operation will fail and calling <a href="qlandmarkmanager.html#error">error</a>() will return <tt>QLandmarkManager::DoesNotExistError</tt>.</p>
 <p>Alternatively, the function will update the existing category in the database if <i>category</i> has a non-empty id and currently exists within the database.</p>
 <p>Returns false on failure or true on success. On successful save of a category with an invalid id, it will be assigned a valid id and have its manager URI set to the URI of this manager.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/saveLandmark"></a>
-<h3 class="fn"><a name="saveLandmark"></a>bool QLandmarkManager::saveLandmark ( <a href="qlandmark.html">QLandmark</a> * <i>landmark</i> )</h3>
+<h3 class="fn"><a name="saveLandmark"></a>bool QLandmarkManager::saveLandmark ( <a href="qlandmark.html">QLandmark</a> * <i>landmark</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds the given <i>landmark</i> to the database if <i>landmark</i> has a default-constructed identifer, or an identifier with the manager URI set to the URI of this manager and an empty id.</p>
 <p>If the manager URI of the identifier of the <i>landmark</i> is neither empty nor equal to the URI of this manager, or the id member of the identifier is not empty, but does not exist in the manager, the operation will fail and calling <a href="qlandmarkmanager.html#error">error</a>() will return <tt>QLandmarkManager::DoesNotExistError</tt>.</p>
 <p>Alternatively, the function will update the existing landmark in the database if <i>landmark</i> has a non-empty id and currently exists within the database.</p>
 <p>Returns false on failure or true on success. On successful save of a landmark with an empty id, it will be assigned a valid id and have its manager URI set to the URI of this manager.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkManager/saveLandmarks"></a>
-<h3 class="fn"><a name="saveLandmarks"></a>bool QLandmarkManager::saveLandmarks ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; * <i>landmarks</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; * <i>errorMap</i> = 0 )</h3>
+<h3 class="fn"><a name="saveLandmarks"></a>bool QLandmarkManager::saveLandmarks ( QList&lt;<a href="qlandmark.html">QLandmark</a>&gt; * <i>landmarks</i>, QMap&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; * <i>errorMap</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds the list of <i>landmarks</i> to the database. Returns true if the landmarks were saved successfully, otherwise returns false.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>landmarks</i> list to the error which occurred when saving the landmark at that index) for every index for which the landmark could not be saved.</p>
 <p>The <a href="qlandmarkmanager.html#error">QLandmarkManager::error</a>() function will only return <tt>QLandmarkManager::NoError</tt> if all landmarks were saved successfully.</p>
-<p>For each newly saved landmark that was successful, the identifier of the landmark will be updated with a new value. If a failure occurs when saving a new landmark, the identifier will be cleared (and become an invalid identifier).</p>
+<p>For each new landmark that was successfully saved, a landmark identifier is assigned to that landmark.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

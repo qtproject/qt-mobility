@@ -1,810 +1,932 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Qt Mobility Project 1.1: dialog.cpp Example File (sysinfo/dialog.cpp)</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">dialog.cpp Example File</h1>
+  <title>Qt 1.1: dialog.cpp Example File (sysinfo/dialog.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<h1 class="title">dialog.cpp Example File</h1>
 <span class="small-subtitle">sysinfo/dialog.cpp</span>
 <div class="descr"/>
-<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
-    **
-    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-    ** All rights reserved.
-    ** Contact: Nokia Corporation (qt-info@nokia.com)
-    **
-    ** This file is part of the Qt Mobility Components.
-    **
-    ** $QT_BEGIN_LICENSE:BSD$
-    ** You may use this file under the terms of the BSD license as follows:
-    **
-    ** &quot;Redistribution and use in source and binary forms, with or without
-    ** modification, are permitted provided that the following conditions are
-    ** met:
-    **   * Redistributions of source code must retain the above copyright
-    **     notice, this list of conditions and the following disclaimer.
-    **   * Redistributions in binary form must reproduce the above copyright
-    **     notice, this list of conditions and the following disclaimer in
-    **     the documentation and/or other materials provided with the
-    **     distribution.
-    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
-    **     the names of its contributors may be used to endorse or promote
-    **     products derived from this software without specific prior written
-    **     permission.
-    **
-    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
-    ** $QT_END_LICENSE$
-    **
-    ****************************************************************************/</span>
-
-    #include &quot;dialog.h&quot;
-    #include &lt;QMessageBox&gt;
-    #include &lt;QTimer&gt;
-
-    Dialog::Dialog() :
-        QWidget(),
-        saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
-    {
-        setupUi(this);
-        setupGeneral();
-
-        connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
-        connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
-        connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-        updateDeviceLockedState();
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
-        timer-&gt;start(1000);
-    }
-
-    Dialog::~Dialog()
-    {
-        delete systemInfo;
-        delete di;
-        delete saver;
-    }
-
-    void Dialog::changeEvent(QEvent *e)
-    {
-        QWidget::changeEvent(e);
-        switch (e-&gt;type()) {
-        case QEvent::LanguageChange:
-            retranslateUi(this);
-            break;
-        default:
-            break;
-        }
-    }
-
-    void Dialog::tabChanged(int index)
-    {
-    #ifdef QTM_EXAMPLES_SMALL_SCREEN
-        switch(index) {
-        case 0:
-            setupGeneral();
-            break;
-        case 1:
-            setupGeneral();
-            break;
-        case 2:
-            setupDevice();
-            break;
-        case 3:
-            setupDevice();
-            break;
-        case 4:
-            setupDevice();
-            break;
-        case 5:
-            setupDisplay();
-            break;
-        case 6:
-            setupStorage();
-            break;
-        case 7:
-            setupNetwork();
-            break;
-        case 8:
-            setupNetwork();
-            break;
-        case 9:
-            setupNetwork();
-            break;
-        case 10:
-            setupSaver();
-            break;
-        };
-    #else
-        switch(index) {
-        case 0:
-            setupGeneral();
-            break;
-        case 1:
-            setupDevice();
-            break;
-        case 2:
-            setupDisplay();
-            break;
-        case 3:
-            setupStorage();
-            break;
-        case 4:
-            setupNetwork();
-            break;
-        case 5:
-            setupSaver();
-            break;
-        };
-    #endif
-    }
-
-    void Dialog::setupGeneral()
-    {
-        delete systemInfo;
-        systemInfo = new QSystemInfo(this);
-        curLanguageLineEdit-&gt;setText( systemInfo-&gt;currentLanguage());
-        languagesComboBox-&gt;clear();
-        languagesComboBox-&gt;insertItems(0,systemInfo-&gt;availableLanguages());
-        countryCodeLabel-&gt;setText(systemInfo-&gt;currentCountryCode());
-    }
-
-    void Dialog::setupDevice()
-    {
-        delete di;
-        di = new QSystemDeviceInfo(this);
-        batteryLevelBar-&gt;setValue(di-&gt;batteryLevel());
-
-        connect(di,SIGNAL(batteryLevelChanged(int)),
-                this,SLOT(updateBatteryStatus(int)));
-
-        connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-                this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
-
-        connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-                this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
-
-        ImeiLabel-&gt;setText(di-&gt;imei());
-        imsiLabel-&gt;setText(di-&gt;imsi());
-        manufacturerLabel-&gt;setText(di-&gt;manufacturer());
-        modelLabel-&gt;setText(di-&gt;model());
-        productLabel-&gt;setText(di-&gt;productName());
-
-        deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
-
-        updateSimStatus();
-        updateProfile();
-
-        connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
-
-        if(di-&gt;currentPowerState() == QSystemDeviceInfo::BatteryPower) {
-            radioButton_2-&gt;setChecked(true);
-        } else  if(di-&gt;currentPowerState() == QSystemDeviceInfo::WallPower) {
-            radioButton_3-&gt;setChecked(true);
-        } else if(di-&gt;currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
-            radioButton_4-&gt;setChecked(true);
-        } else {
-            radioButton-&gt;setChecked(true);
-        }
-
-        QSystemDeviceInfo::InputMethodFlags methods = di-&gt;inputMethodType();
-        QStringList inputs;
-        if((methods &amp; QSystemDeviceInfo::Keys)){
-            inputs &lt;&lt; &quot;Keys&quot;;
-        }
-        if((methods &amp; QSystemDeviceInfo::Keypad)) {
-            inputs &lt;&lt; &quot;Keypad&quot;;
-        }
-        if((methods &amp; QSystemDeviceInfo::Keyboard)) {
-            inputs &lt;&lt; &quot;Keyboard&quot;;
-        }
-        if((methods &amp; QSystemDeviceInfo::SingleTouch)) {
-            inputs &lt;&lt; &quot;Touch Screen&quot;;
-        }
-        if((methods &amp; QSystemDeviceInfo::MultiTouch)) {
-            inputs &lt;&lt; &quot;Multi touch&quot;;
-        }
-        if((methods &amp; QSystemDeviceInfo::Mouse)){
-            inputs &lt;&lt; &quot;Mouse&quot;;
-        }
-
-        inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
-
-        bluetoothPowerLabel-&gt;setText((di-&gt;currentBluetoothPowerState() ? &quot;On&quot; : &quot;Off&quot;));
-        connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
-
-    }
-
-    void Dialog::updateDeviceLockedState()
-    {
-        if (di)
-            deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
-    }
-
-    void Dialog::updateProfile(QSystemDeviceInfo::Profile <span class="comment">/*profile*/</span>)
-    {
-       updateProfile();
-    }
-
-    void Dialog::setupDisplay()
-    {
-        QSystemDisplayInfo di;
-        brightnessLabel-&gt;setText(QString::number(di.displayBrightness(0)));
-        colorDepthLabel-&gt;setText(QString::number(di.colorDepth((0))));
-
-        QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
-        QString orientStr;
-        switch(orientation) {
-        case QSystemDisplayInfo::Landscape:
-            orientStr=&quot;Landscape&quot;;
-            break;
-        case QSystemDisplayInfo::Portrait:
-            orientStr=&quot;Portrait&quot;;
-            break;
-        case QSystemDisplayInfo::InvertedLandscape:
-            orientStr=&quot;Inverted Landscape&quot;;
-            break;
-        case QSystemDisplayInfo::InvertedPortrait:
-            orientStr=&quot;Inverted Portrait&quot;;
-            break;
-        default:
-            orientStr=&quot;Orientation unknown&quot;;
-            break;
-        }
-
-        orientationLabel-&gt;setText(orientStr);
-
-        contrastLabel-&gt;setText(QString::number(di.contrast((0))));
-
-        dpiWidthLabel-&gt;setText(QString::number(di.getDPIWidth(0)));
-        dpiHeightLabel-&gt;setText(QString::number(di.getDPIHeight((0))));
-
-        physicalHeightLabel-&gt;setText(QString::number(di.physicalHeight(0)));
-        physicalWidthLabel-&gt;setText(QString::number(di.physicalWidth((0))));
-    }
-
-    void Dialog::setupStorage()
-    {
-        if(!sti) {
-        sti = new QSystemStorageInfo(this);
-        storageTreeWidget-&gt;header()-&gt;setResizeMode(QHeaderView::ResizeToContents);
-        connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
-        connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
-        }
-        updateStorage();
-    }
-
-    void Dialog::updateStorage()
-    {
-        storageTreeWidget-&gt;clear();
-
-        QStringList vols = sti-&gt;logicalDrives();
-        foreach(QString volName, vols) {
-            QString type;
-            QSystemStorageInfo::DriveType volType;
-            volType = sti-&gt;typeForDrive(volName);
-            if(volType == QSystemStorageInfo::InternalDrive) {
-                type =  &quot;Internal&quot;;
-            }
-
-            if(volType == QSystemStorageInfo::RemovableDrive) {
-                type = &quot;Removable&quot;;
-            }
-            if(volType == QSystemStorageInfo::CdromDrive) {
-                type =  &quot;Cdrom&quot;;
-            }
-            if(volType == QSystemStorageInfo::RemoteDrive) {
-                type =  &quot;Network&quot;;
-            }
-            QStringList items;
-            items &lt;&lt; volName;
-            items &lt;&lt; type;
-            items &lt;&lt; QString::number(sti-&gt;totalDiskSpace(volName));
-            items &lt;&lt; QString::number(sti-&gt;availableDiskSpace(volName));
-            QTreeWidgetItem *item = new QTreeWidgetItem(items);
-            storageTreeWidget-&gt;addTopLevelItem(item);
-        }
-    }
-
-    void Dialog::setupNetwork()
-    {
-        delete ni;
-        ni = new QSystemNetworkInfo(this);
-
-        connect(netStatusComboBox,SIGNAL(activated(int)),
-                this, SLOT(netStatusComboActivated(int)));
-
-        connect(ni,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)),
-                this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
-
-        connect(ni,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-                this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
-
-        connect(ni,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-                this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
-
-        connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-                this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-
-        cellIdLabel-&gt;setText(QString::number(ni-&gt;cellId()));
-        locationAreaCodeLabel-&gt;setText(QString::number(ni-&gt;locationAreaCode()));
-        currentMMCLabel-&gt;setText(ni-&gt;currentMobileCountryCode());
-        currentMNCLabel-&gt;setText(ni-&gt;currentMobileNetworkCode());
-
-        homeMMCLabel-&gt;setText(ni-&gt;homeMobileCountryCode());
-        homeMNCLabel-&gt;setText(ni-&gt;homeMobileNetworkCode());
-
-        networkModeChanged(ni-&gt;currentMode());
-
-    }
-    void Dialog::netStatusComboActivated(int index)
-    {
-        QString status;
-        int reIndex = index;
-
-        displayNetworkStatus(ni-&gt;networkStatus((QSystemNetworkInfo::NetworkMode)reIndex));
-
-        macAddressLabel-&gt;setText(ni-&gt;macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
-
-        int strength = ni-&gt;networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
-        if(strength &lt; 0)
-            strength = 0;
-        signalLevelProgressBar-&gt;setValue(strength);
-
-        InterfaceLabel-&gt;setText(ni-&gt;interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
-
-        operatorNameLabel-&gt;setText(ni-&gt;networkName((QSystemNetworkInfo::NetworkMode)reIndex));
-    }
-
-    void Dialog::getVersion(int index)
-    {
-        QSystemInfo::Version version;
-        switch(index) {
-        case 0:
-            versionLineEdit-&gt;setText(&quot;&quot;);
-            break;
-        case 1:
-            version = QSystemInfo::Os;
-            break;
-        case 2:
-            version = QSystemInfo::QtCore;
-            break;
-        case 3:
-            version = QSystemInfo::Firmware;
-            break;
-        };
-
-        QSystemInfo si;
-        versionLineEdit-&gt;setText(si.version(version));
-    }
-
-    void Dialog::getFeature(int index)
-    {
-        QSystemInfo::Feature feature;
-        switch(index) {
-        case 0:
-            return;
-            break;
-        case 1:
-            feature = QSystemInfo::BluetoothFeature;
-            break;
-        case 2:
-            feature = QSystemInfo::CameraFeature;
-            break;
-        case 3:
-            feature = QSystemInfo::FmradioFeature;
-            break;
-        case 4:
-            feature = QSystemInfo::IrFeature;
-            break;
-        case 5:
-            feature = QSystemInfo::LedFeature;
-            break;
-        case 6:
-            feature = QSystemInfo::MemcardFeature;
-            break;
-        case 7:
-            feature = QSystemInfo::UsbFeature;
-            break;
-        case 8:
-            feature = QSystemInfo::VibFeature;
-            break;
-        case 9:
-            feature = QSystemInfo::WlanFeature;
-            break;
-        case 10:
-            feature = QSystemInfo::SimFeature;
-            break;
-        case 11:
-            feature = QSystemInfo::LocationFeature;
-            break;
-        case 12:
-            feature = QSystemInfo::VideoOutFeature;
-            break;
-        case 13:
-            feature = QSystemInfo::HapticsFeature;
-            break;
-        };
-        QSystemInfo si;
-        featuresLineEdit-&gt;setText((si.hasFeatureSupported(feature) ? &quot;true&quot;:&quot;false&quot; ));
-    }
-
-    void Dialog::setupSaver()
-    {
-        if (!saver) {
-            saver = new QSystemScreenSaver(this);
-        }
-
-        bool saverEnabled = saver-&gt;screenSaverInhibited();
-
-        connect( saverInhibitedCheckBox, SIGNAL(clicked(bool)),
-                 this,SLOT(setSaverEnabled(bool)));
-
-        saverInhibitedCheckBox-&gt;setChecked(saverEnabled);
-    }
-
-    void Dialog::setSaverEnabled(bool b)
-    {
-        if (b) {
-            if (!saver) {
-                saver = new QSystemScreenSaver(this);
-            }
-           if(saver-&gt;setScreenSaverInhibit()) {
-            }
-        } else {
-            delete saver;
-            saver = NULL;
-        }
-    }
-
-    void Dialog::updateBatteryStatus(int level)
-    {
-        batteryLevelBar-&gt;setValue(level);
-    }
-
-    void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
-    {
-
-        switch (newState) {
-        case QSystemDeviceInfo::BatteryPower:
-            {
-                radioButton_2-&gt;setChecked(true);
-            }
-            break;
-        case QSystemDeviceInfo::WallPower:
-            {
-                radioButton_3-&gt;setChecked(true);
-            }
-            break;
-        case QSystemDeviceInfo::WallPowerChargingBattery:
-            {
-                radioButton_4-&gt;setChecked(true);
-            }
-            break;
-        case QSystemDeviceInfo::NoBatteryLevel:
-            {
-                radioButton-&gt;setChecked(true);
-            }
-            break;
-        };
-    }
-
-    void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
-    {
-        <span class="comment">// this wont annoy users will it?</span>
-        QString msg;
-<span class="comment">    //    if(di-&gt;isBatteryCharging()) {</span>
-            switch(status) {
-            case QSystemDeviceInfo::BatteryCritical:
-                {
-                    msg = &quot; Battery is Critical (4% or less), please save your work or plug in the charger.&quot;;
-                    QMessageBox::critical(this,&quot;QSystemInfo&quot;,msg);
-                }
-                break;
-            case QSystemDeviceInfo::BatteryVeryLow:
-                {
-                    msg = &quot;Battery is Very Low (10%), please plug in the charger soon&quot;;
-                    QMessageBox::warning(this,&quot;QSystemInfo&quot;,msg);
-                }
-                break;
-            case QSystemDeviceInfo::BatteryLow:
-                {
-                    msg = &quot;Battery is Low (40% or less)&quot;;
-                    QMessageBox::information(this,&quot;QSystemInfo&quot;,msg);
-
-                }
-                break;
-            case QSystemDeviceInfo::BatteryNormal:
-                {
-                    msg = &quot;Battery is Normal (greater than 40%)&quot;;
-                    QMessageBox::information(this,&quot;QSystemInfo&quot;,msg);
-                }
-                break;
-            case QSystemDeviceInfo::NoBatteryLevel:
-                {
-
-                }
-                break;
-            };
-      <span class="comment">//  }</span>
-
-    }
-
-    void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
-    {
-        if(mode == QSystemNetworkInfo::WlanMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
-                signalLevelProgressBar-&gt;setValue(strength);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::EthernetMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
-                signalLevelProgressBar-&gt;setValue(strength);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::GsmMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
-                signalLevelProgressBar-&gt;setValue(strength);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::CdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
-                signalLevelProgressBar-&gt;setValue(strength);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::WcdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
-                signalLevelProgressBar-&gt;setValue(strength);
-            }
-        }
-
-    }
-
-    void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &amp;text)
-    {
-        if(mode == QSystemNetworkInfo::WlanMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
-                operatorNameLabel-&gt;setText(text);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::EthernetMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
-                operatorNameLabel-&gt;setText(text);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::GsmMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
-                operatorNameLabel-&gt;setText(text);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::CdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
-                operatorNameLabel-&gt;setText(text);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::WcdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
-                operatorNameLabel-&gt;setText(text);
-            }
-        }
-
-    }
-
-    void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
-    {
-        if(mode == QSystemNetworkInfo::WlanMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
-               displayNetworkStatus(status);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::EthernetMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
-               displayNetworkStatus(status);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::GsmMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
-                displayNetworkStatus(status);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::CdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
-                displayNetworkStatus(status);
-            }
-        }
-
-        if(mode == QSystemNetworkInfo::WcdmaMode) {
-            if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
-                displayNetworkStatus(status);
-            }
-        }
-
-    }
-
-    void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
-    {
-        if(mode == QSystemNetworkInfo::WlanMode) {
-            primaryModeLabel-&gt;setText(&quot;Wlan&quot;);
-        }
-
-        if(mode == QSystemNetworkInfo::EthernetMode) {
-            primaryModeLabel-&gt;setText(&quot;Ethernet&quot;);
-        }
-
-        if(mode == QSystemNetworkInfo::GsmMode) {
-            primaryModeLabel-&gt;setText(&quot;Gsm&quot;);
-        }
-
-        if(mode == QSystemNetworkInfo::CdmaMode) {
-            primaryModeLabel-&gt;setText(&quot;Cdma&quot;);
-        }
-
-        if(mode == QSystemNetworkInfo::WcdmaMode) {
-            primaryModeLabel-&gt;setText(&quot;Wcdma&quot;);
-        }
-        if(mode == QSystemNetworkInfo::UnknownMode) {
-            primaryModeLabel-&gt;setText(&quot;None&quot;);
-        }
-    }
-
-    void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
-    {
-        QString stat;
-        switch(status) {
-        case QSystemNetworkInfo::UndefinedStatus:
-            stat = &quot;Undefined&quot;;
-            break;
-        case QSystemNetworkInfo::NoNetworkAvailable:
-            stat = &quot;No Network Available&quot;;
-            break;
-        case QSystemNetworkInfo::EmergencyOnly:
-            stat = &quot;Emergency Only&quot;;
-            break;
-        case QSystemNetworkInfo::Searching:
-            stat = &quot;Searching or Connecting&quot;;
-            break;
-        case QSystemNetworkInfo::Busy:
-            stat = &quot;Busy&quot;;
-            break;
-        case QSystemNetworkInfo::Connected:
-            stat = &quot;Connected&quot;;
-            break;
-        case QSystemNetworkInfo::HomeNetwork:
-            stat = &quot;Home Network&quot;;
-            break;
-        case QSystemNetworkInfo::Denied:
-            stat = &quot;Denied&quot;;
-            break;
-        case QSystemNetworkInfo::Roaming:
-            stat = &quot;Roaming&quot;;
-            break;
-        };
-        cellNetworkStatusLabel-&gt;setText(stat);
-    }
-
-    void Dialog::updateProfile()
-    {
-        if(di) {
-            QString profilestring;
-            switch(di-&gt;currentProfile()) {
-                case QSystemDeviceInfo::UnknownProfile:
-                {
-                    profilestring = &quot;Unknown&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::SilentProfile:
-                {
-                    profilestring = &quot;Silent&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::NormalProfile:
-                {
-                    profilestring = &quot;Normal&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::LoudProfile:
-                {
-                    profilestring = &quot;Loud&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::VibProfile:
-                {
-                    profilestring = &quot;Vibrate&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::OfflineProfile:
-                {
-                    profilestring = &quot;Offline&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::PowersaveProfile:
-                {
-                    profilestring = &quot;Powersave&quot;;
-                }
-                break;
-                case QSystemDeviceInfo::CustomProfile:
-                    {
-                        profilestring = &quot;custom&quot;;
-                    }
-                    break;
-            };
-            profileLabel-&gt;setText(profilestring);
-        }
-    }
-
-    void Dialog::updateSimStatus()
-    {
-        if(di) {
-            QString simstring;
-            switch(di-&gt;simStatus()) {
-            case QSystemDeviceInfo::SimLocked:
-                {
-                    simstring = &quot;Sim Locked&quot;;
-                }
-                break;
-            case QSystemDeviceInfo::SimNotAvailable:
-                {
-                    simstring = &quot;Sim not available&quot;;
-                }
-                break;
-            case QSystemDeviceInfo::SingleSimAvailable:
-                {
-                    simstring = &quot;Single Sim Available&quot;;
-
-                }
-                break;
-            case QSystemDeviceInfo::DualSimAvailable:
-                {
-                    simstring = &quot;Dual Sim available&quot;;
-                }
-                break;
-
-            };
-            simStatusLabel-&gt;setText(simstring);
-        }
-    }
-
-    void Dialog::storageChanged()
-    {
-        setupStorage();
-    }
-
-    void Dialog::bluetoothChanged(bool b)
-    {
-        bluetoothPowerLabel-&gt;setText((b ? &quot;On&quot; : &quot;Off&quot;));
-    }</pre>
+<pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:BSD$
+ ** You may use this file under the terms of the BSD license as follows:
+ **
+ ** &quot;Redistribution and use in source and binary forms, with or without
+ ** modification, are permitted provided that the following conditions are
+ ** met:
+ **   * Redistributions of source code must retain the above copyright
+ **     notice, this list of conditions and the following disclaimer.
+ **   * Redistributions in binary form must reproduce the above copyright
+ **     notice, this list of conditions and the following disclaimer in
+ **     the documentation and/or other materials provided with the
+ **     distribution.
+ **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+ **     the names of its contributors may be used to endorse or promote
+ **     products derived from this software without specific prior written
+ **     permission.
+ **
+ ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/</span>
+
+ #include &quot;dialog.h&quot;
+ #include &lt;QMessageBox&gt;
+ #include &lt;QTimer&gt;
+
+ Dialog::Dialog() :
+     QWidget(),
+     saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
+ {
+     setupUi(this);
+     setupGeneral();
+
+     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
+     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
+     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
+     updateDeviceLockedState();
+     QTimer *timer = new QTimer(this);
+     connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+     timer-&gt;start(1000);
+ }
+
+ Dialog::~Dialog()
+ {
+     delete systemInfo;
+     delete di;
+     delete saver;
+ }
+
+ void Dialog::changeEvent(QEvent *e)
+ {
+     QWidget::changeEvent(e);
+     switch (e-&gt;type()) {
+     case QEvent::LanguageChange:
+         retranslateUi(this);
+         break;
+     default:
+         break;
+     }
+ }
+
+ void Dialog::tabChanged(int index)
+ {
+ #ifdef QTM_EXAMPLES_SMALL_SCREEN
+     switch(index) {
+     case 0:
+         setupGeneral();
+         break;
+     case 1:
+         setupGeneral();
+         break;
+     case 2:
+         setupDevice();
+         break;
+     case 3:
+         setupDevice();
+         break;
+     case 4:
+         setupDevice();
+         break;
+     case 5:
+         setupDisplay();
+         break;
+     case 6:
+         setupStorage();
+         break;
+     case 7:
+         setupNetwork();
+         break;
+     case 8:
+         setupNetwork();
+         break;
+     case 9:
+         setupNetwork();
+         break;
+     case 10:
+         setupSaver();
+         break;
+     };
+ #else
+     switch(index) {
+     case 0:
+         setupGeneral();
+         break;
+     case 1:
+         setupDevice();
+         break;
+     case 2:
+         setupDisplay();
+         break;
+     case 3:
+         setupStorage();
+         break;
+     case 4:
+         setupNetwork();
+         break;
+     case 5:
+         setupSaver();
+         break;
+     };
+ #endif
+ }
+
+ void Dialog::setupGeneral()
+ {
+     delete systemInfo;
+     systemInfo = new QSystemInfo(this);
+     curLanguageLineEdit-&gt;setText( systemInfo-&gt;currentLanguage());
+     languagesComboBox-&gt;clear();
+     languagesComboBox-&gt;insertItems(0,systemInfo-&gt;availableLanguages());
+     countryCodeLabel-&gt;setText(systemInfo-&gt;currentCountryCode());
+ }
+
+ void Dialog::setupDevice()
+ {
+     delete di;
+     di = new QSystemDeviceInfo(this);
+     batteryLevelBar-&gt;setValue(di-&gt;batteryLevel());
+
+     connect(di,SIGNAL(batteryLevelChanged(int)),
+             this,SLOT(updateBatteryStatus(int)));
+
+     connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+             this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
+
+     connect(di,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+             this,SLOT(updatePowerState(QSystemDeviceInfo::PowerState)));
+
+     ImeiLabel-&gt;setText(di-&gt;imei());
+     imsiLabel-&gt;setText(di-&gt;imsi());
+     manufacturerLabel-&gt;setText(di-&gt;manufacturer());
+     modelLabel-&gt;setText(di-&gt;model());
+     productLabel-&gt;setText(di-&gt;productName());
+
+     deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
+
+     updateSimStatus();
+     updateProfile();
+
+     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
+
+     if(di-&gt;currentPowerState() == QSystemDeviceInfo::BatteryPower) {
+         radioButton_2-&gt;setChecked(true);
+     } else  if(di-&gt;currentPowerState() == QSystemDeviceInfo::WallPower) {
+         radioButton_3-&gt;setChecked(true);
+     } else if(di-&gt;currentPowerState() == QSystemDeviceInfo::WallPowerChargingBattery) {
+         radioButton_4-&gt;setChecked(true);
+     } else {
+         radioButton-&gt;setChecked(true);
+     }
+
+     QSystemDeviceInfo::InputMethodFlags methods = di-&gt;inputMethodType();
+     QStringList inputs;
+     if((methods &amp; QSystemDeviceInfo::Keys)){
+         inputs &lt;&lt; &quot;Keys&quot;;
+     }
+     if((methods &amp; QSystemDeviceInfo::Keypad)) {
+         inputs &lt;&lt; &quot;Keypad&quot;;
+     }
+     if((methods &amp; QSystemDeviceInfo::Keyboard)) {
+         inputs &lt;&lt; &quot;Keyboard&quot;;
+     }
+     if((methods &amp; QSystemDeviceInfo::SingleTouch)) {
+         inputs &lt;&lt; &quot;Touch Screen&quot;;
+     }
+     if((methods &amp; QSystemDeviceInfo::MultiTouch)) {
+         inputs &lt;&lt; &quot;Multi touch&quot;;
+     }
+     if((methods &amp; QSystemDeviceInfo::Mouse)){
+         inputs &lt;&lt; &quot;Mouse&quot;;
+     }
+
+     inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
+
+     bluetoothPowerLabel-&gt;setText((di-&gt;currentBluetoothPowerState() ? &quot;On&quot; : &quot;Off&quot;));
+     connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
+ }
+
+ void Dialog::updateDeviceLockedState()
+ {
+     if (di)
+         deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
+ }
+
+ void Dialog::updateProfile(QSystemDeviceInfo::Profile <span class="comment">/*profile*/</span>)
+ {
+    updateProfile();
+ }
+
+ void Dialog::setupDisplay()
+ {
+     QSystemDisplayInfo di;
+     brightnessLabel-&gt;setText(QString::number(di.displayBrightness(0)));
+     colorDepthLabel-&gt;setText(QString::number(di.colorDepth((0))));
+
+     QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+     QString orientStr;
+     switch(orientation) {
+     case QSystemDisplayInfo::Landscape:
+         orientStr=&quot;Landscape&quot;;
+         break;
+     case QSystemDisplayInfo::Portrait:
+         orientStr=&quot;Portrait&quot;;
+         break;
+     case QSystemDisplayInfo::InvertedLandscape:
+         orientStr=&quot;Inverted Landscape&quot;;
+         break;
+     case QSystemDisplayInfo::InvertedPortrait:
+         orientStr=&quot;Inverted Portrait&quot;;
+         break;
+     default:
+         orientStr=&quot;Orientation unknown&quot;;
+         break;
+     }
+
+     orientationLabel-&gt;setText(orientStr);
+
+     contrastLabel-&gt;setText(QString::number(di.contrast((0))));
+
+     dpiWidthLabel-&gt;setText(QString::number(di.getDPIWidth(0)));
+     dpiHeightLabel-&gt;setText(QString::number(di.getDPIHeight((0))));
+
+     physicalHeightLabel-&gt;setText(QString::number(di.physicalHeight(0)));
+     physicalWidthLabel-&gt;setText(QString::number(di.physicalWidth((0))));
+ }
+
+ void Dialog::setupStorage()
+ {
+     if(!sti) {
+     sti = new QSystemStorageInfo(this);
+     storageTreeWidget-&gt;header()-&gt;setResizeMode(QHeaderView::ResizeToContents);
+
+     connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &amp;)),
+             this,SLOT(storageChanged(bool ,const QString &amp;)));
+     }
+     updateStorage();
+ }
+
+ void Dialog::updateStorage()
+ {
+     storageTreeWidget-&gt;clear();
+
+     QStringList vols = sti-&gt;logicalDrives();
+     foreach(QString volName, vols) {
+         QString type;
+         QSystemStorageInfo::DriveType volType;
+         volType = sti-&gt;typeForDrive(volName);
+         if(volType == QSystemStorageInfo::InternalDrive) {
+             type =  &quot;Internal&quot;;
+         }
+
+         if(volType == QSystemStorageInfo::RemovableDrive) {
+             type = &quot;Removable&quot;;
+         }
+         if(volType == QSystemStorageInfo::CdromDrive) {
+             type =  &quot;Cdrom&quot;;
+         }
+         if(volType == QSystemStorageInfo::RemoteDrive) {
+             type =  &quot;Network&quot;;
+         }
+         QStringList items;
+         items &lt;&lt; volName;
+         items &lt;&lt; type;
+         items &lt;&lt; QString::number(sti-&gt;totalDiskSpace(volName));
+         items &lt;&lt; QString::number(sti-&gt;availableDiskSpace(volName));
+         QTreeWidgetItem *item = new QTreeWidgetItem(items);
+         storageTreeWidget-&gt;addTopLevelItem(item);
+     }
+ }
+
+ void Dialog::setupNetwork()
+ {
+     delete ni;
+     ni = new QSystemNetworkInfo(this);
+
+     connect(netStatusComboBox,SIGNAL(activated(int)),
+             this, SLOT(netStatusComboActivated(int)));
+
+     connect(ni,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)),
+             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+
+     connect(ni,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+             this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+
+     connect(ni,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+             this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+
+     connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+             this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+
+     cellIdLabel-&gt;setText(QString::number(ni-&gt;cellId()));
+     locationAreaCodeLabel-&gt;setText(QString::number(ni-&gt;locationAreaCode()));
+     currentMMCLabel-&gt;setText(ni-&gt;currentMobileCountryCode());
+     currentMNCLabel-&gt;setText(ni-&gt;currentMobileNetworkCode());
+
+     homeMMCLabel-&gt;setText(ni-&gt;homeMobileCountryCode());
+     homeMNCLabel-&gt;setText(ni-&gt;homeMobileNetworkCode());
+
+     networkModeChanged(ni-&gt;currentMode());
+
+ }
+ void Dialog::netStatusComboActivated(int index)
+ {
+     QString status;
+     int reIndex = index;
+
+     displayNetworkStatus(ni-&gt;networkStatus((QSystemNetworkInfo::NetworkMode)reIndex));
+
+     macAddressLabel-&gt;setText(ni-&gt;macAddress((QSystemNetworkInfo::NetworkMode)reIndex));
+
+     int strength = ni-&gt;networkSignalStrength((QSystemNetworkInfo::NetworkMode)reIndex);
+     if(strength &lt; 0)
+         strength = 0;
+     signalLevelProgressBar-&gt;setValue(strength);
+
+     InterfaceLabel-&gt;setText(ni-&gt;interfaceForMode((QSystemNetworkInfo::NetworkMode)reIndex).humanReadableName());
+
+     operatorNameLabel-&gt;setText(ni-&gt;networkName((QSystemNetworkInfo::NetworkMode)reIndex));
+ }
+
+ void Dialog::getVersion(int index)
+ {
+     QSystemInfo::Version version;
+     switch(index) {
+     case 0:
+         versionLineEdit-&gt;setText(&quot;&quot;);
+         break;
+     case 1:
+         version = QSystemInfo::Os;
+         break;
+     case 2:
+         version = QSystemInfo::QtCore;
+         break;
+     case 3:
+         version = QSystemInfo::Firmware;
+         break;
+     };
+
+     QSystemInfo si;
+     versionLineEdit-&gt;setText(si.version(version));
+ }
+
+ void Dialog::getFeature(int index)
+ {
+     QSystemInfo::Feature feature;
+     switch(index) {
+     case 0:
+         return;
+         break;
+     case 1:
+         feature = QSystemInfo::BluetoothFeature;
+         break;
+     case 2:
+         feature = QSystemInfo::CameraFeature;
+         break;
+     case 3:
+         feature = QSystemInfo::FmradioFeature;
+         break;
+     case 4:
+         feature = QSystemInfo::IrFeature;
+         break;
+     case 5:
+         feature = QSystemInfo::LedFeature;
+         break;
+     case 6:
+         feature = QSystemInfo::MemcardFeature;
+         break;
+     case 7:
+         feature = QSystemInfo::UsbFeature;
+         break;
+     case 8:
+         feature = QSystemInfo::VibFeature;
+         break;
+     case 9:
+         feature = QSystemInfo::WlanFeature;
+         break;
+     case 10:
+         feature = QSystemInfo::SimFeature;
+         break;
+     case 11:
+         feature = QSystemInfo::LocationFeature;
+         break;
+     case 12:
+         feature = QSystemInfo::VideoOutFeature;
+         break;
+     case 13:
+         feature = QSystemInfo::HapticsFeature;
+         break;
+     };
+     QSystemInfo si;
+     featuresLineEdit-&gt;setText((si.hasFeatureSupported(feature) ? &quot;true&quot;:&quot;false&quot; ));
+ }
+
+ void Dialog::setupSaver()
+ {
+     if (!saver) {
+         saver = new QSystemScreenSaver(this);
+     }
+
+     bool saverEnabled = saver-&gt;screenSaverInhibited();
+
+     connect( saverInhibitedCheckBox, SIGNAL(clicked(bool)),
+              this,SLOT(setSaverEnabled(bool)));
+
+     saverInhibitedCheckBox-&gt;setChecked(saverEnabled);
+ }
+
+ void Dialog::setSaverEnabled(bool b)
+ {
+     if (b) {
+         if (!saver) {
+             saver = new QSystemScreenSaver(this);
+         }
+        if(saver-&gt;setScreenSaverInhibit()) {
+         }
+     } else {
+         delete saver;
+         saver = NULL;
+     }
+ }
+
+ void Dialog::updateBatteryStatus(int level)
+ {
+     batteryLevelBar-&gt;setValue(level);
+ }
+
+ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
+ {
+
+     switch (newState) {
+     case QSystemDeviceInfo::BatteryPower:
+         {
+             radioButton_2-&gt;setChecked(true);
+         }
+         break;
+     case QSystemDeviceInfo::WallPower:
+         {
+             radioButton_3-&gt;setChecked(true);
+         }
+         break;
+     case QSystemDeviceInfo::WallPowerChargingBattery:
+         {
+             radioButton_4-&gt;setChecked(true);
+         }
+         break;
+     case QSystemDeviceInfo::NoBatteryLevel:
+         {
+             radioButton-&gt;setChecked(true);
+         }
+         break;
+     };
+ }
+
+ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
+ {
+     <span class="comment">// this wont annoy users will it?</span>
+     QString msg;
+<span class="comment"> //    if(di-&gt;isBatteryCharging()) {</span>
+         switch(status) {
+         case QSystemDeviceInfo::BatteryCritical:
+             {
+                 msg = &quot; Battery is Critical (4% or less), please save your work or plug in the charger.&quot;;
+                 QMessageBox::critical(this,&quot;QSystemInfo&quot;,msg);
+             }
+             break;
+         case QSystemDeviceInfo::BatteryVeryLow:
+             {
+                 msg = &quot;Battery is Very Low (10%), please plug in the charger soon&quot;;
+                 QMessageBox::warning(this,&quot;QSystemInfo&quot;,msg);
+             }
+             break;
+         case QSystemDeviceInfo::BatteryLow:
+             {
+                 msg = &quot;Battery is Low (40% or less)&quot;;
+                 QMessageBox::information(this,&quot;QSystemInfo&quot;,msg);
+
+             }
+             break;
+         case QSystemDeviceInfo::BatteryNormal:
+             {
+                 msg = &quot;Battery is Normal (greater than 40%)&quot;;
+                 QMessageBox::information(this,&quot;QSystemInfo&quot;,msg);
+             }
+             break;
+         case QSystemDeviceInfo::NoBatteryLevel:
+             {
+
+             }
+             break;
+         };
+   <span class="comment">//  }</span>
+
+ }
+
+ void Dialog::networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode mode , int strength)
+ {
+     if(mode == QSystemNetworkInfo::WlanMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
+             signalLevelProgressBar-&gt;setValue(strength);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::EthernetMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
+             signalLevelProgressBar-&gt;setValue(strength);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::GsmMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
+             signalLevelProgressBar-&gt;setValue(strength);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::CdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+             signalLevelProgressBar-&gt;setValue(strength);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::WcdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+             signalLevelProgressBar-&gt;setValue(strength);
+         }
+     }
+
+ }
+
+ void Dialog::networkNameChanged(QSystemNetworkInfo::NetworkMode mode,const QString &amp;text)
+ {
+     if(mode == QSystemNetworkInfo::WlanMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
+             operatorNameLabel-&gt;setText(text);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::EthernetMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
+             operatorNameLabel-&gt;setText(text);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::GsmMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
+             operatorNameLabel-&gt;setText(text);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::CdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+             operatorNameLabel-&gt;setText(text);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::WcdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+             operatorNameLabel-&gt;setText(text);
+         }
+     }
+
+ }
+
+ void Dialog::networkStatusChanged(QSystemNetworkInfo::NetworkMode mode , QSystemNetworkInfo::NetworkStatus status)
+ {
+     if(mode == QSystemNetworkInfo::WlanMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wlan&quot;) {
+            displayNetworkStatus(status);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::EthernetMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Ethernet&quot;) {
+            displayNetworkStatus(status);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::GsmMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Gsm&quot;) {
+             displayNetworkStatus(status);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::CdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Cdma&quot;) {
+             displayNetworkStatus(status);
+         }
+     }
+
+     if(mode == QSystemNetworkInfo::WcdmaMode) {
+         if(netStatusComboBox-&gt;currentText() == &quot;Wcdma&quot;) {
+             displayNetworkStatus(status);
+         }
+     }
+
+ }
+
+ void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+ {
+     if(mode == QSystemNetworkInfo::WlanMode) {
+         primaryModeLabel-&gt;setText(&quot;Wlan&quot;);
+     }
+
+     if(mode == QSystemNetworkInfo::EthernetMode) {
+         primaryModeLabel-&gt;setText(&quot;Ethernet&quot;);
+     }
+
+     if(mode == QSystemNetworkInfo::GsmMode) {
+         primaryModeLabel-&gt;setText(&quot;Gsm&quot;);
+     }
+
+     if(mode == QSystemNetworkInfo::CdmaMode) {
+         primaryModeLabel-&gt;setText(&quot;Cdma&quot;);
+     }
+
+     if(mode == QSystemNetworkInfo::WcdmaMode) {
+         primaryModeLabel-&gt;setText(&quot;Wcdma&quot;);
+     }
+     if(mode == QSystemNetworkInfo::UnknownMode) {
+         primaryModeLabel-&gt;setText(&quot;None&quot;);
+     }
+ }
+
+ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
+ {
+     QString stat;
+     switch(status) {
+     case QSystemNetworkInfo::UndefinedStatus:
+         stat = &quot;Undefined&quot;;
+         break;
+     case QSystemNetworkInfo::NoNetworkAvailable:
+         stat = &quot;No Network Available&quot;;
+         break;
+     case QSystemNetworkInfo::EmergencyOnly:
+         stat = &quot;Emergency Only&quot;;
+         break;
+     case QSystemNetworkInfo::Searching:
+         stat = &quot;Searching or Connecting&quot;;
+         break;
+     case QSystemNetworkInfo::Busy:
+         stat = &quot;Busy&quot;;
+         break;
+     case QSystemNetworkInfo::Connected:
+         stat = &quot;Connected&quot;;
+         break;
+     case QSystemNetworkInfo::HomeNetwork:
+         stat = &quot;Home Network&quot;;
+         break;
+     case QSystemNetworkInfo::Denied:
+         stat = &quot;Denied&quot;;
+         break;
+     case QSystemNetworkInfo::Roaming:
+         stat = &quot;Roaming&quot;;
+         break;
+     };
+     cellNetworkStatusLabel-&gt;setText(stat);
+ }
+
+ void Dialog::updateProfile()
+ {
+     if(di) {
+         QString profilestring;
+         switch(di-&gt;currentProfile()) {
+             case QSystemDeviceInfo::UnknownProfile:
+             {
+                 profilestring = &quot;Unknown&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::SilentProfile:
+             {
+                 profilestring = &quot;Silent&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::NormalProfile:
+             {
+                 profilestring = &quot;Normal&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::LoudProfile:
+             {
+                 profilestring = &quot;Loud&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::VibProfile:
+             {
+                 profilestring = &quot;Vibrate&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::OfflineProfile:
+             {
+                 profilestring = &quot;Offline&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::PowersaveProfile:
+             {
+                 profilestring = &quot;Powersave&quot;;
+             }
+             break;
+             case QSystemDeviceInfo::CustomProfile:
+                 {
+                     profilestring = &quot;custom&quot;;
+                 }
+                 break;
+         };
+         profileLabel-&gt;setText(profilestring);
+     }
+ }
+
+ void Dialog::updateSimStatus()
+ {
+     if(di) {
+         QString simstring;
+         switch(di-&gt;simStatus()) {
+         case QSystemDeviceInfo::SimLocked:
+             {
+                 simstring = &quot;Sim Locked&quot;;
+             }
+             break;
+         case QSystemDeviceInfo::SimNotAvailable:
+             {
+                 simstring = &quot;Sim not available&quot;;
+             }
+             break;
+         case QSystemDeviceInfo::SingleSimAvailable:
+             {
+                 simstring = &quot;Single Sim Available&quot;;
+
+             }
+             break;
+         case QSystemDeviceInfo::DualSimAvailable:
+             {
+                 simstring = &quot;Dual Sim available&quot;;
+             }
+             break;
+
+         };
+         simStatusLabel-&gt;setText(simstring);
+     }
+ }
+
+ void Dialog::storageChanged(bool added,const QString &amp;vol)
+ {
+     setupStorage();
+ }
+
+ void Dialog::bluetoothChanged(bool b)
+ {
+     bluetoothPowerLabel-&gt;setText((b ? &quot;On&quot; : &quot;Off&quot;));
+ }</pre>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

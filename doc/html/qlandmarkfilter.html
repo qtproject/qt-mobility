@@ -1,121 +1,232 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qlandmarkfilter.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QLandmarkFilter Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QLandmarkFilter"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkFilter Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
-</h1>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qlandmarkfilter.cpp -->
+  <title>Qt 1.1: QLandmarkFilter Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtlocation.html">QtLocation</a></li>
+              <li>QLandmarkFilter</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QLandmarkFilter Class Reference</h1>
 <p>The QLandmarkFilter class serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkFilter&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<p>Inherited by <a href="qlandmarkattributefilter.html">QLandmarkAttributeFilter</a>, <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkidfilter.html">QLandmarkIdFilter</a>, <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>, and <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkFilter&gt;</pre><p>Inherited by <a href="qlandmarkattributefilter.html">QLandmarkAttributeFilter</a>, <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkidfilter.html">QLandmarkIdFilter</a>, <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>, and <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
 <ul>
 <li><a href="qlandmarkfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, NameFilter, ProximityFilter, CategoryFilter, ..., LandmarkIdFilter }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, NameFilter, ProximityFilter, CategoryFilter, ..., LandmarkIdFilter }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#QLandmarkFilter">QLandmarkFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#QLandmarkFilter-2">QLandmarkFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#dtor.QLandmarkFilter">~QLandmarkFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">FilterType </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#type">type</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-not-eq">operator!=</a></b> ( const QLandmarkFilter &amp; <i>other</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-eq">operator=</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-eq-eq">operator==</a></b> ( const QLandmarkFilter &amp; <i>other</i> ) const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#QLandmarkFilter">QLandmarkFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#QLandmarkFilter-2">QLandmarkFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#dtor.QLandmarkFilter">~QLandmarkFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> FilterType </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#operator-not-eq">operator!=</a></b> ( const QLandmarkFilter &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLandmarkFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#operator-eq">operator=</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#operator-eq-eq">operator==</a></b> ( const QLandmarkFilter &amp; <i>other</i> ) const</td></tr>
 </table>
-<hr />
-<a name="related-non-members"></a>
+<a name="related-non-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Related Non-Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">const QLandmarkFilter </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-and-2">operator&amp;</a></b> ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLandmarkFilter </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-7c-2">operator|</a></b> ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> const Q_LOCATION_EXPORT </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#operator-and">operator&amp;</a></b> ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const Q_LOCATION_EXPORT </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfilter.html#operator-7c">operator|</a></b> ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkFilter class serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks.</p>
 <p>This class is used as a parameter to search for landmarks, it allows selection of landmarks which meet certain criteria. It is used with <a href="qlandmarkmanager.html">QLandmarkManager</a> for synchronous searches or the appropriate request classes for asynchronous searches.</p>
 <p>The QLandmarkFilter is primarily intended to serve as the base class for all filter types. However it also has the type of a QLandmark::DefaultFilter, and may thus be used as a filter to match all landmarks.</p>
-<hr />
+</div>
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QLandmarkFilter/FilterType"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/InvalidFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/NameFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/ProximityFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/CategoryFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/BoxFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/IntersectionFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/UnionFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/DefaultFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/AttributeFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkIdFilter"></a>
-<h3 class="fn"><a name="FilterType-enum"></a>enum QLandmarkFilter::FilterType</h3>
+<h3 class="fn"><a name="FilterType-enum"></a>enum QLandmarkFilter::FilterType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Describes the type of the filter</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::InvalidFilter</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">, An invalid filter which matches nothing</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::NameFilter</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches landmarks based on name</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::ProximityFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches landmarks within a certain range of a given coordinate.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::CategoryFilter</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches landmarks that belong to a given category</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::BoxFilter</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches landmarks within a given bounding box.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::IntersectionFilter</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A filter which performs an AND operation with its constituent filters</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::UnionFilter</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which performs an OR operation with its constiuent filters</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::DefaultFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches all landmarks.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::AttributeFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which matches landmarks based on generic attributes.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkIdFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches landmarks based on a list of landmark ids.</td></tr>
-</table></p>
-<hr />
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::InvalidFilter</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">, An invalid filter which matches nothing</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::NameFilter</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">A filter which matches landmarks based on name</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::ProximityFilter</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">A filter which matches landmarks within a certain range of a given coordinate.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::CategoryFilter</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">A filter which matches landmarks that belong to a given category</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::BoxFilter</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">A filter which matches landmarks within a given bounding box.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::IntersectionFilter</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">A filter which performs an AND operation with its constituent filters</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::UnionFilter</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">A filter which performs an OR operation with its constiuent filters</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::DefaultFilter</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A filter which matches all landmarks.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::AttributeFilter</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">A filter which matches landmarks based on generic attributes.</td></tr>
+<tr><td  class="topAlign"><tt>QLandmarkFilter::LandmarkIdFilter</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">A filter which matches landmarks based on a list of landmark ids.</td></tr>
+</table>
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/QLandmarkFilter"></a>
-<h3 class="fn"><a name="QLandmarkFilter"></a>QLandmarkFilter::QLandmarkFilter ()</h3>
+<h3 class="fn"><a name="QLandmarkFilter"></a>QLandmarkFilter::QLandmarkFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs an default landmark filter.</p>
-<h3 class="fn"><a name="QLandmarkFilter-2"></a>QLandmarkFilter::QLandmarkFilter ( const QLandmarkFilter &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="QLandmarkFilter-2"></a>QLandmarkFilter::QLandmarkFilter ( const QLandmarkFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a copy of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/~QLandmarkFilter"></a>
-<h3 class="fn"><a name="dtor.QLandmarkFilter"></a>QLandmarkFilter::~QLandmarkFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QLandmarkFilter"></a>QLandmarkFilter::~QLandmarkFilter ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys the filter.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/type"></a>
-<h3 class="fn"><a name="type"></a><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a> QLandmarkFilter::type () const</h3>
+<h3 class="fn"><a name="type"></a><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a> QLandmarkFilter::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of the filter.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/operator!="></a>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkFilter::operator!= ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkFilter::operator!= ( const QLandmarkFilter &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this filter is not identical to <i>other</i>.</p>
 <p>See also <a href="qlandmarkfilter.html#operator-eq-eq">operator==</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/operator="></a>
-<h3 class="fn"><a name="operator-eq"></a>QLandmarkFilter &amp; QLandmarkFilter::operator= ( const QLandmarkFilter &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="operator-eq"></a>QLandmarkFilter &amp; QLandmarkFilter::operator= ( const QLandmarkFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Assigns <i>other</i> to this filter and returns a reference to this filter.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/operator=="></a>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkFilter::operator== ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkFilter::operator== ( const QLandmarkFilter &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the filter has the same type and criteria as <i>other</i>.</p>
 <p>See also <a href="qlandmarkfilter.html#operator-not-eq">operator!=</a>().</p>
-<hr />
+</div>
+<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-and-2"></a>const QLandmarkFilter operator&amp; ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3>
+<h3 class="fn"><a name="operator-and"></a>const Q_LOCATION_EXPORT operator&amp; ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a filter which is the intersection of the <i>left</i> and <i>right</i> filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>.</p>
-<h3 class="fn"><a name="operator-7c-2"></a>const QLandmarkFilter operator| ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3>
+<h3 class="fn"><a name="operator-7c"></a>const Q_LOCATION_EXPORT operator| ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a filter which is the union of the <i>left</i> and <i>right</i> filters</p>
 <p>See also <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

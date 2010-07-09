@@ -1,136 +1,243 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qgeomapobject.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QGeoMapObject Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QGeoMapObject"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapObject Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
-</h1>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgeomapobject.cpp -->
+  <title>Qt 1.1: QGeoMapObject Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtlocation.html">QtLocation</a></li>
+              <li>QGeoMapObject</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGeoMapObject Class Reference</h1>
 <p>The QGeoMapObject class is graphical item for display in <a href="qgeomapwidget.html">QGeoMapWidget</a> instancse, that is specified in terms of coordinates and distances. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoMapObject&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<p>Inherited by <a href="qgeomapcircleobject.html">QGeoMapCircleObject</a>.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QGeoMapObject&gt;</pre><p>Inherited by <a href="qgeomapcircleobject.html">QGeoMapCircleObject</a>.</p>
 <ul>
 <li><a href="qgeomapobject-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#Type-enum">Type</a></b> { ContainerType, RectangleType, CircleType, PolylineType, PolygonType, MarkerType }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#Type-enum">Type</a></b> { ContainerType, RectangleType, CircleType, PolylineType, PolygonType, MarkerType }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#QGeoMapObject">QGeoMapObject</a></b> ( QGeoMapObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#dtor.QGeoMapObject">~QGeoMapObject</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#addChildObject">addChildObject</a></b> ( QGeoMapObject * <i>childObject</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#boundingBox">boundingBox</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#childObjects">childObjects</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#contains">contains</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#isVisible">isVisible</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#parentObject">parentObject</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#removeChildObject">removeChildObject</a></b> ( QGeoMapObject * <i>childObject</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#setVisible">setVisible</a></b> ( bool <i>visible</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#setZValue">setZValue</a></b> ( int <i>zValue</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#type">type</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapobject.html#zValue">zValue</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#QGeoMapObject">QGeoMapObject</a></b> ( QGeoMapObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#dtor.QGeoMapObject">~QGeoMapObject</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#addChildObject">addChildObject</a></b> ( QGeoMapObject * <i>childObject</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoBoundingBox </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#boundingBox">boundingBox</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#childObjects">childObjects</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#contains">contains</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#isVisible">isVisible</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoMapObject * </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#parentObject">parentObject</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#removeChildObject">removeChildObject</a></b> ( QGeoMapObject * <i>childObject</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#setVisible">setVisible</a></b> ( bool <i>visible</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#setZValue">setZValue</a></b> ( int <i>zValue</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeomapobject.html#zValue">zValue</a></b> () const</td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMapObject class is graphical item for display in <a href="qgeomapwidget.html">QGeoMapWidget</a> instancse, that is specified in terms of coordinates and distances.</p>
 <p>QGeoMapObject instances can also be grouped into heirarchies in order to simplify the process of creating compound objects and managing groups of objects.</p>
-<hr />
+</div>
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QGeoMapObject/Type"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/ContainerType"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/RectangleType"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/CircleType"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/PolylineType"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/PolygonType"></a>
-<a name="//apple_ref/cpp/econst/QGeoMapObject/MarkerType"></a>
-<h3 class="fn"><a name="Type-enum"></a>enum QGeoMapObject::Type</h3>
+<h3 class="fn"><a name="Type-enum"></a>enum QGeoMapObject::Type</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Describes the type of a map object.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoMapObject::ContainerType</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">A basic <a href="qgeomapobject.html">QGeoMapObject</a>.</td></tr>
-<tr><td valign="top"><tt>QGeoMapObject::RectangleType</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a rectangular region.</td></tr>
-<tr><td valign="top"><tt>QGeoMapObject::CircleType</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a circular region.</td></tr>
-<tr><td valign="top"><tt>QGeoMapObject::PolylineType</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a multi-segment line.</td></tr>
-<tr><td valign="top"><tt>QGeoMapObject::PolygonType</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a polygonal region.</td></tr>
-<tr><td valign="top"><tt>QGeoMapObject::MarkerType</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a map marker.</td></tr>
-</table></p>
-<hr />
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::ContainerType</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">A basic <a href="qgeomapobject.html">QGeoMapObject</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::RectangleType</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a rectangular region.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::CircleType</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a circular region.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::PolylineType</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a multi-segment line.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::PolygonType</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a polygonal region.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoMapObject::MarkerType</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">A <a href="qgeomapobject.html">QGeoMapObject</a> used to display a map marker.</td></tr>
+</table>
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/QGeoMapObject"></a>
-<h3 class="fn"><a name="QGeoMapObject"></a>QGeoMapObject::QGeoMapObject ( QGeoMapObject * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QGeoMapObject"></a>QGeoMapObject::QGeoMapObject ( QGeoMapObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new map object with the specified <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/~QGeoMapObject"></a>
-<h3 class="fn"><a name="dtor.QGeoMapObject"></a>QGeoMapObject::~QGeoMapObject ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QGeoMapObject"></a>QGeoMapObject::~QGeoMapObject ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys this map object.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/addChildObject"></a>
-<h3 class="fn"><a name="addChildObject"></a>void QGeoMapObject::addChildObject ( QGeoMapObject * <i>childObject</i> )</h3>
+<h3 class="fn"><a name="addChildObject"></a>void QGeoMapObject::addChildObject ( QGeoMapObject * <i>childObject</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds <i>childObject</i> to the list of children of this map object.</p>
 <p>If <i>childObject</i> is 0 it will not be added.</p>
 <p>The map object will take ownership of <i>childObject</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/boundingBox"></a>
-<h3 class="fn"><a name="boundingBox"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoMapObject::boundingBox () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="boundingBox"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoMapObject::boundingBox () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a bounding box which contains this map object.</p>
 <p>If this map object has children, the bounding box will be large enough to contain both this map object and all of its children.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/childObjects"></a>
-<h3 class="fn"><a name="childObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapObject::childObjects () const</h3>
+<h3 class="fn"><a name="childObjects"></a>QList&lt;QGeoMapObject *&gt; QGeoMapObject::childObjects () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the children of this map object.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/contains"></a>
-<h3 class="fn"><a name="contains"></a>bool QGeoMapObject::contains ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="contains"></a>bool QGeoMapObject::contains ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns whether <i>coordinate</i> is contained with the boundary of this map object.</p>
 <p>If this map object has children, this function will return whether <i>coordinate</i> is contained within the boundary of this map object or within the boundary of any of its children.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/isVisible"></a>
-<h3 class="fn"><a name="isVisible"></a>bool QGeoMapObject::isVisible () const</h3>
+<h3 class="fn"><a name="isVisible"></a>bool QGeoMapObject::isVisible () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns whether this map object is visible.</p>
 <p>If this map object is not visible then none of the <a href="qgeomapobject.html#childObjects">childObjects</a>() will be displayed either.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/parentObject"></a>
-<h3 class="fn"><a name="parentObject"></a>QGeoMapObject * QGeoMapObject::parentObject () const</h3>
+<h3 class="fn"><a name="parentObject"></a>QGeoMapObject * QGeoMapObject::parentObject () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the parent of this map object.</p>
 <p>Returns 0 if this map object has no parent.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/removeChildObject"></a>
-<h3 class="fn"><a name="removeChildObject"></a>void QGeoMapObject::removeChildObject ( QGeoMapObject * <i>childObject</i> )</h3>
+<h3 class="fn"><a name="removeChildObject"></a>void QGeoMapObject::removeChildObject ( QGeoMapObject * <i>childObject</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes <i>childObject</i> from the list of children of this map object.</p>
 <p>This method does nothing if <i>childObject</i> is not contained in this map objects list of children.</p>
 <p>The map object will release ownership of <i>childObject</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/setVisible"></a>
-<h3 class="fn"><a name="setVisible"></a>void QGeoMapObject::setVisible ( bool <i>visible</i> )</h3>
+<h3 class="fn"><a name="setVisible"></a>void QGeoMapObject::setVisible ( bool <i>visible</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets whether this map object is <i>visible</i>.</p>
 <p>If this map object is not visible then none of the <a href="qgeomapobject.html#childObjects">childObjects</a>() will be displayed either.</p>
 <p>See also <a href="qgeomapobject.html#isVisible">isVisible</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/setZValue"></a>
-<h3 class="fn"><a name="setZValue"></a>void QGeoMapObject::setZValue ( int <i>zValue</i> )</h3>
+<h3 class="fn"><a name="setZValue"></a>void QGeoMapObject::setZValue ( int <i>zValue</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the z-value of this map object to <i>zValue</i>.</p>
 <p>The z-value determines the order in which the objects are drawn on the screen. Objects with the same value will be drawn in the order that they were added to the map or map object.</p>
-<p>This is the same behaviour as <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a>.</p>
+<p>This is the same behaviour as QGraphicsItem.</p>
 <p>See also <a href="qgeomapobject.html#zValue">zValue</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/type"></a>
-<h3 class="fn"><a name="type"></a><a href="qgeomapobject.html#Type-enum">Type</a> QGeoMapObject::type () const</h3>
+<h3 class="fn"><a name="type"></a><a href="qgeomapobject.html#Type-enum">Type</a> QGeoMapObject::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of this map object.</p>
-<a name="//apple_ref/cpp/instm/QGeoMapObject/zValue"></a>
-<h3 class="fn"><a name="zValue"></a>int QGeoMapObject::zValue () const</h3>
+<h3 class="fn"><a name="zValue"></a>int QGeoMapObject::zValue () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the z-value of this map object.</p>
 <p>The z-value determines the order in which the objects are drawn on the screen. Objects with the same value will be drawn in the order that they were added to the map or map object.</p>
-<p>This is the same behaviour as <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a>.</p>
+<p>This is the same behaviour as QGraphicsItem.</p>
 <p>See also <a href="qgeomapobject.html#setZValue">setZValue</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

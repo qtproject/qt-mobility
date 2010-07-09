@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt 1.1: contacts.qml Example File (qmlcontacts/contacts.qml)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<h1 class="title">contacts.qml Example File</h1>
+<span class="small-subtitle">qmlcontacts/contacts.qml</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"> /****************************************************************************
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:BSD$
+ ** You may use this file under the terms of the BSD license as follows:
+ **
+ ** &quot;Redistribution and use in source and binary forms, with or without
+ ** modification, are permitted provided that the following conditions are
+ ** met:
+ **   * Redistributions of source code must retain the above copyright
+ **     notice, this list of conditions and the following disclaimer.
+ **   * Redistributions in binary form must reproduce the above copyright
+ **     notice, this list of conditions and the following disclaimer in
+ **     the documentation and/or other materials provided with the
+ **     distribution.
+ **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+ **     the names of its contributors may be used to endorse or promote
+ **     products derived from this software without specific prior written
+ **     permission.
+ **
+ ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
+
+ import Qt 4.7
+ import QtMobility.contacts 1.0
+ import &quot;contents&quot;
+
+ Rectangle {
+     id: topItem
+     width: 360
+     height: 640
+     x: 0
+     y: 0
+
+     color: &quot;#080808&quot;;
+
+     QmlContactModel {
+         id: contactModel
+         manager: &quot;memory&quot;
+         Component.onCompleted : {
+             contactModel.importContacts(&quot;contents/example.vcf&quot;);
+         }
+     }
+
+     Component {
+         id: listdelegate
+
+         Rectangle {
+             id: wrapper
+             border.width: 2
+             height: 36;
+             width: mainList.width;
+
+             property color topColor: &quot;#999999&quot;;
+             property color bottomColor: &quot;#444444&quot;;
+             property real detailsOpacity: 1
+             property int littleDetailsMode: 0;
+             property int bigDetailsMode: 0;
+
+             gradient: Gradient {
+                  GradientStop { position: 0.0; color: topColor }
+                  GradientStop { position: 1.0; color: bottomColor }
+             }
+
+             MouseArea {
+                 id: mr
+                 width: topItem.width;
+                 height: wrapper.height;
+                 anchors.centerIn: parent;
+                 onClicked: { littleDetailsMode = !littleDetailsMode; mainList.currentIndex = index; }
+             }
+             Column {
+                 Row {
+                     spacing: 2
+                     Item {
+                         id: mainAvatar;
+                         height: wrapper.height;
+                         width: height;
+
+                         Rectangle {
+                             border.width: 2;
+                             radius: 4;
+                             anchors.fill: parent;
+                             anchors.margins: 2;
+
+                             Image {
+                                 id: avatar
+                                 anchors.fill: parent;
+                                 anchors.margins: 2;
+
+                                 pixmap: model.decoration
+                                 source: model.avatar;
+                                 fillMode: Image.PreserveAspectFit
+                             }
+                         }
+                     }
+
+                     Column {
+                         Item {
+                             id: mainLabel;
+                             width: nameTxt.width
+                             height: nameTxt.height + 16;
+                             Text {
+                                 id: nameTxt
+                                 y: 8;
+                                 text: display
+                                 color: &quot;white&quot;
+                             }
+                         }
+
+                         Item {
+                             id: details
+                             property color textColor: &quot;#ffffdd&quot;;
+                             opacity: wrapper.detailsOpacity
+                             height: childrenRect.height + 6;
+                             width: childrenRect.width;
+
+                             Column {
+                                 Text {
+                                     text: model.interestLabel + &quot;: &quot; + model.interest
+                                     color: details.textColor;
+                                 }
+                                 Text {
+                                     text: model.presenceAvailable ? model.presenceText + &quot; [&quot; + model.presenceMessage + &quot;]&quot; : &quot; &quot;;
+                                     color: details.textColor;
+                                 }
+                             }
+                         }
+                     }
+
+                     Item {
+                         id: buttonBox
+                         x: wrapper.width - 6 - childrenRect.width;
+                         y: 4;
+                         height:childrenRect.height
+                         opacity: details.opacity;
+                         Column {
+                             // Buttons
+                             MediaButton {
+                                 id: dialButton;
+                                 text: &quot;Dial&quot;;
+                             }
+                             MediaButton {
+                                 id: textButton
+                                 text: &quot;Send Text&quot;;
+                             }
+                             Item {
+                                 height:childrenRect.height
+                                 width: childrenRect.width
+                                 MediaButton {
+                                     id: viewButton
+                                     text: &quot;More...&quot;
+                                     opacity: 0;
+                                     onClicked: wrapper.bigDetailsMode = 1;
+                                 }
+                                 MediaButton {
+                                     id: smallAgainButton
+                                     text: &quot;Back&quot;;
+                                     anchors.top:viewButton.top;
+                                     opacity: 0;
+                                     onClicked: wrapper.bigDetailsMode = 0;
+                                 }
+                             }
+                         }
+                     }
+                 }
+                 ListView {
+                     id: detailView
+                     width: wrapper.width;
+                     focus: true
+                     opacity: 0
+                     keyNavigationWraps: true
+
+                     //detail section header
+                     section.property:  &quot;detailName&quot;
+                     section.criteria: ViewSection.FullString
+                     section.delegate: Rectangle {
+                         color: &quot;lightsteelblue&quot;
+                         width:detailView.width
+                         height: 20
+                         Text {
+                             x: 2; height: 20
+                             verticalAlignment: Text.AlignVCenter
+                             text: section
+                             font.bold: true
+                             color:&quot;white&quot;
+                         }
+                     }
+                     model:contactModel.detailModel(contactId)
+                     delegate: Component {
+                         Item {
+                             width: detailView.width;
+                             height: 25;
+
+                             Row {
+                                 spacing: 5
+                                 Text {
+                                    text:  key;
+                                    color:&quot;white&quot;;
+                                    width: detailView.width * 0.5;
+                                    height: 20;
+                                 }
+                                 TextEdit {
+                                   width: detailView.width * 0.5;
+                                    height: 20;
+                                    text: field.value;
+                                    color:&quot;yellow&quot;;
+                                    //onTextChanged: {field.value = text;}
+                                 }
+                             }
+                         }
+                     }//delegate
+                 }//detail list view
+             }
+             states: [
+                     State {
+                         name: &quot;List&quot;;
+                         when: mainList.currentIndex != index || wrapper.littleDetailsMode == 0
+                         PropertyChanges { target: wrapper; detailsOpacity: 0; }
+                         PropertyChanges { target: wrapper; topColor: &quot;#333333&quot;; }
+                         PropertyChanges { target: wrapper; bottomColor: &quot;#111111&quot;; }
+                         PropertyChanges { target: buttonBox; x: wrapper.width + 6; }
+                         PropertyChanges { target: detailView; opacity:0 }
+                     },
+                     State {
+                         name: &quot;MiniDetails&quot;
+                         when: (mainList.currentIndex == index) &amp;&amp; (wrapper.littleDetailsMode == 1) &amp;&amp; (wrapper.bigDetailsMode == 0);
+                         PropertyChanges { target: viewButton; opacity: 1; }
+                         PropertyChanges { target: smallAgainButton; opacity: 0; }
+                         PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
+                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y } // XXX I don't think this should be here
+                         PropertyChanges { target: detailView; opacity:0 }
+                     },
+                     State {
+                         name: &quot;Details&quot;
+                         when: (mainList.currentIndex == index) &amp;&amp; (wrapper.bigDetailsMode == 1);
+                         PropertyChanges { target: wrapper; height: mainList.height; }
+                         PropertyChanges { target: viewButton; opacity: 0; }
+                         PropertyChanges { target: smallAgainButton; opacity: 1; }
+                         PropertyChanges { target: mainAvatar; height: 96; }
+                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
+                         PropertyChanges { target: mainList; interactive: false; }
+                         PropertyChanges { target: detailView; opacity:1;}
+                         PropertyChanges { target: detailView; height:wrapper.height - 100;}
+                     }
+             ]
+
+             transitions:  [
+                 Transition {
+                     from: &quot;List&quot;
+                     to: &quot;MiniDetails&quot;
+                     reversible: false
+                     SequentialAnimation {
+                         NumberAnimation { duration: 100; properties: &quot;detailsOpacity,height&quot; }
+                         ParallelAnimation {
+                             ColorAnimation { duration: 100; properties: &quot;topColor, bottomColor&quot;;}
+                             NumberAnimation { duration: 150; properties: &quot;x&quot;; }
+                         }
+                     }
+                 },
+                 Transition {
+                     from: &quot;MiniDetails&quot;
+                     to: &quot;Details&quot;
+                     reversible: false
+                     ParallelAnimation {
+                         NumberAnimation { duration: 250; properties: &quot;contentY,opacity&quot;; }
+                         SequentialAnimation {
+                             NumberAnimation { duration: 100; properties: &quot;detailsOpacity,height&quot; }
+                             ParallelAnimation {
+                                 ColorAnimation { duration: 100; properties: &quot;topColor, bottomColor&quot;;}
+                                 NumberAnimation { duration: 150; properties: &quot;x&quot;; }
+                             }
+                         }
+                     }
+                 },
+                 Transition {
+                     from: &quot;Details&quot;
+                     to: &quot;MiniDetails&quot;
+                     reversible: false
+                     ParallelAnimation {
+                         NumberAnimation { duration: 250; properties: &quot;contentY,opacity&quot;; }
+                         SequentialAnimation {
+                             ParallelAnimation {
+                                 NumberAnimation { duration: 150; properties: &quot;x&quot;; }
+                                 ColorAnimation { duration: 200; properties: &quot;topColor, bottomColor&quot;;}
+                             }
+                             NumberAnimation { duration: 200; properties: &quot;detailsOpacity,height&quot; }
+                         }
+                     }
+                 },
+                 Transition {
+                     from: &quot;MiniDetails&quot;
+                     to: &quot;List&quot;
+                     reversible: false
+                     SequentialAnimation {
+                         NumberAnimation { duration: 100; properties: &quot;x&quot;; }
+                         ParallelAnimation{
+                             NumberAnimation { duration: 150; properties: &quot;detailsOpacity,height&quot; }
+                             ColorAnimation { duration: 150; properties: &quot;topColor, bottomColor&quot;;}
+                         }
+                     }
+                 }
+             ]
+         }
+     }
+
+     ListView {
+         id: mainList
+         model: contactModel
+         width: parent.width; height: parent.height
+         delegate: listdelegate
+         highlightFollowsCurrentItem: false
+         focus: true
+         anchors.fill: parent
+         keyNavigationWraps: true
+     }
+
+     // Attach scrollbar to the right edge of the view.
+     ScrollBar {
+         id: verticalScrollBar
+         opacity: 0
+         orientation: &quot;Vertical&quot;
+         position: mainList.visibleArea.yPosition
+         pageSize: mainList.visibleArea.heightRatio
+         width: 20
+         height: mainList.height
+         anchors.right: mainList.right
+         fgColor: &quot;white&quot;
+         // Only show the scrollbar when the view is moving.
+         states: [
+             State {
+                 name: &quot;ShowBars&quot;; when: mainList.moving
+                 PropertyChanges { target: verticalScrollBar; opacity: 1 }
+             }
+         ]
+         transitions: [ Transition { NumberAnimation { property: &quot;opacity&quot;; duration: 400 } } ]
+     }
+ }
+
+ // ![0]</pre>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
+</html>
