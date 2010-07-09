@@ -102,7 +102,8 @@ contains(mobility_modules,versit) {
 }
 
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \

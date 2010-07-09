@@ -36,7 +36,7 @@ maemo* {
 HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
-    qgstreamervideorendererinterface.h \    
+    qgstreamervideorendererinterface.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputendpointselector.h \
     qgstreamervideorenderer.h \
@@ -47,7 +47,7 @@ HEADERS += \
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
-    qgstreamervideorendererinterface.cpp \    
+    qgstreamervideorendererinterface.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputendpointselector.cpp \
     qgstreamervideorenderer.cpp \
