@@ -1,75 +1,173 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qgeosearchmanager.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QGeoSearchManager Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QGeoSearchManager"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoSearchManager Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
-</h1>
-<p>The QGeoSearchManager class provides support for searching operations related to geographic information. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoSearchManager&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgeosearchmanager.cpp -->
+  <title>Qt 1.1: QGeoSearchManager Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtlocation.html">QtLocation</a></li>
+              <li>QGeoSearchManager</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
 <ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGeoSearchManager Class Reference</h1>
+<p>The QGeoSearchManager class provides support for searching operations related to geographic information. <a href="#details">More...</a></p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QGeoSearchManager&gt;</pre><ul>
 <li><a href="qgeosearchmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#SearchType-enum">SearchType</a></b> { SearchNone, SearchGeocode, SearchLandmarks, SearchAll }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a></b></td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#SearchType-enum">SearchType</a></b> { SearchNone, SearchGeocode, SearchLandmarks, SearchAll }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a></b></td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#dtor.QGeoSearchManager">~QGeoSearchManager</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</a></b> ( QLandmarkManager * <i>landmarkManager</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkManager *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoSearchReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#geocode">geocode</a></b> ( const QGeoAddress &amp; <i>address</i>, const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoSearchReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#geocode-2">geocode</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#managerName">managerName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoSearchReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#placeSearch">placeSearch</a></b> ( const QString &amp; <i>searchString</i>, SearchTypes <i>searchTypes</i> = SearchTypes( SearchAll ), const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a></b> ( const QList&lt;QLandmarkManager *&gt; &amp; <i>landmarkManagers</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">SearchTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#supportedSearchTypes">supportedSearchTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#supportsGeocoding">supportsGeocoding</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#dtor.QGeoSearchManager">~QGeoSearchManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</a></b> ( QLandmarkManager * <i>landmarkManager</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkManager *&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QLandmarkManager * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#geocode">geocode</a></b> ( const QGeoAddress &amp; <i>address</i>, const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#geocode-2">geocode</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#managerName">managerName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMap&lt;QString, QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoSearchReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#placeSearch">placeSearch</a></b> ( const QString &amp; <i>searchString</i>, SearchTypes <i>searchTypes</i> = SearchTypes( SearchAll ), const QGeoBoundingBox &amp; <i>bounds</i> = QGeoBoundingBox() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a></b> ( const QList&lt;QLandmarkManager *&gt; &amp; <i>landmarkManagers</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> SearchTypes </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#supportedSearchTypes">supportedSearchTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#supportsGeocoding">supportsGeocoding</a></b> () const</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
-<hr />
-<a name="signals"></a>
+<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#error">error</a></b> ( QGeoSearchReply * <i>reply</i>, QGeoSearchReply::Error <i>error</i>, QString <i>errorString</i> = QString() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosearchmanager.html#finished">finished</a></b> ( QGeoSearchReply * <i>reply</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#error">error</a></b> ( QGeoSearchReply * <i>reply</i>, QGeoSearchReply::Error <i>error</i>, QString <i>errorString</i> = QString() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosearchmanager.html#finished">finished</a></b> ( QGeoSearchReply * <i>reply</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
-</ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoSearchManager class provides support for searching operations related to geographic information.</p>
 <p>The geocode(<a href="qgeoaddress.html">QGeoAddress</a>), geocode(<a href="qgeocoordinate.html">QGeoCoordinate</a>) and <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() functions return <a href="qgeosearchreply.html">QGeoSearchReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
@@ -79,108 +177,96 @@
 <p>A user can supply other <a href="qlandmarkmanager.html">QLandmarkManager</a> instances to be searched during the execution of <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() with <a href="qgeosearchmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a>(). This means that a personal database store can be combined with a public source of database information with very little effort.</p>
 <p>Instances of QGeoSearchManager can be accessed with <a href="qgeoserviceprovider.html#searchManager">QGeoServiceProvider::searchManager</a>().</p>
 <p>A small example of the usage of QGeoSearchManager and the handling of <a href="qlandmark.html">QLandmark</a> results follows:</p>
-<pre>    class MySearchHandler : public QObject
-    {
-        Q_OBJECT
-    public:
-        MySearchHandler(QGeoSearchManager *searchManager, QString searchString)
-        {
-            QGeoSearchReply *reply = searchManager-&gt;placeSearch(searchString);
+<pre class="highlightedCode brush: cpp"> class MySearchHandler : public QObject
+ {
+     Q_OBJECT
+ public:
+     MySearchHandler(QGeoSearchManager *searchManager, QString searchString)
+     {
+         QGeoSearchReply *reply = searchManager-&gt;placeSearch(searchString);
 
-            if (reply-&gt;isFinished()) {
-                if (reply-&gt;error() != QGeoSearchReply::NoError) {
-                    searchResults(reply);
-                } else {
-                    searchError(reply, reply-&gt;error(), reply-&gt;errorString());
-                }
-            } else {
-                connect(searchManager,
-                        SIGNAL(finished(QGeoSearchReply*)),
-                        this,
-                        SLOT(searchResults(QGeoSearchReply*)));
+         if (reply-&gt;isFinished()) {
+             if (reply-&gt;error() != QGeoSearchReply::NoError) {
+                 searchResults(reply);
+             } else {
+                 searchError(reply, reply-&gt;error(), reply-&gt;errorString());
+             }
+         } else {
+             connect(searchManager,
+                     SIGNAL(finished(QGeoSearchReply*)),
+                     this,
+                     SLOT(searchResults(QGeoSearchReply*)));
 
-                connect(searchManager,
-                        SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
-                        this
-                        SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
-            }
-        }
+             connect(searchManager,
+                     SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
+                     this
+                     SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
+         }
+     }
 
-    private slots:
-        void searchResults(QGeoSearchReply *reply)
-        {
-            <span class="comment">// We now have the results as QGeoPlace objects</span>
-            QList&lt;QGeoPlace&gt; places = reply-&gt;places();
+ private slots:
+     void searchResults(QGeoSearchReply *reply)
+     {
+         <span class="comment">// We now have the results as QGeoPlace objects</span>
+         QList&lt;QGeoPlace&gt; places = reply-&gt;places();
 
-            <span class="comment">// The QLandmark results can be created from the simpler</span>
-            <span class="comment">// QGeoPlace results if that is required.</span>
-            QList&lt;QLandmark&gt; landmarks;
-            for (int i = 0; i &lt; places().size(); ++i) {
-                QGeoPlace place = places.at(i);
-                if (place.type() == QGeoPlace::LandmarkType) {
-                    landmarks.append(QLandmark(place));
-                }
-            }
+         <span class="comment">// The QLandmark results can be created from the simpler</span>
+         <span class="comment">// QGeoPlace results if that is required.</span>
+         QList&lt;QLandmark&gt; landmarks;
+         for (int i = 0; i &lt; places().size(); ++i) {
+             QGeoPlace place = places.at(i);
+             if (place.type() == QGeoPlace::LandmarkType) {
+                 landmarks.append(QLandmark(place));
+             }
+         }
 
-            <span class="comment">// ... now we have to make use of the places and landmarks ...</span>
-            reply-&gt;deleteLater();
-        }
+         <span class="comment">// ... now we have to make use of the places and landmarks ...</span>
+         reply-&gt;deleteLater();
+     }
 
-        void searchError(QGeoSearchReply *reply, QGeoSearchReply::Error error, const QString &amp;errorString)
-        {
-            <span class="comment">// ... inform the user that an error has occurred ...</span>
-        }
-    };</pre>
-<hr />
+     void searchError(QGeoSearchReply *reply, QGeoSearchReply::Error error, const QString &amp;errorString)
+     {
+         <span class="comment">// ... inform the user that an error has occurred ...</span>
+     }
+ };</pre>
+</div>
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QGeoSearchManager/SearchType"></a>
-<a name="//apple_ref/cpp/econst/QGeoSearchManager/SearchNone"></a>
-<a name="//apple_ref/cpp/econst/QGeoSearchManager/SearchGeocode"></a>
-<a name="//apple_ref/cpp/econst/QGeoSearchManager/SearchLandmarks"></a>
-<a name="//apple_ref/cpp/econst/QGeoSearchManager/SearchAll"></a>
-<a name="//apple_ref/cpp/tdef/QGeoSearchManager/SearchTypes"></a>
-<h3 class="flags"><a name="SearchType-enum"></a>enum QGeoSearchManager::SearchType<br />flags QGeoSearchManager::SearchTypes</h3>
+<h3 class="flags"><a name="SearchType-enum"></a>enum QGeoSearchManager::SearchType<br/>flags QGeoSearchManager::SearchTypes</h3>
 <p>Describes the type of search that should be performed by <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>().</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoSearchManager::SearchNone</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">Do not use the search string.</td></tr>
-<tr><td valign="top"><tt>QGeoSearchManager::SearchGeocode</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Use the search string as a textual address in a geocoding operation.</td></tr>
-<tr><td valign="top"><tt>QGeoSearchManager::SearchLandmarks</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Use the search string for free-text search against the available landmark information sources.</td></tr>
-<tr><td valign="top"><tt>QGeoSearchManager::SearchAll</tt></td><td align="center" valign="top"><tt>0xFFFF</tt></td><td valign="top">All available information sources should be used as part of the search.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGeoSearchManager::SearchNone</tt></td><td class=" topAlign"><tt>0x0000</tt></td><td  class="topAlign">Do not use the search string.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoSearchManager::SearchGeocode</tt></td><td class=" topAlign"><tt>0x0001</tt></td><td  class="topAlign">Use the search string as a textual address in a geocoding operation.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoSearchManager::SearchLandmarks</tt></td><td class=" topAlign"><tt>0x0002</tt></td><td  class="topAlign">Use the search string for free-text search against the available landmark information sources.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoSearchManager::SearchAll</tt></td><td class=" topAlign"><tt>0xFFFF</tt></td><td  class="topAlign">All available information sources should be used as part of the search.</td></tr>
+</table>
 <p>The SearchTypes type is a typedef for <a href="qflags.html">QFlags</a>&lt;SearchType&gt;. It stores an OR combination of SearchType values.</p>
-<hr />
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/~QGeoSearchManager"></a>
-<h3 class="fn"><a name="dtor.QGeoSearchManager"></a>QGeoSearchManager::~QGeoSearchManager ()</h3>
+<h3 class="fn"><a name="dtor.QGeoSearchManager"></a>QGeoSearchManager::~QGeoSearchManager ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys this manager.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/addAdditionalLandmarkManager"></a>
-<h3 class="fn"><a name="addAdditionalLandmarkManager"></a>void QGeoSearchManager::addAdditionalLandmarkManager ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>landmarkManager</i> )</h3>
+<h3 class="fn"><a name="addAdditionalLandmarkManager"></a>void QGeoSearchManager::addAdditionalLandmarkManager ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>landmarkManager</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds <i>landmarkManager</i> to the list of landmark managers that will be used with <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>().</p>
 <p>These landmark managers will be used along with the landmark manager returned by <a href="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/additionalLandmarkManagers"></a>
-<h3 class="fn"><a name="additionalLandmarkManagers"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; QGeoSearchManager::additionalLandmarkManagers () const</h3>
+<h3 class="fn"><a name="additionalLandmarkManagers"></a>QList&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; QGeoSearchManager::additionalLandmarkManagers () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the landmark managers that will be used with <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>().</p>
 <p>These landmark managers will be used along with the landmark manager returned by <a href="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <p>See also <a href="qgeosearchmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/defaultLandmarkManager"></a>
-<h3 class="fn"><a name="defaultLandmarkManager"></a><a href="qlandmarkmanager.html">QLandmarkManager</a> * QGeoSearchManager::defaultLandmarkManager () const</h3>
+<h3 class="fn"><a name="defaultLandmarkManager"></a><a href="qlandmarkmanager.html">QLandmarkManager</a> * QGeoSearchManager::defaultLandmarkManager () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the landmark manager provided by the service provider for use with <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>().</p>
 <p>Will return 0 if the no landmark manager is associated with the service provider. This does not indicate that <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() does not support landmark searching, only that any landmark searching which occurs within in <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() is done without the use of a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/error"></a>
-<h3 class="fn"><a name="error"></a>void QGeoSearchManager::error ( <a href="qgeosearchreply.html">QGeoSearchReply</a> * <i>reply</i>, <a href="qgeosearchreply.html#Error-enum">QGeoSearchReply::Error</a> <i>error</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="error"></a>void QGeoSearchManager::error ( <a href="qgeosearchreply.html">QGeoSearchReply</a> * <i>reply</i>, <a href="qgeosearchreply.html#Error-enum">QGeoSearchReply::Error</a> <i>error</i>, QString <i>errorString</i> = QString() )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when an error has been detected in the processing of <i>reply</i>. The <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>() signal will probably follow.</p>
 <p>The error will be described by the error code <i>error</i>. If <i>errorString</i> is not empty it will contain a textual description of the error.</p>
 <p>This signal and <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() will be emitted at the same time.</p>
-<p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() instead.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/finished"></a>
-<h3 class="fn"><a name="finished"></a>void QGeoSearchManager::finished ( <a href="qgeosearchreply.html">QGeoSearchReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use deleteLater() instead.</p>
+<h3 class="fn"><a name="finished"></a>void QGeoSearchManager::finished ( <a href="qgeosearchreply.html">QGeoSearchReply</a> * <i>reply</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when <i>reply</i> has finished processing.</p>
 <p>If reply::error() equals <a href="qgeosearchreply.html#Error-enum">QGeoSearchReply::NoError</a> then the processing finished successfully.</p>
 <p>This signal and <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() will be emitted at the same time.</p>
-<p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() instead.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/geocode"></a>
-<h3 class="fn"><a name="geocode"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::geocode ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3>
+<p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use deleteLater() instead.</p>
+<h3 class="fn"><a name="geocode"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::geocode ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Begins the geocoding of <i>address</i>. Geocoding is the process of finding a coordinate that corresponds to a given address.</p>
 <p>A <a href="qgeosearchreply.html">QGeoSearchReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeosearchreply.html">QGeoSearchReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
@@ -188,8 +274,8 @@
 <p>Once the operation has completed, <a href="qgeosearchreply.html#places">QGeoSearchReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>The address data returned in the results may be different from <i>address</i>. This will usually occur if the geocoding service backend uses a different canonical form of addresses or if <i>address</i> was only partially filled out.</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>. This is particularly useful if <i>address</i> is only partially filled out, as the service will attempt to geocode all matches for the specified data.</p>
-<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
-<h3 class="fn"><a name="geocode-2"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::geocode ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3>
+<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with deleteLater().</p>
+<h3 class="fn"><a name="geocode-2"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::geocode ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Begins the reverse geocoding of <i>coordinate</i>. Reverse geocoding is the process of finding an address that corresponds to a given coordinate.</p>
 <p>A <a href="qgeosearchreply.html">QGeoSearchReply</a> object will be returned, which can be used to manage the reverse geocoding operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeosearchreply.html">QGeoSearchReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
@@ -198,20 +284,16 @@
 <p>The coordinate data returned in the results may be different from <i>coordinate</i>. This will usually occur if the reverse geocoding service backend shifts the coordinates to be closer to the matching addresses, or if the backend returns results at multiple levels of detail.</p>
 <p>If multiple results are returned by the reverse geocoding service backend they will be provided in order of specificity. This normally occurs if the backend is configured to reverse geocode across multiple levels of detail. As an example, some services will return address and coordinate pairs for the street address, the city, the state and the country.</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>.</p>
-<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/managerName"></a>
-<h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoSearchManager::managerName () const</h3>
+<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with deleteLater().</p>
+<h3 class="fn"><a name="managerName"></a>QString QGeoSearchManager::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the name of the engine which implements the behaviour of this search manager.</p>
 <p>The combination of managerName() and <a href="qgeosearchmanager.html#managerVersion">managerVersion</a>() should be unique amongst the plugin implementations.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/managerParameters"></a>
-<h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QGeoSearchManager::managerParameters () const</h3>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoSearchManager::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the parameters used in the creation of this search manager.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/managerVersion"></a>
-<h3 class="fn"><a name="managerVersion"></a>int QGeoSearchManager::managerVersion () const</h3>
+<h3 class="fn"><a name="managerVersion"></a>int QGeoSearchManager::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the version of the engine which implements the behaviour of this search manager.</p>
 <p>The combination of <a href="qgeosearchmanager.html#managerName">managerName</a>() and managerVersion() should be unique amongst the plugin implementations.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/placeSearch"></a>
-<h3 class="fn"><a name="placeSearch"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::placeSearch ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>searchString</i>, <a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a> <i>searchTypes</i> = SearchTypes( SearchAll ), const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3>
+<h3 class="fn"><a name="placeSearch"></a><a href="qgeosearchreply.html">QGeoSearchReply</a> * QGeoSearchManager::placeSearch ( const QString &amp; <i>searchString</i>, <a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a> <i>searchTypes</i> = SearchTypes( SearchAll ), const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Begins searching for a place matching <i>searchString</i>. The value of <i>searchTypes</i> will determine whether the search is for addresses only, for landmarks only or for both.</p>
 <p>A <a href="qgeosearchreply.html">QGeoSearchReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeosearchreply.html">QGeoSearchReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
@@ -220,22 +302,31 @@
 <p>If any of the <a href="qgeoplace.html">QGeoPlace</a> instances in the results have landmark associated data, <a href="qgeoplace.html#type">QGeoPlace::type</a>() will return <a href="qgeoplace.html#PlaceType-enum">QGeoPlace::LandmarkType</a> and QLandmark::QLandmark(const <a href="qgeoplace.html">QGeoPlace</a> &amp;place) can be used to convert the <a href="qgeoplace.html">QGeoPlace</a> instance into a <a href="qlandmark.html">QLandmark</a> instance.</p>
 <p>If <i>searchTypes</i> is <a href="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchLandmarks</a> or <a href="qgeosearchmanager.html#SearchType-enum">QGeoSearchManager::SearchAll</a>, a free text landmark search will be performed. The results will be a combination of the backend specific landmark search and the same free text search applied to each of the <a href="qlandmarkmanager.html">QLandmarkManager</a> instances in <a href="qgeosearchmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</a>().</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>.</p>
-<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/setAdditionalLandmarkManagers"></a>
-<h3 class="fn"><a name="setAdditionalLandmarkManagers"></a>void QGeoSearchManager::setAdditionalLandmarkManagers ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; &amp; <i>landmarkManagers</i> )</h3>
+<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeosearchmanager.html#finished">QGeoSearchManager::finished</a>(), <a href="qgeosearchmanager.html#error">QGeoSearchManager::error</a>(), <a href="qgeosearchreply.html#finished">QGeoSearchReply::finished</a>() or <a href="qgeosearchreply.html#error">QGeoSearchReply::error</a>() with deleteLater().</p>
+<h3 class="fn"><a name="setAdditionalLandmarkManagers"></a>void QGeoSearchManager::setAdditionalLandmarkManagers ( const QList&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; &amp; <i>landmarkManagers</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the landmark managers to be used with <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() to <i>landmarkManagers</i>.</p>
 <p>These landmark managers will be used along with the landmark manager returned by <a href="qgeosearchmanager.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <p>See also <a href="qgeosearchmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/supportedSearchTypes"></a>
-<h3 class="fn"><a name="supportedSearchTypes"></a><a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a> QGeoSearchManager::supportedSearchTypes () const</h3>
+<h3 class="fn"><a name="supportedSearchTypes"></a><a href="qgeosearchmanager.html#SearchType-enum">SearchTypes</a> QGeoSearchManager::supportedSearchTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the search types supported by the <a href="qgeosearchmanager.html#placeSearch">placeSearch</a>() with this manager.</p>
-<a name="//apple_ref/cpp/instm/QGeoSearchManager/supportsGeocoding"></a>
-<h3 class="fn"><a name="supportsGeocoding"></a>bool QGeoSearchManager::supportsGeocoding () const</h3>
+<h3 class="fn"><a name="supportsGeocoding"></a>bool QGeoSearchManager::supportsGeocoding () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns whether this manager supports geocoding operations.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>
