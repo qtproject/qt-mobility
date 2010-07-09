@@ -2100,10 +2100,13 @@ bool exportLandmarksGpx(const QString &connectionName,
 {
     QLandmarkFileHandlerGpx gpxHandler;
 
-    QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
     QList<QLandmarkSortOrder> sortOrders;
     QLandmarkFetchHint fetchHint;
-    QList<QLandmark> lms = ::landmarks(connectionName,idFilter, sortOrders, fetchHint, error, errorString, managerUri);
+    QLandmarkFilter filter;
+    if (landmarkIds.count() > 0)
+        filter = QLandmarkIdFilter (landmarkIds, QLandmarkIdFilter::MatchSubset);
+
+    QList<QLandmark> lms = ::landmarks(connectionName,filter, sortOrders, fetchHint, error, errorString, managerUri);
 
     if (error && *error != QLandmarkManager::NoError)
         return false;
@@ -2173,16 +2176,7 @@ bool exportLandmarks(const QString &connectionName,
     Q_ASSERT(errorString);
 
     QFile *file = qobject_cast<QFile *>(device);
-    if (file)
-    {
-        if (!file->exists()) {
-            *error = QLandmarkManager::DoesNotExistError;
-            *errorString = QString("Import operation failed, file does not exist: %1").arg(file->fileName());
-            return false;
-        }
-    }
-
-    if (!device->open(QIODevice::ReadOnly)) {
+    if (!device->open(QIODevice::WriteOnly)) {
         *error = QLandmarkManager::PermissionsError;
         *errorString = "Unable to open io device for importing landmarks";
         return false;
@@ -3213,19 +3207,9 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QByteArray &format,
                                                    QList<QLandmarkId> landmarkIds,
                                                    QLandmarkManager::Error *error,
-                                                   QString *errorString)
+                                                   QString *errorString) const
 {
-    if (format ==  "LmxV1.0") {
-            return ::exportLandmarksLmx(m_dbConnectionName, device, landmarkIds, error, errorString, managerUri());
-    } else if (format == "GpxV1.1") {
-        return ::exportLandmarksGpx(m_dbConnectionName, device, landmarkIds, error, errorString, managerUri());
-    } else {
-        if (error)
-            *error = QLandmarkManager::NotSupportedError;
-        if (errorString)
-            *errorString = "The given format is not supported at this time";
-        return false;
-    }
+    ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
 QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const

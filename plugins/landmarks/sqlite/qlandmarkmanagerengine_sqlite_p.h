@@ -135,7 +135,7 @@ public:
                          const QByteArray &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::Error *error,
-                         QString *errorString);
+                         QString *errorString) const;
 
     QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const;
