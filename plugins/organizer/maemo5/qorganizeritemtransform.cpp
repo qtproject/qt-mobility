@@ -110,6 +110,13 @@ QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
     return retn;
 }
 
+QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent *cevent)
+{
+    QDateTime instanceStartDate = QDateTime::fromTime_t(cevent->getDateStart());
+    QDateTime instanceEndDate = QDateTime::fromTime_t(cevent->getDateEnd());
+    return convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate, QOrganizerItemLocalId(0));
+}
+
 QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceStartDate, const QDateTime &instanceEndDate)
 {
     QOrganizerEventOccurrence retn;
@@ -125,22 +132,14 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
         retn.setLocationGeoCoordinates(tempstr);
 
     // Start time
-    retn.setStartDateTime(instanceStartDate);
-    /*
-    QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
-    if (!tempdt.isNull())
-        retn.setStartDateTime(tempdt);
-        */
+    if (!instanceStartDate.isNull())
+        retn.setStartDateTime(instanceStartDate);
 
     // End time
-    retn.setEndDateTime(instanceEndDate);
-    /*
-    tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
-    if (!tempdt.isNull())
-        retn.setEndDateTime(tempdt);
-        */
+    if (!instanceEndDate.isNull())
+        retn.setEndDateTime(instanceEndDate);
 
-    // Set parent id
+    // Set parent local id
     QString idString = QString::fromStdString(cevent->getId());
     QOrganizerItemLocalId localId = idString.toUInt();
     retn.setParentLocalId(localId);
@@ -148,6 +147,13 @@ QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrenc
     // Set original event date
     retn.setOriginalDate(instanceStartDate.date());
 
+    return retn;
+}
+
+QOrganizerEventOccurrence OrganizerItemTransform::convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemLocalId parentLocalId)
+{
+    QOrganizerEventOccurrence retn = convertCEventToQEventOccurrence(cevent, instanceStartDate, instanceEndDate);
+    retn.setParentLocalId(parentLocalId);
     return retn;
 }
 
@@ -289,8 +295,12 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         tempstr = QString::fromStdString(component->getGUid());
         if(!tempstr.isEmpty())
             ig.setGuid(tempstr);
-        else
+        else {
+            /*
             ig.setGuid(randomGuid()); // no GUID was set, generate a random GUID
+            qDebug() << "GUID " << ig.guid() << " given to item with label " << item->displayLabel();
+            */
+        }
         item->saveDetail(&ig);
 
         // Set component ID
@@ -474,6 +484,10 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // GUid
         if (!item->guid().isEmpty())
             retn->setGUid(item->guid().toStdString());
+        else {
+            retn->setGUid(randomGuid().toStdString()); // no GUID was set, generate a random GUID
+            qDebug() << "GUID " << QString::fromStdString(retn->getGUid()) << " given to item with label " << item->displayLabel();
+        }
 
         // Comments
         QStringList commentList = item->comments();

@@ -170,9 +170,6 @@ public:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
 
 private:
-    // a private implementation for finding item instances
-    QList<QOrganizerItem> doFindItemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const;
-
     // single item saving implementation
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
@@ -182,8 +179,11 @@ private:
     //int saveTodoOccurrence(QOrganizerTodoOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
     void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
 
-    // getting parent items
-    QOrganizerItem parentOf(CCalendar *cal, QOrganizerItem *occurence, QOrganizerItemManager::Error *error);
+    // getting the parent (base) item of an exception item (event occurrence or todo occurrence)
+    QOrganizerItem parentOf(CCalendar *cal, QOrganizerItem *occurence, QOrganizerItemManager::Error *error) const;
+
+    // internal fetch item
+    QOrganizerItem internalFetchItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const;
 
     // identifying native item as an occurrence
     bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;

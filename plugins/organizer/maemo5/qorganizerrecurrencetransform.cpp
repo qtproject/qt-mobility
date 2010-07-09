@@ -150,8 +150,6 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule(const QOrganiz
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule(rule);
 
-    qDebug() << "Rule: " << icalRule;
-
     // Store the new rule to the rule vector
     CRecurrenceRule *crecrule = new CRecurrenceRule();
     crecrule->setRuleType(EXCEPTION_RULE);

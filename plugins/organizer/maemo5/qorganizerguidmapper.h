@@ -66,6 +66,7 @@ public:
 
     void setCalendar(CCalendar *targetCalendar);
     QList<QString> itemIds(const QString &guid, const QString &itemType);
+    QString typeOf(const QString &id);
     void addMapping(const QString &guid, const QString &itemType, const QString &id);
 
 private:
@@ -77,6 +78,7 @@ private:
     bool m_itemsEnumerated;
 
     QMultiMap< QPair<QString, QString>, QString > m_GuidToItemId; // [GUID, itemType] => itemId
+    QMap< QString, QString > m_itemIdToItemType; // item ID => item type
 };
 
 #endif // QORGANIZERGUIDMAPPER_H

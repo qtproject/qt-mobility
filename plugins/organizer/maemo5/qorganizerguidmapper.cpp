@@ -64,6 +64,7 @@ void OrganizerGuidMapper::setCalendar(CCalendar *targetCalendar)
         // Calendar changed
         m_targetCalendar = targetCalendar;
         m_GuidToItemId.clear();
+        m_itemIdToItemType.clear();
         m_itemsEnumerated = false;
     }
 }
@@ -86,17 +87,48 @@ QList<QString> OrganizerGuidMapper::itemIds(const QString &guid, const QString &
         // If possible, change also the hasItem() method!
 
         m_GuidToItemId.clear();
+        m_itemIdToItemType.clear();
         enumerateItems();
         return m_GuidToItemId.values(qMakePair(guid, itemType));
     }
 }
 
-void OrganizerGuidMapper::addMapping(const QString &guid, const QString &itemType, const QString &id)
+QString OrganizerGuidMapper::typeOf(const QString &id)
 {
     init();
-    const QList<QString> ids = m_GuidToItemId.values();
-    if (ids.indexOf(id) == -1) // no duplicate ids allowed
+    QString type = m_itemIdToItemType.value(id);
+    if (!type.isEmpty()) {
+        return type;
+    }
+    else {
+        // have to re-fetch all the items
+        m_GuidToItemId.clear();
+        m_itemIdToItemType.clear();
+        enumerateItems();
+        return m_itemIdToItemType.value(id);
+    }
+}
+
+void OrganizerGuidMapper::addMapping(const QString &guid, const QString &itemType, const QString &id)
+{
+    // note: itemType must NOT be any occurrence type
+    init();
+    if (!m_itemIdToItemType.contains(id)) {
         m_GuidToItemId.insertMulti(qMakePair(guid, itemType), id);
+        m_itemIdToItemType.insert(id, itemType);
+    }
+
+    /*
+    // Old implementation
+    init();
+    const QList<QString> ids = m_GuidToItemId.values();
+    if (ids.indexOf(id) == -1) { // no duplicate ids allowed
+        m_GuidToItemId.insertMulti(qMakePair(guid, itemType), id);
+        m_itemIdToItemType.insert(id, itemType);
+    }
+    */
+
+
 
     /* // ONLY FOR DEBUGGING THE MAPPING, REMOVE LATER
     QMultiMap<QString, QString>::iterator i = m_GuidToItemId.begin();
@@ -123,6 +155,7 @@ void OrganizerGuidMapper::enumerateItems()
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
 
     // Events
+    const QString eventType = QOrganizerItemType::TypeEvent;
     const std::vector< CEvent* > events = m_targetCalendar->getEvents(calError);
     std::vector< CEvent* >::const_iterator event;
     for (event = events.begin(); event != events.end(); ++event)
@@ -130,16 +163,19 @@ void OrganizerGuidMapper::enumerateItems()
         CEvent *cevent = *event;
         if (cevent) {
             QString guid = QString::fromStdString(cevent->getGUid());
-            if (!guid.isEmpty()) {
-                const QString eventType = QOrganizerItemType::TypeEvent;
+            if (!guid.isEmpty())
                 m_GuidToItemId.insertMulti(qMakePair(guid, eventType), QString::fromStdString(cevent->getId()));
-            }
+
+            QString id = QString::fromStdString(cevent->getId());
+            if (!id.isEmpty())
+                m_itemIdToItemType.insert(id, eventType);
 
             delete cevent;
         }
     }
 
     // Todos
+    const QString todoType = QOrganizerItemType::TypeTodo;
     const std::vector< CTodo* > todos = m_targetCalendar->getTodos(calError);
     std::vector< CTodo* >::const_iterator todo;
     for (todo = todos.begin(); todo != todos.end(); ++todo)
@@ -147,16 +183,19 @@ void OrganizerGuidMapper::enumerateItems()
         CTodo *ctodo = *todo;
         if (ctodo) {
             QString guid = QString::fromStdString(ctodo->getGUid());
-            if (!guid.isEmpty()) {
-                const QString todoType = QOrganizerItemType::TypeTodo;
+            if (!guid.isEmpty())
                 m_GuidToItemId.insertMulti(qMakePair(guid, todoType), QString::fromStdString(ctodo->getId()));
-            }
+
+            QString id = QString::fromStdString(ctodo->getId());
+            if (!id.isEmpty())
+                m_itemIdToItemType.insert(id, todoType);
 
             delete ctodo;
         }
     }
 
     // Journals
+    const QString journalType = QOrganizerItemType::TypeJournal;
     const std::vector< CJournal* > journals = m_targetCalendar->getJournals(calError);
     std::vector< CJournal* >::const_iterator journal;
     for (journal = journals.begin(); journal != journals.end(); ++journal)
@@ -164,10 +203,13 @@ void OrganizerGuidMapper::enumerateItems()
         CJournal *cjournal = *journal;
         if (cjournal) {
             QString guid = QString::fromStdString(cjournal->getGUid());
-            if (!guid.isEmpty()) {
-                const QString journalType = QOrganizerItemType::TypeJournal;
+            if (!guid.isEmpty())
                 m_GuidToItemId.insertMulti(qMakePair(guid, journalType), QString::fromStdString(cjournal->getId()));
-            }
+
+            QString id = QString::fromStdString(cjournal->getId());
+            if (!id.isEmpty())
+                m_itemIdToItemType.insert(id, journalType);
+
             delete cjournal;
         }
     }
