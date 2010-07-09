@@ -39,8 +39,8 @@
 **
 ***************************************************************************/
 
-#ifndef QDECLARATIVELOCATION_H
-#define QDECLARATIVELOCATION_H
+#ifndef QDECLARATIVEPOSITION_H
+#define QDECLARATIVEPOSITION_H
 
 #include <QtCore>
 #include <QDateTime>
@@ -48,95 +48,75 @@
 #include <qgeopositioninfo.h>
 #include <QtDeclarative/qdeclarative.h>
 
+// Define this to get usefuld debug messages
+#define QDECLARATIVE_POSITION_DEBUG
+
+#ifdef QDECLARATIVE_POSITION_DEBUG
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativePosition : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
-    Q_PROPERTY(QDateTime timestamp READ timestamp NOTIFY timestampChanged)
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
-    Q_PROPERTY(double latitude READ latitude NOTIFY latitudeChanged)
-    Q_PROPERTY(double longtitude READ longtitude NOTIFY longtitudeChanged)
-    Q_PROPERTY(double altitude READ altitude NOTIFY altitudeChanged)
-    Q_PROPERTY(double speed READ speed NOTIFY speedChanged)
-    Q_PROPERTY(bool positionLatest READ isPositionLatest NOTIFY positionLatestChanged);
-    Q_PROPERTY(bool altitudeLatest READ isAltitudeLatest NOTIFY altitudeLatestChanged);
-    Q_PROPERTY(bool speedLatest READ isSpeedLatest NOTIFY speedLatestChanged);
-    Q_PROPERTY(PositioningMethod positioningMethod READ positioningMethod NOTIFY positioningMethodChanged);
-    Q_ENUMS(PositioningMethod);
+    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged);
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged);
+    Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged);
+    Q_PROPERTY(double longtitude READ longtitude WRITE setLongtitude NOTIFY longtitudeChanged);
+    Q_PROPERTY(bool longtitudeValid READ isLongtitudeValid NOTIFY longtitudeValidChanged);
+    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged);
+    Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged);
+    Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged);
+    Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged);
 
 public:
-
-    enum PositioningMethod {
-        NoPositioningMethod = 0,
-        SatellitePositioningMethod = QGeoPositionInfoSource::SatellitePositioningMethods,
-        NonSatellitePositioningMethod = QGeoPositionInfoSource::NonSatellitePositioningMethods,
-        AllPositioningMethods = QGeoPositionInfoSource::AllPositioningMethods
-    };
 
     QDeclarativePosition();
     ~QDeclarativePosition();
 
-    void setNmeaSource(const QUrl& nmeaSource);
-    void setUpdateInterval(int updateInterval);
-
     QDateTime timestamp() const;
-    QUrl nmeaSource() const;
-    double latitude() const;
-    double longtitude() const;
-    double speed() const;
-    double altitude() const;
-    bool isPositionLatest() const;
-    bool isAltitudeLatest() const;
-    bool isSpeedLatest() const;
-    int updateInterval() const;
-    PositioningMethod positioningMethod() const;
+    void setTimestamp(const QDateTime& timestamp);
 
-public Q_SLOTS:
-    void update();
-    void startUpdates();
-    void stopUpdates();
+    double latitude() const;
+    void setLatitude(double latitude);
+    bool isLatitudeValid() const;
+
+    double longtitude() const;
+    void setLongtitude(double longtitude);
+    bool isLongtitudeValid() const;
+
+    double speed() const;
+    void setSpeed(double speed);
+    bool isSpeedValid() const;
+
+    double altitude() const;
+    void setAltitude(double altitude);
+    bool isAltitudeValid() const;
 
 Q_SIGNALS:
-    void positionUpdated();
     void timestampChanged(QDateTime timestamp);
-    void nmeaSourceChanged(QUrl nmeaSource);
     void latitudeChanged(double latitude);
+    void latitudeValidChanged(bool isValid);
     void longtitudeChanged(double longtitude);
-    void speedChanged(double speed);
+    void longtitudeValidChanged(bool isValid);
     void altitudeChanged(double altitude);
-    void positionLatestChanged(bool isLatest);
-    void altitudeLatestChanged(bool isLatest);
-    void speedLatestChanged(bool isLatest);
-    void positioningMethodChanged(PositioningMethod positioningMethod);
-
-private Q_SLOTS:
-    void positionUpdateReceived(const QGeoPositionInfo& update);
+    void altitudeValidChanged(bool isValid);
+    void speedChanged(double speed);
+    void speedValidChanged(bool isValid);
 
 private:
-    void updateTimestamp(const QGeoPositionInfo& update, bool& timestampChanged);
-    bool updatePosition(const QGeoPositionInfo& update, bool& positionChanged);
-    bool updateAltitude(const QGeoPositionInfo& update, bool& altitudeChanged);
-    bool updateSpeed(const QGeoPositionInfo& update, bool& speedChanged);
-
-private:
-    QGeoPositionInfoSource* m_positionSource;
     QGeoPositionInfo m_positionInfo;
-    QUrl m_nmeaSource;
     QDateTime m_timestamp;
-    PositioningMethod m_positioningMethod;
     double m_latitude;
+    bool m_latitudeValid;
     double m_longtitude;
+    bool m_longtitudeValid;
     double m_altitude;
+    bool m_altitudeValid;
     double m_speed;
-    bool m_updatesOngoing;
-    bool m_positionLatest;
-    bool m_altitudeLatest;
-    bool m_speedLatest;
-    int m_updateInterval;
+    bool m_speedValid;
 };
-
 
 QTM_END_NAMESPACE
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePosition));

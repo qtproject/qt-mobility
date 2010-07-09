@@ -156,6 +156,7 @@ void tst_QDeclarativePosition::cleanupTestCase()
 void tst_QDeclarativePosition::construction()
 {
     QFETCH(QString, componentString);
+    QFETCH(QString, expectedClassName);
     QFETCH(bool, shouldSucceed);
     // Component encapsulates one component description
     QDeclarativeComponent component(&engine);
@@ -163,7 +164,7 @@ void tst_QDeclarativePosition::construction()
     QObject* obj = component.create();
     if (shouldSucceed) {
         QVERIFY(obj != 0);
-        QCOMPARE(obj->metaObject()->className(), "QDeclarativePosition");
+        QCOMPARE(obj->metaObject()->className(), expectedClassName.toAscii().constData());
     } else {
         QVERIFY(obj == 0);
     }
@@ -181,13 +182,19 @@ void tst_QDeclarativePosition::construction()
 
 void tst_QDeclarativePosition::construction_data()
 {
+    QTest::addColumn<QString>("expectedClassName");
     QTest::addColumn<QString>("componentString");
     QTest::addColumn<bool>("shouldSucceed");
-    QTest::newRow("No properties") <<   "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {}" << true;
-    QTest::newRow("Only id property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId}" << true;
-    QTest::newRow("All write properties") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; updateInterval: 1000; nmeaSource: \"nonexistentfile.txt\"}" << true;
-    QTest::newRow("Nonexistent property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; nonExistentProperty: 1980}" << false;
-    QTest::newRow("Non write property") << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; latitude: 20}" << false;
+    // PositionSource
+    QTest::newRow("Source: No properties") <<  "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {}" << true;
+    QTest::newRow("Source: Only id property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId}" << true;
+    QTest::newRow("Source: All write properties") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; updateInterval: 1000; nmeaSource: \"nonexistentfile.txt\"}" << true;
+    QTest::newRow("Source: Nonexistent property") << "QDeclarativePositionSource" << "import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; nonExistentProperty: 1980}" << false;
+    // Position
+    QTest::newRow("Position: No properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {}" << true;
+    QTest::newRow("Position: Only id property") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position}" << true;
+    QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position; timestamp: \"2010-07-09\"; longtitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
+
 }
 
 /*
@@ -195,21 +202,21 @@ void tst_QDeclarativePosition::construction_data()
 */
 void tst_QDeclarativePosition::defaultProperties()
 {
-    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId}");
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId}");
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* obj = component.create();
     QVERIFY(obj != 0);
     QCOMPARE(obj->property("nmeaSource").toUrl(), QUrl());
-    QCOMPARE(obj->property("timestamp").toDateTime(), QDateTime());
+    //QCOMPARE(obj->property("timestamp").toDateTime(), QDateTime());
     QCOMPARE(obj->property("updateInterval").toInt(), 0);
-    QCOMPARE(obj->property("latitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(obj->property("longtitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(obj->property("altitude").toDouble(), static_cast<double>(0));
-    QCOMPARE(obj->property("speed").toDouble(), static_cast<double>(0));
-    QCOMPARE(obj->property("positionLatest").toBool(), false);
-    QCOMPARE(obj->property("altitudeLatest").toBool(), false);
-    QCOMPARE(obj->property("speedLatest").toBool(), false);
+    //QCOMPARE(obj->property("latitude").toDouble(), static_cast<double>(0));
+    //QCOMPARE(obj->property("longtitude").toDouble(), static_cast<double>(0));
+    //QCOMPARE(obj->property("altitude").toDouble(), static_cast<double>(0));
+    //QCOMPARE(obj->property("speed").toDouble(), static_cast<double>(0));
+    //QCOMPARE(obj->property("positionLatest").toBool(), false);
+    //QCOMPARE(obj->property("altitudeLatest").toBool(), false);
+    //QCOMPARE(obj->property("speedLatest").toBool(), false);
     QCOMPARE(obj->property("positioningMethod").toInt(), 0); // Ugly, improve to compare enum NoPositioningMethod
     delete obj;
 }
@@ -224,7 +231,7 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QFETCH(int, repeats);
 
     qDebug() << "1. ----- Create Position with NMEA source and verify the file is found.";
-    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: positionId; nmeaSource: \"data/nmealog.txt\"}");
+    QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; nmeaSource: \"data/nmealog.txt\"}");
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* obj = component.create();
@@ -232,55 +239,54 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QVERIFY(obj->property("nmeaSource").toUrl().isValid());
 
     qDebug() << "2. ----- Start updates and verify that relevant signals are received.";
-    QSignalSpy positionUpdatedSpy(obj, SIGNAL(positionUpdated()));
-    QSignalSpy latitudeChangedSpy(obj, SIGNAL(latitudeChanged(double)));
-    QSignalSpy longtitudeChangedSpy(obj, SIGNAL(longtitudeChanged(double)));
-    QSignalSpy positionLatestSpy(obj, SIGNAL(positionLatestChanged(bool)));
-    QSignalSpy altitudeChangedSpy(obj, SIGNAL(altitudeChanged(double)));
-    QSignalSpy altitudeLatestSpy(obj, SIGNAL(altitudeLatestChanged(bool)));
-    QSignalSpy speedChangedSpy(obj, SIGNAL(speedChanged(double)));
-    QSignalSpy speedLatestSpy(obj, SIGNAL(speedLatestChanged(bool)));
-    QSignalSpy timestampChangedSpy(obj, SIGNAL(timestampChanged(QDateTime)));
+    QSignalSpy positionChangedSpy(obj, SIGNAL(positionChanged()));
+    //QSignalSpy latitudeChangedSpy(obj, SIGNAL(latitudeChanged(double)));
+    //QSignalSpy longtitudeChangedSpy(obj, SIGNAL(longtitudeChanged(double)));
+    //QSignalSpy positionLatestSpy(obj, SIGNAL(positionLatestChanged(bool)));
+    //QSignalSpy altitudeChangedSpy(obj, SIGNAL(altitudeChanged(double)));
+    //QSignalSpy altitudeLatestSpy(obj, SIGNAL(altitudeLatestChanged(bool)));
+    //QSignalSpy speedChangedSpy(obj, SIGNAL(speedChanged(double)));
+    //QSignalSpy speedLatestSpy(obj, SIGNAL(speedLatestChanged(bool)));
+    //QSignalSpy timestampChangedSpy(obj, SIGNAL(timestampChanged(QDateTime)));
 
     // For single shot update, try to get 'repeats' amount of updates
     for (int i = 0; i < repeats; i++) {
         qDebug() << i;
         obj->metaObject()->invokeMethod(obj, updateMethod.toLatin1().constData(), Qt::DirectConnection);
-        QTRY_VERIFY(!positionUpdatedSpy.isEmpty());
-        positionUpdatedSpy.clear();
+        QTRY_VERIFY(!positionChangedSpy.isEmpty());
+        positionChangedSpy.clear();
     }
-    QTRY_VERIFY(!latitudeChangedSpy.isEmpty());
-    QTRY_VERIFY(!longtitudeChangedSpy.isEmpty());
-    QTRY_VERIFY(!altitudeChangedSpy.isEmpty());
-    QTRY_VERIFY(!speedChangedSpy.isEmpty());
-    QTRY_VERIFY(!timestampChangedSpy.isEmpty());
-    QVERIFY(!positionLatestSpy.isEmpty());
-    QVERIFY(!altitudeLatestSpy.isEmpty());
-    QVERIFY(!speedLatestSpy.isEmpty());
+    //QTRY_VERIFY(!latitudeChangedSpy.isEmpty());
+    //QTRY_VERIFY(!longtitudeChangedSpy.isEmpty());
+    //QTRY_VERIFY(!altitudeChangedSpy.isEmpty());
+    //QTRY_VERIFY(!speedChangedSpy.isEmpty());
+    //QTRY_VERIFY(!timestampChangedSpy.isEmpty());
+    //QVERIFY(!positionLatestSpy.isEmpty());
+    //QVERIFY(!altitudeLatestSpy.isEmpty());
+    //QVERIFY(!speedLatestSpy.isEmpty());
     QCOMPARE(obj->property("updateInterval").toInt(), 0);
 
     qDebug() << "3. ----- Stop updates and verify that signals are not received anymore.";
-    obj->metaObject()->invokeMethod(obj, "stopUpdates", Qt::DirectConnection);
-    positionUpdatedSpy.clear();
-    latitudeChangedSpy.clear();
-    longtitudeChangedSpy.clear();
-    positionLatestSpy.clear();
-    altitudeChangedSpy.clear();
-    altitudeLatestSpy.clear();
-    speedChangedSpy.clear();
-    speedLatestSpy.clear();
-    timestampChangedSpy.clear();
+    obj->metaObject()->invokeMethod(obj, "stop", Qt::DirectConnection);
+    positionChangedSpy.clear();
+    //latitudeChangedSpy.clear();
+    //longtitudeChangedSpy.clear();
+    //positionLatestSpy.clear();
+    //altitudeChangedSpy.clear();
+    //altitudeLatestSpy.clear();
+    //speedChangedSpy.clear();
+    //speedLatestSpy.clear();
+    //timestampChangedSpy.clear();
     QTest::qWait(2000); // Wait a moment
-    QVERIFY(positionUpdatedSpy.isEmpty());
-    QVERIFY(positionUpdatedSpy.isEmpty());
-    QVERIFY(latitudeChangedSpy.isEmpty());
-    QVERIFY(longtitudeChangedSpy.isEmpty());
-    QVERIFY(positionLatestSpy.isEmpty());
-    QVERIFY(altitudeChangedSpy.isEmpty());
-    QVERIFY(altitudeLatestSpy.isEmpty());
-    QVERIFY(speedChangedSpy.isEmpty());
-    QVERIFY(speedLatestSpy.isEmpty());
-    QVERIFY(timestampChangedSpy.isEmpty());
+    QVERIFY(positionChangedSpy.isEmpty());
+    //QVERIFY(latitudeChangedSpy.isEmpty());
+    //QVERIFY(longtitudeChangedSpy.isEmpty());
+    //QVERIFY(positionLatestSpy.isEmpty());
+    //QVERIFY(altitudeChangedSpy.isEmpty());
+    //QVERIFY(altitudeLatestSpy.isEmpty());
+    //QVERIFY(speedChangedSpy.isEmpty());
+    //QVERIFY(speedLatestSpy.isEmpty());
+    //QVERIFY(timestampChangedSpy.isEmpty());
     delete obj;
 }
 
@@ -288,7 +294,7 @@ void tst_QDeclarativePosition::basicNmeaSource_data()
 {
     QTest::addColumn<QString>("updateMethod");
     QTest::addColumn<int>("repeats");
-    QTest::newRow("periodic updates") << "startUpdates" << 1;
+    QTest::newRow("periodic updates") << "start" << 1;
     QTest::newRow("single shot update") << "update" << 10;
 }
 

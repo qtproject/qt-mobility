@@ -9,8 +9,10 @@ SOURCES += tst_qdeclarativeposition.cpp
 
 # The plugin needs to be compiled as part of this test case because 
 # it is not a library you could directly link against, ie. most of the API is not exported :)
-SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp
-HEADERS += ../../../plugins/declarative/location/qdeclarativeposition.h
+SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp \
+           ../../../plugins/declarative/location/qdeclarativepositionsource.cpp
+HEADERS += ../../../plugins/declarative/location/qdeclarativeposition.h \
+           ../../../plugins/declarative/location/qdeclarativepositionsource.h
 INCLUDEPATH += ../../../src/location
 CONFIG += mobility
 MOBILITY += location

@@ -44,6 +44,7 @@
 #include <QtDeclarative/qdeclarative.h>
 
 // The actual module provided:
+#include "qdeclarativepositionsource.h"
 #include "qdeclarativeposition.h"
 
 QT_BEGIN_NAMESPACE
@@ -57,6 +58,7 @@ public:
     virtual void registerTypes(const char* uri)
     {
     Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.location"));
+    qmlRegisterType<QDeclarativePositionSource>(uri, 1, 0, "PositionSource");
     qmlRegisterType<QDeclarativePosition>(uri, 1, 0, "Position");
     }
 };
@@ -64,7 +66,7 @@ public:
 QT_END_NAMESPACE
 #include "location.moc"
 
-Q_EXPORT_PLUGIN2(qlocationdeclarativemodule, QT_PREPEND_NAMESPACE(QLocationDeclarativeModule));
+Q_EXPORT_PLUGIN2(declarative_location, QT_PREPEND_NAMESPACE(QLocationDeclarativeModule));
 
 
 

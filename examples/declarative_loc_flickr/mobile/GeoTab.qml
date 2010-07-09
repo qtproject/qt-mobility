@@ -46,8 +46,13 @@ import QtMobility.location 1.0
 Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
-    property alias latitude: position.latitude
-    property alias longtitude: position.longtitude
+    //property alias latitude: positionSource.position.latitude
+    //property alias longtitude: positionSource.position.longtitude
+    property double latitude
+    property double longtitude
+
+    latitude: positionSource.position.latitude
+    longtitude: positionSource.position.longtitude
 
     width: 200; height: 110
     color: "blue"
@@ -72,26 +77,26 @@ Rectangle {
         anchors {left: parent.left; leftMargin: 5}
         y: 3; height: 32; width: parent.width - 10
         onClicked: {
-            if (position.positioningMethod == Position.NoPositioningMethod) {
-                position.nmeaSource = "nmealog.txt";
-                sourceText.text = "(filesource): " + printableMethod(position.positioningMethod);
-                position.update();
+            if (positionSource.positioningMethod == PositionSource.NoPositioningMethod) {
+                positionSource.nmeaSource = "nmealog.txt";
+                sourceText.text = "(filesource): " + printableMethod(positionSource.positioningMethod);
             }
+            positionSource.update();
         }
     }
-    Position {
-        id: position
+    PositionSource {
+        id: positionSource
         //nmeaSource: "nmealog.txt"
-        onPositionUpdated: {planet.source = "images/sun.png";}
+        onPositionChanged: {planet.source = "images/sun.png";}
     }
     function printableMethod(method) {
-        if (method == Position.SatellitePositioningMethod)
+        if (method == PositionSource.SatellitePositioningMethod)
             return "Satellite";
-        else if (method == Position.NoPositioningMethod)
+        else if (method == PositionSource.NoPositioningMethod)
             return "Not available"
-        else if (method == Position.NonSatellitePositioningMethod)
+        else if (method == PositionSource.NonSatellitePositioningMethod)
             return "Non-satellite"
-        else if (method == Position.AllPositioningMethods)
+        else if (method == PositionSource.AllPositioningMethods)
             return "Multiple"
         return "source error";
     }
@@ -105,13 +110,13 @@ Rectangle {
             text: "Lat:"; style: Text.Raised; styleColor: "black"
         }
         Text {id: latitudeValue; color: "white"; font.bold: true
-            text: position.latitude; style: Text.Raised; styleColor: "black";
+            text: positionSource.position.latitude; style: Text.Raised; styleColor: "black";
         }
         Text {color: "white"; font.bold: true
             text: "Lon:"; style: Text.Raised; styleColor: "black"
         }
         Text {id: longtitudeValue; color: "white"; font.bold: true
-            text: position.longtitude; style: Text.Raised; styleColor: "black"
+            text: positionSource.position.longtitude; style: Text.Raised; styleColor: "black"
         }
     }
     Image {
@@ -122,6 +127,6 @@ Rectangle {
     }
     Text {id: sourceText; color: "white"; font.bold: true;
         anchors {left: planet.right; leftMargin: 5; verticalCenter: planet.verticalCenter}
-        text: "Source: " + printableMethod(position.positioningMethod); style: Text.Raised; styleColor: "black";
+        text: "Source: " + printableMethod(positionSource.positioningMethod); style: Text.Raised; styleColor: "black";
     }
 }

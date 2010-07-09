@@ -25,9 +25,11 @@ INCLUDEPATH += ../../../src/global
 
 # The header and source files of this project. Note that qmake generates dependency information
 # and automatically adds necessary 'moc' files as it sees Q_OBJECT macros' in header files
-HEADERS += qdeclarativeposition.h
+HEADERS += qdeclarativeposition.h \
+           qdeclarativepositionsource.h
 SOURCES += qdeclarativeposition.cpp \
-           location.cpp
+           location.cpp \
+           qdeclarativepositionsource.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,
