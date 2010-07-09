@@ -51,7 +51,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
     const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error,
     QString *errorString)
         : QGeoSearchManagerEngine(parameters),
-        m_host("cgu02.tst.nav.svc.ovi.com")
+        m_host("address.s2g.gate5.de")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -69,7 +69,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
             m_host = host;
     }
 
-    setSupportsGeocoding(false);
+    setSupportsGeocoding(true);
 
     QGeoSearchManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
@@ -98,6 +98,37 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
+    requestString += "/nsp?vi=where&la=eng-uk&to=20&q=";
+
+
+    if (!address.thoroughfareName().isEmpty()) {
+        requestString += address.thoroughfareName();
+        requestString += ",";
+    }
+
+    if (!address.thoroughfareNumber().isEmpty()) {
+        requestString += address.thoroughfareNumber();
+        requestString += ",";
+    }
+
+    if (!address.postCode().isEmpty()) {
+        requestString += address.postCode();
+        requestString += ",";
+    }
+
+    if (!address.city().isEmpty()) {
+        requestString += address.city();
+        requestString += ",";
+    }
+
+    if (!address.state().isEmpty()) {
+        requestString += address.state();
+        requestString += ",";
+    }
+
+    if (!address.country().isEmpty()) {
+        requestString += address.country();
+    }
 
     return search(requestString);
 }
@@ -143,8 +174,13 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::placeSearch(const QString &search
         return reply;
     }
 
+    QString q = searchString;
+
     QString requestString = "http://";
     requestString += m_host;
+    requestString += "/nsp?";
+    requestString += "vi=where&la=eng-uk&to=20&q=";
+    requestString += q;
 
     return search(requestString);
 }
