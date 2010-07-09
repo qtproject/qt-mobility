@@ -82,7 +82,7 @@ void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoPlace& place)
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);
     placeItem->setText(0, "place");
 
-    if (!place.boundingBox().isValid())
+    if (place.boundingBox().isValid())
         showBoundingBox(placeItem, place.boundingBox());
 
     prop = new QTreeWidgetItem(placeItem);
