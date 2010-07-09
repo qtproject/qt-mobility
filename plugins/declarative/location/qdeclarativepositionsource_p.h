@@ -47,7 +47,7 @@
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
 #include <QtDeclarative/qdeclarative.h>
-#include "qdeclarativeposition.h"
+#include "qdeclarativeposition_p.h"
 
 QTM_BEGIN_NAMESPACE
 

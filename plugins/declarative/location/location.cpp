@@ -44,8 +44,8 @@
 #include <QtDeclarative/qdeclarative.h>
 
 // The actual module provided:
-#include "qdeclarativepositionsource.h"
-#include "qdeclarativeposition.h"
+#include "qdeclarativepositionsource_p.h"
+#include "qdeclarativeposition_p.h"
 
 QT_BEGIN_NAMESPACE
 QTM_USE_NAMESPACE

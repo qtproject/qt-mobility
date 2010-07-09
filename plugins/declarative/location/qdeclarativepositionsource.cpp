@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativepositionsource.h"
-#include "qdeclarativeposition.h"
+#include "qdeclarativepositionsource_p.h"
+#include "qdeclarativeposition_p.h"
 #include "qdeclarative.h"
 #include <qnmeapositioninfosource.h>
 #include <QFile>
@@ -353,7 +353,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     emit positionChanged();
 }
 
-#include "moc_qdeclarativepositionsource.cpp"
+#include "moc_qdeclarativepositionsource_p.cpp"
 
 QTM_END_NAMESPACE
 

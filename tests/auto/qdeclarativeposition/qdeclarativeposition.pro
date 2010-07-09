@@ -9,15 +9,18 @@ SOURCES += tst_qdeclarativeposition.cpp
 
 # The plugin needs to be compiled as part of this test case because 
 # it is not a library you could directly link against, ie. most of the API is not exported :)
-SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp \
-           ../../../plugins/declarative/location/qdeclarativepositionsource.cpp
-HEADERS += ../../../plugins/declarative/location/qdeclarativeposition.h \
-           ../../../plugins/declarative/location/qdeclarativepositionsource.h
+
+#SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp \
+#          ../../../plugins/declarative/location/qdeclarativepositionsource.cpp
+#HEADERS += ../../../plugins/declarative/location/qdeclarativeposition_p.h \
+#          ../../../plugins/declarative/location/qdeclarativepositionsource_p.h
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/global
+
 CONFIG += mobility
 MOBILITY += location
 
-INCLUDEPATH += ../../../plugins/declarative/location
+#INCLUDEPATH += ../../../plugins/declarative/location
 
 symbian {
     TARGET.CAPABILITY = Location

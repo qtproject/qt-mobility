@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativeposition.h"
+#include "qdeclarativeposition_p.h"
 #include "qdeclarative.h"
 #include <qnmeapositioninfosource.h>
 #include <QFile>
@@ -231,6 +231,6 @@ QDateTime QDeclarativePosition::timestamp() const
     return m_timestamp;
 }
 
-#include "moc_qdeclarativeposition.cpp"
+#include "moc_qdeclarativeposition_p.cpp"
 
 QTM_END_NAMESPACE

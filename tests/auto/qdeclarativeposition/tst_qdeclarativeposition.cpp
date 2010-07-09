@@ -45,7 +45,7 @@
 #include <QDateTime>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
-#include "qdeclarativeposition.h"
+// #include "qdeclarativeposition_p.h"
 #include <QString>
 
 // Eventually these will make it into qtestcase.h
@@ -100,7 +100,7 @@
 #define SRCDIR "."
 #endif
 
-QTM_USE_NAMESPACE
+//QTM_USE_NAMESPACE
 
 class tst_QDeclarativePosition : public QObject
 {
