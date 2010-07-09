@@ -72,6 +72,7 @@
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkimportrequest.h>
+#include <qlandmarkexportrequest.h>
 #include <QMetaType>
 #include <QDebug>
 
@@ -4371,8 +4372,10 @@ private slots:
         QVERIFY(m_manager->saveLandmark(&lm4));
 
         QFile file("myexport.gpx");
-        if (!file.exists())
+        if (file.exists())
             file.remove();
+        QVERIFY(!file.exists());
+
         QVERIFY(m_manager->exportLandmarks("myexport.gpx","GpxV1.1"));
         QVERIFY(file.exists());
 
@@ -4393,7 +4396,6 @@ private slots:
         QList<QLandmarkId> lmIds;
         lmIds << lm1.landmarkId();
         lmIds << lm3.landmarkId();
-        file.close();
         QVERIFY(file.remove());
         QVERIFY(m_manager->exportLandmarks("myexport.gpx", "GpxV1.1", lmIds));
 
@@ -4409,8 +4411,85 @@ private slots:
         QCOMPARE(m_manager->landmarks(nameFilter).count(),3);
         nameFilter.setName("lm4");
         QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
+        QVERIFY(file.remove());
     }
 
+    void exportGpxAsync() {
+        QLandmark lm1;
+        lm1.setName("lm1");
+        QGeoCoordinate coord1(10,20);
+        lm1.setCoordinate(coord1);
+        QVERIFY(m_manager->saveLandmark(&lm1));
+
+        QLandmark lm2;
+        lm2.setName("lm2");
+        QGeoCoordinate coord2(10,20);
+        lm2.setCoordinate(coord2);
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmark lm3;
+        lm3.setName("lm3");
+        QGeoCoordinate coord3(10,20);
+        lm3.setCoordinate(coord3);
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        //note: the gpx file handler should skip over lm4 since
+        //gpx can't doesn't allow nan coordiates.
+        QLandmark lm4;
+        lm4.setName("lm4");
+        QVERIFY(m_manager->saveLandmark(&lm4));
+
+        QFile file("myexport.gpx");
+        if (file.exists())
+            file.remove();
+        QVERIFY(!file.exists());
+
+        QLandmarkExportRequest exportRequest(m_manager);
+        QSignalSpy spy(&exportRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        exportRequest.setFileName(file.fileName());
+        exportRequest.setFormat("GpxV1.1");
+        exportRequest.start();
+
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
+        QVERIFY(file.exists());
+
+        QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+        QList<QLandmark> lms = m_manager->landmarks();
+        QCOMPARE(lms.count(), 7);
+        QLandmarkNameFilter nameFilter;
+        nameFilter.setName("lm1");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm2");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm3");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm4");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
+
+        //try supplying a list of landmark ids
+        QList<QLandmarkId> lmIds;
+        lmIds << lm1.landmarkId();
+        lmIds << lm3.landmarkId();
+        exportRequest.setLandmarkIds(lmIds);
+
+        QVERIFY(file.remove());
+        exportRequest.start();
+        QVERIFY(waitForAsync(spy, &exportRequest, QLandmarkManager::NoError));
+
+        QVERIFY(m_manager->importLandmarks("myexport.gpx", "GpxV1.1"));
+        lms = m_manager->landmarks();
+        QCOMPARE(lms.count(), 9);
+
+        nameFilter.setName("lm1");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),3);
+        nameFilter.setName("lm2");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),2);
+        nameFilter.setName("lm3");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),3);
+        nameFilter.setName("lm4");
+        QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
+        QVERIFY(file.remove());
+    }
     /*
     void sortLandmarksNameDistance()
     {
