@@ -170,7 +170,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                         // other parts of code as well. Especially event occurrence saving and
                         // parent resolving must be verified to work.
                         if (instanceStartDate >= periodStart && instanceStartDate <= periodEnd) {
-                            // TODO: Remove the following occurrence check if it causes regression... or remove this TODO if not
                             if (isOccurrence(cal, coccurenceCandidate, eventType, error)) {
                                 if (*error == QOrganizerItemManager::NoError) {
                                     QOrganizerEventOccurrence eventOcc =
@@ -897,6 +896,9 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
 
     //qDebug() << "Occurrence's original local id = " << originalOccurrence.localId();
 
+    // backup the parent item
+    QOrganizerEvent parentBackup(*parent);
+
     // Parent must always contain some recurrence information, otherwise it won't be
     // recognized as parent. Add something dummy if there's nothing.
     if (parent->recurrenceRules().isEmpty())
@@ -929,13 +931,25 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         parent->setExceptionDates(newExceptionDates);
     }
 
-    // the parent is now ok, we can save it back to the DB
+    // Create a CComponent from occurrence
+    // This is done before saving the parent, so we don't have to rollback
+    // the parent changes if the component creation fails.
+    calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence);
+    if (!component) {
+        *error = QOrganizerItemManager::UnspecifiedError;
+        return calError;
+    }
+    // TODO: The custom detail fields should be iterated and the corresponding
+    // fields should be set to CComponent for saving.
+
+    // save the parent back to the DB
     calError = doSaveItem(cal, parent, cs, error);
 
     if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
         qDebug() << "saving parent modification failed";
         // saving the parent modifications failed
-        // we must nost save the occurrence, because that causes inconsistency
+        // we must not save the occurrence either
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         return calError;
     }
@@ -949,18 +963,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     qDebug() << "Occurrence end date: " << occurrence->endDateTime();
     */
 
-    // create a CComponent from occurrence
-    calError = CALENDAR_OPERATION_SUCCESSFUL;
-    CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence);
-    if (!component) {
-        // TODO: Here we should rollback the parent change
-        *error = QOrganizerItemManager::UnspecifiedError;
-        return calError;
-    }
-
-    // TODO: The custom detail fields should be iterated and the corresponding
-    // fields should be set to CComponent for saving.
-
     // Save occurrence
     CEvent* cevent = static_cast<CEvent *>(component);
     QString ceventId = QString::fromStdString(cevent->getId());
@@ -972,6 +974,11 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         cal->modifyEvent(cevent, calError);
         qDebug() << "cal error = " << calError;
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
+            // occurrence saving failed, we must undo the parent changes too
+            QOrganizerItemManager::Error ignoreError;
+            doSaveItem(cal, &parentBackup, cs, &ignoreError);
+        }
     }
     else {
         // CEvent ID is empty, the event is new
@@ -983,12 +990,13 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
 
         if (calError == CALENDAR_OPERATION_SUCCESSFUL || calError == CALENDAR_ENTRY_DUPLICATED)
+        {
             // The Maemo5 calendar does not accept two items if all the
             // time details are equal. That's so even if the item IDs differ.
             // If the "new" item is actually a duplicate, then let
             // the calendar to modify the existing item.
             // TODO: Is that what we want?
-        {
+
             // Set id for the occurrence
             QString newIdString = QString::fromStdString(cevent->getId());
             QOrganizerItemLocalId newId = newIdString.toUInt();
@@ -1009,6 +1017,11 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
 
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error
             *error = QOrganizerItemManager::NoError; // reset the error
+        }
+        else {
+            // occurrence saving failed, we must undo the parent changes too
+            QOrganizerItemManager::Error ignoreError;
+            doSaveItem(cal, &parentBackup, cs, &ignoreError);
         }
     }
 
