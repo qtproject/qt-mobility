@@ -169,6 +169,8 @@ public slots:
                                            const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);
+    void updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+                                     QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
 public:

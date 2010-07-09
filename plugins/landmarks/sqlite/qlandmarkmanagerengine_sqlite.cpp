@@ -71,6 +71,7 @@
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
 #include <qlandmarkimportrequest.h>
+#include <qlandmarkexportrequest.h>
 
 #include <qlandmarkfilehandler_gpx_p.h>
 #include <qlandmarkfilehandler_lmx_p.h>
@@ -120,6 +121,7 @@ Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryIdFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkImportRequest *)
+Q_DECLARE_METATYPE(QLandmarkExportRequest *)
 Q_DECLARE_METATYPE(ERROR_MAP)
 
 static const double EARTH_MEAN_RADIUS = 6371.0072;
@@ -2182,10 +2184,15 @@ bool exportLandmarks(const QString &connectionName,
         return false;
     }
 
+    bool result;
     if (format ==  "LmxV1.0") {
-            return exportLandmarksLmx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        result = exportLandmarksLmx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        device->close();
+        return result;
     } else if (format == "GpxV1.1") {
-        return exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        result = exportLandmarksGpx(connectionName, device, landmarkIds, error, errorString, managerUri);
+        device->close();
+        return result;
     } else {
         if (error)
             *error = QLandmarkManager::NotSupportedError;
@@ -2434,7 +2441,6 @@ void QueryRun::run()
         case QLandmarkAbstractRequest::ImportRequest :
             {
                 QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
-                QFile *file = qobject_cast<QFile *>(importRequest->device());
 
                 ::importLandmarks(connectionName, importRequest->device(), importRequest->format(), &error, &errorString, managerUri, this);
                 if (this->gpxHandler) {
@@ -2453,6 +2459,29 @@ void QueryRun::run()
                 } else {
                    QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
                                               Q_ARG(QLandmarkImportRequest *, importRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                }
+                break;
+            }
+        case QLandmarkAbstractRequest::ExportRequest :
+            {
+                QLandmarkExportRequest *exportRequest = static_cast<QLandmarkExportRequest *> (request);
+
+                ::exportLandmarks(connectionName, exportRequest->device(), exportRequest->format(), exportRequest->landmarkIds(), &error, &errorString, managerUri);
+
+                if (this->isCanceled) {
+                    error = QLandmarkManager::NoError;
+                    errorString ="";
+                    QMetaObject::invokeMethod(engine, "updateLandmarkExportRequest",
+                                              Q_ARG(QLandmarkExportRequest *,exportRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
+                } else {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkExportRequest",
+                                              Q_ARG(QLandmarkExportRequest *, exportRequest),
                                               Q_ARG(QLandmarkManager::Error, error),
                                               Q_ARG(QString, errorString),
                                               Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
@@ -2488,6 +2517,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkImportRequest *>();
+    qRegisterMetaType<QLandmarkExportRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
@@ -3344,4 +3374,10 @@ void QLandmarkManagerEngineSqlite::updateLandmarkImportRequest(QLandmarkImportRe
                                  QLandmarkAbstractRequest::State newState)
 {
     QLandmarkManagerEngine::updateLandmarkImportRequest(req, error, errorString, newState);
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+                                 QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkExportRequest(req, error, errorString, newState);
 }
