@@ -2025,7 +2025,7 @@ bool importLandmarksGpx(const QString &connectionName,
     }
 
     QLandmarkFileHandlerGpx::State state = gpxHandler->importData(device);
-    bool result;
+    bool result = false;
     if (state == QLandmarkFileHandlerGpx::DoneState) {
             saveLandmarks(connectionName, &(gpxHandler->waypoints()), 0, error, errorString, managerUri);
 
@@ -2043,9 +2043,9 @@ bool importLandmarksGpx(const QString &connectionName,
             *error = QLandmarkManager::ParsingError;
             result = false;
     } else if (state == QLandmarkFileHandlerGpx::CanceledState) {
-        *error = QLandmarkManager::NoError;
-        *errorString = "";
-        result = true;
+        *error = QLandmarkManager::CancelError;
+        *errorString = "Import request was canceled";
+        result = false;
     }
     if (!queryRun)
         delete gpxHandler;
@@ -2249,20 +2249,17 @@ void QueryRun::run()
 
                 if (this->isCanceled) {
                     lmIds.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
-                                              Q_ARG(QLandmarkIdFetchRequest *,idFetchRequest),
-                                              Q_ARG(QList<QLandmarkId>, lmIds),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
-                                              Q_ARG(QLandmarkIdFetchRequest *, idFetchRequest),
-                                              Q_ARG(QList<QLandmarkId>,lmIds),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Landmark Id fetch request canceled";
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
+                                          Q_ARG(QLandmarkIdFetchRequest *, idFetchRequest),
+                                          Q_ARG(QList<QLandmarkId>,lmIds),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
             }
         case QLandmarkAbstractRequest::LandmarkFetchRequest: {
@@ -2272,20 +2269,16 @@ void QueryRun::run()
 
                 if (this->isCanceled) {
                     lms.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkFetchRequest",
-                                              Q_ARG(QLandmarkFetchRequest *,fetchRequest),
-                                              Q_ARG(QList<QLandmark>,lms),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkFetchRequest",
-                                              Q_ARG(QLandmarkFetchRequest *,fetchRequest),
-                                              Q_ARG(QList<QLandmark>,lms),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Landmark fetch request canceled";
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkFetchRequest",
+                                          Q_ARG(QLandmarkFetchRequest *,fetchRequest),
+                                          Q_ARG(QList<QLandmark>,lms),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
                 break;
             }
         case QLandmarkAbstractRequest::LandmarkSaveRequest :
@@ -2295,23 +2288,19 @@ void QueryRun::run()
             saveLandmarks(connectionName, &lms, &errorMap, &error, &errorString, managerUri);
 
             if (this->isCanceled) {
-                    lms.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkSaveRequest",
-                                              Q_ARG(QLandmarkSaveRequest *,saveRequest),
-                                              Q_ARG(QList<QLandmark>,lms),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkSaveRequest",
-                                              Q_ARG(QLandmarkSaveRequest *,saveRequest),
-                                              Q_ARG(QList<QLandmark>,lms),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
-                }
+                lms.clear();
+                error = QLandmarkManager::CancelError;
+                errorString = "Landmark save request canceled";
+            }
+
+            QMetaObject::invokeMethod(engine, "updateLandmarkSaveRequest",
+                                      Q_ARG(QLandmarkSaveRequest *,saveRequest),
+                                      Q_ARG(QList<QLandmark>,lms),
+                                      Q_ARG(QLandmarkManager::Error, error),
+                                      Q_ARG(QString, errorString),
+                                      Q_ARG(ERROR_MAP, errorMap),
+                                      Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
         }
         case QLandmarkAbstractRequest::LandmarkRemoveRequest :
@@ -2320,21 +2309,17 @@ void QueryRun::run()
             QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
             ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri);
             if (this->isCanceled) {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
-                                              Q_ARG(QLandmarkRemoveRequest *,removeRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
-                                              Q_ARG(QLandmarkRemoveRequest *,removeRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
-                }
-                break;
+                error = QLandmarkManager::CancelError;
+                errorString = "Landmark remove request was canceled";
+            }
+
+            QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
+                                      Q_ARG(QLandmarkRemoveRequest *,removeRequest),
+                                      Q_ARG(QLandmarkManager::Error, error),
+                                      Q_ARG(QString, errorString),
+                                      Q_ARG(ERROR_MAP, errorMap),
+                                      Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+            break;
         }
         case QLandmarkAbstractRequest::CategoryIdFetchRequest :
             {
@@ -2344,20 +2329,17 @@ void QueryRun::run()
 
                 if (this->isCanceled) {
                     catIds.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
-                                              Q_ARG(QLandmarkCategoryIdFetchRequest *,catIdFetchRequest),
-                                              Q_ARG(QList<QLandmarkCategoryId>, catIds),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
-                                              Q_ARG(QLandmarkCategoryIdFetchRequest *,catIdFetchRequest),
-                                              Q_ARG(QList<QLandmarkCategoryId>,catIds),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Category id fetch request was canceled";
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
+                                          Q_ARG(QLandmarkCategoryIdFetchRequest *,catIdFetchRequest),
+                                          Q_ARG(QList<QLandmarkCategoryId>,catIds),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
             }
         case QLandmarkAbstractRequest::CategoryFetchRequest :
@@ -2372,20 +2354,16 @@ void QueryRun::run()
 
                 if (this->isCanceled) {
                     cats.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
-                                              Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
-                                              Q_ARG(QList<QLandmarkCategory>, cats),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
-                                              Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
-                                              Q_ARG(QList<QLandmarkCategory>,cats),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Category fetch request canceled";
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
+                                          Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
+                                          Q_ARG(QList<QLandmarkCategory>,cats),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
                 break;
             }
         case QLandmarkAbstractRequest::CategorySaveRequest :
@@ -2395,24 +2373,21 @@ void QueryRun::run()
             ::saveCategories(connectionName, &categories, &errorMap, &error, &errorString, managerUri);
 
             if (this->isCanceled) {
-                    categories.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategorySaveRequest",
-                                              Q_ARG(QLandmarkCategorySaveRequest *,saveRequest),
-                                              Q_ARG(QList<QLandmarkCategory>,categories),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategorySaveRequest",
-                                              Q_ARG(QLandmarkCategorySaveRequest *,saveRequest),
-                                              Q_ARG(QList<QLandmarkCategory>,categories),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
-                }
-                break;
+                categories.clear();
+                error = QLandmarkManager::CancelError;
+                errorString = "Category save request was canceled";
+
+            }
+
+            QMetaObject::invokeMethod(engine, "updateLandmarkCategorySaveRequest",
+                                      Q_ARG(QLandmarkCategorySaveRequest *,saveRequest),
+                                      Q_ARG(QList<QLandmarkCategory>,categories),
+                                      Q_ARG(QLandmarkManager::Error, error),
+                                      Q_ARG(QString, errorString),
+                                      Q_ARG(ERROR_MAP, errorMap),
+                                      Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
+            break;
         }
         case QLandmarkAbstractRequest::CategoryRemoveRequest :
             {
@@ -2420,23 +2395,19 @@ void QueryRun::run()
                 QList<QLandmarkCategoryId> categoryIds = removeRequest->categoryIds();
                ::removeCategories(connectionName, categoryIds, &errorMap, &error, &errorString, managerUri);
 
-                if (this->isCanceled) {
-                    categoryIds.clear();
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryRemoveRequest",
-                                              Q_ARG(QLandmarkCategoryRemoveRequest *,removeRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryRemoveRequest",
-                                              Q_ARG(QLandmarkCategoryRemoveRequest *,removeRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(ERROR_MAP, errorMap),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
-                }
-                break;
+               if (this->isCanceled) {
+                   categoryIds.clear();
+                   error = QLandmarkManager::CancelError;
+                   errorString = "Category remove request was canceled";
+               }
+               QMetaObject::invokeMethod(engine, "updateLandmarkCategoryRemoveRequest",
+                                         Q_ARG(QLandmarkCategoryRemoveRequest *,removeRequest),
+                                         Q_ARG(QLandmarkManager::Error, error),
+                                         Q_ARG(QString, errorString),
+                                         Q_ARG(ERROR_MAP, errorMap),
+                                         Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
+               break;
             }
         case QLandmarkAbstractRequest::ImportRequest :
             {
@@ -2449,20 +2420,17 @@ void QueryRun::run()
                 }
 
                 if (this->isCanceled) {
-                    error = QLandmarkManager::NoError;
-                    errorString ="";
-                    QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
-                                              Q_ARG(QLandmarkImportRequest *,importRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                   QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
-                                              Q_ARG(QLandmarkImportRequest *, importRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Landmark import request was canceled";
+
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkImportRequest",
+                                          Q_ARG(QLandmarkImportRequest *, importRequest),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
             }
         case QLandmarkAbstractRequest::ExportRequest :
@@ -2472,20 +2440,16 @@ void QueryRun::run()
                 ::exportLandmarks(connectionName, exportRequest->device(), exportRequest->format(), exportRequest->landmarkIds(), &error, &errorString, managerUri);
 
                 if (this->isCanceled) {
-                    error = QLandmarkManager::NoError;
-                    errorString ="";
-                    QMetaObject::invokeMethod(engine, "updateLandmarkExportRequest",
-                                              Q_ARG(QLandmarkExportRequest *,exportRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
-                } else {
-                    QMetaObject::invokeMethod(engine, "updateLandmarkExportRequest",
-                                              Q_ARG(QLandmarkExportRequest *, exportRequest),
-                                              Q_ARG(QLandmarkManager::Error, error),
-                                              Q_ARG(QString, errorString),
-                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                    error = QLandmarkManager::CancelError;
+                    errorString = "Landmark export request was canceled";
                 }
+
+                QMetaObject::invokeMethod(engine, "updateLandmarkExportRequest",
+                                          Q_ARG(QLandmarkExportRequest *, exportRequest),
+                                          Q_ARG(QLandmarkManager::Error, error),
+                                          Q_ARG(QString, errorString),
+                                          Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+
                 break;
             }
         default:

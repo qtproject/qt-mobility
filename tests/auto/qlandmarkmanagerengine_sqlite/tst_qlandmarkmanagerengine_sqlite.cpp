@@ -4341,8 +4341,8 @@ private slots:
         importRequest.start();
         QTest::qWait(250);
         importRequest.cancel();
-        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::NoError,
-                            3000, QLandmarkAbstractRequest::CanceledState));
+        QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,
+                            3000, QLandmarkAbstractRequest::FinishedState));
 
     }
 
