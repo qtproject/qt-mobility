@@ -284,6 +284,8 @@ void TestQGeoPositionInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_WS_MAEMO_5)
     QVERIFY(source != 0);
+#elif defined(Q_WS_MAEMO_6)
+    QVERIFY(source != 0);
 #else 
     QVERIFY(source == 0);
 #endif
