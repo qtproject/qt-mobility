@@ -3203,7 +3203,7 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
-    ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
+    return ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
 QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const
