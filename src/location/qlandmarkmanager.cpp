@@ -741,7 +741,6 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
-
     return importLandmarks(&file, format);
 }
 
@@ -786,12 +785,7 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray
 {
     QFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly)) {
-        // TODO set error
-        return false;
-    }
-
-    return exportLandmarks(&file, format, landmarkIds);
+    return exportLandmarks(&file, format,landmarkIds);
 }
 
 /*!

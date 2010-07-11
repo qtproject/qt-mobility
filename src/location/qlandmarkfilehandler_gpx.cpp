@@ -717,8 +717,9 @@ bool QLandmarkFileHandlerGpx::writeGpx()
 
 
     for (int i = 0; i < m_waypoints.size(); ++i) {
-        if (!writeWaypoint(m_waypoints.at(i), "wpt"))
-            return false;
+        //we don't check the return value of writeWayPoint() because
+        //if a landmark cannot be written we just move onto the next.
+        writeWaypoint(m_waypoints.at(i), "wpt");
     }
 
     for (int i = 0; i < m_routes.size(); ++i) {

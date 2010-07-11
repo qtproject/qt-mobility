@@ -79,6 +79,7 @@ public:
         BadArgumentError,
         InvalidManagerError,
         ParsingError,
+        CancelError,
         UnknownError,
     };
 
