@@ -61,11 +61,9 @@ QVersitPluginLoader* QVersitPluginLoader::instance()
 
 void QVersitPluginLoader::loadPlugins() {
     QStringList plugins = mobilityPlugins(QLatin1String("versit"));
-    qDebug() << "loading plugins";
     if (plugins != mPluginPaths) {
         mPluginPaths = plugins;
 
-        qDebug() << mPluginPaths;
         foreach (const QString& pluginPath, mPluginPaths) {
             QPluginLoader qpl(pluginPath);
             QVersitContactHandlerFactory* handler =

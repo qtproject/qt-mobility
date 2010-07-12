@@ -39,32 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTHANDLER_H
-#define QVERSITCONTACTHANDLER_H
+#ifndef TESTVCARDHANDLER_H
+#define TESTVCARDHANDLER_H
 
-#include "qversitcontactimporter.h"
-#include "qversitcontactexporter.h"
+#include <QObject>
+#include <QtPlugin>
+#include "qversitcontacthandler.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
-                                              public QVersitContactExporterDetailHandlerV2
+class TestVCardHandlerFactory : public QObject, public QVersitContactHandlerFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
+
 public:
-    virtual ~QVersitContactHandler() {}
+    QString name() const;
+    QVersitContactHandler* createHandler() const;
 };
-
-class Q_VERSIT_EXPORT QVersitContactHandlerFactory
-{
-public:
-    virtual ~QVersitContactHandlerFactory() {}
-    virtual QString name() const = 0;
-    virtual QVersitContactHandler* createHandler() const = 0;
-};
-
-QTM_END_NAMESPACE
-
-#define QT_VERSIT_CONTACT_HANDLER_INTERFACE "com.nokia.qt.mobility.versit.contacthandlerfactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QVersitContactHandlerFactory, QT_VERSIT_CONTACT_HANDLER_INTERFACE);
 
 #endif
