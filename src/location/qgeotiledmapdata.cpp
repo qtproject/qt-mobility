@@ -1069,7 +1069,8 @@ void QGeoTiledMapDataPrivate::calculateMapPolylineInfo(QGeoMapPolylineObject *po
         }
     }
 
-    if (!startPoint.isNull())
+    if (polyline->type() == QGeoMapObject::PolygonType &&
+        !startPoint.isNull())
         info->path.lineTo(startPoint);
 }
 
