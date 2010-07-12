@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercameracontrol_maemo.h"
+#include "camerabincontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qfile.h>
@@ -56,89 +56,50 @@
 #include <sys/mman.h>
 #include <linux/videodev2.h>
 
-QT_BEGIN_NAMESPACE
-static inline uint qHash(const QSize& key) { return uint(key.width()*256+key.height()); }
-
-static bool operator<(const QSize &s1, const QSize s2)
-{
-    return s1.width()*s1.height() < s2.width()*s2.height();
-}
-QT_END_NAMESPACE
-
-QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
+CameraBinControl::CameraBinControl(CameraBinSession *session)
     :QCameraControl(session),
-    m_captureMode(QCamera::CaptureDisabled),
     m_session(session),
-    m_state(QCamera::StoppedState),
-    m_requestedState(QCamera::StoppedState)
+    m_state(QCamera::StoppedState)
 {
-    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
+    connect(m_session, SIGNAL(stateChanged(QCamera::State)),
             this, SLOT(updateState()));
 }
 
-QGstreamerCameraControl::~QGstreamerCameraControl()
+CameraBinControl::~CameraBinControl()
 {
 }
 
-GstElement *QGstreamerCameraControl::buildElement()
+QCamera::CaptureMode CameraBinControl::captureMode() const
 {
-#ifndef Q_WS_MAEMO_5
-    GstElement *camera = gst_element_factory_make("v4l2src", "camera_source");
-#else
-    GstElement *camera = gst_element_factory_make("v4l2camsrc", "camera_source");
-#endif
-    if (camera && !m_device.isEmpty() )
-        g_object_set(G_OBJECT(camera), "device", m_device.constData(), NULL);
-
-    return camera;
+    return m_session->captureMode();
 }
 
-void QGstreamerCameraControl::setState(QCamera::State state)
+void CameraBinControl::setCaptureMode(QCamera::CaptureMode mode)
 {
-    m_requestedState = state;
-    switch (state) {
-    case QCamera::StoppedState:
-    case QCamera::IdleState:
-        m_session->setState(QGstreamerCaptureSession::StoppedState);
-        break;
-    case QCamera::ActiveState:
-        if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-            m_session->setState(QGstreamerCaptureSession::PreviewState);
-        break;
-    default:
-        emit error(QCamera::NotSupportedFeatureError, tr("State not supported."));
-    }
+    m_session->setCaptureMode(mode);
+    m_session->setState(QCamera::IdleState);
 }
 
-void QGstreamerCameraControl::setDevice(const QString &device)
+void CameraBinControl::setState(QCamera::State state)
 {
-    QByteArray newDevice = device.toLocal8Bit();
-
-    if (m_device != newDevice) {
-        m_device = newDevice;
-        updateSupportedResolutions(device);
-    }
+    qDebug() << Q_FUNC_INFO << state;
+    m_session->setState(state);
 }
 
-QCamera::State QGstreamerCameraControl::state() const
+QCamera::State CameraBinControl::state() const
 {
-    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        return m_requestedState == QCamera::StoppedState ? QCamera::StoppedState : QCamera::IdleState;
-    else
-        return QCamera::ActiveState;
+    return m_session->state();
 }
 
-void QGstreamerCameraControl::updateState()
+void CameraBinControl::updateState()
 {
-    QCamera::State newState = state();
-    if (m_state != newState) {
-        m_state = newState;
-        emit stateChanged(m_state);
-    }
+    m_state = state();
+    qDebug() << "Camera state changed" << m_state;
+    emit stateChanged(m_state);
 }
 
 
-void QGstreamerCameraControl::updateSupportedResolutions(const QString &device)
+/*void CameraBinControl::updateSupportedResolutions(const QString &device)
 {
     m_frameRates.clear();
     m_resolutions.clear();
@@ -182,10 +143,14 @@ void QGstreamerCameraControl::updateSupportedResolutions(const QString &device)
             <<QSize(320, 240)
             <<QSize(352, 288)
             <<QSize(640, 480)
+            <<QSize(720, 576)
+            <<QSize(852, 480)
             <<QSize(1024, 768)
             <<QSize(1280, 1024)
+            <<QSize(1280, 720)
             <<QSize(1600, 1200)
-            <<QSize(1920, 1200)
+            <<QSize(1920, 1080)
+            <<QSize(1920, 1200)            
             <<QSize(2048, 1536)
             <<QSize(2560, 1600)
             <<QSize(2580, 1936);
@@ -313,23 +278,4 @@ void QGstreamerCameraControl::updateSupportedResolutions(const QString &device)
     //qDebug() << "frame rates:" << m_frameRates;
     //qDebug() << "resolutions:" << m_resolutions;
 }
-
-
-QList<qreal> QGstreamerCameraControl::supportedFrameRates(const QSize &frameSize) const
-{
-    if (frameSize.isEmpty())
-        return m_frameRates;
-    else {
-        QList<qreal> res;
-        foreach(int rate, m_ratesByResolution[frameSize]) {
-            res.append(rate/1000.0);
-        }
-        return res;
-    }
-}
-
-QList<QSize> QGstreamerCameraControl::supportedResolutions(qreal frameRate) const
-{
-    Q_UNUSED(frameRate);
-    return m_resolutions;
-}
+*/

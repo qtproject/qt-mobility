@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,36 +39,37 @@
 **
 ****************************************************************************/
 
+#ifndef CAMERABINCAPTUREMETADATACONTROL_H
+#define CAMERABINCAPTUREMETADATACONTROL_H
 
-#ifndef QGSTREAMERIMAGECAPTURECONTROL_H
-#define QGSTREAMERIMAGECAPTURECONTROL_H
-
-#include <qcameraimagecapturecontrol.h>
-#include "qgstreamercapturesession_maemo.h"
+#include <qmetadatawritercontrol.h>
 
 QT_USE_NAMESPACE
 
-class QGstreamerImageCaptureControl : public QCameraImageCaptureControl
+class CameraBinMetaData : public QMetaDataWriterControl
 {
     Q_OBJECT
 public:
-    QGstreamerImageCaptureControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerImageCaptureControl();
+    CameraBinMetaData(QObject *parent);
+    virtual ~CameraBinMetaData() {}
 
-    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
-    void setDriveMode(QCameraImageCapture::DriveMode) {}
 
-    bool isReadyForCapture() const;
-    int capture(const QString &fileName);
-    void cancelCapture();
+    bool isMetaDataAvailable() const { return true; }
+    bool isWritable() const { return true; }
 
-private slots:
-    void updateState();
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value);
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(QString const &name) const;
+    void setExtendedMetaData(QString const &name, QVariant const &value);
+    QStringList availableExtendedMetaData() const;
+
+Q_SIGNALS:
+    void metaDataChanged(const QMap<QByteArray, QVariant>&);
 
 private:
-    QGstreamerCaptureSession *m_session;
-    bool m_ready;
-    int requestId;
+    QMap<QByteArray, QVariant> m_values;
 };
 
-#endif // QGSTREAMERCAPTURECORNTROL_H
+#endif // CAMERABINCAPTUREMETADATACONTROL_H

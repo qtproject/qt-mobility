@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercapturemetadatacontrol_maemo.h"
+#include "camerabinmetadata.h"
 
 #include <gst/gst.h>
 #include <gst/gstversion.h>
@@ -119,12 +119,12 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
     //{ QtMultimediaKit::Subject, 0 }
 };
 
-QGstreamerCaptureMetaDataControl::QGstreamerCaptureMetaDataControl(QObject *parent)
+CameraBinMetaData::CameraBinMetaData(QObject *parent)
     :QMetaDataWriterControl(parent)
 {
 }
 
-QVariant QGstreamerCaptureMetaDataControl::metaData(QtMultimediaKit::MetaData key) const
+QVariant CameraBinMetaData::metaData(QtMultimediaKit::MetaData key) const
 {
     static const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
 
@@ -138,7 +138,7 @@ QVariant QGstreamerCaptureMetaDataControl::metaData(QtMultimediaKit::MetaData ke
     return QVariant();
 }
 
-void QGstreamerCaptureMetaDataControl::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
+void CameraBinMetaData::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 {
     static const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
 
@@ -156,7 +156,7 @@ void QGstreamerCaptureMetaDataControl::setMetaData(QtMultimediaKit::MetaData key
     }
 }
 
-QList<QtMultimediaKit::MetaData> QGstreamerCaptureMetaDataControl::availableMetaData() const
+QList<QtMultimediaKit::MetaData> CameraBinMetaData::availableMetaData() const
 {
     static QMap<QByteArray, QtMultimediaKit::MetaData> keysMap;
     if (keysMap.isEmpty()) {
@@ -176,19 +176,19 @@ QList<QtMultimediaKit::MetaData> QGstreamerCaptureMetaDataControl::availableMeta
     return res;
 }
 
-QVariant QGstreamerCaptureMetaDataControl::extendedMetaData(QString const &name) const
+QVariant CameraBinMetaData::extendedMetaData(QString const &name) const
 {
     return m_values.value(name.toLatin1());
 }
 
-void QGstreamerCaptureMetaDataControl::setExtendedMetaData(QString const &name, QVariant const &value)
+void CameraBinMetaData::setExtendedMetaData(QString const &name, QVariant const &value)
 {
     m_values.insert(name.toLatin1(), value);
     emit QMetaDataWriterControl::metaDataChanged();
     emit metaDataChanged(m_values);
 }
 
-QStringList QGstreamerCaptureMetaDataControl::availableExtendedMetaData() const
+QStringList CameraBinMetaData::availableExtendedMetaData() const
 {
     QStringList res;
     foreach (const QByteArray &key, m_values.keys())

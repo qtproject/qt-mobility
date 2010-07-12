@@ -39,60 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEOENCODE_H
-#define QGSTREAMERVIDEOENCODE_H
 
-#include <qvideoencodercontrol.h>
-class QGstreamerCaptureSession;
+#ifndef CAMERABINMEDIACONTAINERCONTROL_H
+#define CAMERABINMEDIACONTAINERCONTROL_H
 
+#include <qmediacontainercontrol.h>
 #include <QtCore/qstringlist.h>
-#include <QtCore/qmap.h>
 #include <QtCore/qset.h>
 
 #include <gst/gst.h>
 
 QT_USE_NAMESPACE
 
-class QGstreamerVideoEncode : public QVideoEncoderControl
+class CameraBinContainer : public QMediaContainerControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    QGstreamerVideoEncode(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerVideoEncode();
+    CameraBinContainer(QObject *parent);
+    virtual ~CameraBinContainer() {}
 
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
-                                      bool *continuous = 0) const;
+    virtual QStringList supportedContainers() const { return m_supportedContainers; }
+    virtual QString containerMimeType() const { return m_format; }
+    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
 
-    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
-                                       bool *continuous = 0) const;
+    virtual QString containerDescription(const QString &formatMimeType) const { return m_containerDescriptions.value(formatMimeType); }
 
-    QPair<int,int> rateAsRational() const;
+    QByteArray formatElementName() const { return m_elementNames.value(containerMimeType()); }
 
-    QStringList supportedVideoCodecs() const;
-    QString videoCodecDescription(const QString &codecName) const;
+    QSet<QString> supportedStreamTypes(const QString &container) const;
 
-    QVideoEncoderSettings videoSettings() const;
-    void setVideoSettings(const QVideoEncoderSettings &settings);
-
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
-    GstElement *createEncoder();
-
-    QSet<QString> supportedStreamTypes(const QString &codecName) const;
+    static QSet<QString> supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction);
 
 private:
-    QGstreamerCaptureSession *m_session;
-
-    QStringList m_codecs;
-    QMap<QString,QString> m_codecDescriptions;
+    QString m_format;
+    QStringList m_supportedContainers;
     QMap<QString,QByteArray> m_elementNames;
-    QMap<QString,QStringList> m_codecOptions;
-
-    QVideoEncoderSettings m_videoSettings;
-    QMap<QString, QMap<QString, QVariant> > m_options;
+    QMap<QString, QString> m_containerDescriptions;
     QMap<QString, QSet<QString> > m_streamTypes;
 };
 
-#endif
+#endif // CAMERABINMEDIACONTAINERCONTROL_H

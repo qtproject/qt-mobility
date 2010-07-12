@@ -40,51 +40,35 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERCAMERACONTROL_H
-#define QGSTREAMERCAMERACONTROL_H
+#ifndef CAMERABINCONTROL_H
+#define CAMERABINCONTROL_H
 
 #include <QHash>
 #include <qcameracontrol.h>
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinsession.h"
 
 QT_USE_NAMESPACE
 QT_USE_NAMESPACE
 
-class QGstreamerCameraControl : public QCameraControl, public QGstreamerVideoInput
+class CameraBinControl : public QCameraControl
 {
     Q_OBJECT
 public:
-    QGstreamerCameraControl( QGstreamerCaptureSession *session );
-    virtual ~QGstreamerCameraControl();
+    CameraBinControl( CameraBinSession *session );
+    virtual ~CameraBinControl();
 
     bool isValid() const { return true; }
 
     QCamera::State state() const;
     void setState(QCamera::State state);
 
-    GstElement *buildElement();
-
-    QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const;
-    QList<QSize> supportedResolutions(qreal frameRate = -1) const;
-
-    QCamera::CaptureMode captureMode() const { return m_captureMode; }
-    void setCaptureMode(QCamera::CaptureMode mode)
-    {
-        if (m_captureMode != mode) {
-            m_captureMode = mode;
-            setState(QCamera::IdleState);
-            emit captureModeChanged(mode);
-            updateState();
-        }
-    }
+    QCamera::CaptureMode captureMode() const;
+    void setCaptureMode(QCamera::CaptureMode mode);
 
     bool isCaptureModeSupported(QCamera::CaptureMode mode) const
     {
         return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
     }
-
-public slots:
-    void setDevice(const QString &device);
 
 private slots:
     void updateState();
@@ -92,17 +76,8 @@ private slots:
 private:
     void updateSupportedResolutions(const QString &device);
 
-    QList<qreal> m_frameRates;
-    QList<QSize> m_resolutions;
-
-    QHash<QSize, QSet<int> > m_ratesByResolution;
-
-    QCamera::CaptureMode m_captureMode;
-
-    QGstreamerCaptureSession *m_session;
-    QByteArray m_device;
+    CameraBinSession *m_session;
     QCamera::State m_state;
-    QCamera::State m_requestedState;
 };
 
-#endif // QGSTREAMERCAMERACONTROL_H
+#endif // CAMERABINCONTROL_H

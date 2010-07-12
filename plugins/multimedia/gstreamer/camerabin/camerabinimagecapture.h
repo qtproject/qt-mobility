@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,37 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAPTUREMETADATACONTROL_H
-#define QGSTREAMERCAPTUREMETADATACONTROL_H
 
-#include <qmetadatawritercontrol.h>
+#ifndef CAMERABINIMAGECAPTURECONTROL_H
+#define CAMERABINIMAGECAPTURECONTROL_H
+
+#include <qcameraimagecapturecontrol.h>
+#include "camerabinsession.h"
 
 QT_USE_NAMESPACE
 
-class QGstreamerCaptureMetaDataControl : public QMetaDataWriterControl
+class CameraBinImageCapture : public QCameraImageCaptureControl
 {
     Q_OBJECT
 public:
-    QGstreamerCaptureMetaDataControl(QObject *parent);
-    virtual ~QGstreamerCaptureMetaDataControl() {};
+    CameraBinImageCapture(CameraBinSession *session);
+    virtual ~CameraBinImageCapture();
 
+    QCameraImageCapture::DriveMode driveMode() const { return QCameraImageCapture::SingleImageCapture; }
+    void setDriveMode(QCameraImageCapture::DriveMode) {}
 
-    bool isMetaDataAvailable() const { return true; }
-    bool isWritable() const { return true; }
+    bool isReadyForCapture() const;
+    int capture(const QString &fileName);
+    void cancelCapture();
 
-    QVariant metaData(QtMultimediaKit::MetaData key) const;
-    void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value);
-    QList<QtMultimediaKit::MetaData> availableMetaData() const;
-
-    QVariant extendedMetaData(QString const &name) const;
-    void setExtendedMetaData(QString const &name, QVariant const &value);
-    QStringList availableExtendedMetaData() const;
-
-Q_SIGNALS:
-    void metaDataChanged(const QMap<QByteArray, QVariant>&);
+private slots:
+    void updateState();
 
 private:
-    QMap<QByteArray, QVariant> m_values;
+    CameraBinSession *m_session;
+    bool m_ready;
+    int requestId;
 };
 
-#endif // QGSTREAMERCAPTUREMETADATACONTROL_H
+#endif // CAMERABINCAPTURECORNTROL_H

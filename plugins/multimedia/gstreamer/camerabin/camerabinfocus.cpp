@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercamerafocuscontrol_maemo.h"
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinfocus.h"
+#include "camerabinsession.h"
 
 #include <gst/interfaces/photography.h>
 
 #include <QDebug>
 
-QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session)
+CameraBinFocus::CameraBinFocus(GstElement &camerabin, CameraBinSession *session)
     :QCameraFocusControl(session),
      m_session(session),
      m_camerabin(camerabin),
@@ -54,50 +54,50 @@ QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin
 {
 }
 
-QGstreamerCameraFocusControl::~QGstreamerCameraFocusControl()
+CameraBinFocus::~CameraBinFocus()
 {
 }
 
-QCameraFocus::FocusMode QGstreamerCameraFocusControl::focusMode() const
+QCameraFocus::FocusMode CameraBinFocus::focusMode() const
 {
     return m_focusMode;
 }
 
-void QGstreamerCameraFocusControl::setFocusMode(QCameraFocus::FocusMode mode)
+void CameraBinFocus::setFocusMode(QCameraFocus::FocusMode mode)
 {
     if (isFocusModeSupported(mode)) {
         m_focusMode = mode;
     }
 }
 
-bool QGstreamerCameraFocusControl::isFocusModeSupported(QCameraFocus::FocusMode mode) const
+bool CameraBinFocus::isFocusModeSupported(QCameraFocus::FocusMode mode) const
 {
     return mode & QCameraFocus::AutoFocus;
 }
 
-qreal QGstreamerCameraFocusControl::maximumOpticalZoom() const
+qreal CameraBinFocus::maximumOpticalZoom() const
 {
     return 1.0;
 }
 
-qreal QGstreamerCameraFocusControl::maximumDigitalZoom() const
+qreal CameraBinFocus::maximumDigitalZoom() const
 {
     return 10;
 }
 
-qreal QGstreamerCameraFocusControl::opticalZoom() const
+qreal CameraBinFocus::opticalZoom() const
 {
     return 1.0;
 }
 
-qreal QGstreamerCameraFocusControl::digitalZoom() const
+qreal CameraBinFocus::digitalZoom() const
 {
     gint zoomFactor = 0;
     g_object_get(GST_BIN(&m_camerabin), "zoom", &zoomFactor, NULL);
     return zoomFactor/100.0;
 }
 
-void QGstreamerCameraFocusControl::zoomTo(qreal optical, qreal digital)
+void CameraBinFocus::zoomTo(qreal optical, qreal digital)
 {
     Q_UNUSED(optical);
     digital = qBound(qreal(1.0), digital, qreal(10.0));
@@ -105,32 +105,32 @@ void QGstreamerCameraFocusControl::zoomTo(qreal optical, qreal digital)
     emit digitalZoomChanged(digital);
 }
 
-QCameraFocus::FocusPointMode QGstreamerCameraFocusControl::focusPointMode() const
+QCameraFocus::FocusPointMode CameraBinFocus::focusPointMode() const
 {
     return QCameraFocus::FocusPointAuto;
 }
 
-void QGstreamerCameraFocusControl::setFocusPointMode(QCameraFocus::FocusPointMode mode)
+void CameraBinFocus::setFocusPointMode(QCameraFocus::FocusPointMode mode)
 {
     Q_UNUSED(mode);
 }
 
-bool QGstreamerCameraFocusControl::isFocusPointModeSupported(QCameraFocus::FocusPointMode mode) const
+bool CameraBinFocus::isFocusPointModeSupported(QCameraFocus::FocusPointMode mode) const
 {
     return mode == QCameraFocus::FocusPointAuto;
 }
 
-QPointF QGstreamerCameraFocusControl::customFocusPoint() const
+QPointF CameraBinFocus::customFocusPoint() const
 {
     return QPointF(0.5, 0.5);
 }
 
-void QGstreamerCameraFocusControl::setCustomFocusPoint(const QPointF &point)
+void CameraBinFocus::setCustomFocusPoint(const QPointF &point)
 {
     Q_UNUSED(point);
 }
 
-QCameraFocusZoneList QGstreamerCameraFocusControl::focusZones() const
+QCameraFocusZoneList CameraBinFocus::focusZones() const
 {
     return QCameraFocusZoneList() << QCameraFocusZone(QRectF(0.3, 0.3, 0.4, 0.4));
 }

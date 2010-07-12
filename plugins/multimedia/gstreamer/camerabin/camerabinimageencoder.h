@@ -39,41 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAMERALOCKSCONTROL_H
-#define QGSTREAMERCAMERALOCKSCONTROL_H
+#ifndef CAMERABINIMAGEENCODE_H
+#define CAMERABINIMAGEENCODE_H
 
-#include <qcamera.h>
-#include <qcameralockscontrol.h>
+class CameraBinSession;
+
+#include <qimageencodercontrol.h>
+
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
 
 #include <gst/gst.h>
-#include <glib.h>
-
-class QGstreamerCaptureSession;
-
 QT_USE_NAMESPACE
 
-class QGstreamerCameraLocksControl  : public QCameraLocksControl
+class CameraBinImageEncoder : public QImageEncoderControl
 {
     Q_OBJECT
-
 public:
-    QGstreamerCameraLocksControl(GstElement &camerabin, QGstreamerCaptureSession *session);
-    virtual ~QGstreamerCameraLocksControl();
+    CameraBinImageEncoder(CameraBinSession *session);
+    virtual ~CameraBinImageEncoder();
 
-    QCamera::LockTypes supportedLocks() const;
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-    QCamera::LockStatus lockStatus(QCamera::LockType lock) const;
+    QStringList supportedImageCodecs() const;
+    QString imageCodecDescription(const QString &formatName) const;
 
-    void searchAndLock(QCamera::LockTypes locks);
-    void unlock(QCamera::LockTypes locks);
-
-private slots:
-    void updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason);
+    QImageEncoderSettings imageSettings() const;
+    void setImageSettings(const QImageEncoderSettings &settings);
 
 private:
-    QGstreamerCaptureSession *m_session;
-    GstElement &m_camerabin;
-    QCamera::LockStatus m_focusStatus;
+    QImageEncoderSettings m_settings;
+
+    CameraBinSession *m_session;
+
+    // Added
+    QStringList m_codecs;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QStringList> m_codecOptions;
 };
 
 #endif

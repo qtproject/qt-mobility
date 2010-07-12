@@ -40,21 +40,21 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERRECORDERCONTROL_H
-#define QGSTREAMERRECORDERCONTROL_H
+#ifndef CAMERABINRECORDERCONTROL_H
+#define CAMERABINRECORDERCONTROL_H
 
 #include <qmediarecordercontrol.h>
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinsession.h"
 QT_USE_NAMESPACE
 
-class QGstreamerRecorderControl : public QMediaRecorderControl
+class CameraBinRecorder : public QMediaRecorderControl
 {
     Q_OBJECT
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
 
 public:
-    QGstreamerRecorderControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerRecorderControl();
+    CameraBinRecorder(CameraBinSession *session);
+    virtual ~CameraBinRecorder();
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &sink);
@@ -64,6 +64,8 @@ public:
     qint64 duration() const;
 
     bool isMuted() const;
+
+    bool findCodecs();
 
     void applySettings();
 
@@ -77,9 +79,8 @@ private slots:
     void updateState();
 
 private:
-    QGstreamerCaptureSession *m_session;
+    CameraBinSession *m_session;
     QMediaRecorder::State m_state;
-    bool m_hasPreviewState;
 };
 
-#endif // QGSTREAMERCAPTURECORNTROL_H
+#endif // CAMERABINCAPTURECORNTROL_H

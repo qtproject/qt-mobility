@@ -39,45 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERIMAGEENCODE_H
-#define QGSTREAMERIMAGEENCODE_H
+#include "camerabinimagecapture.h"
+#include <QtCore/QDebug>
 
-class QGstreamerCaptureSession;
-
-#include <qimageencodercontrol.h>
-
-#include <QtCore/qstringlist.h>
-#include <QtCore/qmap.h>
-
-#include <gst/gst.h>
-QT_USE_NAMESPACE
-
-class QGstreamerImageEncode : public QImageEncoderControl
+CameraBinImageCapture::CameraBinImageCapture(CameraBinSession *session)
+    :QCameraImageCaptureControl(session), m_session(session), m_ready(false), requestId(0)
 {
-    Q_OBJECT
-public:
-    QGstreamerImageEncode(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerImageEncode();
+    connect(m_session, SIGNAL(stateChanged(CameraBinSession::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(imageExposed(int)), this, SIGNAL(imageExposed(int)));
+    connect(m_session, SIGNAL(imageCaptured(int,QImage)), this, SIGNAL(imageCaptured(int,QImage)));
+    connect(m_session, SIGNAL(imageSaved(int,QString)), this, SIGNAL(imageSaved(int,QString)));
+}
 
-    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
-                                      bool *continuous = 0) const;
+CameraBinImageCapture::~CameraBinImageCapture()
+{
+}
 
-    QStringList supportedImageCodecs() const;
-    QString imageCodecDescription(const QString &formatName) const;
+bool CameraBinImageCapture::isReadyForCapture() const
+{
+    return m_ready;
+}
 
-    QImageEncoderSettings imageSettings() const;
-    void setImageSettings(const QImageEncoderSettings &settings);
+int CameraBinImageCapture::capture(const QString &fileName)
+{
+    requestId++;
+    m_session->captureImage(requestId, fileName);
 
-private:
-    QImageEncoderSettings m_settings;
+    return requestId;
+}
 
-    QGstreamerCaptureSession *m_session;
+void CameraBinImageCapture::cancelCapture()
+{
+}
 
-    // Added
-    QStringList m_codecs;
-    QMap<QString,QByteArray> m_elementNames;
-    QMap<QString,QString> m_codecDescriptions;
-    QMap<QString,QStringList> m_codecOptions;
-};
-
-#endif
+void CameraBinImageCapture::updateState()
+{
+    bool ready = m_session->state() == QCamera::ActiveState;
+    if (m_ready != ready) {
+        emit readyForCaptureChanged(m_ready = ready);
+    }
+}

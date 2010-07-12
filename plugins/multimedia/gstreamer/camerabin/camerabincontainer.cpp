@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qgstreamermediacontainercontrol_maemo.h"
+#include "camerabincontainer.h"
 
 
 #include <QtCore/qdebug.h>
 
-QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent)
+CameraBinContainer::CameraBinContainer(QObject *parent)
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
@@ -82,7 +82,7 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
         setContainerMimeType(m_supportedContainers[0]);
 }
 
-QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction)
+QSet<QString> CameraBinContainer::supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction)
 {
     QSet<QString> types;
     const GList *pads = gst_element_factory_get_static_pad_templates(factory);
@@ -102,7 +102,7 @@ QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(GstElementFa
 }
 
 
-QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(const QString &container) const
+QSet<QString> CameraBinContainer::supportedStreamTypes(const QString &container) const
 {
     return m_streamTypes.value(container);
 }

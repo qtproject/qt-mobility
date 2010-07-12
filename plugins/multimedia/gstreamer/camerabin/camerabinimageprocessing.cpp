@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgstreamerimageprocessingcontrol_maemo.h"
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinimageprocessing.h"
+#include "camerabinsession.h"
 
-QGstreamerImageProcessingControl::QGstreamerImageProcessingControl(GstElement &camerabin, QGstreamerCaptureSession *session)
+CameraBinImageProcessing::CameraBinImageProcessing(GstElement &camerabin, CameraBinSession *session)
     :QCameraImageProcessingControl(session),
      m_session(session),
      m_camerabin(camerabin)
@@ -57,11 +57,11 @@ QGstreamerImageProcessingControl::QGstreamerImageProcessingControl(GstElement &c
     updateColorBalanceValues();
 }
 
-QGstreamerImageProcessingControl::~QGstreamerImageProcessingControl()
+CameraBinImageProcessing::~CameraBinImageProcessing()
 {
 }
 
-void QGstreamerImageProcessingControl::updateColorBalanceValues()
+void CameraBinImageProcessing::updateColorBalanceValues()
 {
     if (!GST_IS_COLOR_BALANCE(&m_camerabin)) {
         // Camerabin doesn't implement gstcolorbalance interface
@@ -89,7 +89,7 @@ void QGstreamerImageProcessingControl::updateColorBalanceValues()
     }
 }
 
-bool QGstreamerImageProcessingControl::setColorBalanceValue(const QString& channel, int value)
+bool CameraBinImageProcessing::setColorBalanceValue(const QString& channel, int value)
 {
 
     if (!GST_IS_COLOR_BALANCE(&m_camerabin)) {
@@ -115,42 +115,42 @@ bool QGstreamerImageProcessingControl::setColorBalanceValue(const QString& chann
     return false;
 }
 
-QCameraImageProcessing::WhiteBalanceMode QGstreamerImageProcessingControl::whiteBalanceMode() const
+QCameraImageProcessing::WhiteBalanceMode CameraBinImageProcessing::whiteBalanceMode() const
 {
     GstWhiteBalanceMode wbMode;
     gst_photography_get_white_balance_mode(GST_PHOTOGRAPHY(&m_camerabin), &wbMode);
     return m_mappedWbValues[wbMode];
 }
 
-void QGstreamerImageProcessingControl::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
+void CameraBinImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
 {
     if (isWhiteBalanceModeSupported(mode))
         gst_photography_set_white_balance_mode(GST_PHOTOGRAPHY(&m_camerabin), m_mappedWbValues.key(mode));
 }
 
-bool QGstreamerImageProcessingControl::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
+bool CameraBinImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const
 {
     return m_mappedWbValues.values().contains(mode);
 }
 
-int QGstreamerImageProcessingControl::manualWhiteBalance() const
+int CameraBinImageProcessing::manualWhiteBalance() const
 {
     return 0;
 }
 
-void QGstreamerImageProcessingControl::setManualWhiteBalance(int colorTemperature)
+void CameraBinImageProcessing::setManualWhiteBalance(int colorTemperature)
 {
     Q_UNUSED(colorTemperature);
 }
 
-bool QGstreamerImageProcessingControl::isProcessingParameterSupported(QCameraImageProcessingControl::ProcessingParameter parameter) const
+bool CameraBinImageProcessing::isProcessingParameterSupported(QCameraImageProcessingControl::ProcessingParameter parameter) const
 {
     return parameter == QCameraImageProcessingControl::Contrast
             || parameter == QCameraImageProcessingControl::Brightness
             || parameter == QCameraImageProcessingControl::Saturation;
 }
 
-QVariant QGstreamerImageProcessingControl::processingParameter(
+QVariant CameraBinImageProcessing::processingParameter(
         QCameraImageProcessingControl::ProcessingParameter parameter) const
 {
     if (m_values.contains(parameter))
@@ -159,7 +159,7 @@ QVariant QGstreamerImageProcessingControl::processingParameter(
         return QVariant();
 }
 
-void QGstreamerImageProcessingControl::setProcessingParameter(
+void CameraBinImageProcessing::setProcessingParameter(
         QCameraImageProcessingControl::ProcessingParameter parameter,
         QVariant value)
 {
@@ -180,22 +180,22 @@ void QGstreamerImageProcessingControl::setProcessingParameter(
     updateColorBalanceValues();
 }
 
-QList<QByteArray> QGstreamerImageProcessingControl::supportedPresets() const
+QList<QByteArray> CameraBinImageProcessing::supportedPresets() const
 {
     return m_presets;
 }
 
-QString QGstreamerImageProcessingControl::presetDescription(const QByteArray &preset) const
+QString CameraBinImageProcessing::presetDescription(const QByteArray &preset) const
 {
     return QString::fromLatin1(preset);
 }
 
-QByteArray QGstreamerImageProcessingControl::preset() const
+QByteArray CameraBinImageProcessing::preset() const
 {
     return m_preset;
 }
 
-void QGstreamerImageProcessingControl::setPreset(const QByteArray &preset)
+void CameraBinImageProcessing::setPreset(const QByteArray &preset)
 {
     if (m_presets.contains(preset))
         m_preset = preset;

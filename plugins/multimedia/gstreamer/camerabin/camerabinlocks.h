@@ -39,57 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERIMAGEPROCESSINGCONTROL_H
-#define QGSTREAMERIMAGEPROCESSINGCONTROL_H
+#ifndef CAMERABINLOCKSCONTROL_H
+#define CAMERABINLOCKSCONTROL_H
 
 #include <qcamera.h>
-#include <qcameraimageprocessingcontrol.h>
+#include <qcameralockscontrol.h>
 
 #include <gst/gst.h>
 #include <glib.h>
 
-#include <gst/interfaces/photography.h>
-#include <gst/interfaces/colorbalance.h>
-
-class QGstreamerCaptureSession;
+class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class QGstreamerImageProcessingControl : public QCameraImageProcessingControl
+class CameraBinLocks  : public QCameraLocksControl
 {
     Q_OBJECT
 
 public:
-    QGstreamerImageProcessingControl(GstElement &camerabin, QGstreamerCaptureSession *session);
-    virtual ~QGstreamerImageProcessingControl();
+    CameraBinLocks(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinLocks();
 
-    QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode() const;
-    void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
-    bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
+    QCamera::LockTypes supportedLocks() const;
 
-    int manualWhiteBalance() const;
-    void setManualWhiteBalance(int colorTemperature);
+    QCamera::LockStatus lockStatus(QCamera::LockType lock) const;
 
-    bool isProcessingParameterSupported(ProcessingParameter) const;
-    QVariant processingParameter(ProcessingParameter parameter) const;
-    void setProcessingParameter(ProcessingParameter parameter, QVariant value);
+    void searchAndLock(QCamera::LockTypes locks);
+    void unlock(QCamera::LockTypes locks);
 
-    QList<QByteArray> supportedPresets() const;
-    QString presetDescription(const QByteArray &preset) const;
-    QByteArray preset() const;
-    void setPreset(const QByteArray &preset);
+private slots:
+    void updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason);
 
 private:
-    bool setColorBalanceValue(const QString& channel, int value);
-    void updateColorBalanceValues();
-
-private:
-    QGstreamerCaptureSession *m_session;
+    CameraBinSession *m_session;
     GstElement &m_camerabin;
-    QMap<QCameraImageProcessingControl::ProcessingParameter, int> m_values;
-    QMap<GstWhiteBalanceMode, QCameraImageProcessing::WhiteBalanceMode> m_mappedWbValues;
-    QList<QByteArray> m_presets;
-    QByteArray m_preset;
+    QCamera::LockStatus m_focusStatus;
 };
 
-#endif // QGSTREAMERIMAGEPROCESSINGCONTROL_H
+#endif

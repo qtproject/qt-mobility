@@ -39,57 +39,50 @@
 **
 ****************************************************************************/
 
-#include "qgstreamerimageencode_maemo.h"
-#include "qgstreamercapturesession_maemo.h"
+#ifndef CAMERABINFOCUSCONTROL_H
+#define CAMERABINFOCUSCONTROL_H
 
-#include <QtCore/qdebug.h>
+#include <qcamera.h>
+#include <qcamerafocuscontrol.h>
 
-QGstreamerImageEncode::QGstreamerImageEncode(QGstreamerCaptureSession *session)
-    :QImageEncoderControl(session), m_session(session)
+#include <gst/gst.h>
+#include <glib.h>
+
+class CameraBinSession;
+
+QT_USE_NAMESPACE
+
+class CameraBinFocus  : public QCameraFocusControl
 {
-    QList<QSize> commonSizes;
-    commonSizes << QSize(1280, 960)
-        << QSize(2048, 1536)
-        << QSize(2576, 1456)
-        << QSize(2576, 1960);
+    Q_OBJECT
 
-    QImageEncoderSettings settings;
-    settings.setResolution(commonSizes[0]);
-    setImageSettings(settings);
-}
+public:
+    CameraBinFocus(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinFocus();
 
-QGstreamerImageEncode::~QGstreamerImageEncode()
-{
-}
+    QCameraFocus::FocusMode focusMode() const;
+    void setFocusMode(QCameraFocus::FocusMode mode);
+    bool isFocusModeSupported(QCameraFocus::FocusMode mode) const;
 
-QList<QSize> QGstreamerImageEncode::supportedResolutions(const QImageEncoderSettings &, bool *continuous) const
-{
-    qDebug() << "QGstreamerImageEncode::supportedResolutions()";
-    if (continuous)
-        *continuous = m_session->videoInput() != 0;
+    qreal maximumOpticalZoom() const;
+    qreal maximumDigitalZoom() const;
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
 
-    return m_session->videoInput() ? m_session->videoInput()->supportedResolutions() : QList<QSize>();
-}
+    void zoomTo(qreal optical, qreal digital) ;
 
-QStringList QGstreamerImageEncode::supportedImageCodecs() const
-{
-    return QStringList() << "jpeg";
-}
+    QCameraFocus::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(QCameraFocus::FocusPointMode mode) ;
+    bool isFocusPointModeSupported(QCameraFocus::FocusPointMode) const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
 
-QString QGstreamerImageEncode::imageCodecDescription(const QString &codecName) const
-{
-    if (codecName == "jpeg")
-        return tr("JPEG image");
+    QCameraFocusZoneList focusZones() const;
 
-    return QString();
-}
+private:
+    CameraBinSession *m_session;
+    GstElement &m_camerabin;
+    QCameraFocus::FocusMode m_focusMode;
+};
 
-QImageEncoderSettings QGstreamerImageEncode::imageSettings() const
-{
-    return m_settings;
-}
-
-void QGstreamerImageEncode::setImageSettings(const QImageEncoderSettings &settings)
-{
-    m_settings = settings;
-}
+#endif // CAMERABINFOCUSCONTROL_H

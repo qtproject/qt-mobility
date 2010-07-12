@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercameraexposurecontrol_maemo.h"
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinexposure.h"
+#include "camerabinsession.h"
 #include <gst/interfaces/photography.h>
 
 #include <QDebug>
 
-QGstreamerCameraExposureControl::QGstreamerCameraExposureControl(GstElement &camerabin, QGstreamerCaptureSession *session)
+CameraBinExposure::CameraBinExposure(GstElement &camerabin, CameraBinSession *session)
     :QCameraExposureControl(session),
      m_camerabin(camerabin),
      m_session(session)
@@ -54,11 +54,11 @@ QGstreamerCameraExposureControl::QGstreamerCameraExposureControl(GstElement &cam
     qDebug() << "Camera caps:" << caps;
 }
 
-QGstreamerCameraExposureControl::~QGstreamerCameraExposureControl()
+CameraBinExposure::~CameraBinExposure()
 {
 }
 
-QCameraExposure::FlashModes QGstreamerCameraExposureControl::flashMode() const
+QCameraExposure::FlashModes CameraBinExposure::flashMode() const
 {
     GstFlashMode flashMode;
     gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
@@ -77,7 +77,7 @@ QCameraExposure::FlashModes QGstreamerCameraExposureControl::flashMode() const
     return modes;
 }
 
-void QGstreamerCameraExposureControl::setFlashMode(QCameraExposure::FlashModes mode)
+void CameraBinExposure::setFlashMode(QCameraExposure::FlashModes mode)
 {
     GstFlashMode flashMode;
     gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
@@ -91,7 +91,7 @@ void QGstreamerCameraExposureControl::setFlashMode(QCameraExposure::FlashModes m
     gst_photography_set_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), flashMode);
 }
 
-bool QGstreamerCameraExposureControl::isFlashModeSupported(QCameraExposure::FlashModes mode) const
+bool CameraBinExposure::isFlashModeSupported(QCameraExposure::FlashModes mode) const
 {
     return  mode == QCameraExposure::FlashOff ||
             mode == QCameraExposure::FlashOn ||
@@ -100,12 +100,12 @@ bool QGstreamerCameraExposureControl::isFlashModeSupported(QCameraExposure::Flas
             mode == QCameraExposure::FlashFill;
 }
 
-bool QGstreamerCameraExposureControl::isFlashReady() const
+bool CameraBinExposure::isFlashReady() const
 {
     return true;
 }
 
-QCameraExposure::ExposureMode QGstreamerCameraExposureControl::exposureMode() const
+QCameraExposure::ExposureMode CameraBinExposure::exposureMode() const
 {
     GstSceneMode sceneMode;
     gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
@@ -124,7 +124,7 @@ QCameraExposure::ExposureMode QGstreamerCameraExposureControl::exposureMode() co
     }
 }
 
-void QGstreamerCameraExposureControl::setExposureMode(QCameraExposure::ExposureMode mode)
+void CameraBinExposure::setExposureMode(QCameraExposure::ExposureMode mode)
 {
     GstSceneMode sceneMode;
     gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
@@ -142,7 +142,7 @@ void QGstreamerCameraExposureControl::setExposureMode(QCameraExposure::ExposureM
     gst_photography_set_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), sceneMode);
 }
 
-bool QGstreamerCameraExposureControl::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
+bool CameraBinExposure::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
 {
     //Similar mode names can be found in gst as GstSceneMode
     return  mode == QCameraExposure::ExposureAuto ||
@@ -154,22 +154,22 @@ bool QGstreamerCameraExposureControl::isExposureModeSupported(QCameraExposure::E
     //GST_PHOTOGRAPHY_SCENE_MODE_LANDSCAPE
 }
 
-QCameraExposure::MeteringMode QGstreamerCameraExposureControl::meteringMode() const
+QCameraExposure::MeteringMode CameraBinExposure::meteringMode() const
 {
     return QCameraExposure::MeteringMatrix;
 }
 
-void QGstreamerCameraExposureControl::setMeteringMode(QCameraExposure::MeteringMode mode)
+void CameraBinExposure::setMeteringMode(QCameraExposure::MeteringMode mode)
 {
     Q_UNUSED(mode);
 }
 
-bool QGstreamerCameraExposureControl::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
+bool CameraBinExposure::isMeteringModeSupported(QCameraExposure::MeteringMode mode) const
 {
     return mode == QCameraExposure::MeteringMatrix;
 }
 
-bool QGstreamerCameraExposureControl::isParameterSupported(ExposureParameter parameter) const
+bool CameraBinExposure::isParameterSupported(ExposureParameter parameter) const
 {
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
@@ -182,7 +182,7 @@ bool QGstreamerCameraExposureControl::isParameterSupported(ExposureParameter par
     }
 }
 
-QVariant QGstreamerCameraExposureControl::exposureParameter(ExposureParameter parameter) const
+QVariant CameraBinExposure::exposureParameter(ExposureParameter parameter) const
 {
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
@@ -211,7 +211,7 @@ QVariant QGstreamerCameraExposureControl::exposureParameter(ExposureParameter pa
     }
 }
 
-QCameraExposureControl::ParameterFlags QGstreamerCameraExposureControl::exposureParameterFlags(ExposureParameter parameter) const
+QCameraExposureControl::ParameterFlags CameraBinExposure::exposureParameterFlags(ExposureParameter parameter) const
 {
     QCameraExposureControl::ParameterFlags flags = 0;
 
@@ -229,7 +229,7 @@ QCameraExposureControl::ParameterFlags QGstreamerCameraExposureControl::exposure
     return flags;
 }
 
-QVariantList QGstreamerCameraExposureControl::supportedParameterRange(ExposureParameter parameter) const
+QVariantList CameraBinExposure::supportedParameterRange(ExposureParameter parameter) const
 {
     QVariantList res;
     switch (parameter) {
@@ -249,7 +249,7 @@ QVariantList QGstreamerCameraExposureControl::supportedParameterRange(ExposurePa
     return res;
 }
 
-bool QGstreamerCameraExposureControl::setExposureParameter(ExposureParameter parameter, const QVariant& value)
+bool CameraBinExposure::setExposureParameter(ExposureParameter parameter, const QVariant& value)
 {
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
@@ -271,7 +271,7 @@ bool QGstreamerCameraExposureControl::setExposureParameter(ExposureParameter par
     return true;
 }
 
-QString QGstreamerCameraExposureControl::extendedParameterName(ExposureParameter)
+QString CameraBinExposure::extendedParameterName(ExposureParameter)
 {
     return QString();
 }

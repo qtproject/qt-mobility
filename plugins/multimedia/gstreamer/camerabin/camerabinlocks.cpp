@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercameralockscontrol_maemo.h"
-#include "qgstreamercapturesession_maemo.h"
+#include "camerabinlocks.h"
+#include "camerabinsession.h"
 
 #include <gst/interfaces/photography.h>
 
 #include <QDebug>
 
-QGstreamerCameraLocksControl::QGstreamerCameraLocksControl(GstElement &camerabin, QGstreamerCaptureSession *session)
+CameraBinLocks::CameraBinLocks(GstElement &camerabin, CameraBinSession *session)
     :QCameraLocksControl(session),
      m_session(session),
      m_camerabin(camerabin),
@@ -56,21 +56,21 @@ QGstreamerCameraLocksControl::QGstreamerCameraLocksControl(GstElement &camerabin
             this, SLOT(updateFocusStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 }
 
-QGstreamerCameraLocksControl::~QGstreamerCameraLocksControl()
+CameraBinLocks::~CameraBinLocks()
 {
 }
 
-QCamera::LockTypes QGstreamerCameraLocksControl::supportedLocks() const
+QCamera::LockTypes CameraBinLocks::supportedLocks() const
 {
     return QCamera::LockFocus;
 }
 
-QCamera::LockStatus QGstreamerCameraLocksControl::lockStatus(QCamera::LockType lock) const
+QCamera::LockStatus CameraBinLocks::lockStatus(QCamera::LockType lock) const
 {
     return lock == QCamera::LockFocus ? m_focusStatus : QCamera::Unlocked;
 }
 
-void QGstreamerCameraLocksControl::searchAndLock(QCamera::LockTypes locks)
+void CameraBinLocks::searchAndLock(QCamera::LockTypes locks)
 {
     if (locks & QCamera::LockFocus) {
         m_focusStatus = QCamera::Searching;
@@ -79,7 +79,7 @@ void QGstreamerCameraLocksControl::searchAndLock(QCamera::LockTypes locks)
     }
 }
 
-void QGstreamerCameraLocksControl::unlock(QCamera::LockTypes locks)
+void CameraBinLocks::unlock(QCamera::LockTypes locks)
 {
     if (locks & QCamera::LockFocus) {
         m_focusStatus = QCamera::Unlocked;
@@ -88,7 +88,7 @@ void QGstreamerCameraLocksControl::unlock(QCamera::LockTypes locks)
     }
 }
 
-void QGstreamerCameraLocksControl::updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason)
+void CameraBinLocks::updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason)
 {
     if (m_focusStatus != status)
         emit lockStatusChanged(QCamera::LockFocus, m_focusStatus = status, reason);

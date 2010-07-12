@@ -39,43 +39,48 @@
 **
 ****************************************************************************/
 
-#include "qgstreamerimagecapturecontrol_maemo.h"
-#include <QtCore/QDebug>
+#include "camerabinimageencoder.h"
+#include "camerabinsession.h"
 
-QGstreamerImageCaptureControl::QGstreamerImageCaptureControl(QGstreamerCaptureSession *session)
-    :QCameraImageCaptureControl(session), m_session(session), m_ready(false), requestId(0)
-{
-    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
-    connect(m_session, SIGNAL(imageExposed(int)), this, SIGNAL(imageExposed(int)));
-    connect(m_session, SIGNAL(imageCaptured(int,QImage)), this, SIGNAL(imageCaptured(int,QImage)));
-    connect(m_session, SIGNAL(imageSaved(int,QString)), this, SIGNAL(imageSaved(int,QString)));
-}
+#include <QtCore/qdebug.h>
 
-QGstreamerImageCaptureControl::~QGstreamerImageCaptureControl()
+CameraBinImageEncoder::CameraBinImageEncoder(CameraBinSession *session)
+    :QImageEncoderControl(session), m_session(session)
 {
 }
 
-bool QGstreamerImageCaptureControl::isReadyForCapture() const
-{
-    return m_ready;
-}
-
-int QGstreamerImageCaptureControl::capture(const QString &fileName)
-{
-    requestId++;
-    m_session->captureImage(requestId, fileName);
-
-    return requestId;
-}
-
-void QGstreamerImageCaptureControl::cancelCapture()
+CameraBinImageEncoder::~CameraBinImageEncoder()
 {
 }
 
-void QGstreamerImageCaptureControl::updateState()
+QList<QSize> CameraBinImageEncoder::supportedResolutions(const QImageEncoderSettings &, bool *continuous) const
 {
-    bool ready = m_session->state() == QGstreamerCaptureSession::PreviewState;
-    if (m_ready != ready) {
-        emit readyForCaptureChanged(m_ready = ready);
-    }
+    qDebug() << "CameraBinImageEncoder::supportedResolutions()";
+    if (continuous)
+        *continuous = false;
+
+    return m_session->supportedResolutions(qMakePair<int,int>(0,0),  continuous);
+}
+
+QStringList CameraBinImageEncoder::supportedImageCodecs() const
+{
+    return QStringList() << "jpeg";
+}
+
+QString CameraBinImageEncoder::imageCodecDescription(const QString &codecName) const
+{
+    if (codecName == "jpeg")
+        return tr("JPEG image");
+
+    return QString();
+}
+
+QImageEncoderSettings CameraBinImageEncoder::imageSettings() const
+{
+    return m_settings;
+}
+
+void CameraBinImageEncoder::setImageSettings(const QImageEncoderSettings &settings)
+{
+    m_settings = settings;
 }

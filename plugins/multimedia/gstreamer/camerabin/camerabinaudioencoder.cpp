@@ -39,15 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qgstreameraudioencode_maemo.h"
-#include "qgstreamermediacontainercontrol_maemo.h"
+#include "camerabinaudioencoder.h"
+#include "camerabincontainer.h"
 
 #include <QtCore/qdebug.h>
 
-QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
+CameraBinAudioEncoder::CameraBinAudioEncoder(QObject *parent)
     :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     codecCandidates << "audio/mpeg" << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/speex";
 
     m_elementNames["audio/mpeg"] = "nokiaaacenc";
@@ -55,6 +57,26 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "nokiaamrnbenc";
     m_elementNames["audio/AMR-WB"] = "nokiaamrwbenc";
+#else
+    codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM"
+                    << "audio/PCM" << "audio/AMR" << "audio/AMR-WB";
+
+    m_elementNames["audio/mpeg"] = "lamemp3enc";
+    m_elementNames["audio/vorbis"] = "vorbisenc";
+    m_elementNames["audio/speex"] = "speexenc";
+    m_elementNames["audio/GSM"] = "gsmenc";
+    m_elementNames["audio/PCM"] = "audioresample";
+    m_elementNames["audio/AMR"] = "amrnbenc";
+    m_elementNames["audio/AMR-WB"] = "amrwbenc";
+
+    m_codecOptions["audio/vorbis"] = QStringList() << "min-bitrate" << "max-bitrate";
+    m_codecOptions["audio/mpeg"] = QStringList() << "mode";
+    m_codecOptions["audio/speex"] = QStringList() << "mode" << "vbr" << "vad" << "dtx";
+    m_codecOptions["audio/GSM"] = QStringList();
+    m_codecOptions["audio/PCM"] = QStringList();
+    m_codecOptions["audio/AMR"] = QStringList();
+    m_codecOptions["audio/AMR-WB"] = QStringList();
+#endif
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         QByteArray elementName = m_elementNames[codecName];
@@ -70,7 +92,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
                 m_codecDescriptions.insert(codecName, QString::fromUtf8(descr));
 
             m_streamTypes.insert(codecName,
-                                 QGstreamerMediaContainerControl::supportedStreamTypes(factory, GST_PAD_SRC));
+                                 CameraBinContainer::supportedStreamTypes(factory, GST_PAD_SRC));
 
             gst_object_unref(GST_OBJECT(factory));
         }
@@ -80,55 +102,55 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
         m_audioSettings.setCodec(m_codecs[0]);
 }
 
-QGstreamerAudioEncode::~QGstreamerAudioEncode()
+CameraBinAudioEncoder::~CameraBinAudioEncoder()
 {
 }
 
-QStringList QGstreamerAudioEncode::supportedAudioCodecs() const
+QStringList CameraBinAudioEncoder::supportedAudioCodecs() const
 {
     return m_codecs;
 }
 
-QString QGstreamerAudioEncode::codecDescription(const QString &codecName) const
+QString CameraBinAudioEncoder::codecDescription(const QString &codecName) const
 {
     return m_codecDescriptions.value(codecName);
 }
 
-QStringList QGstreamerAudioEncode::supportedEncodingOptions(const QString &codec) const
+QStringList CameraBinAudioEncoder::supportedEncodingOptions(const QString &codec) const
 {
     return m_codecOptions.value(codec);
 }
 
-QVariant QGstreamerAudioEncode::encodingOption(
+QVariant CameraBinAudioEncoder::encodingOption(
         const QString &codec, const QString &name) const
 {
     return m_options[codec].value(name);
 }
 
-void QGstreamerAudioEncode::setEncodingOption(
+void CameraBinAudioEncoder::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
 {
     m_options[codec][name] = value;
 }
 
-QList<int> QGstreamerAudioEncode::supportedSampleRates(const QAudioEncoderSettings &, bool *) const
+QList<int> CameraBinAudioEncoder::supportedSampleRates(const QAudioEncoderSettings &, bool *) const
 {
     //TODO check element caps to find actual values
 
     return QList<int>();
 }
 
-QAudioEncoderSettings QGstreamerAudioEncode::audioSettings() const
+QAudioEncoderSettings CameraBinAudioEncoder::audioSettings() const
 {
     return m_audioSettings;
 }
 
-void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settings)
+void CameraBinAudioEncoder::setAudioSettings(const QAudioEncoderSettings &settings)
 {
     m_audioSettings = settings;
 }
 
-GstElement *QGstreamerAudioEncode::createEncoder()
+GstElement *CameraBinAudioEncoder::createEncoder()
 {
     QString codec = m_audioSettings.codec();
 
@@ -234,7 +256,6 @@ GstElement *QGstreamerAudioEncode::createEncoder()
                 qWarning() << "unsupported option type:" << option << value;
                 break;
             }
-
         }
     }
 
@@ -243,7 +264,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
 }
 
 
-QSet<QString> QGstreamerAudioEncode::supportedStreamTypes(const QString &codecName) const
+QSet<QString> CameraBinAudioEncoder::supportedStreamTypes(const QString &codecName) const
 {
     return m_streamTypes.value(codecName);
 }

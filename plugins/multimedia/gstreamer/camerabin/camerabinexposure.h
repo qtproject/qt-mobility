@@ -39,50 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAMERAFOCUSCONTROL_H
-#define QGSTREAMERCAMERAFOCUSCONTROL_H
+#ifndef CAMERABINEXPOSURECONTROL_MAEMO_H
+#define CAMERABINEXPOSURECONTROL_MAEMO_H
 
 #include <qcamera.h>
-#include <qcamerafocuscontrol.h>
+#include <qcameraexposurecontrol.h>
 
 #include <gst/gst.h>
 #include <glib.h>
 
-class QGstreamerCaptureSession;
+class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class QGstreamerCameraFocusControl  : public QCameraFocusControl
+class Q_MULTIMEDIA_EXPORT CameraBinExposure : public QCameraExposureControl
 {
     Q_OBJECT
 
 public:
-    QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session);
-    virtual ~QGstreamerCameraFocusControl();
+    CameraBinExposure(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinExposure();
 
-    QCameraFocus::FocusMode focusMode() const;
-    void setFocusMode(QCameraFocus::FocusMode mode);
-    bool isFocusModeSupported(QCameraFocus::FocusMode mode) const;
+    QCameraExposure::FlashModes flashMode() const;
+    void setFlashMode(QCameraExposure::FlashModes mode);
+    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
 
-    qreal maximumOpticalZoom() const;
-    qreal maximumDigitalZoom() const;
-    qreal opticalZoom() const;
-    qreal digitalZoom() const;
+    bool isFlashReady() const;
 
-    void zoomTo(qreal optical, qreal digital) ;
+    QCameraExposure::ExposureMode exposureMode() const;
+    void setExposureMode(QCameraExposure::ExposureMode mode);
+    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
 
-    QCameraFocus::FocusPointMode focusPointMode() const;
-    void setFocusPointMode(QCameraFocus::FocusPointMode mode) ;
-    bool isFocusPointModeSupported(QCameraFocus::FocusPointMode) const;
-    QPointF customFocusPoint() const;
-    void setCustomFocusPoint(const QPointF &point);
+    QCameraExposure::MeteringMode meteringMode() const;
+    void setMeteringMode(QCameraExposure::MeteringMode mode);
+    bool isMeteringModeSupported(QCameraExposure::MeteringMode mode) const;
 
-    QCameraFocusZoneList focusZones() const;
+    bool isParameterSupported(ExposureParameter parameter) const;
+    QVariant exposureParameter(ExposureParameter parameter) const;
+    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const;
+    QVariantList supportedParameterRange(ExposureParameter parameter) const;
+    bool setExposureParameter(ExposureParameter parameter, const QVariant& value);
+
+    QString extendedParameterName(ExposureParameter parameter);
 
 private:
-    QGstreamerCaptureSession *m_session;
     GstElement &m_camerabin;
-    QCameraFocus::FocusMode m_focusMode;
+    CameraBinSession *m_session;    
 };
 
-#endif // QGSTREAMERCAMERAFOCUSCONTROL_H
+#endif // CAMERABINEXPOSURECONTROL_MAEMO_H

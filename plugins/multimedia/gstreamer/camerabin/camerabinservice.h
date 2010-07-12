@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAPTURESERVICE_H
-#define QGSTREAMERCAPTURESERVICE_H
+#ifndef CAMERABINCAPTURESERVICE_H
+#define CAMERABINCAPTURESERVICE_H
 
 #include <qmediaservice.h>
 
@@ -50,25 +50,25 @@ class QAudioEndpointSelector;
 class QVideoDeviceControl;
 QT_END_NAMESPACE
 
-class QGstreamerCaptureSession;
-class QGstreamerCameraControl;
+class CameraBinSession;
+class CameraBinControl;
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerVideoRenderer;
 class QGstreamerVideoOverlay;
 class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
-class QGstreamerCaptureMetaDataControl;
-class QGstreamerImageCaptureControl;
-class QGstreamerCaptureMetaDataControl;
+class CameraBinMetaData;
+class CameraBinImageCapture;
+class CameraBinMetaData;
 
-class QGstreamerCaptureService : public QMediaService
+class CameraBinService : public QMediaService
 {
     Q_OBJECT
 
 public:
-    QGstreamerCaptureService(const QString &service, QObject *parent = 0);
-    virtual ~QGstreamerCaptureService();
+    CameraBinService(const QString &service, QObject *parent = 0);
+    virtual ~CameraBinService();
 
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *);
@@ -76,9 +76,9 @@ public:
 private:
     void setAudioPreview(GstElement*);
 
-    QGstreamerCaptureSession *m_captureSession;
-    QGstreamerCameraControl *m_cameraControl;    
-    QGstreamerCaptureMetaDataControl *m_metaDataControl;
+    CameraBinSession *m_captureSession;
+    CameraBinControl *m_cameraControl;    
+    CameraBinMetaData *m_metaDataControl;
 
     QAudioEndpointSelector *m_audioInputEndpointSelector;
     QVideoDeviceControl *m_videoInputDevice;
@@ -91,7 +91,7 @@ private:
     QGstreamerElementFactory *m_videoWindowFactory;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
-    QGstreamerImageCaptureControl *m_imageCaptureControl;
+    CameraBinImageCapture *m_imageCaptureControl;
 };
 
-#endif // QGSTREAMERCAPTURESERVICE_H
+#endif // CAMERABINCAPTURESERVICE_H

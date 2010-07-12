@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERAUDIOENCODE_H
-#define QGSTREAMERAUDIOENCODE_H
+#ifndef CAMERABINVIDEOENCODE_H
+#define CAMERABINVIDEOENCODE_H
 
-#include <qaudioencodercontrol.h>
-class QGstreamerCaptureSession;
+#include <qvideoencodercontrol.h>
+class CameraBinSession;
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
@@ -51,47 +51,48 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-#include <qaudioformat.h>
-
 QT_USE_NAMESPACE
 
-class QGstreamerAudioEncode : public QAudioEncoderControl
+class CameraBinVideoEncoder : public QVideoEncoderControl
 {
     Q_OBJECT
 public:
-    QGstreamerAudioEncode(QObject *parent);
-    virtual ~QGstreamerAudioEncode();
+    CameraBinVideoEncoder(CameraBinSession *session);
+    virtual ~CameraBinVideoEncoder();
 
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName) const;
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                      bool *continuous = 0) const;
+
+    QList< qreal > supportedFrameRates(const QVideoEncoderSettings &settings = QVideoEncoderSettings(),
+                                       bool *continuous = 0) const;
+
+    QPair<int,int> rateAsRational(qreal) const;
+
+    QStringList supportedVideoCodecs() const;
+    QString videoCodecDescription(const QString &codecName) const;
+
+    QVideoEncoderSettings videoSettings() const;
+    void setVideoSettings(const QVideoEncoderSettings &settings);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings = QAudioEncoderSettings(),
-                                    bool *isContinuous = 0) const;
-    QList<int> supportedChannelCounts(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
-    QList<int> supportedSampleSizes(const QAudioEncoderSettings &settings = QAudioEncoderSettings()) const;
-
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings&);
 
     GstElement *createEncoder();
 
     QSet<QString> supportedStreamTypes(const QString &codecName) const;
 
 private:
+    CameraBinSession *m_session;
+
     QStringList m_codecs;
-    QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QByteArray> m_elementNames;
     QMap<QString,QStringList> m_codecOptions;
 
+    QVideoEncoderSettings m_videoSettings;
     QMap<QString, QMap<QString, QVariant> > m_options;
-
     QMap<QString, QSet<QString> > m_streamTypes;
-
-    QAudioEncoderSettings m_audioSettings;
 };
 
 #endif

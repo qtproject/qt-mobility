@@ -39,52 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAMERAEXPOSURECONTROL_MAEMO_H
-#define QGSTREAMERCAMERAEXPOSURECONTROL_MAEMO_H
+#ifndef CAMERABINIMAGEPROCESSINGCONTROL_H
+#define CAMERABINIMAGEPROCESSINGCONTROL_H
 
 #include <qcamera.h>
-#include <qcameraexposurecontrol.h>
+#include <qcameraimageprocessingcontrol.h>
 
 #include <gst/gst.h>
 #include <glib.h>
 
-class QGstreamerCaptureSession;
+#include <gst/interfaces/photography.h>
+#include <gst/interfaces/colorbalance.h>
+
+class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class Q_MULTIMEDIA_EXPORT QGstreamerCameraExposureControl : public QCameraExposureControl
+class CameraBinImageProcessing : public QCameraImageProcessingControl
 {
     Q_OBJECT
 
 public:
-    QGstreamerCameraExposureControl(GstElement &camerabin, QGstreamerCaptureSession *session);
-    virtual ~QGstreamerCameraExposureControl();
+    CameraBinImageProcessing(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinImageProcessing();
 
-    QCameraExposure::FlashModes flashMode() const;
-    void setFlashMode(QCameraExposure::FlashModes mode);
-    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
+    QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode() const;
+    void setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode);
+    bool isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const;
 
-    bool isFlashReady() const;
+    int manualWhiteBalance() const;
+    void setManualWhiteBalance(int colorTemperature);
 
-    QCameraExposure::ExposureMode exposureMode() const;
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
+    bool isProcessingParameterSupported(ProcessingParameter) const;
+    QVariant processingParameter(ProcessingParameter parameter) const;
+    void setProcessingParameter(ProcessingParameter parameter, QVariant value);
 
-    QCameraExposure::MeteringMode meteringMode() const;
-    void setMeteringMode(QCameraExposure::MeteringMode mode);
-    bool isMeteringModeSupported(QCameraExposure::MeteringMode mode) const;
-
-    bool isParameterSupported(ExposureParameter parameter) const;
-    QVariant exposureParameter(ExposureParameter parameter) const;
-    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const;
-    QVariantList supportedParameterRange(ExposureParameter parameter) const;
-    bool setExposureParameter(ExposureParameter parameter, const QVariant& value);
-
-    QString extendedParameterName(ExposureParameter parameter);
+    QList<QByteArray> supportedPresets() const;
+    QString presetDescription(const QByteArray &preset) const;
+    QByteArray preset() const;
+    void setPreset(const QByteArray &preset);
 
 private:
+    bool setColorBalanceValue(const QString& channel, int value);
+    void updateColorBalanceValues();
+
+private:
+    CameraBinSession *m_session;
     GstElement &m_camerabin;
-    QGstreamerCaptureSession *m_session;    
+    QMap<QCameraImageProcessingControl::ProcessingParameter, int> m_values;
+    QMap<GstWhiteBalanceMode, QCameraImageProcessing::WhiteBalanceMode> m_mappedWbValues;
+    QList<QByteArray> m_presets;
+    QByteArray m_preset;
 };
 
-#endif // QGSTREAMERCAMERAEXPOSURECONTROL_MAEMO_H
+#endif // CAMERABINIMAGEPROCESSINGCONTROL_H
