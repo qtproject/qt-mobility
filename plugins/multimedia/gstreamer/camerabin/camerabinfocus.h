@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,48 +39,50 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#ifndef CAMERABINFOCUSCONTROL_H
+#define CAMERABINFOCUSCONTROL_H
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+#include <qcamera.h>
+#include <qcamerafocuscontrol.h>
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+#include <gst/gst.h>
+#include <glib.h>
+
+class CameraBinSession;
+
+QT_USE_NAMESPACE
+
+class CameraBinFocus  : public QCameraFocusControl
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
-}
+    Q_OBJECT
 
-QXARecodMediaService::~QXARecodMediaService()
-{
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
-}
+public:
+    CameraBinFocus(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinFocus();
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
-}
+    QCameraFocus::FocusMode focusMode() const;
+    void setFocusMode(QCameraFocus::FocusMode mode);
+    bool isFocusModeSupported(QCameraFocus::FocusMode mode) const;
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}
+    qreal maximumOpticalZoom() const;
+    qreal maximumDigitalZoom() const;
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
+
+    void zoomTo(qreal optical, qreal digital) ;
+
+    QCameraFocus::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(QCameraFocus::FocusPointMode mode) ;
+    bool isFocusPointModeSupported(QCameraFocus::FocusPointMode) const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
+    QCameraFocusZoneList focusZones() const;
+
+private:
+    CameraBinSession *m_session;
+    GstElement &m_camerabin;
+    QCameraFocus::FocusMode m_focusMode;
+};
+
+#endif // CAMERABINFOCUSCONTROL_H

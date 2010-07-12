@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,48 +39,45 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#ifndef CAMERABINIMAGEENCODE_H
+#define CAMERABINIMAGEENCODE_H
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+class CameraBinSession;
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+#include <qimageencodercontrol.h>
+
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+#include <gst/gst.h>
+QT_USE_NAMESPACE
+
+class CameraBinImageEncoder : public QImageEncoderControl
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
-}
+    Q_OBJECT
+public:
+    CameraBinImageEncoder(CameraBinSession *session);
+    virtual ~CameraBinImageEncoder();
 
-QXARecodMediaService::~QXARecodMediaService()
-{
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
-}
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings = QImageEncoderSettings(),
+                                      bool *continuous = 0) const;
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
-}
+    QStringList supportedImageCodecs() const;
+    QString imageCodecDescription(const QString &formatName) const;
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}
+    QImageEncoderSettings imageSettings() const;
+    void setImageSettings(const QImageEncoderSettings &settings);
+
+private:
+    QImageEncoderSettings m_settings;
+
+    CameraBinSession *m_session;
+
+    // Added
+    QStringList m_codecs;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString,QString> m_codecDescriptions;
+    QMap<QString,QStringList> m_codecOptions;
+};
+
+#endif

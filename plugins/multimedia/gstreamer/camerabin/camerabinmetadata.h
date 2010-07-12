@@ -39,48 +39,37 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#ifndef CAMERABINCAPTUREMETADATACONTROL_H
+#define CAMERABINCAPTUREMETADATACONTROL_H
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+#include <qmetadatawritercontrol.h>
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+QT_USE_NAMESPACE
+
+class CameraBinMetaData : public QMetaDataWriterControl
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
-}
+    Q_OBJECT
+public:
+    CameraBinMetaData(QObject *parent);
+    virtual ~CameraBinMetaData() {}
 
-QXARecodMediaService::~QXARecodMediaService()
-{
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
-}
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
-}
+    bool isMetaDataAvailable() const { return true; }
+    bool isWritable() const { return true; }
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value);
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(QString const &name) const;
+    void setExtendedMetaData(QString const &name, QVariant const &value);
+    QStringList availableExtendedMetaData() const;
+
+Q_SIGNALS:
+    void metaDataChanged(const QMap<QByteArray, QVariant>&);
+
+private:
+    QMap<QByteArray, QVariant> m_values;
+};
+
+#endif // CAMERABINCAPTUREMETADATACONTROL_H

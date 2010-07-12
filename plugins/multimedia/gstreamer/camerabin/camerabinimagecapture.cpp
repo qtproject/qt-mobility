@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,48 +39,43 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#include "camerabinimagecapture.h"
+#include <QtCore/QDebug>
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
-
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+CameraBinImageCapture::CameraBinImageCapture(CameraBinSession *session)
+    :QCameraImageCaptureControl(session), m_session(session), m_ready(false), requestId(0)
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
+    connect(m_session, SIGNAL(stateChanged(CameraBinSession::State)), SLOT(updateState()));
+    connect(m_session, SIGNAL(imageExposed(int)), this, SIGNAL(imageExposed(int)));
+    connect(m_session, SIGNAL(imageCaptured(int,QImage)), this, SIGNAL(imageCaptured(int,QImage)));
+    connect(m_session, SIGNAL(imageSaved(int,QString)), this, SIGNAL(imageSaved(int,QString)));
 }
 
-QXARecodMediaService::~QXARecodMediaService()
+CameraBinImageCapture::~CameraBinImageCapture()
 {
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
 }
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
+bool CameraBinImageCapture::isReadyForCapture() const
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
+    return m_ready;
 }
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
+int CameraBinImageCapture::capture(const QString &fileName)
 {
-    Q_UNUSED(control)
+    requestId++;
+    m_session->captureImage(requestId, fileName);
+
+    return requestId;
+}
+
+void CameraBinImageCapture::cancelCapture()
+{
+}
+
+void CameraBinImageCapture::updateState()
+{
+    bool ready = m_session->state() == QCamera::ActiveState;
+    if (m_ready != ready) {
+        emit readyForCaptureChanged(m_ready = ready);
+    }
 }

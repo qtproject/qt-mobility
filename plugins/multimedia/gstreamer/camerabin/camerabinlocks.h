@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,48 +39,41 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#ifndef CAMERABINLOCKSCONTROL_H
+#define CAMERABINLOCKSCONTROL_H
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+#include <qcamera.h>
+#include <qcameralockscontrol.h>
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+#include <gst/gst.h>
+#include <glib.h>
+
+class CameraBinSession;
+
+QT_USE_NAMESPACE
+
+class CameraBinLocks  : public QCameraLocksControl
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
-}
+    Q_OBJECT
 
-QXARecodMediaService::~QXARecodMediaService()
-{
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
-}
+public:
+    CameraBinLocks(GstElement &camerabin, CameraBinSession *session);
+    virtual ~CameraBinLocks();
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
-}
+    QCamera::LockTypes supportedLocks() const;
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}
+    QCamera::LockStatus lockStatus(QCamera::LockType lock) const;
+
+    void searchAndLock(QCamera::LockTypes locks);
+    void unlock(QCamera::LockTypes locks);
+
+private slots:
+    void updateFocusStatus(QCamera::LockStatus status, QCamera::LockChangeReason reason);
+
+private:
+    CameraBinSession *m_session;
+    GstElement &m_camerabin;
+    QCamera::LockStatus m_focusStatus;
+};
+
+#endif

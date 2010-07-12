@@ -39,48 +39,43 @@
 **
 ****************************************************************************/
 
-#include <QString>
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+#ifndef CAMERABINMEDIACONTAINERCONTROL_H
+#define CAMERABINMEDIACONTAINERCONTROL_H
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+#include <qmediacontainercontrol.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qset.h>
+
+#include <gst/gst.h>
+
+QT_USE_NAMESPACE
+
+class CameraBinContainer : public QMediaContainerControl
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
-}
+Q_OBJECT
+public:
+    CameraBinContainer(QObject *parent);
+    virtual ~CameraBinContainer() {}
 
-QXARecodMediaService::~QXARecodMediaService()
-{
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
-}
+    virtual QStringList supportedContainers() const { return m_supportedContainers; }
+    virtual QString containerMimeType() const { return m_format; }
+    virtual void setContainerMimeType(const QString &formatMimeType) { m_format = formatMimeType; }
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
-}
+    virtual QString containerDescription(const QString &formatMimeType) const { return m_containerDescriptions.value(formatMimeType); }
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}
+    QByteArray formatElementName() const { return m_elementNames.value(containerMimeType()); }
+
+    QSet<QString> supportedStreamTypes(const QString &container) const;
+
+    static QSet<QString> supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction);
+
+private:
+    QString m_format;
+    QStringList m_supportedContainers;
+    QMap<QString,QByteArray> m_elementNames;
+    QMap<QString, QString> m_containerDescriptions;
+    QMap<QString, QSet<QString> > m_streamTypes;
+};
+
+#endif // CAMERABINMEDIACONTAINERCONTROL_H

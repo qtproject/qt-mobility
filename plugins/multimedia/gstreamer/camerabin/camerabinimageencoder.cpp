@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,48 +39,48 @@
 **
 ****************************************************************************/
 
-#include <QString>
+#include "camerabinimageencoder.h"
+#include "camerabinsession.h"
 
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
-#include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
-#include "qxacommon.h"
+#include <QtCore/qdebug.h>
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+CameraBinImageEncoder::CameraBinImageEncoder(CameraBinSession *session)
+    :QImageEncoderControl(session), m_session(session)
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
 }
 
-QXARecodMediaService::~QXARecodMediaService()
+CameraBinImageEncoder::~CameraBinImageEncoder()
 {
-    QT_TRACE_FUNCTION_ENTRY_EXIT;
 }
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
+QList<QSize> CameraBinImageEncoder::supportedResolutions(const QImageEncoderSettings &, bool *continuous) const
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
-    return 0;
+    qDebug() << "CameraBinImageEncoder::supportedResolutions()";
+    if (continuous)
+        *continuous = false;
+
+    return m_session->supportedResolutions(qMakePair<int,int>(0,0),  continuous);
 }
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
+QStringList CameraBinImageEncoder::supportedImageCodecs() const
 {
-    Q_UNUSED(control)
+    return QStringList() << "jpeg";
+}
+
+QString CameraBinImageEncoder::imageCodecDescription(const QString &codecName) const
+{
+    if (codecName == "jpeg")
+        return tr("JPEG image");
+
+    return QString();
+}
+
+QImageEncoderSettings CameraBinImageEncoder::imageSettings() const
+{
+    return m_settings;
+}
+
+void CameraBinImageEncoder::setImageSettings(const QImageEncoderSettings &settings)
+{
+    m_settings = settings;
 }
