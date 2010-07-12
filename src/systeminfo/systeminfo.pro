@@ -69,6 +69,9 @@ LIBS+=-lX11 -lXrandr
             QT += dbus
             SOURCES += qhalservice_linux.cpp
             HEADERS += qhalservice_linux_p.h
+
+            SOURCES += qdevicekitservice_linux.cpp
+            HEADERS += qdevicekitservice_linux_p.h
                 contains(networkmanager_enabled, yes): {
                     SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
                     HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
@@ -159,15 +162,15 @@ LIBS+=-lX11 -lXrandr
             -lgdi \
             -lecom \
 
-	    contains(hb_symbian_enabled,yes) {	    	
-	    		CONFIG += qt hb        
-	        	DEFINES += HB_SUPPORTED        
-	        	message("s60_HbKeymap enabled")	            	            
-	        	LIBS += -lhbcore	        
-    	} else {
-            LIBS += -lptiengine 
+        contains(hb_symbian_enabled,yes) {
+                CONFIG += qt hb
+                DEFINES += HB_SUPPORTED
+                message("s60_HbKeymap enabled")
+                LIBS += -lhbcore
+        } else {
+            LIBS += -lptiengine
         }
-        
+
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
@@ -180,6 +183,6 @@ LIBS+=-lX11 -lXrandr
     }
 }
 
-HEADERS += $$PUBLIC_HEADERS 
+HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)

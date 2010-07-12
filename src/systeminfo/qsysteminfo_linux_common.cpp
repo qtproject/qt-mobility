@@ -119,8 +119,26 @@ static bool halAvailable()
     return false;
 }
 
+static bool udisksAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.UDisks");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        } else {
+            qDebug() << "not";
+        }
+    }
+#endif
+    return false;
+}
+
 
 bool halIsAvailable;
+bool udisksIsAvailable;
 
 QTM_BEGIN_NAMESPACE
 
@@ -1070,9 +1088,13 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+    udisksIsAvailable = udisksAvailable();
 
 #if !defined(QT_NO_DBUS)
-    halIface = new QHalInterface();
+    if(halIsAvailable)
+        halIface = new QHalInterface(this);
+    if(udisksIsAvailable)
+        udisksIface = new QUDisksInterface(this);
 #endif
     logicalDrives();
 }
@@ -1085,31 +1107,32 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-    }
-
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
+        if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+            connect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
+                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+#endif
+        } else {
+            mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+            connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                    this,SLOT(deviceChanged(const QString &)));
+        }
     }
 }
 
 void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-
-    }
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+        if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+            disconnect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
+                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+#endif
+        } else {
+            delete mtabWatcherA;
+            mtabWatcherA = 0;
+        }
     }
 }
 
@@ -1149,6 +1172,25 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
     }
 }
 
+void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
+{
+    if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QUDisksDeviceInterface devIface(path.path());
+        QString mountp;
+        if(devIface.deviceMountPaths().count() > 0)
+            mountp = devIface.deviceMountPaths().at(0);
+
+        if(devIface.deviceIsMounted()) {
+            emit logicalDriveChanged(true, mountp);
+        } else {
+            qDebug() << mountEntriesMap.key(devIface.deviceFilePresentation());
+            emit logicalDriveChanged(false, mountEntriesMap.key(devIface.deviceFilePresentation()));
+        }
+#endif
+    }
+}
+
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
 {
     if(driveVolume.left(2) == "//") {
@@ -1181,6 +1223,24 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
 
 QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
 {
+
+    if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QUDisksDeviceInterface devIface("/org/freedesktop/UDisks/devices/"+mountEntriesMap.value(driveVolume));
+        if(devIface.deviceIsMounted()) {
+            QString chopper = devIface.deviceFile();
+            QString mountp;
+            if(devIface.deviceMountPaths().count() > 0)
+                mountp = devIface.deviceMountPaths().at(0);
+
+            if(devIface.deviceIsRemovable()) {
+                return QSystemStorageInfo::RemovableDrive;
+            } else {
+                return QSystemStorageInfo::InternalDrive;
+            }
+        }
+#endif
+    }
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QStringList mountedVol;
@@ -1247,7 +1307,23 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 
 QStringList QSystemStorageInfoLinuxCommonPrivate::logicalDrives()
 {
+#if !defined(QT_NO_DBUS)
+
+    if(udisksAvailable()) {
+        mountEntriesMap.clear();
+        foreach(const QDBusObjectPath device,udisksIface->enumerateDevices() ) {
+            QUDisksDeviceInterface devIface(device.path());
+            if(devIface.deviceIsMounted()) {
+                QString fsname = devIface.deviceMountPaths().at(0);
+                if( !mountEntriesMap.keys().contains(fsname)) {
+                    mountEntriesMap[fsname] = devIface.deviceFilePresentation();
+                }
+            }
+        }
+    } else
+#endif
     mountEntries();
+
     return mountEntriesMap.keys();
 }
 

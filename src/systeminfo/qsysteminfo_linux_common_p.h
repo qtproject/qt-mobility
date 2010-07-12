@@ -67,7 +67,9 @@
 
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
+#include "qdevicekitservice_linux_p.h"
+
 #endif
 
 QT_BEGIN_HEADER
@@ -212,9 +214,13 @@ private:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
+
+    QUDisksInterface *udisksIface;
+    QUDisksDeviceInterface *udisksDeviceIface;
 #endif
 private Q_SLOTS:
     void deviceChanged(const QString &path);
+    void udisksDeviceChanged(const QDBusObjectPath &);
 
 protected:
     void connectNotify(const char *signal);
