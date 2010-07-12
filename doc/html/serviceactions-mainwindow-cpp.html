@@ -1,1372 +1,1493 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Qt Mobility Project 1.1: mainwindow.cpp Example File (serviceactions/mainwindow.cpp)</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">mainwindow.cpp Example File</h1>
+  <title>Qt 1.1: mainwindow.cpp Example File (serviceactions/mainwindow.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<h1 class="title">mainwindow.cpp Example File</h1>
 <span class="small-subtitle">serviceactions/mainwindow.cpp</span>
 <div class="descr"/>
-<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
-    **
-    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
-    ** All rights reserved.
-    ** Contact: Nokia Corporation (qt-info@nokia.com)
-    **
-    ** This file is part of the Qt Mobility Components.
-    **
-    ** $QT_BEGIN_LICENSE:BSD$
-    ** You may use this file under the terms of the BSD license as follows:
-    **
-    ** &quot;Redistribution and use in source and binary forms, with or without
-    ** modification, are permitted provided that the following conditions are
-    ** met:
-    **   * Redistributions of source code must retain the above copyright
-    **     notice, this list of conditions and the following disclaimer.
-    **   * Redistributions in binary form must reproduce the above copyright
-    **     notice, this list of conditions and the following disclaimer in
-    **     the documentation and/or other materials provided with the
-    **     distribution.
-    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
-    **     the names of its contributors may be used to endorse or promote
-    **     products derived from this software without specific prior written
-    **     permission.
-    **
-    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
-    ** $QT_END_LICENSE$
-    **
-    ****************************************************************************/</span>
-
-    #include &quot;mainwindow.h&quot;
-    #include &quot;attachmentlistwidget.h&quot;
-    #include &quot;qmessageservice.h&quot;
-    #include &lt;qmessagemanager.h&gt;
-    #include &lt;QComboBox&gt;
-    #include &lt;QListWidget&gt;
-    #include &lt;QVBoxLayout&gt;
-    #include &lt;QLabel&gt;
-    #include &lt;QTabWidget&gt;
-    #include &lt;QPointer&gt;
-    #include &lt;QPushButton&gt;
-    #include &lt;QDebug&gt;
-    #include &lt;QLineEdit&gt;
-    #include &lt;QTextEdit&gt;
-    #include &lt;QTextBrowser&gt;
-    #include &lt;QFileDialog&gt;
-    #include &lt;QTimer&gt;
-    #include &lt;QMessageBox&gt;
-    #include &lt;QThread&gt;
-    #include &lt;QStackedLayout&gt;
-    #include &lt;QPair&gt;
-    #include &lt;QScrollArea&gt;
-    #include &lt;QMenuBar&gt;
-    #include &lt;QApplication&gt;
-    #include &lt;QStackedWidget&gt;
-    #include &lt;QMutex&gt;
-    #include &lt;QKeyEvent&gt;
-
-    static const QSize WindowGeometry(400,300);
-    static const QString WindowTitle(&quot;Service-actions Example&quot;);
-    static unsigned int RecentMessagesCount = 50;
-
-    class AccountsWidget : public QWidget
-    {
-        Q_OBJECT
-
-    private:
-        class Loader : public QThread
-        {
-        public:
-            Loader(AccountsWidget* parent);
-            void run();
-
-        private:
-            AccountsWidget* m_parent;
-        };
-
-    public:
-        AccountsWidget(QWidget* parent = 0);
-        QMessageAccountId currentAccount() const;
-        QString currentAccountName() const;
-        bool isEmpty() const;
-
-    signals:
-        void accountChanged();
-
-    protected:
-        void showEvent(QShowEvent* e);
-        void hideEvent(QHideEvent* e);
-
-    private slots:
-        void load();
-        void loadStarted();
-        void loadFinished();
-
-    private:
-        void setupUi();
-        void setIds(const QMessageAccountIdList&amp; ids);
-        QMessageAccountIdList ids() const;
-
-    private:
-        QStackedLayout* m_stackedLayout;
-        QComboBox* m_accountsCombo;
-        QLabel* m_busyLabel;
-
-        Loader m_loader;
-        mutable QMutex m_loadMutex;
-        QMessageAccountIdList m_ids;
-    };
-
-    AccountsWidget::Loader::Loader(AccountsWidget* parent)
-    :
-    QThread(parent),
-    m_parent(parent)
-    {
-    }
-
-    void AccountsWidget::Loader::run()
-    {
-        QMessageManager manager;
-        m_parent-&gt;setIds(manager.queryAccounts());
-    }
-
-    AccountsWidget::AccountsWidget(QWidget* parent)
-    :
-    QWidget(parent),
-    m_stackedLayout(0),
-    m_accountsCombo(0),
-    m_busyLabel(0),
-    m_loader(this)
-    {
-        setupUi();
-
-        connect(&amp;m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
-        connect(&amp;m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
-    }
-
-    QMessageAccountId AccountsWidget::currentAccount() const
-    {
-        QMessageAccountId result;
-        if(m_loader.isFinished() &amp;&amp; m_accountsCombo-&gt;count())
-        {
-            int index = m_accountsCombo-&gt;currentIndex();
-            return ids().at(index);
-        }
-
-        return result;
-    }
-
-    QString AccountsWidget::currentAccountName() const
-    {
-        if(m_loader.isFinished() &amp;&amp; m_accountsCombo-&gt;count())
-            return m_accountsCombo-&gt;itemData(m_accountsCombo-&gt;currentIndex()).toString();
-        return QString();
-    }
-
-    bool AccountsWidget::isEmpty() const
-    {
-        return m_accountsCombo-&gt;count() == 0;
-    }
-
-    void AccountsWidget::showEvent(QShowEvent* e)
-    {
-        load();
-        QWidget::showEvent(e);
-    }
-
-    void AccountsWidget::hideEvent(QHideEvent* e)
-    {
-        if(m_loader.isRunning())
-            m_loader.exit();
-        QWidget::hideEvent(e);
-    }
-
-    void AccountsWidget::load()
-    {
-        static bool runonce = false;
-        <span class="comment">//#define NOTHREAD</span>
-    #ifdef NOTHREAD
-        QMessageManager manager;
-        if(!runonce)
-         setIds(manager.queryAccounts());
-        <span class="comment">//        m_loader.start();</span>
-
-    #else
-        <span class="comment">//    if(</span>!runonce)
-             m_loader.start();
-    #endif
-        runonce = true;
-    }
-
-    void AccountsWidget::loadStarted()
-    {
-    #ifndef _WIN32_WCE
-        setCursor(Qt::BusyCursor);
-    #endif
-        m_stackedLayout-&gt;setCurrentWidget(m_busyLabel);
-    }
-
-    void AccountsWidget::loadFinished()
-    {
-        m_accountsCombo-&gt;clear();
-
-        QMessageAccountIdList accountIds = ids();
-
-        if(!accountIds.isEmpty())
-        {
-            for(int i = 0; i &lt; accountIds.count(); ++i)
-            {
-                QMessageAccount account(accountIds[i]);
-                m_accountsCombo-&gt;addItem(QString(&quot;%1 - %2&quot;).arg(i+1).arg(account.name()),account.name());
-            }
-
-            m_stackedLayout-&gt;setCurrentWidget(m_accountsCombo);
-        }
-        else
-            m_busyLabel-&gt;setText(&quot;No accounts!&quot;);
-
-    #ifndef _WIN32_WCE
-        setCursor(Qt::ArrowCursor);
-    #endif
-    }
-
-    void AccountsWidget::setupUi()
-    {
-        m_stackedLayout = new QStackedLayout(this);
-
-        m_accountsCombo = new QComboBox(this);
-        m_stackedLayout-&gt;addWidget(m_accountsCombo);
-        connect(m_accountsCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(accountChanged()));
-
-        m_busyLabel = new QLabel(&quot;Loading...&quot;);
-        m_stackedLayout-&gt;addWidget(m_busyLabel);
-
-        setSizePolicy(m_accountsCombo-&gt;sizePolicy());
-
-    }
-
-    void AccountsWidget::setIds(const QMessageAccountIdList&amp; ids)
-    {
-        QMutexLocker mutex(&amp;m_loadMutex);
-
-        m_ids = ids;
-    }
-
-    QMessageAccountIdList AccountsWidget::ids() const
-    {
-        QMutexLocker mutex(&amp;m_loadMutex);
-        return m_ids;
-    }
-
-    class RecentMessagesWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        RecentMessagesWidget(QWidget* parent = 0, unsigned int maxRecent = 10);
-        ~RecentMessagesWidget();
-        QMessageId currentMessage() const;
-
-    signals:
-        void selected(const QMessageId&amp; messageId);
-
-    protected:
-        void showEvent(QShowEvent* e);
-        void hideEvent(QHideEvent* e);
-
-    private slots:
-        void currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
-        void messagesFound(const QMessageIdList&amp; result);
-        void stateChanged(QMessageService::State s);
-        void messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
-        void messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
-        void processResults();
-
-    private:
-        void setupUi();
-        void updateState();
-        void load();
-
-    private:
-        enum State { Unloaded, Loading, LoadFinished, Processing, LoadFailed, Done };
-        static const int MessageIdRole = Qt::UserRole + 1;
-
-    private:
-        QListWidget* m_messageListWidget;
-        QLabel* m_statusLabel;
-        QStackedLayout* m_layout;
-        QMessageIdList m_ids;
-        QMap&lt;QMessageId,QListWidgetItem*&gt; m_indexMap;
-        unsigned int m_maxRecent;
-        QMessageService* m_service;
-        State m_state;
-        QMessageManager::NotificationFilterId m_storeFilterId;
-        QMessageManager m_manager;
-    };
-
-    RecentMessagesWidget::RecentMessagesWidget(QWidget* parent, unsigned int maxRecent)
-    :
-    QWidget(parent),
-    m_messageListWidget(0),
-    m_statusLabel(0),
-    m_layout(0),
-    m_maxRecent(maxRecent),
-    m_service(new QMessageService(this)),
-    m_state(Unloaded)
-    {
-        setupUi();
-        connect(m_service,SIGNAL(messagesFound(const QMessageIdList&amp;)),this,SLOT(messagesFound(const QMessageIdList&amp;)));
-        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
-
-        <span class="comment">//register for message update notifications</span>
-
-        connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
-            this, SLOT(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
-        connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
-            this, SLOT(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
-
-        m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
-    }
-
-    RecentMessagesWidget::~RecentMessagesWidget()
-    {
-         m_manager.unregisterNotificationFilter(m_storeFilterId);
-    }
-
-    QMessageId RecentMessagesWidget::currentMessage() const
-    {
-        QMessageId result;
-
-        if(QListWidgetItem* currentItem = m_messageListWidget-&gt;currentItem())
-            result = QMessageId(currentItem-&gt;data(MessageIdRole).toString());
-
-        return result;
-    }
-
-    void RecentMessagesWidget::showEvent(QShowEvent* e)
-    {
-        if(m_state == Unloaded)
-            load();
-
-        updateState();
-
-        QWidget::showEvent(e);
-    }
-
-    void RecentMessagesWidget::hideEvent(QHideEvent* e)
-    {
-        if(m_state == Loading || m_state == Processing)
-        {
-            m_service-&gt;cancel();
-            m_state = Unloaded;
-            m_ids.clear();
-        }
-
-        QWidget::hideEvent(e);
-    }
-
-    void RecentMessagesWidget::currentItemChanged(QListWidgetItem*, QListWidgetItem*)
-    {
-        if(m_state != Processing || m_state != Loading)
-            emit selected(currentMessage());
-    }
-
-    void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
-    {
-        m_ids.append(ids);
-    }
-
-    void RecentMessagesWidget::stateChanged(QMessageService::State newState)
-    {
-        if (newState == QMessageService::FinishedState) {
-            if ((m_state != LoadFailed) &amp;&amp; (m_service-&gt;error() == QMessageManager::NoError)) {
-                m_state = LoadFinished;
-            } else {
-                m_state = LoadFailed;
-            }
-        }
-
-        updateState();
-    }
-
-    void RecentMessagesWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
-    {
-        if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
-            return;
-
-        <span class="comment">//update the pertinent entry to reflect completeness</span>
-
-        QListWidgetItem* item = m_indexMap.value(id);
-        if(item)
-        {
-
-            QMessage message(id);
-            bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
-            QFont itemFont = item-&gt;font();
-            itemFont.setItalic(partialMessage);
-            item-&gt;setFont(itemFont);
-        }
-    }
-
-    void RecentMessagesWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
-    {
-        if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
-            return;
-
-        QListWidgetItem* item = m_indexMap.value(id);
-        if(item)
-        {
-            int row = m_messageListWidget-&gt;row(item);
-            QListWidgetItem* item = m_messageListWidget-&gt;takeItem(row);
-            m_indexMap.remove(id);
-            delete item;
-        }
-        m_ids.removeAll(id);
-    }
-
-    void RecentMessagesWidget::setupUi()
-    {
-        m_layout = new QStackedLayout(this);
-
-        m_messageListWidget = new QListWidget(this);
-        m_layout-&gt;addWidget(m_messageListWidget);
-        connect(m_messageListWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
-            this,SLOT(currentItemChanged(QListWidgetItem*,QListWidgetItem*)));
-
-        m_statusLabel = new QLabel(this);
-        m_statusLabel-&gt;setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        m_statusLabel-&gt;setFrameStyle(QFrame::Box);
-        m_layout-&gt;addWidget(m_statusLabel);
-
-    }
-
-    void RecentMessagesWidget::updateState()
-    {
-        switch(m_state)
-        {
-            case Unloaded:
-            {
-                m_statusLabel-&gt;setText(QString());
-                m_layout-&gt;setCurrentWidget(m_statusLabel);
-            }
-            break;
-            case Loading:
-            {
-                m_statusLabel-&gt;setText(&quot;Loading...&quot;);
-                m_layout-&gt;setCurrentWidget(m_statusLabel);
-            }
-            break;
-            case LoadFinished:
-            {
-                if(m_ids.isEmpty())
-                {
-                    m_statusLabel-&gt;setText(&quot;Finished. No messages.&quot;);
-                    m_layout-&gt;setCurrentWidget(m_statusLabel);
-                }
-                else
-                {
-                    m_state = Processing;
-                    updateState();
-                    processResults();
-                }
-            }
-            break;
-            case Processing:
-                m_layout-&gt;setCurrentWidget(m_messageListWidget);
-            break;
-            case LoadFailed:
-            {
-                m_statusLabel-&gt;setText(&quot;Load failed!&quot;);
-                m_layout-&gt;setCurrentWidget(m_statusLabel);
-            }
-            break;
-        }
-
-    #ifndef _WIN32_WCE
-        if(m_state == Loading || m_state == Processing)
-            setCursor(Qt::BusyCursor);
-        else
-            setCursor(Qt::ArrowCursor);
-    #endif
-
-    }
-
-    void RecentMessagesWidget::load()
-    {
-        m_ids.clear();
-        m_state = Loading;
-        bool b;
-
-        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
-    };
-
-    void RecentMessagesWidget::processResults()
-    {
-        if(!m_ids.isEmpty())
-        {
-            QMessageId id = m_ids.takeFirst();
-            QMessage message(id);
-
-            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
-            newItem-&gt;setData(MessageIdRole,id.toString());
-            QFont itemFont = newItem-&gt;font();
-            bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
-            itemFont.setItalic(isPartialMessage);
-            newItem-&gt;setFont(itemFont);
-            m_messageListWidget-&gt;addItem(newItem);
-            m_indexMap.insert(id,newItem);
-            m_messageListWidget-&gt;update();
-            QTimer::singleShot(100,this,SLOT(processResults()));
-        }
-        else
-        {
-            m_state = Done;
-            updateState();
-        }
-    }
-
-    class ComposeSendWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        ComposeSendWidget(QMessageService* service, QWidget* parent = 0);
-
-    signals:
-        void actionsChanged();
-
-    private slots:
-        void composeButtonClicked();
-        void sendButtonClicked();
-        void addAttachmentButtonClicked();
-        void accountChanged();
-
-    private:
-        void setupUi();
-        QMessage constructQMessage(bool asHtml = false) const;
-
-    private:
-        QStackedLayout* m_layoutStack;
-        QMessageService* m_service;
-        AccountsWidget* m_accountsWidget;
-        QLineEdit* m_toEdit;
-        QLineEdit* m_ccEdit;
-        QLabel* m_ccLabel;
-        QLineEdit* m_bccEdit;
-        QLabel* m_bccLabel;
-        QLineEdit* m_subjectEdit;
-        QLabel* m_subjectLabel;
-        QTextEdit* m_bodyEdit;
-        AttachmentListWidget* m_attachmentList;
-        QAction* m_attachmentsAction;
-        QAction* m_sendAsHTMLAction;
-    };
-
-    ComposeSendWidget::ComposeSendWidget(QMessageService* service, QWidget* parent)
-    :
-    QWidget(parent),
-    m_layoutStack(0),
-    m_service(service),
-    m_accountsWidget(0),
-    m_toEdit(0),
-    m_ccEdit(0),
-    m_ccLabel(0),
-    m_bccEdit(0),
-    m_bccLabel(0),
-    m_subjectEdit(0),
-    m_subjectLabel(0),
-    m_bodyEdit(0),
-    m_attachmentList(0),
-    m_attachmentsAction(0),
-    m_sendAsHTMLAction(0)
-    {
-        setupUi();
-    }
-
-    static void notifyResult(bool result, const QString&amp; description)
-    {
-    #ifndef _WIN32_WCE
-        if(result) QMessageBox::information(0,description,&quot;Succeeded!&quot;);
-        else QMessageBox::critical(0,description,&quot;Failed.&quot;);
-    #else
-        Q_UNUSED(result);
-        Q_UNUSED(description);
-    #endif
-    }
-
-    void ComposeSendWidget::composeButtonClicked()
-    {
-        QMessage message(constructQMessage());
-        m_service-&gt;compose(message);
-    }
-
-    void ComposeSendWidget::sendButtonClicked()
-    {
-        bool asHtml = (sender() == m_sendAsHTMLAction);
-        QMessage message(constructQMessage(asHtml));
-        notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
-    }
-
-    void ComposeSendWidget::addAttachmentButtonClicked()
-    {
-        QStringList filenames = QFileDialog::getOpenFileNames(this,tr(&quot;Select attachments&quot;));
-        m_attachmentList-&gt;addAttachments(filenames);
-    }
-
-    void ComposeSendWidget::accountChanged()
-    {
-        QMessageAccount currentAccount(m_accountsWidget-&gt;currentAccount());
-
-        bool isSmsAccount = (currentAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
-
-        foreach(QWidget* emailSpecificWidget , QList&lt;QWidget*&gt;() &lt;&lt; m_bccEdit &lt;&lt; m_bccLabel &lt;&lt;
-                                                                    m_ccEdit &lt;&lt;  m_ccLabel &lt;&lt;
-                                                                    m_subjectEdit &lt;&lt; m_subjectLabel) {
-            emailSpecificWidget-&gt;setVisible(!isSmsAccount);
-        }
-
-        m_attachmentsAction-&gt;setEnabled(!isSmsAccount);
-        m_sendAsHTMLAction-&gt;setEnabled(!isSmsAccount);
-    }
-
-    void ComposeSendWidget::setupUi()
-    {
-        QGridLayout* gl = new QGridLayout(this);
-
-        QLabel* accountLabel = new QLabel(&quot;Account:&quot;,this);
-        gl-&gt;addWidget(accountLabel,0,0);
-
-        m_accountsWidget = new AccountsWidget(this);
-        gl-&gt;addWidget(m_accountsWidget,0,1);
-
-        connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
-
-        QLabel* toLabel = new QLabel(&quot;To:&quot;,this);
-        gl-&gt;addWidget(toLabel,1,0);
-
-        m_toEdit = new QLineEdit(this);
-        gl-&gt;addWidget(m_toEdit,1,1);
-
-        m_ccLabel = new QLabel(&quot;Cc:&quot;,this);
-        gl-&gt;addWidget(m_ccLabel,2,0);
-
-        m_ccEdit = new QLineEdit(this);
-        gl-&gt;addWidget(m_ccEdit,2,1);
-
-        m_bccLabel = new QLabel(&quot;Bcc&quot;,this);
-        gl-&gt;addWidget(m_bccLabel,3,0);
-
-        m_bccEdit = new QLineEdit(this);
-        gl-&gt;addWidget(m_bccEdit,3,1);
-
-        m_subjectLabel = new QLabel(&quot;Subject:&quot;,this);
-        gl-&gt;addWidget(m_subjectLabel,4,0);
-
-        m_subjectEdit = new QLineEdit(this);
-        gl-&gt;addWidget(m_subjectEdit,4,1);
-
-        m_bodyEdit = new QTextEdit(this);
-        gl-&gt;addWidget(m_bodyEdit,5,0,1,2);
-
-        m_attachmentList = new AttachmentListWidget(this);
-        gl-&gt;addWidget(m_attachmentList,6,0,1,2);
-        m_attachmentList-&gt;hide();
-
-        QAction* composeAction = new QAction(&quot;Compose&quot;,this);
-        connect(composeAction,SIGNAL(triggered()),this,SLOT(composeButtonClicked()));
-        addAction(composeAction);
-
-        QAction* sendAction = new QAction(&quot;Send&quot;,this);
-        connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
-        addAction(sendAction);
-
-        m_sendAsHTMLAction = new QAction(&quot;Send as HTML&quot;,this);
-        connect(m_sendAsHTMLAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
-        addAction(m_sendAsHTMLAction);
-
-        QAction* separator = new QAction(this);
-        separator-&gt;setSeparator(true);
-        addAction(separator);
-
-        m_attachmentsAction = new QAction(&quot;Add attachment&quot;,this);
-        connect(m_attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
-        addAction(m_attachmentsAction);
-    }
-
-    QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
-    {
-        QMessage message;
-
-        if(m_accountsWidget-&gt;isEmpty())
-        {
-            QMessageBox::critical(const_cast&lt;ComposeSendWidget*&gt;(this),&quot;No Accounts&quot;,&quot;Cannot send a message without any available accounts&quot;);
-            return message;
-        }
-
-        QMessageAccountId selectedAccountId = m_accountsWidget-&gt;currentAccount();
-        QMessageAccount selectedAccount(selectedAccountId);
-
-        bool composingSms = (selectedAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
-
-        QMessageAddressList toList;
-        QMessageAddressList ccList;
-        QMessageAddressList bccList;
-
-        QMessageAddress::Type addressType = QMessageAddress::Email;
-        if(composingSms)
-        {
-            addressType = QMessageAddress::Phone;
-            message.setType(QMessage::Sms);
-        }
-
-        foreach(QString s, m_toEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-            toList.append(QMessageAddress(addressType, s));
-        message.setTo(toList);
-
-        if(!composingSms)
-        {
-            foreach(QString s, m_ccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                ccList.append(QMessageAddress(QMessageAddress::Email, s));
-            message.setCc(ccList);
-
-            foreach(QString s, m_bccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                bccList.append(QMessageAddress(QMessageAddress::Email, s));
-            message.setBcc(bccList);
-            message.setSubject(m_subjectEdit-&gt;text());
-
-            message.setType(QMessage::Email);
-
-            message.appendAttachments(m_attachmentList-&gt;attachments());
-        }
-
-        message.setParentAccountId(selectedAccountId);
-
-        if(!composingSms &amp;&amp; asHtml) {
-            <span class="comment">//create html body</span>
-            QString htmlBody(&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h2 align=center&gt;%1&lt;/h2&gt;&lt;hr&gt;%2&lt;/body&gt;&lt;/html&gt;&quot;);
-            message.setBody(htmlBody.arg(message.subject()).arg(m_bodyEdit-&gt;toPlainText()),&quot;text/html&quot;);
-        }
-        else
-            message.setBody(m_bodyEdit-&gt;toPlainText());
-
-        return message;
-    }
-
-    class MessageViewWidget : public QWidget
-    {
-        Q_OBJECT
-
-        static const unsigned int LoadTimeLimit = 20; <span class="comment">//seconds</span>
-
-        static QString downloadLinkURL()
-        {
-            static const QString url(&quot;MessageViewWidget://download&quot;);
-            return url;
-        };
-
-    public:
-        MessageViewWidget(QWidget* parent = 0);
-        ~MessageViewWidget();
-
-        QMessageId viewing() const;
-
-    public slots:
-        void view(const QMessageId&amp; messageId);
-        bool retrieveBody();
-
-    protected:
-        void showEvent(QShowEvent* e);
-        void hideEvent(QHideEvent* e);
-
-    private slots:
-        void stateChanged(QMessageService::State s);
-        void loadTimeout();
-        void linkClicked(const QUrl&amp;);
-        void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
-        void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
-
-    private:
-        enum State { Unloaded , Loaded, Loading, LoadFailed };
-        void setupUi();
-        void updateState();
-        void loadMessage();
-        void resetService();
-
-    private:
-        QStackedLayout* m_layoutStack;
-        QLabel* m_statusLabel;
-        QMessageService* m_service;
-        QLineEdit* m_fromLabel;
-        QLineEdit* m_subjectLabel;
-        QTextBrowser* m_messageBrowser;
-        QMessageId m_messageId;
-        State m_state;
-        QTimer m_loadTimer;
-        QMessageManager::NotificationFilterId m_storeFilterId;
-        QMessageManager m_manager;
-    };
-
-    MessageViewWidget::MessageViewWidget(QWidget* parent)
-    :
-    QWidget(parent),
-    m_layoutStack(0),
-    m_statusLabel(0),
-    m_service(new QMessageService(this)),
-    m_messageBrowser(0),
-    m_state(Unloaded)
-    {
-        setupUi();
-        resetService();
-        connect(&amp;m_loadTimer,SIGNAL(timeout()),this,SLOT(loadTimeout()));
-        connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
-            this,SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
-        connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
-            this,SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
-        m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
-    }
-
-    MessageViewWidget::~MessageViewWidget()
-    {
-        m_manager.unregisterNotificationFilter(m_storeFilterId);
-    }
-
-    void MessageViewWidget::view(const QMessageId&amp; messageId)
-    {
-        m_messageId = messageId;
-        m_state = m_messageId.isValid() ? Loaded : Unloaded;
-
-        updateState();
-    }
-
-    bool MessageViewWidget::retrieveBody()
-    {
-        if(m_state != Loading &amp;&amp; !m_loadTimer.isActive())
-        {
-            m_loadTimer.setSingleShot(true);
-            m_loadTimer.start(LoadTimeLimit * 1000);
-            m_state = Unloaded;
-
-            return m_service-&gt;retrieveBody(m_messageId);
-        }
-
-        return false;
-    }
-
-
-    void MessageViewWidget::showEvent(QShowEvent* e)
-    {
-        updateState();
-        QWidget::showEvent(e);
-    }
-
-    void MessageViewWidget::hideEvent(QHideEvent* e)
-    {
-        if(m_state == Loading)
-        {
-            m_service-&gt;cancel();
-            m_state = Unloaded;
-        }
-
-        QWidget::hideEvent(e);
-    }
-
-    void MessageViewWidget::stateChanged(QMessageService::State newState)
-    {
-        if (m_state == LoadFailed)
-            return;
-
-        if (newState == QMessageService::ActiveState) {
-            m_state = Loading;
-        } else if (newState == QMessageService::FinishedState) {
-            m_state = (m_service-&gt;error() == QMessageManager::NoError ? Loaded : LoadFailed);
-        }
-
-        updateState();
-    }
-
-    void MessageViewWidget::loadTimeout()
-    {
-        qWarning() &lt;&lt; &quot;Load timeout&quot;;
-        m_service-&gt;cancel();
-        m_state = LoadFailed;
-        updateState();
-    }
-
-    void MessageViewWidget::linkClicked(const QUrl&amp; url)
-    {
-        bool downloadLinkClicked = url.toString() == downloadLinkURL();
-
-        if(downloadLinkClicked)
-            retrieveBody();
-    }
-
-    void MessageViewWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
-    {
-        if(!filterSet.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || id != m_messageId)
-            return;
-
-        view(id);
-    }
-
-    void MessageViewWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
-    {
-        if(id == m_messageId)
-        {
-            m_state = Unloaded;
-            m_loadTimer.stop();
-            m_messageId = QMessageId();
-            view(QMessageId());
-        }
-    }
-
-    QMessageId MessageViewWidget::viewing() const
-    {
-        return m_messageId;
-    }
-
-    void MessageViewWidget::setupUi()
-    {
-        m_layoutStack = new QStackedLayout(this);
-
-        m_statusLabel = new QLabel(this);
-        m_statusLabel-&gt;setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        m_layoutStack-&gt;addWidget(m_statusLabel);
-
-        m_messageBrowser = new QTextBrowser(this);
-        m_messageBrowser-&gt;setOpenLinks(false);
-        connect(m_messageBrowser,SIGNAL(anchorClicked(const QUrl&amp;)),this,SLOT(linkClicked(const QUrl&amp;)));
-        m_layoutStack-&gt;addWidget(m_messageBrowser);
-    }
-
-    void MessageViewWidget::updateState()
-    {
-        switch(m_state)
-        {
-            case Unloaded:
-            {
-                m_messageBrowser-&gt;clear();
-                m_layoutStack-&gt;setCurrentWidget(m_messageBrowser);
-            } break;
-            case Loading:
-            {
-                m_statusLabel-&gt;setText(&quot;Downloading...&quot;);
-                m_layoutStack-&gt;setCurrentWidget(m_statusLabel);
-            } break;
-            case Loaded:
-            {
-                if(m_loadTimer.isActive())
-                {
-                    m_loadTimer.stop();
-                    if(m_service-&gt;state() == QMessageService::ActiveState)
-                        m_service-&gt;cancel();
-                }
-
-                loadMessage();
-                m_layoutStack-&gt;setCurrentWidget(m_messageBrowser);
-            } break;
-            case LoadFailed:
-            {
-                m_statusLabel-&gt;setText(&quot;Download failed!&quot;);
-                m_layoutStack-&gt;setCurrentWidget(m_statusLabel);
-            } break;
-        }
-    }
-
-    void MessageViewWidget::loadMessage()
-    {
-        m_messageBrowser-&gt;clear();
-
-        static const QString htmlTemplate(&quot;\
-        &lt;html&gt;\
-        &lt;head&gt;\
-        &lt;/head&gt;\
-        &lt;body&gt;\
-        &lt;table border=\&quot;0\&quot; cellspacing=\&quot;0\&quot;&gt;\
-            &lt;tr&gt;&lt;td&gt;&lt;b&gt;From: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;\
-            &lt;tr&gt;&lt;td&gt;&lt;b&gt;Subject: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;\
-            &lt;tr&gt;&lt;td&gt;&lt;b&gt;Date: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\
-        &lt;/table&gt;\
-        &lt;hr&gt;%4\
-        &lt;\body&gt;\
-        &lt;/html&gt;\
-        &quot;);
-
-        if(m_messageId.isValid())
-        {
-            QMessage message(m_messageId);
-
-            QMessageContentContainer bodyPart = message.find(message.bodyId());
-
-            QString bodyText;
-
-            <span class="comment">//for partial message display a download link instead</span>
-
-            bool bodyAvailable = bodyPart.isContentAvailable();
-
-            if(bodyAvailable)
-            {
-                if(bodyPart.contentType() == &quot;text&quot;)
-                    bodyText = bodyPart.textContent();
-                else bodyText = &quot;&lt;Non-text content&gt;&quot;;
-            }
-            else
-                bodyText = QString(&quot;&lt;p align=\&quot;center\&quot;&gt;&lt;a href=\&quot;%1\&quot;&gt;Download&lt;/a&gt;&lt;/p&gt;&quot;).arg(downloadLinkURL());
-            m_messageBrowser-&gt;setHtml(htmlTemplate\
-                                     .arg(message.from().addressee())\
-                                     .arg(message.subject())\
-                                     .arg(message.receivedDate().toString())\
-                                     .arg(bodyText));
-        }
-    }
-
-    void MessageViewWidget::resetService()
-    {
-        if(m_service)
-            m_service-&gt;deleteLater();
-        m_service = new QMessageService(this);
-        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
-    }
-
-    class RetrieveWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        RetrieveWidget(QWidget* parent = 0);
-
-    private slots:
-        void messageSelected(const QMessageId&amp; messageId);
-
-    private:
-        void setupUi();
-
-    private:
-        QMessageService* m_service;
-        RecentMessagesWidget* m_recentMessagesWidget;
-        MessageViewWidget* m_messageViewWidget;
-        QAction* m_retrieveAction;
-    };
-
-    RetrieveWidget::RetrieveWidget(QWidget* parent)
-    :
-    QWidget(parent),
-    m_recentMessagesWidget(0),
-    m_messageViewWidget(0),
-    m_retrieveAction(0)
-    {
-        setupUi();
-    }
-
-    void RetrieveWidget::messageSelected(const QMessageId&amp; messageId)
-    {
-        QMessage message(messageId);
-        bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
-
-        m_retrieveAction-&gt;setEnabled(partialMessage &amp;&amp; messageId.isValid());
-    }
-
-    void RetrieveWidget::setupUi()
-    {
-        QVBoxLayout* l = new QVBoxLayout(this);
-        l-&gt;addWidget(new QLabel(QString(&quot;Last %1 messages:&quot;).arg(RecentMessagesCount),this));
-
-        m_recentMessagesWidget = new RecentMessagesWidget(this,RecentMessagesCount);
-        l-&gt;addWidget(m_recentMessagesWidget);
-
-        m_messageViewWidget = new MessageViewWidget(this);
-        l-&gt;addWidget(m_messageViewWidget);
-
-        m_retrieveAction = new QAction(&quot;Retrieve&quot;,this);
-        connect(m_retrieveAction,SIGNAL(triggered(bool)),m_messageViewWidget,SLOT(retrieveBody()));
-        addAction(m_retrieveAction);
-
-        connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&amp;)),m_messageViewWidget,SLOT(view(const QMessageId&amp;)));
-        connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&amp;)),this,SLOT(messageSelected(const QMessageId&amp;)));
-    }
-
-    class ShowWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        ShowWidget(QMessageService* service, QWidget* parent = 0);
-
-    private slots:
-        void showButtonClicked();
-
-    private:
-        void setupUi();
-
-    private:
-        QMessageService* m_service;
-        RecentMessagesWidget* m_recentMessagesWidget;
-    };
-
-    ShowWidget::ShowWidget(QMessageService* service, QWidget* parent)
-    :
-    QWidget(parent),
-    m_service(service),
-    m_recentMessagesWidget(0)
-    {
-        setupUi();
-    }
-
-    void ShowWidget::showButtonClicked()
-    {
-
-        QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
-
-        if(id.isValid())
-            m_service-&gt;show(id);
-    }
-
-    void ShowWidget::setupUi()
-    {
-        QVBoxLayout* vbl = new QVBoxLayout(this);
-
-        QString labelText(&quot;Last %1 messages:&quot;);
-        vbl-&gt;addWidget(new QLabel(labelText.arg(RecentMessagesCount),this));
-
-        m_recentMessagesWidget = new RecentMessagesWidget(this,RecentMessagesCount);
-        vbl-&gt;addWidget(m_recentMessagesWidget);
-
-        QAction* showAction = new QAction(&quot;Show&quot;,this);
-        connect(showAction,SIGNAL(triggered()),this,SLOT(showButtonClicked()));
-        addAction(showAction);
-    }
-
-    class StoreSignalsWidget : public QWidget
-    {
-        Q_OBJECT
-
-    public:
-        StoreSignalsWidget(QWidget* parent = 0);
-
-    private slots:
-        void messageAdded(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
-        void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
-        void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
-
-    private:
-        void setupUi();
-        void appendString(const QString&amp; message);
-
-    private:
-        QListWidget* m_activityListWidget;
-        QMessageManager::NotificationFilterId m_notificationFilterId;
-        QMessageManager m_manager;
-    };
-
-    StoreSignalsWidget::StoreSignalsWidget(QWidget* parent)
-    :
-    QWidget(parent),
-    m_activityListWidget(0)
-    {
-        setupUi();
-    }
-
-    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
-    {
-        if(!filterSet.contains(m_notificationFilterId))
-            return;
-
-        QMessage message(id);
-
-        QString msg = QString(&quot;Added: %1&quot;).arg(message.subject());
-        m_activityListWidget-&gt;addItem(msg);
-    }
-
-    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
-    {
-        if(!filterSet.contains(m_notificationFilterId))
-            return;
-
-        QMessage message(id);
-
-        QString msg = QString(&quot;Updated: %1&quot;).arg(message.subject());
-        m_activityListWidget-&gt;addItem(msg);
-    }
-
-    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
-    {
-        if(!filterSet.contains(m_notificationFilterId))
-            return;
-
-        QString idString(id.toString());
-        idString.truncate(10);
-
-        QString msg = QString(&quot;Removed ID: %1 ...&quot;).arg(idString);
-        m_activityListWidget-&gt;addItem(msg);
-    }
-
-    void StoreSignalsWidget::setupUi()
-    {
-        m_activityListWidget = new QListWidget(this);
-        QVBoxLayout* l = new QVBoxLayout(this);
-        l-&gt;setSpacing(0);
-        l-&gt;setContentsMargins(0,0,0,0);
-        l-&gt;addWidget(m_activityListWidget);
-
-        connect(&amp;m_manager,
-                SIGNAL(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
-                this,
-                SLOT(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
-
-        connect(&amp;m_manager,
-                SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
-                this,
-                SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
-
-        connect(&amp;m_manager,
-                SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
-                this,
-                SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
-
-        m_notificationFilterId = m_manager.registerNotificationFilter(QMessageFilter());
-
-        QAction* clearAction = new QAction(&quot;Clear&quot;,this);
-        connect(clearAction,SIGNAL(triggered(bool)),m_activityListWidget,SLOT(clear()));
-        addAction(clearAction);
-    }
-
-    MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
-    :
-    QMainWindow(parent,f),
-    m_tabWidget(0)
-    {
-
-        m_service = new QMessageService(this);
-
-        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),
-                this,SLOT(serviceStateChanged(QMessageService::State)));
-
-        <span class="comment">//example widgets</span>
-
-        m_widgetStack = new QStackedWidget(this);
-        setCentralWidget(m_widgetStack);
-
-        foreach(QWidget* exampleWidget, QWidgetList() &lt;&lt; new ComposeSendWidget(m_service,this)
-                                                      &lt;&lt; new ShowWidget(m_service,this)
-                                                      &lt;&lt; new RetrieveWidget(this)
-                                                      &lt;&lt; new StoreSignalsWidget(this)) {
-
-            m_widgetStack-&gt;addWidget(exampleWidget);
-    #ifdef _WIN32_WCE
-            exampleWidget-&gt;installEventFilter(this);
-    #endif
-        }
-
-        <span class="comment">//main menu</span>
-    #ifndef _WIN32_WCE
-        QMenu* fileMenu = new QMenu(&quot;File&quot;,this);
-    #endif
-
-        int index = 0;
-        foreach(QAction* viewAction, QList&lt;QAction*&gt;() &lt;&lt; new QAction(&quot;Compose\\Send&quot;,this)
-                                                       &lt;&lt; new QAction(&quot;Show&quot;,this)
-                                                       &lt;&lt; new QAction(&quot;Retrieve/Query&quot;,this)
-                                                       &lt;&lt; new QAction(&quot;Store Signals&quot;,this))
-        {
-            connect(viewAction,SIGNAL(triggered()),this,SLOT(viewSelected()));
-    #ifndef _WIN32_WCE
-            fileMenu-&gt;addAction(viewAction);
-    #else
-            menuBar()-&gt;addAction(viewAction);
-    #endif
-            viewAction-&gt;setData(index);
-            index++;
-        }
-    #ifndef _WIN32_WCE
-        fileMenu-&gt;addSeparator();
-    #else
-        menuBar()-&gt;addSeparator();
-    #endif
-
-        QAction* quitAction = new QAction(&quot;Quit&quot;,this);
-        connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
-    #ifndef _WIN32_WCE
-        fileMenu-&gt;addAction(quitAction);
-        menuBar()-&gt;addMenu(fileMenu);
-    #else
-        menuBar()-&gt;addAction(quitAction);
-    #endif
-
-        QTimer::singleShot(0,this,SLOT(viewSelected()));
-
-        <span class="comment">//window properties</span>
-
-        setWindowTitle(WindowTitle);
-        resize(WindowGeometry);
-
-    }
-
-    #ifdef _WIN32_WCE
-    bool MainWindow::eventFilter(QObject* source, QEvent* e)
-    {
-        bool actionChanged = (m_widgetStack-&gt;currentWidget() == source) &amp;&amp; e-&gt;type() == QEvent::ActionChanged;
-        if(actionChanged)
-            viewSelected(); <span class="comment">//update the menu items</span>
-        return false;
-    }
-    #endif
-
-    void MainWindow::serviceStateChanged(QMessageService::State newState)
-    {
-        if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
-            QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
-    }
-
-    void MainWindow::viewSelected()
-    {
-        static QMenu* actionMenu = 0;
-
-        if(!actionMenu)
-        {
-            actionMenu = new QMenu(&quot;Action&quot;,this);
-    #ifndef _WIN32_WCE
-            menuBar()-&gt;addMenu(actionMenu);
-    #endif
-        }
-        QAction* senderAction = qobject_cast&lt;QAction*&gt;(sender());
-        if(senderAction)
-            m_widgetStack-&gt;setCurrentIndex(senderAction-&gt;data().toInt());
-
-        bool currentViewHasActions = m_widgetStack-&gt;currentWidget() &amp;&amp; !m_widgetStack-&gt;currentWidget()-&gt;actions().isEmpty();
-        actionMenu-&gt;clear();
-        if(currentViewHasActions)
-        {
-            foreach(QAction* a, m_widgetStack-&gt;currentWidget()-&gt;actions())
-                actionMenu-&gt;addAction(a);
-        }
-    #ifdef _WIN32_WCE
-        static QAction* leftSoftButton = new QAction(&quot;Action&quot;,this);
-        leftSoftButton-&gt;setMenu(actionMenu);
-        menuBar()-&gt;setDefaultAction(leftSoftButton);
-    #endif
-    }
-
-    #include &lt;mainwindow.moc&gt;</pre>
+<pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:BSD$
+ ** You may use this file under the terms of the BSD license as follows:
+ **
+ ** &quot;Redistribution and use in source and binary forms, with or without
+ ** modification, are permitted provided that the following conditions are
+ ** met:
+ **   * Redistributions of source code must retain the above copyright
+ **     notice, this list of conditions and the following disclaimer.
+ **   * Redistributions in binary form must reproduce the above copyright
+ **     notice, this list of conditions and the following disclaimer in
+ **     the documentation and/or other materials provided with the
+ **     distribution.
+ **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+ **     the names of its contributors may be used to endorse or promote
+ **     products derived from this software without specific prior written
+ **     permission.
+ **
+ ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/</span>
+
+ #include &quot;mainwindow.h&quot;
+ #include &quot;attachmentlistwidget.h&quot;
+ #include &quot;qmessageservice.h&quot;
+ #include &lt;qmessagemanager.h&gt;
+ #include &lt;QComboBox&gt;
+ #include &lt;QListWidget&gt;
+ #include &lt;QVBoxLayout&gt;
+ #include &lt;QLabel&gt;
+ #include &lt;QTabWidget&gt;
+ #include &lt;QPointer&gt;
+ #include &lt;QPushButton&gt;
+ #include &lt;QDebug&gt;
+ #include &lt;QLineEdit&gt;
+ #include &lt;QTextEdit&gt;
+ #include &lt;QTextBrowser&gt;
+ #include &lt;QFileDialog&gt;
+ #include &lt;QTimer&gt;
+ #include &lt;QMessageBox&gt;
+ #include &lt;QThread&gt;
+ #include &lt;QStackedLayout&gt;
+ #include &lt;QPair&gt;
+ #include &lt;QScrollArea&gt;
+ #include &lt;QMenuBar&gt;
+ #include &lt;QApplication&gt;
+ #include &lt;QStackedWidget&gt;
+ #include &lt;QMutex&gt;
+ #include &lt;QKeyEvent&gt;
+
+ static const QSize WindowGeometry(400,300);
+ static const QString WindowTitle(&quot;Service-actions Example&quot;);
+ static unsigned int RecentMessagesCount = 50;
+
+ class AccountsWidget : public QWidget
+ {
+     Q_OBJECT
+
+ private:
+     class Loader : public QThread
+     {
+     public:
+         Loader(AccountsWidget* parent);
+         void run();
+
+     private:
+         AccountsWidget* m_parent;
+     };
+
+ public:
+     AccountsWidget(QWidget* parent = 0);
+     QMessageAccountId currentAccount() const;
+     QString currentAccountName() const;
+     bool isEmpty() const;
+
+ signals:
+     void accountChanged();
+
+ protected:
+     void showEvent(QShowEvent* e);
+     void hideEvent(QHideEvent* e);
+
+ private slots:
+     void load();
+     void loadStarted();
+     void loadFinished();
+
+ private:
+     void setupUi();
+     void setIds(const QMessageAccountIdList&amp; ids);
+     QMessageAccountIdList ids() const;
+
+ private:
+     QStackedLayout* m_stackedLayout;
+     QComboBox* m_accountsCombo;
+     QLabel* m_busyLabel;
+
+     Loader m_loader;
+     mutable QMutex m_loadMutex;
+     QMessageAccountIdList m_ids;
+ };
+
+ AccountsWidget::Loader::Loader(AccountsWidget* parent)
+ :
+ QThread(parent),
+ m_parent(parent)
+ {
+ }
+
+ void AccountsWidget::Loader::run()
+ {
+     QMessageManager manager;
+     m_parent-&gt;setIds(manager.queryAccounts());
+ }
+
+ AccountsWidget::AccountsWidget(QWidget* parent)
+ :
+ QWidget(parent),
+ m_stackedLayout(0),
+ m_accountsCombo(0),
+ m_busyLabel(0),
+ m_loader(this)
+ {
+     setupUi();
+
+     connect(&amp;m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
+     connect(&amp;m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
+ }
+
+ QMessageAccountId AccountsWidget::currentAccount() const
+ {
+     QMessageAccountId result;
+     if(m_loader.isFinished() &amp;&amp; m_accountsCombo-&gt;count())
+     {
+         int index = m_accountsCombo-&gt;currentIndex();
+         return ids().at(index);
+     }
+
+     return result;
+ }
+
+ QString AccountsWidget::currentAccountName() const
+ {
+     if(m_loader.isFinished() &amp;&amp; m_accountsCombo-&gt;count())
+         return m_accountsCombo-&gt;itemData(m_accountsCombo-&gt;currentIndex()).toString();
+     return QString();
+ }
+
+ bool AccountsWidget::isEmpty() const
+ {
+     return m_accountsCombo-&gt;count() == 0;
+ }
+
+ void AccountsWidget::showEvent(QShowEvent* e)
+ {
+     load();
+     QWidget::showEvent(e);
+ }
+
+ void AccountsWidget::hideEvent(QHideEvent* e)
+ {
+     if(m_loader.isRunning())
+         m_loader.exit();
+     QWidget::hideEvent(e);
+ }
+
+ void AccountsWidget::load()
+ {
+     static bool runonce = false;
+     <span class="comment">//#define NOTHREAD</span>
+ #ifdef NOTHREAD
+     QMessageManager manager;
+     if(!runonce)
+      setIds(manager.queryAccounts());
+     <span class="comment">//        m_loader.start();</span>
+
+ #else
+     <span class="comment">//    if(</span>!runonce)
+          m_loader.start();
+ #endif
+     runonce = true;
+ }
+
+ void AccountsWidget::loadStarted()
+ {
+ #ifndef _WIN32_WCE
+     setCursor(Qt::BusyCursor);
+ #endif
+     m_stackedLayout-&gt;setCurrentWidget(m_busyLabel);
+ }
+
+ void AccountsWidget::loadFinished()
+ {
+     m_accountsCombo-&gt;clear();
+
+     QMessageAccountIdList accountIds = ids();
+
+     if(!accountIds.isEmpty())
+     {
+         for(int i = 0; i &lt; accountIds.count(); ++i)
+         {
+             QMessageAccount account(accountIds[i]);
+             m_accountsCombo-&gt;addItem(QString(&quot;%1 - %2&quot;).arg(i+1).arg(account.name()),account.name());
+         }
+
+         m_stackedLayout-&gt;setCurrentWidget(m_accountsCombo);
+     }
+     else
+         m_busyLabel-&gt;setText(&quot;No accounts!&quot;);
+
+ #ifndef _WIN32_WCE
+     setCursor(Qt::ArrowCursor);
+ #endif
+ }
+
+ void AccountsWidget::setupUi()
+ {
+     m_stackedLayout = new QStackedLayout(this);
+
+     m_accountsCombo = new QComboBox(this);
+     m_stackedLayout-&gt;addWidget(m_accountsCombo);
+     connect(m_accountsCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(accountChanged()));
+
+     m_busyLabel = new QLabel(&quot;Loading...&quot;);
+     m_stackedLayout-&gt;addWidget(m_busyLabel);
+
+     setSizePolicy(m_accountsCombo-&gt;sizePolicy());
+
+ }
+
+ void AccountsWidget::setIds(const QMessageAccountIdList&amp; ids)
+ {
+     QMutexLocker mutex(&amp;m_loadMutex);
+
+     m_ids = ids;
+ }
+
+ QMessageAccountIdList AccountsWidget::ids() const
+ {
+     QMutexLocker mutex(&amp;m_loadMutex);
+     return m_ids;
+ }
+
+ class RecentMessagesWidget : public QWidget
+ {
+     Q_OBJECT
+
+ public:
+     RecentMessagesWidget(QWidget* parent = 0, unsigned int maxRecent = 10);
+     ~RecentMessagesWidget();
+     QMessageId currentMessage() const;
+
+ signals:
+     void selected(const QMessageId&amp; messageId);
+
+ protected:
+     void showEvent(QShowEvent* e);
+     void hideEvent(QHideEvent* e);
+
+ private slots:
+     void currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
+     void messagesFound(const QMessageIdList&amp; result);
+     void stateChanged(QMessageService::State s);
+     void messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
+     void messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
+     void processResults();
+
+ private:
+     void setupUi();
+     void updateState();
+     void load();
+
+ private:
+     enum State { Unloaded, Loading, LoadFinished, Processing, LoadFailed, Done };
+     static const int MessageIdRole = Qt::UserRole + 1;
+
+ private:
+     QListWidget* m_messageListWidget;
+     QLabel* m_statusLabel;
+     QStackedLayout* m_layout;
+     QMessageIdList m_ids;
+     QMap&lt;QMessageId,QListWidgetItem*&gt; m_indexMap;
+     unsigned int m_maxRecent;
+     QMessageService* m_service;
+     State m_state;
+     QMessageManager::NotificationFilterId m_storeFilterId;
+     QMessageManager m_manager;
+ };
+
+ RecentMessagesWidget::RecentMessagesWidget(QWidget* parent, unsigned int maxRecent)
+ :
+ QWidget(parent),
+ m_messageListWidget(0),
+ m_statusLabel(0),
+ m_layout(0),
+ m_maxRecent(maxRecent),
+ m_service(new QMessageService(this)),
+ m_state(Unloaded)
+ {
+     setupUi();
+     connect(m_service,SIGNAL(messagesFound(const QMessageIdList&amp;)),this,SLOT(messagesFound(const QMessageIdList&amp;)));
+     connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
+
+     <span class="comment">//register for message update notifications</span>
+
+     connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
+         this, SLOT(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
+     connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
+         this, SLOT(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
+
+     m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
+ }
+
+ RecentMessagesWidget::~RecentMessagesWidget()
+ {
+      m_manager.unregisterNotificationFilter(m_storeFilterId);
+ }
+
+ QMessageId RecentMessagesWidget::currentMessage() const
+ {
+     QMessageId result;
+
+     if(QListWidgetItem* currentItem = m_messageListWidget-&gt;currentItem())
+         result = QMessageId(currentItem-&gt;data(MessageIdRole).toString());
+
+     return result;
+ }
+
+ void RecentMessagesWidget::showEvent(QShowEvent* e)
+ {
+     if(m_state == Unloaded)
+         load();
+
+     updateState();
+
+     QWidget::showEvent(e);
+ }
+
+ void RecentMessagesWidget::hideEvent(QHideEvent* e)
+ {
+     if(m_state == Loading || m_state == Processing)
+     {
+         m_service-&gt;cancel();
+         m_state = Unloaded;
+         m_ids.clear();
+     }
+
+     QWidget::hideEvent(e);
+ }
+
+ void RecentMessagesWidget::currentItemChanged(QListWidgetItem*, QListWidgetItem*)
+ {
+     if(m_state != Processing || m_state != Loading)
+         emit selected(currentMessage());
+ }
+
+ void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
+ {
+     m_ids.append(ids);
+ }
+
+ void RecentMessagesWidget::stateChanged(QMessageService::State newState)
+ {
+     if (newState == QMessageService::FinishedState) {
+         if ((m_state != LoadFailed) &amp;&amp; (m_service-&gt;error() == QMessageManager::NoError)) {
+             m_state = LoadFinished;
+         } else {
+             m_state = LoadFailed;
+         }
+     }
+
+     updateState();
+ }
+
+ void RecentMessagesWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
+ {
+     if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
+         return;
+
+     <span class="comment">//update the pertinent entry to reflect completeness</span>
+
+     QListWidgetItem* item = m_indexMap.value(id);
+     if(item)
+     {
+
+         QMessage message(id);
+         bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
+         QFont itemFont = item-&gt;font();
+         itemFont.setItalic(partialMessage);
+         item-&gt;setFont(itemFont);
+     }
+ }
+
+ void RecentMessagesWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
+ {
+     if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
+         return;
+
+     QListWidgetItem* item = m_indexMap.value(id);
+     if(item)
+     {
+         int row = m_messageListWidget-&gt;row(item);
+         QListWidgetItem* item = m_messageListWidget-&gt;takeItem(row);
+         m_indexMap.remove(id);
+         delete item;
+     }
+     m_ids.removeAll(id);
+ }
+
+ void RecentMessagesWidget::setupUi()
+ {
+     m_layout = new QStackedLayout(this);
+
+     m_messageListWidget = new QListWidget(this);
+     m_layout-&gt;addWidget(m_messageListWidget);
+     connect(m_messageListWidget,SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+         this,SLOT(currentItemChanged(QListWidgetItem*,QListWidgetItem*)));
+
+     m_statusLabel = new QLabel(this);
+     m_statusLabel-&gt;setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+     m_statusLabel-&gt;setFrameStyle(QFrame::Box);
+     m_layout-&gt;addWidget(m_statusLabel);
+
+ }
+
+ void RecentMessagesWidget::updateState()
+ {
+     switch(m_state)
+     {
+         case Unloaded:
+         {
+             m_statusLabel-&gt;setText(QString());
+             m_layout-&gt;setCurrentWidget(m_statusLabel);
+         }
+         break;
+         case Loading:
+         {
+             m_statusLabel-&gt;setText(&quot;Loading...&quot;);
+             m_layout-&gt;setCurrentWidget(m_statusLabel);
+         }
+         break;
+         case LoadFinished:
+         {
+             if(m_ids.isEmpty())
+             {
+                 m_statusLabel-&gt;setText(&quot;Finished. No messages.&quot;);
+                 m_layout-&gt;setCurrentWidget(m_statusLabel);
+             }
+             else
+             {
+                 m_state = Processing;
+                 updateState();
+                 processResults();
+             }
+         }
+         break;
+         case Processing:
+             m_layout-&gt;setCurrentWidget(m_messageListWidget);
+         break;
+         case LoadFailed:
+         {
+             m_statusLabel-&gt;setText(&quot;Load failed!&quot;);
+             m_layout-&gt;setCurrentWidget(m_statusLabel);
+         }
+         break;
+     }
+
+ #ifndef _WIN32_WCE
+     if(m_state == Loading || m_state == Processing)
+         setCursor(Qt::BusyCursor);
+     else
+         setCursor(Qt::ArrowCursor);
+ #endif
+
+ }
+
+ void RecentMessagesWidget::load()
+ {
+     m_ids.clear();
+     m_state = Loading;
+     bool b;
+
+     b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+ };
+
+ void RecentMessagesWidget::processResults()
+ {
+     if(!m_ids.isEmpty())
+     {
+         QMessageId id = m_ids.takeFirst();
+         QMessage message(id);
+
+         QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
+         newItem-&gt;setData(MessageIdRole,id.toString());
+         QFont itemFont = newItem-&gt;font();
+         bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
+         itemFont.setItalic(isPartialMessage);
+         newItem-&gt;setFont(itemFont);
+         m_messageListWidget-&gt;addItem(newItem);
+         m_indexMap.insert(id,newItem);
+         m_messageListWidget-&gt;update();
+         QTimer::singleShot(100,this,SLOT(processResults()));
+     }
+     else
+     {
+         m_state = Done;
+         updateState();
+     }
+ }
+
+ class ComposeSendWidget : public QWidget
+ {
+     Q_OBJECT
+
+ public:
+     ComposeSendWidget(QMessageService* service, QWidget* parent = 0);
+
+ signals:
+     void actionsChanged();
+
+ private slots:
+     void composeButtonClicked();
+     void sendButtonClicked();
+     void addAttachmentButtonClicked();
+     void accountChanged();
+
+ private:
+     void setupUi();
+     QMessage constructQMessage(bool asHtml = false) const;
+
+ private:
+     QStackedLayout* m_layoutStack;
+     QMessageService* m_service;
+     AccountsWidget* m_accountsWidget;
+     QLineEdit* m_toEdit;
+     QLineEdit* m_ccEdit;
+     QLabel* m_ccLabel;
+     QLineEdit* m_bccEdit;
+     QLabel* m_bccLabel;
+     QLineEdit* m_subjectEdit;
+     QLabel* m_subjectLabel;
+     QTextEdit* m_bodyEdit;
+     AttachmentListWidget* m_attachmentList;
+     QAction* m_attachmentsAction;
+     QAction* m_sendAsHTMLAction;
+ };
+
+ ComposeSendWidget::ComposeSendWidget(QMessageService* service, QWidget* parent)
+ :
+ QWidget(parent),
+ m_layoutStack(0),
+ m_service(service),
+ m_accountsWidget(0),
+ m_toEdit(0),
+ m_ccEdit(0),
+ m_ccLabel(0),
+ m_bccEdit(0),
+ m_bccLabel(0),
+ m_subjectEdit(0),
+ m_subjectLabel(0),
+ m_bodyEdit(0),
+ m_attachmentList(0),
+ m_attachmentsAction(0),
+ m_sendAsHTMLAction(0)
+ {
+     setupUi();
+ }
+
+ static void notifyResult(bool result, const QString&amp; description)
+ {
+ #ifndef _WIN32_WCE
+     if(result) QMessageBox::information(0,description,&quot;Succeeded!&quot;);
+     else QMessageBox::critical(0,description,&quot;Failed.&quot;);
+ #else
+     Q_UNUSED(result);
+     Q_UNUSED(description);
+ #endif
+ }
+
+ void ComposeSendWidget::composeButtonClicked()
+ {
+     QMessage message(constructQMessage());
+     m_service-&gt;compose(message);
+ }
+
+ void ComposeSendWidget::sendButtonClicked()
+ {
+     bool asHtml = (sender() == m_sendAsHTMLAction);
+     QMessage message(constructQMessage(asHtml));
+     notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
+ }
+
+ void ComposeSendWidget::addAttachmentButtonClicked()
+ {
+     QStringList filenames = QFileDialog::getOpenFileNames(this,tr(&quot;Select attachments&quot;));
+     m_attachmentList-&gt;addAttachments(filenames);
+ }
+
+ void ComposeSendWidget::accountChanged()
+ {
+     QMessageAccount currentAccount(m_accountsWidget-&gt;currentAccount());
+
+     bool isSmsAccount = (currentAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
+
+     foreach(QWidget* emailSpecificWidget , QList&lt;QWidget*&gt;() &lt;&lt; m_bccEdit &lt;&lt; m_bccLabel &lt;&lt;
+                                                                 m_ccEdit &lt;&lt;  m_ccLabel &lt;&lt;
+                                                                 m_subjectEdit &lt;&lt; m_subjectLabel) {
+         emailSpecificWidget-&gt;setVisible(!isSmsAccount);
+     }
+
+     m_attachmentsAction-&gt;setEnabled(!isSmsAccount);
+     m_sendAsHTMLAction-&gt;setEnabled(!isSmsAccount);
+ }
+
+ void ComposeSendWidget::setupUi()
+ {
+     QGridLayout* gl = new QGridLayout(this);
+
+     QLabel* accountLabel = new QLabel(&quot;Account:&quot;,this);
+     gl-&gt;addWidget(accountLabel,0,0);
+
+     m_accountsWidget = new AccountsWidget(this);
+     gl-&gt;addWidget(m_accountsWidget,0,1);
+
+     connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
+
+     QLabel* toLabel = new QLabel(&quot;To:&quot;,this);
+     gl-&gt;addWidget(toLabel,1,0);
+
+     m_toEdit = new QLineEdit(this);
+     gl-&gt;addWidget(m_toEdit,1,1);
+
+     m_ccLabel = new QLabel(&quot;Cc:&quot;,this);
+     gl-&gt;addWidget(m_ccLabel,2,0);
+
+     m_ccEdit = new QLineEdit(this);
+     gl-&gt;addWidget(m_ccEdit,2,1);
+
+     m_bccLabel = new QLabel(&quot;Bcc&quot;,this);
+     gl-&gt;addWidget(m_bccLabel,3,0);
+
+     m_bccEdit = new QLineEdit(this);
+     gl-&gt;addWidget(m_bccEdit,3,1);
+
+     m_subjectLabel = new QLabel(&quot;Subject:&quot;,this);
+     gl-&gt;addWidget(m_subjectLabel,4,0);
+
+     m_subjectEdit = new QLineEdit(this);
+     gl-&gt;addWidget(m_subjectEdit,4,1);
+
+     m_bodyEdit = new QTextEdit(this);
+     gl-&gt;addWidget(m_bodyEdit,5,0,1,2);
+
+     m_attachmentList = new AttachmentListWidget(this);
+     gl-&gt;addWidget(m_attachmentList,6,0,1,2);
+     m_attachmentList-&gt;hide();
+
+     QAction* composeAction = new QAction(&quot;Compose&quot;,this);
+     connect(composeAction,SIGNAL(triggered()),this,SLOT(composeButtonClicked()));
+     addAction(composeAction);
+
+     QAction* sendAction = new QAction(&quot;Send&quot;,this);
+     connect(sendAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
+     addAction(sendAction);
+
+     m_sendAsHTMLAction = new QAction(&quot;Send as HTML&quot;,this);
+     connect(m_sendAsHTMLAction,SIGNAL(triggered()),this,SLOT(sendButtonClicked()));
+     addAction(m_sendAsHTMLAction);
+
+     QAction* separator = new QAction(this);
+     separator-&gt;setSeparator(true);
+     addAction(separator);
+
+     m_attachmentsAction = new QAction(&quot;Add attachment&quot;,this);
+     connect(m_attachmentsAction,SIGNAL(triggered()),this,SLOT(addAttachmentButtonClicked()));
+     addAction(m_attachmentsAction);
+ }
+
+ QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
+ {
+     QMessage message;
+
+     if(m_accountsWidget-&gt;isEmpty())
+     {
+         QMessageBox::critical(const_cast&lt;ComposeSendWidget*&gt;(this),&quot;No Accounts&quot;,&quot;Cannot send a message without any available accounts&quot;);
+         return message;
+     }
+
+     QMessageAccountId selectedAccountId = m_accountsWidget-&gt;currentAccount();
+     QMessageAccount selectedAccount(selectedAccountId);
+
+     bool composingSms = (selectedAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
+
+     QMessageAddressList toList;
+     QMessageAddressList ccList;
+     QMessageAddressList bccList;
+
+     QMessageAddress::Type addressType = QMessageAddress::Email;
+     if(composingSms)
+     {
+         addressType = QMessageAddress::Phone;
+         message.setType(QMessage::Sms);
+     }
+
+     foreach(QString s, m_toEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+         toList.append(QMessageAddress(addressType, s));
+     message.setTo(toList);
+
+     if(!composingSms)
+     {
+         foreach(QString s, m_ccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+             ccList.append(QMessageAddress(QMessageAddress::Email, s));
+         message.setCc(ccList);
+
+         foreach(QString s, m_bccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+             bccList.append(QMessageAddress(QMessageAddress::Email, s));
+         message.setBcc(bccList);
+         message.setSubject(m_subjectEdit-&gt;text());
+
+         message.setType(QMessage::Email);
+
+         message.appendAttachments(m_attachmentList-&gt;attachments());
+     }
+
+     message.setParentAccountId(selectedAccountId);
+
+     if(!composingSms &amp;&amp; asHtml) {
+         <span class="comment">//create html body</span>
+         QString htmlBody(&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h2 align=center&gt;%1&lt;/h2&gt;&lt;hr&gt;%2&lt;/body&gt;&lt;/html&gt;&quot;);
+         message.setBody(htmlBody.arg(message.subject()).arg(m_bodyEdit-&gt;toPlainText()),&quot;text/html&quot;);
+     }
+     else
+         message.setBody(m_bodyEdit-&gt;toPlainText());
+
+     return message;
+ }
+
+ class MessageViewWidget : public QWidget
+ {
+     Q_OBJECT
+
+     static const unsigned int LoadTimeLimit = 20; <span class="comment">//seconds</span>
+
+     static QString downloadLinkURL()
+     {
+         static const QString url(&quot;MessageViewWidget://download&quot;);
+         return url;
+     };
+
+ public:
+     MessageViewWidget(QWidget* parent = 0);
+     ~MessageViewWidget();
+
+     QMessageId viewing() const;
+
+ public slots:
+     void view(const QMessageId&amp; messageId);
+     bool retrieveBody();
+
+ protected:
+     void showEvent(QShowEvent* e);
+     void hideEvent(QHideEvent* e);
+
+ private slots:
+     void stateChanged(QMessageService::State s);
+     void loadTimeout();
+     void linkClicked(const QUrl&amp;);
+     void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
+     void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
+
+ private:
+     enum State { Unloaded , Loaded, Loading, LoadFailed };
+     void setupUi();
+     void updateState();
+     void loadMessage();
+     void resetService();
+
+ private:
+     QStackedLayout* m_layoutStack;
+     QLabel* m_statusLabel;
+     QMessageService* m_service;
+     QLineEdit* m_fromLabel;
+     QLineEdit* m_subjectLabel;
+     QTextBrowser* m_messageBrowser;
+     QMessageId m_messageId;
+     State m_state;
+     QTimer m_loadTimer;
+     QMessageManager::NotificationFilterId m_storeFilterId;
+     QMessageManager m_manager;
+ };
+
+ MessageViewWidget::MessageViewWidget(QWidget* parent)
+ :
+ QWidget(parent),
+ m_layoutStack(0),
+ m_statusLabel(0),
+ m_service(new QMessageService(this)),
+ m_messageBrowser(0),
+ m_state(Unloaded)
+ {
+     setupUi();
+     resetService();
+     connect(&amp;m_loadTimer,SIGNAL(timeout()),this,SLOT(loadTimeout()));
+     connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+         this,SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+     connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+         this,SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+     m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
+ }
+
+ MessageViewWidget::~MessageViewWidget()
+ {
+     m_manager.unregisterNotificationFilter(m_storeFilterId);
+ }
+
+ void MessageViewWidget::view(const QMessageId&amp; messageId)
+ {
+     m_messageId = messageId;
+     m_state = m_messageId.isValid() ? Loaded : Unloaded;
+
+     updateState();
+ }
+
+ bool MessageViewWidget::retrieveBody()
+ {
+     if(m_state != Loading &amp;&amp; !m_loadTimer.isActive())
+     {
+         m_loadTimer.setSingleShot(true);
+         m_loadTimer.start(LoadTimeLimit * 1000);
+         m_state = Unloaded;
+
+         return m_service-&gt;retrieveBody(m_messageId);
+     }
+
+     return false;
+ }
+
+
+ void MessageViewWidget::showEvent(QShowEvent* e)
+ {
+     updateState();
+     QWidget::showEvent(e);
+ }
+
+ void MessageViewWidget::hideEvent(QHideEvent* e)
+ {
+     if(m_state == Loading)
+     {
+         m_service-&gt;cancel();
+         m_state = Unloaded;
+     }
+
+     QWidget::hideEvent(e);
+ }
+
+ void MessageViewWidget::stateChanged(QMessageService::State newState)
+ {
+     if (m_state == LoadFailed)
+         return;
+
+     if (newState == QMessageService::ActiveState) {
+         m_state = Loading;
+     } else if (newState == QMessageService::FinishedState) {
+         m_state = (m_service-&gt;error() == QMessageManager::NoError ? Loaded : LoadFailed);
+     }
+
+     updateState();
+ }
+
+ void MessageViewWidget::loadTimeout()
+ {
+     qWarning() &lt;&lt; &quot;Load timeout&quot;;
+     m_service-&gt;cancel();
+     m_state = LoadFailed;
+     updateState();
+ }
+
+ void MessageViewWidget::linkClicked(const QUrl&amp; url)
+ {
+     bool downloadLinkClicked = url.toString() == downloadLinkURL();
+
+     if(downloadLinkClicked)
+         retrieveBody();
+ }
+
+ void MessageViewWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+ {
+     if(!filterSet.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || id != m_messageId)
+         return;
+
+     view(id);
+ }
+
+ void MessageViewWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+ {
+     if(id == m_messageId)
+     {
+         m_state = Unloaded;
+         m_loadTimer.stop();
+         m_messageId = QMessageId();
+         view(QMessageId());
+     }
+ }
+
+ QMessageId MessageViewWidget::viewing() const
+ {
+     return m_messageId;
+ }
+
+ void MessageViewWidget::setupUi()
+ {
+     m_layoutStack = new QStackedLayout(this);
+
+     m_statusLabel = new QLabel(this);
+     m_statusLabel-&gt;setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+     m_layoutStack-&gt;addWidget(m_statusLabel);
+
+     m_messageBrowser = new QTextBrowser(this);
+     m_messageBrowser-&gt;setOpenLinks(false);
+     connect(m_messageBrowser,SIGNAL(anchorClicked(const QUrl&amp;)),this,SLOT(linkClicked(const QUrl&amp;)));
+     m_layoutStack-&gt;addWidget(m_messageBrowser);
+ }
+
+ void MessageViewWidget::updateState()
+ {
+     switch(m_state)
+     {
+         case Unloaded:
+         {
+             m_messageBrowser-&gt;clear();
+             m_layoutStack-&gt;setCurrentWidget(m_messageBrowser);
+         } break;
+         case Loading:
+         {
+             m_statusLabel-&gt;setText(&quot;Downloading...&quot;);
+             m_layoutStack-&gt;setCurrentWidget(m_statusLabel);
+         } break;
+         case Loaded:
+         {
+             if(m_loadTimer.isActive())
+             {
+                 m_loadTimer.stop();
+                 if(m_service-&gt;state() == QMessageService::ActiveState)
+                     m_service-&gt;cancel();
+             }
+
+             loadMessage();
+             m_layoutStack-&gt;setCurrentWidget(m_messageBrowser);
+         } break;
+         case LoadFailed:
+         {
+             m_statusLabel-&gt;setText(&quot;Download failed!&quot;);
+             m_layoutStack-&gt;setCurrentWidget(m_statusLabel);
+         } break;
+     }
+ }
+
+ void MessageViewWidget::loadMessage()
+ {
+     m_messageBrowser-&gt;clear();
+
+     static const QString htmlTemplate(&quot;\
+     &lt;html&gt;\
+     &lt;head&gt;\
+     &lt;/head&gt;\
+     &lt;body&gt;\
+     &lt;table border=\&quot;0\&quot; cellspacing=\&quot;0\&quot;&gt;\
+         &lt;tr&gt;&lt;td&gt;&lt;b&gt;From: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;\
+         &lt;tr&gt;&lt;td&gt;&lt;b&gt;Subject: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;\
+         &lt;tr&gt;&lt;td&gt;&lt;b&gt;Date: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\
+     &lt;/table&gt;\
+     &lt;hr&gt;%4\
+     &lt;\body&gt;\
+     &lt;/html&gt;\
+     &quot;);
+
+     if(m_messageId.isValid())
+     {
+         QMessage message(m_messageId);
+
+         QMessageContentContainer bodyPart = message.find(message.bodyId());
+
+         QString bodyText;
+
+         <span class="comment">//for partial message display a download link instead</span>
+
+         bool bodyAvailable = bodyPart.isContentAvailable();
+
+         if(bodyAvailable)
+         {
+             if(bodyPart.contentType() == &quot;text&quot;)
+                 bodyText = bodyPart.textContent();
+             else bodyText = &quot;&lt;Non-text content&gt;&quot;;
+         }
+         else
+             bodyText = QString(&quot;&lt;p align=\&quot;center\&quot;&gt;&lt;a href=\&quot;%1\&quot;&gt;Download&lt;/a&gt;&lt;/p&gt;&quot;).arg(downloadLinkURL());
+         m_messageBrowser-&gt;setHtml(htmlTemplate\
+                                  .arg(message.from().addressee())\
+                                  .arg(message.subject())\
+                                  .arg(message.receivedDate().toString())\
+                                  .arg(bodyText));
+     }
+ }
+
+ void MessageViewWidget::resetService()
+ {
+     if(m_service)
+         m_service-&gt;deleteLater();
+     m_service = new QMessageService(this);
+     connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
+ }
+
+ class RetrieveWidget : public QWidget
+ {
+     Q_OBJECT
+
+ public:
+     RetrieveWidget(QWidget* parent = 0);
+
+ private slots:
+     void messageSelected(const QMessageId&amp; messageId);
+
+ private:
+     void setupUi();
+
+ private:
+     QMessageService* m_service;
+     RecentMessagesWidget* m_recentMessagesWidget;
+     MessageViewWidget* m_messageViewWidget;
+     QAction* m_retrieveAction;
+ };
+
+ RetrieveWidget::RetrieveWidget(QWidget* parent)
+ :
+ QWidget(parent),
+ m_recentMessagesWidget(0),
+ m_messageViewWidget(0),
+ m_retrieveAction(0)
+ {
+     setupUi();
+ }
+
+ void RetrieveWidget::messageSelected(const QMessageId&amp; messageId)
+ {
+     QMessage message(messageId);
+     bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
+
+     m_retrieveAction-&gt;setEnabled(partialMessage &amp;&amp; messageId.isValid());
+ }
+
+ void RetrieveWidget::setupUi()
+ {
+     QVBoxLayout* l = new QVBoxLayout(this);
+     l-&gt;addWidget(new QLabel(QString(&quot;Last %1 messages:&quot;).arg(RecentMessagesCount),this));
+
+     m_recentMessagesWidget = new RecentMessagesWidget(this,RecentMessagesCount);
+     l-&gt;addWidget(m_recentMessagesWidget);
+
+     m_messageViewWidget = new MessageViewWidget(this);
+     l-&gt;addWidget(m_messageViewWidget);
+
+     m_retrieveAction = new QAction(&quot;Retrieve&quot;,this);
+     connect(m_retrieveAction,SIGNAL(triggered(bool)),m_messageViewWidget,SLOT(retrieveBody()));
+     addAction(m_retrieveAction);
+
+     connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&amp;)),m_messageViewWidget,SLOT(view(const QMessageId&amp;)));
+     connect(m_recentMessagesWidget,SIGNAL(selected(const QMessageId&amp;)),this,SLOT(messageSelected(const QMessageId&amp;)));
+ }
+
+ class ShowWidget : public QWidget
+ {
+     Q_OBJECT
+
+ public:
+     ShowWidget(QMessageService* service, QWidget* parent = 0);
+
+ private slots:
+     void showButtonClicked();
+
+ private:
+     void setupUi();
+
+ private:
+     QMessageService* m_service;
+     RecentMessagesWidget* m_recentMessagesWidget;
+ };
+
+ ShowWidget::ShowWidget(QMessageService* service, QWidget* parent)
+ :
+ QWidget(parent),
+ m_service(service),
+ m_recentMessagesWidget(0)
+ {
+     setupUi();
+ }
+
+ void ShowWidget::showButtonClicked()
+ {
+
+     QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
+
+     if(id.isValid())
+         m_service-&gt;show(id);
+ }
+
+ void ShowWidget::setupUi()
+ {
+     QVBoxLayout* vbl = new QVBoxLayout(this);
+
+     QString labelText(&quot;Last %1 messages:&quot;);
+     vbl-&gt;addWidget(new QLabel(labelText.arg(RecentMessagesCount),this));
+
+     m_recentMessagesWidget = new RecentMessagesWidget(this,RecentMessagesCount);
+     vbl-&gt;addWidget(m_recentMessagesWidget);
+
+     QAction* showAction = new QAction(&quot;Show&quot;,this);
+     connect(showAction,SIGNAL(triggered()),this,SLOT(showButtonClicked()));
+     addAction(showAction);
+ }
+
+ class StoreSignalsWidget : public QWidget
+ {
+     Q_OBJECT
+
+ public:
+     StoreSignalsWidget(QWidget* parent = 0);
+
+ private slots:
+     void messageAdded(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
+     void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
+     void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
+
+ private:
+     void setupUi();
+     void appendString(const QString&amp; message);
+
+ private:
+     QListWidget* m_activityListWidget;
+     QMessageManager::NotificationFilterId m_notificationFilterId;
+     QMessageManager m_manager;
+ };
+
+ StoreSignalsWidget::StoreSignalsWidget(QWidget* parent)
+ :
+ QWidget(parent),
+ m_activityListWidget(0)
+ {
+     setupUi();
+ }
+
+ void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+ {
+     if(!filterSet.contains(m_notificationFilterId))
+         return;
+
+     QMessage message(id);
+
+     QString msg = QString(&quot;Added: %1&quot;).arg(message.subject());
+     m_activityListWidget-&gt;addItem(msg);
+ }
+
+ void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+ {
+     if(!filterSet.contains(m_notificationFilterId))
+         return;
+
+     QMessage message(id);
+
+     QString msg = QString(&quot;Updated: %1&quot;).arg(message.subject());
+     m_activityListWidget-&gt;addItem(msg);
+ }
+
+ void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+ {
+     if(!filterSet.contains(m_notificationFilterId))
+         return;
+
+     QString idString(id.toString());
+     idString.truncate(10);
+
+     QString msg = QString(&quot;Removed ID: %1 ...&quot;).arg(idString);
+     m_activityListWidget-&gt;addItem(msg);
+ }
+
+ void StoreSignalsWidget::setupUi()
+ {
+     m_activityListWidget = new QListWidget(this);
+     QVBoxLayout* l = new QVBoxLayout(this);
+     l-&gt;setSpacing(0);
+     l-&gt;setContentsMargins(0,0,0,0);
+     l-&gt;addWidget(m_activityListWidget);
+
+     connect(&amp;m_manager,
+             SIGNAL(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+             this,
+             SLOT(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+
+     connect(&amp;m_manager,
+             SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+             this,
+             SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+
+     connect(&amp;m_manager,
+             SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+             this,
+             SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+
+     m_notificationFilterId = m_manager.registerNotificationFilter(QMessageFilter());
+
+     QAction* clearAction = new QAction(&quot;Clear&quot;,this);
+     connect(clearAction,SIGNAL(triggered(bool)),m_activityListWidget,SLOT(clear()));
+     addAction(clearAction);
+ }
+
+ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
+ :
+ QMainWindow(parent,f),
+ m_tabWidget(0)
+ {
+
+     m_service = new QMessageService(this);
+
+     connect(m_service,SIGNAL(stateChanged(QMessageService::State)),
+             this,SLOT(serviceStateChanged(QMessageService::State)));
+
+     <span class="comment">//example widgets</span>
+
+     m_widgetStack = new QStackedWidget(this);
+     setCentralWidget(m_widgetStack);
+
+     foreach(QWidget* exampleWidget, QWidgetList() &lt;&lt; new ComposeSendWidget(m_service,this)
+                                                   &lt;&lt; new ShowWidget(m_service,this)
+                                                   &lt;&lt; new RetrieveWidget(this)
+                                                   &lt;&lt; new StoreSignalsWidget(this)) {
+
+         m_widgetStack-&gt;addWidget(exampleWidget);
+ #ifdef _WIN32_WCE
+         exampleWidget-&gt;installEventFilter(this);
+ #endif
+     }
+
+     <span class="comment">//main menu</span>
+ #ifndef _WIN32_WCE
+     QMenu* fileMenu = new QMenu(&quot;File&quot;,this);
+ #endif
+
+     int index = 0;
+     foreach(QAction* viewAction, QList&lt;QAction*&gt;() &lt;&lt; new QAction(&quot;Compose\\Send&quot;,this)
+                                                    &lt;&lt; new QAction(&quot;Show&quot;,this)
+                                                    &lt;&lt; new QAction(&quot;Retrieve/Query&quot;,this)
+                                                    &lt;&lt; new QAction(&quot;Store Signals&quot;,this))
+     {
+         connect(viewAction,SIGNAL(triggered()),this,SLOT(viewSelected()));
+ #ifndef _WIN32_WCE
+         fileMenu-&gt;addAction(viewAction);
+ #else
+         menuBar()-&gt;addAction(viewAction);
+ #endif
+         viewAction-&gt;setData(index);
+         index++;
+     }
+ #ifndef _WIN32_WCE
+     fileMenu-&gt;addSeparator();
+ #else
+     menuBar()-&gt;addSeparator();
+ #endif
+
+     QAction* quitAction = new QAction(&quot;Quit&quot;,this);
+     connect(quitAction,SIGNAL(triggered()),qApp,SLOT(quit()));
+ #ifndef _WIN32_WCE
+     fileMenu-&gt;addAction(quitAction);
+     menuBar()-&gt;addMenu(fileMenu);
+ #else
+     menuBar()-&gt;addAction(quitAction);
+ #endif
+
+     QTimer::singleShot(0,this,SLOT(viewSelected()));
+
+     <span class="comment">//window properties</span>
+
+     setWindowTitle(WindowTitle);
+     resize(WindowGeometry);
+
+ }
+
+ #ifdef _WIN32_WCE
+ bool MainWindow::eventFilter(QObject* source, QEvent* e)
+ {
+     bool actionChanged = (m_widgetStack-&gt;currentWidget() == source) &amp;&amp; e-&gt;type() == QEvent::ActionChanged;
+     if(actionChanged)
+         viewSelected(); <span class="comment">//update the menu items</span>
+     return false;
+ }
+ #endif
+
+ void MainWindow::serviceStateChanged(QMessageService::State newState)
+ {
+     if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
+         QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
+ }
+
+ void MainWindow::viewSelected()
+ {
+     static QMenu* actionMenu = 0;
+
+     if(!actionMenu)
+     {
+         actionMenu = new QMenu(&quot;Action&quot;,this);
+ #ifndef _WIN32_WCE
+         menuBar()-&gt;addMenu(actionMenu);
+ #endif
+     }
+     QAction* senderAction = qobject_cast&lt;QAction*&gt;(sender());
+     if(senderAction)
+         m_widgetStack-&gt;setCurrentIndex(senderAction-&gt;data().toInt());
+
+     bool currentViewHasActions = m_widgetStack-&gt;currentWidget() &amp;&amp; !m_widgetStack-&gt;currentWidget()-&gt;actions().isEmpty();
+     actionMenu-&gt;clear();
+     if(currentViewHasActions)
+     {
+         foreach(QAction* a, m_widgetStack-&gt;currentWidget()-&gt;actions())
+             actionMenu-&gt;addAction(a);
+     }
+ #ifdef _WIN32_WCE
+     static QAction* leftSoftButton = new QAction(&quot;Action&quot;,this);
+     leftSoftButton-&gt;setMenu(actionMenu);
+     menuBar()-&gt;setDefaultAction(leftSoftButton);
+ #endif
+ }
+
+ #include &lt;mainwindow.moc&gt;</pre>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

@@ -1,20 +1,130 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qaudiooutput.cpp -->
-  <title>Qt Mobility Project 1.1: QAudioOutput Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li><a href="qtmultimediakit.html">QtMultimediaKit</a></li>
+  <title>Qt 1.1: QAudioOutput Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtmultimediakit.html">QtMultimediaKit</a></li>
               <li>QAudioOutput</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -23,13 +133,11 @@
 </div>
 <h1 class="title">QAudioOutput Class Reference</h1>
 <p>The QAudioOutput class provides an interface for sending audio data to an audio output device. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QAudioOutput&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>This class was introduced in Qt Mobility Project Library 4.6.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QAudioOutput&gt;</pre><p>This class was introduced in QtMobility 4.6.</p>
 <ul>
 <li><a href="qaudiooutput-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#QAudioOutput">QAudioOutput</a></b> ( const QAudioFormat &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</td></tr>
@@ -53,153 +161,146 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#stop">stop</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#suspend">suspend</a></b> ()</td></tr>
 </table>
-<ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
-<hr />
-<a name="signals"></a>
+<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#notify">notify</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#stateChanged">stateChanged</a></b> ( QAudio::State <i>state</i> )</td></tr>
 </table>
-<ul>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
-</ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioOutput class provides an interface for sending audio data to an audio output device.</p>
 <p>You can construct an audio output with the system's <a href="qaudiodeviceinfo.html#defaultOutputDevice">default audio output device</a>. It is also possible to create QAudioOutput with a specific <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a>. When you create the audio output, you should also send in the <a href="qaudioformat.html">QAudioFormat</a> to be used for the playback (see the <a href="qaudioformat.html">QAudioFormat</a> class description for details).</p>
 <p>To play a file:</p>
-<p>Starting to play an audio stream is simply a matter of calling <a href="qaudiooutput.html#start">start</a>() with a <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>. QAudioOutput will then fetch the data it needs from the io device. So playing back an audio file is as simple as:</p>
-<pre class="highlightedCode brush: cpp">    QFile inputFile;     <span class="comment">// class member.</span>
-    QAudioOutput* audio; <span class="comment">// class member.</span></pre>
-<pre class="highlightedCode brush: cpp">    inputFile.setFileName(&quot;/tmp/test.raw&quot;);
-    inputFile.open(QIODevice::ReadOnly);
+<p>Starting to play an audio stream is simply a matter of calling <a href="qaudiooutput.html#start">start</a>() with a QIODevice. QAudioOutput will then fetch the data it needs from the io device. So playing back an audio file is as simple as:</p>
+<pre class="highlightedCode brush: cpp"> QFile inputFile;     <span class="comment">// class member.</span>
+ QAudioOutput* audio; <span class="comment">// class member.</span></pre>
+<pre class="highlightedCode brush: cpp"> inputFile.setFileName(&quot;/tmp/test.raw&quot;);
+ inputFile.open(QIODevice::ReadOnly);
 
-    QAudioFormat format;
-<span class="comment">    // Set up the format, eg.</span>
-    format.setFrequency(8000);
-    format.setChannels(1);
-    format.setSampleSize(8);
-    format.setCodec(&quot;audio/pcm&quot;);
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType(QAudioFormat::UnSignedInt);
+ QAudioFormat format;
+<span class="comment"> // Set up the format, eg.</span>
+ format.setFrequency(8000);
+ format.setChannels(1);
+ format.setSampleSize(8);
+ format.setCodec(&quot;audio/pcm&quot;);
+ format.setByteOrder(QAudioFormat::LittleEndian);
+ format.setSampleType(QAudioFormat::UnSignedInt);
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    if (!info.isFormatSupported(format)) {
-        qWarning()&lt;&lt;&quot;raw audio format not supported by backend, cannot play audio.&quot;;
-        return;
-    }
+ QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+ if (!info.isFormatSupported(format)) {
+     qWarning()&lt;&lt;&quot;raw audio format not supported by backend, cannot play audio.&quot;;
+     return;
+ }
 
-    audio = new QAudioOutput(format, this);
-    connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(finishedPlaying(QAudio::State)));
-    audio-&gt;start(&amp;inputFile);</pre>
+ audio = new QAudioOutput(format, this);
+ connect(audio,SIGNAL(stateChanged(QAudio::State)),SLOT(finishedPlaying(QAudio::State)));
+ audio-&gt;start(&amp;inputFile);</pre>
 <p>The file will start playing assuming that the audio system and output device support it. If you run out of luck, check what's up with the <a href="qaudiooutput.html#error">error</a>() function.</p>
 <p>After the file has finished playing, we need to stop the device:</p>
-<pre class="highlightedCode brush: cpp">    void finishedPlaying(QAudio::State state)
-    {
-      if(state == QAudio::IdleState) {
-        audio-&gt;stop();
-        inputFile.close();
-        delete audio;
-      }
-    }</pre>
+<pre class="highlightedCode brush: cpp"> void finishedPlaying(QAudio::State state)
+ {
+   if(state == QAudio::IdleState) {
+     audio-&gt;stop();
+     inputFile.close();
+     delete audio;
+   }
+ }</pre>
 <p>At any given time, the QAudioOutput will be in one of four states: active, suspended, stopped, or idle. These states are described by the <a href="qaudio.html#State-enum">QAudio::State</a> enum. State changes are reported through the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal. You can use this signal to, for instance, update the GUI of the application; the mundane example here being changing the state of a <tt>play/pause</tt> button. You request a state change directly with <a href="qaudiooutput.html#suspend">suspend</a>(), <a href="qaudiooutput.html#stop">stop</a>(), <a href="qaudiooutput.html#reset">reset</a>(), <a href="qaudiooutput.html#resume">resume</a>(), and <a href="qaudiooutput.html#start">start</a>().</p>
-<p>While the stream is playing, you can set a notify interval in milliseconds with <a href="qaudiooutput.html#setNotifyInterval">setNotifyInterval</a>(). This interval specifies the time between two emissions of the <a href="qaudiooutput.html#notify">notify</a>() signal. This is relative to the position in the stream, i.e&#x2e;, if the QAudioOutput is in the SuspendedState or the IdleState, the <a href="qaudiooutput.html#notify">notify</a>() signal is not emitted. A typical use-case would be to update a <a href="http://qt.nokia.com/doc/4.6/qslider.html">slider</a> that allows seeking in the stream. If you want the time since playback started regardless of which states the audio output has been in, <a href="qaudiooutput.html#elapsedUSecs">elapsedUSecs</a>() is the function for you.</p>
+<p>While the stream is playing, you can set a notify interval in milliseconds with <a href="qaudiooutput.html#setNotifyInterval">setNotifyInterval</a>(). This interval specifies the time between two emissions of the <a href="qaudiooutput.html#notify">notify</a>() signal. This is relative to the position in the stream, i.e&#x2e;, if the QAudioOutput is in the SuspendedState or the IdleState, the <a href="qaudiooutput.html#notify">notify</a>() signal is not emitted. A typical use-case would be to update a slider that allows seeking in the stream. If you want the time since playback started regardless of which states the audio output has been in, <a href="qaudiooutput.html#elapsedUSecs">elapsedUSecs</a>() is the function for you.</p>
 <p>If an error occurs, you can fetch the <a href="qaudio.html#Error-enum">error type</a> with the <a href="qaudiooutput.html#error">error</a>() function. Please see the <a href="qaudio.html#Error-enum">QAudio::Error</a> enum for a description of the possible errors that are reported. When an error is encountered, the state changes to <a href="qaudio.html#State-enum">QAudio::StoppedState</a>. You can check for errors by connecting to the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal:</p>
-<pre class="highlightedCode brush: cpp">      void stateChanged(QAudio::State newState)
-      {
-          switch (newState) {
-          case QAudio::StopState:
-              if (output-&gt;error() != QAudio::NoError) {
-                  <span class="comment">// Perform error handling</span>
-              } else {
-                  <span class="comment">// Normal stop</span>
-              }
-              break;</pre>
+<pre class="highlightedCode brush: cpp">   void stateChanged(QAudio::State newState)
+   {
+       switch (newState) {
+       case QAudio::StopState:
+           if (output-&gt;error() != QAudio::NoError) {
+               <span class="comment">// Perform error handling</span>
+           } else {
+               <span class="comment">// Normal stop</span>
+           }
+           break;</pre>
 </div>
 <p>See also <a href="qaudioinput.html">QAudioInput</a> and <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a>.</p>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioOutput"></a>QAudioOutput::QAudioOutput ( const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QAudioOutput"></a>QAudioOutput::QAudioOutput ( const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Construct a new audio output and attach it to <i>parent</i>. The default audio output device is used with the output <i>format</i> parameters.</p>
-<h3 class="fn"><a name="QAudioOutput-2"></a>QAudioOutput::QAudioOutput ( const <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a> &amp; <i>audioDevice</i>, const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QAudioOutput-2"></a>QAudioOutput::QAudioOutput ( const <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a> &amp; <i>audioDevice</i>, const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Construct a new audio output and attach it to <i>parent</i>. The device referenced by <i>audioDevice</i> is used with the output <i>format</i> parameters.</p>
-<h3 class="fn"><a name="dtor.QAudioOutput"></a>QAudioOutput::~QAudioOutput ()</h3>
+<h3 class="fn"><a name="dtor.QAudioOutput"></a>QAudioOutput::~QAudioOutput ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys this audio output.</p>
-<h3 class="fn"><a name="bufferSize"></a>int QAudioOutput::bufferSize () const</h3>
+<h3 class="fn"><a name="bufferSize"></a>int QAudioOutput::bufferSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the audio buffer size in bytes.</p>
 <p>If called before <a href="qaudiooutput.html#start">start</a>(), returns platform default value. If called before <a href="qaudiooutput.html#start">start</a>() but <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>() was called prior, returns value set by <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>(). If called after <a href="qaudiooutput.html#start">start</a>(), returns the actual buffer size being used. This may not be what was set previously by <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>().</p>
 <p>See also <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>().</p>
-<h3 class="fn"><a name="bytesFree"></a>int QAudioOutput::bytesFree () const</h3>
+<h3 class="fn"><a name="bytesFree"></a>int QAudioOutput::bytesFree () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the free space available in bytes in the audio buffer.</p>
-<p>NOTE: returned value is only valid while in <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::ActiveState</a> or <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::IdleState</a> state, otherwise returns zero.</p>
-<h3 class="fn"><a name="elapsedUSecs"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QAudioOutput::elapsedUSecs () const</h3>
+<p>NOTE: returned value is only valid while in <a href="qaudio.html#State-enum">QAudio::ActiveState</a> or <a href="qaudio.html#State-enum">QAudio::IdleState</a> state, otherwise returns zero.</p>
+<h3 class="fn"><a name="elapsedUSecs"></a>qint64 QAudioOutput::elapsedUSecs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the microseconds since <a href="qaudiooutput.html#start">start</a>() was called, including time in Idle and Suspend states.</p>
-<h3 class="fn"><a name="error"></a><a href="qaudio.html#Error-enum">QAudio::Error</a> QAudioOutput::error () const</h3>
+<h3 class="fn"><a name="error"></a><a href="qaudio.html#Error-enum">QAudio::Error</a> QAudioOutput::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the error state.</p>
-<h3 class="fn"><a name="format"></a><a href="qaudioformat.html">QAudioFormat</a> QAudioOutput::format () const</h3>
+<h3 class="fn"><a name="format"></a><a href="qaudioformat.html">QAudioFormat</a> QAudioOutput::format () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the <a href="qaudioformat.html">QAudioFormat</a> being used.</p>
-<h3 class="fn"><a name="notify"></a>void QAudioOutput::notify ()<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="notify"></a>void QAudioOutput::notify ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when x ms of audio data has been processed the interval set by setNotifyInterval(x).</p>
-<h3 class="fn"><a name="notifyInterval"></a>int QAudioOutput::notifyInterval () const</h3>
+<h3 class="fn"><a name="notifyInterval"></a>int QAudioOutput::notifyInterval () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the notify interval in milliseconds.</p>
 <p>See also <a href="qaudiooutput.html#setNotifyInterval">setNotifyInterval</a>().</p>
-<h3 class="fn"><a name="periodSize"></a>int QAudioOutput::periodSize () const</h3>
+<h3 class="fn"><a name="periodSize"></a>int QAudioOutput::periodSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the period size in bytes.</p>
 <p>Note: This is the recommended write size in bytes.</p>
-<h3 class="fn"><a name="processedUSecs"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> QAudioOutput::processedUSecs () const</h3>
+<h3 class="fn"><a name="processedUSecs"></a>qint64 QAudioOutput::processedUSecs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the amount of audio data processed since <a href="qaudiooutput.html#start">start</a>() was called in microseconds.</p>
-<h3 class="fn"><a name="reset"></a>void QAudioOutput::reset ()</h3>
+<h3 class="fn"><a name="reset"></a>void QAudioOutput::reset ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Drops all audio data in the buffers, resets buffers to zero.</p>
-<h3 class="fn"><a name="resume"></a>void QAudioOutput::resume ()</h3>
+<h3 class="fn"><a name="resume"></a>void QAudioOutput::resume ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Resumes processing audio data after a <a href="qaudiooutput.html#suspend">suspend</a>().</p>
-<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::NoError</a>. Sets <a href="qaudiooutput.html#state">state</a>() to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::ActiveState</a> if you previously called start(<a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>*). Sets <a href="qaudiooutput.html#state">state</a>() to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::IdleState</a> if you previously called <a href="qaudiooutput.html#start">start</a>(). emits <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
-<h3 class="fn"><a name="setBufferSize"></a>void QAudioOutput::setBufferSize ( int <i>value</i> )</h3>
+<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>. Sets <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::ActiveState</a> if you previously called start(QIODevice*). Sets <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::IdleState</a> if you previously called <a href="qaudiooutput.html#start">start</a>(). emits <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
+<h3 class="fn"><a name="setBufferSize"></a>void QAudioOutput::setBufferSize ( int <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the audio buffer size to <i>value</i> in bytes.</p>
 <p>Note: This function can be called anytime before <a href="qaudiooutput.html#start">start</a>(), calls to this are ignored after <a href="qaudiooutput.html#start">start</a>(). It should not be assumed that the buffer size set is the actual buffer size used, calling <a href="qaudiooutput.html#bufferSize">bufferSize</a>() anytime after <a href="qaudiooutput.html#start">start</a>() will return the actual buffer size being used.</p>
 <p>See also <a href="qaudiooutput.html#bufferSize">bufferSize</a>().</p>
-<h3 class="fn"><a name="setNotifyInterval"></a>void QAudioOutput::setNotifyInterval ( int <i>ms</i> )</h3>
+<h3 class="fn"><a name="setNotifyInterval"></a>void QAudioOutput::setNotifyInterval ( int <i>ms</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the interval for <a href="qaudiooutput.html#notify">notify</a>() signal to be emitted. This is based on the <i>ms</i> of audio data processed not on actual real-time. The minimum resolution of the timer is platform specific and values should be checked with <a href="qaudiooutput.html#notifyInterval">notifyInterval</a>() to confirm actual value being used.</p>
 <p>See also <a href="qaudiooutput.html#notifyInterval">notifyInterval</a>().</p>
-<h3 class="fn"><a name="start"></a>void QAudioOutput::start ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
-<p>Uses the <i>device</i> as the <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> to transfer data. Passing a <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> allows the data to be transfered without any extra code. All that is required is to open the <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>.</p>
-<p>If able to successfully output audio data to the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::ActiveState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
-<p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>.</p>
-<h3 class="fn"><a name="start-2"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QAudioOutput::start ()</h3>
-<p>Returns a pointer to the <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> being used to handle the data transfer. This <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> can be used to write() audio data directly.</p>
-<p>If able to access the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#State-enum">QAudio::IdleState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
-<p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
-<p>See also <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a>.</p>
-<h3 class="fn"><a name="state"></a><a href="qaudio.html#State-enum">QAudio::State</a> QAudioOutput::state () const</h3>
+<h3 class="fn"><a name="start"></a>void QAudioOutput::start ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Uses the <i>device</i> as the QIODevice to transfer data. Passing a QIODevice allows the data to be transfered without any extra code. All that is required is to open the QIODevice.</p>
+<p>If able to successfully output audio data to the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::ActiveState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
+<p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
+<p>See also QIODevice.</p>
+<h3 class="fn"><a name="start-2"></a>QIODevice * QAudioOutput::start ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Returns a pointer to the QIODevice being used to handle the data transfer. This QIODevice can be used to write() audio data directly.</p>
+<p>If able to access the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::IdleState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
+<p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
+<p>See also QIODevice.</p>
+<h3 class="fn"><a name="state"></a><a href="qaudio.html#State-enum">QAudio::State</a> QAudioOutput::state () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the state of audio processing.</p>
-<h3 class="fn"><a name="stateChanged"></a>void QAudioOutput::stateChanged ( <a href="qaudio.html#State-enum">QAudio::State</a> <i>state</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QAudioOutput::stateChanged ( <a href="qaudio.html#State-enum">QAudio::State</a> <i>state</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This signal is emitted when the device <i>state</i> has changed. This is the current state of the audio output.</p>
-<h3 class="fn"><a name="stop"></a>void QAudioOutput::stop ()</h3>
+<h3 class="fn"><a name="stop"></a>void QAudioOutput::stop ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Stops the audio output, detaching from the system resource.</p>
-<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
-<h3 class="fn"><a name="suspend"></a>void QAudioOutput::suspend ()</h3>
+<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
+<h3 class="fn"><a name="suspend"></a>void QAudioOutput::suspend ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Stops processing audio data, preserving buffered audio data.</p>
-<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="http://qt.nokia.com/doc/4.6/qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::SuspendedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
+<p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::SuspendedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

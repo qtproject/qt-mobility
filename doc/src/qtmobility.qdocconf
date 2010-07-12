@@ -137,23 +137,23 @@ sources.fileextensions  = "*.cpp *.qdoc *.mm"
 examples.fileextensions = "*.cpp *.h *.js *.xq *.svg *.xml *.ui *.qhp *.qhcp *.qml"
 examples.imageextensions = "*.png"
 
-#imagedirs               = images \
-#                         $QT_MOBILITY_SOURCE_TREE/examples \
-#			             $QT_MOBILITY_SOURCE_TREE/doc/src/template/images
-#
-#outputdir               = $QT_MOBILITY_SOURCE_TREE/doc/html
-#tagfile                 = $QT_MOBILITY_SOURCE_TREE/doc/html/qt.tags
-#base                    = file:$QT_MOBILITY_SOURCE_TREE/doc/html
-
-
-
 imagedirs               = images \
-                         ../../examples \
-                         ../../doc/src/template/images
+                         $QT_MOBILITY_SOURCE_TREE/examples \
+			             $QT_MOBILITY_SOURCE_TREE/doc/src/template/images
 
-outputdir               = ../html
-tagfile                 = ../html/qt.tags
-base                    = file:./doc/html
+outputdir               = $QT_MOBILITY_SOURCE_TREE/doc/html
+tagfile                 = $QT_MOBILITY_SOURCE_TREE/doc/html/qt.tags
+base                    = file:$QT_MOBILITY_SOURCE_TREE/doc/html
+
+
+
+#imagedirs               = images \
+#                         ../../examples \
+#                         ../../doc/src/template/images
+
+#outputdir               = ../html
+#tagfile                 = ../html/qt.tags
+#base                    = file:../../doc/html
 
 
 

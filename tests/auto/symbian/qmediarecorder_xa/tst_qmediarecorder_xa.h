@@ -43,19 +43,11 @@
 #define TST_QMEDIARECORDER_XA_H
 
 #include <QtTest/QtTest>
-#include <QDebug>
-#include <qmediaobject.h>
-#include <qmediacontrol.h>
-#include <qmediaservice.h>
-#include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
-#include <qaudioendpointselector.h>
-#include <qaudioencodercontrol.h>
-#include <qmediacontainercontrol.h>
-#include <QtMultimediaKit/qaudioformat.h>
 #include <qaudiocapturesource.h>
 
 QT_USE_NAMESPACE
+
 class tst_QMediaRecorder: public QObject
 {
     Q_OBJECT
@@ -65,77 +57,20 @@ public slots:
     void cleanupTestCase();
 
 private slots:
-
-    // Positive test cases
-    void testMediaRecorderObject();
-    void testAudioSink();
-    void testAudioEndPointSelector();
-    void testDefaultAudioEncodingSettings();
-    void testAudioWav();
-    void testAudioWavSr8kHz();
-    void testAudioWavSr16kHz();
-    void testAudioWavSr32kHz();
-    void testAudioWavSr96kHz();
-    void testAudioWavSr8kHzStereo();
-    void testAudioWavSr16kHzStereo();
-    void testAudioWavSr32kHzStereo();
-    void testAudioWavSr96kHzStereo();
-    void testAudioWavQualityVeryLow();
-    void testAudioWavQualityLow();
-    void testAudioWavQualityNormal();
-    void testAudioWavQualityHigh();
-    void testAudioWavQualityVeryHigh();
-    // Negetive test cases
-    void testAudioWavSr4kHz();
-    void testAudioWavSr8kHz5Channel();
-
-    // Positive test cases
-    void testAudioAmr();
-    void testAudioAmrBr4750bps();
-    void testAudioAmrBr5150bps();
-    void testAudioAmrBr5900bps();
-    void testAudioAmrBr6700bps();
-    void testAudioAmrBr7400bps();
-    void testAudioAmrBr7950bps();
-    void testAudioAmrBr10200bps();
-    void testAudioAmrBr12200bps();
-    void testAudioAmrQualityVeryLow();
-    void testAudioAmrQualityLow();
-    void testAudioAmrQualityNormal();
-    void testAudioAmrQualityHigh();
-    void testAudioAmrQualityVeryHigh();
-    // Negetive test cases
-    void testAudioAmrSr8kHzMono();
-    void testAudioAmrStereo();
-    void testAudioAmrSr16kHz();
-
-    // Positive test cases
-    void testAudioMpegBr32kSr8kHz();
-    void testAudioMpegBr32kbpsSr8kHzStereo();
-    void testAudioMpegBr128kbpsSr16kHz();
-    void testAudioMpegBr128kbpsSr16kHzStereo();
-    void testAudioMpegBr192kbpsSr32kHz();
-    void testAudioMpegBr192kbpsSr32kHzStereo();
-    void testAudioMpegBr256kbpsSr48kHz();
-    void testAudioMpegBr256kbpsSr48kHzStereo();
-    void testAudioMpegQualityVeryLow();
-    void testAudioMpegQualityVeryHigh();
-    // Negetive test cases
-    void testAudioMpegBr16kSr8kHz();
+    void testMediaRecorderObject(); //1
+    void testDefaultAudioEncodingSettings(); //2
+    void testOutputLocation(); //3
+    void testAudioRecordingLocationOnly(); //4
+    void testAudioRecording_data(); //5
+    void testAudioRecording(); //6
 
 private:
-
-    void testAudioMpeg();
-    void testAudioMpegQualityLow();
-    void testAudioMpegQualityNormal();
-    void testAudioMpegQualityHigh();
-
     QUrl nextFileName(QDir outputDir, QString appendName, QString ext);
 
-    QAudioEncoderControl *audioEncoder;
-    QAudioEndpointSelector *audioEndpoint;
-    QMediaRecorder  *audiocapture;
-    QAudioCaptureSource *captureSource;
+private:
+    QAudioCaptureSource* audiosource;
+    QMediaRecorder* audiocapture;
+
 };
 
 #endif /* TST_QMEDIARECORDER_XA_H */

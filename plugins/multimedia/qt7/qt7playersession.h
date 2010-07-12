@@ -123,6 +123,8 @@ signals:
     void error(int error, const QString &errorString);
 
 private:
+    void openMovie(bool tryAsync);
+
     void *m_QTMovie;
     void *m_movieObserver;
 
@@ -136,6 +138,7 @@ private:
     mutable qint64 m_currentTime;
 
     bool m_muted;
+    bool m_tryingAsync;
     int m_volume;
     qreal m_rate;
 

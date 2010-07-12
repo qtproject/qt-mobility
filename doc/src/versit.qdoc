@@ -105,4 +105,9 @@ To complete the exporting process, QVersitWriter can be used to write to an I/O 
     \o \l{QVersitOrganizerImporter}
     \o \l{QVersitOrganizerExporter}
 \endlist
+
+\section1 Supported Features
+Please see the \l{vcardsupport}{Supported vCard Features} document for a list of vCard
+features that the Versit module
+supports.
 */
