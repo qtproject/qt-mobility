@@ -73,7 +73,6 @@ public:
     virtual int minimumUpdateInterval() const;
 
 private:
-    PositioningMethods availableMethods;
     bool positionInited;
     QTimer *updateTimer;
     QTimer *requestTimer;

@@ -49,9 +49,7 @@ QTM_BEGIN_NAMESPACE
 QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent) 
     : QGeoPositionInfoSource(parent)
 {
-    // default values
-    availableMethods = SatellitePositioningMethods;
-    
+    // default values    
     timerInterval = DEFAULT_UPDATE_INTERVAL;
     updateTimer = new QTimer(this);
     updateTimer->setSingleShot(true);
@@ -84,7 +82,16 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supportedPositioningMethods() const
 {
-    return availableMethods;
+    QGeoPositionInfoSource::PositioningMethods methods;
+
+    if (!GConfItem("/system/nokia/location/gps-disabled").value().toBool())
+        methods |= SatellitePositioningMethods;
+    if (!GConfItem("/system/nokia/location/network-disabled").value().toBool())
+        methods |= NonSatellitePositioningMethods;
+    if (methods.testFlag(SatellitePositioningMethods) && methods.testFlag(NonSatellitePositioningMethods))
+        methods |= AllPositioningMethods;
+
+    return methods;
 }
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
