@@ -42,6 +42,8 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 
+#include <QtAlgorithms>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -229,27 +231,14 @@ QGeoMapObject* QGeoMapObject::parentObject() const
 */
 void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 {
-    Q_D(QGeoMapObject);
-
     if (!childObject)
         return;
 
     childObject->d_ptr->parent = this;
+    //binary search
+    QList<QGeoMapObject*>::iterator i = qUpperBound(d_ptr->children.begin(), d_ptr->children.end(), childObject);
+    d_ptr->children.insert(i, childObject);
 
-    //binary search for proper insert slot
-    int a = 0;
-    int b = d->children.size() - 1;
-
-    while (a <= b) {
-        int mid = a + ((b - a) / 2);
-
-        if (d->children.at(mid)->d_ptr->zValue <= childObject->d_ptr->zValue)
-            a = mid + 1;
-        else
-            b = mid - 1;
-    }
-
-    d->children.insert(a, childObject);
     connect(childObject, SIGNAL(destroyed(QObject*)),
             this, SLOT(childObjectDestroyed(QObject*)));
     emit childObjectAdded(childObject);
@@ -288,6 +277,16 @@ QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {
     Q_D(const QGeoMapObject);
     return d->children;
+}
+
+bool QGeoMapObject::operator<(const QGeoMapObject &other) const
+{
+    return d_ptr->zValue < other.d_ptr->zValue;
+}
+
+bool QGeoMapObject::operator>(const QGeoMapObject &other) const
+{
+    return d_ptr->zValue > other.d_ptr->zValue;
 }
 
 /*******************************************************************************
