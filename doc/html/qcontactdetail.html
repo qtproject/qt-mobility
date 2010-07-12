@@ -1,19 +1,130 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qcontactdetail.cpp -->
-  <title>Qt Mobility Project 1.1: QContactDetail Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QContactDetail</li>
+  <title>Qt 1.1: QContactDetail Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtcontacts.html">QtContacts</a></li>
+              <li>QContactDetail</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -23,19 +134,16 @@
 </div>
 <h1 class="title">QContactDetail Class Reference</h1>
 <p>The QContactDetail class represents a single, complete detail about a contact. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactfamily.html">QContactFamily</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactgeolocation.html">QContactGeoLocation</a>, <a href="qcontactglobalpresence.html">QContactGlobalPresence</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactnickname.html">QContactNickname</a>, <a href="qcontactnote.html">QContactNote</a>, <a href="qcontactonlineaccount.html">QContactOnlineAccount</a>, <a href="qcontactorganization.html">QContactOrganization</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactpresence.html">QContactPresence</a>, <a href="qcontactringtone.html">QContactRingtone</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttag.html">QContactTag</a>, <a href="qcontactthumbnail.html">QContactThumbnail</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, <a href="qcontacttype.html">QContactType</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
-<ul>
+<pre class="highlightedCode brush: cpp"> #include &lt;QContactDetail&gt;</pre><ul>
 <li><a href="qcontactdetail-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#AccessConstraint-enum">AccessConstraint</a></b> { NoConstraint, ReadOnly, Irremovable }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#AccessConstraint-enum">AccessConstraints</a></b></td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#QContactDetail">QContactDetail</a></b> ()</td></tr>
@@ -73,52 +181,49 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactDetail &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#operator-eq">operator=</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#operator-eq-eq">operator==</a></b> ( const QContactDetail &amp; <i>other</i> ) const</td></tr>
 </table>
-<hr />
-<a name="macros"></a>
+<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a></b></td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetail class represents a single, complete detail about a contact.</p>
 <p>All of the information for a contact is stored in one or more QContactDetail objects.</p>
-<p>A detail is a group of logically related bits of data - for example, a street address is a single detail that has multiple fields (number, region, country etc). Every QContactDetail has the name of an associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> that describes the fields, their data type, and any restrictions on their values. Different contact managers might have different detail definitions for the same name, depending on their capabilities. For example, for the <a href="qcontactname.html">QContactName</a> definition name, one manager might not support the middle name field, while a different manager may add an extra field for specific extra information not present in the default schema.</p>
-<p>Both the names of all the fields, and the name of the associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> are stored as 8-bit strings encoded in Latin 1 for memory conservation. Note, however, that the values stored in each field are not constrained in this way, and full unicode QStrings or <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> data can be stored.</p>
+<p>A detail is a group of logically related bits of data - for example, a street address is a single detail that has multiple fields (number, region, country etc). Every QContactDetail has the name of an associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> that describes the fields, their data type, and any restrictions on their values. Different contact managers might have different detail definitions for the same name, depending on their capabilities. For example, for the QContactName definition name, one manager might not support the middle name field, while a different manager may add an extra field for specific extra information not present in the default schema.</p>
+<p>Both the names of all the fields, and the name of the associated <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> are stored as 8-bit strings encoded in Latin 1 for memory conservation. Note, however, that the values stored in each field are not constrained in this way, and full unicode QStrings or QVariant data can be stored.</p>
 <p>One field which is common to all details is the context field. This field is intended to store one or more contexts that this detail is associated with. Commonly this will be something like &quot;Home&quot; and/or &quot;Work&quot;, although no limitations are placed on which values may be stored in this field in the default schema.</p>
 <p>There are two other, related fields which are common to all details. The first is <i>QContactDetail::FieldDetailUri</i>, which stores the unique URI of the detail if one exists. The field is not mandatory, and backends are not required to verify that the given URI is indeed unique within the contact. The second field is <i>QContactDetail::LinkedDetailUris</i>, which stores a list of detail URIs to which this detail is linked. The link is one-way, and can be used to show how or where a detail was derived. This is useful for things like presence information and avatars, which are linked to a particular online account detail of the contact.</p>
-<p>When a QContactDetail has been retrieved in a <a href="qcontact.html">QContact</a> from a <a href="qcontactmanager.html">QContactManager</a>, it may have certain access constraints provided with it, like <a href="qcontactdetail.html#AccessConstraint-enum">ReadOnly</a> or <a href="qcontactdetail.html#AccessConstraint-enum">Irremovable</a>. This might mean that the supplied detail is calculated or otherwise not modifiable by the user - presence information is a good example. Also, some details may be marked <a href="qcontactdetail.html#AccessConstraint-enum">Irremovable</a>. These are typically things that a contact has to have - like a <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> or a <a href="qcontacttype.html">QContactType</a>.</p>
-<p>It is possible to inherit from QContactDetail to provide convenience or standardized access to values. For example, <a href="qcontactphonenumber.html">QContactPhoneNumber</a> provides a convenient API for manipulating a QContactDetail as a phone number, according to the schema.</p>
-<p>In general, QContactDetail and the built in subclasses (like <a href="qcontactphonenumber.html">QContactPhoneNumber</a>) provide constants for the names of fields (like <a href="qcontactphonenumber.html#FieldNumber-var">QContactPhoneNumber::FieldNumber</a>), and for predefined common values like <a href="qcontactdetail.html#ContextHome-var">QContactDetail::ContextHome</a>. Typically the constants for field names start with <tt>Field</tt>, and the constants for predefined values of a field start with the name of that field (e.g&#x2e; <tt>ContextHome</tt> is a predefined constant for <tt>FieldContext</tt>).</p>
-<p>If you wish to create your own, customized contact detail, you should use the <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a> macro in order to ensure proper operation, and declare your own field constants with <a href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</a>. See the predefined detail subclasses (like <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactaddress.html">QContactAddress</a>) for more information.</p>
+<p>When a QContactDetail has been retrieved in a <a href="qcontact.html">QContact</a> from a <a href="qcontactmanager.html">QContactManager</a>, it may have certain access constraints provided with it, like <a href="qcontactdetail.html#AccessConstraint-enum">ReadOnly</a> or <a href="qcontactdetail.html#AccessConstraint-enum">Irremovable</a>. This might mean that the supplied detail is calculated or otherwise not modifiable by the user - presence information is a good example. Also, some details may be marked <a href="qcontactdetail.html#AccessConstraint-enum">Irremovable</a>. These are typically things that a contact has to have - like a QContactDisplayLabel or a QContactType.</p>
+<p>It is possible to inherit from QContactDetail to provide convenience or standardized access to values. For example, QContactPhoneNumber provides a convenient API for manipulating a QContactDetail as a phone number, according to the schema.</p>
+<p>In general, QContactDetail and the built in subclasses (like QContactPhoneNumber) provide constants for the names of fields (like QContactPhoneNumber::FieldNumber), and for predefined common values like <a href="qcontactdetail.html#ContextHome-var">QContactDetail::ContextHome</a>. Typically the constants for field names start with <tt>Field</tt>, and the constants for predefined values of a field start with the name of that field (e.g&#x2e; <tt>ContextHome</tt> is a predefined constant for <tt>FieldContext</tt>).</p>
+<p>If you wish to create your own, customized contact detail, you should use the <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a> macro in order to ensure proper operation, and declare your own field constants with Q_DECLARE_LATIN1_CONSTANT. See the predefined detail subclasses (like QContactPhoneNumber, QContactAddress) for more information.</p>
 <p>QContactDetail objects act like type checked values. In general, you can assign them to and fro and have reasonable behaviour, like the following example.</p>
-<pre class="highlightedCode brush: cpp">    QContactPhoneNumber number;
-    number.setNumber(&quot;555-1212&quot;);
-<span class="comment">    // number.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
-<span class="comment">    // number.definitionName() == QContactPhoneNumber::DefinitionName</span>
+<pre class="highlightedCode brush: cpp"> QContactPhoneNumber number;
+ number.setNumber(&quot;555-1212&quot;);
+<span class="comment"> // number.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
+<span class="comment"> // number.definitionName() == QContactPhoneNumber::DefinitionName</span>
 
-    QContactDetail detail = number;
-<span class="comment">    // detail.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
-<span class="comment">    // detail.definitionName() == QContactPhoneNumber::DefinitionName</span>
+ QContactDetail detail = number;
+<span class="comment"> // detail.value(QContactPhoneNumber::FieldNumber) == &quot;555-1212&quot;;</span>
+<span class="comment"> // detail.definitionName() == QContactPhoneNumber::DefinitionName</span>
 
-    QContactPhoneNumber otherNumber = detail;
-<span class="comment">    // otherNumber.number() == &quot;555-1212&quot;;</span>
-<span class="comment">    // otherNumber.definitionName() == QContactPhoneNumber::DefinitionName</span>
+ QContactPhoneNumber otherNumber = detail;
+<span class="comment"> // otherNumber.number() == &quot;555-1212&quot;;</span>
+<span class="comment"> // otherNumber.definitionName() == QContactPhoneNumber::DefinitionName</span>
 
-    QContactAddress address = detail;
-<span class="comment">    // address is now a default constructed QContactAddress</span>
-<span class="comment">    // address.value(QContactPhoneNumber::FieldNumber) is empty</span>
-<span class="comment">    // address.definitionName() == QContactAddress::DefinitionName</span>
+ QContactAddress address = detail;
+<span class="comment"> // address is now a default constructed QContactAddress</span>
+<span class="comment"> // address.value(QContactPhoneNumber::FieldNumber) is empty</span>
+<span class="comment"> // address.definitionName() == QContactAddress::DefinitionName</span>
 
-    QContactAddress otherAddress = number;
-<span class="comment">    // otherAddress is now a default constructed QContactAddress</span>
-<span class="comment">    // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty</span>
-<span class="comment">    // otherAddress.definitionName() == QContactAddress::DefinitionName</span></pre>
+ QContactAddress otherAddress = number;
+<span class="comment"> // otherAddress is now a default constructed QContactAddress</span>
+<span class="comment"> // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty</span>
+<span class="comment"> // otherAddress.definitionName() == QContactAddress::DefinitionName</span></pre>
 </div>
 <p>See also <a href="qcontact.html">QContact</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>, <a href="qcontactdetailfilter.html">QContactDetailFilter</a>, <a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a>, and <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a>.</p>
-<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="AccessConstraint-enum"></a>enum QContactDetail::AccessConstraint<br/>flags QContactDetail::AccessConstraints</h3>
@@ -130,170 +235,179 @@
 </table>
 <p>The AccessConstraints type is a typedef for <a href="qflags.html">QFlags</a>&lt;AccessConstraint&gt;. It stores an OR combination of AccessConstraint values.</p>
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactDetail"></a>QContactDetail::QContactDetail ()</h3>
+<h3 class="fn"><a name="QContactDetail"></a>QContactDetail::QContactDetail ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new, empty detail</p>
-<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const char * <i>thisDefinitionId</i> )</h3>
+<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const char * <i>thisDefinitionId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i></p>
-<p>The supplied pointer must be valid for the lifetime of the program. In general this means it should be a constant, and not allocated on the stack. If you cannot meet this requirement, use the alternative constructor that takes a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> instead.</p>
-<h3 class="fn"><a name="QContactDetail-3"></a>QContactDetail::QContactDetail ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>thisDefinitionId</i> )</h3>
+<p>The supplied pointer must be valid for the lifetime of the program. In general this means it should be a constant, and not allocated on the stack. If you cannot meet this requirement, use the alternative constructor that takes a QString instead.</p>
+<h3 class="fn"><a name="QContactDetail-3"></a>QContactDetail::QContactDetail ( const QString &amp; <i>thisDefinitionId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i>. The definitionId must be restricted to the Latin 1 character set.</p>
-<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a detail that is a copy of <i>other</i></p>
-<h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()</h3>
+<h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Frees the memory used by this detail</p>
-<h3 class="fn"><a name="accessConstraints"></a><a href="qcontactdetail.html#AccessConstraint-enum">AccessConstraints</a> QContactDetail::accessConstraints () const</h3>
+<h3 class="fn"><a name="accessConstraints"></a><a href="qcontactdetail.html#AccessConstraint-enum">AccessConstraints</a> QContactDetail::accessConstraints () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the access constraints associated with the detail.</p>
 <p>Some details may not be written to, while other details may not be removed from a contact.</p>
 <p>See also <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::AccessConstraints</a>.</p>
-<h3 class="fn"><a name="contexts"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactDetail::contexts () const</h3>
+<h3 class="fn"><a name="contexts"></a>QStringList QContactDetail::contexts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function to return the <tt>Context</tt> field of this detail.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    value&lt;QStringList&gt;(QContactDetail::FieldContext);</pre>
+<pre class="highlightedCode brush: cpp"> value&lt;QStringList&gt;(QContactDetail::FieldContext);</pre>
 <p>See also <a href="qcontactdetail.html#setContexts">setContexts</a>() and <a href="qcontactdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="definitionName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::definitionName () const</h3>
+<h3 class="fn"><a name="definitionName"></a>QString QContactDetail::definitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the (unique) name of the definition which defines the semantics and structure of this detail. The actual <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> should be retrieved from the relevant <a href="qcontactmanager.html">QContactManager</a> using this name.</p>
-<h3 class="fn"><a name="detailUri"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::detailUri () const</h3>
+<h3 class="fn"><a name="detailUri"></a>QString QContactDetail::detailUri () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function to return the <tt>DetailUri</tt> field of this detail.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    value(QContactDetail::FieldDetailUri);</pre>
+<pre class="highlightedCode brush: cpp"> value(QContactDetail::FieldDetailUri);</pre>
 <p>See also <a href="qcontactdetail.html#setDetailUri">setDetailUri</a>() and <a href="qcontactdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
-<h3 class="fn"><a name="hasValue-3"></a>bool QContactDetail::hasValue ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="hasValue-3"></a>bool QContactDetail::hasValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
+<h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if no values are contained in this detail. Note that context is stored as a value; hence, if a context is set, this function will return false.</p>
-<h3 class="fn"><a name="key"></a>int QContactDetail::key () const</h3>
+<h3 class="fn"><a name="key"></a>int QContactDetail::key () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the key of this detail.</p>
 <p>Be aware that if a contact is retrieved (or reloaded) from the backend, the keys of any details it contains may have been changed by the backend, or other threads may have modified the contact details in the backend. Therefore, clients should reload the detail that they wish to save in or remove from a contact after retrieving the contact from the backend, in order to ascertain the keys of any such details.</p>
-<h3 class="fn"><a name="linkedDetailUris"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactDetail::linkedDetailUris () const</h3>
+<h3 class="fn"><a name="linkedDetailUris"></a>QStringList QContactDetail::linkedDetailUris () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function to return the <tt>Context</tt> field of this detail.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    value&lt;QStringList&gt;(QContactDetail::FieldLinkedDetailUris);</pre>
+<pre class="highlightedCode brush: cpp"> value&lt;QStringList&gt;(QContactDetail::FieldLinkedDetailUris);</pre>
 <p>See also <a href="qcontactdetail.html#setLinkedDetailUris">setLinkedDetailUris</a>() and <a href="qcontactdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )</h3>
+<h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const QString &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise.</p>
-<h3 class="fn"><a name="removeValue-3"></a>bool QContactDetail::removeValue ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i> )</h3>
+<h3 class="fn"><a name="removeValue-3"></a>bool QContactDetail::removeValue ( const QLatin1Constant &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise.</p>
-<h3 class="fn"><a name="resetKey"></a>void QContactDetail::resetKey ()</h3>
+<h3 class="fn"><a name="resetKey"></a>void QContactDetail::resetKey ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it. This ensures that calling <a href="qcontact.html#saveDetail">QContact::saveDetail</a>() will result in a new detail being saved, rather than another detail being updated.</p>
-<h3 class="fn"><a name="setContexts"></a>void QContactDetail::setContexts ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>contexts</i> )</h3>
+<h3 class="fn"><a name="setContexts"></a>void QContactDetail::setContexts ( const QStringList &amp; <i>contexts</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function that sets the <tt>Context</tt> field of this detail to the given <i>contexts</i>.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    setValue(QContactDetail::FieldContext, contexts);</pre>
+<pre class="highlightedCode brush: cpp"> setValue(QContactDetail::FieldContext, contexts);</pre>
 <p>See also <a href="qcontactdetail.html#contexts">contexts</a>() and <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="setContexts-2"></a>void QContactDetail::setContexts ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>context</i> )</h3>
+<h3 class="fn"><a name="setContexts-2"></a>void QContactDetail::setContexts ( const QString &amp; <i>context</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function that sets the <tt>Context</tt> field of this detail to the given <i>context</i>. It is useful if the detail is only valid in a single context.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    setValue(FieldContext, QStringList(context));</pre>
+<pre class="highlightedCode brush: cpp"> setValue(FieldContext, QStringList(context));</pre>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="setDetailUri"></a>void QContactDetail::setDetailUri ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>detailUri</i> )</h3>
+<h3 class="fn"><a name="setDetailUri"></a>void QContactDetail::setDetailUri ( const QString &amp; <i>detailUri</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function that sets the <tt>DetailUri</tt> field of this detail to the given <i>detailUri</i>. In order to be linked to, a detail must have a specific and (per-contact) unique detail URI set.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    setValue(FieldDetailUri, detailUri);</pre>
+<pre class="highlightedCode brush: cpp"> setValue(FieldDetailUri, detailUri);</pre>
 <p>See also <a href="qcontactdetail.html#detailUri">detailUri</a>() and <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="setLinkedDetailUris"></a>void QContactDetail::setLinkedDetailUris ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>linkedDetailUris</i> )</h3>
+<h3 class="fn"><a name="setLinkedDetailUris"></a>void QContactDetail::setLinkedDetailUris ( const QStringList &amp; <i>linkedDetailUris</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function that sets the <tt>LinkedDetailUris</tt> field of this detail to the given <i>linkedDetailUris</i>.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    setValue(QContactDetail::FieldLinkedDetailUris, linkedDetailUris);</pre>
+<pre class="highlightedCode brush: cpp"> setValue(QContactDetail::FieldLinkedDetailUris, linkedDetailUris);</pre>
 <p>See also <a href="qcontactdetail.html#linkedDetailUris">linkedDetailUris</a>() and <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="setLinkedDetailUris-2"></a>void QContactDetail::setLinkedDetailUris ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>linkedDetailUri</i> )</h3>
+<h3 class="fn"><a name="setLinkedDetailUris-2"></a>void QContactDetail::setLinkedDetailUris ( const QString &amp; <i>linkedDetailUri</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is a convenience function that sets the <tt>LinkedDetailUris</tt> field of this detail to the given <i>linkedDetailUri</i>. It is useful if the detail is linked to a single other detail in the contact.</p>
 <p>It is equivalent to the following code:</p>
-<pre class="highlightedCode brush: cpp">    setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));</pre>
+<pre class="highlightedCode brush: cpp"> setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));</pre>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="setValue-3"></a>bool QContactDetail::setValue ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setValue-3"></a>bool QContactDetail::setValue ( const QLatin1Constant &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
-<h3 class="fn"><a name="value"></a>T QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value"></a>T QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a>T QContactDetail::value ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="value-3"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-2"></a>T QContactDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="value-3"></a>QString QContactDetail::value ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is an overloaded function.</p>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="value-6"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i> ) const</h3>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="value-6"></a>QString QContactDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is an overloaded function.</p>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
-<h3 class="fn"><a name="variantValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="variantValue-3"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const <a href="qlatin1constant.html">QLatin1Constant</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="variantValues"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactDetail::variantValues () const</h3>
+<h3 class="fn"><a name="variantValue"></a>QVariant QContactDetail::variantValue ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QVariant, or an invalid QVariant if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="variantValue-3"></a>QVariant QContactDetail::variantValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Returns the value stored in this detail for the given <i>key</i> as a QVariant, or an invalid QVariant if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="variantValues"></a>QVariantMap QContactDetail::variantValues () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the values stored in this detail as a map from value key to value</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetail::operator!= ( const QContactDetail &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetail::operator!= ( const QContactDetail &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the values or id of this detail is different to those of the <i>other</i> detail</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactDetail &amp; QContactDetail::operator= ( const QContactDetail &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="operator-eq"></a>QContactDetail &amp; QContactDetail::operator= ( const QContactDetail &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Assigns this detail to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetail::operator== ( const QContactDetail &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetail::operator== ( const QContactDetail &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Compares this detail to <i>other</i>. Returns true if the definition, access constraints and values of <i>other</i> are equal to those of this detail. The keys of each detail are not considered during the comparison, in order to allow details from different contacts to be compared according to their values.</p>
 </div>
-<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="Q_DECLARE_CUSTOM_CONTACT_DETAIL"></a>Q_DECLARE_CUSTOM_CONTACT_DETAIL</h3>
+<h3 class="fn"><a name="Q_DECLARE_CUSTOM_CONTACT_DETAIL"></a>Q_DECLARE_CUSTOM_CONTACT_DETAIL</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Macro for simplifying declaring custom (leaf) detail classes.</p>
 <p>The first argument is the name of the class, and the second argument is a Latin-1 string literal naming the detail type.</p>
 <p>If you are creating a convenience class for a type of <a href="qcontactdetail.html">QContactDetail</a>, you should use this macro when declaring your class to ensure that it interoperates with other contact functionality.</p>
-<p>Here is an example of a class (<a href="qcontactphonenumber.html">QContactPhoneNumber</a>) using this macro. Note that the class provides some predefined constants and some convenience methods that return values associated with schema fields.</p>
-<pre class="highlightedCode brush: cpp">    class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
-    {
-    public:
-    #ifdef Q_QDOC
-        static const QLatin1Constant DefinitionName;
-        static const QLatin1Constant FieldNumber;
-        static const QLatin1Constant FieldSubTypes;
-        static const QLatin1Constant SubTypeLandline;
-        static const QLatin1Constant SubTypeMobile;
-        static const QLatin1Constant SubTypeFax;
-        static const QLatin1Constant SubTypePager;
-        static const QLatin1Constant SubTypeVoice;
-        static const QLatin1Constant SubTypeModem;
-        static const QLatin1Constant SubTypeVideo;
-        static const QLatin1Constant SubTypeCar;
-        static const QLatin1Constant SubTypeBulletinBoardSystem;
-        static const QLatin1Constant SubTypeMessagingCapable;
-        static const QLatin1Constant SubTypeAssistant;
-        static const QLatin1Constant SubTypeDtmfMenu;
-    #else
-        Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
-        Q_DECLARE_LATIN1_CONSTANT(FieldNumber, &quot;PhoneNumber&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, &quot;SubTypes&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, &quot;Landline&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, &quot;Mobile&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, &quot;Fax&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypePager, &quot;Pager&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, &quot;Voice&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeModem, &quot;Modem&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, &quot;Video&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeCar, &quot;Car&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, &quot;Assistant&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
-    #endif
+<p>Here is an example of a class (QContactPhoneNumber) using this macro. Note that the class provides some predefined constants and some convenience methods that return values associated with schema fields.</p>
+<pre class="highlightedCode brush: cpp"> class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
+ {
+ public:
+ #ifdef Q_QDOC
+     static const QLatin1Constant DefinitionName;
+     static const QLatin1Constant FieldNumber;
+     static const QLatin1Constant FieldSubTypes;
+     static const QLatin1Constant SubTypeLandline;
+     static const QLatin1Constant SubTypeMobile;
+     static const QLatin1Constant SubTypeFax;
+     static const QLatin1Constant SubTypePager;
+     static const QLatin1Constant SubTypeVoice;
+     static const QLatin1Constant SubTypeModem;
+     static const QLatin1Constant SubTypeVideo;
+     static const QLatin1Constant SubTypeCar;
+     static const QLatin1Constant SubTypeBulletinBoardSystem;
+     static const QLatin1Constant SubTypeMessagingCapable;
+     static const QLatin1Constant SubTypeAssistant;
+     static const QLatin1Constant SubTypeDtmfMenu;
+ #else
+     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
+     Q_DECLARE_LATIN1_CONSTANT(FieldNumber, &quot;PhoneNumber&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, &quot;SubTypes&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, &quot;Landline&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, &quot;Mobile&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, &quot;Fax&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypePager, &quot;Pager&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, &quot;Voice&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeModem, &quot;Modem&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, &quot;Video&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeCar, &quot;Car&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, &quot;Assistant&quot;);
+     Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
+ #endif
 
-        void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
-        QString number() const {return value(FieldNumber);}
+     void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
+     QString number() const {return value(FieldNumber);}
 
-        void setSubTypes(const QStringList&amp; subTypes) {setValue(FieldSubTypes, subTypes);}
-        void setSubTypes(const QString&amp; subType) {setValue(FieldSubTypes, QStringList(subType));}
-        QStringList subTypes() const {return value&lt;QStringList&gt;(FieldSubTypes);}
+     void setSubTypes(const QStringList&amp; subTypes) {setValue(FieldSubTypes, subTypes);}
+     void setSubTypes(const QString&amp; subType) {setValue(FieldSubTypes, QStringList(subType));}
+     QStringList subTypes() const {return value&lt;QStringList&gt;(FieldSubTypes);}
 
-        <span class="comment">// Convenience filter</span>
-        static QContactFilter match(const QString&amp; number);
-    };</pre>
+     <span class="comment">// Convenience filter</span>
+     static QContactFilter match(const QString&amp; number);
+ };</pre>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>
