@@ -44,6 +44,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qmobilitypluginsearch.h"
 
 #include <qcontactmanagerengine.h>
 #include <qcontact.h>
@@ -68,6 +69,8 @@
 #include <qcontactdisplaylabel.h>
 #include <qcontactthumbnail.h>
 #include <qcontactringtone.h>
+#include "qversitcontacthandler.h"
+#include "qversitpluginloader_p.h"
 
 #include <QHash>
 #include <QFile>
@@ -113,6 +116,8 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
             QLatin1String(versitSubTypeMappings[i].versitString),
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
+
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createHandlers();
 }
 
 /*!
@@ -121,6 +126,9 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
 QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 {
     delete mDefaultResourceHandler;
+    foreach (QVersitContactHandler* pluginHandler, mPluginPropertyHandlers) {
+        delete pluginHandler;
+    }
 }
 
 /*!
@@ -157,6 +165,11 @@ bool QVersitContactImporterPrivate::importContact(
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
 
+    // run plugin handlers
+    foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
+        handler->documentProcessed(document, contact);
+    }
+    // run the v2 handler, if set
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
         mPropertyHandler2->documentProcessed(document, contact);
     }
@@ -217,6 +230,11 @@ void QVersitContactImporterPrivate::importProperty(
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
 
+    // run plugin handlers
+    foreach (QVersitContactImporterPropertyHandlerV2* handler, mPluginPropertyHandlers) {
+        handler->propertyProcessed(document, property, success, *contact, &updatedDetails);
+    }
+    // run the v2 handler, if set
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
         mPropertyHandler2->propertyProcessed(document, property, success, *contact, &updatedDetails);
     }
@@ -225,6 +243,7 @@ void QVersitContactImporterPrivate::importProperty(
         contact->saveDetail(&detail);
     }
 
+    // run the v1 handler, if set
     if (mPropertyHandler && mPropertyHandlerVersion == 1)
         mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
 }

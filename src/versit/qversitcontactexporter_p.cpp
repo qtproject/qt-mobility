@@ -66,6 +66,8 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 #include <qcontactthumbnail.h>
+#include "qversitcontacthandler.h"
+#include "qversitpluginloader_p.h"
 
 #include <QUrl>
 #include <QBuffer>
@@ -106,6 +108,8 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
                 QLatin1String(versitSubTypeMappings[i].contactString),
                 QLatin1String(versitSubTypeMappings[i].versitString));
     }
+
+    mPluginDetailHandlers = QVersitPluginLoader::instance()->createHandlers();
 }
 
 /*!
@@ -184,6 +188,12 @@ bool QVersitContactExporterPrivate::exportContact(
             encodeDisplayLabel(detail, document, &removedProperties, &generatedProperties, &processedFields);
         }
 
+        // run plugin handlers
+        foreach (QVersitContactExporterDetailHandlerV2* handler, mPluginDetailHandlers) {
+            handler->detailProcessed(contact, detail, processedFields, document,
+                                     &removedProperties, &generatedProperties);
+        }
+        // run the v2 handler, if set
         if (mDetailHandler2 && mDetailHandlerVersion > 1) {
             mDetailHandler2->detailProcessed(contact, detail, processedFields, document,
                                              &removedProperties, &generatedProperties);
@@ -201,6 +211,11 @@ bool QVersitContactExporterPrivate::exportContact(
         }
     }
 
+    // run plugin handlers
+    foreach (QVersitContactExporterDetailHandlerV2* handler, mPluginDetailHandlers) {
+        handler->contactProcessed(contact, &document);
+    }
+    // run the v2 handler, if set
     if (mDetailHandler2 && mDetailHandlerVersion > 1) {
         mDetailHandler2->contactProcessed(contact, &document);
     }

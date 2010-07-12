@@ -69,6 +69,7 @@ class QContactDetail;
 class QContactOrganization;
 class QVersitProperty;
 class QVersitDocument;
+class QVersitContactHandler;
 
 class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
@@ -114,6 +115,7 @@ public: // Data
     QMap<int, QVersitContactImporter::Error> mErrors;
     QVersitContactImporterPropertyHandler* mPropertyHandler;
     QVersitContactImporterPropertyHandlerV2* mPropertyHandler2;
+    QList<QVersitContactHandler*> mPluginPropertyHandlers;
     int mPropertyHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
