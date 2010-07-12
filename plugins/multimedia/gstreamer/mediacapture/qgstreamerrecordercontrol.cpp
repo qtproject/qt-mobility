@@ -287,3 +287,43 @@ QString QGstreamerRecorderControl::generateFileName(const QDir &dir, const QStri
 
     return dir.absoluteFilePath(name);
 }
+
+QDir QGstreamerRecorderControl::defaultDir() const
+{
+    QStringList dirCandidates;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    dirCandidates << QLatin1String("/home/user/MyDocs");
+#endif
+
+    dirCandidates << QDir::home().filePath("Documents");
+    dirCandidates << QDir::home().filePath("My Documents");
+    dirCandidates << QDir::homePath();
+    dirCandidates << QDir::currentPath();
+    dirCandidates << QDir::tempPath();
+
+    foreach (const QString &path, dirCandidates) {
+        QDir dir(path);
+        if (dir.exists() && QFileInfo(path).isWritable())
+            return dir;
+    }
+
+    return QDir();
+}
+
+QString QGstreamerRecorderControl::generateFileName(const QDir &dir, const QString &ext) const
+{
+
+    int lastClip = 0;
+    foreach(QString fileName, dir.entryList(QStringList() << QString("clip_*.%1").arg(ext))) {
+        int imgNumber = fileName.mid(5, fileName.size()-6-ext.length()).toInt();
+        lastClip = qMax(lastClip, imgNumber);
+    }
+
+    QString name = QString("clip_%1.%2").arg(lastClip+1,
+                                     4, //fieldWidth
+                                     10,
+                                     QLatin1Char('0')).arg(ext);
+
+    return dir.absoluteFilePath(name);
+}
