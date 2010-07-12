@@ -69,7 +69,7 @@ class QVersitContactHandler;
 class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
 public:
-    QVersitContactExporterPrivate();
+    QVersitContactExporterPrivate(const QSet<QString>& profiles = QSet<QString>());
     ~QVersitContactExporterPrivate();
 
     bool exportContact(const QContact& contact, QVersitDocument& versitDocument,

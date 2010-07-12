@@ -58,7 +58,7 @@ class QVersitPluginLoader
 
     public:
         static QVersitPluginLoader* instance();
-        QList<QVersitContactHandler*> createHandlers();
+        QList<QVersitContactHandler*> createHandlers(const QSet<QString>& profiles = QSet<QString>());
 
     private:
         void loadPlugins();

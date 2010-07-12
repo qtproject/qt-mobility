@@ -64,6 +64,13 @@ public:
                           QVersitDocument* document);
 };
 
+QSet<QString> TestVCardHandlerFactory::profiles() const
+{
+    QSet<QString> retval;
+    retval.insert(QVersitContactHandlerFactory::ProfileTest);
+    return retval;
+}
+
 QString TestVCardHandlerFactory::name() const
 {
     return QLatin1String("com.nokia.qt.mobility.versit.testhandler");

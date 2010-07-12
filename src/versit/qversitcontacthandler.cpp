@@ -39,24 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef TESTVCARDHANDLER_H
-#define TESTVCARDHANDLER_H
-
-#include <QObject>
-#include <QtPlugin>
 #include "qversitcontacthandler.h"
 
 QTM_USE_NAMESPACE
 
-class TestVCardHandlerFactory : public QObject, public QVersitContactHandlerFactory
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
-
-public:
-    QSet<QString> profiles() const;
-    QString name() const;
-    QVersitContactHandler* createHandler() const;
-};
-
-#endif
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileTest, "Test");
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");

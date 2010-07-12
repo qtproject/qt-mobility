@@ -75,6 +75,7 @@ SOURCES += qversitdocument.cpp \
     qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
+    qversitcontacthandler.cpp \
     qversitpluginloader_p.cpp \
     versitutils.cpp
 

@@ -75,12 +75,22 @@ void QVersitPluginLoader::loadPlugins() {
     }
 }
 
-QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers()
+QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QSet<QString>& profiles)
 {
     loadPlugins();
 
     QList<QVersitContactHandler*> handlers;
     foreach (const QVersitContactHandlerFactory* factory, mFactories) {
+        if (!factory->profiles().isEmpty()) {
+            bool isAppropriate = false;
+            foreach (const QString& profile, profiles) {
+                if (factory->profiles().contains(profile)) {
+                    isAppropriate = true;
+                }
+            }
+            if (!isAppropriate)
+                continue;
+        }
         QVersitContactHandler* handler = factory->createHandler();
         handlers.append(handler);
     }

@@ -94,6 +94,7 @@ public:
     };
 
     QVersitContactImporter();
+    QVersitContactImporter(QSet<QString> profiles);
     ~QVersitContactImporter();
 
     bool importDocuments(const QList<QVersitDocument>& documents);

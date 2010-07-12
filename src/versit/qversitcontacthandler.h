@@ -58,8 +58,12 @@ class Q_VERSIT_EXPORT QVersitContactHandlerFactory
 {
 public:
     virtual ~QVersitContactHandlerFactory() {}
+    virtual QSet<QString> profiles() const { return QSet<QString>(); }
     virtual QString name() const = 0;
     virtual QVersitContactHandler* createHandler() const = 0;
+
+    Q_DECLARE_LATIN1_CONSTANT(ProfileTest, "Test");
+    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
 };
 
 QTM_END_NAMESPACE
