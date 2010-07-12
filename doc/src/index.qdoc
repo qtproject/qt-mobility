@@ -361,15 +361,15 @@
     <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 1</b></td>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 2</b></td>
-    <td width="9%"><b>S60 5th Edition</b></td>
-    <td width="9%"><b>Symbian^3</b></td>
-    <td width="9%"><b>Maemo 5</b></td>
-    <td width="9%"><b>Windows CE/Mobile<b></b></b></td>
-    <td width="9%"><b>Windows XP/Vista</b></td>
-    <td width="9%"><b>Linux</b></td>
-    <td width="9%"><b>Mac OS X</b></td>
+    <td><b>S60 3rd Edition, Feature Pack 1</b></td>
+    <td><b>S60 3rd Edition, Feature Pack 2</b></td>
+    <td><b>S60 5th Edition</b></td>
+    <td><b>Symbian^3</b></td>
+    <td><b>Maemo 5</b></td>
+    <td><b>Windows CE/Mobile<b></b></b></td>
+    <td><b>Windows XP/Vista</b></td>
+    <td><b>Linux</b></td>
+    <td><b>Mac OS X</b></td>
     </tr>
     <tr>
     <td>Service Framework (in-process)</td>
@@ -509,18 +509,18 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     </tr>
     <tr>
     <td>Camera</td>
     <td>TP</td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -536,17 +536,17 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Organizer</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -556,10 +556,10 @@
     <tr>
     <td>Landmarks</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -569,10 +569,10 @@
     <tr>
     <td>Document Gallery</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -595,11 +595,11 @@
     <tr>
     <td>Feedback</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -608,10 +608,10 @@
     <tr>
     <td>Telephony Events</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
