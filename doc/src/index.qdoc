@@ -296,11 +296,11 @@
 
     \section2 Telephony
 
-    The Qt Telephony API enables access to the telephony event services to 
+    The Qt Telephony Events API enables access to the telephony event services to 
     provide telephony call notification that other applications can use to 
     be notified.
 
-    For more details, see the \l {Telephony API}{Telephony Overview}.
+    For more details, see the \l {Telephony Events API}{Telephony Overview}.
     
     \section1 The QtMobility Namespace 
 
