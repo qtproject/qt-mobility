@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <ul>
 <li><a href="qcameraimageprocessing-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a></b> { WhiteBalanceManual, WhiteBalanceAuto, WhiteBalanceSunlight, WhiteBalanceCloudy, ..., WhiteBalanceVendor }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcameraimageprocessing.html#contrast">contrast</a></b> () const</td></tr>
@@ -162,16 +164,18 @@
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcameraimageprocessing.html#sharpeningLevel">sharpeningLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> WhiteBalanceMode </td><td class="memItemRight bottomAlign"><b><a href="qcameraimageprocessing.html#whiteBalanceMode">whiteBalanceMode</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QCameraImageProcessing class provides interface for focus and zoom related camera settings.</p>
 <p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
 <p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="WhiteBalanceMode-enum"></a>enum QCameraImageProcessing::WhiteBalanceMode</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="WhiteBalanceMode-enum"></a>enum QCameraImageProcessing::WhiteBalanceMode</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QCameraImageProcessing::WhiteBalanceManual</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Manual white balance. In this mode the white balance should be set with <a href="qcameraimageprocessing.html#setManualWhiteBalance">setManualWhiteBalance</a>()</td></tr>
 <tr><td  class="topAlign"><tt>QCameraImageProcessing::WhiteBalanceAuto</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Auto white balance mode.</td></tr>
@@ -186,55 +190,56 @@
 <tr><td  class="topAlign"><tt>QCameraImageProcessing::WhiteBalanceVendor</tt></td><td class=" topAlign"><tt>1000</tt></td><td  class="topAlign">Vendor defined white balance mode.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="contrast"></a>int QCameraImageProcessing::contrast () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contrast"></a>int QCameraImageProcessing::contrast () const</h3>
 <p>Return the contrast.</p>
 <p>See also <a href="qcameraimageprocessing.html#setContrast">setContrast</a>().</p>
-<h3 class="fn"><a name="denoisingLevel"></a>int QCameraImageProcessing::denoisingLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="denoisingLevel"></a>int QCameraImageProcessing::denoisingLevel () const</h3>
 <p>Returns the denoising level.</p>
 <p>See also <a href="qcameraimageprocessing.html#setDenoisingLevel">setDenoisingLevel</a>().</p>
-<h3 class="fn"><a name="isAvailable"></a>bool QCameraImageProcessing::isAvailable () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isAvailable"></a>bool QCameraImageProcessing::isAvailable () const</h3>
 <p>Returns true if image processing related settings are supported by this camera.</p>
-<h3 class="fn"><a name="isDenoisingSupported"></a>bool QCameraImageProcessing::isDenoisingSupported () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isDenoisingSupported"></a>bool QCameraImageProcessing::isDenoisingSupported () const</h3>
 <p>Returns true if denoising is supported.</p>
-<h3 class="fn"><a name="isSharpeningSupported"></a>bool QCameraImageProcessing::isSharpeningSupported () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isSharpeningSupported"></a>bool QCameraImageProcessing::isSharpeningSupported () const</h3>
 <p>Identifies if sharpening is supported.</p>
 <p>Returns true if sharpening is supported; and false if it is not.</p>
-<h3 class="fn"><a name="isWhiteBalanceModeSupported"></a>bool QCameraImageProcessing::isWhiteBalanceModeSupported ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isWhiteBalanceModeSupported"></a>bool QCameraImageProcessing::isWhiteBalanceModeSupported ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> ) const</h3>
 <p>Returns true if the white balance <i>mode</i> is supported.</p>
-<h3 class="fn"><a name="manualWhiteBalance"></a>int QCameraImageProcessing::manualWhiteBalance () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="manualWhiteBalance"></a>int QCameraImageProcessing::manualWhiteBalance () const</h3>
 <p>Returns the current color temperature if the manual white balance is active, otherwise the return value is undefined.</p>
 <p>See also <a href="qcameraimageprocessing.html#setManualWhiteBalance">setManualWhiteBalance</a>().</p>
-<h3 class="fn"><a name="saturation"></a>int QCameraImageProcessing::saturation () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saturation"></a>int QCameraImageProcessing::saturation () const</h3>
 <p>Returns the saturation value.</p>
 <p>See also <a href="qcameraimageprocessing.html#setSaturation">setSaturation</a>().</p>
-<h3 class="fn"><a name="setContrast"></a>void QCameraImageProcessing::setContrast ( int <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContrast"></a>void QCameraImageProcessing::setContrast ( int <i>value</i> )</h3>
 <p>Set the contrast to <i>value</i>.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qcameraimageprocessing.html#contrast">contrast</a>().</p>
-<h3 class="fn"><a name="setDenoisingLevel"></a>void QCameraImageProcessing::setDenoisingLevel ( int <i>level</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDenoisingLevel"></a>void QCameraImageProcessing::setDenoisingLevel ( int <i>level</i> )</h3>
 <p>Sets the denoising <i>level</i>.</p>
 <p>Valid denoising level values range between -1 for default denoising level, 0 for denoising disabled and 100 for maximum denoising applied.</p>
 <p>See also <a href="qcameraimageprocessing.html#denoisingLevel">denoisingLevel</a>().</p>
-<h3 class="fn"><a name="setManualWhiteBalance"></a>void QCameraImageProcessing::setManualWhiteBalance ( int <i>colorTemperature</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setManualWhiteBalance"></a>void QCameraImageProcessing::setManualWhiteBalance ( int <i>colorTemperature</i> )</h3>
 <p>Sets manual white balance to <i>colorTemperature</i></p>
 <p>See also <a href="qcameraimageprocessing.html#manualWhiteBalance">manualWhiteBalance</a>().</p>
-<h3 class="fn"><a name="setSaturation"></a>void QCameraImageProcessing::setSaturation ( int <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSaturation"></a>void QCameraImageProcessing::setSaturation ( int <i>value</i> )</h3>
 <p>Sets the saturation value to <i>value</i>.</p>
 <p>Valid saturation values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qcameraimageprocessing.html#saturation">saturation</a>().</p>
-<h3 class="fn"><a name="setSharpeningLevel"></a>void QCameraImageProcessing::setSharpeningLevel ( int <i>level</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSharpeningLevel"></a>void QCameraImageProcessing::setSharpeningLevel ( int <i>level</i> )</h3>
 <p>Sets the sharpening <i>level</i>.</p>
 <p>Valid sharpening level values range between -1 for default sharpening level, 0 for sharpening disabled and 100 for maximum sharpening applied.</p>
 <p>See also <a href="qcameraimageprocessing.html#sharpeningLevel">sharpeningLevel</a>().</p>
-<h3 class="fn"><a name="setWhiteBalanceMode"></a>void QCameraImageProcessing::setWhiteBalanceMode ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setWhiteBalanceMode"></a>void QCameraImageProcessing::setWhiteBalanceMode ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> )</h3>
 <p>Sets the white balance to <i>mode</i>.</p>
 <p>See also <a href="qcameraimageprocessing.html#whiteBalanceMode">whiteBalanceMode</a>().</p>
-<h3 class="fn"><a name="sharpeningLevel"></a>int QCameraImageProcessing::sharpeningLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sharpeningLevel"></a>int QCameraImageProcessing::sharpeningLevel () const</h3>
 <p>Returns the sharpening level.</p>
 <p>See also <a href="qcameraimageprocessing.html#setSharpeningLevel">setSharpeningLevel</a>().</p>
-<h3 class="fn"><a name="whiteBalanceMode"></a><a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> QCameraImageProcessing::whiteBalanceMode () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="whiteBalanceMode"></a><a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> QCameraImageProcessing::whiteBalanceMode () const</h3>
 <p>Returns the white balance mode being used.</p>
 <p>See also <a href="qcameraimageprocessing.html#setWhiteBalanceMode">setWhiteBalanceMode</a>().</p>
 </div>
@@ -244,15 +249,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

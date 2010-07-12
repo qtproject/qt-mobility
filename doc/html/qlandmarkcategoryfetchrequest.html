@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <ul>
 <li><a href="qlandmarkcategoryfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">MatchingScheme</a></b> { MatchAll, MatchSubset }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryfetchrequest.html#QLandmarkCategoryFetchRequest">QLandmarkCategoryFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -164,50 +166,53 @@
 <li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkCategoryFetchRequest class allows a client to asynchronously request a list of categories from a landmark manager.</p>
 <p>For a QLandmarkCategoryFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted as resultant categories are found (these are retrievable via the callings <a href="qlandmarkcategoryfetchrequest.html#categories">categories</a>()), as well as if an overall operation error occurred(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">QLandmarkAbstractRequest::error</a>()).</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="MatchingScheme-enum"></a>enum QLandmarkCategoryFetchRequest::MatchingScheme</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="MatchingScheme-enum"></a>enum QLandmarkCategoryFetchRequest::MatchingScheme</h3>
 <p>Defines the matching behavior of the request when a specific set of category ids is to be retrieved.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QLandmarkCategoryFetchRequest::MatchAll</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">A category must be returned for every id assigned to the filter. Failure to match every id results in a <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::DoesNotExistError</a>.</td></tr>
 <tr><td  class="topAlign"><tt>QLandmarkCategoryFetchRequest::MatchSubset</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Every id does not have to be matched to a category. Matching only a subset of the assigned ids is acceptable.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkCategoryFetchRequest"></a>QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkCategoryFetchRequest"></a>QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a new category fetch request object with the given <i>manager</i> and <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkCategoryFetchRequest"></a>QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkCategoryFetchRequest"></a>QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="categories"></a>QList&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkCategoryFetchRequest::categories () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="categories"></a>QList&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkCategoryFetchRequest::categories () const</h3>
 <p>Returns the list of categories that have been found during the request.</p>
-<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryFetchRequest::categoryIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryFetchRequest::categoryIds () const</h3>
 <p>Returns a list of identifiers for categories which will be retrieved by the fetch request.</p>
 <p>By default no category ids are set, this means the fetch request will fetch all categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</a>().</p>
-<h3 class="fn"><a name="matchingScheme"></a><a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">MatchingScheme</a> QLandmarkCategoryFetchRequest::matchingScheme () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="matchingScheme"></a><a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">MatchingScheme</a> QLandmarkCategoryFetchRequest::matchingScheme () const</h3>
 <p>Returns the matching scheme for the fetch request.</p>
 <p>By default the matching scheme is set to to <tt>MatchSubset</tt>. The matching scheme only has an effect when a particular set of category ids are assigned to the fetch request. If all categories are to be retrieved, then the matching scheme is ignored.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#setMatchingScheme">setMatchingScheme</a>().</p>
-<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategoryFetchRequest::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategoryFetchRequest::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
 <p>Convenience function to set a single category identified by <i>categoryId</i> to be fetched.</p>
-<h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryFetchRequest::setCategoryIds ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> = QList&lt;QLandmarkCategoryId&gt; () )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryFetchRequest::setCategoryIds ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> = QList&lt;QLandmarkCategoryId&gt; () )</h3>
 <p>Sets the categories to be retrieved by the request as a list of <i>categoryIds</i>.</p>
 <p>If <i>categoryIds</i> is empty, then the request will fetch all categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</a>().</p>
-<h3 class="fn"><a name="setMatchingScheme"></a>void QLandmarkCategoryFetchRequest::setMatchingScheme ( <a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">QLandmarkCategoryFetchRequest::MatchingScheme</a> <i>matchingScheme</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMatchingScheme"></a>void QLandmarkCategoryFetchRequest::setMatchingScheme ( <a href="qlandmarkcategoryfetchrequest.html#MatchingScheme-enum">QLandmarkCategoryFetchRequest::MatchingScheme</a> <i>matchingScheme</i> )</h3>
 <p>Sets the <i>matchingScheme</i> of the fetch request.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#matchingScheme">matchingScheme</a>().</p>
-<h3 class="fn"><a name="setSorting"></a>void QLandmarkCategoryFetchRequest::setSorting ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting"></a>void QLandmarkCategoryFetchRequest::setSorting ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> )</h3>
 <p>Sets <i>nameSort</i> to specify the sorting of the returned categories.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="sorting"></a><a href="qlandmarknamesort.html">QLandmarkNameSort</a> QLandmarkCategoryFetchRequest::sorting () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sorting"></a><a href="qlandmarknamesort.html">QLandmarkNameSort</a> QLandmarkCategoryFetchRequest::sorting () const</h3>
 <p>Returns the sorting of the categories. By default the sorting is case insensitive and in ascending order according to the category name.</p>
 <p>The sorting only takes effect when all categories are to be retrieved. (i.e&#x2e; no category ids are assigned to the fetch request). If a particular set of categories are to be retrieved then the sorting is ignored.</p>
 <p>See also <a href="qlandmarkcategoryfetchrequest.html#setSorting">setSorting</a>().</p>
@@ -218,15 +223,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

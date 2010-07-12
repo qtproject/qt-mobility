@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoMappingManager&gt;</pre><ul>
 <li><a href="qgeomappingmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#dtor.QGeoMappingManager">~QGeoMappingManager</a></b> ()</td></tr>
@@ -150,7 +151,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#removeMapData">removeMapData</a></b> ( QGeoMapData * <i>mapData</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapWidget::MapType&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanager.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMappingManager class provides support for displaying and interacting with maps.</p>
@@ -160,35 +162,36 @@
  QGeoMappingManager *manager = serviceProvider.mappingManager();
  QGeoMapWidget *widget = new QGeoMapWidget(manager);</pre>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QGeoMappingManager"></a>QGeoMappingManager::~QGeoMappingManager ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoMappingManager"></a>QGeoMappingManager::~QGeoMappingManager ()</h3>
 <p>Destroys this <a href="qgeomappingmanager.html">QGeoMappingManager</a> object.</p>
-<h3 class="fn"><a name="createMapData"></a><a href="qgeomapdata.html">QGeoMapData</a> * QGeoMappingManager::createMapData ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createMapData"></a><a href="qgeomapdata.html">QGeoMapData</a> * QGeoMappingManager::createMapData ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )</h3>
 <p>Returns a new <a href="qgeomapdata.html">QGeoMapData</a> instance for <i>widget</i> which will be managed by this manager.</p>
-<h3 class="fn"><a name="managerName"></a>QString QGeoMappingManager::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QGeoMappingManager::managerName () const</h3>
 <p>Returns the name of the engine which implements the behaviour of this mapping manager.</p>
 <p>The combination of managerName() and <a href="qgeomappingmanager.html#managerVersion">managerVersion</a>() should be unique amongst the plugin implementations.</p>
-<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoMappingManager::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoMappingManager::managerParameters () const</h3>
 <p>Returns the parameters used in the creation of this mapping manager.</p>
-<h3 class="fn"><a name="managerVersion"></a>int QGeoMappingManager::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerVersion"></a>int QGeoMappingManager::managerVersion () const</h3>
 <p>Returns the version of the engine which implements the behaviour of this mapping manager.</p>
 <p>The combination of <a href="qgeomappingmanager.html#managerName">managerName</a>() and managerVersion() should be unique amongst the plugin implementations.</p>
-<h3 class="fn"><a name="maximumImageSize"></a>QSize QGeoMappingManager::maximumImageSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maximumImageSize"></a>QSize QGeoMappingManager::maximumImageSize () const</h3>
 <p>Returns the size of the largest map image which is supported by this manager.</p>
 <p>An invalid size indicates that this manager places no restrictions on the maximum size of the map image.</p>
-<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMappingManager::maximumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMappingManager::maximumZoomLevel () const</h3>
 <p>Returns the maximum zoom level supported by this manager.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
-<h3 class="fn"><a name="minimumImageSize"></a>QSize QGeoMappingManager::minimumImageSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumImageSize"></a>QSize QGeoMappingManager::minimumImageSize () const</h3>
 <p>Returns the size of the smallest map image which is supported by this manager.</p>
 <p>An invalid size indicates that this manager places no restrictions on the minimum size of the map image.</p>
-<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMappingManager::minimumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMappingManager::minimumZoomLevel () const</h3>
 <p>Returns the minimum zoom level supported by this manager.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
-<h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManager::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManager::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )</h3>
 <p>Stops this manager from managing <i>mapData</i>.</p>
-<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManager::supportedMapTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManager::supportedMapTypes () const</h3>
 <p>Returns a list of the map types supported by this manager.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -197,15 +200,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

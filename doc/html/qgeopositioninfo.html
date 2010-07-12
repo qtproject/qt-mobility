@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,12 +136,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoPositionInfo&gt;</pre><ul>
 <li><a href="qgeopositioninfo-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeopositioninfo.html#Attribute-enum">Attribute</a></b> { Direction, GroundSpeed, VerticalSpeed, MagneticVariation, HorizontalAccuracy, VerticalAccuracy }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeopositioninfo.html#QGeoPositionInfo">QGeoPositionInfo</a></b> ()</td></tr>
@@ -161,16 +163,18 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoPositionInfo &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeopositioninfo.html#operator-eq">operator=</a></b> ( const QGeoPositionInfo &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeopositioninfo.html#operator-eq-eq">operator==</a></b> ( const QGeoPositionInfo &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.</p>
 <p>A QGeoPositionInfo contains, at a minimum, a geographical coordinate and a timestamp. It may also have heading and speed measurements as well as estimates of the accuracy of the provided data.</p>
 </div>
 <p>See also <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Attribute-enum"></a>enum QGeoPositionInfo::Attribute</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Attribute-enum"></a>enum QGeoPositionInfo::Attribute</h3>
 <p>Defines the attributes for positional information.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QGeoPositionInfo::Direction</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The bearing to true north from the direction of travel, in degrees.</td></tr>
@@ -181,52 +185,53 @@
 <tr><td  class="topAlign"><tt>QGeoPositionInfo::VerticalAccuracy</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The accuracy of the provided altitude value, in metres.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoPositionInfo"></a>QGeoPositionInfo::QGeoPositionInfo ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPositionInfo"></a>QGeoPositionInfo::QGeoPositionInfo ()</h3>
 <p>Creates an invalid <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
 <p>See also <a href="qgeopositioninfo.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const QDateTime &amp; <i>timestamp</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPositionInfo-2"></a>QGeoPositionInfo::QGeoPositionInfo ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const QDateTime &amp; <i>timestamp</i> )</h3>
 <p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> for the given <i>coordinate</i> and <i>timestamp</i>.</p>
-<h3 class="fn"><a name="QGeoPositionInfo-3"></a>QGeoPositionInfo::QGeoPositionInfo ( const QGeoPositionInfo &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPositionInfo-3"></a>QGeoPositionInfo::QGeoPositionInfo ( const QGeoPositionInfo &amp; <i>other</i> )</h3>
 <p>Creates a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> with the values of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoPositionInfo"></a>QGeoPositionInfo::~QGeoPositionInfo ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoPositionInfo"></a>QGeoPositionInfo::~QGeoPositionInfo ()</h3>
 <p>Destroys a <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
-<h3 class="fn"><a name="attribute"></a>qreal QGeoPositionInfo::attribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attribute"></a>qreal QGeoPositionInfo::attribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3>
 <p>Returns the value of the specified <i>attribute</i> as a qreal value.</p>
 <p>Returns -1 if the value has not been set, although this may also be a legitimate value for some attributes.</p>
 <p>The function <a href="qgeopositioninfo.html#hasAttribute">hasAttribute</a>() should be used to determine whether or not a value has been set for an attribute.</p>
 <p>See also <a href="qgeopositioninfo.html#hasAttribute">hasAttribute</a>() and <a href="qgeopositioninfo.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoPositionInfo::coordinate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoPositionInfo::coordinate () const</h3>
 <p>Returns the coordinate for this position.</p>
 <p>Returns an invalid coordinate if no coordinate has been set.</p>
 <p>See also <a href="qgeopositioninfo.html#setCoordinate">setCoordinate</a>().</p>
-<h3 class="fn"><a name="hasAttribute"></a>bool QGeoPositionInfo::hasAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasAttribute"></a>bool QGeoPositionInfo::hasAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3>
 <p>Returns true if the specified <i>attribute</i> is present for this <a href="qgeopositioninfo.html">QGeoPositionInfo</a> object.</p>
-<h3 class="fn"><a name="isValid"></a>bool QGeoPositionInfo::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QGeoPositionInfo::isValid () const</h3>
 <p>Returns true if the <a href="qgeopositioninfo.html#timestamp">timestamp</a>() and <a href="qgeopositioninfo.html#coordinate">coordinate</a>() values are both valid.</p>
 <p>See also <a href="qgeocoordinate.html#isValid">QGeoCoordinate::isValid</a>() and QDateTime::isValid().</p>
-<h3 class="fn"><a name="removeAttribute"></a>void QGeoPositionInfo::removeAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeAttribute"></a>void QGeoPositionInfo::removeAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i> )</h3>
 <p>Removes the specified <i>attribute</i> and its value.</p>
-<h3 class="fn"><a name="setAttribute"></a>void QGeoPositionInfo::setAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i>, qreal <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAttribute"></a>void QGeoPositionInfo::setAttribute ( <a href="qgeopositioninfo.html#Attribute-enum">Attribute</a> <i>attribute</i>, qreal <i>value</i> )</h3>
 <p>Sets the value for <i>attribute</i> to <i>value</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#attribute">attribute</a>().</p>
-<h3 class="fn"><a name="setCoordinate"></a>void QGeoPositionInfo::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCoordinate"></a>void QGeoPositionInfo::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
 <p>Sets the coordinate for this position to <i>coordinate</i>.</p>
 <p>See also <a href="qgeopositioninfo.html#coordinate">coordinate</a>().</p>
-<h3 class="fn"><a name="setTimestamp"></a>void QGeoPositionInfo::setTimestamp ( const QDateTime &amp; <i>timestamp</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTimestamp"></a>void QGeoPositionInfo::setTimestamp ( const QDateTime &amp; <i>timestamp</i> )</h3>
 <p>Sets the date and time at which this position was reported to <i>timestamp</i>.</p>
 <p>The <i>timestamp</i> must be in UTC time.</p>
 <p>See also <a href="qgeopositioninfo.html#timestamp">timestamp</a>().</p>
-<h3 class="fn"><a name="timestamp"></a>QDateTime QGeoPositionInfo::timestamp () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="timestamp"></a>QDateTime QGeoPositionInfo::timestamp () const</h3>
 <p>Returns the date and time at which this position was reported, in UTC time.</p>
 <p>Returns an invalid QDateTime if no date/time value has been set.</p>
 <p>See also <a href="qgeopositioninfo.html#setTimestamp">setTimestamp</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoPositionInfo::operator!= ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoPositionInfo::operator!= ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if any of this object's values are not the same as those of <i>other</i>.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoPositionInfo &amp; QGeoPositionInfo::operator= ( const QGeoPositionInfo &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoPositionInfo &amp; QGeoPositionInfo::operator= ( const QGeoPositionInfo &amp; <i>other</i> )</h3>
 <p>Assigns the values from <i>other</i> to this <a href="qgeopositioninfo.html">QGeoPositionInfo</a>.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoPositionInfo::operator== ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoPositionInfo::operator== ( const QGeoPositionInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if all of this object's values are the same as those of <i>other</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -235,15 +240,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

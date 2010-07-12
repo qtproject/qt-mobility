@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -140,7 +140,8 @@
 <ul>
 <li><a href="qmetadatawritercontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#dtor.QMetaDataWriterControl">~QMetaDataWriterControl</a></b> ()</td></tr>
@@ -153,24 +154,28 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#setMetaData">setMetaData</a></b> ( QtMultimediaKit::MetaData <i>key</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#metaDataAvailableChanged">metaDataAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#metaDataChanged">metaDataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#writableChanged">writableChanged</a></b> ( bool <i>writable</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#QMetaDataWriterControl">QMetaDataWriterControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmetadatawritercontrol.html#QMetaDataWriterControl_iid">QMetaDataWriterControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMetaDataWriterControl class provides write access to the meta-data of a <a href="qmediaservice.html">QMediaService</a>'s media.</p>
@@ -179,46 +184,48 @@
 <p>The interface name of QMetaDataWriterControl is <tt>com.nokia.Qt.QMetaDataWriterControl/1.0</tt> as defined in <a href="qmetadatawritercontrol.html#QMetaDataWriterControl_iid">QMetaDataWriterControl_iid</a>.</p>
 </div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qmediaobject.html">QMediaObject</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMetaDataWriterControl"></a>QMetaDataWriterControl::QMetaDataWriterControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMetaDataWriterControl"></a>QMetaDataWriterControl::QMetaDataWriterControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Construct a <a href="qmetadatawritercontrol.html">QMetaDataWriterControl</a> with <i>parent</i>. This class is meant as a base class for service specific meta data providers so this constructor is protected.</p>
-<h3 class="fn"><a name="dtor.QMetaDataWriterControl"></a>QMetaDataWriterControl::~QMetaDataWriterControl ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMetaDataWriterControl"></a>QMetaDataWriterControl::~QMetaDataWriterControl ()</h3>
 <p>Destroy the meta-data writer control.</p>
-<h3 class="fn"><a name="availableExtendedMetaData"></a>QStringList QMetaDataWriterControl::availableExtendedMetaData () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableExtendedMetaData"></a>QStringList QMetaDataWriterControl::availableExtendedMetaData () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of keys there is extended meta-data available for.</p>
-<h3 class="fn"><a name="availableMetaData"></a>QList&lt;QtMultimediaKit::MetaData&gt; QMetaDataWriterControl::availableMetaData () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableMetaData"></a>QList&lt;QtMultimediaKit::MetaData&gt; QMetaDataWriterControl::availableMetaData () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of keys there is meta-data available for.</p>
-<h3 class="fn"><a name="extendedMetaData"></a>QVariant QMetaDataWriterControl::extendedMetaData ( const QString &amp; <i>key</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="extendedMetaData"></a>QVariant QMetaDataWriterControl::extendedMetaData ( const QString &amp; <i>key</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the meta-data for an abitrary string <i>key</i>.</p>
 <p>The valid selection of keys for extended meta-data is determined by the provider and the meaning and type may differ between providers.</p>
 <p>See also <a href="qmetadatawritercontrol.html#setExtendedMetaData">setExtendedMetaData</a>().</p>
-<h3 class="fn"><a name="isMetaDataAvailable"></a>bool QMetaDataWriterControl::isMetaDataAvailable () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isMetaDataAvailable"></a>bool QMetaDataWriterControl::isMetaDataAvailable () const<tt> [pure virtual]</tt></h3>
 <p>Identifies if meta-data is available from a media service.</p>
 <p>Returns true if the meta-data is available and false otherwise.</p>
-<h3 class="fn"><a name="isWritable"></a>bool QMetaDataWriterControl::isWritable () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isWritable"></a>bool QMetaDataWriterControl::isWritable () const<tt> [pure virtual]</tt></h3>
 <p>Identifies if a media service's meta-data can be edited.</p>
 <p>Returns true if the meta-data is writable and false otherwise.</p>
-<h3 class="fn"><a name="metaData"></a>QVariant QMetaDataWriterControl::metaData ( QtMultimediaKit::MetaData <i>key</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="metaData"></a>QVariant QMetaDataWriterControl::metaData ( QtMultimediaKit::MetaData <i>key</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the meta-data for the given <i>key</i>.</p>
 <p>See also <a href="qmetadatawritercontrol.html#setMetaData">setMetaData</a>().</p>
-<h3 class="fn"><a name="metaDataAvailableChanged"></a>void QMetaDataWriterControl::metaDataAvailableChanged ( bool <i>available</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="metaDataAvailableChanged"></a>void QMetaDataWriterControl::metaDataAvailableChanged ( bool <i>available</i> )<tt> [signal]</tt></h3>
 <p>Signal the availability of meta-data has changed, <i>available</i> will be true if the multimedia object has meta-data.</p>
-<h3 class="fn"><a name="metaDataChanged"></a>void QMetaDataWriterControl::metaDataChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="metaDataChanged"></a>void QMetaDataWriterControl::metaDataChanged ()<tt> [signal]</tt></h3>
 <p>Signal the changes of meta-data.</p>
-<h3 class="fn"><a name="setExtendedMetaData"></a>void QMetaDataWriterControl::setExtendedMetaData ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setExtendedMetaData"></a>void QMetaDataWriterControl::setExtendedMetaData ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3>
 <p>Change the value of the meta-data element with an abitrary string <i>key</i> to <i>value</i>.</p>
 <p>The valid selection of keys for extended meta-data is determined by the provider and the meaning and type may differ between providers.</p>
 <p>See also <a href="qmetadatawritercontrol.html#extendedMetaData">extendedMetaData</a>().</p>
-<h3 class="fn"><a name="setMetaData"></a>void QMetaDataWriterControl::setMetaData ( QtMultimediaKit::MetaData <i>key</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMetaData"></a>void QMetaDataWriterControl::setMetaData ( QtMultimediaKit::MetaData <i>key</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>value</i> of the meta-data element with the given <i>key</i>.</p>
 <p>See also <a href="qmetadatawritercontrol.html#metaData">metaData</a>().</p>
-<h3 class="fn"><a name="writableChanged"></a>void QMetaDataWriterControl::writableChanged ( bool <i>writable</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="writableChanged"></a>void QMetaDataWriterControl::writableChanged ( bool <i>writable</i> )<tt> [signal]</tt></h3>
 <p>Signal a change in the writable status of meta-data, <i>writable</i> will be true if meta-data elements can be added or adjusted.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QMetaDataWriterControl_iid"></a>QMetaDataWriterControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMetaDataWriterControl_iid"></a>QMetaDataWriterControl_iid</h3>
 <p><tt>com.nokia.Qt.QMetaDataWriterControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qmetadatawritercontrol.html">QMetaDataWriterControl</a> class.</p>
 </div>
@@ -228,15 +235,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

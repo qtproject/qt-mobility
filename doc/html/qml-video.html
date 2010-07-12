@@ -124,8 +124,9 @@
 <h1 class="title">QML Video Element</h1>
 <span class="subtitle"></span>
 <p>The Video element allows you to add videos to a scene. <a href="#details">More...</a></p>
-<a name="Propertiesx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="Propertiesx"></a>
 <h2>Properties</h2>
+<table class="qmlsummary">
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-video.html#albumArtist-prop">albumArtist</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#albumTitle-prop">albumTitle</a></b></b> : variant</li>
@@ -158,6 +159,7 @@
 <li class="fn"><b><b><a href="qml-video.html#keywords-prop">keywords</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#language-prop">language</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#leadPerformer-prop">leadPerformer</a></b></b> : variant</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><b><a href="qml-video.html#lyrics-prop">lyrics</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#mediaType-prop">mediaType</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#mood-prop">mood</a></b></b> : variant</li>
@@ -190,7 +192,9 @@
 <li class="fn"><b><b><a href="qml-video.html#writer-prop">writer</a></b></b> : variant</li>
 <li class="fn"><b><b><a href="qml-video.html#year-prop">year</a></b></b> : variant</li>
 </ul>
-<a name="Signalsx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+</td></tr>
+</table>
+<a name="Signalsx"></a>
 <h2>Signals</h2>
 <tr class="even topAlign"><ul>
 <li class="fn"><b><b><a href="qml-video.html#onBuffered-signal">onBuffered</a></b></b></li>
@@ -204,14 +208,14 @@
 <li class="fn"><b><b><a href="qml-video.html#onStarted-signal">onStarted</a></b></b></li>
 <li class="fn"><b><b><a href="qml-video.html#onStopped-signal">onStopped</a></b></b></li>
 </ul>
-<a name="Methods"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="Methods"></a>
 <h2>Methods</h2>
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-video.html#pause-method">pause</a></b></b></li>
 <li class="fn"><b><b><a href="qml-video.html#play-method">play</a></b></b></li>
 <li class="fn"><b><b><a href="qml-video.html#stop-method">stop</a></b></b></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
 <h2>Detailed Description</h2>
 <p>This element is part of the <b>Qt.multimedia 1.0</b> module.</p>
 <pre class="highlightedCode brush: cpp"> import Qt 4.7
@@ -238,6 +242,7 @@
 <p>The Video item supports untransformed, stretched, and uniformly scaled video presentation. For a description of stretched uniformly scaled presentation, see the <a href="qml-video.html#fillMode-prop">fillMode</a> property description.</p>
 <p>The Video item is only visible when the <a href="qml-video.html#hasVideo-prop">hasVideo</a> property is true and the video is playing.</p>
 <p>See also <a href="qml-audio.html">Audio</a>.</p>
+<hr />
 <h2>Property Documentation</h2>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="albumArtist-prop"></a>albumArtist : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the name of the principal artist of the album the media belongs to.</p>
 <p>See also QtMultimediaKit::AlbumArtist.</p>
@@ -260,7 +265,7 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="averageLevel-prop"></a>averageLevel : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the average volume level of the media.</p>
 <p>See also QtMultimediaKit::AverageLevel.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="bufferProgress-prop"></a><span class="qmlreadonly">read-only</span>bufferProgress : real</td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="bufferProgress-prop"></a>bufferProgress : real</td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="category-prop"></a>category : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the category of the media</p>
 <p>See also QtMultimediaKit::Category.</p>
@@ -301,10 +306,10 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="director-prop"></a>director : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the director of the media.</p>
 <p>See also QtMultimediaKit::Director.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="duration-prop"></a><span class="qmlreadonly">read-only</span>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the media in milliseconds.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="duration-prop"></a>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the media in milliseconds.</p>
 <p>If the media doesn't have a fixed duration (a live stream for example) this will be 0.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="error-prop"></a><span class="qmlreadonly">read-only</span>error : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the video. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="error-prop"></a>error : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the video. It can be one of:</p>
 <ul>
 <li>NoError - there is no current error.</li>
 <li>ResourceError - the video cannot be played due to a problem allocating resources.</li>
@@ -314,7 +319,7 @@
 <li>ServiceMissing - the video cannot be played because the media service could not be instantiated.</li>
 </ul>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="errorString-prop"></a><span class="qmlreadonly">read-only</span>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="errorString-prop"></a>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="fillMode-prop"></a>fillMode : enumeration</td></tr></table></div><div class="qmldoc"><p>Set this property to define how the video is scaled to fit the target area.</p>
 <ul>
@@ -327,9 +332,9 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="genre-prop"></a>genre : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the genre of the media.</p>
 <p>See also QtMultimediaKit::Genre.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="hasAudio-prop"></a><span class="qmlreadonly">read-only</span>hasAudio : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media contains audio.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="hasAudio-prop"></a>hasAudio : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media contains audio.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="hasVideo-prop"></a><span class="qmlreadonly">read-only</span>hasVideo : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media contains video.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="hasVideo-prop"></a>hasVideo : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media contains video.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="keywords-prop"></a>keywords : variant</td></tr></table></div><div class="qmldoc"><p>This property holds a list of keywords describing the media.</p>
 <p>See also QtMultimediaKit::Keywords.</p>
@@ -385,7 +390,7 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="sampleRate-prop"></a>sampleRate : variant</td></tr></table></div><div class="qmldoc"><p>This property holds the sample rate of the media's audio stream in hertz.</p>
 <p>See also QtMultimediaKit::SampleRate.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="seekable-prop"></a><span class="qmlreadonly">read-only</span>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the video can be changed.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="seekable-prop"></a>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the video can be changed.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="size-prop"></a>size : variant</td></tr></table></div><div class="qmldoc"><p>This property property holds the size of the media in bytes.</p>
 <p>See also QtMultimediaKit::Size.</p>
@@ -476,15 +481,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

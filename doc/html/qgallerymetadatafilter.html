@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -134,7 +134,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryMetaDataFilter&gt;</pre><ul>
 <li><a href="qgallerymetadatafilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#QGalleryMetaDataFilter">QGalleryMetaDataFilter</a></b> ()</td></tr>
@@ -155,57 +156,59 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#operator-not">operator!</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgallerymetadatafilter.html#operator-eq">operator=</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryMetaDataFilter class provides a filter which accepts items with meta-data properties matching a specific value.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ()</h3>
 <p>Constructs an empty meta-data filter.</p>
-<h3 class="fn"><a name="QGalleryMetaDataFilter-2"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const QString &amp; <i>property</i>, const QVariant &amp; <i>value</i>, <a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> <i>comparison</i> = QGalleryFilter::Equals, Qt::CaseSensitivity <i>caseSensitivity</i> = Qt::CaseSensitive )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryMetaDataFilter-2"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const QString &amp; <i>property</i>, const QVariant &amp; <i>value</i>, <a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> <i>comparison</i> = QGalleryFilter::Equals, Qt::CaseSensitivity <i>caseSensitivity</i> = Qt::CaseSensitive )</h3>
 <p>Constructs a meta-data filter which tests if a meta-data <i>property</i> matches a <i>value</i> according to a <i>comparison</i> operator.</p>
 <p>The <i>caseSensitivity</i> determines whether or not a case-sensitive comparison is made.</p>
-<h3 class="fn"><a name="QGalleryMetaDataFilter-3"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryMetaDataFilter-3"></a>QGalleryMetaDataFilter::QGalleryMetaDataFilter ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a meta-data <i>filter</i>.</p>
-<h3 class="fn"><a name="dtor.QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::~QGalleryMetaDataFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryMetaDataFilter"></a>QGalleryMetaDataFilter::~QGalleryMetaDataFilter ()</h3>
 <p>Destroys a meta-data filter.</p>
-<h3 class="fn"><a name="caseSensitivity"></a>Qt::CaseSensitivity QGalleryMetaDataFilter::caseSensitivity () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="caseSensitivity"></a>Qt::CaseSensitivity QGalleryMetaDataFilter::caseSensitivity () const</h3>
 <p>Returns whether a filter performs case-sensitive comparisons.</p>
 <p>See also <a href="qgallerymetadatafilter.html#setCaseSensitivity">setCaseSensitivity</a>().</p>
-<h3 class="fn"><a name="comparator"></a><a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> QGalleryMetaDataFilter::comparator () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="comparator"></a><a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> QGalleryMetaDataFilter::comparator () const</h3>
 <p>Returns the comparator used by a meta-data filter.</p>
 <p>See also <a href="qgallerymetadatafilter.html#setComparator">setComparator</a>().</p>
-<h3 class="fn"><a name="isInverted"></a>bool QGalleryMetaDataFilter::isInverted () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isInverted"></a>bool QGalleryMetaDataFilter::isInverted () const</h3>
 <p>Returns whether the result of a meta-data filter should be inverted.</p>
-<h3 class="fn"><a name="isValid"></a>bool QGalleryMetaDataFilter::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QGalleryMetaDataFilter::isValid () const</h3>
 <p>Returns true if the filter is a valid meta-data filter.</p>
 <p>An invalid filter can be obtained by casting a non <a href="qgalleryfilter.html#Type-enum">QGalleryFilter::MetaData</a> type <a href="qgalleryfilter.html">QGalleryFilter</a> to <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>.</p>
-<h3 class="fn"><a name="propertyName"></a>QString QGalleryMetaDataFilter::propertyName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="propertyName"></a>QString QGalleryMetaDataFilter::propertyName () const</h3>
 <p>Returns the name of the property the value of a meta-data filter is compared against.</p>
 <p>See also <a href="qgallerymetadatafilter.html#setPropertyName">setPropertyName</a>().</p>
-<h3 class="fn"><a name="setCaseSensitivity"></a>void QGalleryMetaDataFilter::setCaseSensitivity ( Qt::CaseSensitivity <i>sensitivity</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCaseSensitivity"></a>void QGalleryMetaDataFilter::setCaseSensitivity ( Qt::CaseSensitivity <i>sensitivity</i> )</h3>
 <p>Sets the case-<i>sensitivity</i> of a meta-data filter.</p>
 <p>See also <a href="qgallerymetadatafilter.html#caseSensitivity">caseSensitivity</a>().</p>
-<h3 class="fn"><a name="setComparator"></a>void QGalleryMetaDataFilter::setComparator ( <a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> <i>comparator</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setComparator"></a>void QGalleryMetaDataFilter::setComparator ( <a href="qgalleryfilter.html#Comparator-enum">QGalleryFilter::Comparator</a> <i>comparator</i> )</h3>
 <p>Sets the <i>comparator</i> used by a meta-data filter.</p>
 <p>See also <a href="qgallerymetadatafilter.html#comparator">comparator</a>().</p>
-<h3 class="fn"><a name="setInverted"></a>void QGalleryMetaDataFilter::setInverted ( bool <i>inverted</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInverted"></a>void QGalleryMetaDataFilter::setInverted ( bool <i>inverted</i> )</h3>
 <p>Sets whether the result of a meta-data filter should be <i>inverted</i>.</p>
 <p>See also <a href="qgallerymetadatafilter.html#isInverted">isInverted</a>().</p>
-<h3 class="fn"><a name="setPropertyName"></a>void QGalleryMetaDataFilter::setPropertyName ( const QString &amp; <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPropertyName"></a>void QGalleryMetaDataFilter::setPropertyName ( const QString &amp; <i>name</i> )</h3>
 <p>Sets the <i>name</i> of the property the value of meta-data filter is compared against.</p>
 <p>See also <a href="qgallerymetadatafilter.html#propertyName">propertyName</a>().</p>
-<h3 class="fn"><a name="setValue"></a>void QGalleryMetaDataFilter::setValue ( const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue"></a>void QGalleryMetaDataFilter::setValue ( const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the <i>value</i> a property is expected to match for a meta-data filter to pass.</p>
 <p>See also <a href="qgallerymetadatafilter.html#value">value</a>().</p>
-<h3 class="fn"><a name="value"></a>QVariant QGalleryMetaDataFilter::value () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QGalleryMetaDataFilter::value () const</h3>
 <p>Returns the value a property is expected to match for a meta-data filter to pass.</p>
 <p>See also <a href="qgallerymetadatafilter.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="operator-not"></a>QGalleryMetaDataFilter QGalleryMetaDataFilter::operator! () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not"></a>QGalleryMetaDataFilter QGalleryMetaDataFilter::operator! () const</h3>
 <p>Returns a meta-data filter which tests the inverse of an existing filter.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGalleryMetaDataFilter &amp; QGalleryMetaDataFilter::operator= ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryMetaDataFilter &amp; QGalleryMetaDataFilter::operator= ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another meta-data filter.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -214,15 +217,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

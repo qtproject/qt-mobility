@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkCategory&gt;</pre><ul>
 <li><a href="qlandmarkcategory-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategory.html#QLandmarkCategory">QLandmarkCategory</a></b> ()</td></tr>
@@ -157,7 +158,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkCategory &amp; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategory.html#operator-eq">operator=</a></b> ( const QLandmarkCategory &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategory.html#operator-eq-eq">operator==</a></b> ( const QLandmarkCategory &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkCategory class designates a grouping of landmarks of similar type.</p>
@@ -166,58 +168,59 @@
 <p>Some categories may be designated as read-only. Typically these are intended to be &quot;global&quot; categories that are the same across landmark stores. In practicality, not all landmark stores may necessarily have the same set of global categories. Localization is only possible for categories that are read-only. If the landmark store supports localization, the locale may be set through a <a href="qlandmarkmanager.html">QLandmarkManager</a>'s parameters and whenever categories are retrieved, the translated names are used. The <tt>QLandmarkManager::isReadOnly(const QLandmarkCategoryId &amp;)</tt> function may be used to determine if a category is read-only.</p>
 <p>A QLandmarkCategory instance is an in memory representation and may not reflect the state of the category found in persistent storage, until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(e.g&#x2e;<a href="qlandmarkmanager.html#saveCategory">saveCategory()</a>, <a href="qlandmarkmanager.html#removeCategory">removeCategory()</a>).</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkCategory"></a>QLandmarkCategory::QLandmarkCategory ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkCategory"></a>QLandmarkCategory::QLandmarkCategory ()</h3>
 <p>Constructs an empty category.</p>
 <p>A new category will be assigned an invalid <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>.</p>
-<h3 class="fn"><a name="QLandmarkCategory-2"></a>QLandmarkCategory::QLandmarkCategory ( const QLandmarkCategory &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkCategory-2"></a>QLandmarkCategory::QLandmarkCategory ( const QLandmarkCategory &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkCategory"></a>QLandmarkCategory::~QLandmarkCategory ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkCategory"></a>QLandmarkCategory::~QLandmarkCategory ()</h3>
 <p>Destroys the category.</p>
-<h3 class="fn"><a name="attribute"></a>QVariant QLandmarkCategory::attribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>defaultValue</i> = QVariant() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attribute"></a>QVariant QLandmarkCategory::attribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>defaultValue</i> = QVariant() ) const</h3>
 <p>Returns the value of the attribute corresponding to <i>key</i>. If the attribute does not exist, returns <i>defaultValue</i>.</p>
 <p>If no default value is specified, a default QVariant is returned.</p>
 <p>See also <a href="qlandmarkcategory.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmarkCategory::attributeKeys () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmarkCategory::attributeKeys () const</h3>
 <p>Returns a list of attribute keys.</p>
 <p>See also <a href="qlandmarkcategory.html#attribute">attribute</a>() and <a href="qlandmarkcategory.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="categoryId"></a><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> QLandmarkCategory::categoryId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="categoryId"></a><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> QLandmarkCategory::categoryId () const</h3>
 <p>Returns the identifier of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setCategoryId">setCategoryId</a>().</p>
-<h3 class="fn"><a name="clear"></a>void QLandmarkCategory::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QLandmarkCategory::clear ()</h3>
 <p>Clears all the data fields of the category.</p>
-<h3 class="fn"><a name="description"></a>QString QLandmarkCategory::description () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="description"></a>QString QLandmarkCategory::description () const</h3>
 <p>Returns the description of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setDescription">setDescription</a>().</p>
-<h3 class="fn"><a name="iconUrl"></a>QUrl QLandmarkCategory::iconUrl () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="iconUrl"></a>QUrl QLandmarkCategory::iconUrl () const</h3>
 <p>Returns the url of the category's icon.</p>
 <p>See also <a href="qlandmarkcategory.html#setIconUrl">setIconUrl</a>().</p>
-<h3 class="fn"><a name="name"></a>QString QLandmarkCategory::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QLandmarkCategory::name () const</h3>
 <p>Returns the name of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setName">setName</a>().</p>
-<h3 class="fn"><a name="setAttribute"></a>void QLandmarkCategory::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAttribute"></a>void QLandmarkCategory::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the <i>value</i> of the attribute corresponding to <i>key</i>.</p>
 <p>See also <a href="qlandmarkcategory.html#attribute">attribute</a>().</p>
-<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategory::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategory::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>id</i> )</h3>
 <p>Sets the <i>id</i> of the category.</p>
 <p>Note that saving a new category using a <a href="qlandmarkmanager.html">QLandmarkManager</a> will automatically assign the category a valid identifier.</p>
 <p>See also <a href="qlandmarkcategory.html#categoryId">categoryId</a>().</p>
-<h3 class="fn"><a name="setDescription"></a>void QLandmarkCategory::setDescription ( const QString &amp; <i>description</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDescription"></a>void QLandmarkCategory::setDescription ( const QString &amp; <i>description</i> )</h3>
 <p>Sets the <i>description</i> of the category</p>
 <p>See also <a href="qlandmarkcategory.html#description">description</a>().</p>
-<h3 class="fn"><a name="setIconUrl"></a>void QLandmarkCategory::setIconUrl ( const QUrl &amp; <i>url</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setIconUrl"></a>void QLandmarkCategory::setIconUrl ( const QUrl &amp; <i>url</i> )</h3>
 <p>Sets the <i>url</i> of the category's icon</p>
 <p>See also <a href="qlandmarkcategory.html#iconUrl">iconUrl</a>().</p>
-<h3 class="fn"><a name="setName"></a>void QLandmarkCategory::setName ( const QString &amp; <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setName"></a>void QLandmarkCategory::setName ( const QString &amp; <i>name</i> )</h3>
 <p>Sets the <i>name</i> of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#name">name</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkCategory::operator!= ( const QLandmarkCategory &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkCategory::operator!= ( const QLandmarkCategory &amp; <i>other</i> ) const</h3>
 <p>Returns true if this category is not equal to <i>other</i>, otherwise returns false.</p>
 <p>See also <a href="qlandmarkcategory.html#operator-eq-eq">operator==</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QLandmarkCategory &amp; QLandmarkCategory::operator= ( const QLandmarkCategory &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QLandmarkCategory &amp; QLandmarkCategory::operator= ( const QLandmarkCategory &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this category and returns a reference to this category.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkCategory::operator== ( const QLandmarkCategory &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkCategory::operator== ( const QLandmarkCategory &amp; <i>other</i> ) const</h3>
 <p>Returns true if this category is equal to <i>other</i>, otherwise returns false.</p>
 <p>See also <a href="qlandmarkcategory.html#operator-not-eq">operator!=</a>().</p>
 </div>
@@ -227,15 +230,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

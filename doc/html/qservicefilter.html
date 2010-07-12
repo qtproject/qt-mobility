@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -135,13 +135,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QServiceFilter&gt;</pre><ul>
 <li><a href="qservicefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a></b> { MatchMinimum, MatchLoadable }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</a></b> { ExactVersionMatch, MinimumVersionMatch }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qservicefilter.html#QServiceFilter">QServiceFilter</a></b> ()</td></tr>
@@ -164,16 +166,18 @@
 <tr><td class="memItemLeft rightAlign topAlign"> VersionMatchRule </td><td class="memItemRight bottomAlign"><b><a href="qservicefilter.html#versionMatchRule">versionMatchRule</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QServiceFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qservicefilter.html#operator-eq">operator=</a></b> ( const QServiceFilter &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceFilter class defines criteria for defining a sub-set of all available services.</p>
 <p>A QServiceFilter can be used to constrain the number of services when searching for services. Only those services that match all filter criteria are returned by <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>().</p>
 </div>
 <p>See also <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicemanager.html">QServiceManager</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="CapabilityMatchRule-enum"></a>enum QServiceFilter::CapabilityMatchRule</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="CapabilityMatchRule-enum"></a>enum QServiceFilter::CapabilityMatchRule</h3>
 <p>This enum describes the capability/permission matching rules. Some platforms restrict what services clients can access using &quot;capabilities&quot; or permissions. Services with more capabilities require more privileged clients. Platforms without capabilities may ignore this type of matching rule as the default behavior is to ignore any capability restrictions.</p>
 <p>This is a brief example. Assuming that the system knows the services S1 - S6 which require capabilities as stated below:</p>
 <table class="generic">
@@ -199,68 +203,69 @@
 <tr><td  class="topAlign"><tt>QServiceFilter::MatchMinimum</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter matches any service that requires at least the given filter capabilities. This may mean that the returned services may require more capabilities than the specified ones. Such a search is equivalent to a wildcard match if the passed filter's capability list is empty. In mathematical set notation this rule is equivalent to Cap<sub>(Filter)</sub> \ Cap<sub>(Service)</sub> = {}. This is the default matching rule.</td></tr>
 <tr><td  class="topAlign"><tt>QServiceFilter::MatchLoadable</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The filter matches any service that could be loaded by the client. Using this matching rule guarantees that the returned services do not require more capabilites than specified by this rule. It includes services with no capability requirements. If this rule is provided alongside an empty capability search list the returned services do not require any capabilities and thus can be accessed by any client. The equivalent set notation is Cap<sub>(Service)</sub> \ Cap<sub>(Filter)</sub> = {}.</td></tr>
 </table>
-<h3 class="fn"><a name="VersionMatchRule-enum"></a>enum QServiceFilter::VersionMatchRule</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="VersionMatchRule-enum"></a>enum QServiceFilter::VersionMatchRule</h3>
 <p>This enum describes how interface version matching is performed.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QServiceFilter::ExactVersionMatch</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter matches any interface implementation that implements the exact version provided.</td></tr>
 <tr><td  class="topAlign"><tt>QServiceFilter::MinimumVersionMatch</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The filter matches any interface implementation that implements either the given major/minor version or any subsequent version.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QServiceFilter"></a>QServiceFilter::QServiceFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QServiceFilter"></a>QServiceFilter::QServiceFilter ()</h3>
 <p>Creates a new filter object that matches all service implementations.</p>
-<h3 class="fn"><a name="QServiceFilter-2"></a>QServiceFilter::QServiceFilter ( const QServiceFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QServiceFilter-2"></a>QServiceFilter::QServiceFilter ( const QServiceFilter &amp; <i>other</i> )</h3>
 <p>Creates a copy of <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i>.</p>
-<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
-<h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
-<h3 class="fn"><a name="capabilities"></a>QStringList QServiceFilter::capabilities () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="capabilities"></a>QStringList QServiceFilter::capabilities () const</h3>
 <p>Returns the list of capabilities which are used to limit services searches.</p>
 <p>The filter matches any services that requires the given or less capabilities and thus enabling clients to query for services for which they have the required capabilties.</p>
 <p>See also <a href="qservicefilter.html#setCapabilities">setCapabilities</a>(), <a href="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</a>(), and QAbstractSecuritySession.</p>
-<h3 class="fn"><a name="capabilityMatchRule"></a><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a> QServiceFilter::capabilityMatchRule () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="capabilityMatchRule"></a><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a> QServiceFilter::capabilityMatchRule () const</h3>
 <p>Returns the capability matching rule for this filter.</p>
 <p>See also <a href="qservicefilter.html#setCapabilities">setCapabilities</a>() and <a href="qservicefilter.html#capabilities">capabilities</a>().</p>
-<h3 class="fn"><a name="clearCustomAttribute"></a>void QServiceFilter::clearCustomAttribute ( const QString &amp; <i>key</i> = QString() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearCustomAttribute"></a>void QServiceFilter::clearCustomAttribute ( const QString &amp; <i>key</i> = QString() )</h3>
 <p>Clears the custom attribute <i>key</i> from the filter's set of constraints. If <i>key</i> is empty all custom attributes are cleared.</p>
 <p>See also <a href="qservicefilter.html#setCustomAttribute">setCustomAttribute</a>().</p>
-<h3 class="fn"><a name="customAttribute"></a>QString QServiceFilter::customAttribute ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="customAttribute"></a>QString QServiceFilter::customAttribute ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value for the custom attribute <i>key</i>; otherwise returns a null string.</p>
 <p>See also <a href="qservicefilter.html#setCustomAttribute">setCustomAttribute</a>() and <a href="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</a>().</p>
-<h3 class="fn"><a name="customAttributes"></a>QStringList QServiceFilter::customAttributes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="customAttributes"></a>QStringList QServiceFilter::customAttributes () const</h3>
 <p>Returns the list of custom keys which have been added to the filter.</p>
-<h3 class="fn"><a name="interfaceName"></a>QString QServiceFilter::interfaceName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="interfaceName"></a>QString QServiceFilter::interfaceName () const</h3>
 <p>Returns the interface name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="majorVersion"></a>int QServiceFilter::majorVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="majorVersion"></a>int QServiceFilter::majorVersion () const</h3>
 <p>Returns the major interface version for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="minorVersion"></a>int QServiceFilter::minorVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minorVersion"></a>int QServiceFilter::minorVersion () const</h3>
 <p>Returns the minor interface version for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="serviceName"></a>QString QServiceFilter::serviceName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="serviceName"></a>QString QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
-<h3 class="fn"><a name="setCapabilities"></a>void QServiceFilter::setCapabilities ( <a href="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::CapabilityMatchRule</a> <i>rule</i>, const QStringList &amp; <i>capabilities</i> = QStringList() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCapabilities"></a>void QServiceFilter::setCapabilities ( <a href="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::CapabilityMatchRule</a> <i>rule</i>, const QStringList &amp; <i>capabilities</i> = QStringList() )</h3>
 <p>Sets the list of <i>capabilities</i> which are used to constrain searches for services. The capabilities are matched according to the given <i>rule</i>.</p>
 <p>See also <a href="qservicefilter.html#capabilities">capabilities</a>() and QAbstractSecuritySession.</p>
-<h3 class="fn"><a name="setCustomAttribute"></a>void QServiceFilter::setCustomAttribute ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCustomAttribute"></a>void QServiceFilter::setCustomAttribute ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</h3>
 <p>The filter only matches implementations which have the custom attribute <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
 <p>See also <a href="qservicefilter.html#customAttribute">customAttribute</a>() and <a href="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</a>().</p>
-<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>
 <p>This method does nothing if <i>version</i> is not a valid version string or if <i>interfaceName</i> is empty.</p>
 <p>A valid version string has the format x.y whereby x and y are positive integer numbers.</p>
-<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const QString &amp; <i>serviceName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const QString &amp; <i>serviceName</i> )</h3>
 <p>The filter only matches implementations which are provided by the service specified by <i>serviceName</i>.</p>
 <p>If the <i>serviceName</i> is empty the filter matches any service.</p>
 <p>See also <a href="qservicefilter.html#serviceName">serviceName</a>().</p>
-<h3 class="fn"><a name="versionMatchRule"></a><a href="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</a> QServiceFilter::versionMatchRule () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="versionMatchRule"></a><a href="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</a> QServiceFilter::versionMatchRule () const</h3>
 <p>Returns the version match rule for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QServiceFilter &amp; QServiceFilter::operator= ( const QServiceFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QServiceFilter &amp; QServiceFilter::operator= ( const QServiceFilter &amp; <i>other</i> )</h3>
 <p>Copies the content of the <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i> into this one.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -269,15 +274,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

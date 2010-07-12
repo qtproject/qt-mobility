@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QFeedbackFileInterface&gt;</pre><ul>
 <li><a href="qfeedbackfileinterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackfileinterface.html#dtor.QFeedbackFileInterface">~QFeedbackFileInterface</a></b> ()</td></tr>
@@ -146,41 +147,45 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackfileinterface.html#setLoaded">setLoaded</a></b> ( QFeedbackFileEffect * <i>effect</i>, bool <i>value</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QStringList </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackfileinterface.html#supportedMimeTypes">supportedMimeTypes</a></b> () = 0</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QFeedbackFileInterface * </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackfileinterface.html#instance">instance</a></b> ()</td></tr>
 </table>
-<a name="static-protected-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-protected-members"></a>
 <h2>Static Protected Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackfileinterface.html#reportLoadFinished">reportLoadFinished</a></b> ( QFeedbackFileEffect * <i>effect</i>, bool <i>success</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QFeedbackFileInterface class is the base class for objects providing support for effects stored in files.</p>
 <p>They can be of any nature (tactile, audio..&#x2e;)&#x2e; As it is possible to load many different file types using different technologies, all the backend plugins exposing this interface will be loaded at the same time. When loading a file all the backend will be tried in order until one can load the file. It is thus very important that the backends return a load status as soon as possible to not take a too long time to load a file.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QFeedbackFileInterface"></a>QFeedbackFileInterface::~QFeedbackFileInterface ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="effectDuration"></a>int QFeedbackFileInterface::effectDuration ( const <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QFeedbackFileInterface"></a>QFeedbackFileInterface::~QFeedbackFileInterface ()<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="effectDuration"></a>int QFeedbackFileInterface::effectDuration ( const <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3>
 <p>return the duration in msecs of <i>effect</i>. It should return QFileFeedbackEffect::INFINITE in case the duration is infinite or undefined.</p>
-<h3 class="fn"><a name="effectState"></a><a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> QFeedbackFileInterface::effectState ( const <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="effectState"></a><a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> QFeedbackFileInterface::effectState ( const <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3>
 <p>returns the current state of the effect <i>effect</i>.</p>
 <p>See also <a href="qfeedbackfileinterface.html#setEffectState">setEffectState</a>().</p>
-<h3 class="fn"><a name="instance"></a>QFeedbackFileInterface * QFeedbackFileInterface::instance ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instance"></a>QFeedbackFileInterface * QFeedbackFileInterface::instance ()<tt> [static]</tt></h3>
 <p>returns the instance of the object managing theme effects. Even if no backend has been loaded, this will never return a null pointer.</p>
-<h3 class="fn"><a name="reportLoadFinished"></a>void QFeedbackFileInterface::reportLoadFinished ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, bool <i>success</i> )<tt> [static protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="reportLoadFinished"></a>void QFeedbackFileInterface::reportLoadFinished ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, bool <i>success</i> )<tt> [static protected]</tt></h3>
 <p>This is the function the backend should call when it has finished trying to load the effect <i>effect</i>. As loading a file is asynchronous, the backend has to call this function in order for the process to perform smoothly. The success of the operation is indicated by <i>success</i>.</p>
-<h3 class="fn"><a name="setEffectState"></a>void QFeedbackFileInterface::setEffectState ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, <a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> <i>state</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEffectState"></a>void QFeedbackFileInterface::setEffectState ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, <a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> <i>state</i> )<tt> [pure virtual]</tt></h3>
 <p>set the state of <i>effect</i> to <i>state</i>.</p>
 <p>See also <a href="qfeedbackfileinterface.html#effectState">effectState</a>().</p>
-<h3 class="fn"><a name="setLoaded"></a>void QFeedbackFileInterface::setLoaded ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, bool <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLoaded"></a>void QFeedbackFileInterface::setLoaded ( <a href="qfeedbackfileeffect.html">QFeedbackFileEffect</a> * <i>effect</i>, bool <i>value</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the state of the effect <i>effect</i> to be loaded or unloaded. Loading a file is asynchronous. Once the backend know if it has loaded or can't load the plugin, it must call the reportLoadFinished function.</p>
 <p>See also QFeedbackFileInterface::reportLoadFinished(QFeedbackFileEffect* effect, bool success).</p>
-<h3 class="fn"><a name="supportedMimeTypes"></a>QStringList QFeedbackFileInterface::supportedMimeTypes ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedMimeTypes"></a>QStringList QFeedbackFileInterface::supportedMimeTypes ()<tt> [pure virtual]</tt></h3>
 <p>returns a list of supported MIME types.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -189,15 +194,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

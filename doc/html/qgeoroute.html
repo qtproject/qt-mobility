@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoRoute&gt;</pre><ul>
 <li><a href="qgeoroute-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoroute.html#QGeoRoute">QGeoRoute</a></b> ()</td></tr>
@@ -159,7 +160,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeoroute.html#travelTime">travelTime</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoRoute &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeoroute.html#operator-eq">operator=</a></b> ( const QGeoRoute &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoRoute class represents a route between two points.</p>
@@ -168,71 +170,72 @@
 <p>Routing information is normally requested using <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(), which returns a <a href="qgeoroutereply.html">QGeoRouteReply</a> instance. If the operation is completed successfully the routing information can be accessed with <a href="qgeoroutereply.html#routes">QGeoRouteReply::routes</a>()</p>
 </div>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoRoute"></a>QGeoRoute::QGeoRoute ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRoute"></a>QGeoRoute::QGeoRoute ()</h3>
 <p>Constructs a route object.</p>
-<h3 class="fn"><a name="QGeoRoute-2"></a>QGeoRoute::QGeoRoute ( const QGeoRoute &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRoute-2"></a>QGeoRoute::QGeoRoute ( const QGeoRoute &amp; <i>other</i> )</h3>
 <p>Constructs a route object from the contents of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoRoute"></a>QGeoRoute::~QGeoRoute ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoRoute"></a>QGeoRoute::~QGeoRoute ()</h3>
 <p>Destroys this route object.</p>
-<h3 class="fn"><a name="bounds"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoRoute::bounds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bounds"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoRoute::bounds () const</h3>
 <p>Returns a bounding box which encompasses the entire route.</p>
 <p>See also <a href="qgeoroute.html#setBounds">setBounds</a>().</p>
-<h3 class="fn"><a name="distance"></a>qreal QGeoRoute::distance () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="distance"></a>qreal QGeoRoute::distance () const</h3>
 <p>Returns the distance covered by this route, in metres.</p>
 <p>See also <a href="qgeoroute.html#setDistance">setDistance</a>().</p>
-<h3 class="fn"><a name="path"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRoute::path () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="path"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRoute::path () const</h3>
 <p>Returns the geometric shape of the route.</p>
 <p>The coordinates should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
 <p>See also <a href="qgeoroute.html#setPath">setPath</a>().</p>
-<h3 class="fn"><a name="request"></a><a href="qgeorouterequest.html">QGeoRouteRequest</a> QGeoRoute::request () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="request"></a><a href="qgeorouterequest.html">QGeoRouteRequest</a> QGeoRoute::request () const</h3>
 <p>Returns the route request which describes the criteria used in the calculation of this route.</p>
 <p>See also <a href="qgeoroute.html#setRequest">setRequest</a>().</p>
-<h3 class="fn"><a name="routeId"></a>QString QGeoRoute::routeId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="routeId"></a>QString QGeoRoute::routeId () const</h3>
 <p>Returns the ID of this route.</p>
 <p>Service providers which support the updating of routes commonly assign IDs to routes. If this route did not come from such a service provider the function will return an empty string.</p>
 <p>See also <a href="qgeoroute.html#setRouteId">setRouteId</a>().</p>
-<h3 class="fn"><a name="routeSegments"></a>QList&lt;<a href="qgeoroutesegment.html">QGeoRouteSegment</a>&gt; QGeoRoute::routeSegments () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="routeSegments"></a>QList&lt;<a href="qgeoroutesegment.html">QGeoRouteSegment</a>&gt; QGeoRoute::routeSegments () const</h3>
 <p>Returns the route segments.</p>
 <p><a href="qgeoroutesegment.html">QGeoRouteSegment</a> contains more detailed information than <a href="qgeoroute.html">QGeoRoute</a> and can be subclasses to provide more specialized information, such as for the description of segments of the journey for those who are travelling by public transport, or by truck.</p>
 <p>See also <a href="qgeoroute.html#setRouteSegments">setRouteSegments</a>().</p>
-<h3 class="fn"><a name="setBounds"></a>void QGeoRoute::setBounds ( const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBounds"></a>void QGeoRoute::setBounds ( const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )</h3>
 <p>Sets the bounding box which encompasses the entire route to <i>bounds</i>.</p>
 <p>See also <a href="qgeoroute.html#bounds">bounds</a>().</p>
-<h3 class="fn"><a name="setDistance"></a>void QGeoRoute::setDistance ( qreal <i>distance</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDistance"></a>void QGeoRoute::setDistance ( qreal <i>distance</i> )</h3>
 <p>Sets the distance covered by this route, in metres, to <i>distance</i>.</p>
 <p>See also <a href="qgeoroute.html#distance">distance</a>().</p>
-<h3 class="fn"><a name="setPath"></a>void QGeoRoute::setPath ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>path</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPath"></a>void QGeoRoute::setPath ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>path</i> )</h3>
 <p>Sets the geometric shape of the route to <i>path</i>.</p>
 <p>The coordinates in <i>path</i> should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
 <p>See also <a href="qgeoroute.html#path">path</a>().</p>
-<h3 class="fn"><a name="setRequest"></a>void QGeoRoute::setRequest ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRequest"></a>void QGeoRoute::setRequest ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )</h3>
 <p>Sets the route request which describes the criteria used in the calculcation of this route to <i>request</i>.</p>
 <p>See also <a href="qgeoroute.html#request">request</a>().</p>
-<h3 class="fn"><a name="setRouteId"></a>void QGeoRoute::setRouteId ( const QString &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRouteId"></a>void QGeoRoute::setRouteId ( const QString &amp; <i>id</i> )</h3>
 <p>Sets the ID of this route to <i>id</i>.</p>
 <p>Service providers which support the updating of routes commonly assign IDs to routes. If this route came from such a service provider changing the ID will probably cause route updates to stop working.</p>
 <p>See also <a href="qgeoroute.html#routeId">routeId</a>().</p>
-<h3 class="fn"><a name="setRouteSegments"></a>void QGeoRoute::setRouteSegments ( const QList&lt;<a href="qgeoroutesegment.html">QGeoRouteSegment</a>&gt; &amp; <i>routeSegments</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRouteSegments"></a>void QGeoRoute::setRouteSegments ( const QList&lt;<a href="qgeoroutesegment.html">QGeoRouteSegment</a>&gt; &amp; <i>routeSegments</i> )</h3>
 <p>Sets the list of route segements to <i>routeSegments</i>.</p>
 <p><a href="qgeoroutesegment.html">QGeoRouteSegment</a> contains more detailed information than <a href="qgeoroute.html">QGeoRoute</a> and can be subclasses to provide more specialized information, such as for the description of segments of the journey for those who are travelling by public transport, or by truck.</p>
 <p>See also <a href="qgeoroute.html#routeSegments">routeSegments</a>().</p>
-<h3 class="fn"><a name="setTravelMode"></a>void QGeoRoute::setTravelMode ( <a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> <i>mode</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTravelMode"></a>void QGeoRoute::setTravelMode ( <a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> <i>mode</i> )</h3>
 <p>Sets the travel mode for this route.</p>
 <p>This should be one of the travel modes returned by <a href="qgeoroute.html#request">request</a>().travelModes().</p>
 <p>See also <a href="qgeoroute.html#travelMode">travelMode</a>().</p>
-<h3 class="fn"><a name="setTravelTime"></a>void QGeoRoute::setTravelTime ( int <i>secs</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTravelTime"></a>void QGeoRoute::setTravelTime ( int <i>secs</i> )</h3>
 <p>Sets the estimated amount of time it will take to traverse this route, in seconds, to <i>secs</i>.</p>
 <p>See also <a href="qgeoroute.html#travelTime">travelTime</a>().</p>
-<h3 class="fn"><a name="travelMode"></a><a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> QGeoRoute::travelMode () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="travelMode"></a><a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> QGeoRoute::travelMode () const</h3>
 <p>Returns the travel mode for the this route.</p>
 <p>This should be one of the travel modes returned by <a href="qgeoroute.html#request">request</a>().travelModes().</p>
 <p>See also <a href="qgeoroute.html#setTravelMode">setTravelMode</a>().</p>
-<h3 class="fn"><a name="travelTime"></a>int QGeoRoute::travelTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="travelTime"></a>int QGeoRoute::travelTime () const</h3>
 <p>Returns the estimated amount of time it will take to traverse this route, in seconds.</p>
 <p>See also <a href="qgeoroute.html#setTravelTime">setTravelTime</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoRoute &amp; QGeoRoute::operator= ( const QGeoRoute &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoRoute &amp; QGeoRoute::operator= ( const QGeoRoute &amp; <i>other</i> )</h3>
 <p>Assigns the contents of <i>other</i> to this route and returns a reference to this route.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -241,15 +244,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

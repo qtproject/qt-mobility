@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkattributefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkattributefilter.html#QLandmarkAttributeFilter">QLandmarkAttributeFilter</a></b> ()</td></tr>
@@ -151,31 +152,33 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes.</p>
 <p>The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values. If an invalid QVariant is provided as the value for an attribute, then any landmark that has that attribute is returned, regardless of its value. More than one attribute may be set in the filter, a landmark will only match if all attributes are matched.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::QLandmarkAttributeFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::QLandmarkAttributeFilter ()</h3>
 <p>Creates an attribute filter.</p>
-<h3 class="fn"><a name="QLandmarkAttributeFilter-2"></a>QLandmarkAttributeFilter::QLandmarkAttributeFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkAttributeFilter-2"></a>QLandmarkAttributeFilter::QLandmarkAttributeFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new attribute filter.</p>
-<h3 class="fn"><a name="dtor.QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::~QLandmarkAttributeFilter ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::~QLandmarkAttributeFilter ()<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
-<h3 class="fn"><a name="attribute"></a>QVariant QLandmarkAttributeFilter::attribute ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attribute"></a>QVariant QLandmarkAttributeFilter::attribute ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value of the attribute corresponding to <i>key</i>.</p>
 <p>If the attribute isn't set an invalid QVariant is returned.</p>
 <p>See also <a href="qlandmarkattributefilter.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmarkAttributeFilter::attributeKeys () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmarkAttributeFilter::attributeKeys () const</h3>
 <p>Returns the keys of all attributes set in the filter.</p>
-<h3 class="fn"><a name="clearAttributes"></a>void QLandmarkAttributeFilter::clearAttributes ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAttributes"></a>void QLandmarkAttributeFilter::clearAttributes ()</h3>
 <p>Clears all attributes from the filter.</p>
-<h3 class="fn"><a name="removeAttribute"></a>void QLandmarkAttributeFilter::removeAttribute ( const QString &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeAttribute"></a>void QLandmarkAttributeFilter::removeAttribute ( const QString &amp; <i>key</i> )</h3>
 <p>Removes the attribute corresponding to <i>key</i> from the filter.</p>
-<h3 class="fn"><a name="setAttribute"></a>void QLandmarkAttributeFilter::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAttribute"></a>void QLandmarkAttributeFilter::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the <i>value</i> of the attribute corresponding to <i>key</i>.</p>
 <p>Setting an invalid QVariant to an attribute means that the filter will match any landmark that has that attribute set, regardless of its value. Setting a valid QVariant means that the filter will match only landmarks whose values exactly match that of <i>value</i>.</p>
 <p>See also <a href="qlandmarkattributefilter.html#attribute">attribute</a>().</p>
@@ -186,15 +189,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

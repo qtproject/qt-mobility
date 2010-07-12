@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#protected-functions">Protected Functions</a></li>
@@ -137,7 +137,8 @@
 <ul>
 <li><a href="qmediaservice-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaservice.html#dtor.QMediaService">~QMediaService</a></b> ()</td></tr>
@@ -145,12 +146,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaControl * </td><td class="memItemRight bottomAlign"><b><a href="qmediaservice.html#requestControl">requestControl</a></b> ( const char * <i>interface</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> T </td><td class="memItemRight bottomAlign"><b><a href="qmediaservice.html#requestControl-2">requestControl</a></b> ()</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaservice.html#QMediaService">QMediaService</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaService class provides a common base class for media service implementations.</p>
@@ -162,19 +165,20 @@
 <p>Media objects can use services loaded dynamically from plug-ins or implemented statically within an applications. Plug-in based services should also implement the <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a> interface. Static services should implement the <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> interface.</p>
 </div>
 <p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediacontrol.html">QMediaControl</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, and <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaService"></a>QMediaService::QMediaService ( QObject * <i>parent</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaService"></a>QMediaService::QMediaService ( QObject * <i>parent</i> )<tt> [protected]</tt></h3>
 <p>Construct a media service with the given <i>parent</i>. This class is meant as a base class for Multimedia services so this constructor is protected.</p>
-<h3 class="fn"><a name="dtor.QMediaService"></a>QMediaService::~QMediaService ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMediaService"></a>QMediaService::~QMediaService ()</h3>
 <p>Destroys a media service.</p>
-<h3 class="fn"><a name="releaseControl"></a>void QMediaService::releaseControl ( <a href="qmediacontrol.html">QMediaControl</a> * <i>control</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="releaseControl"></a>void QMediaService::releaseControl ( <a href="qmediacontrol.html">QMediaControl</a> * <i>control</i> )<tt> [pure virtual]</tt></h3>
 <p>Releases a <i>control</i> back to the service.</p>
-<h3 class="fn"><a name="requestControl"></a><a href="qmediacontrol.html">QMediaControl</a> * QMediaService::requestControl ( const char * <i>interface</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestControl"></a><a href="qmediacontrol.html">QMediaControl</a> * QMediaService::requestControl ( const char * <i>interface</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns a pointer to the media control implementing <i>interface</i>.</p>
 <p>If the service does not implement the control, or if it is unavailable a null pointer is returned instead.</p>
 <p>Controls must be returned to the service when no longer needed using the <a href="qmediaservice.html#releaseControl">releaseControl</a>() function.</p>
-<h3 class="fn"><a name="requestControl-2"></a>T QMediaService::requestControl ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestControl-2"></a>T QMediaService::requestControl ()</h3>
 <p>Returns a pointer to the media control of type T implemented by a media service.</p>
 <p>If the service does not implement the control, or if it is unavailable a null pointer is returned instead.</p>
 <p>Controls must be returned to the service when no longer needed using the <a href="qmediaservice.html#releaseControl">releaseControl</a>() function.</p>
@@ -185,15 +189,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

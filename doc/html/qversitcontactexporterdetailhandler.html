@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,29 +135,32 @@
 <ul>
 <li><a href="qversitcontactexporterdetailhandler-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporterdetailhandler.html#dtor.QVersitContactExporterDetailHandler">~QVersitContactExporterDetailHandler</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporterdetailhandler.html#postProcessDetail">postProcessDetail</a></b> ( const QContact &amp; <i>contact</i>, const QContactDetail &amp; <i>detail</i>, bool <i>alreadyProcessed</i>, QVersitDocument * <i>document</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporterdetailhandler.html#preProcessDetail">preProcessDetail</a></b> ( const QContact &amp; <i>contact</i>, const QContactDetail &amp; <i>detail</i>, QVersitDocument * <i>document</i> ) = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactExporterDetailHandler class is an interface for clients wishing to implement custom export behaviour for certain contact details.</p>
 <p>This interface is replaced by <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a>.</p>
 </div>
 <p>See also <a href="qversitcontactexporter.html">QVersitContactExporter</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QVersitContactExporterDetailHandler"></a>QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVersitContactExporterDetailHandler"></a>QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler ()<tt> [virtual]</tt></h3>
 <p>Frees any memory in use by this handler.</p>
-<h3 class="fn"><a name="postProcessDetail"></a>bool QVersitContactExporterDetailHandler::postProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, bool <i>alreadyProcessed</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="postProcessDetail"></a>bool QVersitContactExporterDetailHandler::postProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, bool <i>alreadyProcessed</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )<tt> [pure virtual]</tt></h3>
 <p>Process <i>detail</i> and update <i>document</i> with the corresponding <a href="qversitproperty.html">QVersitProperty</a>(s). <i>contact</i> provides the context within which the detail was found. <i>alreadyProcessed</i> is true if the detail has already been processed either by <a href="qversitcontactexporterdetailhandler.html#preProcessDetail">preProcessDetail</a>() or by <a href="qversitcontactexporter.html">QVersitContactExporter</a> itself.</p>
 <p>Returns true if the detail has been handled, false otherwise.</p>
 <p>This function is called on every <a href="qcontactdetail.html">QContactDetail</a> encountered during an export. This can be used to implement support for QContactDetails not supported by <a href="qversitcontactexporter.html">QVersitContactExporter</a>.</p>
-<h3 class="fn"><a name="preProcessDetail"></a>bool QVersitContactExporterDetailHandler::preProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="preProcessDetail"></a>bool QVersitContactExporterDetailHandler::preProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )<tt> [pure virtual]</tt></h3>
 <p>Process <i>detail</i> and update <i>document</i> with the corresponding <a href="qversitproperty.html">QVersitProperty</a>(s). <i>contact</i> provides the context within which the detail was found.</p>
 <p>Returns true if the detail has been handled and requires no further processing, false otherwise.</p>
 <p>This function is called on every <a href="qcontactdetail.html">QContactDetail</a> encountered during an export. Supply this function and return true to implement custom export behaviour.</p>
@@ -168,15 +171,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

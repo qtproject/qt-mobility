@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -138,20 +138,23 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QSystemInfo&gt;</pre><ul>
 <li><a href="qsysteminfo-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#Feature-enum">Feature</a></b> { BluetoothFeature, CameraFeature, FmradioFeature, IrFeature, ..., HapticsFeature }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#Version-enum">Version</a></b> { Os, QtCore, Firmware }</td></tr>
 </table>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qsysteminfo.html#availableLanguages-prop">availableLanguages</a></b> : const QStringList</li>
 <li class="fn"><b><a href="qsysteminfo.html#currentCountryCode-prop">currentCountryCode</a></b> : const QString</li>
 <li class="fn"><b><a href="qsysteminfo.html#currentLanguage-prop">currentLanguage</a></b> : const QString</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#QSystemInfo">QSystemInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -162,12 +165,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</a></b> ( QSystemInfo::Feature <i>feature</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#version">version</a></b> ( QSystemInfo::Version <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</a></b> ( const QString &amp; <i>lang</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QSystemInfo class provides access to various general information from the system.</p>
@@ -184,9 +189,10 @@
 </table>
 <p>Platform notes Some functionality may or may not be supported on various platforms. Depending on if there is a reliable way to gather such information.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Feature-enum"></a>enum QSystemInfo::Feature</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Feature-enum"></a>enum QSystemInfo::Feature</h3>
 <p>This enum describes the features of the device or computer.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QSystemInfo::BluetoothFeature</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Bluetooth feature available.</td></tr>
@@ -203,7 +209,7 @@
 <tr><td  class="topAlign"><tt>QSystemInfo::VideoOutFeature</tt></td><td class=" topAlign"><tt>11</tt></td><td  class="topAlign">Video out feature available.</td></tr>
 <tr><td  class="topAlign"><tt>QSystemInfo::HapticsFeature</tt></td><td class=" topAlign"><tt>12</tt></td><td  class="topAlign">Haptics feature available.</td></tr>
 </table>
-<h3 class="fn"><a name="Version-enum"></a>enum QSystemInfo::Version</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Version-enum"></a>enum QSystemInfo::Version</h3>
 <p>This enum describes the version component.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QSystemInfo::Os</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Operating system version / platform ID.</td></tr>
@@ -211,23 +217,24 @@
 <tr><td  class="topAlign"><tt>QSystemInfo::Firmware</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Version of (flashable) system as a whole.</td></tr>
 </table>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="availableLanguages-prop"></a>availableLanguages : const QStringList</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableLanguages-prop"></a>availableLanguages : const QStringList</h3>
 <p>This property holds list of available languages.</p>
 <p>Returns a QStringList of available Qt language translations in 2 letter ISO 639-1 format. If the Qt translations cannot be found, returns the current system language.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> QStringList </td><td class="memItemRight bottomAlign"><b>availableLanguages</b> ()</td></tr>
 </table>
-<h3 class="fn"><a name="currentCountryCode-prop"></a>currentCountryCode : const QString</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentCountryCode-prop"></a>currentCountryCode : const QString</h3>
 <p>This property holds the current locale country code.</p>
 <p>Returns the 2 letter ISO 3166-1 for the current country code.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><b>currentCountryCode</b> ()</td></tr>
 </table>
-<h3 class="fn"><a name="currentLanguage-prop"></a>currentLanguage : const QString</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentLanguage-prop"></a>currentLanguage : const QString</h3>
 <p>This property holds the current Language Returns the current language in 2 letter ISO 639-1 format.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -238,17 +245,18 @@
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</a></b> ( const QString &amp; <i>lang</i> )</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QSystemInfo"></a>QSystemInfo::QSystemInfo ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QSystemInfo"></a>QSystemInfo::QSystemInfo ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsysteminfo.html">QSystemInfo</a> object with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QSystemInfo"></a>QSystemInfo::~QSystemInfo ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QSystemInfo"></a>QSystemInfo::~QSystemInfo ()<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qsysteminfo.html">QSystemInfo</a> object</p>
-<h3 class="fn"><a name="currentLanguageChanged"></a>void QSystemInfo::currentLanguageChanged ( const QString &amp; <i>lang</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentLanguageChanged"></a>void QSystemInfo::currentLanguageChanged ( const QString &amp; <i>lang</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever the current language changes, specified by <i>lang</i>, which is in 2 letter, ISO 639-1 specification form.</p>
-<h3 class="fn"><a name="hasFeatureSupported"></a>bool QSystemInfo::hasFeatureSupported ( <a href="qsysteminfo.html#Feature-enum">QSystemInfo::Feature</a> <i>feature</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasFeatureSupported"></a>bool QSystemInfo::hasFeatureSupported ( <a href="qsysteminfo.html#Feature-enum">QSystemInfo::Feature</a> <i>feature</i> )</h3>
 <p>Returns true if the <a href="qsysteminfo.html#Feature-enum">QSystemInfo::Feature</a> <i>feature</i> is supported, otherwise false.</p>
-<h3 class="fn"><a name="version"></a>QString QSystemInfo::version ( <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="version"></a>QString QSystemInfo::version ( <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</h3>
 <p>Returns the version of <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, with optional platform dependent <i>parameter</i> as a string.</p>
 <p>Version will be returned in &quot;major.minor.build&quot; form.</p>
 <p>In case a particular version does not use the &quot;build&quot; part, it is set to 0. If a particular element is not available at all, an error &quot;Not Installed&quot; will be returned by the API.</p>
@@ -259,15 +267,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

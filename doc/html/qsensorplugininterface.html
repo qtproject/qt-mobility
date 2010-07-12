@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -134,21 +134,24 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QSensorPluginInterface&gt;</pre><ul>
 <li><a href="qsensorplugininterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qsensorplugininterface.html#registerSensors">registerSensors</a></b> () = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QSensorPluginInterface class is the pure virtual interface to sensor plugins.</p>
 <p>The QSensorPluginInterface class is implemented in sensor plugins to register sensor backends with <a href="qsensormanager.html">QSensorManager</a>.</p>
 </div>
 <p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="registerSensors"></a>void QSensorPluginInterface::registerSensors ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="registerSensors"></a>void QSensorPluginInterface::registerSensors ()<tt> [pure virtual]</tt></h3>
 <p>This function is called when the plugin is loaded. The plugin should register sensor backends by calling <a href="qsensormanager.html#registerBackend">QSensorManager::registerBackend</a>().</p>
 <p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
 </div>
@@ -158,15 +161,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

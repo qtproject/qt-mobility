@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,13 +138,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactManager&gt;</pre><ul>
 <li><a href="qcontactmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, InvalidDetailError, ..., UnspecifiedError }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, ActionPreferences, DetailOrdering, Relationships, ..., Anonymous }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#QContactManager">QContactManager</a></b> ( const QString &amp; <i>managerName</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
@@ -186,7 +188,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a></b> ( QContact * <i>contact</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#contactsAdded">contactsAdded</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )</td></tr>
@@ -197,7 +200,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#relationshipsRemoved">relationshipsRemoved</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#selfContactIdChanged">selfContactIdChanged</a></b> ( const QContactLocalId &amp; <i>oldId</i>, const QContactLocalId &amp; <i>newId</i> )</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#availableManagers">availableManagers</a></b> ()</td></tr>
@@ -205,7 +209,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactManager * </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#fromUri">fromUri</a></b> ( const QString &amp; <i>managerUri</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactmanager.html#parseUri">parseUri</a></b> ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.</p>
@@ -213,9 +218,10 @@
 <p>The functions provided by QContactManager are purely synchronous; to access the same functionality in an asynchronous manner, clients should use the use-case-specific classes derived from <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>.</p>
 <p>Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see the <a href="contactssync.html">synchronous</a> and <a href="contactsasync.html">asynchronous</a> API information from the <a href="contacts.html">contacts module</a> API documentation.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QContactManager::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Error-enum"></a>enum QContactManager::Error</h3>
 <p>This enum specifies an error that occurred during the most recent operation:</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QContactManager::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The most recent operation was successful</td></tr>
@@ -234,7 +240,7 @@
 <tr><td  class="topAlign"><tt>QContactManager::BadArgumentError</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">The most recent operation failed because one or more of the parameters to the operation were invalid</td></tr>
 <tr><td  class="topAlign"><tt>QContactManager::UnspecifiedError</tt></td><td class=" topAlign"><tt>11</tt></td><td  class="topAlign">The most recent operation failed for an undocumented reason</td></tr>
 </table>
-<h3 class="fn"><a name="ManagerFeature-enum"></a>enum QContactManager::ManagerFeature</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="ManagerFeature-enum"></a>enum QContactManager::ManagerFeature</h3>
 <p>This enum describes the possible features that a particular manager may support</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QContactManager::Groups</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The manager supports saving contacts of the <tt>QContactType::TypeGroup</tt> type</td></tr>
@@ -248,101 +254,102 @@
 <tr><td  class="topAlign"><tt>QContactManager::Anonymous</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">The manager is isolated from other managers</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const QString &amp; <i>managerName</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const QString &amp; <i>managerName</i> = QString(), const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation is identified by <i>managerName</i> with the given <i>parameters</i>.</p>
 <p>The <i>parent</i> QObject will be used as the parent of this <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be used.</p>
-<h3 class="fn"><a name="QContactManager-2"></a>QContactManager::QContactManager ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactManager-2"></a>QContactManager::QContactManager ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose backend has the name <i>managerName</i> and version <i>implementationVersion</i>, where the manager is constructed with the provided <i>parameters</i>.</p>
 <p>The <i>parent</i> QObject will be used as the parent of this <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>If an empty <i>managerName</i> is specified, the default implementation for the platform will be instantiated. If the specified implementation version is not available, the manager with the name <i>managerName</i> with the default implementation version is instantiated.</p>
-<h3 class="fn"><a name="QContactManager-3"></a>QContactManager::QContactManager ( QObject * <i>parent</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactManager-3"></a>QContactManager::QContactManager ( QObject * <i>parent</i> )</h3>
 <p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose parent QObject is <i>parent</i>. The default implementation for the platform will be created.</p>
-<h3 class="fn"><a name="dtor.QContactManager"></a>QContactManager::~QContactManager ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactManager"></a>QContactManager::~QContactManager ()</h3>
 <p>Frees the memory used by the <a href="qcontactmanager.html">QContactManager</a></p>
-<h3 class="fn"><a name="availableManagers"></a>QStringList QContactManager::availableManagers ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableManagers"></a>QStringList QContactManager::availableManagers ()<tt> [static]</tt></h3>
 <p>Returns a list of available manager ids that can be used when constructing a <a href="qcontactmanager.html">QContactManager</a>. If an empty id is specified to the constructor, the first value in this list will be used instead.</p>
-<h3 class="fn"><a name="buildUri"></a>QString QContactManager::buildUri ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="buildUri"></a>QString QContactManager::buildUri ( const QString &amp; <i>managerName</i>, const QMap&lt;QString, QString&gt; &amp; <i>params</i>, int <i>implementationVersion</i> = -1 )<tt> [static]</tt></h3>
 <p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerName</i>, <i>params</i> and an optional <i>implementationVersion</i>. This function is generally useful only if you intend to construct a manager with the <a href="qcontactmanager.html#fromUri">fromUri</a>() function, or wish to set the manager URI field in a <a href="qcontactid.html">QContactId</a> manually (for synchronization or other purposes). Most clients will not need to use this function.</p>
-<h3 class="fn"><a name="compatibleContact"></a><a href="qcontact.html">QContact</a> QContactManager::compatibleContact ( const <a href="qcontact.html">QContact</a> &amp; <i>original</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="compatibleContact"></a><a href="qcontact.html">QContact</a> QContactManager::compatibleContact ( const <a href="qcontact.html">QContact</a> &amp; <i>original</i> )</h3>
 <p>Returns a pruned or modified version of the <i>original</i> contact which is valid and can be saved in the manager. The returned contact might have entire details removed or arbitrarily changed. The cache of relationships in the contact are ignored entirely when considering compatibility with the backend, as they are saved and validated separately.</p>
-<h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const QContactLocalId &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const QContactLocalId &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the contact in the database identified by <i>contactId</i>.</p>
 <p>If the contact does not exist, an empty, default constructed <a href="qcontact.html">QContact</a> will be returned, and the error returned by <a href="qcontactmanager.html#error">error</a>() will be <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contact will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
-<h3 class="fn"><a name="contactIds"></a>QList&lt;QContactLocalId&gt; QContactManager::contactIds ( const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactIds"></a>QList&lt;QContactLocalId&gt; QContactManager::contactIds ( const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
 <p>Return the list of contact ids, sorted according to the given list of <i>sortOrders</i></p>
-<h3 class="fn"><a name="contactIds-2"></a>QList&lt;QContactLocalId&gt; QContactManager::contactIds ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactIds-2"></a>QList&lt;QContactLocalId&gt; QContactManager::contactIds ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
 <p>Returns a list of contact ids that match the given <i>filter</i>, sorted according to the given list of <i>sortOrders</i>. Depending on the backend, this filtering operation may involve retrieving all the contacts.</p>
-<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the list of contacts stored in the manager sorted according to the given list of <i>sortOrders</i>.</p>
 <p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
-<h3 class="fn"><a name="contacts-2"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contacts-2"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns a list of contacts that match the given <i>filter</i>, sorted according to the given list of <i>sortOrders</i>.</p>
 <p>Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the contacts and testing them against the supplied filter - see the <a href="qcontactmanager.html#isFilterSupported">isFilterSupported</a>() function.</p>
 <p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
-<h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been added to a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
-<h3 class="fn"><a name="contactsChanged"></a>void QContactManager::contactsChanged ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactsChanged"></a>void QContactManager::contactsChanged ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been modified in a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
-<h3 class="fn"><a name="contactsRemoved"></a>void QContactManager::contactsRemoved ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactsRemoved"></a>void QContactManager::contactsRemoved ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point once the contacts identified by <i>contactIds</i> have been removed from a datastore managed by this manager. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
-<h3 class="fn"><a name="dataChanged"></a>void QContactManager::dataChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dataChanged"></a>void QContactManager::dataChanged ()<tt> [signal]</tt></h3>
 <p>This signal is emitted by the manager if its internal state changes, and it is unable to determine the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload all data. If this signal is emitted, no other signals will be emitted for the associated changes.</p>
-<h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManager::detailDefinition ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinition"></a><a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> QContactManager::detailDefinition ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3>
 <p>Returns the definition identified by the given <i>definitionName</i> that is valid for the contacts whose type is the given <i>contactType</i> in this store, or a default-constructed <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> if no such definition exists</p>
-<h3 class="fn"><a name="detailDefinitions"></a>QMap&lt;QString, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManager::detailDefinitions ( const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitions"></a>QMap&lt;QString, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; QContactManager::detailDefinitions ( const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3>
 <p>Returns a map of identifier to detail definition for the registered detail definitions which are valid for contacts whose type is the given <i>contactType</i> which are valid for the contacts in this store</p>
-<h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactManager::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactManager::error () const</h3>
 <p>Return the error code of the most recent operation</p>
-<h3 class="fn"><a name="fromUri"></a>QContactManager * QContactManager::fromUri ( const QString &amp; <i>managerUri</i>, QObject * <i>parent</i> = 0 )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fromUri"></a>QContactManager * QContactManager::fromUri ( const QString &amp; <i>managerUri</i>, QObject * <i>parent</i> = 0 )<tt> [static]</tt></h3>
 <p>Constructs a <a href="qcontactmanager.html">QContactManager</a> whose implementation version, manager name and specific parameters are specified in the given <i>managerUri</i>, and whose parent object is <i>parent</i>.</p>
-<h3 class="fn"><a name="hasFeature"></a>bool QContactManager::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactManager::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3>
 <p>Returns true if the given feature <i>feature</i> is supported by the manager, for the specified type of contact <i>contactType</i></p>
-<h3 class="fn"><a name="isFilterSupported"></a>bool QContactManager::isFilterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFilterSupported"></a>bool QContactManager::isFilterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const</h3>
 <p>Returns true if the given <i>filter</i> is supported natively by the manager, and false if the filter behaviour would be emulated.</p>
 <p>Note: In some cases, the behaviour of an unsupported filter cannot be emulated. For example, a filter that requests contacts that have changed since a given time depends on having that information available. In these cases, the filter will fail.</p>
-<h3 class="fn"><a name="isRelationshipTypeSupported"></a>bool QContactManager::isRelationshipTypeSupported ( const QString &amp; <i>relationshipType</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isRelationshipTypeSupported"></a>bool QContactManager::isRelationshipTypeSupported ( const QString &amp; <i>relationshipType</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact ) const</h3>
 <p>Returns true if the manager supports the relationship type specified in <i>relationshipType</i> for contacts whose type is the given <i>contactType</i>.</p>
 <p>Note that some managers may support the relationship type for a contact in a limited manner (for example, only as the first contact in the relationship, or only as the second contact in the relationship). In this case, it will still return true. It will only return false if the relationship is entirely unsupported for the given type of contact.</p>
-<h3 class="fn"><a name="managerName"></a>QString QContactManager::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QContactManager::managerName () const</h3>
 <p>Returns the manager name for this <a href="qcontactmanager.html">QContactManager</a></p>
-<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QContactManager::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QContactManager::managerParameters () const</h3>
 <p>Return the parameters relevant to the creation of this <a href="qcontactmanager.html">QContactManager</a></p>
-<h3 class="fn"><a name="managerUri"></a>QString QContactManager::managerUri () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerUri"></a>QString QContactManager::managerUri () const</h3>
 <p>Return the uri describing this <a href="qcontactmanager.html">QContactManager</a>, consisting of the manager name and any parameters.</p>
-<h3 class="fn"><a name="managerVersion"></a>int QContactManager::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerVersion"></a>int QContactManager::managerVersion () const</h3>
 <p>Returns the engine backend implementation version number</p>
-<h3 class="fn"><a name="parseUri"></a>bool QContactManager::parseUri ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parseUri"></a>bool QContactManager::parseUri ( const QString &amp; <i>uri</i>, QString * <i>pManagerId</i>, QMap&lt;QString, QString&gt; * <i>pParams</i> )<tt> [static]</tt></h3>
 <p>Splits the given <i>uri</i> into the manager, store, and parameters that it describes, and places the information into the memory addressed by <i>pManagerId</i> and <i>pParams</i> respectively. Returns true if <i>uri</i> could be split successfully, otherwise returns false</p>
-<h3 class="fn"><a name="relationships"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactManager::relationships ( const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i>, <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i> = QContactRelationship::Either ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationships"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactManager::relationships ( const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i>, <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i> = QContactRelationship::Either ) const</h3>
 <p>Returns a list of relationships in which the contact identified by the given <i>participantId</i> participates in the given <i>role</i>. If <i>participantId</i> is the default-constructed id, <i>role</i> is ignored and all relationships are returned.</p>
-<h3 class="fn"><a name="relationships-2"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactManager::relationships ( const QString &amp; <i>relationshipType</i> = QString(), const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i> = QContactId(), <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i> = QContactRelationship::Either ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationships-2"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactManager::relationships ( const QString &amp; <i>relationshipType</i> = QString(), const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i> = QContactId(), <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i> = QContactRelationship::Either ) const</h3>
 <p>Returns a list of relationships of the given <i>relationshipType</i> in which the contact identified by the given <i>participantId</i> participates in the given <i>role</i>. If <i>participantId</i> is the default-constructed id, <i>role</i> is ignored and all relationships of the given <i>relationshipType</i> are returned. If <i>relationshipType</i> is empty, relationships of any type are returned.</p>
-<h3 class="fn"><a name="relationshipsAdded"></a>void QContactManager::relationshipsAdded ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationshipsAdded"></a>void QContactManager::relationshipsAdded ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point after relationships have been added to the manager which involve the contacts identified by <i>affectedContactIds</i>. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
-<h3 class="fn"><a name="relationshipsRemoved"></a>void QContactManager::relationshipsRemoved ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationshipsRemoved"></a>void QContactManager::relationshipsRemoved ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point after relationships have eben removed from the manager which involve the contacts identified by <i>affectedContactIds</i>. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for these changes.</p>
-<h3 class="fn"><a name="removeContact"></a>bool QContactManager::removeContact ( const QContactLocalId &amp; <i>contactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeContact"></a>bool QContactManager::removeContact ( const QContactLocalId &amp; <i>contactId</i> )</h3>
 <p>Remove the contact identified by <i>contactId</i> from the database, and also removes any relationships in which the contact was involved. Returns true if the contact was removed successfully, otherwise returns false.</p>
-<h3 class="fn"><a name="removeContacts"></a>bool QContactManager::removeContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeContacts"></a>bool QContactManager::removeContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3>
 <p>Remove every contact whose id is contained in the list of contacts ids <i>contactIds</i>. Returns true if all contacts were removed successfully, otherwise false.</p>
 <p>Any contact that was removed successfully will have the relationships in which it was involved removed also.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contactIds</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be removed, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
 <p>If the given list of contact ids <i>contactIds</i> is empty, the function will return false and calling <a href="qcontactmanager.html#error">error</a>() will return <tt>QContactManager::BadArgumentError</tt>. If the list is non-empty and contains ids which do not identify a valid contact in the manager, the function will remove any contacts which are identified by ids in the <i>contactIds</i> list, insert <tt>QContactManager::DoesNotExist</tt> entries into the <i>errorMap</i> for the indices of invalid ids in the <i>contactIds</i> list, return false, and set the overall operation error to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
-<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManager::removeDetailDefinition ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManager::removeDetailDefinition ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact )</h3>
 <p>Removes the detail definition identified by <i>definitionName</i> from the database, which is valid for contacts whose type is the given <i>contactType</i>. Returns true if the definition was removed successfully, otherwise returns false</p>
-<h3 class="fn"><a name="removeRelationship"></a>bool QContactManager::removeRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>relationship</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeRelationship"></a>bool QContactManager::removeRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>relationship</i> )</h3>
 <p>Removes the given <i>relationship</i> from the manager. If the relationship exists in the manager, the relationship will be removed, the error will be set to <tt>QContactManager::NoError</tt> and this function will return true. If no such relationship exists in the manager, the error will be set to <tt>QContactManager::DoesNotExistError</tt> and this function will return false.</p>
-<h3 class="fn"><a name="removeRelationships"></a>bool QContactManager::removeRelationships ( const QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeRelationships"></a>bool QContactManager::removeRelationships ( const QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3>
 <p>Removes the given <i>relationships</i> from the database and returns true if the operation was successful. For any relationship which was unable to be removed, an entry into the <i>errorMap</i> will be created, with the key being the index into the input relationships list, and the value being the error which occurred for that index.</p>
-<h3 class="fn"><a name="saveContact"></a>bool QContactManager::saveContact ( <a href="qcontact.html">QContact</a> * <i>contact</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveContact"></a>bool QContactManager::saveContact ( <a href="qcontact.html">QContact</a> * <i>contact</i> )</h3>
 <p>Adds the given <i>contact</i> to the database if <i>contact</i> has a default-constructed id, or an id with the manager URI set to the URI of this manager and a local id of zero.</p>
 <p>If the manager URI of the id of the <i>contact</i> is neither empty nor equal to the URI of this manager, or local id of the <i>contact</i> is non-zero but does not exist in the manager, the operation will fail and calling <a href="qcontactmanager.html#error">error</a>() will return <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>Alternatively, the function will update the existing contact in the database if <i>contact</i> has a non-zero id and currently exists in the database.</p>
@@ -350,31 +357,31 @@
 <p>If the <i>contact</i> has had its relationships reordered, the manager will check to make sure that every relationship that the contact is currently involved in is included in the reordered list, and that no relationships which either do not involve the contact, or have not been saved in the manager are included in the list. If these conditions are not met, the function will return <tt>false</tt> and calling <a href="qcontactmanager.html#error">error</a>() will return <tt>QContactManager::InvalidRelationshipError</tt>.</p>
 <p>Returns false on failure, or true on success. On successful save of a contact with an id of zero, its id will be set to a new, valid id with the manager URI set to the URI of this manager, and the local id set to a new, valid local id. The manager will automatically synthesize the display label of the contact when it is saved. The manager is not required to fetch updated details of the contact on save, and as such, clients should fetch a contact if they want the most up-to-date information by calling <a href="qcontactmanager.html#contact">QContactManager::contact</a>().</p>
 <p>See also <a href="qcontactmanager.html#managerUri">managerUri</a>().</p>
-<h3 class="fn"><a name="saveContacts"></a>bool QContactManager::saveContacts ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveContacts"></a>bool QContactManager::saveContacts ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3>
 <p>Adds the list of contacts given by <i>contacts</i> list to the database. Returns true if the contacts were saved successfully, otherwise false.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contacts</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be saved, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
 <p>For each newly saved contact that was successful, the id of the contact in the <i>contacts</i> list will be updated with the new value. If a failure occurs when saving a new contact, the id will be cleared.</p>
 <p>See also <a href="qcontactmanager.html#saveContact">QContactManager::saveContact</a>().</p>
-<h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactManager::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveDetailDefinition"></a>bool QContactManager::saveDetailDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>def</i>, const QString &amp; <i>contactType</i> = QContactType::TypeContact )</h3>
 <p>Persists the given definition <i>def</i> in the database, which is valid for contacts whose type is the given <i>contactType</i>. Returns true if the definition was saved successfully, otherwise returns false</p>
-<h3 class="fn"><a name="saveRelationship"></a>bool QContactManager::saveRelationship ( <a href="qcontactrelationship.html">QContactRelationship</a> * <i>relationship</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveRelationship"></a>bool QContactManager::saveRelationship ( <a href="qcontactrelationship.html">QContactRelationship</a> * <i>relationship</i> )</h3>
 <p>Saves the given <i>relationship</i> in the database. If the relationship already exists in the database, this function will return <tt>false</tt> and the error will be set to <tt>QContactManager::AlreadyExistsError</tt>. If the relationship is saved successfully, this function will return <tt>true</tt> and error will be set to <tt>QContactManager::NoError</tt>. Note that relationships cannot be updated directly using this function; in order to update a relationship, you must remove the old relationship, make the required modifications, and then save it.</p>
 <p>The given relationship is invalid if it is circular (the first contact is the second contact), or if it references a non-existent local contact (either the first or second contact). If the given <i>relationship</i> is invalid, the function will return <tt>false</tt> and the error will be set to <tt>QContactManager::InvalidRelationshipError</tt>. If the given <i>relationship</i> could not be saved in the database (due to backend limitations) the function will return <tt>false</tt> and error will be set to <tt>QContactManager::NotSupportedError</tt>.</p>
-<h3 class="fn"><a name="saveRelationships"></a>bool QContactManager::saveRelationships ( QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveRelationships"></a>bool QContactManager::saveRelationships ( QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i> )</h3>
 <p>Saves the given <i>relationships</i> in the database and returns true if the operation was successful. For any relationship which was unable to be saved, an entry into the <i>errorMap</i> will be created, with the key being the index into the input relationships list, and the value being the error which occurred for that index.</p>
-<h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactManager::selfContactId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactManager::selfContactId () const</h3>
 <p>Returns the id of the &quot;self&quot; contact which has previously been set. If no &quot;self&quot; contact has been set, or if the self contact was removed from the manager after being set, or if the backend does not support the concept of a &quot;self&quot; contact, an invalid id will be returned and the error will be set to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>See also <a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a>().</p>
-<h3 class="fn"><a name="selfContactIdChanged"></a>void QContactManager::selfContactIdChanged ( const QContactLocalId &amp; <i>oldId</i>, const QContactLocalId &amp; <i>newId</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selfContactIdChanged"></a>void QContactManager::selfContactIdChanged ( const QContactLocalId &amp; <i>oldId</i>, const QContactLocalId &amp; <i>newId</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted at some point after the id of the self-contact is changed from <i>oldId</i> to <i>newId</i> in the manager. If the <i>newId</i> is the invalid, zero id, then the self contact was deleted or no self contact exists. This signal must not be emitted if the <a href="qcontactmanager.html#dataChanged">dataChanged</a>() signal was previously emitted for this change.</p>
-<h3 class="fn"><a name="setSelfContactId"></a>bool QContactManager::setSelfContactId ( const QContactLocalId &amp; <i>contactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSelfContactId"></a>bool QContactManager::setSelfContactId ( const QContactLocalId &amp; <i>contactId</i> )</h3>
 <p>Sets the id of the &quot;self&quot; contact to the given <i>contactId</i>. Returns true if the &quot;self&quot; contact id was set successfully. If the given <i>contactId</i> does not identify a contact stored in this manager, the error will be set to <tt>QContactManager::DoesNotExistError</tt> and the function will return false; if the backend does not support the concept of a &quot;self&quot; contact then the error will be set to <tt>QContactManager::NotSupportedError</tt> and the function will return false.</p>
 <p>See also <a href="qcontactmanager.html#selfContactId">selfContactId</a>().</p>
-<h3 class="fn"><a name="supportedContactTypes"></a>QStringList QContactManager::supportedContactTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedContactTypes"></a>QStringList QContactManager::supportedContactTypes () const</h3>
 <p>Returns the list of contact types which are supported by this manager. This is a convenience function, equivalent to retrieving the allowable values for the <tt>QContactType::FieldType</tt> field of the QContactType definition which is valid in this manager.</p>
-<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManager::supportedDataTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactManager::supportedDataTypes () const</h3>
 <p>Returns the list of data types supported by the manager</p>
-<h3 class="fn"><a name="synthesizeContactDisplayLabel"></a>void QContactManager::synthesizeContactDisplayLabel ( <a href="qcontact.html">QContact</a> * <i>contact</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="synthesizeContactDisplayLabel"></a>void QContactManager::synthesizeContactDisplayLabel ( <a href="qcontact.html">QContact</a> * <i>contact</i> ) const</h3>
 <p>Updates the display label of the supplied <i>contact</i>, according to the formatting rules of this manager.</p>
 <p>Different managers can format the display label of a contact in different ways - some managers may only consider first or last name, or might put them in different orders. Others might consider an organization, a nickname, or a freeform label.</p>
 <p>This function will update the QContactDisplayLabel of this contact, and the string returned by <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
@@ -394,7 +401,7 @@
      manager-&gt;synthesizeContactDisplayLabel(&amp;c);
      qDebug() &lt;&lt; &quot;Now the label is:&quot; &lt;&lt; c.displayLabel();</pre>
 <p>See also <a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a>() and <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
-<h3 class="fn"><a name="synthesizedContactDisplayLabel"></a>QString QContactManager::synthesizedContactDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="synthesizedContactDisplayLabel"></a>QString QContactManager::synthesizedContactDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
 <p>Returns a display label for a <i>contact</i> which is synthesized from its details in a manager specific manner.</p>
 <p>If you want to update the display label stored in the contact, use the <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>() function instead.</p>
 <p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>().</p>
@@ -405,15 +412,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

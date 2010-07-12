@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#how-to-register-and-unregister-service-plugins-in-s60">How to register and unregister service plugins in S60?</a></li>
 <li class="level1"><a href="#what-s-special-from-the-security-perspective">What's special from the security perspective?</a></li>
@@ -132,7 +132,7 @@
 <h1 class="title">Qt Service Framework on Symbian</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="how-to-register-and-unregister-service-plugins-in-s60"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="how-to-register-and-unregister-service-plugins-in-s60"></a>
 <h2>How to register and unregister service plugins in S60?</h2>
 <p>Registration phase is a little different compared to other platforms because of the authenticity of the provider is done during (un)registering phase based on the verification of VID/SID (vendor ID or secure ID). A tiny installer application must be implemented by the service provider. Installer application is responsible for the registering (and the unregistering) of the service. The example code for the installer is shown below. The whole installer project can be found under <tt>examples/serviceinstaller_sfw_symbian</tt>.</p>
 <pre class="highlightedCode brush: cpp"> const QString filemanagerxml = &quot;c:\\resource\\apps\\xmldata\\filemanagerservice.xml&quot;;
@@ -163,11 +163,11 @@
 <li><a href="http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#VendorID">VendorID</a></li>
 <li><a href="http://developer.symbian.org/wiki/index.php/Platform_Security_%28Fundamentals_of_Symbian_C%2B%2B%29#SecureID">SecureID</a></li>
 </ul>
-<a name="what-s-special-from-the-security-perspective"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="what-s-special-from-the-security-perspective"></a>
 <h2>What's special from the security perspective?</h2>
 <p>There is only one database in S60 because both databases (user and system) are combined to the same database. The database is located behind the server's private folder, (<tt>c:\private\E3b48c24</tt>). This ensures the database can't be thumbered (e.g&#x2e; remove, move or replace) without Allfiles capability which isn't user-grantable (More about the capabilities: <a href="http://wiki.forum.nokia.com/index.php/Capabilities">http://wiki.forum.nokia.com/index.php/Capabilities</a>). That makes it impossible for example to replace the whole database with the new one which might contain malicious services.</p>
 <p>Note! It doesn't matter which scope is used on Symbian as QService::UserScope and QService::SystemScope are mapped to the same database.</p>
-<a name="directory-structure"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="directory-structure"></a>
 <h2>Directory structure</h2>
 <p>There are different implementations for the both emulator and device because emulator doesn't support multiple applications to be loaded at the same time, (Known issue: <a href="http://bugreports.qt.nokia.com/browse/QTBUG-2950">QTBUG-2950</a>). The dll approach must be used in the emulator environment and the exe approach instead of dll in the real device.</p>
 <p>Note! The greatest part of the S60 specific code is located under the symbian folder in a directory hierarchy of Service FW. ServiceDatabase class contains also S60 specific code and the DatabaseManager class has been replaced totally with the corresponding class.</p>
@@ -178,15 +178,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

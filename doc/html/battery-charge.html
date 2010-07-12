@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#battery-subscriber">Battery Subscriber</a></li>
 <li class="level2"><a href="#qml">QML</a></li>
@@ -147,10 +147,10 @@
 <p>and provides controls for modifying their values.</p>
 <p class="centerAlign"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
 <p>The user interface of the battery subscriber program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
-<p class="centerAlign"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p class="centerAlign"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
 <p>The <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class is available from within QML through the use of a plugin which is parsed by the QML engine. This means that simply using the QML element 'ValueSpaceSubscriber' allows access to the valuespace, which is demonstrated below.</p>
-<a name="qml"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="qml"></a>
 <h3>QML</h3>
 <p>Firstly, import the plugin library that provides the ValueSpaceSubscriber QML element.</p>
 <pre class="highlightedCode brush: cpp"> import QtMobility.publishsubscribe 1.0</pre>
@@ -198,15 +198,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

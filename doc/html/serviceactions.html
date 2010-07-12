@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#send-and-compose">Send and Compose</a></li>
 <li class="level1"><a href="#show">Show</a></li>
@@ -144,7 +144,7 @@
 </ul>
 <p>This simple example demonstrates how to compose, send, show, query and retrieve messages, and also react to message store events using the Qt Mobility Messaging API.</p>
 <p>Each of these actions is demonstrated in a separate sub example accessible from the &quot;File&quot; menu of each platform.</p>
-<a name="send-and-compose"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="send-and-compose"></a>
 <h2>Send and Compose</h2>
 <p>Messages are sent and composed from a composition widget under the &quot;Compose/Send&quot; menu. Relevant message details such as sending account, recipients and message bodies (attachments for email accounts) can be entered by the user via corresponding UI elements. A <a href="qmessage.html">QMessage</a> is constructed using these details:</p>
 <pre class="highlightedCode brush: cpp"> QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
@@ -218,7 +218,7 @@
      QMessage message(constructQMessage(asHtml));
      notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
  }</pre>
-<a name="show"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="show"></a>
 <h2>Show</h2>
 <p>Messages are displayed by a show widget under the &quot;Show&quot; menu. This widget displays the users last 50 messages. (Ensure the platform has one or more messages in its mail accounts).</p>
 <p>The last 50 messages (incoming/outgoing) are queried from the store using the <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>() service request:</p>
@@ -267,7 +267,7 @@
      if(id.isValid())
          m_service-&gt;show(id);
  }</pre>
-<a name="query-and-retrieve"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="query-and-retrieve"></a>
 <h2>Query and Retrieve</h2>
 <p>Message contents are displayed/retrieved by a retrieve widget under the &quot;Query/Retrieve&quot; menu. This example displays the last 50 messages, as in the &quot;Show&quot; example, but also displays message content in a QTextBrowser widget and provides the option to download messages that are incomplete.</p>
 <p>After the message list is populated, the message display widget will attempt to load and display the currently selected message. The completeness of the message body is checked using the QMessageContentContainer::isContentAvailable function. If the message body is partially downloaded, a download link is displayed.</p>
@@ -331,7 +331,7 @@
 
      return false;
  }</pre>
-<a name="store-signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="store-signals"></a>
 <h2>Store Signals</h2>
 <p>This example displays the activities of the <a href="qmessagemanager.html">QMessageManager</a> in a QListWidget by connecting to QMessageManager::message(Added/Updated/Removed) signals.</p>
 <pre class="highlightedCode brush: cpp"> void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
@@ -374,15 +374,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

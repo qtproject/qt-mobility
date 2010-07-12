@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryIntersectionFilter&gt;</pre><ul>
 <li><a href="qgalleryintersectionfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter">QGalleryIntersectionFilter</a></b> ()</td></tr>
@@ -159,63 +160,67 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryintersectionfilter.html#replace-2">replace</a></b> ( int <i>index</i>, const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryIntersectionFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgalleryintersectionfilter.html#operator-eq">operator=</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<a name="related-non-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryIntersectionFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryintersectionfilter.html#operator-and-and">operator&amp;&amp;</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryIntersectionFilter class provides a filter which matches the intersection of two or more meta-data filters.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ()</h3>
 <p>Constructs an empty intersection.</p>
-<h3 class="fn"><a name="QGalleryIntersectionFilter-2"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-2"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs an intersection filter from a meta-data <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryIntersectionFilter-3"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-3"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs an intersection filter from a union <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryIntersectionFilter-4"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-4"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of an intersection <i>filter</i>.</p>
-<h3 class="fn"><a name="dtor.QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::~QGalleryIntersectionFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::~QGalleryIntersectionFilter ()</h3>
 <p>Destroys an intersection filter.</p>
-<h3 class="fn"><a name="append"></a>void QGalleryIntersectionFilter::append ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append"></a>void QGalleryIntersectionFilter::append ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends a meta-data <i>filter</i> to an intersection.</p>
-<h3 class="fn"><a name="append-2"></a>void QGalleryIntersectionFilter::append ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append-2"></a>void QGalleryIntersectionFilter::append ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appens a union <i>filter</i> to an intersection.</p>
-<h3 class="fn"><a name="append-3"></a>void QGalleryIntersectionFilter::append ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append-3"></a>void QGalleryIntersectionFilter::append ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Appends the contents of an intersection <i>filter</i> to an intersection.</p>
-<h3 class="fn"><a name="clear"></a>void QGalleryIntersectionFilter::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QGalleryIntersectionFilter::clear ()</h3>
 <p>Clears all the filters from an intersection.</p>
-<h3 class="fn"><a name="filterCount"></a>int QGalleryIntersectionFilter::filterCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filterCount"></a>int QGalleryIntersectionFilter::filterCount () const</h3>
 <p>Returns the number of filters in an intersection.</p>
-<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qgalleryfilter.html">QGalleryFilter</a>&gt; QGalleryIntersectionFilter::filters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qgalleryfilter.html">QGalleryFilter</a>&gt; QGalleryIntersectionFilter::filters () const</h3>
 <p>Return the filters contained in an intersection.</p>
-<h3 class="fn"><a name="insert"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Inserts a meta-data <i>filter</i> into an intersection at <i>index</i>.</p>
-<h3 class="fn"><a name="insert-2"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert-2"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Inserts a union <i>filter</i> into an intersection at <i>index</i>.</p>
-<h3 class="fn"><a name="insert-3"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert-3"></a>void QGalleryIntersectionFilter::insert ( int <i>index</i>, const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Inserts the contents of an intersection <i>filter</i> into an intersection at <i>index</i>.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QGalleryIntersectionFilter::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QGalleryIntersectionFilter::isEmpty () const</h3>
 <p>Returns true if an intersection does not contain any filters, and returns false otherwise.</p>
-<h3 class="fn"><a name="isValid"></a>bool QGalleryIntersectionFilter::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QGalleryIntersectionFilter::isValid () const</h3>
 <p>Returns true if the filter is a valid intersection filter.</p>
 <p>An invalid filter can be obtained by casting a non <a href="qgalleryfilter.html#Type-enum">QGalleryFilter::Intersection</a> type <a href="qgalleryfilter.html">QGalleryFilter</a> to <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a>.</p>
-<h3 class="fn"><a name="removeAt"></a>void QGalleryIntersectionFilter::removeAt ( int <i>index</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeAt"></a>void QGalleryIntersectionFilter::removeAt ( int <i>index</i> )</h3>
 <p>Removes the filter at <i>index</i> from an intersection.</p>
-<h3 class="fn"><a name="replace"></a>void QGalleryIntersectionFilter::replace ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="replace"></a>void QGalleryIntersectionFilter::replace ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Replaces the filter at <i>index</i> in an intersection with a meta-data <i>filter</i>.</p>
-<h3 class="fn"><a name="replace-2"></a>void QGalleryIntersectionFilter::replace ( int <i>index</i>, const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="replace-2"></a>void QGalleryIntersectionFilter::replace ( int <i>index</i>, const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Replaces the filter at <i>index</i> in an intersection with a union <i>filter</i>.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGalleryIntersectionFilter &amp; QGalleryIntersectionFilter::operator= ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryIntersectionFilter &amp; QGalleryIntersectionFilter::operator= ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another intersection filter.</p>
 </div>
+<hr />
 <div class="relnonmem"/>
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-and-and"></a>QGalleryIntersectionFilter operator&amp;&amp; ( const QGalleryIntersectionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-and-and"></a>QGalleryIntersectionFilter operator&amp;&amp; ( const QGalleryIntersectionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3>
 <p>Returns a gallery filter matches the intersection of <i>filter1</i> and <i>filter2</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -224,15 +229,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

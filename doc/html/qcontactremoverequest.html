@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qcontactremoverequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactremoverequest.html#QContactRemoveRequest">QContactRemoveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -154,28 +155,30 @@
 <li class="fn">3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactRemoveRequest class allows a client to asynchronously request that certain contacts be removed from a contacts store.</p>
 <p>For a QContactRemoveRequest, the resultsUpdated() signal will be emitted when the individual item errors (which may be retrieved by calling <a href="qcontactremoverequest.html#errorMap">errorMap</a>()) are updated, or if the overall operation error (which may be retrieved by calling <a href="qcontactabstractrequest.html#error">error</a>()) is updated.</p>
 <p>Please see the class documentation of <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> for more information about the usage of request classes and ownership semantics.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactRemoveRequest"></a>QContactRemoveRequest::QContactRemoveRequest ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactRemoveRequest"></a>QContactRemoveRequest::QContactRemoveRequest ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new contact remove request whose parent is the specified <i>parent</i></p>
-<h3 class="fn"><a name="dtor.QContactRemoveRequest"></a>QContactRemoveRequest::~QContactRemoveRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactRemoveRequest"></a>QContactRemoveRequest::~QContactRemoveRequest ()</h3>
 <p>Frees any memory used by this request</p>
-<h3 class="fn"><a name="contactIds"></a>QList&lt;QContactLocalId&gt; QContactRemoveRequest::contactIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactIds"></a>QList&lt;QContactLocalId&gt; QContactRemoveRequest::contactIds () const</h3>
 <p>Returns the list of ids of contacts which will be removed</p>
 <p>See also <a href="qcontactremoverequest.html#setContactIds">setContactIds</a>().</p>
-<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactRemoveRequest::errorMap () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactRemoveRequest::errorMap () const</h3>
 <p>Returns the map of input contact list indices to errors which occurred</p>
-<h3 class="fn"><a name="setContactId"></a>void QContactRemoveRequest::setContactId ( const QContactLocalId &amp; <i>contactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContactId"></a>void QContactRemoveRequest::setContactId ( const QContactLocalId &amp; <i>contactId</i> )</h3>
 <p>Sets the id of the contact which will be removed to <i>contactId</i>. Equivalent to calling:</p>
 <pre class="highlightedCode brush: cpp"> setContactIds(QList&lt;QContactLocalId&gt;() &lt;&lt; contactIds);</pre>
-<h3 class="fn"><a name="setContactIds"></a>void QContactRemoveRequest::setContactIds ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContactIds"></a>void QContactRemoveRequest::setContactIds ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i> )</h3>
 <p>Sets the list of ids of contacts which will be removed to <i>contactIds</i></p>
 <p>See also <a href="qcontactremoverequest.html#contactIds">contactIds</a>().</p>
 </div>
@@ -185,15 +188,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

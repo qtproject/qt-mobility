@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkidfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkidfetchrequest.html#QLandmarkIdFetchRequest">QLandmarkIdFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -158,39 +159,41 @@
 <li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkIdFetchRequest class allows a client to asynchronously request a list of landmark identifiers from a landmark manager.</p>
 <p>For a QLandmarkIdFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when the resultant identifiers (which may be retrieved by calling ids()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()) is updated.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkIdFetchRequest"></a>QLandmarkIdFetchRequest::QLandmarkIdFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkIdFetchRequest"></a>QLandmarkIdFetchRequest::QLandmarkIdFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a new landmark id fetch request object with the given <i>manager</i> and <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkIdFetchRequest"></a>QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkIdFetchRequest"></a>QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="fetchHint"></a><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> QLandmarkIdFetchRequest::fetchHint () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fetchHint"></a><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> QLandmarkIdFetchRequest::fetchHint () const</h3>
 <p>Returns the request's fetch hint.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setFetchHint">setFetchHint</a>().</p>
-<h3 class="fn"><a name="filter"></a><a href="qlandmarkfilter.html">QLandmarkFilter</a> QLandmarkIdFetchRequest::filter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filter"></a><a href="qlandmarkfilter.html">QLandmarkFilter</a> QLandmarkIdFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the landmarks whose identifiers will be returned.</p>
 <p>By default, the filter's type will be a LandmarkFilter::DefaultFilter and thus match all landmarks.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setFilter">setFilter</a>().</p>
-<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFetchRequest::landmarkIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFetchRequest::landmarkIds () const</h3>
 <p>Returns the list of identifiers of landmarks which matched the filter.</p>
-<h3 class="fn"><a name="setFetchHint"></a>void QLandmarkIdFetchRequest::setFetchHint ( const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFetchHint"></a>void QLandmarkIdFetchRequest::setFetchHint ( const <a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a> &amp; <i>fetchHint</i> )</h3>
 <p>Sets the request's <i>fetchHint</i>.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#fetchHint">fetchHint</a>().</p>
-<h3 class="fn"><a name="setFilter"></a>void QLandmarkIdFetchRequest::setFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFilter"></a>void QLandmarkIdFetchRequest::setFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the <i>filter</i> which will be used to select landmark identifiers.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#filter">filter</a>().</p>
-<h3 class="fn"><a name="setSorting"></a>void QLandmarkIdFetchRequest::setSorting ( const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sorting</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting"></a>void QLandmarkIdFetchRequest::setSorting ( const QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort ordering of the request to <i>sorting</i>. This function will only have an effect on the results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>().</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="setSorting-2"></a>void QLandmarkIdFetchRequest::setSorting ( const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sorting</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting-2"></a>void QLandmarkIdFetchRequest::setSorting ( const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sorting</i> )</h3>
 <p>Sets the sort ordering of the request to a single <i>sorting</i>. This function will only have an effect on the results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>().</p>
-<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; QLandmarkIdFetchRequest::sorting () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; QLandmarkIdFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering which is used to sort the result.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setSorting">setSorting</a>().</p>
 </div>
@@ -200,15 +203,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

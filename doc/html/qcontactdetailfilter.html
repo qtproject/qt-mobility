@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qcontactdetailfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailfilter.html#QContactDetailFilter">QContactDetailFilter</a></b> ()</td></tr>
@@ -152,37 +153,39 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qcontactfilter.html#public-functions">QContactFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetailFilter class provides a filter based around a detail value criterion</p>
 <p>It may be used to select contacts which contain a detail of a particular definition with a particular value</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactDetailFilter"></a>QContactDetailFilter::QContactDetailFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailFilter"></a>QContactDetailFilter::QContactDetailFilter ()</h3>
 <p>Constructs a new detail filter</p>
-<h3 class="fn"><a name="QContactDetailFilter-2"></a>QContactDetailFilter::QContactDetailFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailFilter-2"></a>QContactDetailFilter::QContactDetailFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new detail filter</p>
-<h3 class="fn"><a name="detailDefinitionName"></a>QString QContactDetailFilter::detailDefinitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitionName"></a>QString QContactDetailFilter::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected for matching values</p>
 <p>See also <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="detailFieldName"></a>QString QContactDetailFilter::detailFieldName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailFieldName"></a>QString QContactDetailFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="matchFlags"></a><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> QContactDetailFilter::matchFlags () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="matchFlags"></a><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> QContactDetailFilter::matchFlags () const</h3>
 <p>Returns the semantics of the value matching criterion</p>
 <p>See also <a href="qcontactdetailfilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which details will be matched to <i>definitionName</i>, and the name of the field in details of that definition which will contain the value criterion to <i>fieldName</i>. If <i>definitionName</i> is empty, the detail filter will match no contacts. If <i>fieldName</i> is empty, the detail filter acts like a &quot;detail exists&quot; filter; if any detail of the specified definition is present in a contact, that contact will match the filter, regardless of what values might be stored in that detail.</p>
 <p>See also <a href="qcontactdetailfilter.html#detailDefinitionName">detailDefinitionName</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the semantics of the value matching criterion to those defined in <i>flags</i></p>
 <p>See also <a href="qcontactdetailfilter.html#matchFlags">matchFlags</a>().</p>
-<h3 class="fn"><a name="setValue"></a>void QContactDetailFilter::setValue ( const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue"></a>void QContactDetailFilter::setValue ( const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the value criterion of the filter to <i>value</i>. Note that if the field name criterion (set via <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>()) of the filter is an empty string, this value will be ignored.</p>
 <p>See also <a href="qcontactdetailfilter.html#value">value</a>() and <a href="qcontactdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="value"></a>QVariant QContactDetailFilter::value () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QContactDetailFilter::value () const</h3>
 <p>Returns the value criterion of the detail filter</p>
 <p>See also <a href="qcontactdetailfilter.html#setValue">setValue</a>().</p>
 </div>
@@ -192,15 +195,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

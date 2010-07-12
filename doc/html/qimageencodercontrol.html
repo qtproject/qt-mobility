@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#protected-functions">Protected Functions</a></li>
@@ -139,7 +139,8 @@
 <ul>
 <li><a href="qimageencodercontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qimageencodercontrol.html#dtor.QImageEncoderControl">~QImageEncoderControl</a></b> ()</td></tr>
@@ -149,17 +150,20 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QStringList </td><td class="memItemRight bottomAlign"><b><a href="qimageencodercontrol.html#supportedImageCodecs">supportedImageCodecs</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QList&lt;QSize&gt; </td><td class="memItemRight bottomAlign"><b><a href="qimageencodercontrol.html#supportedResolutions">supportedResolutions</a></b> ( const QImageEncoderSettings &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const = 0</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qimageencodercontrol.html#QImageEncoderControl">QImageEncoderControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qimageencodercontrol.html#QImageEncoderControl_iid">QImageEncoderControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QImageEncoderControl class provides access to the settings of a media service that performs image encoding.</p>
@@ -167,30 +171,32 @@
 <p>The interface name of QImageEncoderControl is <tt>com.nokia.Qt.QImageEncoderControl/1.0</tt> as defined in <a href="qimageencodercontrol.html#QImageEncoderControl_iid">QImageEncoderControl_iid</a>.</p>
 </div>
 <p>See also <a href="qimageencodersettings.html">QImageEncoderSettings</a> and <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QImageEncoderControl"></a>QImageEncoderControl::QImageEncoderControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QImageEncoderControl"></a>QImageEncoderControl::QImageEncoderControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a new image encoder control object with the given <i>parent</i></p>
-<h3 class="fn"><a name="dtor.QImageEncoderControl"></a>QImageEncoderControl::~QImageEncoderControl ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QImageEncoderControl"></a>QImageEncoderControl::~QImageEncoderControl ()<tt> [virtual]</tt></h3>
 <p>Destroys the image encoder control.</p>
-<h3 class="fn"><a name="imageCodecDescription"></a>QString QImageEncoderControl::imageCodecDescription ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageCodecDescription"></a>QString QImageEncoderControl::imageCodecDescription ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a description of an image <i>codec</i>.</p>
-<h3 class="fn"><a name="imageSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QImageEncoderControl::imageSettings () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QImageEncoderControl::imageSettings () const<tt> [pure virtual]</tt></h3>
 <p>Returns the currently used image encoder settings.</p>
 <p>See also <a href="qimageencodercontrol.html#setImageSettings">setImageSettings</a>().</p>
-<h3 class="fn"><a name="setImageSettings"></a>void QImageEncoderControl::setImageSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setImageSettings"></a>void QImageEncoderControl::setImageSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the selected image encoder <i>settings</i>.</p>
 <p>See also <a href="qimageencodercontrol.html#imageSettings">imageSettings</a>().</p>
-<h3 class="fn"><a name="supportedImageCodecs"></a>QStringList QImageEncoderControl::supportedImageCodecs () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedImageCodecs"></a>QStringList QImageEncoderControl::supportedImageCodecs () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported image codecs.</p>
-<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QImageEncoderControl::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QImageEncoderControl::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported resolutions.</p>
 <p>If non null image <i>settings</i> parameter is passed, the returned list is reduced to resolutions supported with partial settings applied. It can be used to query the list of resolutions, supported by specific image codec.</p>
 <p>If the encoder supports arbitrary resolutions within the supported resolutions range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QImageEncoderControl_iid"></a>QImageEncoderControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QImageEncoderControl_iid"></a>QImageEncoderControl_iid</h3>
 <p><tt>com.nokia.Qt.QImageEncoderControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qimageencodercontrol.html">QImageEncoderControl</a> class.</p>
 </div>
@@ -200,15 +206,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -134,7 +134,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactDetailDefinition&gt;</pre><ul>
 <li><a href="qcontactdetaildefinition-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetaildefinition.html#QContactDetailDefinition">QContactDetailDefinition</a></b> ()</td></tr>
@@ -153,47 +154,49 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactDetailDefinition &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetaildefinition.html#operator-eq">operator=</a></b> ( const QContactDetailDefinition &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetaildefinition.html#operator-eq-eq">operator==</a></b> ( const QContactDetailDefinition &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetailDefinition class provides the specification for a detail that can be included in any particular <a href="qcontact.html">QContact</a>. The definition does not include any data, but defines the semantics of the representation and use of data details that are stored in a <a href="qcontact.html">QContact</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactDetailDefinition"></a>QContactDetailDefinition::QContactDetailDefinition ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailDefinition"></a>QContactDetailDefinition::QContactDetailDefinition ()</h3>
 <p>Construct a new, invalid <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></p>
-<h3 class="fn"><a name="QContactDetailDefinition-2"></a>QContactDetailDefinition::QContactDetailDefinition ( const QContactDetailDefinition &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailDefinition-2"></a>QContactDetailDefinition::QContactDetailDefinition ( const QContactDetailDefinition &amp; <i>other</i> )</h3>
 <p>Constructs a new <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> from <i>other</i></p>
-<h3 class="fn"><a name="dtor.QContactDetailDefinition"></a>QContactDetailDefinition::~QContactDetailDefinition ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactDetailDefinition"></a>QContactDetailDefinition::~QContactDetailDefinition ()</h3>
 <p>Frees the memory used by this <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></p>
-<h3 class="fn"><a name="fields"></a>QMap&lt;QString, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; QContactDetailDefinition::fields () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fields"></a>QMap&lt;QString, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; QContactDetailDefinition::fields () const</h3>
 <p>Returns the map of keys to fields which are present in details of this definition</p>
 <p>See also <a href="qcontactdetaildefinition.html#setFields">setFields</a>().</p>
-<h3 class="fn"><a name="insertField"></a>void QContactDetailDefinition::insertField ( const QString &amp; <i>key</i>, const <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a> &amp; <i>field</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertField"></a>void QContactDetailDefinition::insertField ( const QString &amp; <i>key</i>, const <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a> &amp; <i>field</i> )</h3>
 <p>Inserts the field <i>field</i> into the map of fields which constitute the data of details of this definition for the given field key <i>key</i>. If another field for that key already exists in the definition, it will be overwritten.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QContactDetailDefinition::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QContactDetailDefinition::isEmpty () const</h3>
 <p>Returns true if the id and fields of this definition are empty</p>
-<h3 class="fn"><a name="isUnique"></a>bool QContactDetailDefinition::isUnique () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isUnique"></a>bool QContactDetailDefinition::isUnique () const</h3>
 <p>Returns the per-contact uniqueness of this definition</p>
-<h3 class="fn"><a name="name"></a>QString QContactDetailDefinition::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QContactDetailDefinition::name () const</h3>
 <p>Returns the identifier of this detail definition</p>
 <p>See also <a href="qcontactdetaildefinition.html#setName">setName</a>().</p>
-<h3 class="fn"><a name="removeField"></a>void QContactDetailDefinition::removeField ( const QString &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeField"></a>void QContactDetailDefinition::removeField ( const QString &amp; <i>key</i> )</h3>
 <p>Removes the field associated with the given field key <i>key</i> from the map of fields which constitute the data of details of this definition.</p>
-<h3 class="fn"><a name="setFields"></a>void QContactDetailDefinition::setFields ( const QMap&lt;QString, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; &amp; <i>fields</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFields"></a>void QContactDetailDefinition::setFields ( const QMap&lt;QString, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; &amp; <i>fields</i> )</h3>
 <p>Sets the fields which constitute the data of details of this this definition to <i>fields</i></p>
 <p>See also <a href="qcontactdetaildefinition.html#fields">fields</a>().</p>
-<h3 class="fn"><a name="setName"></a>void QContactDetailDefinition::setName ( const QString &amp; <i>definitionName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setName"></a>void QContactDetailDefinition::setName ( const QString &amp; <i>definitionName</i> )</h3>
 <p>Sets the unique identifier of this detail type to <i>definitionName</i>.</p>
 <p>See also <a href="qcontactdetaildefinition.html#name">name</a>().</p>
-<h3 class="fn"><a name="setUnique"></a>void QContactDetailDefinition::setUnique ( bool <i>unique</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setUnique"></a>void QContactDetailDefinition::setUnique ( bool <i>unique</i> )</h3>
 <p>Sets whether a contact can have more than one detail of this type. If <i>unique</i> is true, only one detail of this type can be added. Otherwise, any number can be added.</p>
 <p>See also <a href="qcontactdetaildefinition.html#isUnique">isUnique</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailDefinition::operator!= ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailDefinition::operator!= ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3>
 <p>Returns true if this detail definition has different allowable field types or uniqueness to the <i>other</i> definition</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactDetailDefinition &amp; QContactDetailDefinition::operator= ( const QContactDetailDefinition &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactDetailDefinition &amp; QContactDetailDefinition::operator= ( const QContactDetailDefinition &amp; <i>other</i> )</h3>
 <p>Assigns this <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailDefinition::operator== ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailDefinition::operator== ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3>
 <p>Returns true if the definition has the same type, uniqueness and allowable value datatypes as <i>other</i></p>
 </div>
 <p /><address><hr /><div align="center">
@@ -202,15 +205,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

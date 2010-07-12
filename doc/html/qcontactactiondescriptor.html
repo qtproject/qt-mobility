@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactActionDescriptor&gt;</pre><ul>
 <li><a href="qcontactactiondescriptor-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactactiondescriptor.html#QContactActionDescriptor">QContactActionDescriptor</a></b> ( const QString &amp; <i>actionName</i> = QString(), const QString &amp; <i>vendorName</i> = QString(), int <i>vendorVersion</i> = -1 )</td></tr>
@@ -152,44 +153,46 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactActionDescriptor &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactactiondescriptor.html#operator-eq">operator=</a></b> ( const QContactActionDescriptor &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactactiondescriptor.html#operator-eq-eq">operator==</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactActionDescriptor class provides information that uniquely identifies a specific implementation of an action</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactActionDescriptor"></a>QContactActionDescriptor::QContactActionDescriptor ( const QString &amp; <i>actionName</i> = QString(), const QString &amp; <i>vendorName</i> = QString(), int <i>vendorVersion</i> = -1 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactActionDescriptor"></a>QContactActionDescriptor::QContactActionDescriptor ( const QString &amp; <i>actionName</i> = QString(), const QString &amp; <i>vendorName</i> = QString(), int <i>vendorVersion</i> = -1 )</h3>
 <p>Constructs a new action descriptor for the implementation of the action identified by the given <i>actionName</i> of the given implementation <i>vendorVersion</i>, as implemented by the vendor identified by the given <i>vendorName</i></p>
-<h3 class="fn"><a name="QContactActionDescriptor-2"></a>QContactActionDescriptor::QContactActionDescriptor ( const QContactActionDescriptor &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactActionDescriptor-2"></a>QContactActionDescriptor::QContactActionDescriptor ( const QContactActionDescriptor &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> action descriptor</p>
-<h3 class="fn"><a name="dtor.QContactActionDescriptor"></a>QContactActionDescriptor::~QContactActionDescriptor ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactActionDescriptor"></a>QContactActionDescriptor::~QContactActionDescriptor ()</h3>
 <p>Cleans up any memory in use by the action descriptor</p>
-<h3 class="fn"><a name="actionName"></a>QString QContactActionDescriptor::actionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="actionName"></a>QString QContactActionDescriptor::actionName () const</h3>
 <p>Returns the name of the action which is identified by the action descriptor</p>
 <p>See also <a href="qcontactactiondescriptor.html#setActionName">setActionName</a>().</p>
-<h3 class="fn"><a name="implementationVersion"></a>int QContactActionDescriptor::implementationVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="implementationVersion"></a>int QContactActionDescriptor::implementationVersion () const</h3>
 <p>Returns the vendor-specified version of the action implementation which is identified by the action descriptor</p>
 <p>See also <a href="qcontactactiondescriptor.html#setImplementationVersion">setImplementationVersion</a>().</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QContactActionDescriptor::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QContactActionDescriptor::isEmpty () const</h3>
 <p>Returns true if either the name, vendor and version of the descriptor are missing from the descriptor. An empty descriptor cannot uniquely identify an action.</p>
-<h3 class="fn"><a name="setActionName"></a>void QContactActionDescriptor::setActionName ( const QString &amp; <i>actionName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setActionName"></a>void QContactActionDescriptor::setActionName ( const QString &amp; <i>actionName</i> )</h3>
 <p>Sets the name of the action identified by this action descriptor to <i>actionName</i></p>
 <p>See also <a href="qcontactactiondescriptor.html#actionName">actionName</a>().</p>
-<h3 class="fn"><a name="setImplementationVersion"></a>void QContactActionDescriptor::setImplementationVersion ( int <i>implementationVersion</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setImplementationVersion"></a>void QContactActionDescriptor::setImplementationVersion ( int <i>implementationVersion</i> )</h3>
 <p>Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to <i>implementationVersion</i></p>
 <p>See also <a href="qcontactactiondescriptor.html#implementationVersion">implementationVersion</a>().</p>
-<h3 class="fn"><a name="setVendorName"></a>void QContactActionDescriptor::setVendorName ( const QString &amp; <i>vendorName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setVendorName"></a>void QContactActionDescriptor::setVendorName ( const QString &amp; <i>vendorName</i> )</h3>
 <p>Sets the name of the vendor of the action implementation identified by this action descriptor to <i>vendorName</i></p>
 <p>See also <a href="qcontactactiondescriptor.html#vendorName">vendorName</a>().</p>
-<h3 class="fn"><a name="vendorName"></a>QString QContactActionDescriptor::vendorName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="vendorName"></a>QString QContactActionDescriptor::vendorName () const</h3>
 <p>Returns the name of the vendor of the action implementation which is identified by the action descriptor</p>
 <p>See also <a href="qcontactactiondescriptor.html#setVendorName">setVendorName</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactActionDescriptor::operator!= ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactActionDescriptor::operator!= ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>
 <p>Returns true if the action name, vendor name or vendor-specified implementation version specified by this action descriptor are different to that specified by <i>other</i></p>
-<h3 class="fn"><a name="operator-eq"></a>QContactActionDescriptor &amp; QContactActionDescriptor::operator= ( const QContactActionDescriptor &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactActionDescriptor &amp; QContactActionDescriptor::operator= ( const QContactActionDescriptor &amp; <i>other</i> )</h3>
 <p>Assigns this action descriptor to be equal to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactActionDescriptor::operator== ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactActionDescriptor::operator== ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>
 <p>Returns true if the action name, vendor name and vendor-specified implementation version specified by this action descriptor are equal to those specified by <i>other</i></p>
 </div>
 <p /><address><hr /><div align="center">
@@ -198,15 +201,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <ul>
 <li><a href="qimageencodersettings-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qimageencodersettings.html#QImageEncoderSettings">QImageEncoderSettings</a></b> ()</td></tr>
@@ -153,7 +154,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QImageEncoderSettings &amp; </td><td class="memItemRight bottomAlign"><b><a href="qimageencodersettings.html#operator-eq">operator=</a></b> ( const QImageEncoderSettings &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qimageencodersettings.html#operator-eq-eq">operator==</a></b> ( const QImageEncoderSettings &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QImageEncoderSettings class provides a set of image encoder settings.</p>
@@ -165,45 +167,46 @@
  imageCapture-&gt;setImageSettings(imageSettings);</pre>
 </div>
 <p>See also <a href="qimageencodercontrol.html">QImageEncoderControl</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QImageEncoderSettings"></a>QImageEncoderSettings::QImageEncoderSettings ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QImageEncoderSettings"></a>QImageEncoderSettings::QImageEncoderSettings ()</h3>
 <p>Constructs a null image encoder settings object.</p>
-<h3 class="fn"><a name="QImageEncoderSettings-2"></a>QImageEncoderSettings::QImageEncoderSettings ( const QImageEncoderSettings &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QImageEncoderSettings-2"></a>QImageEncoderSettings::QImageEncoderSettings ( const QImageEncoderSettings &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the image encoder settings object <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QImageEncoderSettings"></a>QImageEncoderSettings::~QImageEncoderSettings ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QImageEncoderSettings"></a>QImageEncoderSettings::~QImageEncoderSettings ()</h3>
 <p>Destroys a image encoder settings object.</p>
-<h3 class="fn"><a name="codec"></a>QString QImageEncoderSettings::codec () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="codec"></a>QString QImageEncoderSettings::codec () const</h3>
 <p>Returns the image codec.</p>
 <p>See also <a href="qimageencodersettings.html#setCodec">setCodec</a>().</p>
-<h3 class="fn"><a name="isNull"></a>bool QImageEncoderSettings::isNull () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isNull"></a>bool QImageEncoderSettings::isNull () const</h3>
 <p>Identifies if a image encoder settings object is uninitalized.</p>
 <p>Returns true if the settings are null, and false if they are not.</p>
-<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality () const</h3>
 <p>Returns the image encoding quality.</p>
 <p>See also <a href="qimageencodersettings.html#setQuality">setQuality</a>().</p>
-<h3 class="fn"><a name="resolution"></a>QSize QImageEncoderSettings::resolution () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resolution"></a>QSize QImageEncoderSettings::resolution () const</h3>
 <p>Returns the resolution of the encoded image.</p>
 <p>See also <a href="qimageencodersettings.html#setResolution">setResolution</a>().</p>
-<h3 class="fn"><a name="setCodec"></a>void QImageEncoderSettings::setCodec ( const QString &amp; <i>codec</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCodec"></a>void QImageEncoderSettings::setCodec ( const QString &amp; <i>codec</i> )</h3>
 <p>Sets the image <i>codec</i>.</p>
 <p>See also <a href="qimageencodersettings.html#codec">codec</a>().</p>
-<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3>
 <p>Sets the image encoding <i>quality</i>.</p>
 <p>See also <a href="qimageencodersettings.html#quality">quality</a>().</p>
-<h3 class="fn"><a name="setResolution"></a>void QImageEncoderSettings::setResolution ( const QSize &amp; <i>resolution</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setResolution"></a>void QImageEncoderSettings::setResolution ( const QSize &amp; <i>resolution</i> )</h3>
 <p>Sets the <i>resolution</i> of the encoded image.</p>
 <p>An empty QSize indicates the encoder should make an optimal choice based on what is available from the image source and the limitations of the codec.</p>
 <p>See also <a href="qimageencodersettings.html#resolution">resolution</a>().</p>
-<h3 class="fn"><a name="setResolution-2"></a>void QImageEncoderSettings::setResolution ( int <i>width</i>, int <i>height</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setResolution-2"></a>void QImageEncoderSettings::setResolution ( int <i>width</i>, int <i>height</i> )</h3>
 <p>Sets the <i>width</i> and <i>height</i> of the resolution of the encoded image.</p>
 <p>This is an overloaded function.</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QImageEncoderSettings::operator!= ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QImageEncoderSettings::operator!= ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to a image encoder settings object.</p>
 <p>Returns true if the settings objects are not of equal value, and false if they are of equal value.</p>
-<h3 class="fn"><a name="operator-eq"></a>QImageEncoderSettings &amp; QImageEncoderSettings::operator= ( const QImageEncoderSettings &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QImageEncoderSettings &amp; QImageEncoderSettings::operator= ( const QImageEncoderSettings &amp; <i>other</i> )</h3>
 <p>Assigns the value of <i>other</i> to a image encoder settings object.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QImageEncoderSettings::operator== ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QImageEncoderSettings::operator== ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to a image encoder settings object.</p>
 <p>Returns true if the settings objects are of equal value, and false if they are not of equal value.</p>
 </div>
@@ -213,15 +216,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

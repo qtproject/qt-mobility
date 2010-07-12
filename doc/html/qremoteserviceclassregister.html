@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,52 +138,60 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QRemoteServiceClassRegister&gt;</pre><ul>
 <li><a href="qremoteserviceclassregister-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qremoteserviceclassregister.html#InstanceType-enum">InstanceType</a></b> { SharedInstance, UniqueInstance }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QRemoteServiceIdentifier&gt; </td><td class="memItemRight bottomAlign"><b><a href="qremoteserviceclassregister.html#types">types</a></b> () const</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qremoteserviceclassregister.html#registerType">registerType</a></b> ( QRemoteServiceClassRegister::InstanceType <i>type</i> = UniqueInstance )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</a></b> (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QRemoteServiceClassRegister class manages the various remote service classes which can be instanciated.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="InstanceType-enum"></a>enum QRemoteServiceClassRegister::InstanceType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="InstanceType-enum"></a>enum QRemoteServiceClassRegister::InstanceType</h3>
 <p>Defines the possible service instanciation methodologies.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QRemoteServiceClassRegister::SharedInstance</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Each new request for this service receives a reference to the same service object instance. This can be compared with a singleton pattern.</td></tr>
 <tr><td  class="topAlign"><tt>QRemoteServiceClassRegister::UniqueInstance</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A new service object instance is created for each new client requesting a reference to the service.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="registerType"></a>bool QRemoteServiceClassRegister::registerType ( <a href="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::InstanceType</a> <i>type</i> = UniqueInstance )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="registerType"></a>bool QRemoteServiceClassRegister::registerType ( <a href="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::InstanceType</a> <i>type</i> = UniqueInstance )<tt> [static]</tt></h3>
 <p>This template function registers the provided template class as remote service and returns true if the registration was successfull. The <i>type</i> specifies the method used for service class instanciation.</p>
 <pre class="highlightedCode brush: cpp"> QRemoteServiceClassRegister::registerType&lt;ServiceClass&gt;();</pre>
 <p>Every service class must be marked via the <a href="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</a>() macro.</p>
-<h3 class="fn"><a name="types"></a>QList&lt;QRemoteServiceIdentifier&gt; QRemoteServiceClassRegister::types () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="types"></a>QList&lt;QRemoteServiceIdentifier&gt; QRemoteServiceClassRegister::types () const</h3>
 <p>Returns the list of all registered service types.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="Q_SERVICE"></a>Q_SERVICE (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Q_SERVICE"></a>Q_SERVICE (  <i>T</i>,  <i>name</i>,  <i>interface</i>,  <i>version</i> )</h3>
 <p>This macro marks a class as remote service and should be placed next to the Q_OBJECT macro. <i>T</i> represents the name of the class implementing the service, <i>interface</i> specifies the service framework service name, interface name and <i>version</i> represents the interface version. All parameters must match the interface information provided by the associated service XML file.</p>
 <pre class="highlightedCode brush: cpp"> class ServiceClass : public QObject
  {
@@ -201,15 +209,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

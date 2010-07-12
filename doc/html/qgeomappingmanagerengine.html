@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#protected-functions">Protected Functions</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoMappingManagerEngine&gt;</pre><ul>
 <li><a href="qgeomappingmanagerengine-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#QGeoMappingManagerEngine">QGeoMappingManagerEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -152,7 +153,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#removeMapData">removeMapData</a></b> ( QGeoMapData * <i>mapData</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapWidget::MapType&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#setMaximumImageSize">setMaximumImageSize</a></b> ( const QSize &amp; <i>maximumImageSize</i> )</td></tr>
@@ -161,7 +163,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#setMinimumZoomLevel">setMinimumZoomLevel</a></b> ( qreal <i>minimumZoom</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomappingmanagerengine.html#setSupportedMapTypes">setSupportedMapTypes</a></b> ( const QList&lt;QGeoMapWidget::MapType&gt; &amp; <i>mapTypes</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMappingManagerEngine class provides an interface and convenience methods to implementors of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provides support for displaying and interacting with maps.</p>
@@ -169,68 +172,69 @@
 <p>The functions setSupportedMapTypes(const QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; &amp;mapTypes), setMinimumZoomLevel(qreal minimumZoom), setMaximumZoomLevel(qreal maximumZoom), setMinimumImageSize(const QSize &amp;minimumSize) and setMaximumImageSize(const QSize &amp;maximumSize) should be used to configure the reported capabilities of the engine.</p>
 <p>It is important that this is done before <a href="qgeomappingmanagerengine.html#createMapData">createMapData</a>(), updateMapImage() or any of the capability reporting functions are used to prevent incorrect or inconsistent behaviour.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoMappingManagerEngine"></a>QGeoMappingManagerEngine::QGeoMappingManagerEngine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoMappingManagerEngine"></a>QGeoMappingManagerEngine::QGeoMappingManagerEngine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new engine with the specified <i>parent</i>, using <i>parameters</i> to pass any implementation specific data to the engine.</p>
-<h3 class="fn"><a name="dtor.QGeoMappingManagerEngine"></a>QGeoMappingManagerEngine::~QGeoMappingManagerEngine ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoMappingManagerEngine"></a>QGeoMappingManagerEngine::~QGeoMappingManagerEngine ()<tt> [virtual]</tt></h3>
 <p>Destroys this engine.</p>
-<h3 class="fn"><a name="createMapData"></a><a href="qgeomapdata.html">QGeoMapData</a> * QGeoMappingManagerEngine::createMapData ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createMapData"></a><a href="qgeomapdata.html">QGeoMapData</a> * QGeoMappingManagerEngine::createMapData ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns a new <a href="qgeomapdata.html">QGeoMapData</a> instance for <i>widget</i> which will be managed by this manager.</p>
 <p>A <a href="qgeomapdata.html">QGeoMapData</a> instance contains and manages the information about what a map widget is looking at. A single manager can be used by several widgets since each widget has an associated <a href="qgeomapdata.html">QGeoMapData</a> instance.</p>
 <p>The <a href="qgeomapdata.html">QGeoMapData</a> instance can be treated as a kind of session object, or as a model in a model-view-controller architecture, with <a href="qgeomapwidget.html">QGeoMapWidget</a> as the view and <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> as the controller.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> are free to create subclasses of <a href="qgeomapdata.html">QGeoMapData</a> in order to associate implementation specific data with the created instance..</p>
-<h3 class="fn"><a name="managerName"></a>QString QGeoMappingManagerEngine::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QGeoMappingManagerEngine::managerName () const</h3>
 <p>Returns the name which this engine implementation uses to distinguish itself from the implementations provided by other plugins.</p>
 <p>The combination of managerName() and <a href="qgeomappingmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
-<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoMappingManagerEngine::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoMappingManagerEngine::managerParameters () const</h3>
 <p>Returns the parameters used in the creation of this engine object.</p>
-<h3 class="fn"><a name="managerVersion"></a>int QGeoMappingManagerEngine::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerVersion"></a>int QGeoMappingManagerEngine::managerVersion () const</h3>
 <p>Returns the version of this engine implementation.</p>
 <p>The combination of <a href="qgeomappingmanagerengine.html#managerName">managerName</a>() and managerVersion() should be unique amongst plugin implementations.</p>
-<h3 class="fn"><a name="maximumImageSize"></a>QSize QGeoMappingManagerEngine::maximumImageSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maximumImageSize"></a>QSize QGeoMappingManagerEngine::maximumImageSize () const</h3>
 <p>Returns the size of the largest map image which is supported by this engine.</p>
 <p>An invalid size indicates that this <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> instance places no restrictions on the maximum size of the map image.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#setMaximumImageSize">setMaximumImageSize</a>().</p>
-<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMappingManagerEngine::maximumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMappingManagerEngine::maximumZoomLevel () const</h3>
 <p>Returns the maximum zoom level supported by this engine.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#setMaximumZoomLevel">setMaximumZoomLevel</a>().</p>
-<h3 class="fn"><a name="minimumImageSize"></a>QSize QGeoMappingManagerEngine::minimumImageSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumImageSize"></a>QSize QGeoMappingManagerEngine::minimumImageSize () const</h3>
 <p>Returns the size of the smallest map image which is supported by this engine.</p>
 <p>An invalid size indicates that this <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> instance places no restrictions on the minimum size of the map image.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#setMinimumImageSize">setMinimumImageSize</a>().</p>
-<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMappingManagerEngine::minimumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMappingManagerEngine::minimumZoomLevel () const</h3>
 <p>Returns the minimum zoom level supported by this engine.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#setMinimumZoomLevel">setMinimumZoomLevel</a>().</p>
-<h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManagerEngine::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMapData"></a>void QGeoMappingManagerEngine::removeMapData ( <a href="qgeomapdata.html">QGeoMapData</a> * <i>mapData</i> )<tt> [virtual]</tt></h3>
 <p>Stops this manager from managing <i>mapData</i>.</p>
-<h3 class="fn"><a name="setMaximumImageSize"></a>void QGeoMappingManagerEngine::setMaximumImageSize ( const QSize &amp; <i>maximumImageSize</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMaximumImageSize"></a>void QGeoMappingManagerEngine::setMaximumImageSize ( const QSize &amp; <i>maximumImageSize</i> )<tt> [protected]</tt></h3>
 <p>Sets the size of the largest map image which is supported by this engine.</p>
 <p>An invalid size indicates that this engine places no restrictions on the maximum size of the map image.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> should use this function to ensure <a href="qgeomappingmanagerengine.html#maximumImageSize">maximumImageSize</a>() provides accurate information.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#maximumImageSize">maximumImageSize</a>().</p>
-<h3 class="fn"><a name="setMaximumZoomLevel"></a>void QGeoMappingManagerEngine::setMaximumZoomLevel ( qreal <i>maximumZoom</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMaximumZoomLevel"></a>void QGeoMappingManagerEngine::setMaximumZoomLevel ( qreal <i>maximumZoom</i> )<tt> [protected]</tt></h3>
 <p>Sets the maximum zoom level supported by this engine.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> should use this function to ensure <a href="qgeomappingmanagerengine.html#maximumZoomLevel">maximumZoomLevel</a>() provides accurate information.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#maximumZoomLevel">maximumZoomLevel</a>().</p>
-<h3 class="fn"><a name="setMinimumImageSize"></a>void QGeoMappingManagerEngine::setMinimumImageSize ( const QSize &amp; <i>minimumImageSize</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMinimumImageSize"></a>void QGeoMappingManagerEngine::setMinimumImageSize ( const QSize &amp; <i>minimumImageSize</i> )<tt> [protected]</tt></h3>
 <p>Sets the size of the smallest map image which is supported by this engine.</p>
 <p>An invalid size indicates that this engine places no restrictions on the minimum size of the map image.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> should use this function to ensure <a href="qgeomappingmanagerengine.html#minimumImageSize">minimumImageSize</a>() provides accurate information.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#minimumImageSize">minimumImageSize</a>().</p>
-<h3 class="fn"><a name="setMinimumZoomLevel"></a>void QGeoMappingManagerEngine::setMinimumZoomLevel ( qreal <i>minimumZoom</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMinimumZoomLevel"></a>void QGeoMappingManagerEngine::setMinimumZoomLevel ( qreal <i>minimumZoom</i> )<tt> [protected]</tt></h3>
 <p>Sets the minimum zoom level supported by this engine.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> should use this function to ensure <a href="qgeomappingmanagerengine.html#minimumZoomLevel">minimumZoomLevel</a>() provides accurate information.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#minimumZoomLevel">minimumZoomLevel</a>().</p>
-<h3 class="fn"><a name="setSupportedMapTypes"></a>void QGeoMappingManagerEngine::setSupportedMapTypes ( const QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; &amp; <i>mapTypes</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSupportedMapTypes"></a>void QGeoMappingManagerEngine::setSupportedMapTypes ( const QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; &amp; <i>mapTypes</i> )<tt> [protected]</tt></h3>
 <p>Sets the list of map types supported by this engine to <i>mapTypes</i>.</p>
 <p>Subclasses of <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> should use this function to ensure that <a href="qgeomappingmanagerengine.html#supportedMapTypes">supportedMapTypes</a>() provides accurate information.</p>
 <p>See also <a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> and <a href="qgeomappingmanagerengine.html#supportedMapTypes">QGeoMappingManagerEngine::supportedMapTypes</a>().</p>
-<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManagerEngine::supportedMapTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManagerEngine::supportedMapTypes () const</h3>
 <p>Returns a list of the map types supported by this engine.</p>
 <p>See also <a href="qgeomappingmanagerengine.html#setSupportedMapTypes">setSupportedMapTypes</a>().</p>
 </div>
@@ -240,15 +244,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

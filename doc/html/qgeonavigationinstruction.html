@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoNavigationInstruction&gt;</pre><ul>
 <li><a href="qgeonavigationinstruction-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeonavigationinstruction.html#QGeoNavigationInstruction">QGeoNavigationInstruction</a></b> ()</td></tr>
@@ -153,49 +154,51 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoNavigationInstruction &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeonavigationinstruction.html#operator-eq">operator=</a></b> ( const QGeoNavigationInstruction &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeonavigationinstruction.html#operator-eq-eq">operator==</a></b> ( const QGeoNavigationInstruction &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoNavigationInstruction class represents a navigation instruction.</p>
 <p>A QGeoNavigationInstruction instance has a position at which the instruction applies and a textual instruction to provide at that position.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoNavigationInstruction"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoNavigationInstruction"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ()</h3>
 <p>Constructs a navigation instruction object.</p>
-<h3 class="fn"><a name="QGeoNavigationInstruction-2"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ( const QGeoNavigationInstruction &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoNavigationInstruction-2"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ( const QGeoNavigationInstruction &amp; <i>other</i> )</h3>
 <p>Constructs a navigation instruction object from the contents of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoNavigationInstruction"></a>QGeoNavigationInstruction::~QGeoNavigationInstruction ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoNavigationInstruction"></a>QGeoNavigationInstruction::~QGeoNavigationInstruction ()</h3>
 <p>Destroys this navigation instruction object.</p>
-<h3 class="fn"><a name="distanceToNextInstruction"></a>qreal QGeoNavigationInstruction::distanceToNextInstruction () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="distanceToNextInstruction"></a>qreal QGeoNavigationInstruction::distanceToNextInstruction () const</h3>
 <p>Returns the distance, in metres, between the point at which this instruction was issued and the point that the next instruction should be issued.</p>
 <p>See also <a href="qgeonavigationinstruction.html#setDistanceToNextInstruction">setDistanceToNextInstruction</a>().</p>
-<h3 class="fn"><a name="instructionText"></a>QString QGeoNavigationInstruction::instructionText () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instructionText"></a>QString QGeoNavigationInstruction::instructionText () const</h3>
 <p>Returns the textual navigation instructions.</p>
 <p>See also <a href="qgeonavigationinstruction.html#setInstructionText">setInstructionText</a>().</p>
-<h3 class="fn"><a name="position"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoNavigationInstruction::position () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="position"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoNavigationInstruction::position () const</h3>
 <p>Returns the position where the instructions should be provided.</p>
 <p>See also <a href="qgeonavigationinstruction.html#setPosition">setPosition</a>().</p>
-<h3 class="fn"><a name="setDistanceToNextInstruction"></a>void QGeoNavigationInstruction::setDistanceToNextInstruction ( qreal <i>distance</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDistanceToNextInstruction"></a>void QGeoNavigationInstruction::setDistanceToNextInstruction ( qreal <i>distance</i> )</h3>
 <p>Sets the distance, in metres, between the point at which this instruction was issued and the point that the next instruction should be issued to <i>distance</i>.</p>
 <p>See also <a href="qgeonavigationinstruction.html#distanceToNextInstruction">distanceToNextInstruction</a>().</p>
-<h3 class="fn"><a name="setInstructionText"></a>void QGeoNavigationInstruction::setInstructionText ( const QString &amp; <i>instructionText</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInstructionText"></a>void QGeoNavigationInstruction::setInstructionText ( const QString &amp; <i>instructionText</i> )</h3>
 <p>Sets the textual navigation instructions to <i>instructionText</i>.</p>
 <p>See also <a href="qgeonavigationinstruction.html#instructionText">instructionText</a>().</p>
-<h3 class="fn"><a name="setPosition"></a>void QGeoNavigationInstruction::setPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>position</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPosition"></a>void QGeoNavigationInstruction::setPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>position</i> )</h3>
 <p>Sets the position where the instructions should be provided to <i>position</i>.</p>
 <p>See also <a href="qgeonavigationinstruction.html#position">position</a>().</p>
-<h3 class="fn"><a name="setTimeToNextInstruction"></a>void QGeoNavigationInstruction::setTimeToNextInstruction ( int <i>secs</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTimeToNextInstruction"></a>void QGeoNavigationInstruction::setTimeToNextInstruction ( int <i>secs</i> )</h3>
 <p>Sets the estimated time it will take to travel from the point at which this instruction was issued and the point that the next instruction should be issued, in seconds, to <i>secs</i>.</p>
 <p>See also <a href="qgeonavigationinstruction.html#timeToNextInstruction">timeToNextInstruction</a>().</p>
-<h3 class="fn"><a name="timeToNextInstruction"></a>int QGeoNavigationInstruction::timeToNextInstruction () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="timeToNextInstruction"></a>int QGeoNavigationInstruction::timeToNextInstruction () const</h3>
 <p>Returns the estimated time it will take to travel from the point at which this instruction was issued and the point that the next instruction should be issued, in seconds.</p>
 <p>See also <a href="qgeonavigationinstruction.html#setTimeToNextInstruction">setTimeToNextInstruction</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoNavigationInstruction::operator!= ( const QGeoNavigationInstruction &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoNavigationInstruction::operator!= ( const QGeoNavigationInstruction &amp; <i>other</i> ) const</h3>
 <p>Returns whether this navigation instruction is not equal to <i>other</i>.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoNavigationInstruction &amp; QGeoNavigationInstruction::operator= ( const QGeoNavigationInstruction &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoNavigationInstruction &amp; QGeoNavigationInstruction::operator= ( const QGeoNavigationInstruction &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this navigation instruction object and then returns a reference to this navigation instruction object.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoNavigationInstruction::operator== ( const QGeoNavigationInstruction &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoNavigationInstruction::operator== ( const QGeoNavigationInstruction &amp; <i>other</i> ) const</h3>
 <p>Returns whether this navigation instruction is equal to <i>other</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -204,15 +207,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

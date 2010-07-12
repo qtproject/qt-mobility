@@ -126,9 +126,9 @@
 <div class="descr"/>
 <p>This is a <b>Technology Preview</b> and includes new APIs that are included in order to encourage feedback from the community.</p>
 <p>Qt Mobility Project delivers a set of new APIs to Qt with features that are well known from the mobile device world, in particular phones. However, these APIs allow the developer to use these features with ease from one framework and apply them to phones, netbooks and non-mobile personal computers. The framework not only improves many aspects of a mobile experience, because it improves the use of these technologies, but has applicability beyond the mobile device arena.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
-<a name="introducing-the-qt-mobility-apis"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="introducing-the-qt-mobility-apis"></a>
 <h3>Introducing the Qt Mobility APIs</h3>
 <p>Qt Mobility covers a wide range of features and technologies so it best to regard it not as a single API but as a collection of APIs or frameworks.</p>
 <p>This release contains the following APIs:</p>
@@ -159,11 +159,11 @@
 <li>Publish-Subscribe enables communication between separate objects whether local or remote to the device.</li>
 </ul>
 <p>The New Qt APIs deliver to developers an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable or familiar to mobile users, irrespective of whether the platform is mobile or not. This means that there is the possibility of easy transfer of user experience from PC to phone or vice versa.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace, with the important exception of Multimedia. This is done to facilitate the future migration of Mobility APIs into Qt.</p>
 <p>See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="getting-started"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="getting-started"></a>
 <h2>Getting Started</h2>
 <p>To get started with Qt Mobility see the</p>
 <ul>
@@ -172,23 +172,23 @@
 <li><a href="all-examples.html">List of all examples.</a></li>
 </ul>
 <p>For users on the supported Symbian platforms, shown at the bottom of this page, see the instructions at the <a href="http://library.forum.nokia.com/topic/Qt_for_Symbian_Developers_Library/GUID-7E53D0F7-72CB-41C4-8807-FE7A772B0DB4.html">Qt For Symbian Developer's Library</a></p>
-<a name="known-issues"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>For a list of known issues and an additional details on feature supported see <a href="qtmobility-known-issues.html">Release Notes of the QtMobility Project</a>.</p>
 <p>For a overview of Platform Compatibility see <a href="#platform-compatibility">Platform Compatibility</a>.</p>
-<a name="the-qt-mobility-apis"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="the-qt-mobility-apis"></a>
 <h2>The Qt Mobility APIs</h2>
-<a name="service-framework"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="service-framework"></a>
 <h3>Service Framework</h3>
 <p>A platform independent method of finding Services. A 'service' is an independent component that allows a client to perform a well-defined operation.</p>
 <p>The services are implemented as plugins installed on the device and can look for supporting external services running on a central server. E.g&#x2e; weather, local tourist attractions etc. Default applications can use the layer to locate servers.</p>
 <p>Since this is an abstraction layer then the app does not need to be concerned with the underlying protocol, where the servers are, the hardware peculiarities with networking and other low level details.</p>
 <p>For more details see the <a href="service-frameworks.html">Service Framework API overview</a>.</p>
-<a name="messaging"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="messaging"></a>
 <h3>Messaging</h3>
 <p>A common interface for handling SMS, MMS, MIME Email and TNEF Email messages. Enables access to messaging services to search and sort messages, notify of changes to messages stored, send messages with or without attachments, retrieve message data, and launch the preferred messaging client to either display an existing message, or compose a message.</p>
 <p>For more details see the <a href="messaging.html">Messaging API overview</a>.</p>
-<a name="bearer-management"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="bearer-management"></a>
 <h3>Bearer Management</h3>
 <p>Although not a network manager, this component manages the connectivity state of the device to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
 <p>Some platforms can have a set of grouped access points perhaps based on a common purpose. Bearer Management allows comparison and prioritization of the access and use of these points.</p>
@@ -201,68 +201,68 @@
 <li>A connection manager application can be implemented with Qt. This application enumerates available connections, shows counters, and allows the user to connect or disconnect</li>
 </ul>
 <p>For more details, see the <a href="bearer-management.html">Bearer Management API overview</a>.</p>
-<a name="publish-and-subscribe"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="publish-and-subscribe"></a>
 <h3>Publish and Subscribe</h3>
 <p>Will enable context sensitive access to information in future releases. Data is organized as a tree, with data being able to 'shadow' other data with the 'same key', a string specifying the leaf or node. The context is an example of a context ontology, a defined set of relationships. As the context changes the values of the objects change but the relationships remain the same. It is intended to be an enabling technology, the basis of a range future applications.</p>
 <p>At this stage the API is intended to act as a common communications method between applications, whether local or remote.</p>
 <p>For more details, see the <a href="publ-subs.html">Publish and Subscribe API overview</a>.</p>
-<a name="contacts"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="contacts"></a>
 <h3>Contacts</h3>
 <p>The structure and retrieval of contact data from local or remote backends. It includes the ability to create, edit, list, delete and lookup contact information whether it is stored locally or remotely.</p>
 <p>For more details, see the <a href="contacts.html">Contacts API overview</a>.</p>
-<a name="location"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="location"></a>
 <h3>Location</h3>
 <p>The C++ API is one layer of this feature. This API provides an easy to use interface that encapsulates basic geographical information obtained from satellite or other sources about the user, including latitude and longitude, bearing, speed and altitude. It will enable a range of geographical applications, for example, maps.</p>
 <p>For more details, see the <a href="location-overview.html">Location API overview</a>.</p>
-<a name="multimedia"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="multimedia"></a>
 <h3>Multimedia</h3>
 <p>An API to play audio and video of various formats. Record audio. The playing and managing of an FM radio. This includes the typical functionality you would find on a music and video player, combined with an FM radio.</p>
 <p>For more details see the <a href="multimedia.html">Multimedia API overview</a>.</p>
-<a name="system-information"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="system-information"></a>
 <h3>System Information</h3>
 <p>An API to discover system related information and capabilities. Information available will cover software version numbers, hardware features, network connection types and status, display, data storage devices, device information and the screensaver.</p>
 <p>For more details see the <a href="systeminfo.html">System Information API overview</a>.</p>
-<a name="sensors"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="sensors"></a>
 <h3>Sensors</h3>
 <p>An API for accessing hardware sensors. This covers both high-level sensors such as screen orientation (portrait, landscape) and low-level, real-time sensors such as accelerometer data.</p>
 <p>For more details see the <a href="sensors-api.html">Sensors API overview</a>.</p>
-<a name="versit-vcard"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="versit-vcard"></a>
 <h3>Versit (vCard)</h3>
 <p>An API to manage Versit <sup>&reg;</sup> documents, such as vCards.</p>
 <p>For more details see the <a href="versit.html">Versit API overview</a>.</p>
-<a name="preview-apis"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="preview-apis"></a>
 <h2>Preview APIs</h2>
-<a name="organizer"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="organizer"></a>
 <h3>Organizer</h3>
 <p>The structure and retrieval of calendar, scheduling and personal data from local or remote backends. It includes the ability to create, edit, list, delete and lookup organizer information whether it is stored locally or remotely.</p>
 <p>For more details, see the <a href="organizer.html">Organizer API overview</a>.</p>
-<a name="versit-organizer"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="versit-organizer"></a>
 <h3>Versit (Organizer)</h3>
 <p>Similar to Organizer above, this is a cross-platform solution.</p>
-<a name="camera"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="camera"></a>
 <h3>Camera</h3>
 <p>The Camera API provides control of system camera devices. Providing support for still or video image capture with sound support.</p>
 <p>For more details, see the <a href="camera.html">Camera Overview</a>.</p>
-<a name="landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="landmarks"></a>
 <h3>Landmarks</h3>
 <p>The Landmarks portion of the Location API facilitates the creation, retrieval, updating and deletion of landmarks from arbitrary data stores.</p>
 <p>For more details, see the <a href="landmarks.html">Landmark examples</a>.</p>
-<a name="document-gallery"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="document-gallery"></a>
 <h3>Document Gallery</h3>
 <p>The Document Gallery provides a meta-data focused API for managing collections of documents and media.</p>
 <p>For more details, see the <a href="gallery.html">Document Gallery overview</a>.</p>
-<a name="feedback"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="feedback"></a>
 <h3>Feedback</h3>
 <p>The Feedback API enables a client to control the vibration of the device or the piezo feedback from the screen.</p>
 <p>For more details, see the <a href="feedback.html">Feedback API Overview</a>.</p>
-<a name="telephony"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="telephony"></a>
 <h3>Telephony</h3>
 <p>The Qt Telephony API enables access to the telephony event services to provide telephony call notification that other applications can use to be notified.</p>
 <p>For more details, see the <a href="telephony.html">Telephony Overview</a>.</p>
-<a name="the-qtmobility-namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="the-qtmobility-namespace"></a>
 <h2>The QtMobility Namespace</h2>
 <p>The QtMobility APIs are placed into the QtMobility namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="platform-compatibility"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="platform-compatibility"></a>
 <h2>Platform Compatibility</h2>
     <table cellpadding="2" cellspacing="1" border="0">
     <tbody>
@@ -574,11 +574,11 @@
     <br>
 
         <p>
-    <a name="feedback-and-bug-reports"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+    <a name="feedback-and-bug-reports"></a>
 <h2>Feedback and bug reports</h2>
 <p>Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com</p>
 <p>And please report any bugs you may find to <a href="http://bugreports.qt.nokia.com">http://bugreports.qt.nokia.com</a></p>
-<a name="acknowledgements"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="acknowledgements"></a>
 <h2>Acknowledgements</h2>
 <p>The icheck tool uses the following third-party component:</p>
 <p><b>Open Source front-end for C++ (MIT license)</b>, Roberto Raggi &lt;roberto.raggi@gmail.com&gt;, QTMOBILITY/tools/icheck/parser/src</p>
@@ -591,15 +591,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -138,7 +138,8 @@
 <ul>
 <li><a href="qmediaplaylistprovider-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#QMediaPlaylistProvider">QMediaPlaylistProvider</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -158,12 +159,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#save">save</a></b> ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#shuffle">shuffle</a></b> ()</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#loadFailed">loadFailed</a></b> ( QMediaPlaylist::Error <i>error</i>, const QString &amp; <i>errorMessage</i> )</td></tr>
@@ -174,75 +177,77 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#mediaInserted">mediaInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistprovider.html#mediaRemoved">mediaRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylistProvider class provides an abstract list of media.</p>
 </div>
 <p>See also <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylistProvider"></a>QMediaPlaylistProvider::QMediaPlaylistProvider ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaPlaylistProvider"></a>QMediaPlaylistProvider::QMediaPlaylistProvider ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a playlist provider with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QMediaPlaylistProvider"></a>QMediaPlaylistProvider::~QMediaPlaylistProvider ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMediaPlaylistProvider"></a>QMediaPlaylistProvider::~QMediaPlaylistProvider ()<tt> [virtual]</tt></h3>
 <p>Destroys a playlist provider.</p>
-<h3 class="fn"><a name="addMedia"></a>bool QMediaPlaylistProvider::addMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addMedia"></a>bool QMediaPlaylistProvider::addMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [virtual]</tt></h3>
 <p>Append <i>media</i> to a playlist.</p>
 <p>Returns true if the media was appended; and false otherwise.</p>
-<h3 class="fn"><a name="addMedia-2"></a>bool QMediaPlaylistProvider::addMedia ( const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addMedia-2"></a>bool QMediaPlaylistProvider::addMedia ( const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )<tt> [virtual]</tt></h3>
 <p>Append multiple media <i>items</i> to a playlist.</p>
 <p>Returns true if the media items were appended; and false otherwise.</p>
-<h3 class="fn"><a name="clear"></a>bool QMediaPlaylistProvider::clear ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>bool QMediaPlaylistProvider::clear ()<tt> [virtual]</tt></h3>
 <p>Removes all media from a playlist.</p>
 <p>Returns true if the media was removed; and false otherwise.</p>
-<h3 class="fn"><a name="insertMedia"></a>bool QMediaPlaylistProvider::insertMedia ( int <i>position</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertMedia"></a>bool QMediaPlaylistProvider::insertMedia ( int <i>position</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [virtual]</tt></h3>
 <p>Inserts <i>media</i> into a playlist at <i>position</i>.</p>
 <p>Returns true if the media was inserted; and false otherwise.</p>
-<h3 class="fn"><a name="insertMedia-2"></a>bool QMediaPlaylistProvider::insertMedia ( int <i>position</i>, const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertMedia-2"></a>bool QMediaPlaylistProvider::insertMedia ( int <i>position</i>, const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )<tt> [virtual]</tt></h3>
 <p>Inserts multiple media <i>items</i> into a playlist at <i>position</i>.</p>
 <p>Returns true if the media <i>items</i> were inserted; and false otherwise.</p>
-<h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylistProvider::isReadOnly () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylistProvider::isReadOnly () const<tt> [virtual]</tt></h3>
 <p>Returns true if a playlist is read-only; otherwise returns false.</p>
-<h3 class="fn"><a name="load"></a>bool QMediaPlaylistProvider::load ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="load"></a>bool QMediaPlaylistProvider::load ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3>
 <p>Loads a playlist from from a URL <i>location</i>. If no playlist <i>format</i> is specified the loader will inspect the URL or probe the headers to guess the format.</p>
 <p>New items are appended to playlist.</p>
 <p>Returns true if the provider supports the format and loading from the locations URL protocol, otherwise this will return false.</p>
-<h3 class="fn"><a name="load-2"></a>bool QMediaPlaylistProvider::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="load-2"></a>bool QMediaPlaylistProvider::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3>
 <p>Loads a playlist from from an I/O <i>device</i>. If no playlist <i>format</i> is specified the loader will probe the headers to guess the format.</p>
 <p>New items are appended to playlist.</p>
 <p>Returns true if the provider supports the format and loading from an I/O device, otherwise this will return false.</p>
-<h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylistProvider::loadFailed ( <a href="qmediaplaylist.html#Error-enum">QMediaPlaylist::Error</a> <i>error</i>, const QString &amp; <i>errorMessage</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylistProvider::loadFailed ( <a href="qmediaplaylist.html#Error-enum">QMediaPlaylist::Error</a> <i>error</i>, const QString &amp; <i>errorMessage</i> )<tt> [signal]</tt></h3>
 <p>Signals that a load failed() due to an <i>error</i>. The <i>errorMessage</i> provides more information.</p>
-<h3 class="fn"><a name="loaded"></a>void QMediaPlaylistProvider::loaded ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loaded"></a>void QMediaPlaylistProvider::loaded ()<tt> [signal]</tt></h3>
 <p>Signals that a <a href="qmediaplaylistprovider.html#load">load</a>() finished successfully.</p>
-<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistProvider::media ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistProvider::media ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the media at <i>index</i> in the playlist.</p>
 <p>If the index is invalid this will return a null media content.</p>
-<h3 class="fn"><a name="mediaAboutToBeInserted"></a>void QMediaPlaylistProvider::mediaAboutToBeInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaAboutToBeInserted"></a>void QMediaPlaylistProvider::mediaAboutToBeInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signals that new media is about to be inserted into a playlist between the <i>start</i> and <i>end</i> positions.</p>
-<h3 class="fn"><a name="mediaAboutToBeRemoved"></a>void QMediaPlaylistProvider::mediaAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaAboutToBeRemoved"></a>void QMediaPlaylistProvider::mediaAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signals that media is about to be removed from a playlist between the <i>start</i> and <i>end</i> positions.</p>
-<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlaylistProvider::mediaChanged ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlaylistProvider::mediaChanged ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signals that media in playlist between the <i>start</i> and <i>end</i> positions inclusive has changed.</p>
-<h3 class="fn"><a name="mediaCount"></a>int QMediaPlaylistProvider::mediaCount () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaCount"></a>int QMediaPlaylistProvider::mediaCount () const<tt> [pure virtual]</tt></h3>
 <p>Returns the size of playlist.</p>
-<h3 class="fn"><a name="mediaInserted"></a>void QMediaPlaylistProvider::mediaInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaInserted"></a>void QMediaPlaylistProvider::mediaInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signals that new media has been inserted into a playlist between the <i>start</i> and <i>end</i> positions.</p>
-<h3 class="fn"><a name="mediaRemoved"></a>void QMediaPlaylistProvider::mediaRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaRemoved"></a>void QMediaPlaylistProvider::mediaRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signals that media has been removed from a playlist between the <i>start</i> and <i>end</i> positions.</p>
-<h3 class="fn"><a name="removeMedia"></a>bool QMediaPlaylistProvider::removeMedia ( int <i>position</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMedia"></a>bool QMediaPlaylistProvider::removeMedia ( int <i>position</i> )<tt> [virtual]</tt></h3>
 <p>Removes the media at <i>position</i> from a playlist.</p>
 <p>Returns true if the media was removed; and false otherwise.</p>
-<h3 class="fn"><a name="removeMedia-2"></a>bool QMediaPlaylistProvider::removeMedia ( int <i>start</i>, int <i>end</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMedia-2"></a>bool QMediaPlaylistProvider::removeMedia ( int <i>start</i>, int <i>end</i> )<tt> [virtual]</tt></h3>
 <p>Removes the media between the given <i>start</i> and <i>end</i> positions from a playlist.</p>
 <p>Returns true if the media was removed; and false otherwise.</p>
-<h3 class="fn"><a name="save"></a>bool QMediaPlaylistProvider::save ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="save"></a>bool QMediaPlaylistProvider::save ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )<tt> [virtual]</tt></h3>
 <p>Saves the contents of a playlist to a URL <i>location</i>. If no playlist <i>format</i> is specified the writer will inspect the URL to guess the format.</p>
 <p>Returns true if the playlist was saved succesfully; and false otherwise.</p>
-<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylistProvider::save ( QIODevice * <i>device</i>, const char * <i>format</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylistProvider::save ( QIODevice * <i>device</i>, const char * <i>format</i> )<tt> [virtual]</tt></h3>
 <p>Saves the contents of a playlist to an I/O <i>device</i> in the specified <i>format</i>.</p>
 <p>Returns true if the playlist was saved succesfully; and false otherwise.</p>
-<h3 class="fn"><a name="shuffle"></a>void QMediaPlaylistProvider::shuffle ()<tt> [virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="shuffle"></a>void QMediaPlaylistProvider::shuffle ()<tt> [virtual slot]</tt></h3>
 <p>Shuffles the contents of a playlist.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -251,15 +256,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

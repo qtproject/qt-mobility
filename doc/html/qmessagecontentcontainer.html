@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qmessagecontentcontainer-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</td></tr>
@@ -159,7 +160,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#writeContent">writeContent</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#writeTextContent">writeTextContent</a></b> ( QTextStream &amp; <i>out</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageContentContainer class provides an interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved.</p>
@@ -174,58 +176,59 @@
 <p>A container also stores name-value pairs known as header fields. Names are ASCII strings, while values are charset encoded unicode strings. A list of the header fields present in a container is returned by <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(). The unicode string values associated with a particular header field name are returned by <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
 </div>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageContentContainer"></a>QMessageContentContainer::QMessageContentContainer ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageContentContainer"></a>QMessageContentContainer::QMessageContentContainer ()</h3>
 <p>Constructs an empty container object.</p>
-<h3 class="fn"><a name="QMessageContentContainer-2"></a>QMessageContentContainer::QMessageContentContainer ( const QMessageContentContainer &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageContentContainer-2"></a>QMessageContentContainer::QMessageContentContainer ( const QMessageContentContainer &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessageContentContainer"></a>QMessageContentContainer::~QMessageContentContainer ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageContentContainer"></a>QMessageContentContainer::~QMessageContentContainer ()<tt> [virtual]</tt></h3>
 <p>Destroys the container object.</p>
-<h3 class="fn"><a name="contains"></a>bool QMessageContentContainer::contains ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contains"></a>bool QMessageContentContainer::contains ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3>
 <p>If the container contains content with the identifier <i>id</i>, either directly or recursively then returns true; otherwise returns false.</p>
 <p>See also <a href="qmessagecontentcontainer.html#find">find</a>() and <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
-<h3 class="fn"><a name="content"></a>QByteArray QMessageContentContainer::content () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="content"></a>QByteArray QMessageContentContainer::content () const</h3>
 <p>Return the content after decoding any transfer encoding used to represent binary data using 7-bit ASCII characters, such as quoted-printable and base64.</p>
 <p>For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R, Windows-1251 etc will not be decoded.</p>
 <p>See also <a href="qmessagecontentcontainer.html#textContent">textContent</a>().</p>
-<h3 class="fn"><a name="contentCharset"></a>QByteArray QMessageContentContainer::contentCharset () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contentCharset"></a>QByteArray QMessageContentContainer::contentCharset () const</h3>
 <p>Returns the internet media (MIME) content charset, when defined; otherwise an empty array is returned.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>() and <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>().</p>
-<h3 class="fn"><a name="contentIds"></a>QMessageContentContainerIdList QMessageContentContainer::contentIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contentIds"></a>QMessageContentContainerIdList QMessageContentContainer::contentIds () const</h3>
 <p>For a multipart container returns a list of identifiers for all content directly contained by the container; otherwise returns an empty list.</p>
 <p>See also <a href="qmessagecontentcontainer.html#find">find</a>() and <a href="qmessagecontentcontainer.html#contains">contains</a>().</p>
-<h3 class="fn"><a name="contentSubType"></a>QByteArray QMessageContentContainer::contentSubType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contentSubType"></a>QByteArray QMessageContentContainer::contentSubType () const</h3>
 <p>Returns the internet media (MIME) subtype of the content.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>() and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
-<h3 class="fn"><a name="contentType"></a>QByteArray QMessageContentContainer::contentType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contentType"></a>QByteArray QMessageContentContainer::contentType () const</h3>
 <p>Returns the content type of the container. Common types are &quot;text&quot;, &quot;image&quot;, &quot;audio&quot;, &quot;video&quot;, &quot;application&quot;, &quot;message&quot; and &quot;multipart&quot;.</p>
 <p>The internet media (MIME) type of the container is &quot;multipart&quot; if the container directly contains multiple parts rather than directly contains media.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>() and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
-<h3 class="fn"><a name="find"></a>QMessageContentContainer QMessageContentContainer::find ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="find"></a>QMessageContentContainer QMessageContentContainer::find ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3>
 <p>If the container contains another container with identifier <i>id</i> either directly or recursively, then returns the value of that other container; otherwise returns an empty container constructed with the default constructor.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contains">contains</a>() and <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
-<h3 class="fn"><a name="headerFieldValue"></a>QString QMessageContentContainer::headerFieldValue ( const QByteArray &amp; <i>name</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="headerFieldValue"></a>QString QMessageContentContainer::headerFieldValue ( const QByteArray &amp; <i>name</i> ) const</h3>
 <p>Returns the value of the first header field of the container with the name <i>name</i>, if any; otherwise returns a null string.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>() and <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
-<h3 class="fn"><a name="headerFieldValues"></a>QStringList QMessageContentContainer::headerFieldValues ( const QByteArray &amp; <i>name</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="headerFieldValues"></a>QStringList QMessageContentContainer::headerFieldValues ( const QByteArray &amp; <i>name</i> ) const</h3>
 <p>Returns a list of values of header fields with the name <i>name</i>, if any; otherwise returns an empty list.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>() and <a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a>().</p>
-<h3 class="fn"><a name="headerFields"></a>QList&lt;QByteArray&gt; QMessageContentContainer::headerFields () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="headerFields"></a>QList&lt;QByteArray&gt; QMessageContentContainer::headerFields () const</h3>
 <p>Returns a list of names of header fields of the container.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a>() and <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
-<h3 class="fn"><a name="isContentAvailable"></a>bool QMessageContentContainer::isContentAvailable () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isContentAvailable"></a>bool QMessageContentContainer::isContentAvailable () const</h3>
 <p>Returns true if the entirety of the content contained is available on the device; otherwise returns false.</p>
-<h3 class="fn"><a name="size"></a>int QMessageContentContainer::size () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="size"></a>int QMessageContentContainer::size () const</h3>
 <p>If the size of the container is known then returns an indication of the size of the container on the originating server, including contents; otherwise returns 0.</p>
-<h3 class="fn"><a name="suggestedFileName"></a>QByteArray QMessageContentContainer::suggestedFileName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="suggestedFileName"></a>QByteArray QMessageContentContainer::suggestedFileName () const</h3>
 <p>Returns the suggested filename for the attachment, when defined; otherwise an empty array is returned.</p>
 <p>The default is an empty array.</p>
-<h3 class="fn"><a name="textContent"></a>QString QMessageContentContainer::textContent () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="textContent"></a>QString QMessageContentContainer::textContent () const</h3>
 <p>For textual content encoded with a recognized charset, returns the content as a unicode string; otherwise a null string is returned.</p>
-<h3 class="fn"><a name="writeContent"></a>void QMessageContentContainer::writeContent ( QDataStream &amp; <i>out</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="writeContent"></a>void QMessageContentContainer::writeContent ( QDataStream &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#content">content</a>() to the stream <i>out</i>; otherwise does nothing.</p>
-<h3 class="fn"><a name="writeTextContent"></a>void QMessageContentContainer::writeTextContent ( QTextStream &amp; <i>out</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="writeTextContent"></a>void QMessageContentContainer::writeTextContent ( QTextStream &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#textContent">textContent</a>() to the stream <i>out</i>; otherwise does nothing.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -234,15 +237,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

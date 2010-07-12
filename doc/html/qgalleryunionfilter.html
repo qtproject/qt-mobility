@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryUnionFilter&gt;</pre><ul>
 <li><a href="qgalleryunionfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter">QGalleryUnionFilter</a></b> ()</td></tr>
@@ -159,63 +160,67 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryunionfilter.html#replace-2">replace</a></b> ( int <i>index</i>, const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryUnionFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgalleryunionfilter.html#operator-eq">operator=</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<a name="related-non-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryUnionFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryunionfilter.html#operator-7c-7c">operator||</a></b> ( const QGalleryUnionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryUnionFilter class provides a filter which matches the union of two or more meta-data filters.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryUnionFilter"></a>QGalleryUnionFilter::QGalleryUnionFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryUnionFilter"></a>QGalleryUnionFilter::QGalleryUnionFilter ()</h3>
 <p>Constructs an empty union.</p>
-<h3 class="fn"><a name="QGalleryUnionFilter-2"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryUnionFilter-2"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a union filter from a meta data <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryUnionFilter-3"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryUnionFilter-3"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a union filter from an intersection <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryUnionFilter-4"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryUnionFilter-4"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a union <i>filter</i>.</p>
-<h3 class="fn"><a name="dtor.QGalleryUnionFilter"></a>QGalleryUnionFilter::~QGalleryUnionFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryUnionFilter"></a>QGalleryUnionFilter::~QGalleryUnionFilter ()</h3>
 <p>Destroys a union filter.</p>
-<h3 class="fn"><a name="append"></a>void QGalleryUnionFilter::append ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append"></a>void QGalleryUnionFilter::append ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends a meta-data <i>filter</i> to a union.</p>
-<h3 class="fn"><a name="append-2"></a>void QGalleryUnionFilter::append ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append-2"></a>void QGalleryUnionFilter::append ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends an intersection <i>filter</i> to a union.</p>
-<h3 class="fn"><a name="append-3"></a>void QGalleryUnionFilter::append ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append-3"></a>void QGalleryUnionFilter::append ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Appends the contents of a union <i>filter</i> to a union.</p>
-<h3 class="fn"><a name="clear"></a>void QGalleryUnionFilter::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QGalleryUnionFilter::clear ()</h3>
 <p>Clears all the filters from a union.</p>
-<h3 class="fn"><a name="filterCount"></a>int QGalleryUnionFilter::filterCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filterCount"></a>int QGalleryUnionFilter::filterCount () const</h3>
 <p>Returns the number of filters in a union.</p>
-<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qgalleryfilter.html">QGalleryFilter</a>&gt; QGalleryUnionFilter::filters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qgalleryfilter.html">QGalleryFilter</a>&gt; QGalleryUnionFilter::filters () const</h3>
 <p>Returns the filters contained in a union.</p>
-<h3 class="fn"><a name="insert"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Inserts a meta-data <i>filter</i> into a union at <i>index</i>.</p>
-<h3 class="fn"><a name="insert-2"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert-2"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Inserts an intersection <i>filter</i> into a union at <i>index</i>.</p>
-<h3 class="fn"><a name="insert-3"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const QGalleryUnionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insert-3"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Inserts the contents of a union <i>filter</i> into a union at <i>index</i>.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QGalleryUnionFilter::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QGalleryUnionFilter::isEmpty () const</h3>
 <p>Returns true if a union contains no filters, and false otherwise.</p>
-<h3 class="fn"><a name="isValid"></a>bool QGalleryUnionFilter::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QGalleryUnionFilter::isValid () const</h3>
 <p>Returns true if the filter is a valid union filter.</p>
 <p>An invalid filter can be obtained by casting a non <a href="qgalleryfilter.html#Type-enum">QGalleryFilter::Union</a> type <a href="qgalleryfilter.html">QGalleryFilter</a> to <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a>.</p>
-<h3 class="fn"><a name="removeAt"></a>void QGalleryUnionFilter::removeAt ( int <i>index</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeAt"></a>void QGalleryUnionFilter::removeAt ( int <i>index</i> )</h3>
 <p>Removes the filter at <i>index</i> from a union.</p>
-<h3 class="fn"><a name="replace"></a>void QGalleryUnionFilter::replace ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="replace"></a>void QGalleryUnionFilter::replace ( int <i>index</i>, const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Replaces the filter at <i>index</i> in a union with a meta-data <i>filter</i>.</p>
-<h3 class="fn"><a name="replace-2"></a>void QGalleryUnionFilter::replace ( int <i>index</i>, const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="replace-2"></a>void QGalleryUnionFilter::replace ( int <i>index</i>, const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Replaces the filter at <i>index</i> in a union with an intersetion <i>filter</i>.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGalleryUnionFilter &amp; QGalleryUnionFilter::operator= ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryUnionFilter &amp; QGalleryUnionFilter::operator= ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another union filter.</p>
 </div>
+<hr />
 <div class="relnonmem"/>
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-7c-7c"></a>QGalleryUnionFilter operator|| ( const QGalleryUnionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-7c-7c"></a>QGalleryUnionFilter operator|| ( const QGalleryUnionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3>
 <p>Returns a gallery filter which matches the union of <i>filter1</i> and <i>filter2</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -224,15 +229,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

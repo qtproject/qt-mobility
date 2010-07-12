@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#system-information">System Information</a></li>
 <li class="level1"><a href="#namespace">Namespace</a></li>
@@ -151,32 +151,32 @@
 <tr class="odd topAlign"><td><p><a href="qsystemscreensaver.html">QSystemScreenSaver</a></p></td><td><p>Access to screen saver and blanking</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></p></td><td><p>Access to memory and disk information from the system</p></td></tr>
 </table>
-<a name="system-information"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="system-information"></a>
 <h2>System Information</h2>
 <p>The System Information API provides a set of APIs to discover system related information and capabilities.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>The System Information API returns the system information related to a number of categories.</p>
-<a name="information-categories"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="information-categories"></a>
 <h3>Information Categories</h3>
-<a name="version"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="version"></a>
 <h4>Version</h4>
 <p>Contains version information for a range of supporting software on the device. For example, from the Operating System and Firmware to the version of WebKit, Qt and the Service Framework.</p>
-<a name="features-hardware"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="features-hardware"></a>
 <h4>Features (hardware)</h4>
 <p>This lists the supported hardware on the device. Features include items such as the camera, bluetooth, GPS, FM radio etc.</p>
-<a name="network"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="network"></a>
 <h4>Network</h4>
 <p>The state of the network connection, and also the type of network e.g&#x2e; gsm, cdma, ethernet etc.</p>
-<a name="display-information"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="display-information"></a>
 <h4>Display Information</h4>
-<a name="storage-information"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="storage-information"></a>
 <h4>Storage Information</h4>
 <p>The presence of various storage devices. Including: none, internal, removable, cdrom.</p>
-<a name="device-information"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="device-information"></a>
 <h4>Device Information</h4>
 <ul>
 <li>Battery Status</li>
@@ -185,18 +185,18 @@
 <li>Sim</li>
 <li>Input Method (key/buttons, keypad, qwerty, single touch screen, multitouch etc)</li>
 </ul>
-<a name="screensaver"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="screensaver"></a>
 <h4>Screensaver</h4>
-<a name="building-and-compiling"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-and-compiling"></a>
 <h2>Building and compiling</h2>
 <p>This library requires Qt 4.6 to be installed.</p>
 <p>To build the library, run <tt>qmake</tt> and <tt>make</tt>.</p>
 <p>Linux supports a NetworkManager based backend and generic backend using QNetworkInterface only. By default the generic backend is selected. If the NetworkManager backend is required run qmake as follows:</p>
 <pre class="highlightedCode brush: cpp"> qmake BACKEND=NetworkManager</pre>
 <p>The backend selection is expected to disappear once the API is integrated into Qt.</p>
-<a name="examples"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="examples"></a>
 <h2>Examples</h2>
-<a name="system-information-example"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="system-information-example"></a>
 <h3>System Information Example</h3>
 <p>The <a href="sysinfo.html">System Information</a> example demonstrates how an application can very easily access the system information of the device.</p>
 </div>
@@ -206,15 +206,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

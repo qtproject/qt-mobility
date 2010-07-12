@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -140,7 +140,8 @@
 <ul>
 <li><a href="qvideowidgetcontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#dtor.QVideoWidgetControl">~QVideoWidgetControl</a></b> ()</td></tr>
@@ -158,7 +159,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#setSaturation">setSaturation</a></b> ( int <i>saturation</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QWidget * </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#videoWidget">videoWidget</a></b> () = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
@@ -167,17 +169,20 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#QVideoWidgetControl">QVideoWidgetControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowidgetcontrol.html#QVideoWidgetControl_iid">QVideoWidgetControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoWidgetControl class provides a media control which implements a video widget.</p>
@@ -188,71 +193,73 @@
 <p>The interface name of QVideoWidgetControl is <tt>com.nokia.Qt.QVideoWidgetControl/1.0</tt> as defined in <a href="qvideowidgetcontrol.html#QVideoWidgetControl_iid">QVideoWidgetControl_iid</a>.</p>
 </div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qvideowidget.html">QVideoWidget</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVideoWidgetControl"></a>QVideoWidgetControl::QVideoWidgetControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoWidgetControl"></a>QVideoWidgetControl::QVideoWidgetControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a new video widget control with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QVideoWidgetControl"></a>QVideoWidgetControl::~QVideoWidgetControl ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVideoWidgetControl"></a>QVideoWidgetControl::~QVideoWidgetControl ()<tt> [virtual]</tt></h3>
 <p>Destroys a video widget control.</p>
-<h3 class="fn"><a name="aspectRatioMode"></a>Qt::AspectRatioMode QVideoWidgetControl::aspectRatioMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="aspectRatioMode"></a>Qt::AspectRatioMode QVideoWidgetControl::aspectRatioMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns how video is scaled to fit the widget with respect to its aspect ratio.</p>
 <p>See also <a href="qvideowidgetcontrol.html#setAspectRatioMode">setAspectRatioMode</a>().</p>
-<h3 class="fn"><a name="brightness"></a>int QVideoWidgetControl::brightness () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="brightness"></a>int QVideoWidgetControl::brightness () const<tt> [pure virtual]</tt></h3>
 <p>Returns the brightness adjustment applied to a video.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#setBrightness">setBrightness</a>().</p>
-<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWidgetControl::brightnessChanged ( int <i>brightness</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWidgetControl::brightnessChanged ( int <i>brightness</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>brightness</i> adjustment has changed.</p>
-<h3 class="fn"><a name="contrast"></a>int QVideoWidgetControl::contrast () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contrast"></a>int QVideoWidgetControl::contrast () const<tt> [pure virtual]</tt></h3>
 <p>Returns the contrast adjustment applied to a video.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#setContrast">setContrast</a>().</p>
-<h3 class="fn"><a name="contrastChanged"></a>void QVideoWidgetControl::contrastChanged ( int <i>contrast</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contrastChanged"></a>void QVideoWidgetControl::contrastChanged ( int <i>contrast</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>contrast</i> adjustment has changed.</p>
-<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidgetControl::fullScreenChanged ( bool <i>fullScreen</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWidgetControl::fullScreenChanged ( bool <i>fullScreen</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>fullScreen</i> state of a video widget has changed.</p>
-<h3 class="fn"><a name="hue"></a>int QVideoWidgetControl::hue () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hue"></a>int QVideoWidgetControl::hue () const<tt> [pure virtual]</tt></h3>
 <p>Returns the hue adjustment applied to a video widget.</p>
 <p>Value hue values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#setHue">setHue</a>().</p>
-<h3 class="fn"><a name="hueChanged"></a>void QVideoWidgetControl::hueChanged ( int <i>hue</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hueChanged"></a>void QVideoWidgetControl::hueChanged ( int <i>hue</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>hue</i> adjustment has changed.</p>
-<h3 class="fn"><a name="isFullScreen"></a>bool QVideoWidgetControl::isFullScreen () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFullScreen"></a>bool QVideoWidgetControl::isFullScreen () const<tt> [pure virtual]</tt></h3>
 <p>Returns true if the video is shown using the complete screen.</p>
-<h3 class="fn"><a name="saturation"></a>int QVideoWidgetControl::saturation () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saturation"></a>int QVideoWidgetControl::saturation () const<tt> [pure virtual]</tt></h3>
 <p>Returns the saturation adjustment applied to a video widget.</p>
 <p>Value saturation values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#setSaturation">setSaturation</a>().</p>
-<h3 class="fn"><a name="saturationChanged"></a>void QVideoWidgetControl::saturationChanged ( int <i>saturation</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saturationChanged"></a>void QVideoWidgetControl::saturationChanged ( int <i>saturation</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video widget's <i>saturation</i> adjustment has changed.</p>
-<h3 class="fn"><a name="setAspectRatioMode"></a>void QVideoWidgetControl::setAspectRatioMode ( Qt::AspectRatioMode <i>mode</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAspectRatioMode"></a>void QVideoWidgetControl::setAspectRatioMode ( Qt::AspectRatioMode <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the aspect ratio <i>mode</i> which determines how video is scaled to the fit the widget with respect to its aspect ratio.</p>
 <p>See also <a href="qvideowidgetcontrol.html#aspectRatioMode">aspectRatioMode</a>().</p>
-<h3 class="fn"><a name="setBrightness"></a>void QVideoWidgetControl::setBrightness ( int <i>brightness</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBrightness"></a>void QVideoWidgetControl::setBrightness ( int <i>brightness</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>brightness</i> adjustment for a video.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#brightness">brightness</a>().</p>
-<h3 class="fn"><a name="setContrast"></a>void QVideoWidgetControl::setContrast ( int <i>contrast</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContrast"></a>void QVideoWidgetControl::setContrast ( int <i>contrast</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the contrast adjustment for a video widget to <i>contrast</i>.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#contrast">contrast</a>().</p>
-<h3 class="fn"><a name="setFullScreen"></a>void QVideoWidgetControl::setFullScreen ( bool <i>fullScreen</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFullScreen"></a>void QVideoWidgetControl::setFullScreen ( bool <i>fullScreen</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets whether a video widget is in <i>fullScreen</i> mode.</p>
 <p>See also <a href="qvideowidgetcontrol.html#isFullScreen">isFullScreen</a>().</p>
-<h3 class="fn"><a name="setHue"></a>void QVideoWidgetControl::setHue ( int <i>hue</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setHue"></a>void QVideoWidgetControl::setHue ( int <i>hue</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>hue</i> adjustment for a video widget.</p>
 <p>Valid hue values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#hue">hue</a>().</p>
-<h3 class="fn"><a name="setSaturation"></a>void QVideoWidgetControl::setSaturation ( int <i>saturation</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSaturation"></a>void QVideoWidgetControl::setSaturation ( int <i>saturation</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>saturation</i> adjustment for a video widget.</p>
 <p>Valid saturation values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowidgetcontrol.html#saturation">saturation</a>().</p>
-<h3 class="fn"><a name="videoWidget"></a>QWidget * QVideoWidgetControl::videoWidget ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="videoWidget"></a>QWidget * QVideoWidgetControl::videoWidget ()<tt> [pure virtual]</tt></h3>
 <p>Returns the QWidget.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QVideoWidgetControl_iid"></a>QVideoWidgetControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoWidgetControl_iid"></a>QVideoWidgetControl_iid</h3>
 <p><tt>com.nokia.Qt.QVideoWidgetControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qvideowidgetcontrol.html">QVideoWidgetControl</a> class.</p>
 </div>
@@ -262,15 +269,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -135,13 +135,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryFilter&gt;</pre><ul>
 <li><a href="qgalleryfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryfilter.html#Comparator-enum">Comparator</a></b> { Equals, LessThan, GreaterThan, LessThanEquals, ..., RegExp }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryfilter.html#Type-enum">Type</a></b> { Invalid, Intersection, Union, MetaData }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryfilter.html#QGalleryFilter">QGalleryFilter</a></b> ()</td></tr>
@@ -157,14 +159,16 @@
 <tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="qgalleryfilter.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgalleryfilter.html#operator-eq">operator=</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryFilter class provides filtering criteria for gallery requests.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Comparator-enum"></a>enum QGalleryFilter::Comparator</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Comparator-enum"></a>enum QGalleryFilter::Comparator</h3>
 <p>Identifies the comparison made by a <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QGalleryFilter::Equals</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter tests if a meta-data property is equal to a value.</td></tr>
@@ -178,7 +182,7 @@
 <tr><td  class="topAlign"><tt>QGalleryFilter::Wildcard</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">The filter tests if a meta-data property matches a wildcard string.</td></tr>
 <tr><td  class="topAlign"><tt>QGalleryFilter::RegExp</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">The filter tests if a meta-data property matches a regular expression.</td></tr>
 </table>
-<h3 class="fn"><a name="Type-enum"></a>enum QGalleryFilter::Type</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Type-enum"></a>enum QGalleryFilter::Type</h3>
 <p>Identifies the type of a filter.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QGalleryFilter::Invalid</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter is a null <a href="qgalleryfilter.html">QGalleryFilter</a>.</td></tr>
@@ -187,34 +191,35 @@
 <tr><td  class="topAlign"><tt>QGalleryFilter::MetaData</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The filter is a <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryFilter"></a>QGalleryFilter::QGalleryFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryFilter"></a>QGalleryFilter::QGalleryFilter ()</h3>
 <p>Constructs a gallery filter of type <a href="qgalleryfilter.html#Type-enum">Invalid</a>.</p>
-<h3 class="fn"><a name="QGalleryFilter-2"></a>QGalleryFilter::QGalleryFilter ( const QGalleryFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryFilter-2"></a>QGalleryFilter::QGalleryFilter ( const QGalleryFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryFilter-3"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryFilter-3"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery intersection <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryFilter-4"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryFilter-4"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery union <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryFilter-5"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryFilter-5"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery meta-data <i>filter</i>.</p>
-<h3 class="fn"><a name="dtor.QGalleryFilter"></a>QGalleryFilter::~QGalleryFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryFilter"></a>QGalleryFilter::~QGalleryFilter ()</h3>
 <p>Destroys a gallery filter.</p>
-<h3 class="fn"><a name="isValid"></a>bool QGalleryFilter::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QGalleryFilter::isValid () const</h3>
 <p>Returns true if the <a href="qgalleryfilter.html#type">type</a>() of the filter is not equal to Invalid.</p>
-<h3 class="fn"><a name="toIntersectionFilter"></a><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> QGalleryFilter::toIntersectionFilter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="toIntersectionFilter"></a><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> QGalleryFilter::toIntersectionFilter () const</h3>
 <p>Casts a filter to an intersection filter. The filter must be of type Intersection or this will return an Invalid filter.</p>
 <p>Returns a <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a>.</p>
-<h3 class="fn"><a name="toMetaDataFilter"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryFilter::toMetaDataFilter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="toMetaDataFilter"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryFilter::toMetaDataFilter () const</h3>
 <p>Casts a filter to a meta-data filter. The filter must be of type <a href="qgalleryfilter.html#Type-enum">MetaData</a> or this will return an Invalid filter.</p>
 <p>Returns a <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>.</p>
-<h3 class="fn"><a name="toUnionFilter"></a><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> QGalleryFilter::toUnionFilter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="toUnionFilter"></a><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> QGalleryFilter::toUnionFilter () const</h3>
 <p>Casts a filter to a union filter. The filter must be of type Union or this will return an Invalid filter.</p>
 <p>Returns a <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a>.</p>
-<h3 class="fn"><a name="type"></a><a href="qgalleryfilter.html#Type-enum">Type</a> QGalleryFilter::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qgalleryfilter.html#Type-enum">Type</a> QGalleryFilter::type () const</h3>
 <p>Returns the type of a filter.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGalleryFilter &amp; QGalleryFilter::operator= ( const QGalleryFilter &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryFilter &amp; QGalleryFilter::operator= ( const QGalleryFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another filter.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -223,15 +228,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

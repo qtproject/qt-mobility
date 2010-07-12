@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactChangeSet&gt;</pre><ul>
 <li><a href="qcontactchangeset-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactchangeset.html#QContactChangeSet">QContactChangeSet</a></b> ()</td></tr>
@@ -169,78 +170,80 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactchangeset.html#setOldAndNewSelfContactId">setOldAndNewSelfContactId</a></b> ( const QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; <i>oldAndNewContactId</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QContactChangeSet &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactchangeset.html#operator-eq">operator=</a></b> ( const QContactChangeSet &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactChangeSet class provides a simple API to simplify the emission of state-change signals from <a href="qcontactmanagerengine.html">QContactManagerEngine</a> implementations.</p>
 <p>This class can be utilised by backend implementations to ensure correct emission of the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>(), <a href="qcontactmanagerengine.html#contactsAdded">QContactManagerEngine::contactsAdded</a>(), <a href="qcontactmanagerengine.html#contactsChanged">QContactManagerEngine::contactsChanged</a>() and <a href="qcontactmanagerengine.html#contactsRemoved">QContactManagerEngine::contactsRemoved</a>().</p>
 </div>
 <p>See also <a href="qcontactmanagerengine.html">QContactManagerEngine</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactChangeSet"></a>QContactChangeSet::QContactChangeSet ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactChangeSet"></a>QContactChangeSet::QContactChangeSet ()</h3>
 <p>Constructs a new change set</p>
-<h3 class="fn"><a name="QContactChangeSet-2"></a>QContactChangeSet::QContactChangeSet ( const QContactChangeSet &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactChangeSet-2"></a>QContactChangeSet::QContactChangeSet ( const QContactChangeSet &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> change set</p>
-<h3 class="fn"><a name="dtor.QContactChangeSet"></a>QContactChangeSet::~QContactChangeSet ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactChangeSet"></a>QContactChangeSet::~QContactChangeSet ()</h3>
 <p>Frees the memory used by this change set</p>
-<h3 class="fn"><a name="addedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::addedContacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::addedContacts () const</h3>
 <p>Returns the set of ids of contacts which have been added to the database.</p>
-<h3 class="fn"><a name="addedRelationshipsContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::addedRelationshipsContacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addedRelationshipsContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::addedRelationshipsContacts () const</h3>
 <p>Returns the set of ids of contacts which have been affected by the addition of relationships to the database.</p>
-<h3 class="fn"><a name="changedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::changedContacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="changedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::changedContacts () const</h3>
 <p>Returns the set of ids of contacts which have been changed in the database.</p>
-<h3 class="fn"><a name="clearAddedContacts"></a>void QContactChangeSet::clearAddedContacts ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAddedContacts"></a>void QContactChangeSet::clearAddedContacts ()</h3>
 <p>Clears the set of ids of contacts which have been added to the database</p>
-<h3 class="fn"><a name="clearAddedRelationshipsContacts"></a>void QContactChangeSet::clearAddedRelationshipsContacts ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAddedRelationshipsContacts"></a>void QContactChangeSet::clearAddedRelationshipsContacts ()</h3>
 <p>Clears the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
-<h3 class="fn"><a name="clearAll"></a>void QContactChangeSet::clearAll ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAll"></a>void QContactChangeSet::clearAll ()</h3>
 <p>Clears all flags and sets of ids in this change set</p>
-<h3 class="fn"><a name="clearChangedContacts"></a>void QContactChangeSet::clearChangedContacts ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearChangedContacts"></a>void QContactChangeSet::clearChangedContacts ()</h3>
 <p>Clears the set of ids of contacts which have been changed to the database</p>
-<h3 class="fn"><a name="clearRemovedContacts"></a>void QContactChangeSet::clearRemovedContacts ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearRemovedContacts"></a>void QContactChangeSet::clearRemovedContacts ()</h3>
 <p>Clears the set of ids of contacts which have been removed to the database</p>
-<h3 class="fn"><a name="clearRemovedRelationshipsContacts"></a>void QContactChangeSet::clearRemovedRelationshipsContacts ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearRemovedRelationshipsContacts"></a>void QContactChangeSet::clearRemovedRelationshipsContacts ()</h3>
 <p>Clears the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
-<h3 class="fn"><a name="dataChanged"></a>bool QContactChangeSet::dataChanged ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dataChanged"></a>bool QContactChangeSet::dataChanged ()</h3>
 <p>Returns the value of the data changed flag</p>
 <p>See also <a href="qcontactchangeset.html#setDataChanged">setDataChanged</a>().</p>
-<h3 class="fn"><a name="emitSignals"></a>void QContactChangeSet::emitSignals ( <a href="qcontactmanagerengine.html">QContactManagerEngine</a> * <i>engine</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="emitSignals"></a>void QContactChangeSet::emitSignals ( <a href="qcontactmanagerengine.html">QContactManagerEngine</a> * <i>engine</i> )</h3>
 <p>Emits the appropriate signals from the given <i>engine</i> given the state of the change set</p>
-<h3 class="fn"><a name="insertAddedContact"></a>void QContactChangeSet::insertAddedContact ( QContactLocalId <i>addedContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedContact"></a>void QContactChangeSet::insertAddedContact ( QContactLocalId <i>addedContactId</i> )</h3>
 <p>Inserts the given contact id <i>addedContactId</i> into the set of ids of contacts which have been added to the database.</p>
-<h3 class="fn"><a name="insertAddedContacts"></a>void QContactChangeSet::insertAddedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>addedContactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedContacts"></a>void QContactChangeSet::insertAddedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>addedContactIds</i> )</h3>
 <p>Inserts each of the given contact ids <i>addedContactIds</i> into the set of ids of contacts which have been added to the database.</p>
-<h3 class="fn"><a name="insertAddedRelationshipsContact"></a>void QContactChangeSet::insertAddedRelationshipsContact ( QContactLocalId <i>affectedContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedRelationshipsContact"></a>void QContactChangeSet::insertAddedRelationshipsContact ( QContactLocalId <i>affectedContactId</i> )</h3>
 <p>Inserts the given contact id <i>affectedContactId</i> into the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
-<h3 class="fn"><a name="insertAddedRelationshipsContacts"></a>void QContactChangeSet::insertAddedRelationshipsContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedRelationshipsContacts"></a>void QContactChangeSet::insertAddedRelationshipsContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</h3>
 <p>Inserts each of the given contact ids <i>affectedContactIds</i> into the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
-<h3 class="fn"><a name="insertChangedContact"></a>void QContactChangeSet::insertChangedContact ( QContactLocalId <i>changedContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertChangedContact"></a>void QContactChangeSet::insertChangedContact ( QContactLocalId <i>changedContactId</i> )</h3>
 <p>Inserts the given contact id <i>changedContactId</i> into the set of ids of contacts which have been changed to the database.</p>
-<h3 class="fn"><a name="insertChangedContacts"></a>void QContactChangeSet::insertChangedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>changedContactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertChangedContacts"></a>void QContactChangeSet::insertChangedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>changedContactIds</i> )</h3>
 <p>Inserts each of the given contact ids <i>changedContactIds</i> into the set of ids of contacts which have been changed to the database.</p>
-<h3 class="fn"><a name="insertRemovedContact"></a>void QContactChangeSet::insertRemovedContact ( QContactLocalId <i>removedContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedContact"></a>void QContactChangeSet::insertRemovedContact ( QContactLocalId <i>removedContactId</i> )</h3>
 <p>Inserts the given contact id <i>removedContactId</i> into the set of ids of contacts which have been removed to the database.</p>
-<h3 class="fn"><a name="insertRemovedContacts"></a>void QContactChangeSet::insertRemovedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>removedContactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedContacts"></a>void QContactChangeSet::insertRemovedContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>removedContactIds</i> )</h3>
 <p>Inserts each of the given contact ids <i>removedContactIds</i> into the set of ids of contacts which have been removed to the database.</p>
-<h3 class="fn"><a name="insertRemovedRelationshipsContact"></a>void QContactChangeSet::insertRemovedRelationshipsContact ( QContactLocalId <i>affectedContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedRelationshipsContact"></a>void QContactChangeSet::insertRemovedRelationshipsContact ( QContactLocalId <i>affectedContactId</i> )</h3>
 <p>Inserts the given contact id <i>affectedContactId</i> into the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
-<h3 class="fn"><a name="insertRemovedRelationshipsContacts"></a>void QContactChangeSet::insertRemovedRelationshipsContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedRelationshipsContacts"></a>void QContactChangeSet::insertRemovedRelationshipsContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</h3>
 <p>Inserts each of the given contact ids <i>affectedContactIds</i> into the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
-<h3 class="fn"><a name="oldAndNewSelfContactId"></a>QPair&lt;QContactLocalId, QContactLocalId&gt; QContactChangeSet::oldAndNewSelfContactId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="oldAndNewSelfContactId"></a>QPair&lt;QContactLocalId, QContactLocalId&gt; QContactChangeSet::oldAndNewSelfContactId () const</h3>
 <p>Returns the pair of ids which represents the old and new self contact ids. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the <a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine::selfContactIdChanged</a>() signal will be emitted.</p>
 <p>See also <a href="qcontactchangeset.html#setOldAndNewSelfContactId">setOldAndNewSelfContactId</a>().</p>
-<h3 class="fn"><a name="removedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::removedContacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removedContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::removedContacts () const</h3>
 <p>Returns the set of ids of contacts which have been removed from the database.</p>
-<h3 class="fn"><a name="removedRelationshipsContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::removedRelationshipsContacts () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removedRelationshipsContacts"></a>QSet&lt;QContactLocalId&gt; QContactChangeSet::removedRelationshipsContacts () const</h3>
 <p>Returns the set of ids of contacts which have been affected by the removal of relationships from the database.</p>
-<h3 class="fn"><a name="setDataChanged"></a>void QContactChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDataChanged"></a>void QContactChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3>
 <p>Sets the data changed flag to <i>dataChanged</i>. If this is set to true prior to calling <a href="qcontactchangeset.html#emitSignals">emitSignals</a>(), only the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>() signal will be emitted; otherwise, the appropriate finer-grained signals will be emitted.</p>
 <p>See also <a href="qcontactchangeset.html#dataChanged">dataChanged</a>().</p>
-<h3 class="fn"><a name="setOldAndNewSelfContactId"></a>void QContactChangeSet::setOldAndNewSelfContactId ( const QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; <i>oldAndNewContactId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setOldAndNewSelfContactId"></a>void QContactChangeSet::setOldAndNewSelfContactId ( const QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; <i>oldAndNewContactId</i> )</h3>
 <p>Sets the pair of ids which represent the old and new self contact ids to the given pair of ids <i>oldAndNewContactId</i>. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the QContactManagerEngine::selfContactIdChanged signal will be emitted.</p>
 <p>See also <a href="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactChangeSet &amp; QContactChangeSet::operator= ( const QContactChangeSet &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactChangeSet &amp; QContactChangeSet::operator= ( const QContactChangeSet &amp; <i>other</i> )</h3>
 <p>Assigns this change set to be equal to <i>other</i></p>
 </div>
 <p /><address><hr /><div align="center">
@@ -249,15 +252,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

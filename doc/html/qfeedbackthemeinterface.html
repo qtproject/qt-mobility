@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -135,32 +135,36 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QFeedbackThemeInterface&gt;</pre><ul>
 <li><a href="qfeedbackthemeinterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackthemeinterface.html#dtor.QFeedbackThemeInterface">~QFeedbackThemeInterface</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackthemeinterface.html#play">play</a></b> ( QFeedbackEffect::ThemeEffect <i>effect</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual PluginPriority </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackthemeinterface.html#pluginPriority">pluginPriority</a></b> () = 0</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QFeedbackThemeInterface * </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackthemeinterface.html#instance">instance</a></b> ()</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QFeedbackThemeInterface class is the base class for objects providing themed effects.</p>
 <p>They can be of any nature (tactile, audio..&#x2e;)&#x2e; This simple interface will be used to play those themed effects by a simple call to the play method.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QFeedbackThemeInterface"></a>QFeedbackThemeInterface::~QFeedbackThemeInterface ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="instance"></a>QFeedbackThemeInterface * QFeedbackThemeInterface::instance ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QFeedbackThemeInterface"></a>QFeedbackThemeInterface::~QFeedbackThemeInterface ()<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="instance"></a>QFeedbackThemeInterface * QFeedbackThemeInterface::instance ()<tt> [static]</tt></h3>
 <p>returns the instance of the object managing theme effects. If no backend has been loaded, this will return a null pointer.</p>
-<h3 class="fn"><a name="play"></a>bool QFeedbackThemeInterface::play ( <a href="qfeedbackeffect.html#ThemeEffect-enum">QFeedbackEffect::ThemeEffect</a> <i>effect</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="play"></a>bool QFeedbackThemeInterface::play ( <a href="qfeedbackeffect.html#ThemeEffect-enum">QFeedbackEffect::ThemeEffect</a> <i>effect</i> )<tt> [pure virtual]</tt></h3>
 <p>Plays the theme effect <i>effect</i>. Returns false in case of an error.</p>
-<h3 class="fn"><a name="pluginPriority"></a>PluginPriority QFeedbackThemeInterface::pluginPriority ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="pluginPriority"></a>PluginPriority QFeedbackThemeInterface::pluginPriority ()<tt> [pure virtual]</tt></h3>
 <p>returns the priority for the plugin.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -169,15 +173,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#introduction">Introduction</a></li>
 <li class="level1"><a href="#information-for-clients">Information For Clients</a></li>
@@ -147,36 +147,36 @@
 <h1 class="title">Qt Contacts Manager Engines</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="introduction"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The <a href="qcontactmanager.html">QContactManager</a> interface provided to clients to allow access to contact information depends on an implementation of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> existing. This engine provides the methods which are called by the manager. An engine is identified by its URI, which is the name reported to clients through the <a href="qcontactmanager.html#managerUri">QContactManager::managerUri</a>() function. The URI of a manager is built by combining its name, version and relevant construction parameters.</p>
-<a name="information-for-clients"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="information-for-clients"></a>
 <h2>Information For Clients</h2>
 <p>While clients never interact directly with instances of <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, they may need to be aware of limitations of individual engines, or differences between engines. The API offered through <a href="qcontactmanager.html">QContactManager</a> allows clients to retrieve this information for the engine which provides the functionality exposed through a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
-<a name="where-is-the-data-stored"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="where-is-the-data-stored"></a>
 <h3>Where Is The Data Stored?</h3>
 <p>A <a href="qcontactmanagerengine.html">QContactManagerEngine</a> may provide an aggregated view of multiple physical datastores, zero or more of which may be remote datastores. Clients of the API are aware only that the data is managed by a <a href="qcontactmanagerengine.html">QContactManagerEngine</a> with a particular URI. It is possible that multiple different engines will have overlap in the datastores which they aggregate, and in that case the way in which those engines were implemented will determine whether operations are thread-safe or not.</p>
 <p>Since the data may physically be stored in a remote datastore, any operations may be dominated by the return-trip-time of communications with the remote datastore. As such, it is recommended that clients use the asynchronous client API to access contact information from any <a href="qcontactmanager.html">QContactManager</a>.</p>
-<a name="schema-differences"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="schema-differences"></a>
 <h3>Schema Differences</h3>
 <p>Each engine may support a different schema. All engines should attempt to support the default schema, described in the <a href="contactsschema.html">default schema</a> documentation, however clients should never assume that any engine does support the default schema fully.</p>
 <p>Clients are able to retrieve the schema supported by a particular engine at run-time by calling <a href="qcontactmanager.html#detailDefinitions">QContactManager::detailDefinitions</a>(). Some engines support different detail definitions (that is, a different schema) for different types of contacts. Clients can retrieve the contact types supported by an engine by calling <a href="qcontactmanager.html#supportedContactTypes">QContactManager::supportedContactTypes</a>().</p>
-<a name="provided-engines"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="provided-engines"></a>
 <h3>Provided Engines</h3>
 <p>The Contacts module of the Qt Mobility project includes several backends already, some of which are designed to interface with the default addressbook on their particular platform.</p>
-<a name="in-memory-example-engine"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="in-memory-example-engine"></a>
 <h4>In-Memory Example Engine</h4>
 <p>The in-memory engine identifies itself as the &quot;memory&quot; engine. It is available on all platforms which are supported by the Qt Mobility project.</p>
 <p>The in-memory engine supports the default schema, and provides all functionality available through the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any way.</p>
-<a name="symbian-engine"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="symbian-engine"></a>
 <h4>Symbian Engine</h4>
 <p>The Symbian engine identifies itself as the &quot;symbian&quot; engine, and is only available on the Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.</p>
 <p>The Symbian engine supports a modified version of the default schema. The schema supported by the Symbian engine depends on which version of the platform is being used.</p>
 <p>The symbian engine allows clients to use both the asynchronous and synchronous interfaces, and supports various different relationships, supports setting the self-contact, and persists all saved data to the system addressbook.</p>
-<a name="symbian-sim-engine"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="symbian-sim-engine"></a>
 <h4>Symbian Sim Engine</h4>
 <p>The Symbian Sim engine identifies itself as the &quot;symbiansim&quot; engine, and is only available on Symbian platforms. It is an extremely limited engine which supports a very small subset of the default schema, and can be constructed with a &quot;store&quot; parameter to set which contact store to interact with. The value of the &quot;store&quot; parameter may be either &quot;ADN&quot;, &quot;FDN&quot; or &quot;SDN&quot;.</p>
-<a name="maemo-5-fremantle-engine"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="maemo-5-fremantle-engine"></a>
 <h4>Maemo 5 (Fremantle) Engine</h4>
 <p>The Maemo 5 (Fremantle) engine identifies itself as the &quot;maemo5&quot; engine, but is only available on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including lib-osso-abook).</p>
 <p>The Maemo 5 (Fremantle) engine supports a modified version of the default schema. In particular, it does not support the following details which are provided in the default schema:</p>
@@ -201,17 +201,17 @@
 <li>It supports only the <tt>QContactPhoneNumber::SubTypeMobile</tt> and <tt>QContactPhoneNumber::SubTypeVoice</tt> values for the <tt>QContactPhoneNumber::FieldSubTypes</tt> field of QContactPhoneNumber details</li>
 </ul>
 <p>The Maemo 5 (Fremantle) engine supports asynchronous and synchronous requests, but does not support group contacts or relationships of any kind. It does not allow clients to set a particular contact as the &quot;self&quot; contact. It persists all data in the system addressbook.</p>
-<a name="windows-ce-engine"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="windows-ce-engine"></a>
 <h4>Windows CE Engine</h4>
 <p>The Windows CE engine identifies itself as the &quot;wince&quot; engine, and is only available on the Windows Mobile 6.0 platform.</p>
 <p>It supports a subset of the default schema, and supports both the asynchronous and synchronous interfaces to the datastore. It persists saved data to the system addressbook.</p>
-<a name="information-for-engine-implementors"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="information-for-engine-implementors"></a>
 <h2>Information For Engine Implementors</h2>
 <p>Some developers may wish to provide implementations of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> for use by clients. The engine that they provide may aggregate multiple datastores, or access a remote datastore, or provide some other functionality to clients. An engine is distributed as a Qt Plugin, and will be detected automatically by the plugin loading code in the <a href="qcontactmanager.html">QContactManager</a>, so long as the plugin is located in the correct path ($QT_PLUGINS_DIR/contacts/).</p>
-<a name="which-functions-do-i-need-to-implement"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="which-functions-do-i-need-to-implement"></a>
 <h3>Which Functions Do I Need To Implement</h3>
 <p>Different engines provide different functionality and support different features. Depending on the feature set of the engine, it will need to implement a particular subset of the API. The default implementation for most functions will set the error to <tt>QContactManager::NotSupportedError</tt> and return the value which indicates that an error has occurred.</p>
-<a name="mandatory-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="mandatory-functions"></a>
 <h4>Mandatory Functions</h4>
 <p>All engines must implement the following functions:</p>
 <ul>
@@ -241,7 +241,7 @@
 </ul>
 <p>If the engine does not support asynchronous requests, it should always return false in the last three of those functions, and do nothing in the first. If the engine does support asynchronous requests, it must ensure that all information required to perform the request is saved in the engine within <a href="qcontactmanagerengine.html#startRequest">QContactManagerEngine::startRequest</a>(), as the client owns the request object and may delete it at any time. In general, engine implementors should be aware of this ownership semantic, and never attempt an unsafe operation on a request pointer.</p>
 <p>It is recommended that all engine implementations support asynchronous requests, even if they use a &quot;dummy&quot; implementation which services the request synchronously during startRequest, and then emit the appropriate signals from the request via a zero-millisecond timeout timer.</p>
-<a name="optional-functionality"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="optional-functionality"></a>
 <h4>Optional Functionality</h4>
 <p>The rest of the virtual functions are optional, and should be implemented only if the engine supports the operations.</p>
 <p>If the engine can be constructed with different parameters, which affects the operation of the engine (for example, a parameter might define which file to read contact information from, or it might be an access token to prove that the client has the access rights to read contact information from the engine, etc), it must report which parameters it was constructed with via the</p>
@@ -282,7 +282,7 @@
 <li><a href="qcontactmanagerengine.html#setSelfContactId">QContactManagerEngine::setSelfContactId</a>()</li>
 <li><a href="qcontactmanagerengine.html#selfContactId">QContactManagerEngine::selfContactId</a>()</li>
 </ul>
-<a name="optional-implementation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="optional-implementation"></a>
 <h4>Optional Implementation</h4>
 <p>Apart from areas of functionality which may be optionally implemented by the engine or not, the default implementation provides several functions which operate in a naive, in-memory manner. An engine implementation can override this default implementation with its own, if it wishes, in order to obtain performance gains, or to more accurately implement the function.</p>
 <p>As previously mentioned it may implement its own sorting or filtering, in functions such as <a href="qcontactmanagerengine.html#contacts">QContactManagerEngine::contacts</a>(). An engine may also implement:</p>
@@ -292,7 +292,7 @@
 <li><a href="qcontactmanagerengine.html#compatibleContact">QContactManagerEngine::compatibleContact</a>()</li>
 <li><a href="qcontactmanagerengine.html#synthesizedDisplayLabel">QContactManagerEngine::synthesizedDisplayLabel</a>()</li>
 </ul>
-<a name="which-signals-do-i-need-to-emit"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="which-signals-do-i-need-to-emit"></a>
 <h3>Which Signals Do I Need To Emit</h3>
 <p>An engine implementation must emit the appropriate signals for the subset of functionality that it supports.</p>
 <p>If the engine supports reading or saving contacts, it must emit the:</p>
@@ -313,7 +313,7 @@
 <li><a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine::selfContactIdChanged</a>()</li>
 </ul>
 <p>signal as appropriate. Alternatively, it can emit the <a href="qcontactmanager.html#dataChanged">QContactManager::dataChanged</a>() signal instead.</p>
-<a name="other-considerations"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="other-considerations"></a>
 <h3>Other Considerations</h3>
 <p>There are several other considerations that engine writers must be aware of:</p>
 <ul>
@@ -322,7 +322,7 @@
 <li>The single-item functions for contact and relationship retrieval, removal and save already have a default implementation which merely wraps the batch retrieval, removal or save function appropriately. This default implementation may not be as performant as a hand-rolled function. Engine implementations MUST implement the batch functions for each area of functionality supported by the engine.</li>
 <li>Most clients will prefer to use the asynchronous API to access contact information from the engine. It is therefore suggested that asynchronous requests be serviced, even if it is implemented in a similar manner to the (provided) memory engine's naive implementation.</li>
 </ul>
-<a name="example-implementation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="example-implementation"></a>
 <h3>Example Implementation</h3>
 <p>There are several implementations of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> available in the Qt Mobility source code repository. In particular, the &quot;memory&quot; engine provides an implementation of an in-memory, anonymous datastore which supports every feature in the API, and therefore is useful for demonstration purposes. Be aware, however, that the implementation of all functionality in the &quot;memory&quot; engine is naive and not performant, and should not be copied in any real engine implementation (e.g&#x2e;, to perform filtering, it reads all contacts from the (in-memory) database, and checks one by one for matches; a real engine, on the other hand, might perform a database query to return the results directly, rather than performing n-reads).</p>
 </div>
@@ -332,15 +332,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

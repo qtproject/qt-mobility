@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QMessageContentContainerId&gt;</pre><ul>
 <li><a href="qmessagecontentcontainerid-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainerid.html#QMessageContentContainerId">QMessageContentContainerId</a></b> ()</td></tr>
@@ -145,7 +146,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainerid.html#isValid">isValid</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainerid.html#toString">toString</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageContentContainerId class provides a unique identifier for <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> internet media (MIME) type entities, within the scope of the containing message.</p>
@@ -156,20 +158,21 @@
 <p>If the QMessageContentContainerId refers to an object that has a parent container, and the contents of that parent container are modified by removing or prepending contents (i.e&#x2e; message attachments are removed or a message body is created) or the parent container itself is removed then the identifier may become invalid, or be reused to reference a different object entirely.</p>
 </div>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageContentContainerId"></a>QMessageContentContainerId::QMessageContentContainerId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageContentContainerId"></a>QMessageContentContainerId::QMessageContentContainerId ()</h3>
 <p>Creates an invalid identifier, <a href="qmessagecontentcontainerid.html#toString">toString</a>() will return a null string;</p>
-<h3 class="fn"><a name="QMessageContentContainerId-2"></a>QMessageContentContainerId::QMessageContentContainerId ( const QMessageContentContainerId &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageContentContainerId-2"></a>QMessageContentContainerId::QMessageContentContainerId ( const QMessageContentContainerId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="QMessageContentContainerId-3"></a>QMessageContentContainerId::QMessageContentContainerId ( const QString &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageContentContainerId-3"></a>QMessageContentContainerId::QMessageContentContainerId ( const QString &amp; <i>id</i> )</h3>
 <p>Constructs an identifier from <i>id</i>.</p>
 <p>See also <a href="qmessagecontentcontainerid.html#toString">toString</a>().</p>
-<h3 class="fn"><a name="dtor.QMessageContentContainerId"></a>QMessageContentContainerId::~QMessageContentContainerId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageContentContainerId"></a>QMessageContentContainerId::~QMessageContentContainerId ()</h3>
 <p>Destroys the identifier.</p>
-<h3 class="fn"><a name="isValid"></a>bool QMessageContentContainerId::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QMessageContentContainerId::isValid () const</h3>
 <p>Returns true if this identifier is valid; otherwise returns false.</p>
-<h3 class="fn"><a name="toString"></a>QString QMessageContentContainerId::toString () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="toString"></a>QString QMessageContentContainerId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
 <p>A null string should be returned if and only if the identifier is invalid.</p>
 <p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
@@ -180,15 +183,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

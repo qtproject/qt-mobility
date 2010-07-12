@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#creating-categories-and-landmarks">Creating categories and landmarks</a></li>
@@ -153,14 +153,14 @@
 <div class="descr"/>
 <p><b>Note:</b> This API and documentation is a <b>Technology Preview</b> and is still subject to change.</p>
 <p>The Landmarks portion of the Location API facilitates the creation, retrieval, updating and deletion of landmarks from arbitrary data stores. The following page demonstrates how to perform these operations.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="creating-categories-and-landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="creating-categories-and-landmarks"></a>
 <h2>Creating categories and landmarks</h2>
-<a name="synchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="synchronous"></a>
 <h3>Synchronous</h3>
-<a name="creating-a-category"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="creating-a-category"></a>
 <h4>Creating a category</h4>
 <p>The following example demonstrates how to synchronously add a category. We create a <a href="qlandmarkcategory.html">QLandmarkCategory</a> instance, set the desired properties and then use a <a href="qlandmarkmanager.html">QLandmarkManager</a> instance to save it. When the category is saved, it is assigned a <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> which is why it passed as a pointer.</p>
 <pre class="highlightedCode brush: cpp">     QLandmarkCategory cafes;
@@ -168,7 +168,7 @@
      cafes.setDescription(&quot;Small diners&quot;);
      cafes.setIconUrl(QUrl(&quot;cafe.png&quot;));
      lm-&gt;saveCategory(&amp;cafes);  <span class="comment">//lm is a QLandmarkManager *</span></pre>
-<a name="creating-landmark"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="creating-landmark"></a>
 <h4>Creating landmark</h4>
 <p>The following example demonstrate synchronously adding a landmark. We create a <a href="qlandmark.html">QLandmark</a> instance, set the desired properties and then use a QLandmarkMangerInstance to save it. When the landmark is saved, it is assigned a <a href="qlandmarkid.html">QLandmarkId</a>, which is why it is passed as a pointer.</p>
 <pre class="highlightedCode brush: cpp">     QLandmark monks;
@@ -188,9 +188,9 @@
      monks.addCategoryId(cafes.categoryId());
 
      lm-&gt;saveLandmark(&amp;monks); <span class="comment">//lm  is a QLandmarkManager*</span></pre>
-<a name="asynchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="asynchronous"></a>
 <h3>Asynchronous</h3>
-<a name="creating-a-category"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="creating-a-category"></a>
 <h4>Creating a category</h4>
 <p>We create a <a href="qlandmarkcategory.html">QLandmarkCategory</a> instance and set the desired properties. Next we have an instance of a <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> and set its <a href="qlandmarkmanager.html">QLandmarkManager</a> and the append the category we want to save. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre class="highlightedCode brush: cpp"> void RequestExample::categorySaveRequest()
@@ -223,7 +223,7 @@
          }
      }
  }</pre>
-<a name="creating-a-landmark"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="creating-a-landmark"></a>
 <h4>Creating a landmark</h4>
 <p>We create a <a href="qlandmark.html">QLandmark</a> instance and set the desired properties. Next we have an instance of a <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> and set its <a href="qlandmarkmanager.html">QLandmarkManager</a> and the append the category we want to save. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre class="highlightedCode brush: cpp"> void RequestExample::landmarkSaveRequest()
@@ -264,11 +264,11 @@
          }
      }
  }</pre>
-<a name="retrieving-categories-and-landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="retrieving-categories-and-landmarks"></a>
 <h2>Retrieving categories and landmarks</h2>
-<a name="synchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="synchronous"></a>
 <h3>Synchronous</h3>
-<a name="retrieving-categories"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="retrieving-categories"></a>
 <h4>Retrieving categories</h4>
 <p>When retrieiving categories we may do so by the category ids. When the category data is needed we may use the id to retrieve a category object:</p>
 <pre class="highlightedCode brush: cpp">     QList&lt;QLandmarkCategoryId&gt; categoryIds = lm-&gt;categoryIds();
@@ -280,7 +280,7 @@
      foreach(QLandmarkCategory category, categories) {
          qDebug() &lt;&lt; &quot;Found category: &quot; &lt;&lt; category.name();
      }</pre>
-<a name="retrieving-landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="retrieving-landmarks"></a>
 <h4>Retrieving landmarks</h4>
 <p>To retrieve landmarks we create an appropriate filter, in this case a category filter, and use it with a sort order on a <a href="qlandmarkmanager.html">QLandmarkManager</a>. We can either retrieve the appropriate ids as shown below:</p>
 <pre class="highlightedCode brush: cpp">     QLandmarkCategoryFilter filter;
@@ -300,9 +300,9 @@
      foreach(QLandmark landmark, landmarks) {
          qDebug() &lt;&lt; &quot;Found landmark:&quot; &lt;&lt; landmark.name();
      }</pre>
-<a name="asynchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="asynchronous"></a>
 <h3>Asynchronous</h3>
-<a name="retrieving-categories"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="retrieving-categories"></a>
 <h4>Retrieving categories</h4>
 <p>To retrieve categories we can use a <a href="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</a> (or if we wish to fetch id's then a <a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a>) and set its manager. The request's <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal is connected to a slot which detects whether the operation is complete. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre class="highlightedCode brush: cpp">     <span class="comment">//catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest(lmManager)</span>
@@ -334,7 +334,7 @@
          }
      }
  }</pre>
-<a name="retrieving-landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="retrieving-landmarks"></a>
 <h4>Retrieving landmarks</h4>
 <p>To retrieve landmarks we create an appropriate filter, in this case a category filter, and use it with a sort order on a <a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a>. (If we wanted to operate with ids we would use a <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>). We also set the manager of the request. The request's <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal is connected to a slot which detects whether the operation is complete. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre class="highlightedCode brush: cpp">     QLandmarkCategoryFilter filter;
@@ -373,23 +373,23 @@
          }
      }
  }</pre>
-<a name="deleting-categories-and-landmarks"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deleting-categories-and-landmarks"></a>
 <h2>Deleting categories and landmarks</h2>
-<a name="synchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="synchronous"></a>
 <h3>Synchronous</h3>
-<a name="deleting-a-category"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deleting-a-category"></a>
 <h4>Deleting a category</h4>
 <p>To remove a category we simply pass the category id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <pre class="highlightedCode brush: cpp">     <span class="comment">//category is a previously retrieved QLandmarkCategory object</span>
      lm-&gt;removeCategory(category.categoryId());</pre>
-<a name="deleting-a-landmark"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deleting-a-landmark"></a>
 <h4>Deleting a landmark</h4>
 <p>To remove a landmark we simply passs the landmark id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <pre class="highlightedCode brush: cpp">     <span class="comment">//landmark is a previously retrieved QLandmark object</span>
      lm-&gt;removeLandmark(landmark.landmarkId());</pre>
-<a name="asynchronous"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="asynchronous"></a>
 <h3>Asynchronous</h3>
-<a name="deleting-a-category"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deleting-a-category"></a>
 <h4>Deleting a category</h4>
 <p>To remove a category we use a <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a> and set its manager and the id of the category we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
 <pre class="highlightedCode brush: cpp"> void RequestExample::categoryRemoveRequest()
@@ -425,7 +425,7 @@
          qDebug() &lt;&lt; &quot;Requested category removal, awaiting results...&quot;;
      }
  }</pre>
-<a name="deleting-a-landmark"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deleting-a-landmark"></a>
 <h4>Deleting a landmark</h4>
 <p>To remove a landmark we use a <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a> and set its manager and the id of the landmark we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
 <pre class="highlightedCode brush: cpp"> void RequestExample::landmarkRemoveRequest()
@@ -460,15 +460,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

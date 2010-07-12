@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <ul>
 <li><a href="qsensorreading-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> : const QtMobility::qtimestamp</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#setTimestamp">setTimestamp</a></b> ( qtimestamp <i>timestamp</i> )</td></tr>
@@ -150,21 +152,24 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#value">value</a></b> ( int <i>index</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#valueCount">valueCount</a></b> () const</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#DECLARE_READING">DECLARE_READING</a></b> (  <i>classname</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</a></b> (  <i>classname</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QSensorReading class holds the readings from the sensor.</p>
 <p>Note that QSensorReading is not particularly useful by itself. The interesting data for each sensor is defined in a sub-class of QSensorReading.</p>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="timestamp-prop"></a>timestamp : const QtMobility::qtimestamp</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="timestamp-prop"></a>timestamp : const QtMobility::qtimestamp</h3>
 <p>This property holds the timestamp of the reading.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -172,12 +177,13 @@
 </table>
 <p>See also <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="setTimestamp"></a>void QSensorReading::setTimestamp ( <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a> <i>timestamp</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTimestamp"></a>void QSensorReading::setTimestamp ( <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a> <i>timestamp</i> )</h3>
 <p>Sets the <i>timestamp</i> of the reading.</p>
 <p>See also <a href="qsensorreading.html#timestamp-prop">timestamp</a>().</p>
-<h3 class="fn"><a name="value"></a>QVariant QSensorReading::value ( int <i>index</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QSensorReading::value ( int <i>index</i> ) const</h3>
 <p>Returns the value of the property at <i>index</i>.</p>
 <p>Note that this function is slower than calling the data function directly.</p>
 <p>Here is an example of getting a property via the different mechanisms available.</p>
@@ -190,14 +196,15 @@
 <pre class="highlightedCode brush: cpp"> qreal x = reading-&gt;value(0).value&lt;qreal&gt;();</pre>
 <p>Note that value() can only access properties declared with Q_PROPERTY() in sub-classes of <a href="qsensorreading.html">QSensorReading</a>.</p>
 <p>See also <a href="qsensorreading.html#valueCount">valueCount</a>() and QObject::property().</p>
-<h3 class="fn"><a name="valueCount"></a>int QSensorReading::valueCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="valueCount"></a>int QSensorReading::valueCount () const</h3>
 <p>Returns the number of extra properties that the reading has.</p>
 <p>Note that this does not count properties declared in <a href="qsensorreading.html">QSensorReading</a>.</p>
 <p>As an example, this returns 3 for <a href="qaccelerometerreading.html">QAccelerometerReading</a> because there are 3 properties defined in that class.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="DECLARE_READING"></a>DECLARE_READING (  <i>classname</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="DECLARE_READING"></a>DECLARE_READING (  <i>classname</i> )</h3>
 <p>The DECLARE_READING macro adds some required methods to a reading class.</p>
 <p>This macro should be used for all reading classes. Pass the <i>classname</i> of your reading class.</p>
 <pre class="highlightedCode brush: cpp"> class MyReading : public QSensorReading
@@ -210,7 +217,7 @@
      vod setMyprop(qreal myprop);
  };</pre>
 <p>See also <a href="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</a>().</p>
-<h3 class="fn"><a name="IMPLEMENT_READING"></a>IMPLEMENT_READING (  <i>classname</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="IMPLEMENT_READING"></a>IMPLEMENT_READING (  <i>classname</i> )</h3>
 <p>The IMPLEMENT_READING macro implements the required methods for a reading class.</p>
 <p>This macro should be used for all reading classes. It should be placed into a single compilation unit (source file), not into a header file. Pass the <i>classname</i> of your reading class.</p>
 <pre class="highlightedCode brush: cpp"> IMPLEMENT_READING(MyReading)</pre>
@@ -222,15 +229,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

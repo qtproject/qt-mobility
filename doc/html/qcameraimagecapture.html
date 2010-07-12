@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -142,18 +142,21 @@
 <ul>
 <li><a href="qcameraimagecapture-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#DriveMode-enum">DriveMode</a></b> { SingleImageCapture }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#Error-enum">Error</a></b> { NoError, NotReadyError, ResourceError, NotSupportedFeatureError, FormatError, OutOfSpaceError }</td></tr>
 </table>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qcameraimagecapture.html#readyForCapture-prop">readyForCapture</a></b> : const bool</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#QCameraImageCapture">QCameraImageCapture</a></b> ( QMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -169,7 +172,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#supportedImageCodecs">supportedImageCodecs</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QSize&gt; </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#supportedResolutions">supportedResolutions</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> = QImageEncoderSettings(), bool * <i>continuous</i> = 0 ) const</td></tr>
 </table>
-<a name="reimplemented-public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaObject * </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#mediaObject">mediaObject</a></b> () const</td></tr>
@@ -177,13 +181,15 @@
 <ul>
 <li class="fn">1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
 </ul>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#cancelCapture">cancelCapture</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#capture">capture</a></b> ( const QString &amp; <i>file</i> = QString() )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#error-2">error</a></b> ( QCameraImageCapture::Error <i>error</i> )</td></tr>
@@ -192,7 +198,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#imageSaved">imageSaved</a></b> ( int <i>id</i>, const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
-<a name="reimplemented-protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-protected-functions"></a>
 <h2>Reimplemented Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#setMediaObject">setMediaObject</a></b> ( QMediaObject * <i>mediaObject</i> )</td></tr>
@@ -200,7 +207,8 @@
 <ul>
 <li class="fn">1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QCameraImageCapture class is used for the recording of media content.</p>
@@ -225,10 +233,11 @@
  camera-&gt;unlock();</pre>
 </div>
 <p>See also <a href="qcamera.html">QCamera</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="DriveMode-enum"></a>enum QCameraImageCapture::DriveMode</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="Error-enum"></a>enum QCameraImageCapture::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="DriveMode-enum"></a>enum QCameraImageCapture::DriveMode</h3>
+<h3 class="fn"><a name="Error-enum"></a>enum QCameraImageCapture::Error</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QCameraImageCapture::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No Errors.</td></tr>
 <tr><td  class="topAlign"><tt>QCameraImageCapture::NotReadyError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The service is not ready for capture yet.</td></tr>
@@ -238,9 +247,10 @@
 <tr><td  class="topAlign"><tt>QCameraImageCapture::OutOfSpaceError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">No space left on device.</td></tr>
 </table>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="readyForCapture-prop"></a>readyForCapture : const bool</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="readyForCapture-prop"></a>readyForCapture : const bool</h3>
 <p>Indicates the service is ready to capture a an image immediately.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -251,57 +261,58 @@
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraimagecapture.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QCameraImageCapture"></a>QCameraImageCapture::QCameraImageCapture ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QCameraImageCapture"></a>QCameraImageCapture::QCameraImageCapture ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a media recorder which records the media produced by <i>mediaObject</i>.</p>
 <p>The <i>parent</i> is passed to <a href="qmediaobject.html">QMediaObject</a>.</p>
-<h3 class="fn"><a name="dtor.QCameraImageCapture"></a>QCameraImageCapture::~QCameraImageCapture ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QCameraImageCapture"></a>QCameraImageCapture::~QCameraImageCapture ()</h3>
 <p>Destroys images capture object.</p>
-<h3 class="fn"><a name="availabilityError"></a>QtMultimediaKit::AvailabilityError QCameraImageCapture::availabilityError () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availabilityError"></a>QtMultimediaKit::AvailabilityError QCameraImageCapture::availabilityError () const</h3>
 <p>Returns the availability error code.</p>
-<h3 class="fn"><a name="cancelCapture"></a>void QCameraImageCapture::cancelCapture ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cancelCapture"></a>void QCameraImageCapture::cancelCapture ()<tt> [slot]</tt></h3>
 <p>Cancel incomplete capture requests. Already captured and queused for proicessing images may be discarded.</p>
-<h3 class="fn"><a name="capture"></a>int QCameraImageCapture::capture ( const QString &amp; <i>file</i> = QString() )<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="capture"></a>int QCameraImageCapture::capture ( const QString &amp; <i>file</i> = QString() )<tt> [slot]</tt></h3>
 <p>Capture the image and save it to <i>file</i>. This operation is asynchronous in majority of cases, followed by signals <a href="qcameraimagecapture.html#imageCaptured">QCameraImageCapture::imageCaptured</a>(), <a href="qcameraimagecapture.html#imageSaved">QCameraImageCapture::imageSaved</a>() or <a href="qcameraimagecapture.html#error">QCameraImageCapture::error</a>().</p>
 <p>If an empty <i>file</i> is passed, the camera backend choses the default location and naming scheme for photos on the system, if only file name without full path is specified, the image will be saved to the default directory, with a full path reported with <a href="qcameraimagecapture.html#imageCaptured">imageCaptured</a>() and <a href="qcameraimagecapture.html#imageSaved">imageSaved</a>() signals.</p>
 <p>QCameraImageCapture::capture returns the capture Id parameter, used with <a href="qcameraimagecapture.html#imageExposed">imageExposed</a>(), <a href="qcameraimagecapture.html#imageCaptured">imageCaptured</a>() and <a href="qcameraimagecapture.html#imageSaved">imageSaved</a>() signals.</p>
-<h3 class="fn"><a name="encodingSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QCameraImageCapture::encodingSettings () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="encodingSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QCameraImageCapture::encodingSettings () const</h3>
 <p>Returns the image encoder settings being used.</p>
 <p>See also <a href="qcameraimagecapture.html#setEncodingSettings">setEncodingSettings</a>().</p>
-<h3 class="fn"><a name="error"></a><a href="qcameraimagecapture.html#Error-enum">Error</a> QCameraImageCapture::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qcameraimagecapture.html#Error-enum">Error</a> QCameraImageCapture::error () const</h3>
 <p>Returns the current error state.</p>
 <p>See also <a href="qcameraimagecapture.html#errorString">errorString</a>().</p>
-<h3 class="fn"><a name="error-2"></a>void QCameraImageCapture::error ( <a href="qcameraimagecapture.html#Error-enum">QCameraImageCapture::Error</a> <i>error</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error-2"></a>void QCameraImageCapture::error ( <a href="qcameraimagecapture.html#Error-enum">QCameraImageCapture::Error</a> <i>error</i> )<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> has occurred.</p>
-<h3 class="fn"><a name="errorString"></a>QString QCameraImageCapture::errorString () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errorString"></a>QString QCameraImageCapture::errorString () const</h3>
 <p>Returns a string describing the current error state.</p>
 <p>See also <a href="qcameraimagecapture.html#error">error</a>().</p>
-<h3 class="fn"><a name="imageCaptured"></a>void QCameraImageCapture::imageCaptured ( int <i>id</i>, const QImage &amp; <i>preview</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageCaptured"></a>void QCameraImageCapture::imageCaptured ( int <i>id</i>, const QImage &amp; <i>preview</i> )<tt> [signal]</tt></h3>
 <p>Signal emited when the frame with request <i>id</i> was captured, but not processed and saved yet. Frame <i>preview</i> can be displayed to user.</p>
-<h3 class="fn"><a name="imageCodecDescription"></a>QString QCameraImageCapture::imageCodecDescription ( const QString &amp; <i>codec</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageCodecDescription"></a>QString QCameraImageCapture::imageCodecDescription ( const QString &amp; <i>codec</i> ) const</h3>
 <p>Returns a description of an image <i>codec</i>.</p>
-<h3 class="fn"><a name="imageExposed"></a>void QCameraImageCapture::imageExposed ( int <i>id</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageExposed"></a>void QCameraImageCapture::imageExposed ( int <i>id</i> )<tt> [signal]</tt></h3>
 <p>Signal emited when the frame with request <i>id</i> was exposed.</p>
-<h3 class="fn"><a name="imageSaved"></a>void QCameraImageCapture::imageSaved ( int <i>id</i>, const QString &amp; <i>fileName</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="imageSaved"></a>void QCameraImageCapture::imageSaved ( int <i>id</i>, const QString &amp; <i>fileName</i> )<tt> [signal]</tt></h3>
 <p>Signal emited when the frame with request <i>id</i> was saved to <i>fileName</i>.</p>
-<h3 class="fn"><a name="isAvailable"></a>bool QCameraImageCapture::isAvailable () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isAvailable"></a>bool QCameraImageCapture::isAvailable () const</h3>
 <p>Returns true if the images capture service ready to use.</p>
-<h3 class="fn"><a name="mediaObject"></a><a href="qmediaobject.html">QMediaObject</a> * QCameraImageCapture::mediaObject () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaObject"></a><a href="qmediaobject.html">QMediaObject</a> * QCameraImageCapture::mediaObject () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediabindableinterface.html#mediaObject">QMediaBindableInterface::mediaObject</a>().</p>
 <p>See also <a href="qcameraimagecapture.html#setMediaObject">setMediaObject</a>().</p>
-<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCameraImageCapture::readyForCaptureChanged ( bool <i>ready</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCameraImageCapture::readyForCaptureChanged ( bool <i>ready</i> )<tt> [signal]</tt></h3>
 <p>Signals that a camera's <i>ready</i> for capture state has changed.</p>
-<h3 class="fn"><a name="setEncodingSettings"></a>void QCameraImageCapture::setEncodingSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEncodingSettings"></a>void QCameraImageCapture::setEncodingSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )</h3>
 <p>Sets the image encodeing <i>settings</i>.</p>
 <p>If some parameters are not specified, or null settings are passed, the encoder choose the default encoding parameters.</p>
 <p>See also <a href="qcameraimagecapture.html#encodingSettings">encodingSettings</a>().</p>
-<h3 class="fn"><a name="setMediaObject"></a>bool QCameraImageCapture::setMediaObject ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i> )<tt> [virtual protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMediaObject"></a>bool QCameraImageCapture::setMediaObject ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="qmediabindableinterface.html#setMediaObject">QMediaBindableInterface::setMediaObject</a>().</p>
 <p>See also <a href="qcameraimagecapture.html#mediaObject">mediaObject</a>().</p>
-<h3 class="fn"><a name="supportedImageCodecs"></a>QStringList QCameraImageCapture::supportedImageCodecs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedImageCodecs"></a>QStringList QCameraImageCapture::supportedImageCodecs () const</h3>
 <p>Returns a list of supported image codecs.</p>
-<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QCameraImageCapture::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> = QImageEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QCameraImageCapture::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> = QImageEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3>
 <p>Returns a list of resolutions images can be encoded at.</p>
 <p>If non null image <i>settings</i> parameter is passed, the returned list is reduced to resolution supported with partial settings like image codec or quality applied.</p>
 <p>If the encoder supports arbitrary resolutions within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
@@ -313,15 +324,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoRouteSegment&gt;</pre><ul>
 <li><a href="qgeoroutesegment-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutesegment.html#QGeoRouteSegment">QGeoRouteSegment</a></b> ()</td></tr>
@@ -151,47 +152,49 @@
 <tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutesegment.html#travelTime">travelTime</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoRouteSegment &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutesegment.html#operator-eq">operator=</a></b> ( const QGeoRouteSegment &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoRouteSegment class represents a segment of a route.</p>
 <p>A QGeoRouteSegment instance has information about the physcial layout of the route segment, the length of the route and the estimated time and navigation instructions required to traverse the route segment.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoRouteSegment"></a>QGeoRouteSegment::QGeoRouteSegment ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRouteSegment"></a>QGeoRouteSegment::QGeoRouteSegment ()</h3>
 <p>Constructs a route segment object.</p>
-<h3 class="fn"><a name="QGeoRouteSegment-2"></a>QGeoRouteSegment::QGeoRouteSegment ( const QGeoRouteSegment &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRouteSegment-2"></a>QGeoRouteSegment::QGeoRouteSegment ( const QGeoRouteSegment &amp; <i>other</i> )</h3>
 <p>Constructs a route segment object from the contents of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoRouteSegment"></a>QGeoRouteSegment::~QGeoRouteSegment ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoRouteSegment"></a>QGeoRouteSegment::~QGeoRouteSegment ()</h3>
 <p>Destroys this route segment object.</p>
-<h3 class="fn"><a name="distance"></a>qreal QGeoRouteSegment::distance () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="distance"></a>qreal QGeoRouteSegment::distance () const</h3>
 <p>Returns the distance covered by this segment of the route, in metres.</p>
 <p>See also <a href="qgeoroutesegment.html#setDistance">setDistance</a>().</p>
-<h3 class="fn"><a name="instruction"></a><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> QGeoRouteSegment::instruction () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instruction"></a><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> QGeoRouteSegment::instruction () const</h3>
 <p>Returns the instruction for this route segment.</p>
 <p>See also <a href="qgeoroutesegment.html#setInstruction">setInstruction</a>().</p>
-<h3 class="fn"><a name="path"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteSegment::path () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="path"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteSegment::path () const</h3>
 <p>Returns the geometric shape of this route segment of the route.</p>
 <p>The coordinates should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
 <p>See also <a href="qgeoroutesegment.html#setPath">setPath</a>().</p>
-<h3 class="fn"><a name="setDistance"></a>void QGeoRouteSegment::setDistance ( qreal <i>distance</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDistance"></a>void QGeoRouteSegment::setDistance ( qreal <i>distance</i> )</h3>
 <p>Sets the distance covered by this segment of the route, in metres, to <i>distance</i>.</p>
 <p>See also <a href="qgeoroutesegment.html#distance">distance</a>().</p>
-<h3 class="fn"><a name="setInstruction"></a>void QGeoRouteSegment::setInstruction ( const <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> &amp; <i>instruction</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInstruction"></a>void QGeoRouteSegment::setInstruction ( const <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> &amp; <i>instruction</i> )</h3>
 <p>Sets the instruction for this route segement to <i>instruction</i>.</p>
 <p>See also <a href="qgeoroutesegment.html#instruction">instruction</a>().</p>
-<h3 class="fn"><a name="setPath"></a>void QGeoRouteSegment::setPath ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>path</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPath"></a>void QGeoRouteSegment::setPath ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>path</i> )</h3>
 <p>Sets the geometric shape of this segment of the route to <i>path</i>.</p>
 <p>The coordinates in <i>path</i> should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
 <p>See also <a href="qgeoroutesegment.html#path">path</a>().</p>
-<h3 class="fn"><a name="setTravelTime"></a>void QGeoRouteSegment::setTravelTime ( int <i>secs</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTravelTime"></a>void QGeoRouteSegment::setTravelTime ( int <i>secs</i> )</h3>
 <p>Sets the estimated amount of time it will take to traverse this segment of the route, in seconds, to <i>secs</i>.</p>
 <p>See also <a href="qgeoroutesegment.html#travelTime">travelTime</a>().</p>
-<h3 class="fn"><a name="travelTime"></a>int QGeoRouteSegment::travelTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="travelTime"></a>int QGeoRouteSegment::travelTime () const</h3>
 <p>Returns the estimated amount of time it will take to traverse this segment of the route, in seconds.</p>
 <p>See also <a href="qgeoroutesegment.html#setTravelTime">setTravelTime</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoRouteSegment &amp; QGeoRouteSegment::operator= ( const QGeoRouteSegment &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoRouteSegment &amp; QGeoRouteSegment::operator= ( const QGeoRouteSegment &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this route segment object and then returns a reference to this route segment object.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -200,15 +203,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

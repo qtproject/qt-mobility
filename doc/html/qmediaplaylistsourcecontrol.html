@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -140,29 +140,34 @@
 <ul>
 <li><a href="qmediaplaylistsourcecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#dtor.QMediaPlaylistSourceControl">~QMediaPlaylistSourceControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylist * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#playlist">playlist</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylist * <i>playlist</i> ) = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#playlistChanged">playlistChanged</a></b> ( QMediaPlaylist * <i>playlist</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#QMediaPlaylistSourceControl">QMediaPlaylistSourceControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistsourcecontrol.html#QMediaPlaylistSourceControl_iid">QMediaPlaylistSourceControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylistSourceControl class provides access to the playlist playback functionality of a <a href="qmediaservice.html">QMediaService</a>.</p>
@@ -171,25 +176,27 @@
 <p>The interface name of QMediaPlaylistSourceControl is <tt>com.nokia.Qt.QMediaPlaylistSourceControl/1.0</tt> as defined in <a href="qmediaplaylistsourcecontrol.html#QMediaPlaylistSourceControl_iid">QMediaPlaylistSourceControl_iid</a>.</p>
 </div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qmediaplayer.html">QMediaPlayer</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylistSourceControl"></a>QMediaPlaylistSourceControl::QMediaPlaylistSourceControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaPlaylistSourceControl"></a>QMediaPlaylistSourceControl::QMediaPlaylistSourceControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Create a new playlist source control object with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QMediaPlaylistSourceControl"></a>QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMediaPlaylistSourceControl"></a>QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl ()<tt> [virtual]</tt></h3>
 <p>Destroys the playlist control.</p>
-<h3 class="fn"><a name="playlist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaPlaylistSourceControl::playlist () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="playlist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaPlaylistSourceControl::playlist () const<tt> [pure virtual]</tt></h3>
 <p>Returns the current playlist. Should return a null pointer if no playlist is assigned.</p>
 <p>See also <a href="qmediaplaylistsourcecontrol.html#setPlaylist">setPlaylist</a>().</p>
-<h3 class="fn"><a name="playlistChanged"></a>void QMediaPlaylistSourceControl::playlistChanged ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="playlistChanged"></a>void QMediaPlaylistSourceControl::playlistChanged ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )<tt> [signal]</tt></h3>
 <p>Signal emited when the playlist has changed to <i>playlist</i>.</p>
-<h3 class="fn"><a name="setPlaylist"></a>void QMediaPlaylistSourceControl::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPlaylist"></a>void QMediaPlaylistSourceControl::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )<tt> [pure virtual]</tt></h3>
 <p>Set the playlist of this media player to <i>playlist</i>. If a null pointer is passed, the playlist source should be disabled.</p>
 <p>The current media should be replaced with the current item of the media playlist.</p>
 <p>See also <a href="qmediaplaylistsourcecontrol.html#playlist">playlist</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylistSourceControl_iid"></a>QMediaPlaylistSourceControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaPlaylistSourceControl_iid"></a>QMediaPlaylistSourceControl_iid</h3>
 <p><tt>com.nokia.Qt.QMediaPlaylistSourceControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qmediaplaylistsourcecontrol.html">QMediaPlaylistSourceControl</a> class.</p>
 </div>
@@ -199,15 +206,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

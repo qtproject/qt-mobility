@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#introduction">Introduction</a></li>
@@ -141,6 +141,7 @@
 <li class="level1"><a href="#installing-the-service-at-runtime">Installing the Service at Runtime</a></li>
 <li class="level1"><a href="#identifying-services">Identifying Services</a></li>
 <li class="level2"><a href="#upgrading-services">Upgrading Services</a></li>
+<li class="level2"><a href="#out-of-process-services">Out of process Services</a></li>
 <li class="level1"><a href="#examples">Examples</a></li>
 <li class="level1"><a href="#main-classes">Main Classes</a></li>
 </ul>
@@ -149,24 +150,24 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <p>The Qt Service Framework allows clients to discover and instantiate arbitrary services.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="introduction"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The Qt Service Framework defines a unified way of finding, implementing and accessing services across multiple platforms.</p>
 <p>Due to the service frameworks knowledge of service interfaces, their versions and QObject-based introspection it may even be used to unify and access multiple platform specific service implementations via the same Qt-based client application.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>A service is an independent component that allows a client to perform a well-defined operation. Clients can find services based on their name and version as well as the interface that is implemented by the service object. Once the service has been identified the framework starts the service and returns a pointer to it. <a href="qservicemanager.html">QServiceManager</a> is the main interface through which clients can access the mentioned framework functionality. In addition services themselves may also act as clients to the service framework by requesting other services installed on the system.</p>
-<p>Service provider are implemented via plug-ins. <a href="qserviceplugininterface.html">QServicePluginInterface</a> defines the main interface for each plug-in. In order to avoid that clients have to link against service specific libraries each service object must be derived from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities. To achieve the best level of access via the Qt meta object system services should be implemented in such a way that their entire functionality is accessable via the signals, slots, properties or invokable functions (see Q_INVOKABLE macro for more details).</p>
+<p>Service provider are implemented via plug-ins. <a href="qserviceplugininterface.html">QServicePluginInterface</a> defines the main interface for each plug-in. In order to avoid that clients have to link against service specific libraries each service object must be derived from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities. To achieve the best level of access via the Qt meta object system services should be implemented in such a way that their entire functionality is accessible via the signals, slots, properties or invokable functions (see Q_INVOKABLE macro for more details).</p>
 <p>Each service plug-in implements one service only but can provide multiple implementations for multiple interfaces. Therefore a service (plug-in) can retain a certain level of backwards compatibility even if the main service interface breaks in such a way that a new interface name has to be used. Existing clients can still use the previous version of service interface whereas new clients can utilize the new interface.</p>
-<p>Future versions of this framework may also enable access to out-of-process service provider.</p>
-<a name="using-the-framework"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Services can also include remote processes. By registering with the service manager processes can communicate via signals, slots, invokable functions and properties as if they were local objects. Services can choose to be either be shared between all clients, or unique to that client.</p>
+<a name="using-the-framework"></a>
 <h2>Using the Framework</h2>
 <p>This section assumes that the user wants to access the <i>FileStorage</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
 <p><a href="qservicemanager.html">QServiceManager</a> is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or by using the default lookup mechanism.</p>
-<a name="verbose-lookup"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="verbose-lookup"></a>
 <h3>Verbose Lookup</h3>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
 <pre class="highlightedCode brush: cpp"> QServiceManager manager;
@@ -181,21 +182,21 @@
 <span class="comment"> // instantiate the FileStorage object</span>
  QObject *fileStorage;
  fileStorage = manager.loadInterface(foundServices.at(0));</pre>
-<a name="default-lookup"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="default-lookup"></a>
 <h3>Default Lookup</h3>
 <p>It is assumed that the client has knowledge of the interface but does not really care about the specific type or version of the service implementing the interface. In such cases the default service lookup can be utilized to create a service object instance.</p>
 <pre class="highlightedCode brush: cpp"> QServiceManager manager;
  manager.setInterfaceDefault(&quot;FileStorageService&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
 <p>The above call to <a href="qservicemanager.html#setInterfaceDefault">QServiceManager::setInterfaceDefault</a>() registers the <i>FileStorageService</i> as default implementation. Whenever a client asks for an implementation of <i>com.nokia.qt.examples.FileStorage</i> the <i>FileStorageService</i> service will be loaded. If (at the time of this call) the <i>FileStorageService</i> provides multiple registered implementations/versions for the same interface the latest version becomes the default. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
 <p>The current scope of the service manager object determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface becomes the system wide default selection.</p>
-<a name="qobject-based-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="qobject-based-services"></a>
 <h4>QObject based services</h4>
 <p>This is the most common way of interacting with services.</p>
 <pre class="highlightedCode brush: cpp"> storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
  if (storage)
      QMetaObject::invokeMethod(storage, &quot;deleteFile&quot;, Q_ARG(QString, &quot;/tmp/readme.txt&quot;));</pre>
 <p>The above invocation of the file storage object's deleteFile() function is done via the service's QMetaObject. The client does not require any knowledge of the objects actual type and therefore does not have to link against a service specific library.</p>
-<a name="typed-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="typed-services"></a>
 <h4>Typed services</h4>
 <p>So far all lookup mechanism returned a QObject pointer. This pointer can be utilized by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disadvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
@@ -207,23 +208,23 @@
  storage = manager.loadLocalTypedInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);
  if (storage)
      storage-&gt;deleteFile(&quot;/tmp/readme.txt&quot;);</pre>
-<a name="service-scope"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="service-scope"></a>
 <h2>Service Scope</h2>
 <p>The <a href="qservicemanager.html">QServiceManager</a> operates in either User scope or System scope. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.</p>
-<a name="user-scope"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="user-scope"></a>
 <h3>User Scope</h3>
 <p>In user scope, services are registered in a storage location specific to the current user. When a default service is set for an interface using <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a>, the referenced service can be either a user-specific or system-wide service.</p>
 <p>For service and interface lookups, a manager will first search the user-specific services; if the requested component is not found, the manager then searches the system-wide services, if the user has sufficient permissions to do so.</p>
 <p>The <a href="qservicemanager.html#serviceAdded">QServiceManager::serviceAdded</a>() and <a href="qservicemanager.html#serviceRemoved">QServiceManager::serviceRemoved</a>() notifications are emitted when services are added or removed from either the user-specific or system-wide services. These signals have a <tt>scope</tt> parameter to indicate the scope in which the service was added or removed. (Note the system-wide service notifications are only available if the user has sufficient permissions to access the system-wide service storage.)</p>
-<a name="system-scope"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="system-scope"></a>
 <h3>System Scope</h3>
 <p>In system scope, services are registered in a system-wide storage location. The manager does not access user-specific services for any operations. Service and interface lookups fail if the requested services are not found in the system-wide service storage. Service registration is performed in the system-wide storage.</p>
 <p>If <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault()</a> is called for a user-specific service, the operation fails.</p>
 <p>Also, the <a href="qservicemanager.html#serviceAdded">QServiceManager::serviceAdded</a>() and <a href="qservicemanager.html#serviceRemoved">QServiceManager::serviceRemoved</a>() notifications are only emitted for system-wide services.</p>
-<a name="adding-and-removing-of-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="adding-and-removing-of-services"></a>
 <h2>Adding and Removing of Services</h2>
 <p>New services can be installed and removed at runtime. An XML file is used to describe the service meta data and links the service code to its meta description.</p>
-<a name="xml-format"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="xml-format"></a>
 <h3>XML Format</h3>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
 <pre class="highlightedCode brush: cpp"> &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
@@ -277,15 +278,15 @@
          &lt;customproperty key=&quot;key2&quot;&gt;value2&lt;/customproperty&gt;
      &lt;/interface&gt;
  &lt;/service&gt;</pre>
-<a name="tools-for-xml-generation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="tools-for-xml-generation"></a>
 <h2>Tools for XML Generation</h2>
 <p>The framework includes a GUI tool under <tt>tools/servicexmlgen</tt> for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.</p>
 <p>Here is a screenshot of the application, loaded with the <i>TestService</i> XML description provided above.</p>
-<p class="centerAlign"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p class="centerAlign"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a>
 <h2>Installing the Service at Runtime</h2>
 <p>New services can be added and removed at any time via <a href="qservicemanager.html#addService">QServiceManager::addService</a>() and <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
 <p>On Symbian devices a service can be installed using the Symbian package installer. More details about this process can be found in the <a href="service-framework-on-symbian.html">Qt Service Framework on Symbian</a> documentation.</p>
-<a name="identifying-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="identifying-services"></a>
 <h2>Identifying Services</h2>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
@@ -301,19 +302,23 @@
      if (serviceObject)
          serviceObject-&gt;setParent(this);
  }</pre>
-<a name="upgrading-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="upgrading-services"></a>
 <h3>Upgrading Services</h3>
 <p>There are two ways in which to upgrade a service. The first is an incremental approach whereby <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is used to register an XML descriptor whose service name already exists but defines new interface implementations. For example an already existing service, &quot;ovi&quot; may define version 1.0 of interface,&quot;IDownload&quot;. <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is then called with an XML descriptor that declares itself as belonging the &quot;ovi&quot; service, but implements version 1.1 of the interface &quot;IDownload&quot;. Both implementation versions will be available for use.</p>
 <p>The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.</p>
 <p>As an example the already existing &quot;ovi&quot; service may implement interface &quot;IDownload&quot; version 1.0, the new &quot;ovi&quot; service may implement &quot;IDownload&quot; version 1.0 and version 1.1&#x2e; In this case the old service implementation must be first be removed using <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>() to make way for the new service implementation.</p>
-<a name="examples"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="out-of-process-services"></a>
+<h3>Out of process Services</h3>
+<p>Out of process services behave similarly to local services, with one exception. There can be IPC errors, or the remote service can be terminate unexpectedly. QObjects returned by the service manager for out of process services have an additional signal created, errorUnrecoverableIPCFault(QService::UnrecoverableIPCError) which the client must connect to. If an error occurs the object must be destroyed, no further calls can be made. Error recovery is left up to the client application.</p>
+<a name="examples"></a>
 <h2>Examples</h2>
 <ul>
 <li><a href="filemanagerplugin.html">File Manager Plugin Example</a></li>
 <li><a href="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</a></li>
 <li><a href="servicebrowser.html">Service Browser Example</a></li>
+<li>Service Framework Echo Example</li>
 </ul>
-<a name="main-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="main-classes"></a>
 <h2>Main Classes</h2>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qremoteserviceclassregister.html">QRemoteServiceClassRegister</a></p></td><td><p>Manages the various remote service classes which can be instanciated</p></td></tr>
@@ -330,15 +335,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

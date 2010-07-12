@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -135,43 +135,47 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QTelephonyCallList&gt;</pre><ul>
 <li><a href="qtelephonycalllist-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#QTelephonyCallList">QTelephonyCallList</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#dtor.QTelephonyCallList">~QTelephonyCallList</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QTelephonyCallInfo&gt; </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#activeCalls">activeCalls</a></b> ( const QTelephonyCallInfo::CallType &amp; <i>calltype</i> = QTelephonyCallInfo::Any ) const</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#activeCallAdded">activeCallAdded</a></b> ( const QTelephonyCallInfo &amp; <i>call</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#activeCallRemoved">activeCallRemoved</a></b> ( const QTelephonyCallInfo &amp; <i>call</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycalllist.html#activeCallStatusChanged">activeCallStatusChanged</a></b> ( const QTelephonyCallInfo &amp; <i>call</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.</p>
 <p>QTelephonyCallList supports calls event notification for other application and an access of the list of the existing calls.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QTelephonyCallList"></a>QTelephonyCallList::QTelephonyCallList ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QTelephonyCallList"></a>QTelephonyCallList::QTelephonyCallList ( QObject * <i>parent</i> = 0 )</h3>
 <p><i>parent</i> The parent of this object. Default is 0.</p>
 <p>Constructor for the <a href="qtelephonycalllist.html">QTelephonyCallList</a> object</p>
-<h3 class="fn"><a name="dtor.QTelephonyCallList"></a>QTelephonyCallList::~QTelephonyCallList ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QTelephonyCallList"></a>QTelephonyCallList::~QTelephonyCallList ()<tt> [virtual]</tt></h3>
 <p>Destructor of <a href="qtelephonycalllist.html">QTelephonyCallList</a>.</p>
-<h3 class="fn"><a name="activeCallAdded"></a>void QTelephonyCallList::activeCallAdded ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeCallAdded"></a>void QTelephonyCallList::activeCallAdded ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3>
 <p><i>call</i> The <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object that was added to the active call list.</p>
 <p>This signal is emitted whenever a call was added to the active call list.</p>
-<h3 class="fn"><a name="activeCallRemoved"></a>void QTelephonyCallList::activeCallRemoved ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeCallRemoved"></a>void QTelephonyCallList::activeCallRemoved ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3>
 <p><i>call</i> The <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object that was removed from the active call list.</p>
 <p>This signal is emitted whenever a call was removed from the active call list.</p>
-<h3 class="fn"><a name="activeCallStatusChanged"></a>void QTelephonyCallList::activeCallStatusChanged ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeCallStatusChanged"></a>void QTelephonyCallList::activeCallStatusChanged ( const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> &amp; <i>call</i> )<tt> [signal]</tt></h3>
 <p><i>call</i> The <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object that changed its status.</p>
 <p>This signal is emitted whenever the status of a active call was changed.</p>
-<h3 class="fn"><a name="activeCalls"></a>QList&lt;<a href="qtelephonycallinfo.html">QTelephonyCallInfo</a>&gt; QTelephonyCallList::activeCalls ( const <a href="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::CallType</a> &amp; <i>calltype</i> = QTelephonyCallInfo::Any ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeCalls"></a>QList&lt;<a href="qtelephonycallinfo.html">QTelephonyCallInfo</a>&gt; QTelephonyCallList::activeCalls ( const <a href="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::CallType</a> &amp; <i>calltype</i> = QTelephonyCallInfo::Any ) const</h3>
 <p><i>calltype</i> All calls in the list have this type.</p>
 <p>Gives back a list of calls from type of calltype.</p>
 </div>
@@ -181,15 +185,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

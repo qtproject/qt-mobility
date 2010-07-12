@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkimportrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -157,37 +158,39 @@
 <li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkImportRequest class allows a client to asynchronously request that a landmark manager import a set of landmarks.</p>
 <p>For a QLandmarkImportRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when landmarks have been successfully added by the manager. The list of added landmarks may be retrieved by the ids() function. The <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal may also be emitted if an overall operational error occurs.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a landmark import request with the given <i>manager</i> <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkImportRequest"></a>QLandmarkImportRequest::~QLandmarkImportRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkImportRequest"></a>QLandmarkImportRequest::~QLandmarkImportRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="device"></a>QIODevice * QLandmarkImportRequest::device () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="device"></a>QIODevice * QLandmarkImportRequest::device () const</h3>
 <p>Returns the device from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<h3 class="fn"><a name="fileName"></a>QString QLandmarkImportRequest::fileName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fileName"></a>QString QLandmarkImportRequest::fileName () const</h3>
 <p>If the currently assigned device is a QFile, or if <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() has been called, this function returns the name of the file to be read from. In all other cases, it returns an empty string.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<h3 class="fn"><a name="format"></a>QByteArray QLandmarkImportRequest::format () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="format"></a>QByteArray QLandmarkImportRequest::format () const</h3>
 <p>Returns the expected data format for the import operation. If the format is an empty byte array or not set, then during the import, an attempt is made to auto detect the format.</p>
 <p>By default no format is set.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setFormat">setFormat</a>().</p>
-<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::landmarkIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::landmarkIds () const</h3>
 <p>Returns a list of identifiers of landmarks that have been imported.</p>
-<h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( QIODevice * <i>device</i> )</h3>
 <p>Sets the <i>device</i> from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#device">device</a>().</p>
-<h3 class="fn"><a name="setFileName"></a>void QLandmarkImportRequest::setFileName ( const QString &amp; <i>fileName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFileName"></a>void QLandmarkImportRequest::setFileName ( const QString &amp; <i>fileName</i> )</h3>
 <p>Sets the name of the file to be read from to <i>fileName</i>. Internally, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a> will create a QFile and open it in QIODevice::WriteOnly mode, and use this file to export to.</p>
 <p>See also <a href="qlandmarkimportrequest.html#fileName">fileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<h3 class="fn"><a name="setFormat"></a>void QLandmarkImportRequest::setFormat ( const QByteArray &amp; <i>format</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFormat"></a>void QLandmarkImportRequest::setFormat ( const QByteArray &amp; <i>format</i> )</h3>
 <p>Sets the expected data <i>format</i> for the import operation. If an empty byte array is set, then during the import, an attempt is made to auto detect the format.</p>
 <p>See also <a href="qlandmarkimportrequest.html#format">format</a>().</p>
 </div>
@@ -197,15 +200,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

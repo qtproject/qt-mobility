@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,13 +137,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QFeedbackActuator&gt;</pre><ul>
 <li><a href="qfeedbackactuator-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#Capability-enum">Capability</a></b> { Envelope, Period }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#State-enum">State</a></b> { Busy, Ready, Unknown }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#QFeedbackActuator">QFeedbackActuator</a></b> ()</td></tr>
@@ -155,12 +157,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#setEnabled">setEnabled</a></b> ( bool <i>enabled</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#state">state</a></b> () const</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QFeedbackActuator&gt; </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackactuator.html#actuators">actuators</a></b> ()</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QFeedbackActuator class is describing actuators for tactile feedback.</p>
@@ -168,42 +172,44 @@
 <p>You can query the actuators available on your system.</p>
 </div>
 <p>See also <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Capability-enum"></a>enum QFeedbackActuator::Capability</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Capability-enum"></a>enum QFeedbackActuator::Capability</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QFeedbackActuator::Envelope</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Capability defining the wave type with attack/fade times and levels.</td></tr>
 <tr><td  class="topAlign"><tt>QFeedbackActuator::Period</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Capability defining that the device can play periodic effects.</td></tr>
 </table>
-<h3 class="fn"><a name="State-enum"></a>enum QFeedbackActuator::State</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="State-enum"></a>enum QFeedbackActuator::State</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QFeedbackActuator::Busy</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The actuator is busy.</td></tr>
 <tr><td  class="topAlign"><tt>QFeedbackActuator::Ready</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The actuator is ready to play an effect.</td></tr>
 <tr><td  class="topAlign"><tt>QFeedbackActuator::Unknown</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The actuator is in an anknown state.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QFeedbackActuator"></a>QFeedbackActuator::QFeedbackActuator ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QFeedbackActuator"></a>QFeedbackActuator::QFeedbackActuator ()</h3>
 <p>Constructs a <a href="qfeedbackactuator.html">QFeedbackActuator</a>. It will represent the default actuator on the system.</p>
 <p>If there are no actuators attached to the system, <a href="qfeedbackactuator.html#isValid">isValid</a>() will return false.</p>
 <p>See also <a href="qfeedbackactuator.html#isValid">isValid</a>().</p>
-<h3 class="fn"><a name="actuators"></a>QList&lt;QFeedbackActuator&gt; QFeedbackActuator::actuators ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="actuators"></a>QList&lt;QFeedbackActuator&gt; QFeedbackActuator::actuators ()<tt> [static]</tt></h3>
 <p>returns the list of actuators available on the system.</p>
-<h3 class="fn"><a name="id"></a>int QFeedbackActuator::id () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="id"></a>int QFeedbackActuator::id () const</h3>
 <p>returns the id of the actuator</p>
-<h3 class="fn"><a name="isCapabilitySupported"></a>bool QFeedbackActuator::isCapabilitySupported ( <a href="qfeedbackactuator.html#Capability-enum">Capability</a> <i>capability</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isCapabilitySupported"></a>bool QFeedbackActuator::isCapabilitySupported ( <a href="qfeedbackactuator.html#Capability-enum">Capability</a> <i>capability</i> ) const</h3>
 <p>returns if the actuator supports the capability capability.</p>
-<h3 class="fn"><a name="isEnabled"></a>bool QFeedbackActuator::isEnabled () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEnabled"></a>bool QFeedbackActuator::isEnabled () const</h3>
 <p>returns true if you can use this actuator to start effects.</p>
-<h3 class="fn"><a name="isValid"></a>bool QFeedbackActuator::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QFeedbackActuator::isValid () const</h3>
 <p>returns true if the actuator is valid.</p>
-<h3 class="fn"><a name="name"></a>QString QFeedbackActuator::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QFeedbackActuator::name () const</h3>
 <p>returns the name of the actuator.</p>
-<h3 class="fn"><a name="setEnabled"></a>void QFeedbackActuator::setEnabled ( bool <i>enabled</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEnabled"></a>void QFeedbackActuator::setEnabled ( bool <i>enabled</i> )</h3>
 <p>Allows to enable or disable a actuator to <i>enabled</i>.</p>
 <p>See also <a href="qfeedbackactuator.html#isEnabled">isEnabled</a>().</p>
-<h3 class="fn"><a name="state"></a><a href="qfeedbackactuator.html#State-enum">State</a> QFeedbackActuator::state () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="state"></a><a href="qfeedbackactuator.html#State-enum">State</a> QFeedbackActuator::state () const</h3>
 <p>returns the state of the actuator.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -212,15 +218,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

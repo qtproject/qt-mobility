@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemChangeSet&gt;</pre><ul>
 <li><a href="qorganizeritemchangeset-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemchangeset.html#QOrganizerItemChangeSet">QOrganizerItemChangeSet</a></b> ()</td></tr>
@@ -159,56 +160,58 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemchangeset.html#setDataChanged">setDataChanged</a></b> ( bool <i>dataChanged</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QOrganizerItemChangeSet &amp; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemchangeset.html#operator-eq">operator=</a></b> ( const QOrganizerItemChangeSet &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemChangeSet class provides a simple API to simplify the emission of state-change signals from <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> implementations.</p>
 <p>This class can be utilised by backend implementations to ensure correct emission of the <a href="qorganizeritemmanagerengine.html#dataChanged">QOrganizerItemManagerEngine::dataChanged</a>(), <a href="qorganizeritemmanagerengine.html#itemsAdded">QOrganizerItemManagerEngine::itemsAdded</a>(), <a href="qorganizeritemmanagerengine.html#itemsChanged">QOrganizerItemManagerEngine::itemsChanged</a>() and <a href="qorganizeritemmanagerengine.html#itemsRemoved">QOrganizerItemManagerEngine::itemsRemoved</a>().</p>
 </div>
 <p>See also <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemChangeSet"></a>QOrganizerItemChangeSet::QOrganizerItemChangeSet ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemChangeSet"></a>QOrganizerItemChangeSet::QOrganizerItemChangeSet ()</h3>
 <p>Constructs a new change set</p>
-<h3 class="fn"><a name="QOrganizerItemChangeSet-2"></a>QOrganizerItemChangeSet::QOrganizerItemChangeSet ( const QOrganizerItemChangeSet &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemChangeSet-2"></a>QOrganizerItemChangeSet::QOrganizerItemChangeSet ( const QOrganizerItemChangeSet &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> change set</p>
-<h3 class="fn"><a name="dtor.QOrganizerItemChangeSet"></a>QOrganizerItemChangeSet::~QOrganizerItemChangeSet ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemChangeSet"></a>QOrganizerItemChangeSet::~QOrganizerItemChangeSet ()</h3>
 <p>Frees the memory used by this change set</p>
-<h3 class="fn"><a name="addedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::addedItems () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::addedItems () const</h3>
 <p>Returns the set of ids of organizeritems which have been added to the database.</p>
-<h3 class="fn"><a name="changedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::changedItems () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="changedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::changedItems () const</h3>
 <p>Returns the set of ids of organizeritems which have been changed in the database.</p>
-<h3 class="fn"><a name="clearAddedItems"></a>void QOrganizerItemChangeSet::clearAddedItems ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAddedItems"></a>void QOrganizerItemChangeSet::clearAddedItems ()</h3>
 <p>Clears the set of ids of organizeritems which have been added to the database</p>
-<h3 class="fn"><a name="clearAll"></a>void QOrganizerItemChangeSet::clearAll ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAll"></a>void QOrganizerItemChangeSet::clearAll ()</h3>
 <p>Clears all flags and sets of ids in this change set</p>
-<h3 class="fn"><a name="clearChangedItems"></a>void QOrganizerItemChangeSet::clearChangedItems ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearChangedItems"></a>void QOrganizerItemChangeSet::clearChangedItems ()</h3>
 <p>Clears the set of ids of organizeritems which have been changed to the database</p>
-<h3 class="fn"><a name="clearRemovedItems"></a>void QOrganizerItemChangeSet::clearRemovedItems ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearRemovedItems"></a>void QOrganizerItemChangeSet::clearRemovedItems ()</h3>
 <p>Clears the set of ids of organizeritems which have been removed to the database</p>
-<h3 class="fn"><a name="dataChanged"></a>bool QOrganizerItemChangeSet::dataChanged ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dataChanged"></a>bool QOrganizerItemChangeSet::dataChanged ()</h3>
 <p>Returns the value of the data changed flag</p>
 <p>See also <a href="qorganizeritemchangeset.html#setDataChanged">setDataChanged</a>().</p>
-<h3 class="fn"><a name="emitSignals"></a>void QOrganizerItemChangeSet::emitSignals ( <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> * <i>engine</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="emitSignals"></a>void QOrganizerItemChangeSet::emitSignals ( <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> * <i>engine</i> )</h3>
 <p>Emits the appropriate signals from the given <i>engine</i> given the state of the change set</p>
-<h3 class="fn"><a name="insertAddedItem"></a>void QOrganizerItemChangeSet::insertAddedItem ( QOrganizerItemLocalId <i>addedOrganizerItemId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedItem"></a>void QOrganizerItemChangeSet::insertAddedItem ( QOrganizerItemLocalId <i>addedOrganizerItemId</i> )</h3>
 <p>Inserts the given organizeritem id <i>addedOrganizerItemId</i> into the set of ids of organizeritems which have been added to the database.</p>
-<h3 class="fn"><a name="insertAddedItems"></a>void QOrganizerItemChangeSet::insertAddedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>addedOrganizerItemIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertAddedItems"></a>void QOrganizerItemChangeSet::insertAddedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>addedOrganizerItemIds</i> )</h3>
 <p>Inserts each of the given organizeritem ids <i>addedOrganizerItemIds</i> into the set of ids of organizeritems which have been added to the database.</p>
-<h3 class="fn"><a name="insertChangedItem"></a>void QOrganizerItemChangeSet::insertChangedItem ( QOrganizerItemLocalId <i>changedOrganizerItemId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertChangedItem"></a>void QOrganizerItemChangeSet::insertChangedItem ( QOrganizerItemLocalId <i>changedOrganizerItemId</i> )</h3>
 <p>Inserts the given organizeritem id <i>changedOrganizerItemId</i> into the set of ids of organizeritems which have been changed to the database.</p>
-<h3 class="fn"><a name="insertChangedItems"></a>void QOrganizerItemChangeSet::insertChangedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>changedOrganizerItemIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertChangedItems"></a>void QOrganizerItemChangeSet::insertChangedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>changedOrganizerItemIds</i> )</h3>
 <p>Inserts each of the given organizeritem ids <i>changedOrganizerItemIds</i> into the set of ids of organizeritems which have been changed to the database.</p>
-<h3 class="fn"><a name="insertRemovedItem"></a>void QOrganizerItemChangeSet::insertRemovedItem ( QOrganizerItemLocalId <i>removedOrganizerItemId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedItem"></a>void QOrganizerItemChangeSet::insertRemovedItem ( QOrganizerItemLocalId <i>removedOrganizerItemId</i> )</h3>
 <p>Inserts the given organizeritem id <i>removedOrganizerItemId</i> into the set of ids of organizeritems which have been removed to the database.</p>
-<h3 class="fn"><a name="insertRemovedItems"></a>void QOrganizerItemChangeSet::insertRemovedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>removedOrganizerItemIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertRemovedItems"></a>void QOrganizerItemChangeSet::insertRemovedItems ( const QList&lt;QOrganizerItemLocalId&gt; &amp; <i>removedOrganizerItemIds</i> )</h3>
 <p>Inserts each of the given organizeritem ids <i>removedOrganizerItemIds</i> into the set of ids of organizeritems which have been removed to the database.</p>
-<h3 class="fn"><a name="removedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::removedItems () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removedItems"></a>QSet&lt;QOrganizerItemLocalId&gt; QOrganizerItemChangeSet::removedItems () const</h3>
 <p>Returns the set of ids of organizeritems which have been removed from the database.</p>
-<h3 class="fn"><a name="setDataChanged"></a>void QOrganizerItemChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDataChanged"></a>void QOrganizerItemChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3>
 <p>Sets the data changed flag to <i>dataChanged</i>. If this is set to true prior to calling <a href="qorganizeritemchangeset.html#emitSignals">emitSignals</a>(), only the <a href="qorganizeritemmanagerengine.html#dataChanged">QOrganizerItemManagerEngine::dataChanged</a>() signal will be emitted; otherwise, the appropriate finer-grained signals will be emitted.</p>
 <p>See also <a href="qorganizeritemchangeset.html#dataChanged">dataChanged</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemChangeSet &amp; QOrganizerItemChangeSet::operator= ( const QOrganizerItemChangeSet &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemChangeSet &amp; QOrganizerItemChangeSet::operator= ( const QOrganizerItemChangeSet &amp; <i>other</i> )</h3>
 <p>Assigns this change set to be equal to <i>other</i></p>
 </div>
 <p /><address><hr /><div align="center">
@@ -217,15 +220,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

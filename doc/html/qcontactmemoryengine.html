@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -138,12 +138,14 @@
 <ul>
 <li><a href="qcontactmemoryengine-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactmemoryengine.html#dtor.QContactMemoryEngine">~QContactMemoryEngine</a></b> ()</td></tr>
 </table>
-<a name="reimplemented-public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactmemoryengine.html#cancelRequest">cancelRequest</a></b> ( QContactAbstractRequest * <i>req</i> )</td></tr>
@@ -169,7 +171,8 @@
 <ul>
 <li class="fn">35 public functions inherited from <a href="qcontactmanagerengine.html#public-functions">QContactManagerEngine</a></li>
 </ul>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QContactMemoryEngine * </td><td class="memItemRight bottomAlign"><b><a href="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</a></b> ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )</td></tr>
@@ -177,7 +180,8 @@
 <ul>
 <li class="fn">21 static public members inherited from <a href="qcontactmanagerengine.html#static-public-members">QContactManagerEngine</a></li>
 </ul>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactmemoryengine.html#QContactMemoryEngine">QContactMemoryEngine</a></b> ( QContactMemoryEngineData * <i>data</i> )</td></tr>
@@ -186,7 +190,8 @@
 <ul>
 <li class="fn">7 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactMemoryEngine class provides an in-memory implementation of a contacts backend.</p>
@@ -195,53 +200,54 @@
 <p>Data stored in this engine is only available in the current process.</p>
 <p>This engine supports sharing, so an internal reference count is increased whenever a manager uses this backend, and is decreased when the manager no longer requires this engine.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactMemoryEngine"></a>QContactMemoryEngine::QContactMemoryEngine ( QContactMemoryEngineData * <i>data</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactMemoryEngine"></a>QContactMemoryEngine::QContactMemoryEngine ( QContactMemoryEngineData * <i>data</i> )<tt> [protected]</tt></h3>
 <p>Constructs a new in-memory backend which shares the given <i>data</i> with other shared memory engines.</p>
-<h3 class="fn"><a name="dtor.QContactMemoryEngine"></a>QContactMemoryEngine::~QContactMemoryEngine ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactMemoryEngine"></a>QContactMemoryEngine::~QContactMemoryEngine ()</h3>
 <p>Frees any memory used by this engine</p>
-<h3 class="fn"><a name="cancelRequest"></a>bool QContactMemoryEngine::cancelRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cancelRequest"></a>bool QContactMemoryEngine::cancelRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#cancelRequest">QContactManagerEngine::cancelRequest</a>().</p>
-<h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactMemoryEngine::contact ( const QContactLocalId &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactMemoryEngine::contact ( const QContactLocalId &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#contact">QContactManagerEngine::contact</a>().</p>
-<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactMemoryEngine::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contacts"></a>QList&lt;<a href="qcontact.html">QContact</a>&gt; QContactMemoryEngine::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const QList&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#contacts">QContactManagerEngine::contacts</a>().</p>
-<h3 class="fn"><a name="createMemoryEngine"></a>QContactMemoryEngine * QContactMemoryEngine::createMemoryEngine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createMemoryEngine"></a>QContactMemoryEngine * QContactMemoryEngine::createMemoryEngine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> )<tt> [static]</tt></h3>
 <p>Factory function for creating a new in-memory backend, based on the given <i>parameters</i>.</p>
 <p>The same engine will be returned for multiple calls with the same value for the &quot;id&quot; parameter, while one of them is in scope.</p>
-<h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const QString &amp; <i>contactType</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const QString &amp; <i>contactType</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine::hasFeature</a>().</p>
-<h3 class="fn"><a name="isFilterSupported"></a>bool QContactMemoryEngine::isFilterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFilterSupported"></a>bool QContactMemoryEngine::isFilterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#isFilterSupported">QContactManagerEngine::isFilterSupported</a>().</p>
 <p>The function returns true if the backend natively supports the given filter <i>filter</i>, otherwise false.</p>
-<h3 class="fn"><a name="isRelationshipTypeSupported"></a>bool QContactMemoryEngine::isRelationshipTypeSupported ( const QString &amp; <i>relationshipType</i>, const QString &amp; <i>contactType</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isRelationshipTypeSupported"></a>bool QContactMemoryEngine::isRelationshipTypeSupported ( const QString &amp; <i>relationshipType</i>, const QString &amp; <i>contactType</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#isRelationshipTypeSupported">QContactManagerEngine::isRelationshipTypeSupported</a>().</p>
-<h3 class="fn"><a name="managerName"></a>QString QContactMemoryEngine::managerName () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QContactMemoryEngine::managerName () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#managerName">QContactManagerEngine::managerName</a>().</p>
-<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QContactMemoryEngine::managerParameters () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QContactMemoryEngine::managerParameters () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#managerParameters">QContactManagerEngine::managerParameters</a>().</p>
-<h3 class="fn"><a name="relationships"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactMemoryEngine::relationships ( const QString &amp; <i>relationshipType</i>, const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i>, <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationships"></a>QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactMemoryEngine::relationships ( const QString &amp; <i>relationshipType</i>, const <a href="qcontactid.html">QContactId</a> &amp; <i>participantId</i>, <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>role</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#relationships">QContactManagerEngine::relationships</a>().</p>
-<h3 class="fn"><a name="removeContacts"></a>bool QContactMemoryEngine::removeContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeContacts"></a>bool QContactMemoryEngine::removeContacts ( const QList&lt;QContactLocalId&gt; &amp; <i>contactIds</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeContacts">QContactManagerEngine::removeContacts</a>().</p>
-<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactMemoryEngine::removeDetailDefinition ( const QString &amp; <i>definitionId</i>, const QString &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactMemoryEngine::removeDetailDefinition ( const QString &amp; <i>definitionId</i>, const QString &amp; <i>contactType</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeDetailDefinition">QContactManagerEngine::removeDetailDefinition</a>().</p>
-<h3 class="fn"><a name="removeRelationships"></a>bool QContactMemoryEngine::removeRelationships ( const QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeRelationships"></a>bool QContactMemoryEngine::removeRelationships ( const QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#removeRelationships">QContactManagerEngine::removeRelationships</a>().</p>
-<h3 class="fn"><a name="requestDestroyed"></a>void QContactMemoryEngine::requestDestroyed ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestDestroyed"></a>void QContactMemoryEngine::requestDestroyed ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#requestDestroyed">QContactManagerEngine::requestDestroyed</a>().</p>
-<h3 class="fn"><a name="saveContacts"></a>bool QContactMemoryEngine::saveContacts ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveContacts"></a>bool QContactMemoryEngine::saveContacts ( QList&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveContacts">QContactManagerEngine::saveContacts</a>().</p>
-<h3 class="fn"><a name="saveRelationships"></a>bool QContactMemoryEngine::saveRelationships ( QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveRelationships"></a>bool QContactMemoryEngine::saveRelationships ( QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; * <i>relationships</i>, QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#saveRelationships">QContactManagerEngine::saveRelationships</a>().</p>
-<h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactMemoryEngine::selfContactId ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selfContactId"></a>QContactLocalId QContactMemoryEngine::selfContactId ( <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#selfContactId">QContactManagerEngine::selfContactId</a>().</p>
-<h3 class="fn"><a name="startRequest"></a>bool QContactMemoryEngine::startRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="startRequest"></a>bool QContactMemoryEngine::startRequest ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#startRequest">QContactManagerEngine::startRequest</a>().</p>
-<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactMemoryEngine::supportedDataTypes () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedDataTypes"></a>QList&lt;QVariant::Type&gt; QContactMemoryEngine::supportedDataTypes () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#supportedDataTypes">QContactManagerEngine::supportedDataTypes</a>().</p>
-<h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactMemoryEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactMemoryEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#waitForRequestFinished">QContactManagerEngine::waitForRequestFinished</a>().</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -250,15 +256,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

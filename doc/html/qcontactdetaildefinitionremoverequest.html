@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qcontactdetaildefinitionremoverequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetaildefinitionremoverequest.html#QContactDetailDefinitionRemoveRequest">QContactDetailDefinitionRemoveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -156,35 +157,37 @@
 <li class="fn">3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetailDefinitionRemoveRequest class allows a client to asynchronously request that certain detail definitions be removed from a contacts store.</p>
 <p>For a QContactDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when the individual item errors (which may be retrieved by calling <a href="qcontactdetaildefinitionremoverequest.html#errorMap">errorMap</a>()) are updated, or if the overall operation error (which may be retrieved by calling <a href="qcontactabstractrequest.html#error">error</a>()) is updated.</p>
 <p>Please see the class documentation of <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> for more information about the usage of request classes and ownership semantics.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactDetailDefinitionRemoveRequest"></a>QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailDefinitionRemoveRequest"></a>QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new detail definition remove request whose parent is the specified <i>parent</i></p>
-<h3 class="fn"><a name="dtor.QContactDetailDefinitionRemoveRequest"></a>QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactDetailDefinitionRemoveRequest"></a>QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest ()</h3>
 <p>Frees any memory used by this request</p>
-<h3 class="fn"><a name="contactType"></a>QString QContactDetailDefinitionRemoveRequest::contactType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contactType"></a>QString QContactDetailDefinitionRemoveRequest::contactType () const</h3>
 <p>Returns the type of contact for which detail definitions will be removed</p>
 <p>See also <a href="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</a>().</p>
-<h3 class="fn"><a name="definitionNames"></a>QStringList QContactDetailDefinitionRemoveRequest::definitionNames () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="definitionNames"></a>QStringList QContactDetailDefinitionRemoveRequest::definitionNames () const</h3>
 <p>Returns the list of names of the detail definitions that will be removed from the manager</p>
 <p>See also <a href="qcontactdetaildefinitionremoverequest.html#setDefinitionNames">setDefinitionNames</a>().</p>
-<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactDetailDefinitionRemoveRequest::errorMap () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactDetailDefinitionRemoveRequest::errorMap () const</h3>
 <p>Returns the map of input name list indices to errors which occurred</p>
-<h3 class="fn"><a name="setContactType"></a>void QContactDetailDefinitionRemoveRequest::setContactType ( const QString &amp; <i>contactType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContactType"></a>void QContactDetailDefinitionRemoveRequest::setContactType ( const QString &amp; <i>contactType</i> )</h3>
 <p>Sets the type of contact for which detail definitions should be removed to <i>contactType</i></p>
 <p>See also <a href="qcontactdetaildefinitionremoverequest.html#contactType">contactType</a>().</p>
-<h3 class="fn"><a name="setDefinitionName"></a>void QContactDetailDefinitionRemoveRequest::setDefinitionName ( const QString &amp; <i>definitionName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDefinitionName"></a>void QContactDetailDefinitionRemoveRequest::setDefinitionName ( const QString &amp; <i>definitionName</i> )</h3>
 <p>Sets the name of the detail definition to remove from the manager to <i>definitionName</i>. Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such definitions exist for contacts of the given contact type, specified via <a href="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</a>(). Equivalent to calling:</p>
 <pre class="highlightedCode brush: cpp"> setDefinitionNames(QStringList(definitionName));</pre>
 <p>See also <a href="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</a>().</p>
-<h3 class="fn"><a name="setDefinitionNames"></a>void QContactDetailDefinitionRemoveRequest::setDefinitionNames ( const QStringList &amp; <i>names</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDefinitionNames"></a>void QContactDetailDefinitionRemoveRequest::setDefinitionNames ( const QStringList &amp; <i>names</i> )</h3>
 <p>Sets the names of the detail definitions to remove from the manager to <i>names</i>. Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such definitions exist for contacts of the given contact type, specified via <a href="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</a>().</p>
 <p>See also <a href="qcontactdetaildefinitionremoverequest.html#definitionNames">definitionNames</a>() and <a href="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</a>().</p>
 </div>
@@ -194,15 +197,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

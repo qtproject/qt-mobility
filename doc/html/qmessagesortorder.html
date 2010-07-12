@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QMessageSortOrder&gt;</pre><ul>
 <li><a href="qmessagesortorder-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#QMessageSortOrder">QMessageSortOrder</a></b> ()</td></tr>
@@ -147,7 +148,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageSortOrder </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#operator-2b">operator+</a></b> ( const QMessageSortOrder &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageSortOrder &amp; </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#operator-2b-eq">operator+=</a></b> ( const QMessageSortOrder &amp; <i>other</i> )</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageSortOrder </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#byPriority">byPriority</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
@@ -160,7 +162,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageSortOrder </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#byTimeStamp">byTimeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageSortOrder </td><td class="memItemRight bottomAlign"><b><a href="qmessagesortorder.html#byType">byType</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageSortOrder class defines the parameters used for sorting a subset of queried messages from the messaging store.</p>
@@ -170,58 +173,59 @@
  QMessageIdList results = QMessageManager().queryMessages(QMessageFilter(), sortOrder);</pre>
 </div>
 <p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessagefilter.html">QMessageFilter</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageSortOrder"></a>QMessageSortOrder::QMessageSortOrder ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageSortOrder"></a>QMessageSortOrder::QMessageSortOrder ()</h3>
 <p>Create a <a href="qmessagesortorder.html">QMessageSortOrder</a> with specifying matching parameters.</p>
 <p>A default-constructed sort order (one for which <a href="qmessagesortorder.html#isEmpty">isEmpty</a>() returns true) sorts no messages.</p>
 <p>The result of combining an empty sort order with a non-empty sort order is the same as the original non-empty sort order.</p>
 <p>The result of combining two empty sort orders is an empty sort order.</p>
 <p>Windows mobile and desktop platforms do not support sorting <a href="qmessagesortorder.html#bySender">bySender</a>() and <a href="qmessagesortorder.html#byRecipients">byRecipients</a>(), additionally the Windows mobile platform does not support sorting <a href="qmessagesortorder.html#byTimeStamp">byTimeStamp</a>() and <a href="qmessagesortorder.html#bySize">bySize</a>().</p>
-<h3 class="fn"><a name="QMessageSortOrder-2"></a>QMessageSortOrder::QMessageSortOrder ( const QMessageSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageSortOrder-2"></a>QMessageSortOrder::QMessageSortOrder ( const QMessageSortOrder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessageSortOrder"></a>QMessageSortOrder::~QMessageSortOrder ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageSortOrder"></a>QMessageSortOrder::~QMessageSortOrder ()<tt> [virtual]</tt></h3>
 <p>Destroys the sort order.</p>
-<h3 class="fn"><a name="byPriority"></a>QMessageSortOrder QMessageSortOrder::byPriority ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byPriority"></a>QMessageSortOrder QMessageSortOrder::byPriority ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their priority, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
-<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageSortOrder QMessageSortOrder::byReceptionTimeStamp ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their reception timestamp, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<h3 class="fn"><a name="byRecipients"></a>QMessageSortOrder QMessageSortOrder::byRecipients ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byRecipients"></a>QMessageSortOrder QMessageSortOrder::byRecipients ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by the addresses to which they were sent, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile and desktop platforms.</p>
 <p>See also <a href="qmessage.html#to">QMessage::to</a>().</p>
-<h3 class="fn"><a name="bySender"></a>QMessageSortOrder QMessageSortOrder::bySender ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySender"></a>QMessageSortOrder QMessageSortOrder::bySender ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by the address from which they were sent, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile and desktop platforms.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<h3 class="fn"><a name="bySize"></a>QMessageSortOrder QMessageSortOrder::bySize ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySize"></a>QMessageSortOrder QMessageSortOrder::bySize ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their size, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile platform.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<h3 class="fn"><a name="byStatus"></a>QMessageSortOrder QMessageSortOrder::byStatus ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>flag</i>, Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byStatus"></a>QMessageSortOrder QMessageSortOrder::byStatus ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>flag</i>, Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their status value <i>flag</i>, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
-<h3 class="fn"><a name="bySubject"></a>QMessageSortOrder QMessageSortOrder::bySubject ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySubject"></a>QMessageSortOrder QMessageSortOrder::bySubject ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their subject, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<h3 class="fn"><a name="byTimeStamp"></a>QMessageSortOrder QMessageSortOrder::byTimeStamp ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byTimeStamp"></a>QMessageSortOrder QMessageSortOrder::byTimeStamp ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their origination timestamp, according to <i>order</i>.</p>
 <p>Not supported on the Windows mobile platform.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>() and <a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a>().</p>
-<h3 class="fn"><a name="byType"></a>QMessageSortOrder QMessageSortOrder::byType ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byType"></a>QMessageSortOrder QMessageSortOrder::byType ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )<tt> [static]</tt></h3>
 <p>Returns a sort order that sorts messages by their message type, according to <i>order</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QMessageSortOrder::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QMessageSortOrder::isEmpty () const</h3>
 <p>Returns true if the sort order remains empty after default construction; otherwise returns false.</p>
-<h3 class="fn"><a name="isSupported"></a>bool QMessageSortOrder::isSupported () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isSupported"></a>bool QMessageSortOrder::isSupported () const</h3>
 <p>Returns true if the sort order is supported on the current platform; otherwise returns false.</p>
-<h3 class="fn"><a name="operator-2b"></a>QMessageSortOrder QMessageSortOrder::operator+ ( const QMessageSortOrder &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-2b"></a>QMessageSortOrder QMessageSortOrder::operator+ ( const QMessageSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns a sort order that which is the result of concatenating the vaue of this sort order and the value of sort order <i>other</i>.</p>
 <p>This function determines sorting precedence.</p>
 <p>On the Windows Mobile platform <a href="qmessagesortorder.html#bySubject">bySubject</a>() and <a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a>() sort orders can not be combined with each other.</p>
-<h3 class="fn"><a name="operator-2b-eq"></a>QMessageSortOrder &amp; QMessageSortOrder::operator+= ( const QMessageSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-2b-eq"></a>QMessageSortOrder &amp; QMessageSortOrder::operator+= ( const QMessageSortOrder &amp; <i>other</i> )</h3>
 <p>Appends the value of the sort order <i>other</i> with the value of this sort order and assigns the result to this sort order.</p>
 <p>This function determines sorting precedence.</p>
 <p>On the Windows Mobile platform <a href="qmessagesortorder.html#bySubject">bySubject</a>() and <a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a>() sort orders can not be combined with each other.</p>
@@ -232,15 +236,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

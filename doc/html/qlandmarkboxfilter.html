@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkboxfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkboxfilter.html#QLandmarkBoxFilter">QLandmarkBoxFilter</a></b> ( const QGeoCoordinate &amp; <i>topLeft</i> = QGeoCoordinate(), const QGeoCoordinate &amp; <i>bottomRight</i> = QGeoCoordinate() )</td></tr>
@@ -150,29 +151,31 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkBoxFilter"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> = QGeoCoordinate(), const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> = QGeoCoordinate() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkBoxFilter"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> = QGeoCoordinate(), const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> = QGeoCoordinate() )</h3>
 <p>Creates a filter that will search for landmarks within a bounding box defined by the <i>topLeft</i> and <i>bottomRight</i> coordinates.</p>
-<h3 class="fn"><a name="QLandmarkBoxFilter-2"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkBoxFilter-2"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new box filter.</p>
-<h3 class="fn"><a name="dtor.QLandmarkBoxFilter"></a>QLandmarkBoxFilter::~QLandmarkBoxFilter ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkBoxFilter"></a>QLandmarkBoxFilter::~QLandmarkBoxFilter ()<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
-<h3 class="fn"><a name="bottomRightCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::bottomRightCoordinate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bottomRightCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::bottomRightCoordinate () const</h3>
 <p>Returns the bottom-right coordinate of the bounding box this filter uses to select landmarks.</p>
 <p>See also <a href="qlandmarkboxfilter.html#setBottomRightCoordinate">setBottomRightCoordinate</a>().</p>
-<h3 class="fn"><a name="setBottomRightCoordinate"></a>void QLandmarkBoxFilter::setBottomRightCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBottomRightCoordinate"></a>void QLandmarkBoxFilter::setBottomRightCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> )</h3>
 <p>Sets the <i>bottomRight</i> coordinate of the bounding box this filter uses to select landmarks.</p>
 <p>See also <a href="qlandmarkboxfilter.html#bottomRightCoordinate">bottomRightCoordinate</a>().</p>
-<h3 class="fn"><a name="setTopLeftCoordinate"></a>void QLandmarkBoxFilter::setTopLeftCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTopLeftCoordinate"></a>void QLandmarkBoxFilter::setTopLeftCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> )</h3>
 <p>Sets the <i>topLeft</i> corner of the bounding box this filter uses to select landmarks.</p>
 <p>See also <a href="qlandmarkboxfilter.html#topLeftCoordinate">topLeftCoordinate</a>().</p>
-<h3 class="fn"><a name="topLeftCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::topLeftCoordinate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="topLeftCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::topLeftCoordinate () const</h3>
 <p>Returns the top-left corner of the bounding box this filter uses to select landmarks.</p>
 <p>See also <a href="qlandmarkboxfilter.html#setTopLeftCoordinate">setTopLeftCoordinate</a>().</p>
 </div>
@@ -182,15 +185,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

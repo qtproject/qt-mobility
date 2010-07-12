@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkFetchHint&gt;</pre><ul>
 <li><a href="qlandmarkfetchhint-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfetchhint.html#QLandmarkFetchHint">QLandmarkFetchHint</a></b> ()</td></tr>
@@ -147,33 +148,35 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfetchhint.html#setOffset">setOffset</a></b> ( int <i>offset</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkFetchHint &amp; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkfetchhint.html#operator-eq">operator=</a></b> ( const QLandmarkFetchHint &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkFetchHint class provides miscellaneous hints to the manager when fetching landmarks.</p>
 <p>The QLandmarkFetchHint class may be used to specify the maximum number of landmark items to return during a query and an offset to facilitate paging.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkFetchHint"></a>QLandmarkFetchHint::QLandmarkFetchHint ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkFetchHint"></a>QLandmarkFetchHint::QLandmarkFetchHint ()</h3>
 <p>Constructs a new landmark fetch hint</p>
-<h3 class="fn"><a name="QLandmarkFetchHint-2"></a>QLandmarkFetchHint::QLandmarkFetchHint ( const QLandmarkFetchHint &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkFetchHint-2"></a>QLandmarkFetchHint::QLandmarkFetchHint ( const QLandmarkFetchHint &amp; <i>other</i> )</h3>
 <p>Constructs a new landmark fetch hint as a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkFetchHint"></a>QLandmarkFetchHint::~QLandmarkFetchHint ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkFetchHint"></a>QLandmarkFetchHint::~QLandmarkFetchHint ()</h3>
 <p>Destroys the fetch hint</p>
-<h3 class="fn"><a name="maxItems"></a>int QLandmarkFetchHint::maxItems () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maxItems"></a>int QLandmarkFetchHint::maxItems () const</h3>
 <p>Returns the maxmimum number of items to be retrieved. By default, maxItems is set to -1, meaning that there is no maximum limit.</p>
 <p>See also <a href="qlandmarkfetchhint.html#setMaxItems">setMaxItems</a>().</p>
-<h3 class="fn"><a name="offset"></a>int QLandmarkFetchHint::offset () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="offset"></a>int QLandmarkFetchHint::offset () const</h3>
 <p>Returns the offset of the items to be retrieved. By default, the offset is set to 0.</p>
 <p>See also <a href="qlandmarkfetchhint.html#setOffset">setOffset</a>().</p>
-<h3 class="fn"><a name="setMaxItems"></a>void QLandmarkFetchHint::setMaxItems ( int <i>max</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMaxItems"></a>void QLandmarkFetchHint::setMaxItems ( int <i>max</i> )</h3>
 <p>Sets the <i>max</i> number of items to be retrieved.</p>
 <p>See also <a href="qlandmarkfetchhint.html#maxItems">maxItems</a>().</p>
-<h3 class="fn"><a name="setOffset"></a>void QLandmarkFetchHint::setOffset ( int <i>offset</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setOffset"></a>void QLandmarkFetchHint::setOffset ( int <i>offset</i> )</h3>
 <p>Sets the <i>offset</i> for the items to be retrieved.</p>
 <p>See also <a href="qlandmarkfetchhint.html#offset">offset</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QLandmarkFetchHint &amp; QLandmarkFetchHint::operator= ( const QLandmarkFetchHint &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QLandmarkFetchHint &amp; QLandmarkFetchHint::operator= ( const QLandmarkFetchHint &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this fetch hint and returns a reference to this fetch hint.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -182,15 +185,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,27 +135,30 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QRemoteServiceControl&gt;</pre><ul>
 <li><a href="qremoteservicecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qremoteservicecontrol.html#QRemoteServiceControl">QRemoteServiceControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qremoteservicecontrol.html#dtor.QRemoteServiceControl">~QRemoteServiceControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qremoteservicecontrol.html#publishServices">publishServices</a></b> ( const QString &amp; <i>ident</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QRemoteServiceControl class manages instances of remote service objects.</p>
 <p>This class instanciates IPC based service objects which have been registered via <a href="qremoteserviceclassregister.html">QRemoteServiceClassRegister</a>. It owns each created service object instance and ensures that the platform specific IPC mechanism publishes the required service object to other processes in the system.</p>
 </div>
 <p>See also <a href="qremoteserviceclassregister.html">QRemoteServiceClassRegister</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QRemoteServiceControl"></a>QRemoteServiceControl::QRemoteServiceControl ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QRemoteServiceControl"></a>QRemoteServiceControl::QRemoteServiceControl ( QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a service control instance with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QRemoteServiceControl"></a>QRemoteServiceControl::~QRemoteServiceControl ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QRemoteServiceControl"></a>QRemoteServiceControl::~QRemoteServiceControl ()</h3>
 <p>Destroys the service control instance</p>
-<h3 class="fn"><a name="publishServices"></a>void QRemoteServiceControl::publishServices ( const QString &amp; <i>ident</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="publishServices"></a>void QRemoteServiceControl::publishServices ( const QString &amp; <i>ident</i> )</h3>
 <p>Publishes every service that has been registered using <a href="qremoteserviceclassregister.html#registerType">QRemoteServiceClassRegister::registerType</a>(). <i>ident</i> is the service specific IPC address under which the service can be reached. This address must match the address provided in the services xml descriptor (see &lt;filepath&gt; tag).</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -164,15 +167,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

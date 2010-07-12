@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QMessageFolder&gt;</pre><ul>
 <li><a href="qmessagefolder-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagefolder.html#QMessageFolder">QMessageFolder</a></b> ()</td></tr>
@@ -148,32 +149,34 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageFolderId </td><td class="memItemRight bottomAlign"><b><a href="qmessagefolder.html#parentFolderId">parentFolderId</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qmessagefolder.html#path">path</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageFolder class provides an interface for folders containing messages in the messaging store.</p>
 <p>QMessageFolder represents a folder of messages, either fully or partially stored in the messaging store. A QMessageFolder object has an optional parent of the same type, allowing folders to be arranged in tree structures. Messages may be associated with folders, allowing for simple classification and access by their parentFolderId property.</p>
 </div>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagestore.html#folder">QMessageStore::folder</a>().</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageFolder"></a>QMessageFolder::QMessageFolder ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageFolder"></a>QMessageFolder::QMessageFolder ()</h3>
 <p>Constructor that creates an empty and invalid <a href="qmessagefolder.html">QMessageFolder</a>. An empty folder is one which has no path, no parent folder and no parent account. An invalid folder does not exist in the database and has an invalid id.</p>
-<h3 class="fn"><a name="QMessageFolder-2"></a>QMessageFolder::QMessageFolder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageFolder-2"></a>QMessageFolder::QMessageFolder ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i> )</h3>
 <p>Constructor that creates a <a href="qmessagefolder.html">QMessageFolder</a> by loading the data from the messaging store as specified by the <a href="qmessagefolderid.html">QMessageFolderId</a> <i>id</i>. If the folder does not exist in the messaging store, then this constructor will create an empty and invalid <a href="qmessagefolder.html">QMessageFolder</a>.</p>
-<h3 class="fn"><a name="QMessageFolder-3"></a>QMessageFolder::QMessageFolder ( const QMessageFolder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageFolder-3"></a>QMessageFolder::QMessageFolder ( const QMessageFolder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessageFolder"></a>QMessageFolder::~QMessageFolder ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageFolder"></a>QMessageFolder::~QMessageFolder ()<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qmessagefolder.html">QMessageFolder</a> object.</p>
-<h3 class="fn"><a name="id"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::id () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="id"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::id () const</h3>
 <p>Returns the identifier of the <a href="qmessagefolder.html">QMessageFolder</a> object. A <a href="qmessagefolder.html">QMessageFolder</a> with an invalid identifier does not yet exist in the messaging store.</p>
-<h3 class="fn"><a name="name"></a>QString QMessageFolder::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QMessageFolder::name () const</h3>
 <p>Returns the display name of the folder suitable for viewing in a user interface. This is typically the same as, or a simplification of the <a href="qmessagefolder.html#path">path</a>() for the folder.</p>
-<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessageFolder::parentAccountId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessageFolder::parentAccountId () const</h3>
 <p>Returns the identifier of the parent account of the folder. If the folder is not linked to an account an invalid identifier is returned.</p>
-<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::parentFolderId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::parentFolderId () const</h3>
 <p>Returns the identifier of the parent folder. This folder is a root folder if the parent identifier is invalid.</p>
-<h3 class="fn"><a name="path"></a>QString QMessageFolder::path () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="path"></a>QString QMessageFolder::path () const</h3>
 <p>Returns the path of the folder.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -182,15 +185,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

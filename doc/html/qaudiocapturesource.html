@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -139,7 +139,8 @@
 <ul>
 <li><a href="qaudiocapturesource-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#QAudioCaptureSource">QAudioCaptureSource</a></b> ( QObject * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
@@ -149,7 +150,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QString&gt; </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#audioInputs">audioInputs</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#defaultAudioInput">defaultAudioInput</a></b> () const</td></tr>
 </table>
-<a name="reimplemented-public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QtMultimediaKit::AvailabilityError </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#availabilityError">availabilityError</a></b> () const</td></tr>
@@ -158,12 +160,14 @@
 <ul>
 <li class="fn">12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 </ul>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#setAudioInput">setAudioInput</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiocapturesource.html#activeAudioInputChanged">activeAudioInputChanged</a></b> ( const QString &amp; <i>name</i> )</td></tr>
@@ -177,7 +181,8 @@
 <li class="fn">1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
 <li class="fn">2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioCaptureSource class provides an interface to query and select an audio input endpoint.</p>
@@ -194,31 +199,32 @@
 <p>- Control the recording using record(),stop()</p>
 </div>
 <p>See also <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioCaptureSource"></a>QAudioCaptureSource::QAudioCaptureSource ( QObject * <i>parent</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioCaptureSource"></a>QAudioCaptureSource::QAudioCaptureSource ( QObject * <i>parent</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
 <p>Construct a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> using the <a href="qmediaservice.html">QMediaService</a> from <i>provider</i>, with <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QAudioCaptureSource"></a>QAudioCaptureSource::~QAudioCaptureSource ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAudioCaptureSource"></a>QAudioCaptureSource::~QAudioCaptureSource ()</h3>
 <p>Destroys the audiocapturesource object.</p>
-<h3 class="fn"><a name="activeAudioInput"></a>QString QAudioCaptureSource::activeAudioInput () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeAudioInput"></a>QString QAudioCaptureSource::activeAudioInput () const</h3>
 <p>Returns the active audio input name.</p>
-<h3 class="fn"><a name="activeAudioInputChanged"></a>void QAudioCaptureSource::activeAudioInputChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeAudioInputChanged"></a>void QAudioCaptureSource::activeAudioInputChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when active audio input changes to <i>name</i>.</p>
-<h3 class="fn"><a name="audioDescription"></a>QString QAudioCaptureSource::audioDescription ( const QString &amp; <i>name</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="audioDescription"></a>QString QAudioCaptureSource::audioDescription ( const QString &amp; <i>name</i> ) const</h3>
 <p>Returns the description of the audio input device with <i>name</i>.</p>
-<h3 class="fn"><a name="audioInputs"></a>QList&lt;QString&gt; QAudioCaptureSource::audioInputs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="audioInputs"></a>QList&lt;QString&gt; QAudioCaptureSource::audioInputs () const</h3>
 <p>Returns a list of available audio inputs</p>
-<h3 class="fn"><a name="availabilityError"></a>QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availabilityError"></a>QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the error state of the audio capture service.</p>
-<h3 class="fn"><a name="availableAudioInputsChanged"></a>void QAudioCaptureSource::availableAudioInputsChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableAudioInputsChanged"></a>void QAudioCaptureSource::availableAudioInputsChanged ()<tt> [signal]</tt></h3>
 <p>Signal is emitted when the available audio inputs change.</p>
-<h3 class="fn"><a name="defaultAudioInput"></a>QString QAudioCaptureSource::defaultAudioInput () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="defaultAudioInput"></a>QString QAudioCaptureSource::defaultAudioInput () const</h3>
 <p>Returns the default audio input name.</p>
-<h3 class="fn"><a name="isAvailable"></a>bool QAudioCaptureSource::isAvailable () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isAvailable"></a>bool QAudioCaptureSource::isAvailable () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
 <p>Returns true if the audio capture service is available, otherwise returns false.</p>
-<h3 class="fn"><a name="setAudioInput"></a>void QAudioCaptureSource::setAudioInput ( const QString &amp; <i>name</i> )<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAudioInput"></a>void QAudioCaptureSource::setAudioInput ( const QString &amp; <i>name</i> )<tt> [slot]</tt></h3>
 <p>Set the active audio input to <i>name</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -227,15 +233,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

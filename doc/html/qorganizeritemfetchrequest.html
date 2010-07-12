@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qorganizeritemfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchrequest.html#QOrganizerItemFetchRequest">QOrganizerItemFetchRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -156,34 +157,36 @@
 <li class="fn">3 public slots inherited from <a href="qorganizeritemabstractrequest.html#public-slots">QOrganizerItemAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qorganizeritemabstractrequest.html#signals">QOrganizerItemAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemFetchRequest class allows a client to asynchronously request organizeritems from a organizeritems store manager.</p>
 <p>For a QOrganizerItemFetchRequest, the <a href="qorganizeritemabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when the resultant organizeritems (which may be retrieved by calling organizeritems()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qorganizeritemabstractrequest.html#error">error</a>()) is updated.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemFetchRequest"></a>QOrganizerItemFetchRequest::QOrganizerItemFetchRequest ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemFetchRequest"></a>QOrganizerItemFetchRequest::QOrganizerItemFetchRequest ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new organizeritem fetch request whose parent is the specified <i>parent</i></p>
-<h3 class="fn"><a name="fetchHint"></a><a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a> QOrganizerItemFetchRequest::fetchHint () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fetchHint"></a><a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a> QOrganizerItemFetchRequest::fetchHint () const</h3>
 <p>Returns the fetch hint which may be used by the backend to optimize organizeritem retrieval. A client should not make changes to a organizeritem which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the organizeritem back to the manager (as the &quot;new&quot; restricted organizeritem will replace the previously saved organizeritem in the backend).</p>
 <p>See also <a href="qorganizeritemfetchrequest.html#setFetchHint">setFetchHint</a>() and <a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a>.</p>
-<h3 class="fn"><a name="filter"></a><a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> QOrganizerItemFetchRequest::filter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filter"></a><a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> QOrganizerItemFetchRequest::filter () const</h3>
 <p>Returns the filter that will be used to select organizeritems to be returned</p>
 <p>See also <a href="qorganizeritemfetchrequest.html#setFilter">setFilter</a>().</p>
-<h3 class="fn"><a name="items"></a>QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; QOrganizerItemFetchRequest::items () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="items"></a>QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; QOrganizerItemFetchRequest::items () const</h3>
 <p>Returns the list of organizeritems retrieved by this request</p>
-<h3 class="fn"><a name="setFetchHint"></a>void QOrganizerItemFetchRequest::setFetchHint ( const <a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a> &amp; <i>fetchHint</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFetchHint"></a>void QOrganizerItemFetchRequest::setFetchHint ( const <a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a> &amp; <i>fetchHint</i> )</h3>
 <p>Sets the fetch hint which may be used by the backend to optimize organizeritem retrieval to <i>fetchHint</i>. A client should not make changes to a organizeritem which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the organizeritem back to the manager (as the &quot;new&quot; restricted organizeritem will replace the previously saved organizeritem in the backend).</p>
 <p>See also <a href="qorganizeritemfetchrequest.html#fetchHint">fetchHint</a>() and <a href="qorganizeritemfetchhint.html">QOrganizerItemFetchHint</a>.</p>
-<h3 class="fn"><a name="setFilter"></a>void QOrganizerItemFetchRequest::setFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFilter"></a>void QOrganizerItemFetchRequest::setFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the organizeritem filter used to determine which organizeritems will be retrieved to <i>filter</i></p>
 <p>See also <a href="qorganizeritemfetchrequest.html#filter">filter</a>().</p>
-<h3 class="fn"><a name="setSorting"></a>void QOrganizerItemFetchRequest::setSorting ( const QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; &amp; <i>sorting</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting"></a>void QOrganizerItemFetchRequest::setSorting ( const QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort order of the result to <i>sorting</i>. Only has an effect if called prior to calling <tt>start()</tt></p>
 <p>See also <a href="qorganizeritemfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; QOrganizerItemFetchRequest::sorting () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; QOrganizerItemFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering that will be used sort the results of this request</p>
 <p>See also <a href="qorganizeritemfetchrequest.html#setSorting">setSorting</a>().</p>
 </div>
@@ -193,15 +196,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

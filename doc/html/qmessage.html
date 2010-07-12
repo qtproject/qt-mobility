@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,7 +138,8 @@
 <ul>
 <li><a href="qmessage-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#Priority-enum">Priority</a></b> { HighPriority, NormalPriority, LowPriority }</td></tr>
@@ -149,7 +150,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#Type-enum">Type</a></b> { NoType, Mms, Sms, Email, InstantMessage, AnyType }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#Type-enum">TypeFlags</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#QMessage">QMessage</a></b> ()</td></tr>
@@ -196,14 +198,16 @@
 <ul>
 <li class="fn">16 public functions inherited from <a href="qmessagecontentcontainer.html#public-functions">QMessageContentContainer</a></li>
 </ul>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a></b> ( const QString &amp; <i>text</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QByteArray&gt; </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#preferredCharsets">preferredCharsets</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a></b> ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
@@ -216,23 +220,24 @@
 <p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses.</p>
 </div>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagemanager.html">QMessageManager</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Priority-enum"></a>enum QMessage::Priority</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Priority-enum"></a>enum QMessage::Priority</h3>
 <p>Defines the priority of a message.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMessage::HighPriority</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The message is high priority.</td></tr>
 <tr><td  class="topAlign"><tt>QMessage::NormalPriority</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The message is normal priority.</td></tr>
 <tr><td  class="topAlign"><tt>QMessage::LowPriority</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The message is low priority.</td></tr>
 </table>
-<h3 class="fn"><a name="ResponseType-enum"></a>enum QMessage::ResponseType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="ResponseType-enum"></a>enum QMessage::ResponseType</h3>
 <p>Defines the type of a response to an existing message.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMessage::ReplyToSender</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A response to the sender of the existing message.</td></tr>
 <tr><td  class="topAlign"><tt>QMessage::ReplyToAll</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">A response to the sender of the existing message, and any other recipients of that message.</td></tr>
 <tr><td  class="topAlign"><tt>QMessage::Forward</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">A response created to copy the content of the existing message to a new recipient.</td></tr>
 </table>
-<h3 class="fn"><a name="StandardFolder-enum"></a>enum QMessage::StandardFolder</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="StandardFolder-enum"></a>enum QMessage::StandardFolder</h3>
 <p>Defines the standard folders.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMessage::InboxFolder</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Represents the standard inbox folder.</td></tr>
@@ -264,137 +269,138 @@
 <p>The TypeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Type&gt;. It stores an OR combination of Type values.</p>
 <p>See also <a href="qmessage.html#type">type</a>() and <a href="qmessage.html#setType">setType</a>().</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessage"></a>QMessage::QMessage ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessage"></a>QMessage::QMessage ()</h3>
 <p>Constructs an empty message.</p>
-<h3 class="fn"><a name="QMessage-2"></a>QMessage::QMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessage-2"></a>QMessage::QMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Constructs a message from data stored in the messaging store with identifier <i>id</i>.</p>
 <p>See also <a href="qmessagemanager.html#message">QMessageManager::message</a>().</p>
-<h3 class="fn"><a name="QMessage-3"></a>QMessage::QMessage ( const QMessage &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessage-3"></a>QMessage::QMessage ( const QMessage &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()<tt> [virtual]</tt></h3>
 <p>Destroys the message.</p>
-<h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const QStringList &amp; <i>fileNames</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const QStringList &amp; <i>fileNames</i> )</h3>
 <p>Append the contents of the files specified by <i>fileNames</i> to the end of the list of attachments for the message. The internet media (MIME) type of the attachments will be determined by examining the files or file names.</p>
 <p>See also <a href="qmessage.html#attachmentIds">attachmentIds</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
-<h3 class="fn"><a name="attachmentIds"></a>QMessageContentContainerIdList QMessage::attachmentIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attachmentIds"></a>QMessageContentContainerIdList QMessage::attachmentIds () const</h3>
 <p>Returns a list of attachment identifiers for the message.</p>
 <p>The body of the message will not be included in the list.</p>
 <p>See also <a href="qmessage.html#appendAttachments">appendAttachments</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
-<h3 class="fn"><a name="bcc"></a>QMessageAddressList QMessage::bcc () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bcc"></a>QMessageAddressList QMessage::bcc () const</h3>
 <p>Returns the list of all the bcc (blind carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmessage.html#to">to</a>(), <a href="qmessage.html#cc">cc</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
-<h3 class="fn"><a name="bodyId"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessage::bodyId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bodyId"></a><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> QMessage::bodyId () const</h3>
 <p>Returns the identifier for the body content contained by the Message if a body exists; otherwise returns an invalid identifier.</p>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> and <a href="qmessage.html#setBody">setBody</a>().</p>
-<h3 class="fn"><a name="cc"></a>QMessageAddressList QMessage::cc () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cc"></a>QMessageAddressList QMessage::cc () const</h3>
 <p>Returns the list of all the cc (carbon copy) recipients specified for the message.</p>
 <p>See also <a href="qmessage.html#to">to</a>(), <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setCc">setCc</a>(), and <a href="qmessagefilter.html#byRecipients">QMessageFilter::byRecipients</a>().</p>
-<h3 class="fn"><a name="clearAttachments"></a>void QMessage::clearAttachments ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clearAttachments"></a>void QMessage::clearAttachments ()</h3>
 <p>Clears the list of attachments for the message, leaving only the message body, if any.</p>
 <p>See also <a href="qmessage.html#attachmentIds">attachmentIds</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
-<h3 class="fn"><a name="createResponseMessage"></a>QMessage QMessage::createResponseMessage ( <a href="qmessage.html#ResponseType-enum">ResponseType</a> <i>type</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createResponseMessage"></a>QMessage QMessage::createResponseMessage ( <a href="qmessage.html#ResponseType-enum">ResponseType</a> <i>type</i> ) const</h3>
 <p>Creates a new message as a response to this message, with properties predetermined according to <i>type</i>.</p>
 <p>See also <a href="qmessageservice.html#compose">QMessageService::compose</a>().</p>
-<h3 class="fn"><a name="date"></a>QDateTime QMessage::date () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="date"></a>QDateTime QMessage::date () const</h3>
 <p>Returns the timestamp contained in the origination date header field of the message, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setDate">setDate</a>() and <a href="qmessagefilter.html#byTimeStamp">QMessageFilter::byTimeStamp</a>().</p>
-<h3 class="fn"><a name="from"></a><a href="qmessageaddress.html">QMessageAddress</a> QMessage::from () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="from"></a><a href="qmessageaddress.html">QMessageAddress</a> QMessage::from () const</h3>
 <p>Returns the originating address of the message.</p>
 <p>See also <a href="qmessage.html#setFrom">setFrom</a>() and <a href="qmessagefilter.html#bySender">QMessageFilter::bySender</a>().</p>
-<h3 class="fn"><a name="id"></a><a href="qmessageid.html">QMessageId</a> QMessage::id () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="id"></a><a href="qmessageid.html">QMessageId</a> QMessage::id () const</h3>
 <p>Returns the identifier of the message.</p>
 <p>See also <a href="qmessagefilter.html#byId">QMessageFilter::byId</a>().</p>
-<h3 class="fn"><a name="isModified"></a>bool QMessage::isModified () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isModified"></a>bool QMessage::isModified () const</h3>
 <p>Returns true if the message has been modified since it was constructed; otherwise returns false.</p>
-<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessage::parentAccountId () const</h3>
 <p>Returns the identifier of the parent account of the message if any; otherwise returns an invalid identifier.</p>
 <p>See also <a href="qmessage.html#setParentAccountId">setParentAccountId</a>().</p>
-<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const</h3>
 <p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
-<h3 class="fn"><a name="preferredCharsetFor"></a>QByteArray QMessage::preferredCharsetFor ( const QString &amp; <i>text</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="preferredCharsetFor"></a>QByteArray QMessage::preferredCharsetFor ( const QString &amp; <i>text</i> )<tt> [static]</tt></h3>
 <p>Returns the first charset from the preferred list that is capable of encoding the content of <i>text</i>.</p>
 <p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>() and <a href="qmessage.html#setBody">setBody</a>().</p>
-<h3 class="fn"><a name="preferredCharsets"></a>QList&lt;QByteArray&gt; QMessage::preferredCharsets ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="preferredCharsets"></a>QList&lt;QByteArray&gt; QMessage::preferredCharsets ()<tt> [static]</tt></h3>
 <p>Returns an ordered-by-preference list of charset names to use when encoding unicode QString data to a serialized form.</p>
 <p>See also <a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
-<h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const</h3>
 <p>Returns the priority of the message.</p>
 <p>The default is <a href="qmessage.html#Priority-enum">NormalPriority</a>.</p>
 <p>See also <a href="qmessage.html#setPriority">setPriority</a>() and <a href="qmessagefilter.html#byPriority">QMessageFilter::byPriority</a>().</p>
-<h3 class="fn"><a name="receivedDate"></a>QDateTime QMessage::receivedDate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="receivedDate"></a>QDateTime QMessage::receivedDate () const</h3>
 <p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setReceivedDate">setReceivedDate</a>() and <a href="qmessagefilter.html#byReceptionTimeStamp">QMessageFilter::byReceptionTimeStamp</a>().</p>
-<h3 class="fn"><a name="setBcc"></a>void QMessage::setBcc ( const QMessageAddressList &amp; <i>bccList</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBcc"></a>void QMessage::setBcc ( const QMessageAddressList &amp; <i>bccList</i> )</h3>
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>bccList</i>.</p>
 <p>See also <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setCc">setCc</a>().</p>
-<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const QString &amp; <i>body</i>, const QByteArray &amp; <i>mimeType</i> = QByteArray() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const QString &amp; <i>body</i>, const QByteArray &amp; <i>mimeType</i> = QByteArray() )</h3>
 <p>Sets the body text of the message to be the string <i>body</i>.</p>
 <p>The internet media (MIME) content type of the body is set to <i>mimeType</i>, if provided. If the <i>mimeType</i> is not specified, the content type will default to &quot;text/plain&quot;, and the encoding charset will be as determined by <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
 <p>See also <a href="qmessage.html#bodyId">bodyId</a>() and <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
-<h3 class="fn"><a name="setBody-2"></a>void QMessage::setBody ( QTextStream &amp; <i>in</i>, const QByteArray &amp; <i>mimeType</i> = QByteArray() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBody-2"></a>void QMessage::setBody ( QTextStream &amp; <i>in</i>, const QByteArray &amp; <i>mimeType</i> = QByteArray() )</h3>
 <p>Sets the body text of the message to be the text read from the stream <i>in</i>.</p>
 <p>The internet media (MIME) content type of the body is set to <i>mimeType</i>, if provided. If the <i>mimeType</i> is not specified, the content type will default to &quot;text/plain&quot;, and the encoding charset will be as determined by <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
 <p>See also <a href="qmessage.html#bodyId">bodyId</a>() and <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
-<h3 class="fn"><a name="setCc"></a>void QMessage::setCc ( const QMessageAddressList &amp; <i>ccList</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCc"></a>void QMessage::setCc ( const QMessageAddressList &amp; <i>ccList</i> )</h3>
 <p>Set the list of cc (carbon copy) recipients for the message to <i>ccList</i>.</p>
 <p>See also <a href="qmessage.html#cc">cc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
-<h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const QDateTime &amp; <i>d</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const QDateTime &amp; <i>d</i> )</h3>
 <p>Sets the origination date header field specifying the timestamp of the message to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#date">date</a>().</p>
-<h3 class="fn"><a name="setFrom"></a>void QMessage::setFrom ( const <a href="qmessageaddress.html">QMessageAddress</a> &amp; <i>address</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFrom"></a>void QMessage::setFrom ( const <a href="qmessageaddress.html">QMessageAddress</a> &amp; <i>address</i> )</h3>
 <p>Sets the from address, that is the originating address of the message to <i>address</i>.</p>
 <p>See also <a href="qmessage.html#from">from</a>().</p>
-<h3 class="fn"><a name="setParentAccountId"></a>void QMessage::setParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setParentAccountId"></a>void QMessage::setParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>accountId</i> )</h3>
 <p>Sets the parent account of the message to the account with identifier <i>accountId</i>.</p>
 <p>This operation is only permitted on new messages that have not yet been inserted into the message store. Attempting to change the parent account of a message already in the message store will result in an error when attempting to update the message with QMessageStore::update().</p>
 <p>See also <a href="qmessage.html#parentAccountId">parentAccountId</a>().</p>
-<h3 class="fn"><a name="setPreferredCharsets"></a>void QMessage::setPreferredCharsets ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPreferredCharsets"></a>void QMessage::setPreferredCharsets ( const QList&lt;QByteArray&gt; &amp; <i>charsetNames</i> )<tt> [static]</tt></h3>
 <p>Sets the ordered-by-preference list of names of charsets to use when encoding unicode QString data to a serialized form to <i>charsetNames</i>.</p>
 <p>The set of valid charset names is returned by QTextCodec::availableCharsets().</p>
 <p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
-<h3 class="fn"><a name="setPriority"></a>void QMessage::setPriority ( <a href="qmessage.html#Priority-enum">Priority</a> <i>newPriority</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPriority"></a>void QMessage::setPriority ( <a href="qmessage.html#Priority-enum">Priority</a> <i>newPriority</i> )</h3>
 <p>Sets the priority of the message to <i>newPriority</i>.</p>
 <p>See also <a href="qmessage.html#priority">priority</a>().</p>
-<h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const QDateTime &amp; <i>d</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const QDateTime &amp; <i>d</i> )</h3>
 <p>Sets the timestamp indicating the time of message reception by the device to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">receivedDate</a>().</p>
-<h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setStatus"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">StatusFlags</a> <i>newStatus</i> )</h3>
 <p>Sets the status flags value for the message to <i>newStatus</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
-<h3 class="fn"><a name="setStatus-2"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">Status</a> <i>flag</i>, bool <i>set</i> = true )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setStatus-2"></a>void QMessage::setStatus ( <a href="qmessage.html#Status-enum">Status</a> <i>flag</i>, bool <i>set</i> = true )</h3>
 <p>Sets the status flag <i>flag</i> for the message to have the value <i>set</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
-<h3 class="fn"><a name="setSubject"></a>void QMessage::setSubject ( const QString &amp; <i>text</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSubject"></a>void QMessage::setSubject ( const QString &amp; <i>text</i> )</h3>
 <p>Sets the subject of the message to <i>text</i>.</p>
 <p>See also <a href="qmessage.html#subject">subject</a>().</p>
-<h3 class="fn"><a name="setTo"></a>void QMessage::setTo ( const QMessageAddressList &amp; <i>toList</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTo"></a>void QMessage::setTo ( const QMessageAddressList &amp; <i>toList</i> )</h3>
 <p>Sets the list of primary recipients for the message to <i>toList</i>.</p>
 <p>See also <a href="qmessage.html#to">to</a>().</p>
-<h3 class="fn"><a name="setTo-2"></a>void QMessage::setTo ( const <a href="qmessageaddress.html">QMessageAddress</a> &amp; <i>address</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTo-2"></a>void QMessage::setTo ( const <a href="qmessageaddress.html">QMessageAddress</a> &amp; <i>address</i> )</h3>
 <p>Sets the primary recipient for the message to <i>address</i>.</p>
 <p>See also <a href="qmessage.html#to">to</a>().</p>
-<h3 class="fn"><a name="setType"></a>void QMessage::setType ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setType"></a>void QMessage::setType ( <a href="qmessage.html#Type-enum">Type</a> <i>t</i> )</h3>
 <p>Sets the Type of the message to <i>t</i>.</p>
 <p>The type of a message may be set for non-empty messages.</p>
 <p>See also <a href="qmessage.html#type">type</a>().</p>
-<h3 class="fn"><a name="size"></a>int QMessage::size () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="size"></a>int QMessage::size () const</h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
 <p>See also <a href="qmessagefilter.html#bySize">QMessageFilter::bySize</a>().</p>
-<h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const</h3>
 <p>Returns the standard folder of the message.</p>
 <p>Defaults to <a href="qmessage.html#StandardFolder-enum">DraftsFolder</a>.</p>
-<h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const</h3>
 <p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilter.html#byStatus">QMessageFilter::byStatus</a>().</p>
-<h3 class="fn"><a name="subject"></a>QString QMessage::subject () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="subject"></a>QString QMessage::subject () const</h3>
 <p>Returns the subject of the message, if present; otherwise returns a null string.</p>
 <p>See also <a href="qmessage.html#setSubject">setSubject</a>() and <a href="qmessagefilter.html#bySubject">QMessageFilter::bySubject</a>().</p>
-<h3 class="fn"><a name="to"></a>QMessageAddressList QMessage::to () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="to"></a>QMessageAddressList QMessage::to () const</h3>
 <p>Returns the list of primary recipients for the message.</p>
 <p>See also <a href="qmessage.html#setTo">setTo</a>() and <a href="qmessagefilter.html#byRecipients">QMessageFilter::byRecipients</a>().</p>
-<h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const</h3>
 <p>Returns the Type of the message.</p>
 <p>See also <a href="qmessage.html#setType">setType</a>() and <a href="qmessagefilter.html#byType">QMessageFilter::byType</a>().</p>
 </div>
@@ -404,15 +410,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

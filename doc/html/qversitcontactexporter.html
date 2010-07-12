@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,12 +136,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QVersitContactExporter&gt;</pre><ul>
 <li><a href="qversitcontactexporter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#Error-enum">Error</a></b> { NoError, EmptyContactError, NoNameError }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#QVersitContactExporter">QVersitContactExporter</a></b> ()</td></tr>
@@ -153,7 +155,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a></b> ( QVersitContactExporterDetailHandlerV2 * <i>handler</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a></b> ( QVersitResourceHandler * <i>handler</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
@@ -180,7 +183,7 @@
      <span class="comment">// detailHandler.mUnknownDetails now contains the list of unknown details</span>
 
      delete backupHandler;</pre>
-<a name="exporting-group-relationships"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="exporting-group-relationships"></a>
 <h3>Exporting group relationships</h3>
 <p>The exporter does not handle QContactRelationships at all.</p>
 <p>Some managers use the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a> along with contacts of type TypeGroup to indicate categorization of contacts. In vCard, categorization is represented by the CATEGORIES property, which has semantics most similar to the QContactTag detail. For contact manager backends that supports groups but not QContactTag, if the categorization information needs to be retained through CATEGORIES vCard properties, extra work can be done to convert from group relationships to QContactTag before passing the contact list to the exporter. Below is some example code that does this translation.</p>
@@ -239,9 +242,10 @@
  }</pre>
 </div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitproperty.html">QVersitProperty</a>, <a href="qversitresourcehandler.html">QVersitResourceHandler</a>, and <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QVersitContactExporter::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitContactExporter::Error</h3>
 <p>This enum specifies an error that occurred during the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>()</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QVersitContactExporter::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The most recent operation was successful</td></tr>
@@ -249,28 +253,29 @@
 <tr><td  class="topAlign"><tt>QVersitContactExporter::NoNameError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">One of the contacts has no QContactName field</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVersitContactExporter"></a>QVersitContactExporter::QVersitContactExporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVersitContactExporter"></a>QVersitContactExporter::QVersitContactExporter ()</h3>
 <p>Constructs a new contact exporter</p>
-<h3 class="fn"><a name="dtor.QVersitContactExporter"></a>QVersitContactExporter::~QVersitContactExporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVersitContactExporter"></a>QVersitContactExporter::~QVersitContactExporter ()</h3>
 <p>Frees any memory in use by this contact exporter.</p>
-<h3 class="fn"><a name="documents"></a>QList&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitContactExporter::documents () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="documents"></a>QList&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitContactExporter::documents () const</h3>
 <p>Returns the documents exported in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
-<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitcontactexporter.html#Error-enum">Error</a>&gt; QVersitContactExporter::errors () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitcontactexporter.html#Error-enum">Error</a>&gt; QVersitContactExporter::errors () const</h3>
 <p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>(). The key is the index into the input list of contacts and the value is the error that occurred on that contact.</p>
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
-<h3 class="fn"><a name="exportContacts"></a>bool QVersitContactExporter::exportContacts ( const QList&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="exportContacts"></a>bool QVersitContactExporter::exportContacts ( const QList&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3>
 <p>Converts <i>contacts</i> into a list of corresponding QVersitDocuments, using the format given by <i>versitType</i>. Returns true on success. If any of the contacts could not be exported, false is returned and <a href="qversitcontactexporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully exported documents will still be available via <a href="qversitcontactexporter.html#documents">documents</a>().</p>
-<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactExporter::resourceHandler () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactExporter::resourceHandler () const</h3>
 <p>Returns the associated resource handler.</p>
 <p>See also <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
-<h3 class="fn"><a name="setDetailHandler"></a>void QVersitContactExporter::setDetailHandler ( <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailHandler"></a>void QVersitContactExporter::setDetailHandler ( <a href="qversitcontactexporterdetailhandlerv2.html">QVersitContactExporterDetailHandlerV2</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler for processing QContactDetails, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter. This function is used for version 2 and higher handlers.</p>
 <p>Only one detail handler can be set. If another detail handler (of any version) was previously set, it will no longer be associated with the exporter.</p>
-<h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactExporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactExporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler to load files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactexporter.html#resourceHandler">resourceHandler</a>().</p>
@@ -281,15 +286,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

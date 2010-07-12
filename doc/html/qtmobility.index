@@ -12354,6 +12354,7 @@
             <contents name="installing-the-service-at-runtime" title="Installing the Service at Runtime" level="1"/>
             <contents name="identifying-services" title="Identifying Services" level="1"/>
             <contents name="upgrading-services" title="Upgrading Services" level="2"/>
+            <contents name="out-of-process-services" title="Out of process Services" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
         </page>

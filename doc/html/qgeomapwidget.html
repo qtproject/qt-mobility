@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,12 +138,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoMapWidget&gt;</pre><ul>
 <li><a href="qgeomapwidget-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#MapType-enum">MapType</a></b> { NoMap, StreetMap, SatelliteMapDay, SatelliteMapNight, TerrainMap }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#QGeoMapWidget">QGeoMapWidget</a></b> ( QGeoMappingManager * <i>manager</i>, QGraphicsItem * <i>parent</i> = 0 )</td></tr>
@@ -171,19 +173,22 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#centered">centered</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#mapTypeChanged">mapTypeChanged</a></b> ( MapType <i>mapType</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#zoomLevelChanged">zoomLevelChanged</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeomapwidget.html#resizeEvent">resizeEvent</a></b> ( QGraphicsSceneResizeEvent * <i>event</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMapWidget class is used to display a map and manager the interactions between the user and the map.</p>
@@ -192,9 +197,10 @@
 <p>The <a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a>() and coordinateToScreenPoisition() functions can be used to convert between positions on the screen and global coordinates.</p>
 <p>Mouse and keyboard events should be handled by subclassing QGeoMapWidget and providing implementations of the event handling functions present in QGraphicsWidget.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="MapType-enum"></a>enum QGeoMapWidget::MapType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="MapType-enum"></a>enum QGeoMapWidget::MapType</h3>
 <p>Describes a type of map data.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QGeoMapWidget::NoMap</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Indicates a lack of map valid data.</td></tr>
@@ -204,82 +210,83 @@
 <tr><td  class="topAlign"><tt>QGeoMapWidget::TerrainMap</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The map data is a graphical representation of terrain features. This may also include some of the information provided by QGeoMapWidget::StreetMap.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoMapWidget"></a>QGeoMapWidget::QGeoMapWidget ( <a href="qgeomappingmanager.html">QGeoMappingManager</a> * <i>manager</i>, QGraphicsItem * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoMapWidget"></a>QGeoMapWidget::QGeoMapWidget ( <a href="qgeomappingmanager.html">QGeoMappingManager</a> * <i>manager</i>, QGraphicsItem * <i>parent</i> = 0 )</h3>
 <p>Creates a new mapping widget, with the mapping operations managed by <i>manager</i>, and the specified <i>parent</i>.</p>
 <p>Note that the <i>manager</i> will typically be accessed from an instance of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a>:</p>
 <pre class="highlightedCode brush: cpp"> QGeoServiceProvider serviceProvider(&quot;nokia&quot;);
  QGeoMappingManager *manager = serviceProvider.mappingManager();
  QGeoMapWidget *widget = new QGeoMapWidget(manager);</pre>
-<h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()<tt> [virtual]</tt></h3>
 <p>Destroys this map widget.</p>
-<h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Adds <i>mapObject</i> to the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will display the map object immediately.</p>
 <p>The widget will take ownership of the <i>mapObject</i>.</p>
-<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3>
 <p>Returns the coordinate of the point in the center of the map viewport.</p>
 <p>See also <a href="qgeomapwidget.html#setCenter">setCenter</a>().</p>
-<h3 class="fn"><a name="centered"></a>void QGeoMapWidget::centered ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="centered"></a>void QGeoMapWidget::centered ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )<tt> [signal]</tt></h3>
 <p>Indicates that the map has been centered on <i>coordinate</i>.</p>
 <p>This signal will not be emitted when the user pans the map.</p>
-<h3 class="fn"><a name="coordinateToScreenPosition"></a>QPointF QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="coordinateToScreenPosition"></a>QPointF QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
 <p>Returns the position on the screen at which <i>coordinate</i> is displayed.</p>
 <p>An invalid QPointF will be returned if <i>coordinate</i> is invalid or is not within the current viewport.</p>
-<h3 class="fn"><a name="mapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjects ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget.</p>
-<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const QPointF &amp; <i>screenPosition</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const QPointF &amp; <i>screenPosition</i> )</h3>
 <p>Returns the list of map objects managed by this widget which are visible and contain the point <i>screenPosition</i> within their boundaries.</p>
-<h3 class="fn"><a name="mapObjectsInScreenRect"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const QRectF &amp; <i>screenRect</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapObjectsInScreenRect"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const QRectF &amp; <i>screenRect</i> )</h3>
 <p>Returns the list of map objects managed by this widget which are visible and which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
-<h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3>
 <p>Returns the type of map data which is being displayed.</p>
 <p>See also <a href="qgeomapwidget.html#setMapType">setMapType</a>().</p>
-<h3 class="fn"><a name="mapTypeChanged"></a>void QGeoMapWidget::mapTypeChanged ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapTypeChanged"></a>void QGeoMapWidget::mapTypeChanged ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )<tt> [signal]</tt></h3>
 <p>Indicates that the type of the map has been changed.</p>
-<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMapWidget::maximumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maximumZoomLevel"></a>qreal QGeoMapWidget::maximumZoomLevel () const</h3>
 <p>Returns the maximum zoom level supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
-<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMapWidget::minimumZoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumZoomLevel"></a>qreal QGeoMapWidget::minimumZoomLevel () const</h3>
 <p>Returns the minimum zoom level supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
-<h3 class="fn"><a name="paint"></a>void QGeoMapWidget::paint ( QPainter * <i>painter</i>, const QStyleOptionGraphicsItem * <i>option</i>, QWidget * <i>parent</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="pan"></a>void QGeoMapWidget::pan ( int <i>dx</i>, int <i>dy</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="paint"></a>void QGeoMapWidget::paint ( QPainter * <i>painter</i>, const QStyleOptionGraphicsItem * <i>option</i>, QWidget * <i>parent</i> )</h3>
+<h3 class="fn"><a name="pan"></a>void QGeoMapWidget::pan ( int <i>dx</i>, int <i>dy</i> )</h3>
 <p>Pans the map view <i>dx</i> pixels in the x direction and <i>dy</i> pixels in they y direction.</p>
 <p>The x and y axes are specified in Graphics View Framework coordinates. By default this will mean that positive values of <i>dx</i> move the viewed area to the right and that positive values of <i>dy</i> move the viewed area down.</p>
-<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Removes <i>mapObject</i> from the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will stop displaying the map object immediately.</p>
 <p>The widget will release ownership of the <i>mapObject</i>.</p>
-<h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( QGraphicsSceneResizeEvent * <i>event</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::screenPositionToCoordinate ( QPointF <i>screenPosition</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( QGraphicsSceneResizeEvent * <i>event</i> )<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::screenPositionToCoordinate ( QPointF <i>screenPosition</i> ) const</h3>
 <p>Returns the coordinate corresponding to the point in the viewport at <i>screenPosition</i>.</p>
 <p>An invalid <a href="qgeocoordinate.html">QGeoCoordinate</a> will be returned if <i>screenPosition</i> is invalid or is not within the current viewport.</p>
-<h3 class="fn"><a name="setCenter"></a>void QGeoMapWidget::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCenter"></a>void QGeoMapWidget::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3>
 <p>Centers the map viewport on the coordinate <i>center</i>.</p>
 <p>See also <a href="qgeomapwidget.html#center">center</a>().</p>
-<h3 class="fn"><a name="setMapType"></a>void QGeoMapWidget::setMapType ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMapType"></a>void QGeoMapWidget::setMapType ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )</h3>
 <p>Changes the type of map data to display to <i>mapType</i>.</p>
 <p>This will do nothing if <i>mapType</i> is not present in <a href="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</a>().</p>
 <p>See also <a href="qgeomapwidget.html#mapType">mapType</a>().</p>
-<h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapWidget::setZoomLevel ( qreal <i>zoomLevel</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapWidget::setZoomLevel ( qreal <i>zoomLevel</i> )</h3>
 <p>Sets the zoom level of the map to <i>zoomLevel</i>.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>If <i>zoomLevel</i> is less than <a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a>() then <a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a>() will be used, and if <i>zoomLevel</i> is larger than <a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a>() then <a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a>() will be used.</p>
 <p>See also <a href="qgeomapwidget.html#zoomLevel">zoomLevel</a>().</p>
-<h3 class="fn"><a name="shape"></a>QPainterPath QGeoMapWidget::shape () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="startPanning"></a>void QGeoMapWidget::startPanning ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="stopPanning"></a>void QGeoMapWidget::stopPanning ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">MapType</a>&gt; QGeoMapWidget::supportedMapTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="shape"></a>QPainterPath QGeoMapWidget::shape () const</h3>
+<h3 class="fn"><a name="startPanning"></a>void QGeoMapWidget::startPanning ()</h3>
+<h3 class="fn"><a name="stopPanning"></a>void QGeoMapWidget::stopPanning ()</h3>
+<h3 class="fn"><a name="supportedMapTypes"></a>QList&lt;<a href="qgeomapwidget.html#MapType-enum">MapType</a>&gt; QGeoMapWidget::supportedMapTypes () const</h3>
 <p>Returns the map types supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
-<h3 class="fn"><a name="visibleMapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::visibleMapObjects ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="visibleMapObjects"></a>QList&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget which are currently visible and at least partially within the viewport of the map.</p>
-<h3 class="fn"><a name="zoomLevel"></a>qreal QGeoMapWidget::zoomLevel () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="zoomLevel"></a>qreal QGeoMapWidget::zoomLevel () const</h3>
 <p>Returns the zoom level of the map.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>See also <a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a>().</p>
-<h3 class="fn"><a name="zoomLevelChanged"></a>void QGeoMapWidget::zoomLevelChanged ( qreal <i>zoomLevel</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="zoomLevelChanged"></a>void QGeoMapWidget::zoomLevelChanged ( qreal <i>zoomLevel</i> )<tt> [signal]</tt></h3>
 <p>Indicates that the zoom level has changed to <i>zoomLevel</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -288,15 +295,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

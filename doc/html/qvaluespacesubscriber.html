@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,13 +136,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QValueSpaceSubscriber&gt;</pre><ul>
 <li><a href="qvaluespacesubscriber-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qvaluespacesubscriber.html#path-prop">path</a></b> : QString</li>
 <li class="fn"><b><a href="qvaluespacesubscriber.html#value-prop">value</a></b> : const QVariant</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacesubscriber.html#QValueSpaceSubscriber">QValueSpaceSubscriber</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -159,12 +161,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacesubscriber.html#subPaths">subPaths</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacesubscriber.html#value">value</a></b> ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacesubscriber.html#contentsChanged">contentsChanged</a></b> ()</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QValueSpaceSubscriber class allows applications to read and subscribe to Value Space paths.</p>
@@ -183,9 +187,10 @@
      QObject::connect(buttons, SIGNAL(contentsChanged()), this, SLOT(buttonInfoChanged()));</pre>
 <p>will invoke the <tt>buttonInfoChanged()</tt> slot whenever any value under <tt>/Device/Buttons</tt> changes. This includes the value of <tt>/Device/Buttons</tt> itself, a change of a subpath such as <tt>/Device/Buttons/2/Name</tt> or the creation or removal of a subpath.</p>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="path-prop"></a>path : QString</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="path-prop"></a>path : QString</h3>
 <p>This property holds the current path that the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> refers to.</p>
 <p>Settings this property causes the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to disconnect and reconnect to the Value Space with the new path. As a result all signal/slot connections are disconnected.</p>
 <p><b>Access functions:</b></p>
@@ -194,49 +199,50 @@
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPath</b> ( const QString &amp; <i>path</i> )</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPath</b> ( QValueSpaceSubscriber * <i>subscriber</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="value-prop"></a>value : const QVariant</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value-prop"></a>value : const QVariant</h3>
 <p>This property holds the value of the path that this <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> refers to.</p>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacesubscriber.html#contentsChanged">contentsChanged</a></b> ()</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QValueSpaceSubscriber"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpaceSubscriber"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to the root path.</p>
 <p>The constructed Value Space subscriber will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-2"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpaceSubscriber-2"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>.</p>
 <p>The constructed Value Space subscriber will access all available <a href="qabstractvaluespacelayer.html">layers</a>.</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-3"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( QValueSpace::LayerOptions <i>filter</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpaceSubscriber-3"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( QValueSpace::LayerOptions <i>filter</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. The <i>filter</i> parameter is used to limit which layers this <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will access.</p>
 <p>If a layer matching <i>filter</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
 <p>See also <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpaceSubscriber-4"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const QUuid &amp; <i>uuid</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpaceSubscriber-4"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( const QUuid &amp; <i>uuid</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> with the specified <i>parent</i> that refers to <i>path</i>. This <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will only use the layer identified by <i>uuid</i>.</p>
 <p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
 <p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> will be unconnected.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer::id</a>(), <a href="qvaluespace.html">QValueSpace</a>, and <a href="qvaluespacesubscriber.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="dtor.QValueSpaceSubscriber"></a>QValueSpaceSubscriber::~QValueSpaceSubscriber ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QValueSpaceSubscriber"></a>QValueSpaceSubscriber::~QValueSpaceSubscriber ()<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
-<h3 class="fn"><a name="cd"></a>void QValueSpaceSubscriber::cd ( const QString &amp; <i>path</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cd"></a>void QValueSpaceSubscriber::cd ( const QString &amp; <i>path</i> )</h3>
 <p>Changes the path to the absolute path if <i>path</i> starts with a '/'; otherwise changes to the sub path of the current path.</p>
-<h3 class="fn"><a name="cdUp"></a>void QValueSpaceSubscriber::cdUp ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cdUp"></a>void QValueSpaceSubscriber::cdUp ()</h3>
 <p>Sets the path to parent of the current path.</p>
-<h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceSubscriber::contentsChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contentsChanged"></a>void QValueSpaceSubscriber::contentsChanged ()<tt> [signal]</tt></h3>
 <p>Emitted whenever any value under the current path changes.</p>
 <p><b>Note:</b> that if a value changes multiple times in quick succession, only the most recent value may be accessible via the <a href="qvaluespacesubscriber.html#value">value</a>() function.</p>
-<h3 class="fn"><a name="isConnected"></a>bool QValueSpaceSubscriber::isConnected () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isConnected"></a>bool QValueSpaceSubscriber::isConnected () const</h3>
 <p>Returns true if this <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> is connected to at least one available layer; otherwise returns false. An unconnected <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> is constructed if the filtering parameters passed to the constructor eliminate all available layers.</p>
-<h3 class="fn"><a name="subPaths"></a>QStringList QValueSpaceSubscriber::subPaths () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="subPaths"></a>QStringList QValueSpaceSubscriber::subPaths () const</h3>
 <p>Returns a list of sub-paths under the current path. For example, given a Value Space tree containing:</p>
 <pre class="highlightedCode brush: cpp"> /Settings/Nokia/Device
  /Settings/Nokia/Other
  /Settings/Qt
  /Device/Buttons</pre>
 <p><tt>QValueSpaceSubscriber(&quot;/Settings&quot;).subPaths()</tt> will return a list containing <tt>{ Nokia, Qt }</tt> in no particular order.</p>
-<h3 class="fn"><a name="value"></a>QVariant QValueSpaceSubscriber::value ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QValueSpaceSubscriber::value ( const QString &amp; <i>subPath</i> = QString(), const QVariant &amp; <i>def</i> = QVariant() ) const</h3>
 <p>Returns the value of the <i>subPath</i> under this subscriber path, or the value of this subscriber path if <i>subPath</i> is empty. If the value does not exists <i>def</i> is returned.</p>
 <p>The following code shows how the subscriber path and <i>subPath</i> relate.</p>
 <pre class="highlightedCode brush: cpp"> QValueSpaceSubscriber base(&quot;/Settings&quot;);
@@ -251,15 +257,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

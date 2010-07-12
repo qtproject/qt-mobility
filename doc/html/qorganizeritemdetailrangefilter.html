@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,13 +137,15 @@
 <ul>
 <li><a href="qorganizeritemdetailrangefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlag</a></b> { IncludeLower, IncludeUpper, ExcludeLower, ExcludeUpper }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlags</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetailrangefilter.html#QOrganizerItemDetailRangeFilter">QOrganizerItemDetailRangeFilter</a></b> ()</td></tr>
@@ -161,12 +163,14 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qorganizeritemfilter.html#public-functions">QOrganizerItemFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemDetailRangeFilter class provides a filter based around a detail value range criterion.</p>
 <p>It may be used to select organizeritems which contain a detail of a particular definition with a particular value</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="RangeFlag-enum"></a>enum QOrganizerItemDetailRangeFilter::RangeFlag<br/>flags QOrganizerItemDetailRangeFilter::RangeFlags</h3>
@@ -179,37 +183,38 @@
 </table>
 <p>The RangeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;RangeFlag&gt;. It stores an OR combination of RangeFlag values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemDetailRangeFilter"></a>QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetailRangeFilter"></a>QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter ()</h3>
 <p>Constructs a new detail range filter</p>
-<h3 class="fn"><a name="QOrganizerItemDetailRangeFilter-2"></a>QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetailRangeFilter-2"></a>QOrganizerItemDetailRangeFilter::QOrganizerItemDetailRangeFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new detail range filter</p>
-<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemDetailRangeFilter::detailDefinitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemDetailRangeFilter::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected for matching values</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemDetailRangeFilter::detailFieldName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemDetailRangeFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="matchFlags"></a><a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> QOrganizerItemDetailRangeFilter::matchFlags () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="matchFlags"></a><a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> QOrganizerItemDetailRangeFilter::matchFlags () const</h3>
 <p>Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<h3 class="fn"><a name="maxValue"></a>QVariant QOrganizerItemDetailRangeFilter::maxValue () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="maxValue"></a>QVariant QOrganizerItemDetailRangeFilter::maxValue () const</h3>
 <p>Returns the upper bound of the value range criterion</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setRange">setRange</a>().</p>
-<h3 class="fn"><a name="minValue"></a>QVariant QOrganizerItemDetailRangeFilter::minValue () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minValue"></a>QVariant QOrganizerItemDetailRangeFilter::minValue () const</h3>
 <p>Returns the lower bound of the value range criterion</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setRange">setRange</a>().</p>
-<h3 class="fn"><a name="rangeFlags"></a><a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> QOrganizerItemDetailRangeFilter::rangeFlags () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="rangeFlags"></a><a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> QOrganizerItemDetailRangeFilter::rangeFlags () const</h3>
 <p>Returns a set of flags which defines the boundary condition semantics of the value range criterion</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#setRange">setRange</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemDetailRangeFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemDetailRangeFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which type details will be inspected for matching values to <i>definitionName</i>, and the name of the field which will be inspected in details of that definition to <i>fieldName</i>.</p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qorganizeritemdetailrangefilter.html#detailFieldName">detailFieldName</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QOrganizerItemDetailRangeFilter::setMatchFlags ( <a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> <i>flags</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMatchFlags"></a>void QOrganizerItemDetailRangeFilter::setMatchFlags ( <a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the match flags of the filter criterion to <i>flags</i></p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#matchFlags">matchFlags</a>().</p>
-<h3 class="fn"><a name="setRange"></a>void QOrganizerItemDetailRangeFilter::setRange ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, <a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRange"></a>void QOrganizerItemDetailRangeFilter::setRange ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, <a href="qorganizeritemdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
 <p>Sets the value range criterion of the filter to within <i>min</i> and <i>max</i>, with boundary conditions specified in the given <i>flags</i></p>
 <p>See also <a href="qorganizeritemdetailrangefilter.html#minValue">minValue</a>() and <a href="qorganizeritemdetailrangefilter.html#maxValue">maxValue</a>().</p>
 </div>
@@ -219,15 +224,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkManagerEngineFactory&gt;</pre><ul>
 <li><a href="qlandmarkmanagerenginefactory-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanagerenginefactory.html#dtor.QLandmarkManagerEngineFactory">~QLandmarkManagerEngineFactory</a></b> ()</td></tr>
@@ -143,25 +144,27 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanagerenginefactory.html#managerName">managerName</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QList&lt;int&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkManagerEngineFactory class provides the interface for plugins that implement <a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a> functionality.</p>
 <p>This class provides a simple interface for the creation of landmark manager engine instances. Each factory has a specific id associated with it, which forms the <tt>managerName</tt> parameter when creating <a href="qlandmarkmanager.html">QLandmarkManager</a> objects.</p>
 </div>
 <p>See also <a href="qlandmarkmanager.html">QLandmarkManager</a> and <a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QLandmarkManagerEngineFactory"></a>QLandmarkManagerEngineFactory::~QLandmarkManagerEngineFactory ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkManagerEngineFactory"></a>QLandmarkManagerEngineFactory::~QLandmarkManagerEngineFactory ()<tt> [virtual]</tt></h3>
 <p>Destroys the engine factory.</p>
-<h3 class="fn"><a name="engine"></a><a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a> * QLandmarkManagerEngineFactory::engine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a> * <i>error</i>, QString * <i>errorString</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="engine"></a><a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a> * QLandmarkManagerEngineFactory::engine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a> * <i>error</i>, QString * <i>errorString</i> )<tt> [pure virtual]</tt></h3>
 <p>This function is called by the <a href="qlandmarkmanager.html">QLandmarkManager</a> implementation to create an instance of the engine provided by this factory.</p>
 <p>The <i>parameters</i> supplied can be ignored or interpreted as desired.</p>
 <p>If a supplied parameter results in an unfulfillable request, or some other error occurs, this function may return a null pointer, and the client developer will get an invalid <a href="qlandmarkmanager.html">QLandmarkManager</a> in return. Errors are stored in <i>error</i> and <i>errorString</i>.</p>
-<h3 class="fn"><a name="managerName"></a>QString QLandmarkManagerEngineFactory::managerName () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QLandmarkManagerEngineFactory::managerName () const<tt> [pure virtual]</tt></h3>
 <p>This function returns a unique string that identifies the engine provided by this factory.</p>
 <p>Typically this would be of the form &quot;com.nokia.qt.landmarks.engines.sqlite&quot;, with the appropriate domain and engine name substituted.</p>
-<h3 class="fn"><a name="supportedImplementationVersions"></a>QList&lt;int&gt; QLandmarkManagerEngineFactory::supportedImplementationVersions () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedImplementationVersions"></a>QList&lt;int&gt; QLandmarkManagerEngineFactory::supportedImplementationVersions () const<tt> [virtual]</tt></h3>
 <p>This function returns a list of versions of the engine which this factory can instantiate.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -170,15 +173,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

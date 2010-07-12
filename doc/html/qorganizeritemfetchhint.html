@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,13 +136,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemFetchHint&gt;</pre><ul>
 <li><a href="qorganizeritemfetchhint-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHint</a></b> { AllRequired, NoBinaryBlobs }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHints</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchhint.html#QOrganizerItemFetchHint">QOrganizerItemFetchHint</a></b> ()</td></tr>
@@ -154,7 +156,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchhint.html#setOptimizationHints">setOptimizationHints</a></b> ( OptimizationHints <i>hints</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QOrganizerItemFetchHint &amp; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemfetchhint.html#operator-eq">operator=</a></b> ( const QOrganizerItemFetchHint &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemFetchHint class provides hints to the manager about which organizeritem information needs to be retrieved in an asynchronous fetch request or a synchronous function call.</p>
@@ -166,6 +169,7 @@
 </ul>
 <p>Important note: a client should not make changes to a organizeritem which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the organizeritem back to the manager (as the &quot;new&quot; restricted organizeritem will replace the previously saved organizeritem in the backend).</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="OptimizationHint-enum"></a>enum QOrganizerItemFetchHint::OptimizationHint<br/>flags QOrganizerItemFetchHint::OptimizationHints</h3>
@@ -176,27 +180,28 @@
 </table>
 <p>The OptimizationHints type is a typedef for <a href="qflags.html">QFlags</a>&lt;OptimizationHint&gt;. It stores an OR combination of OptimizationHint values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemFetchHint"></a>QOrganizerItemFetchHint::QOrganizerItemFetchHint ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemFetchHint"></a>QOrganizerItemFetchHint::QOrganizerItemFetchHint ()</h3>
 <p>Constructs a new organizeritem fetch hint which requests that the backend fetch all information</p>
-<h3 class="fn"><a name="QOrganizerItemFetchHint-2"></a>QOrganizerItemFetchHint::QOrganizerItemFetchHint ( const QOrganizerItemFetchHint &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemFetchHint-2"></a>QOrganizerItemFetchHint::QOrganizerItemFetchHint ( const QOrganizerItemFetchHint &amp; <i>other</i> )</h3>
 <p>Constructs a new organizeritem fetch hint as a copy of <i>other</i></p>
-<h3 class="fn"><a name="dtor.QOrganizerItemFetchHint"></a>QOrganizerItemFetchHint::~QOrganizerItemFetchHint ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemFetchHint"></a>QOrganizerItemFetchHint::~QOrganizerItemFetchHint ()</h3>
 <p>Frees any memory in use by the fetch hint</p>
-<h3 class="fn"><a name="detailDefinitionsHint"></a>QStringList QOrganizerItemFetchHint::detailDefinitionsHint () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitionsHint"></a>QStringList QOrganizerItemFetchHint::detailDefinitionsHint () const</h3>
 <p>Returns the list of definition names that identify detail definitions of which details the manager should (at a minimum) retrieve when fetching organizeritems. This hint may be ignored by the backend, in which case it will return the full set of details for each organizeritem retrieved.</p>
 <p>See also <a href="qorganizeritemfetchhint.html#setDetailDefinitionsHint">setDetailDefinitionsHint</a>().</p>
-<h3 class="fn"><a name="optimizationHints"></a><a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHints</a> QOrganizerItemFetchHint::optimizationHints () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="optimizationHints"></a><a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHints</a> QOrganizerItemFetchHint::optimizationHints () const</h3>
 <p>Returns the optimization hint flags specified by the client. These hints may be ignored by the backend, in which case it will return the full set of information accessible in a organizeritem, including relationships and binary blobs.</p>
 <p>See also <a href="qorganizeritemfetchhint.html#setOptimizationHints">setOptimizationHints</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionsHint"></a>void QOrganizerItemFetchHint::setDetailDefinitionsHint ( const QStringList &amp; <i>definitionNames</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailDefinitionsHint"></a>void QOrganizerItemFetchHint::setDetailDefinitionsHint ( const QStringList &amp; <i>definitionNames</i> )</h3>
 <p>Sets the list of definition names that identify detail definitions of which details the manager should (at a minimum) retrieve when fetching organizeritems to <i>definitionNames</i>. This hint may be ignored by the backend, in which case it will return the full set of details for each organizeritem retrieved.</p>
 <p>See also <a href="qorganizeritemfetchhint.html#detailDefinitionsHint">detailDefinitionsHint</a>().</p>
-<h3 class="fn"><a name="setOptimizationHints"></a>void QOrganizerItemFetchHint::setOptimizationHints ( <a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHints</a> <i>hints</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setOptimizationHints"></a>void QOrganizerItemFetchHint::setOptimizationHints ( <a href="qorganizeritemfetchhint.html#OptimizationHint-enum">OptimizationHints</a> <i>hints</i> )</h3>
 <p>Sets the optimization hint flags specified by the client to <i>hints</i>. These hints may be ignored by the backend, in which case it will return the full set of information accessible in a organizeritem, including relationships and binary blobs.</p>
 <p>See also <a href="qorganizeritemfetchhint.html#optimizationHints">optimizationHints</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemFetchHint &amp; QOrganizerItemFetchHint::operator= ( const QOrganizerItemFetchHint &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemFetchHint &amp; QOrganizerItemFetchHint::operator= ( const QOrganizerItemFetchHint &amp; <i>other</i> )</h3>
 <p>Assigns this fetch hint to be equal to the <i>other</i> fetch hint</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -205,15 +210,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

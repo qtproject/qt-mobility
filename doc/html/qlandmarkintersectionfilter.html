@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkintersectionfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkintersectionfilter.html#QLandmarkIntersectionFilter">QLandmarkIntersectionFilter</a></b> ()</td></tr>
@@ -153,39 +154,41 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkIntersectionFilter class provides a filter which intersects the results of its constituent filters.</p>
 <p>Conceptually it performs an AND operation and thus may be used to select landmarks which match all of it's constituent filters.</p>
 <p>Whether an intersection filter can be comprised of compound filters (i.e&#x2e; union or intersection filters) is backend specific. Even if this is supported the performance of such a filter is likely to be poor.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkIntersectionFilter"></a>QLandmarkIntersectionFilter::QLandmarkIntersectionFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkIntersectionFilter"></a>QLandmarkIntersectionFilter::QLandmarkIntersectionFilter ()</h3>
 <p>Constructs an intersection filter.</p>
-<h3 class="fn"><a name="QLandmarkIntersectionFilter-2"></a>QLandmarkIntersectionFilter::QLandmarkIntersectionFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkIntersectionFilter-2"></a>QLandmarkIntersectionFilter::QLandmarkIntersectionFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new intersection filter.</p>
-<h3 class="fn"><a name="dtor.QLandmarkIntersectionFilter"></a>QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkIntersectionFilter"></a>QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter ()<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
-<h3 class="fn"><a name="append"></a>void QLandmarkIntersectionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="append"></a>void QLandmarkIntersectionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</a>(), <a href="qlandmarkintersectionfilter.html#prepend">prepend</a>(), and <a href="qlandmarkintersectionfilter.html#filters">filters</a>().</p>
-<h3 class="fn"><a name="clear"></a>void QLandmarkIntersectionFilter::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QLandmarkIntersectionFilter::clear ()</h3>
 <p>Removes all filters from the list of intersected filters.</p>
-<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; QLandmarkIntersectionFilter::filters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filters"></a>QList&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; QLandmarkIntersectionFilter::filters () const</h3>
 <p>Returns the list of filters which form the intersection filter</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#setFilters">setFilters</a>(), <a href="qlandmarkintersectionfilter.html#prepend">prepend</a>(), <a href="qlandmarkintersectionfilter.html#append">append</a>(), and <a href="qlandmarkintersectionfilter.html#remove">remove</a>().</p>
-<h3 class="fn"><a name="prepend"></a>void QLandmarkIntersectionFilter::prepend ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="prepend"></a>void QLandmarkIntersectionFilter::prepend ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Prepends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#append">append</a>() and <a href="qlandmarkintersectionfilter.html#filters">filters</a>().</p>
-<h3 class="fn"><a name="remove"></a>void QLandmarkIntersectionFilter::remove ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="remove"></a>void QLandmarkIntersectionFilter::remove ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Removes the given <i>filter</i> from the list of intersected filters.</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#filters">filters</a>(), <a href="qlandmarkintersectionfilter.html#append">append</a>(), and <a href="qlandmarkintersectionfilter.html#prepend">prepend</a>().</p>
-<h3 class="fn"><a name="setFilters"></a>void QLandmarkIntersectionFilter::setFilters ( const QList&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; &amp; <i>filters</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFilters"></a>void QLandmarkIntersectionFilter::setFilters ( const QList&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; &amp; <i>filters</i> )</h3>
 <p>Sets the <i>filters</i> whose criteria will be intersected.</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#filters">filters</a>().</p>
-<h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkIntersectionFilter &amp; QLandmarkIntersectionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkIntersectionFilter &amp; QLandmarkIntersectionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#append">append</a>().</p>
 </div>
@@ -195,15 +198,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

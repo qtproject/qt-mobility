@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#introduction">Introduction</a></li>
 <li class="level1"><a href="#using-the-api">Using The API</a></li>
@@ -140,11 +140,11 @@
 <h1 class="title">Contacts Synchronous API</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="introduction"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The Contacts Synchronous API enables a client to synchronously fetch, update, or remove contact data from a contact manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or user interface responsiveness is not critical. Synchronous calls to a contact manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
 <p>Most operations which may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
-<a name="using-the-api"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="using-the-api"></a>
 <h2>Using The API</h2>
 <p>The synchronous API offered by the Contacts module is available through the <a href="qcontactmanager.html">QContactManager</a> class. It consists of four major sections:</p>
 <ul>
@@ -153,12 +153,12 @@
 <li>Contact Manipulation</li>
 <li>Relationship Manipulation</li>
 </ul>
-<a name="error-reporting"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="error-reporting"></a>
 <h3>Error Reporting</h3>
 <p>When a synchronous operation fails, clients need to be able to retrieve error information associated with that synchronous operation. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function provides this information to clients.</p>
 <p>For some synchronous operations (for example, batch save or remove operations) it is possible that multiple errors may occur during the operation. In those cases, the synchronous function will take a pointer to a map of input index to error, which will be filled by the function as required, and the <a href="qcontactmanager.html#error">QContactManager::error</a>() function will report the overall operation error.</p>
 <p>Error reporting is handled slightly differently in the asynchronous API, in that each instance of an asynchronous request is able to report any overall operation error as well as the finer-grained map of errors, for the operation which it requested.</p>
-<a name="contact-manipulation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="contact-manipulation"></a>
 <h3>Contact Manipulation</h3>
 <p>The most common type of operation that clients will perform involves retrieval or modification of contacts. The <a href="qcontactmanager.html">QContactManager</a> class offers synchronous API to retrieve, create, update and delete contacts. The create and update operations are provided through the same interface. Both singular and batch operations are offered by the API.</p>
 <p>A contact is identified by its <a href="qcontactid.html">QContactId</a>. This id consists of two parts: a URI which identifies the contact manager which stores the contact, and the local id of the contact in that manager. Some operations which take a pointer to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.</p>
@@ -193,7 +193,7 @@
 <li>selfContactId() const</li>
 </ul>
 <p>In order to unset the self contact, a client may either delete the contact which is currently set as the self contact, or set the self contact id to be the invalid, zero id (constructed via QContactLocalId(0)). The self-contact manipulation functionality is only available via the synchronous API.</p>
-<a name="relationship-manipulation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="relationship-manipulation"></a>
 <h3>Relationship Manipulation</h3>
 <p>Contacts may be related in various ways. The contacts API allows clients to define relationships between contacts if the plugin providing the functionality supports such relationships. Any plugin which supports relationships should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::Relationships</a> feature.</p>
 <p>Some plugins support arbitrary relationship types. Clients can define custom relationships between contacts saved in such plugins. Any plugin which supports arbitrary relationship types should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ArbitraryRelationshipTypes</a> feature.</p>
@@ -207,7 +207,7 @@
 <li>removeRelationships(const QList&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt;&amp; relationships);</li>
 </ul>
 <p>The relationship manipulation functionality is also provided via asynchronous API through the <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a>, <a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a>, and <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a> classes.</p>
-<a name="schema-manipulation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="schema-manipulation"></a>
 <h3>Schema Manipulation</h3>
 <p>The schema supported by a plugin is the list of detail definitions which are supported by the plugin. A contact which contains a detail of a particular definition which is not supported by the plugin will fail to validate when the user attempts to save it in that manager. The schema also includes any access constraints which may apply to certain details or detail definitions (for example, a particular detail definition might be declared to be unique per-contact in a particular manager).</p>
 <p>Every plugin will support a slightly different schema, as the schema which can be supported will depend on the semantics and limitations of the underlying storage platform on which the plugin is based. The default schema is described in the <a href="contactsschema.html">Qt Mobility Contacts schema documentation</a>, and plugins should attempt to implement that schema; however no guarantees are given to clients as to the conformance of the schemas supported by various plugins to the default schema.</p>
@@ -221,10 +221,10 @@
 </ul>
 <p>The schema manipulation functionality is also provided via asynchronous API through the <a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a>, <a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a> and <a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a> classes.</p>
 <p>Note that the schema supported by a plugin may vary depending on the type of contact to which the schema applies. For example, a particular plugin might support name, address, phone number, email address, and gender details for normal contacts, but only name, address, and phone number details for a group contact.</p>
-<a name="examples-of-usage"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="examples-of-usage"></a>
 <h2>Examples Of Usage</h2>
 <p>The synchronous API provides the simplest way to access or modify the contact information managed by a particular backend. It has the disadvantage that calls block until completion and is therefore most suitable only for applications which interact with local, high-speed datastores.</p>
-<a name="saving-a-new-contact-to-the-default-manager"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="saving-a-new-contact-to-the-default-manager"></a>
 <h3>Saving a new contact to the default manager</h3>
 <p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.</p>
 <p>We assume the existence of a specialized leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialized leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
@@ -259,7 +259,7 @@
                              : qDebug() &lt;&lt; &quot;Failed to save&quot; &lt;&lt; aliceName.customLabel();
      qDebug() &lt;&lt; &quot;The backend has synthesized a display label for the contact:&quot; &lt;&lt; alice.displayLabel();
  }</pre>
-<a name="filtering-by-detail-definition-and-value"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
 <p>The client utilizes a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided QContactPhoneNumber detail leaf class (which implements the default definition for phone number details).</p>
 <pre class="highlightedCode brush: cpp"> void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
@@ -279,7 +279,7 @@
                   &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
      }
  }</pre>
-<a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
 <h3>Installing a plugin that modifies the definition of one type of detail</h3>
 <p>The client installs a plugin, which requires a new field to be added to details of the &quot;EmailAddress&quot; definition. It loads the definition from the default manager, modifies it (by adding the new field - a label field), and saves it back.</p>
 <pre class="highlightedCode brush: cpp"> void addPlugin(QContactManager* cm)
@@ -303,7 +303,7 @@
      else
          qDebug() &lt;&lt; &quot;This backend could not support our modifications!&quot;;
  }</pre>
-<a name="modifying-an-existing-contact-and-saving-the-modifications"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
 <h4>Modifying an existing contact and saving the modifications</h4>
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
 <pre class="highlightedCode brush: cpp"> void editView(QContactManager* cm)
@@ -338,15 +338,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

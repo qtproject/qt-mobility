@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactRelationship&gt;</pre><ul>
 <li><a href="qcontactrelationship-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#Role-enum">Role</a></b> { First, Second, Either }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#QContactRelationship">QContactRelationship</a></b> ()</td></tr>
@@ -158,7 +160,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactRelationship &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#operator-eq">operator=</a></b> ( const QContactRelationship &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#operator-eq-eq">operator==</a></b> ( const QContactRelationship &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#Aggregates-var">Aggregates</a></b></td></tr>
@@ -168,7 +171,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#HasSpouse-var">HasSpouse</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactrelationship.html#IsSameAs-var">IsSameAs</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactRelationship class describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.</p>
@@ -177,9 +181,10 @@
 <p>If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship in a <a href="qcontactmanager.html">QContactManager</a>.</p>
 </div>
 <p>See also <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Role-enum"></a>enum QContactRelationship::Role</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Role-enum"></a>enum QContactRelationship::Role</h3>
 <p>Describes the roles that a contact may take in a relationship.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QContactRelationship::First</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The contact is the first contact in the relationship</td></tr>
@@ -187,52 +192,54 @@
 <tr><td  class="topAlign"><tt>QContactRelationship::Either</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The contact is either the first or second contact in the relationship</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactRelationship"></a>QContactRelationship::QContactRelationship ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactRelationship"></a>QContactRelationship::QContactRelationship ()</h3>
 <p>Constructs a new relationship</p>
-<h3 class="fn"><a name="QContactRelationship-2"></a>QContactRelationship::QContactRelationship ( const QContactRelationship &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactRelationship-2"></a>QContactRelationship::QContactRelationship ( const QContactRelationship &amp; <i>other</i> )</h3>
 <p>Creates a copy of the <i>other</i> relationship</p>
-<h3 class="fn"><a name="dtor.QContactRelationship"></a>QContactRelationship::~QContactRelationship ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactRelationship"></a>QContactRelationship::~QContactRelationship ()</h3>
 <p>Frees the memory in use by the relationship</p>
-<h3 class="fn"><a name="first"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::first () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="first"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::first () const</h3>
 <p>Returns the id of the locally-stored contact which has a relationship of the given type with the second contact</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>(), <a href="qcontactrelationship.html#second">second</a>(), and <a href="qcontactrelationship.html#setFirst">setFirst</a>().</p>
-<h3 class="fn"><a name="relationshipType"></a>QString QContactRelationship::relationshipType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="relationshipType"></a>QString QContactRelationship::relationshipType () const</h3>
 <p>Returns the type of relationship which the source contact has with the destination contacts</p>
 <p>See also <a href="qcontactrelationship.html#setRelationshipType">setRelationshipType</a>().</p>
-<h3 class="fn"><a name="second"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::second () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="second"></a><a href="qcontactid.html">QContactId</a> QContactRelationship::second () const</h3>
 <p>Returns the id of the contact with which the first contact has a relationship of the given type</p>
 <p>See also <a href="qcontactrelationship.html#setSecond">setSecond</a>(), <a href="qcontactrelationship.html#relationshipType">relationshipType</a>(), and <a href="qcontactrelationship.html#first">first</a>().</p>
-<h3 class="fn"><a name="setFirst"></a>void QContactRelationship::setFirst ( const <a href="qcontactid.html">QContactId</a> &amp; <i>firstId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFirst"></a>void QContactRelationship::setFirst ( const <a href="qcontactid.html">QContactId</a> &amp; <i>firstId</i> )</h3>
 <p>Sets the id of the first contact in the relationship to <i>firstId</i>. This contact must be stored in the manager in which the relationship is stored, and has a relationship of the specified type with the second contact.</p>
 <p>See also <a href="qcontactrelationship.html#first">first</a>().</p>
-<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const QString &amp; <i>relationshipType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRelationshipType"></a>void QContactRelationship::setRelationshipType ( const QString &amp; <i>relationshipType</i> )</h3>
 <p>Sets the type of relationship that the source contact has with the destination contacts to <i>relationshipType</i>.</p>
 <p>See also <a href="qcontactrelationship.html#relationshipType">relationshipType</a>().</p>
-<h3 class="fn"><a name="setSecond"></a>void QContactRelationship::setSecond ( const <a href="qcontactid.html">QContactId</a> &amp; <i>secondId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSecond"></a>void QContactRelationship::setSecond ( const <a href="qcontactid.html">QContactId</a> &amp; <i>secondId</i> )</h3>
 <p>Sets the second contact in the relationship to <i>secondId</i>. The first contact has a relationship of the specified type with this contact.</p>
 <p>See also <a href="qcontactrelationship.html#second">second</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactRelationship::operator!= ( const QContactRelationship &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactRelationship::operator!= ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is not equal to <i>other</i>, otherwise returns false.</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactRelationship &amp; QContactRelationship::operator= ( const QContactRelationship &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactRelationship &amp; QContactRelationship::operator= ( const QContactRelationship &amp; <i>other</i> )</h3>
 <p>Assigns this relationship to be equal to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactRelationship::operator== ( const QContactRelationship &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactRelationship::operator== ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is equal to the <i>other</i> relationship, otherwise returns false.</p>
 </div>
+<hr />
 <div class="vars"/>
 <h2>Member Variable Documentation</h2>
-<h3 class="fn"><a name="Aggregates-var"></a>const QLatin1Constant QContactRelationship::Aggregates</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Aggregates-var"></a>const QLatin1Constant QContactRelationship::Aggregates</h3>
 <p>The relationship type which identifies the first contact as aggregating the second contact into a metacontact</p>
-<h3 class="fn"><a name="HasAssistant-var"></a>const QLatin1Constant QContactRelationship::HasAssistant</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="HasAssistant-var"></a>const QLatin1Constant QContactRelationship::HasAssistant</h3>
 <p>The relationship type which identifies the second contact as being the assistant of the first contact</p>
-<h3 class="fn"><a name="HasManager-var"></a>const QLatin1Constant QContactRelationship::HasManager</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="HasManager-var"></a>const QLatin1Constant QContactRelationship::HasManager</h3>
 <p>The relationship type which identifies the second contact as being the manager of the first contact</p>
-<h3 class="fn"><a name="HasMember-var"></a>const QLatin1Constant QContactRelationship::HasMember</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="HasMember-var"></a>const QLatin1Constant QContactRelationship::HasMember</h3>
 <p>The relationship type which identifies the first contact as being a group which includes the second contact</p>
-<h3 class="fn"><a name="HasSpouse-var"></a>const QLatin1Constant QContactRelationship::HasSpouse</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="HasSpouse-var"></a>const QLatin1Constant QContactRelationship::HasSpouse</h3>
 <p>The relationship type which identifies the second contact as being the spouse of the first contact</p>
-<h3 class="fn"><a name="IsSameAs-var"></a>const QLatin1Constant QContactRelationship::IsSameAs</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="IsSameAs-var"></a>const QLatin1Constant QContactRelationship::IsSameAs</h3>
 <p>The relationship type which identifies the first contact as being the same contact as the second contact</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -241,15 +248,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

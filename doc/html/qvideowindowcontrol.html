@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -140,7 +140,8 @@
 <ul>
 <li><a href="qvideowindowcontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#dtor.QVideoWindowControl">~QVideoWindowControl</a></b> ()</td></tr>
@@ -163,7 +164,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#setWinId">setWinId</a></b> ( WId <i>id</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual WId </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#winId">winId</a></b> () const = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#brightnessChanged">brightnessChanged</a></b> ( int <i>brightness</i> )</td></tr>
@@ -173,17 +175,20 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#nativeSizeChanged">nativeSizeChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#saturationChanged">saturationChanged</a></b> ( int <i>saturation</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#QVideoWindowControl">QVideoWindowControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideowindowcontrol.html#QVideoWindowControl_iid">QVideoWindowControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoWindowControl class provides a media control for rendering video to a window.</p>
@@ -196,88 +201,90 @@
 <p>The interface name of QVideoWindowControl is <tt>com.nokia.Qt.QVideoWindowControl/1.0</tt> as defined in <a href="qvideowindowcontrol.html#QVideoWindowControl_iid">QVideoWindowControl_iid</a>.</p>
 </div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qvideowidget.html">QVideoWidget</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVideoWindowControl"></a>QVideoWindowControl::QVideoWindowControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoWindowControl"></a>QVideoWindowControl::QVideoWindowControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a new video window control with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QVideoWindowControl"></a>QVideoWindowControl::~QVideoWindowControl ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVideoWindowControl"></a>QVideoWindowControl::~QVideoWindowControl ()</h3>
 <p>Destroys a video window control.</p>
-<h3 class="fn"><a name="aspectRatioMode"></a>Qt::AspectRatioMode QVideoWindowControl::aspectRatioMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="aspectRatioMode"></a>Qt::AspectRatioMode QVideoWindowControl::aspectRatioMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns how video is scaled to fit the display region with respect to its aspect ratio.</p>
 <p>See also <a href="qvideowindowcontrol.html#setAspectRatioMode">setAspectRatioMode</a>().</p>
-<h3 class="fn"><a name="brightness"></a>int QVideoWindowControl::brightness () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="brightness"></a>int QVideoWindowControl::brightness () const<tt> [pure virtual]</tt></h3>
 <p>Returns the brightness adjustment applied to a video overlay.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#setBrightness">setBrightness</a>().</p>
-<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWindowControl::brightnessChanged ( int <i>brightness</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="brightnessChanged"></a>void QVideoWindowControl::brightnessChanged ( int <i>brightness</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video overlay's <i>brightness</i> adjustment has changed.</p>
-<h3 class="fn"><a name="contrast"></a>int QVideoWindowControl::contrast () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contrast"></a>int QVideoWindowControl::contrast () const<tt> [pure virtual]</tt></h3>
 <p>Returns the contrast adjustment applied to a video overlay.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#setContrast">setContrast</a>().</p>
-<h3 class="fn"><a name="contrastChanged"></a>void QVideoWindowControl::contrastChanged ( int <i>contrast</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contrastChanged"></a>void QVideoWindowControl::contrastChanged ( int <i>contrast</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video overlay's <i>contrast</i> adjustment has changed.</p>
-<h3 class="fn"><a name="displayRect"></a>QRect QVideoWindowControl::displayRect () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="displayRect"></a>QRect QVideoWindowControl::displayRect () const<tt> [pure virtual]</tt></h3>
 <p>Returns the sub-rect of a window where video is displayed.</p>
 <p>See also <a href="qvideowindowcontrol.html#setDisplayRect">setDisplayRect</a>().</p>
-<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWindowControl::fullScreenChanged ( bool <i>fullScreen</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="fullScreenChanged"></a>void QVideoWindowControl::fullScreenChanged ( bool <i>fullScreen</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>fullScreen</i> state of a video overlay has changed.</p>
-<h3 class="fn"><a name="hue"></a>int QVideoWindowControl::hue () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hue"></a>int QVideoWindowControl::hue () const<tt> [pure virtual]</tt></h3>
 <p>Returns the hue adjustment applied to a video overlay.</p>
 <p>Value hue values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#setHue">setHue</a>().</p>
-<h3 class="fn"><a name="hueChanged"></a>void QVideoWindowControl::hueChanged ( int <i>hue</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hueChanged"></a>void QVideoWindowControl::hueChanged ( int <i>hue</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video overlay's <i>hue</i> adjustment has changed.</p>
-<h3 class="fn"><a name="isFullScreen"></a>bool QVideoWindowControl::isFullScreen () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFullScreen"></a>bool QVideoWindowControl::isFullScreen () const<tt> [pure virtual]</tt></h3>
 <p>Identifies if a video overlay is a fullScreen overlay.</p>
 <p>Returns true if the video overlay is fullScreen, and false otherwise.</p>
-<h3 class="fn"><a name="nativeSize"></a>QSize QVideoWindowControl::nativeSize () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="nativeSize"></a>QSize QVideoWindowControl::nativeSize () const<tt> [pure virtual]</tt></h3>
 <p>Returns a suggested size for the video display based on the resolution and aspect ratio of the video.</p>
-<h3 class="fn"><a name="nativeSizeChanged"></a>void QVideoWindowControl::nativeSizeChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="nativeSizeChanged"></a>void QVideoWindowControl::nativeSizeChanged ()<tt> [signal]</tt></h3>
 <p>Signals that the native dimensions of the video have changed.</p>
-<h3 class="fn"><a name="repaint"></a>void QVideoWindowControl::repaint ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="repaint"></a>void QVideoWindowControl::repaint ()<tt> [pure virtual]</tt></h3>
 <p>Repaints the last frame.</p>
-<h3 class="fn"><a name="saturation"></a>int QVideoWindowControl::saturation () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saturation"></a>int QVideoWindowControl::saturation () const<tt> [pure virtual]</tt></h3>
 <p>Returns the saturation adjustment applied to a video overlay.</p>
 <p>Value saturation values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#setSaturation">setSaturation</a>().</p>
-<h3 class="fn"><a name="saturationChanged"></a>void QVideoWindowControl::saturationChanged ( int <i>saturation</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saturationChanged"></a>void QVideoWindowControl::saturationChanged ( int <i>saturation</i> )<tt> [signal]</tt></h3>
 <p>Signals that a video overlay's <i>saturation</i> adjustment has changed.</p>
-<h3 class="fn"><a name="setAspectRatioMode"></a>void QVideoWindowControl::setAspectRatioMode ( Qt::AspectRatioMode <i>mode</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAspectRatioMode"></a>void QVideoWindowControl::setAspectRatioMode ( Qt::AspectRatioMode <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the aspect ratio <i>mode</i> which determines how video is scaled to the fit the display region with respect to its aspect ratio.</p>
 <p>See also <a href="qvideowindowcontrol.html#aspectRatioMode">aspectRatioMode</a>().</p>
-<h3 class="fn"><a name="setBrightness"></a>void QVideoWindowControl::setBrightness ( int <i>brightness</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBrightness"></a>void QVideoWindowControl::setBrightness ( int <i>brightness</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>brightness</i> adjustment for a video overlay.</p>
 <p>Valid brightness values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#brightness">brightness</a>().</p>
-<h3 class="fn"><a name="setContrast"></a>void QVideoWindowControl::setContrast ( int <i>contrast</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setContrast"></a>void QVideoWindowControl::setContrast ( int <i>contrast</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>contrast</i> adjustment for a video overlay.</p>
 <p>Valid contrast values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#contrast">contrast</a>().</p>
-<h3 class="fn"><a name="setDisplayRect"></a>void QVideoWindowControl::setDisplayRect ( const QRect &amp; <i>rect</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDisplayRect"></a>void QVideoWindowControl::setDisplayRect ( const QRect &amp; <i>rect</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the sub-<i>rect</i> of a window where video is displayed.</p>
 <p>See also <a href="qvideowindowcontrol.html#displayRect">displayRect</a>().</p>
-<h3 class="fn"><a name="setFullScreen"></a>void QVideoWindowControl::setFullScreen ( bool <i>fullScreen</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFullScreen"></a>void QVideoWindowControl::setFullScreen ( bool <i>fullScreen</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets whether a video overlay is a <i>fullScreen</i> overlay.</p>
 <p>See also <a href="qvideowindowcontrol.html#isFullScreen">isFullScreen</a>().</p>
-<h3 class="fn"><a name="setHue"></a>void QVideoWindowControl::setHue ( int <i>hue</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setHue"></a>void QVideoWindowControl::setHue ( int <i>hue</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>hue</i> adjustment for a video overlay.</p>
 <p>Valid hue values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#hue">hue</a>().</p>
-<h3 class="fn"><a name="setSaturation"></a>void QVideoWindowControl::setSaturation ( int <i>saturation</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSaturation"></a>void QVideoWindowControl::setSaturation ( int <i>saturation</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>saturation</i> adjustment for a video overlay.</p>
 <p>Valid saturation values range between -100 and 100, the default is 0.</p>
 <p>See also <a href="qvideowindowcontrol.html#saturation">saturation</a>().</p>
-<h3 class="fn"><a name="setWinId"></a>void QVideoWindowControl::setWinId ( WId <i>id</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setWinId"></a>void QVideoWindowControl::setWinId ( WId <i>id</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>id</i> of the window a video overlay end point renders to.</p>
 <p>See also <a href="qvideowindowcontrol.html#winId">winId</a>().</p>
-<h3 class="fn"><a name="winId"></a>WId QVideoWindowControl::winId () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="winId"></a>WId QVideoWindowControl::winId () const<tt> [pure virtual]</tt></h3>
 <p>Returns the ID of the window a video overlay end point renders to.</p>
 <p>See also <a href="qvideowindowcontrol.html#setWinId">setWinId</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QVideoWindowControl_iid"></a>QVideoWindowControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoWindowControl_iid"></a>QVideoWindowControl_iid</h3>
 <p><tt>com.nokia.Qt.QVideoWindowControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qvideowindowcontrol.html">QVideoWindowControl</a> class.</p>
 </div>
@@ -287,15 +294,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

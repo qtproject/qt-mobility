@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#get-qt-mobility-and-qt-packages">Get Qt Mobility and Qt packages</a></li>
 <li class="level1"><a href="#install-pre-requisites">Install pre-requisites</a></li>
@@ -134,16 +134,16 @@
 <h1 class="title">Messaging Installation On Windows Mobile</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="get-qt-mobility-and-qt-packages"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="get-qt-mobility-and-qt-packages"></a>
 <h2>Get Qt Mobility and Qt packages</h2>
 <p>Get the Qt Mobility Package from <a href="http://get.qt.nokia.com">http://get.qt.nokia.com</a></p>
 <p>Get Qt 4.5&#x2e;2 (or newer) Embedded for Windows Mobile package <a href="http://get.qt.nokia.com/qt/source/qt-embedded-wince-opensource-src-4.5.3.zip">download here</a>.</p>
-<a name="install-pre-requisites"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="install-pre-requisites"></a>
 <h2>Install pre-requisites</h2>
 <p>A perl interpreter such as <a href="http://www.activestate.com/activeperl">ActivePerl</a> must be installed and available in the environment path.</p>
 <p>Visual Studio 2009 or newer must be installed.</p>
 <p>Windows Mobile 6 Standard SDK (including ActiveSync) must be installed <a href="http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=20686a1d-97a8-4f80-bc6a-ae010e085a6e">download page</a>.</p>
-<a name="build-qt"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="build-qt"></a>
 <h2>Build Qt</h2>
 <p>Extract Qt 4.5&#x2e;2 Embedded (or newer) into your Qt directory on windows. e.g&#x2e; c:\Qt\4.5&#x2e;2_winmobile6_standard</p>
 <p>Open a Visual Studio cmd shell</p>
@@ -161,7 +161,7 @@
 <pre class="highlightedCode brush: cpp"> ibmake</pre>
 <p>or</p>
 <pre class="highlightedCode brush: cpp"> nmake</pre>
-<a name="build-mobility-messaging"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="build-mobility-messaging"></a>
 <h2>Build Mobility Messaging</h2>
 <p>Open a new Visual Studio cmd shell</p>
 <p>Set the path to Qt</p>
@@ -186,7 +186,7 @@
  *.user</pre>
 <p>Open the generated *.sln file and compile.</p>
 <p>If you get errors during the Visual Studio build regarding mainACRT, right click on the project, goto linker-advanced and Clear the Entry-Point value.</p>
-<a name="deploy"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="deploy"></a>
 <h2>Deploy</h2>
 <p>Before running a debug instance, ensure that the <a href="qtmessaging.html">QtMessaging</a>.dll is a deployment dependency for the examples and tests.</p>
 <p>Right click properties on project e.g&#x2e; serviceactions. Under deployment-&gt;addition files add:</p>
@@ -199,15 +199,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qaudioencodersettings-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudioencodersettings.html#QAudioEncoderSettings">QAudioEncoderSettings</a></b> ()</td></tr>
@@ -159,7 +160,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QAudioEncoderSettings &amp; </td><td class="memItemRight bottomAlign"><b><a href="qaudioencodersettings.html#operator-eq">operator=</a></b> ( const QAudioEncoderSettings &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qaudioencodersettings.html#operator-eq-eq">operator==</a></b> ( const QAudioEncoderSettings &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioEncoderSettings class provides a set of audio encoder settings.</p>
@@ -171,65 +173,66 @@
  recorder-&gt;setEncodingSettings(audioSettings);</pre>
 </div>
 <p>See also <a href="qmediarecorder.html">QMediaRecorder</a> and <a href="qaudioencodercontrol.html">QAudioEncoderControl</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioEncoderSettings"></a>QAudioEncoderSettings::QAudioEncoderSettings ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioEncoderSettings"></a>QAudioEncoderSettings::QAudioEncoderSettings ()</h3>
 <p>Construct a null audio encoder settings object.</p>
-<h3 class="fn"><a name="QAudioEncoderSettings-2"></a>QAudioEncoderSettings::QAudioEncoderSettings ( const QAudioEncoderSettings &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioEncoderSettings-2"></a>QAudioEncoderSettings::QAudioEncoderSettings ( const QAudioEncoderSettings &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the audio encoder settings object <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QAudioEncoderSettings"></a>QAudioEncoderSettings::~QAudioEncoderSettings ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAudioEncoderSettings"></a>QAudioEncoderSettings::~QAudioEncoderSettings ()</h3>
 <p>Destroys an audio encoder settings object.</p>
-<h3 class="fn"><a name="bitRate"></a>int QAudioEncoderSettings::bitRate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bitRate"></a>int QAudioEncoderSettings::bitRate () const</h3>
 <p>Returns the bit rate of the compressed audio stream in bits per second.</p>
 <p>See also <a href="qaudioencodersettings.html#setBitRate">setBitRate</a>().</p>
-<h3 class="fn"><a name="channelCount"></a>int QAudioEncoderSettings::channelCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="channelCount"></a>int QAudioEncoderSettings::channelCount () const</h3>
 <p>Returns the number of audio channels.</p>
 <p>See also <a href="qaudioencodersettings.html#setChannelCount">setChannelCount</a>().</p>
-<h3 class="fn"><a name="codec"></a>QString QAudioEncoderSettings::codec () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="codec"></a>QString QAudioEncoderSettings::codec () const</h3>
 <p>Returns the audio codec.</p>
 <p>See also <a href="qaudioencodersettings.html#setCodec">setCodec</a>().</p>
-<h3 class="fn"><a name="encodingMode"></a>QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="encodingMode"></a>QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode () const</h3>
 <p>Returns the audio encoding mode.</p>
 <p>See also <a href="qaudioencodersettings.html#setEncodingMode">setEncodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
-<h3 class="fn"><a name="isNull"></a>bool QAudioEncoderSettings::isNull () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isNull"></a>bool QAudioEncoderSettings::isNull () const</h3>
 <p>Identifies if an audio settings object is initialized.</p>
 <p>Returns true if the settings object is null, and false if it is not.</p>
-<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality () const</h3>
 <p>Returns the audio encoding quality.</p>
 <p>See also <a href="qaudioencodersettings.html#setQuality">setQuality</a>().</p>
-<h3 class="fn"><a name="sampleRate"></a>int QAudioEncoderSettings::sampleRate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sampleRate"></a>int QAudioEncoderSettings::sampleRate () const</h3>
 <p>Returns the audio sample rate in Hz.</p>
 <p>See also <a href="qaudioencodersettings.html#setSampleRate">setSampleRate</a>().</p>
-<h3 class="fn"><a name="setBitRate"></a>void QAudioEncoderSettings::setBitRate ( int <i>rate</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBitRate"></a>void QAudioEncoderSettings::setBitRate ( int <i>rate</i> )</h3>
 <p>Sets the audio bit <i>rate</i> in bits per second.</p>
 <p>See also <a href="qaudioencodersettings.html#bitRate">bitRate</a>().</p>
-<h3 class="fn"><a name="setChannelCount"></a>void QAudioEncoderSettings::setChannelCount ( int <i>channels</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setChannelCount"></a>void QAudioEncoderSettings::setChannelCount ( int <i>channels</i> )</h3>
 <p>Sets the number of audio <i>channels</i>.</p>
 <p>A value of -1 indicates the encoder should make an optimal choice based on what is available from the audio source and the limitations of the codec.</p>
 <p>See also <a href="qaudioencodersettings.html#channelCount">channelCount</a>().</p>
-<h3 class="fn"><a name="setCodec"></a>void QAudioEncoderSettings::setCodec ( const QString &amp; <i>codec</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCodec"></a>void QAudioEncoderSettings::setCodec ( const QString &amp; <i>codec</i> )</h3>
 <p>Sets the audio <i>codec</i>.</p>
 <p>See also <a href="qaudioencodersettings.html#codec">codec</a>().</p>
-<h3 class="fn"><a name="setEncodingMode"></a>void QAudioEncoderSettings::setEncodingMode ( QtMultimediaKit::EncodingMode <i>mode</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEncodingMode"></a>void QAudioEncoderSettings::setEncodingMode ( QtMultimediaKit::EncodingMode <i>mode</i> )</h3>
 <p>Sets the audio encoding <i>mode</i> setting.</p>
 <p>If QtMultimediaKit::ConstantQualityEncoding is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
 <p>The audio codec, channels count and sample rate settings are used in all the encoding modes.</p>
 <p>See also <a href="qaudioencodersettings.html#encodingMode">encodingMode</a>() and QtMultimediaKit::EncodingMode.</p>
-<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setQuality"></a>void QAudioEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3>
 <p>Set the audio encoding <i>quality</i>.</p>
 <p>Setting the audio quality parameter allows backend to choose the balanced set of encoding parameters to achieve the desired quality level.</p>
 <p>The <i>quality</i> settings parameter is only used in the constant quality <a href="qaudioencodersettings.html#encodingMode">encoding mode</a>.</p>
 <p>See also <a href="qaudioencodersettings.html#quality">quality</a>().</p>
-<h3 class="fn"><a name="setSampleRate"></a>void QAudioEncoderSettings::setSampleRate ( int <i>rate</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSampleRate"></a>void QAudioEncoderSettings::setSampleRate ( int <i>rate</i> )</h3>
 <p>Sets the audio sample <i>rate</i> in Hz.</p>
 <p>A value of -1 indicates the encoder should make an optimal choice based on what is avaialbe from the audio source and the limitations of the codec.</p>
 <p>See also <a href="qaudioencodersettings.html#sampleRate">sampleRate</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QAudioEncoderSettings::operator!= ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QAudioEncoderSettings::operator!= ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to an audio encoder settings object.</p>
 <p>Returns true if the settings objects are not of equal value, and true if they are of equal value.</p>
-<h3 class="fn"><a name="operator-eq"></a>QAudioEncoderSettings &amp; QAudioEncoderSettings::operator= ( const QAudioEncoderSettings &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QAudioEncoderSettings &amp; QAudioEncoderSettings::operator= ( const QAudioEncoderSettings &amp; <i>other</i> )</h3>
 <p>Assigns the value of <i>other</i> to an audio encoder settings object.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioEncoderSettings::operator== ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioEncoderSettings::operator== ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to an audio encoder settings object.</p>
 <p>Returns true if the settings objects are of equal value, and false if they are not of equal value.</p>
 </div>
@@ -239,15 +242,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

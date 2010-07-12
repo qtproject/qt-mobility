@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#no-special-namespace">No Special Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
@@ -145,16 +145,16 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <p>Multimedia provides a set of APIs that allow the developer to play, record and manage a collection of media content. It is dependent on the <a href="qtmultimediakit.html">QtMultimediaKit</a> module. This API is planned to replace Phonon at a later stage.</p>
-<a name="no-special-namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="no-special-namespace"></a>
 <h2>No Special Namespace</h2>
 <p>Unlike the other APIs in Qt Mobility, the Multimedia API is <i>not</i> in the <i>QtMobility</i> namespace.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>This library will require Qt 4.6&#x2e;</p>
 <p>This API delivers an easy to use interface to multimedia functions. The developer can use the API to display an image, or a video, record sound or play a multimedia stream.</p>
 <p>There are several benefits this API brings to Qt. Firstly, the developer can now implement fundamental multimedia functions with minimal code, mostly because they are already implemented. Also there is a great deal of flexibility with the media source or the generated multimedia. The source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Finally, many different codecs are supported 'out of the box'.</p>
 <p>The supplied examples give a good idea at the ease of use of the API. When the supporting user interface code is ignored we can see that functionality is immediately available with minimal effort.</p>
-<a name="audio"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="audio"></a>
 <h3>Audio</h3>
 <p>The Audio Recorder example is a good introduction to the basic use of the API. We will use snippets from this example to illustrate how to use the API to quickly build functionality.</p>
 <p>The first step is to demonstrate recording audio to a file. When recording from an audio source there are a number of things we may want to control beyond the essential user interface. We may want a particular encoding of the file, MP3 or Ogg Vorbis for instance, or select a different input source. The user may modify the bitrate, number of channels, quality and sample rate. Here the example will only modify the codec and the source device, since they are essential.</p>
@@ -195,7 +195,7 @@
  playlist-&gt;setCurrentPosition(1);
  player-&gt;play();</pre>
 <p>To manipulate the playlist there are the usual management functions (which are in fact slots): previous, next, setCurrentPosition and shuffle. Playlists can be built, saved and loaded using the API.</p>
-<a name="video"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="video"></a>
 <h3>Video</h3>
 <p>Continuing with the example discussed for an Audio recorder/player, we can use this to show how to play video files with little change to the code.</p>
 <p>Moving from audio to video requires few changes in the sample code. To play a video playlist the code can be changed to include another new Mobility Project class: <a href="qvideowidget.html">QVideoWidget</a>. This class enables control of a video resource with signals and slots for the control of brightness, contrast, hue, saturation and full screen mode.</p>
@@ -216,10 +216,10 @@
 
      playlistModel = new PlaylistModel(this);
      playlistModel-&gt;setPlaylist(playlist);</pre>
-<a name="radio"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="radio"></a>
 <h3>Radio</h3>
 <p><a href="qradiotunercontrol.html">QRadioTunerControl</a> is a pure virtual base class that will be the basis for any platform specific radio device control. When the functions are implemented the developer will be able to quickly produce an application that supports the typical uses of an FM radio including tuning, volume, start, stop and various other controls.</p>
-<a name="extending-the-api-for-symbian-and-maemo"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="extending-the-api-for-symbian-and-maemo"></a>
 <h2>Extending the API for Symbian and Maemo</h2>
 <p>For the developer who wishes to extend the functionality of the Multimedia classes there are several classes of particular importance. The default classes are <a href="qmediaservice.html">QMediaService</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <p>Basically, the idea is that to use the Multimedia API you would use these three classes or classes derived from them as follows</p>
@@ -230,7 +230,7 @@
 </ul>
 <p>Consider a developer creating, for example, a media player class called MyPlayer. It may have special requirements beyond ordinary media players and so may need a custom service and a custom control. We can subclass <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> to create out MyServiceProvider class. Also we will create a MyMediaService, and the MyMediaControl to manipulate the media service.</p>
 <p>The MyPlayer object calls MyServiceProvider::requestService() to get an instance of MyMediaService. Then the MyPlayer object calls this service object it has just received and calling control() it will receive the control object derived from <a href="qmediacontrol.html">QMediaControl</a>. Now we have all the parts necessary for our media application. We have the service provider, the service it provides and the control used to manipulate the service. Since our MyPlayer object has instances of the service and its control then it would be possible for these to be used by associated classes that could do additional actions, perhaps with their own control since the parameter to control() is a c-type string, <i>const char *</i>, for the interface.</p>
-<a name="adding-a-media-service-provider"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="adding-a-media-service-provider"></a>
 <h3>Adding a Media Service Provider</h3>
 <p>The base class for creating new service providers is <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>. The user must implement the <a href="qmediaserviceprovider.html#requestService">requestService()</a> function</p>
 <pre class="highlightedCode brush: cpp"> QMediaService* requestService(const QByteArray &amp;type, const QMediaServiceProviderHint &amp;hint);</pre>
@@ -249,20 +249,20 @@
 
  QString deviceDescription(const QByteArray &amp;serviceType, const QByteArray &amp;device);</pre>
 <p>The choice of what needs to be done depends on what the developer wishes to do with the service.</p>
-<a name="examples"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="examples"></a>
 <h2>Examples</h2>
-<a name="record-a-sound-source"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="record-a-sound-source"></a>
 <h3>Record a Sound Source</h3>
 <p><a href="audiorecorder.html">AudioRecorder</a> is a demonstration of the discovery of the supported devices and codecs and the use of recording functions in the <a href="qmediarecorder.html">QMediaRecorder</a> class.</p>
-<a name="play-a-media-file"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="play-a-media-file"></a>
 <h3>Play a Media File</h3>
 <p>The <a href="player.html">Player</a> example is a simple multimedia player. Select a video file to play, stop, pause, show in fullscreen or manipulate various image attributes using the Color Options button.</p>
-<a name="slide-show"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="slide-show"></a>
 <h3>Slide Show</h3>
 <p>The <a href="slideshow.html">Slide Show</a> shows the use of the <a href="qmediaimageviewer.html">QMediaImageViewer</a> and <a href="qvideowidget.html">QVideoWidget</a> classes.</p>
-<a name="reference-documentation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="reference-documentation"></a>
 <h2>Reference documentation</h2>
-<a name="main-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="main-classes"></a>
 <h3>Main classes</h3>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qaudio.html">QAudio</a></p></td><td><p>Contains enums used by the audio classes</p></td></tr>
@@ -307,13 +307,13 @@
 <tr class="even topAlign"><td><p><a href="qvideowindowcontrol.html">QVideoWindowControl</a></p></td><td><p>Media control for rendering video to a window</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qtmultimediakit.html">QtMultimediaKit</a></p></td><td><p>Contains miscellaneous identifiers used throughout the Qt Media services library</p></td></tr>
 </table>
-<a name="classes-for-service-implementers"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="classes-for-service-implementers"></a>
 <h3>Classes for service implementers.</h3>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qcameraimageprocessingcontrol.html">QCameraImageProcessingControl</a></p></td><td><p>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qmetadatareadercontrol.html">QMetaDataReaderControl</a></p></td><td><p>Read access to the meta-data of a QMediaService's media</p></td></tr>
 </table>
-<a name="qml-multimedia-elements"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="qml-multimedia-elements"></a>
 <h3>QML multimedia elements</h3>
 <ul>
 <li><a href="qml-soundeffect.html">SoundEffect: Low Latency Sound Effects</a></li>
@@ -327,15 +327,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

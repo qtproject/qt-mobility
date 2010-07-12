@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#servicebrowser-class-definition">ServiceBrowser Class Definition</a></li>
 <li class="level1"><a href="#servicebrowser-class-implementation">ServiceBrowser Class Implementation</a></li>
@@ -156,7 +156,7 @@
 <li>Whether the implementation is the default for its interface</li>
 </ul>
 <p>The right-hand pane shows the attributes of an interface implementation that are invokable through the Qt meta-object system. Such attributes include signals, slots, properties and methods marked with the <tt>Q_INVOKABLE</tt> macro. If the &quot;Selected implementation&quot; radio button is checked, this view shows the attributes of the selected implementation in the bottom-left pane; otherwise, it shows the attributes of the <i>default</i> implementation for the interface of the selected implementation.</p>
-<a name="servicebrowser-class-definition"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="servicebrowser-class-definition"></a>
 <h2>ServiceBrowser Class Definition</h2>
 <p>The ServiceBrowser class inherits from QWidget. It has several slots for reloading the lists in the three information panes, and for changing the default implementation for an interface.</p>
 <pre class="highlightedCode brush: cpp"> class ServiceBrowser : public QWidget
@@ -176,7 +176,7 @@
  private:
      ...
  };</pre>
-<a name="servicebrowser-class-implementation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="servicebrowser-class-implementation"></a>
 <h2>ServiceBrowser Class Implementation</h2>
 <pre class="highlightedCode brush: cpp"> ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
      : QWidget(parent, flags)
@@ -267,7 +267,7 @@
  }</pre>
 <p>Call QObject::metaObject() on the implementation instance to get a QMetaObject instance that reveals the dynamically invokable attributes for the instance. These attributes include properties, signals, slots, and methods marked with the Q_INVOKABLE macro. Call QMetaObject::method() to get information about a signal, slot or invokable method, and QMetaObject::property() to access a property of the instance.</p>
 <p>When you know the name of the method you wish to invoke, call QMetaObject::invoke() or QMetaMethod::invoke() to invoke it dynamically. Similarly, QMetaProperty::read() and QMetaProperty::write() can be used to read and modify the value of a property.</p>
-<a name="invoking-attributes-an-example"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="invoking-attributes-an-example"></a>
 <h3>Invoking attributes: an example</h3>
 <p>Here is an example of invoking attributes on an implementation, using the <a href="filemanagerplugin.html">FileManagerPlugin</a> that is shown in the Service Browser.</p>
 <p>The <a href="filemanagerplugin.html">FileManagerPlugin</a> provides a service called &quot;FileManagerService&quot; in its <tt>filemanagerplugin.xml</tt> service definition. When FileManagerPlugin::createInstance() is called, if the com.nokia.qt.examples.FileStorage interface is requested, it returns an instance of the FileManagerStorage class. The FileManagerStorage class is defined like this:</p>
@@ -306,15 +306,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

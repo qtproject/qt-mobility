@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -141,7 +141,8 @@
 <ul>
 <li><a href="qaudioendpointselector-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#dtor.QAudioEndpointSelector">~QAudioEndpointSelector</a></b> ()</td></tr>
@@ -150,28 +151,33 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#defaultEndpoint">defaultEndpoint</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#endpointDescription">endpointDescription</a></b> ( const QString &amp; <i>name</i> ) const = 0</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#setActiveEndpoint">setActiveEndpoint</a></b> ( const QString &amp; <i>name</i> ) = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#activeEndpointChanged">activeEndpointChanged</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#availableEndpointsChanged">availableEndpointsChanged</a></b> ()</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#QAudioEndpointSelector">QAudioEndpointSelector</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudioendpointselector.html#QAudioEndpointSelector_iid">QAudioEndpointSelector_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioEndpointSelector class provides an audio endpoint selector media control.</p>
@@ -179,32 +185,34 @@
 <p>The interface name of QAudioEndpointSelector is <tt>com.nokia.Qt.QAudioEndpointSelector/1.0</tt> as defined in <a href="qaudioendpointselector.html#QAudioEndpointSelector_iid">QAudioEndpointSelector_iid</a>.</p>
 </div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioEndpointSelector"></a>QAudioEndpointSelector::QAudioEndpointSelector ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioEndpointSelector"></a>QAudioEndpointSelector::QAudioEndpointSelector ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a new audio endpoint selector with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QAudioEndpointSelector"></a>QAudioEndpointSelector::~QAudioEndpointSelector ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAudioEndpointSelector"></a>QAudioEndpointSelector::~QAudioEndpointSelector ()<tt> [virtual]</tt></h3>
 <p>Destroys an audio endpoint selector.</p>
-<h3 class="fn"><a name="activeEndpoint"></a>QString QAudioEndpointSelector::activeEndpoint () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeEndpoint"></a>QString QAudioEndpointSelector::activeEndpoint () const<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the currently selected audio endpoint.</p>
 <p>See also <a href="qaudioendpointselector.html#setActiveEndpoint">setActiveEndpoint</a>().</p>
-<h3 class="fn"><a name="activeEndpointChanged"></a>void QAudioEndpointSelector::activeEndpointChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="activeEndpointChanged"></a>void QAudioEndpointSelector::activeEndpointChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3>
 <p>Signals that the audio endpoint has changed to <i>name</i>.</p>
-<h3 class="fn"><a name="availableEndpoints"></a>QList&lt;QString&gt; QAudioEndpointSelector::availableEndpoints () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableEndpoints"></a>QList&lt;QString&gt; QAudioEndpointSelector::availableEndpoints () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of available audio endpoints.</p>
-<h3 class="fn"><a name="availableEndpointsChanged"></a>void QAudioEndpointSelector::availableEndpointsChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="availableEndpointsChanged"></a>void QAudioEndpointSelector::availableEndpointsChanged ()<tt> [signal]</tt></h3>
 <p>Signals that list of available endpoints has changed.</p>
-<h3 class="fn"><a name="defaultEndpoint"></a>QString QAudioEndpointSelector::defaultEndpoint () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="defaultEndpoint"></a>QString QAudioEndpointSelector::defaultEndpoint () const<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the default audio endpoint.</p>
-<h3 class="fn"><a name="endpointDescription"></a>QString QAudioEndpointSelector::endpointDescription ( const QString &amp; <i>name</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="endpointDescription"></a>QString QAudioEndpointSelector::endpointDescription ( const QString &amp; <i>name</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the description of the endpoint <i>name</i>.</p>
-<h3 class="fn"><a name="setActiveEndpoint"></a>void QAudioEndpointSelector::setActiveEndpoint ( const QString &amp; <i>name</i> )<tt> [pure virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setActiveEndpoint"></a>void QAudioEndpointSelector::setActiveEndpoint ( const QString &amp; <i>name</i> )<tt> [pure virtual slot]</tt></h3>
 <p>Set the audio endpoint to <i>name</i>.</p>
 <p>See also <a href="qaudioendpointselector.html#activeEndpoint">activeEndpoint</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QAudioEndpointSelector_iid"></a>QAudioEndpointSelector_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioEndpointSelector_iid"></a>QAudioEndpointSelector_iid</h3>
 <p><tt>com.nokia.Qt.QAudioEndpointSelector/1.0</tt></p>
 <p>Defines the interface name of the <a href="qaudioendpointselector.html">QAudioEndpointSelector</a> class.</p>
 </div>
@@ -214,15 +222,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

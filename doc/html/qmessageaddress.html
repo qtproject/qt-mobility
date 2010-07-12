@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QMessageAddress&gt;</pre><ul>
 <li><a href="qmessageaddress-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmessageaddress.html#Type-enum">Type</a></b> { System, Phone, Email, InstantMessage }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessageaddress.html#QMessageAddress">QMessageAddress</a></b> ()</td></tr>
@@ -154,20 +156,23 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessageaddress.html#setType">setType</a></b> ( Type <i>type</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> Type </td><td class="memItemRight bottomAlign"><b><a href="qmessageaddress.html#type">type</a></b> () const</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessageaddress.html#parseEmailAddress">parseEmailAddress</a></b> ( const QString &amp; <i>emailAddress</i>, QString * <i>name</i>, QString * <i>address</i>, QString * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageAddress class provides an interface for a message address.</p>
 <p>A message address consists of an addressee string and a type.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Type-enum"></a>enum QMessageAddress::Type</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Type-enum"></a>enum QMessageAddress::Type</h3>
 <p>This enum type is used to describe the type of a message address.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMessageAddress::System</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A system address.</td></tr>
@@ -177,32 +182,33 @@
 </table>
 <p>See also <a href="qmessageaddress.html#type">type</a>() and <a href="qmessageaddress.html#setType">setType</a>().</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageAddress"></a>QMessageAddress::QMessageAddress ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageAddress"></a>QMessageAddress::QMessageAddress ()</h3>
 <p>Constructs an empty message address.</p>
-<h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i>, const QString &amp; <i>addressee</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageAddress-2"></a>QMessageAddress::QMessageAddress ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i>, const QString &amp; <i>addressee</i> )</h3>
 <p>Constructs a message address with the given <i>type</i> and <i>addressee</i>.</p>
-<h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageAddress-3"></a>QMessageAddress::QMessageAddress ( const QMessageAddress &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageAddress"></a>QMessageAddress::~QMessageAddress ()<tt> [virtual]</tt></h3>
 <p>Destroys the message address.</p>
-<h3 class="fn"><a name="addressee"></a>QString QMessageAddress::addressee () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addressee"></a>QString QMessageAddress::addressee () const</h3>
 <p>Returns the addressee.</p>
 <p>See also <a href="qmessageaddress.html#setAddressee">setAddressee</a>().</p>
-<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const QString &amp; <i>emailAddress</i>, QString * <i>name</i>, QString * <i>address</i>, QString * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parseEmailAddress"></a>void QMessageAddress::parseEmailAddress ( const QString &amp; <i>emailAddress</i>, QString * <i>name</i>, QString * <i>address</i>, QString * <i>suffix</i> = 0, bool * <i>startDelimeterFound</i> = 0, bool * <i>endDelimeterFound</i> = 0 )<tt> [static]</tt></h3>
 <p>Parses an email address into name, address and suffix parts.</p>
 <p>* <i>name</i> is set to the name part of the email address. * <i>address</i> is set to the address part of the email address. * <i>suffix</i> is set to the suffix part of the email address.</p>
 <p>If the starting delimeter between the name and address part of the email address is found then * <i>startDelimeterFound</i> is set to true; otherwise * <i>startDelimeterFound</i> is set to false;</p>
 <p>If the starting delimeter is not found, then the parsing is ambiguous and both * <i>name</i> and * <i>address</i> will be set to the input <i>emailAddress</i>.</p>
 <p>If the ending delimeter of the address part of the email address is found then * <i>endDelimeterFound</i> is set to true; otherwise * <i>endDelimeterFound</i> is set to false;</p>
-<h3 class="fn"><a name="setAddressee"></a>void QMessageAddress::setAddressee ( const QString &amp; <i>addressee</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAddressee"></a>void QMessageAddress::setAddressee ( const QString &amp; <i>addressee</i> )</h3>
 <p>Sets the addressee to <i>addressee</i>.</p>
 <p>See also <a href="qmessageaddress.html#addressee">addressee</a>().</p>
-<h3 class="fn"><a name="setType"></a>void QMessageAddress::setType ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setType"></a>void QMessageAddress::setType ( <a href="qmessageaddress.html#Type-enum">Type</a> <i>type</i> )</h3>
 <p>Sets the type of the message address to <i>type</i>.</p>
 <p>See also <a href="qmessageaddress.html#type">type</a>().</p>
-<h3 class="fn"><a name="type"></a><a href="qmessageaddress.html#Type-enum">Type</a> QMessageAddress::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qmessageaddress.html#Type-enum">Type</a> QMessageAddress::type () const</h3>
 <p>Returns the type of the message address.</p>
 <p>See also <a href="qmessageaddress.html#setType">setType</a>().</p>
 </div>
@@ -212,15 +218,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

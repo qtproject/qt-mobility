@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemManagerEngineFactory&gt;</pre><ul>
 <li><a href="qorganizeritemmanagerenginefactory-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemmanagerenginefactory.html#dtor.QOrganizerItemManagerEngineFactory">~QOrganizerItemManagerEngineFactory</a></b> ()</td></tr>
@@ -143,7 +144,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemmanagerenginefactory.html#managerName">managerName</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QList&lt;int&gt; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</a></b> () const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemManagerEngineFactory class provides the interface for plugins that implement <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> functionality.</p>
@@ -151,18 +153,19 @@
 <p>More information on writing a organizeritems engine plugin is available in the <a href="organizerengines.html">Qt Organizer Manager Engines</a> documentation.</p>
 </div>
 <p>See also <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> and <a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QOrganizerItemManagerEngineFactory"></a>QOrganizerItemManagerEngineFactory::~QOrganizerItemManagerEngineFactory ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemManagerEngineFactory"></a>QOrganizerItemManagerEngineFactory::~QOrganizerItemManagerEngineFactory ()<tt> [virtual]</tt></h3>
 <p>A default, empty destructor.</p>
-<h3 class="fn"><a name="engine"></a><a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> * QOrganizerItemManagerEngineFactory::engine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, <a href="qorganizeritemmanager.html#Error-enum">QOrganizerItemManager::Error</a> * <i>error</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="engine"></a><a href="qorganizeritemmanagerengine.html">QOrganizerItemManagerEngine</a> * QOrganizerItemManagerEngineFactory::engine ( const QMap&lt;QString, QString&gt; &amp; <i>parameters</i>, <a href="qorganizeritemmanager.html#Error-enum">QOrganizerItemManager::Error</a> * <i>error</i> )<tt> [pure virtual]</tt></h3>
 <p>This function is called by the <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> implementation to create an instance of the engine provided by this factory.</p>
 <p>The <i>parameters</i> supplied can be ignored or interpreted as desired.</p>
 <p>If a supplied parameter results in an unfulfillable request, or some other error occurs, this function may return a null pointer, and the client developer will get an invalid <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> in return. Any error should be stored in the supplied <i>error</i> reference.</p>
-<h3 class="fn"><a name="managerName"></a>QString QOrganizerItemManagerEngineFactory::managerName () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QOrganizerItemManagerEngineFactory::managerName () const<tt> [pure virtual]</tt></h3>
 <p>This function should return a unique string that identifies the engines provided by this factory.</p>
 <p>Typically this would be of the form &quot;com.nokia.qt.organizeritems.engines.memory&quot;, with the appropriate domain and engine name substituted.</p>
-<h3 class="fn"><a name="supportedImplementationVersions"></a>QList&lt;int&gt; QOrganizerItemManagerEngineFactory::supportedImplementationVersions () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedImplementationVersions"></a>QList&lt;int&gt; QOrganizerItemManagerEngineFactory::supportedImplementationVersions () const<tt> [virtual]</tt></h3>
 <p>This function should return a list of versions of the engine which this factory can instantiate.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -171,15 +174,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

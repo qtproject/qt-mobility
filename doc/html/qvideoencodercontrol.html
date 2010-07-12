@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#protected-functions">Protected Functions</a></li>
@@ -139,7 +139,8 @@
 <ul>
 <li><a href="qvideoencodercontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qvideoencodercontrol.html#dtor.QVideoEncoderControl">~QVideoEncoderControl</a></b> ()</td></tr>
@@ -153,17 +154,20 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qvideoencodercontrol.html#videoCodecDescription">videoCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QVideoEncoderSettings </td><td class="memItemRight bottomAlign"><b><a href="qvideoencodercontrol.html#videoSettings">videoSettings</a></b> () const = 0</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideoencodercontrol.html#QVideoEncoderControl">QVideoEncoderControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideoencodercontrol.html#QVideoEncoderControl_iid">QVideoEncoderControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoEncoderControl class provides access to the settings of a media service that performs video encoding.</p>
@@ -172,45 +176,47 @@
 <p>The interface name of QVideoEncoderControl is <tt>com.nokia.Qt.QVideoEncoderControl/1.0</tt> as defined in <a href="qvideoencodercontrol.html#QVideoEncoderControl_iid">QVideoEncoderControl_iid</a>.</p>
 </div>
 <p>See also <a href="qmediarecorder.html">QMediaRecorder</a>, <a href="qvideoencodersettings.html">QVideoEncoderSettings</a>, and <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVideoEncoderControl"></a>QVideoEncoderControl::QVideoEncoderControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoEncoderControl"></a>QVideoEncoderControl::QVideoEncoderControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Create a new video encoder control object with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QVideoEncoderControl"></a>QVideoEncoderControl::~QVideoEncoderControl ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVideoEncoderControl"></a>QVideoEncoderControl::~QVideoEncoderControl ()<tt> [virtual]</tt></h3>
 <p>Destroys a video encoder control.</p>
-<h3 class="fn"><a name="encodingOption"></a>QVariant QVideoEncoderControl::encodingOption ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="encodingOption"></a>QVariant QVideoEncoderControl::encodingOption ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the value of a video <i>codec</i> <i>option</i>.</p>
 <p>See also <a href="qvideoencodercontrol.html#setEncodingOption">setEncodingOption</a>().</p>
-<h3 class="fn"><a name="setEncodingOption"></a>void QVideoEncoderControl::setEncodingOption ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEncodingOption"></a>void QVideoEncoderControl::setEncodingOption ( const QString &amp; <i>codec</i>, const QString &amp; <i>option</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>value</i> of a <i>codec</i> specific <i>option</i>.</p>
 <p>See also <a href="qvideoencodercontrol.html#encodingOption">encodingOption</a>().</p>
-<h3 class="fn"><a name="setVideoSettings"></a>void QVideoEncoderControl::setVideoSettings ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setVideoSettings"></a>void QVideoEncoderControl::setVideoSettings ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the selected video encoder <i>settings</i>.</p>
 <p>See also <a href="qvideoencodercontrol.html#videoSettings">videoSettings</a>().</p>
-<h3 class="fn"><a name="supportedEncodingOptions"></a>QStringList QVideoEncoderControl::supportedEncodingOptions ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedEncodingOptions"></a>QStringList QVideoEncoderControl::supportedEncodingOptions ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported encoding options for a video <i>codec</i>.</p>
 <p>The names and types of the options in the list is system dependent.</p>
-<h3 class="fn"><a name="supportedFrameRates"></a>QList&lt;qreal&gt; QVideoEncoderControl::supportedFrameRates ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedFrameRates"></a>QList&lt;qreal&gt; QVideoEncoderControl::supportedFrameRates ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported frame rates.</p>
 <p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to frame rates supported with partial settings like <a href="qvideoencodersettings.html#setCodec">video codec</a> or <a href="qvideoencodersettings.html#setResolution">video resolution</a> applied.</p>
 <p>If the encoder supports arbitrary frame rates within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 <p>See also <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings::frameRate</a>().</p>
-<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QVideoEncoderControl::supportedResolutions ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedResolutions"></a>QList&lt;QSize&gt; QVideoEncoderControl::supportedResolutions ( const <a href="qvideoencodersettings.html">QVideoEncoderSettings</a> &amp; <i>settings</i>, bool * <i>continuous</i> = 0 ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of supported resolutions.</p>
 <p>If non null video <i>settings</i> parameter is passed, the returned list is reduced to resolution supported with partial settings like <a href="qvideoencodersettings.html#setCodec">video codec</a> or <a href="qvideoencodersettings.html#setFrameRate">frame rate</a> applied.</p>
 <p>If the encoder supports arbitrary resolutions within the supported resolutions range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 <p>See also <a href="qvideoencodersettings.html#resolution">QVideoEncoderSettings::resolution</a>().</p>
-<h3 class="fn"><a name="supportedVideoCodecs"></a>QStringList QVideoEncoderControl::supportedVideoCodecs () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedVideoCodecs"></a>QStringList QVideoEncoderControl::supportedVideoCodecs () const<tt> [pure virtual]</tt></h3>
 <p>Returns the list of supported video codecs.</p>
-<h3 class="fn"><a name="videoCodecDescription"></a>QString QVideoEncoderControl::videoCodecDescription ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="videoCodecDescription"></a>QString QVideoEncoderControl::videoCodecDescription ( const QString &amp; <i>codec</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a description of a video <i>codec</i>.</p>
-<h3 class="fn"><a name="videoSettings"></a><a href="qvideoencodersettings.html">QVideoEncoderSettings</a> QVideoEncoderControl::videoSettings () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="videoSettings"></a><a href="qvideoencodersettings.html">QVideoEncoderSettings</a> QVideoEncoderControl::videoSettings () const<tt> [pure virtual]</tt></h3>
 <p>Returns the selected video encoder settings.</p>
 <p>See also <a href="qvideoencodercontrol.html#setVideoSettings">setVideoSettings</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QVideoEncoderControl_iid"></a>QVideoEncoderControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoEncoderControl_iid"></a>QVideoEncoderControl_iid</h3>
 <p><tt>com.nokia.Qt.QVideoEncoderControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qvideoencodercontrol.html">QVideoEncoderControl</a> class.</p>
 </div>
@@ -220,15 +226,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

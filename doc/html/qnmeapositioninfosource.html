@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -139,12 +139,14 @@
 <ul>
 <li><a href="qnmeapositioninfosource-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a></b> { RealTimeMode, SimulationMode }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#QNmeaPositionInfoSource">QNmeaPositionInfoSource</a></b> ( UpdateMode <i>updateMode</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -153,7 +155,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> UpdateMode </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#updateMode">updateMode</a></b> () const</td></tr>
 </table>
-<a name="reimplemented-public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QGeoPositionInfo </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const</td></tr>
@@ -164,7 +167,8 @@
 <ul>
 <li class="fn">7 public functions inherited from <a href="qgeopositioninfosource.html#public-functions">QGeoPositionInfoSource</a></li>
 </ul>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>msec</i> = 0 )</td></tr>
@@ -174,7 +178,8 @@
 <ul>
 <li class="fn">3 public slots inherited from <a href="qgeopositioninfosource.html#public-slots">QGeoPositionInfoSource</a></li>
 </ul>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qnmeapositioninfosource.html#parsePosInfoFromNmeaData">parsePosInfoFromNmeaData</a></b> ( const char * <i>data</i>, int <i>size</i>, QGeoPositionInfo * <i>posInfo</i>, bool * <i>hasFix</i> )</td></tr>
@@ -185,7 +190,8 @@
 <li class="fn">2 signals inherited from <a href="qgeopositioninfosource.html#signals">QGeoPositionInfoSource</a></li>
 <li class="fn">1 static public member inherited from <a href="qgeopositioninfosource.html#static-public-members">QGeoPositionInfoSource</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNmeaPositionInfoSource class provides positional information using a NMEA data source.</p>
@@ -195,49 +201,51 @@
 <p>Use <a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a>() to start receiving regular position updates and <a href="qnmeapositioninfosource.html#stopUpdates">stopUpdates</a>() to stop these updates. If you only require updates occasionally, you can call <a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a>() to request a single update.</p>
 <p>In both cases the position information is received via the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() signal and the last known position can be accessed with <a href="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="UpdateMode-enum"></a>enum QNmeaPositionInfoSource::UpdateMode</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="UpdateMode-enum"></a>enum QNmeaPositionInfoSource::UpdateMode</h3>
 <p>Defines the available update modes.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QNmeaPositionInfoSource::RealTimeMode</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Positional data is read and distributed from the data source as it becomes available. Use this mode if you are using a live source of positional data (for example, a GPS hardware device).</td></tr>
 <tr><td  class="topAlign"><tt>QNmeaPositionInfoSource::SimulationMode</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The data and time information in the NMEA source data is used to provide positional updates at the rate at which the data was originally recorded. Use this mode if the data source contains previously recorded NMEA data and you want to replay the data for simulation purposes.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::QNmeaPositionInfoSource ( <a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> <i>updateMode</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::QNmeaPositionInfoSource ( <a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> <i>updateMode</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> instance with the given <i>parent</i> and <i>updateMode</i>.</p>
-<h3 class="fn"><a name="dtor.QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::~QNmeaPositionInfoSource ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::~QNmeaPositionInfoSource ()</h3>
 <p>Destroys the position source.</p>
-<h3 class="fn"><a name="device"></a>QIODevice * QNmeaPositionInfoSource::device () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="device"></a>QIODevice * QNmeaPositionInfoSource::device () const</h3>
 <p>Returns the NMEA data source.</p>
 <p>See also <a href="qnmeapositioninfosource.html#setDevice">setDevice</a>().</p>
-<h3 class="fn"><a name="lastKnownPosition"></a><a href="qgeopositioninfo.html">QGeoPositionInfo</a> QNmeaPositionInfoSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="lastKnownPosition"></a><a href="qgeopositioninfo.html">QGeoPositionInfo</a> QNmeaPositionInfoSource::lastKnownPosition ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#lastKnownPosition">QGeoPositionInfoSource::lastKnownPosition</a>().</p>
-<h3 class="fn"><a name="minimumUpdateInterval"></a>int QNmeaPositionInfoSource::minimumUpdateInterval () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="minimumUpdateInterval"></a>int QNmeaPositionInfoSource::minimumUpdateInterval () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">QGeoPositionInfoSource::minimumUpdateInterval</a>().</p>
-<h3 class="fn"><a name="parsePosInfoFromNmeaData"></a>bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData ( const char * <i>data</i>, int <i>size</i>, <a href="qgeopositioninfo.html">QGeoPositionInfo</a> * <i>posInfo</i>, bool * <i>hasFix</i> )<tt> [virtual protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parsePosInfoFromNmeaData"></a>bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData ( const char * <i>data</i>, int <i>size</i>, <a href="qgeopositioninfo.html">QGeoPositionInfo</a> * <i>posInfo</i>, bool * <i>hasFix</i> )<tt> [virtual protected]</tt></h3>
 <p>Parses an NMEA sentence string into a <a href="qgeopositioninfo.html">QGeoPositionInfo</a>.</p>
 <p>The default implementation will parse standard NMEA sentences. This method should be reimplemented in a subclass whenever the need to deal with non-standard NMEA sentences arises.</p>
 <p>The parser reads <i>size</i> bytes from <i>data</i> and uses that information to setup <i>posInfo</i> and <i>hasFix</i>. If <i>hasFix</i> is set to false then <i>posInfo</i> may contain only the time or the date and the time.</p>
 <p>Returns true if the sentence was succsesfully parsed, otherwise returns false and should not modifiy <i>posInfo</i> or <i>hasFix</i>.</p>
-<h3 class="fn"><a name="requestUpdate"></a>void QNmeaPositionInfoSource::requestUpdate ( int <i>msec</i> = 0 )<tt> [virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestUpdate"></a>void QNmeaPositionInfoSource::requestUpdate ( int <i>msec</i> = 0 )<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#requestUpdate">QGeoPositionInfoSource::requestUpdate</a>().</p>
-<h3 class="fn"><a name="setDevice"></a>void QNmeaPositionInfoSource::setDevice ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDevice"></a>void QNmeaPositionInfoSource::setDevice ( QIODevice * <i>device</i> )</h3>
 <p>Sets the NMEA data source to <i>device</i>. If the device is not open, it will be opened in QIODevice::ReadOnly mode.</p>
 <p>The source device can only be set once and must be set before calling <a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a>() or <a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a>().</p>
 <p><b>Note:</b> The <i>device</i> must emit QIODevice::readyRead() for the source to be notified when data is available for reading.</p>
 <p>See also <a href="qnmeapositioninfosource.html#device">device</a>().</p>
-<h3 class="fn"><a name="setUpdateInterval"></a>void QNmeaPositionInfoSource::setUpdateInterval ( int <i>msec</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setUpdateInterval"></a>void QNmeaPositionInfoSource::setUpdateInterval ( int <i>msec</i> )<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource::setUpdateInterval</a>().</p>
-<h3 class="fn"><a name="startUpdates"></a>void QNmeaPositionInfoSource::startUpdates ()<tt> [virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="startUpdates"></a>void QNmeaPositionInfoSource::startUpdates ()<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#startUpdates">QGeoPositionInfoSource::startUpdates</a>().</p>
-<h3 class="fn"><a name="stopUpdates"></a>void QNmeaPositionInfoSource::stopUpdates ()<tt> [virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="stopUpdates"></a>void QNmeaPositionInfoSource::stopUpdates ()<tt> [virtual slot]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#stopUpdates">QGeoPositionInfoSource::stopUpdates</a>().</p>
-<h3 class="fn"><a name="supportedPositioningMethods"></a><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a> QNmeaPositionInfoSource::supportedPositioningMethods () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedPositioningMethods"></a><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a> QNmeaPositionInfoSource::supportedPositioningMethods () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qgeopositioninfosource.html#supportedPositioningMethods">QGeoPositionInfoSource::supportedPositioningMethods</a>().</p>
-<h3 class="fn"><a name="updateMode"></a><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> QNmeaPositionInfoSource::updateMode () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="updateMode"></a><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> QNmeaPositionInfoSource::updateMode () const</h3>
 <p>Returns the update mode.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -246,15 +254,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

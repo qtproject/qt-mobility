@@ -124,8 +124,9 @@
 <h1 class="title">QML Audio Element</h1>
 <span class="subtitle"></span>
 <p>The Audio element allows you to add audio playback to a scene. <a href="#details">More...</a></p>
-<a name="Propertiesx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="Propertiesx"></a>
 <h2>Properties</h2>
+<table class="qmlsummary">
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-audio.html#autoLoad-prop">autoLoad</a></b></b> : url</li>
 <li class="fn"><b><b><a href="qml-audio.html#bufferProgress-prop">bufferProgress</a></b></b> : real</li>
@@ -134,6 +135,7 @@
 <li class="fn"><b><b><a href="qml-audio.html#errorString-prop">errorString</a></b></b> : string</li>
 <li class="fn"><b><b><a href="qml-audio.html#muted-prop">muted</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-audio.html#paused-prop">paused</a></b></b> : bool</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><b><a href="qml-audio.html#playbackRate-prop">playbackRate</a></b></b> : real</li>
 <li class="fn"><b><b><a href="qml-audio.html#playing-prop">playing</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-audio.html#position-prop">position</a></b></b> : int</li>
@@ -142,7 +144,9 @@
 <li class="fn"><b><b><a href="qml-audio.html#status-prop">status</a></b></b> : enumeration</li>
 <li class="fn"><b><b><a href="qml-audio.html#volume-prop">volume</a></b></b> : real</li>
 </ul>
-<a name="Signalsx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+</td></tr>
+</table>
+<a name="Signalsx"></a>
 <h2>Signals</h2>
 <tr class="even topAlign"><ul>
 <li class="fn"><b><b><a href="qml-audio.html#onBuffered-signal">onBuffered</a></b></b></li>
@@ -156,14 +160,14 @@
 <li class="fn"><b><b><a href="qml-audio.html#onStarted-signal">onStarted</a></b></b></li>
 <li class="fn"><b><b><a href="qml-audio.html#onStopped-signal">onStopped</a></b></b></li>
 </ul>
-<a name="Methods"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="Methods"></a>
 <h2>Methods</h2>
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-audio.html#pause-method">pause</a></b></b></li>
 <li class="fn"><b><b><a href="qml-audio.html#play-method">play</a></b></b></li>
 <li class="fn"><b><b><a href="qml-audio.html#stop-method">stop</a></b></b></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
 <h2>Detailed Description</h2>
 <p>This element is part of the <b>Qt.multimedia 1.0</b> module.</p>
 <pre class="highlightedCode brush: cpp"> import Qt 4.7
@@ -185,16 +189,17 @@
      }
  }</pre>
 <p>See also <a href="qml-video.html">Video</a>.</p>
+<hr />
 <h2>Property Documentation</h2>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="autoLoad-prop"></a>autoLoad : url</td></tr></table></div><div class="qmldoc"><p>This property indicates if loading of media should begin immediately.</p>
 <p>Defaults to true, if false media will not be loaded until playback is started.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="bufferProgress-prop"></a><span class="qmlreadonly">read-only</span>bufferProgress : real</td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="bufferProgress-prop"></a>bufferProgress : real</td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="duration-prop"></a><span class="qmlreadonly">read-only</span>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the media in milliseconds.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="duration-prop"></a>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the media in milliseconds.</p>
 <p>If the media doesn't have a fixed duration (a live stream for example) this will be 0.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="error-prop"></a><span class="qmlreadonly">read-only</span>error : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the audio. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="error-prop"></a>error : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the audio. It can be one of:</p>
 <ul>
 <li>NoError - there is no current error.</li>
 <li>ResourceError - the audio cannot be played due to a problem allocating resources.</li>
@@ -204,7 +209,7 @@
 <li>ServiceMissing - the audio cannot be played because the media service could not be instantiated.</li>
 </ul>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="errorString-prop"></a><span class="qmlreadonly">read-only</span>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="errorString-prop"></a>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="muted-prop"></a>muted : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the audio output is muted.</p>
 </div></div><br/>
@@ -219,12 +224,12 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="position-prop"></a>position : int</td></tr></table></div><div class="qmldoc"><p>This property holds the current playback position in milliseconds.</p>
 <p>If the <a href="qml-audio.html#seekable-prop">seekable</a> property is true, this property can be set to seek to a new position.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="seekable-prop"></a><span class="qmlreadonly">read-only</span>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the audio can be changed.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="seekable-prop"></a>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the audio can be changed.</p>
 <p>If true; setting a <a href="qml-audio.html#position-prop">position</a> value will cause playback to seek to the new position.</p>
 </div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="source-prop"></a>source : url</td></tr></table></div><div class="qmldoc"><p>This property holds the source URL of the media.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="status-prop"></a><span class="qmlreadonly">read-only</span>status : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the status of media loading. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="status-prop"></a>status : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the status of media loading. It can be one of:</p>
 <ul>
 <li>NoMedia - no media has been set.</li>
 <li>Loading - the media is currently being loaded.</li>
@@ -276,15 +281,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

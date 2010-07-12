@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,13 +136,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryItemListModel&gt;</pre><ul>
 <li><a href="qgalleryitemlistmodel-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qgalleryitemlistmodel.html#autoUpdateCursorPosition-prop">autoUpdateCursorPosition</a></b> : bool</li>
 <li class="fn"><b><a href="qgalleryitemlistmodel.html#itemList-prop">itemList</a></b> : QGalleryItemList *</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlistmodel.html#QGalleryItemListModel">QGalleryItemListModel</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -167,20 +169,23 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlistmodel.html#setHeaderData">setHeaderData</a></b> ( int <i>section</i>, Qt::Orientation <i>orientation</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlistmodel.html#setRoleProperties">setRoleProperties</a></b> ( int <i>column</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlistmodel.html#itemList-prop">setItemList</a></b> ( QGalleryItemList * <i>list</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryItemListModel class provides a QAbstractItemModel wrapper for <a href="qgalleryitemlist.html">QGalleryItemList</a>.</p>
 </div>
 <p>See also <a href="qgalleryitemlist.html">QGalleryItemList</a>.</p>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="autoUpdateCursorPosition-prop"></a>autoUpdateCursorPosition : bool</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="autoUpdateCursorPosition-prop"></a>autoUpdateCursorPosition : bool</h3>
 <p>This property holds whether a model should update the QGalleryItemList::cursorPosition property.</p>
 <p>If enabled the model will attempt to infer an appropriate cursorPosition from <a href="qgalleryitemlistmodel.html#index">index</a>() calls.</p>
 <p><b>Access functions:</b></p>
@@ -188,7 +193,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>autoUpdateCursorPosition</b> () const</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setAutoUpdateCursorPosition</b> ( bool <i>enabled</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="itemList-prop"></a>itemList : <a href="qgalleryitemlist.html">QGalleryItemList</a> *</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="itemList-prop"></a>itemList : <a href="qgalleryitemlist.html">QGalleryItemList</a> *</h3>
 <p>This property holds the gallery item list a model wraps.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -196,40 +201,41 @@
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setItemList</b> ( QGalleryItemList * <i>list</i> )</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryItemListModel"></a>QGalleryItemListModel::QGalleryItemListModel ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryItemListModel"></a>QGalleryItemListModel::QGalleryItemListModel ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new gallery item list model.</p>
 <p>The <i>parent</i> is passed to QObject.</p>
-<h3 class="fn"><a name="dtor.QGalleryItemListModel"></a>QGalleryItemListModel::~QGalleryItemListModel ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryItemListModel"></a>QGalleryItemListModel::~QGalleryItemListModel ()</h3>
 <p>Destroys a gallery item list model.</p>
-<h3 class="fn"><a name="addColumn"></a>void QGalleryItemListModel::addColumn ( const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addColumn"></a>void QGalleryItemListModel::addColumn ( const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
 <p>Add a new column to a model with the given <i>properties</i> mapped to item model roles.</p>
-<h3 class="fn"><a name="addColumn-2"></a>void QGalleryItemListModel::addColumn ( const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addColumn-2"></a>void QGalleryItemListModel::addColumn ( const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3>
 <p>Adds a new column to a model with <i>property</i> mapped to an item model <i>role</i>.</p>
-<h3 class="fn"><a name="columnCount"></a>int QGalleryItemListModel::columnCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="data"></a>QVariant QGalleryItemListModel::data ( const QModelIndex &amp; <i>index</i>, int <i>role</i> = Qt::DisplayRole ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="columnCount"></a>int QGalleryItemListModel::columnCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="data"></a>QVariant QGalleryItemListModel::data ( const QModelIndex &amp; <i>index</i>, int <i>role</i> = Qt::DisplayRole ) const</h3>
 <p>See also <a href="qgalleryitemlistmodel.html#setData">setData</a>().</p>
-<h3 class="fn"><a name="flags"></a>Qt::ItemFlags QGalleryItemListModel::flags ( const QModelIndex &amp; <i>index</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="headerData"></a>QVariant QGalleryItemListModel::headerData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, int <i>role</i> = Qt::DisplayRole ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="flags"></a>Qt::ItemFlags QGalleryItemListModel::flags ( const QModelIndex &amp; <i>index</i> ) const</h3>
+<h3 class="fn"><a name="headerData"></a>QVariant QGalleryItemListModel::headerData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, int <i>role</i> = Qt::DisplayRole ) const</h3>
 <p>See also <a href="qgalleryitemlistmodel.html#setHeaderData">setHeaderData</a>().</p>
-<h3 class="fn"><a name="index"></a>QModelIndex QGalleryItemListModel::index ( int <i>row</i>, int <i>column</i>, const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="insertColumn"></a>void QGalleryItemListModel::insertColumn ( int <i>index</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="index"></a>QModelIndex QGalleryItemListModel::index ( int <i>row</i>, int <i>column</i>, const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="insertColumn"></a>void QGalleryItemListModel::insertColumn ( int <i>index</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
 <p>Inserts a new column into a model at <i>index</i> with the given <i>properties</i> mapped to item model roles.</p>
-<h3 class="fn"><a name="insertColumn-2"></a>void QGalleryItemListModel::insertColumn ( int <i>index</i>, const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertColumn-2"></a>void QGalleryItemListModel::insertColumn ( int <i>index</i>, const QString &amp; <i>property</i>, int <i>role</i> = Qt::DisplayRole )</h3>
 <p>Inserts a new column into a model at <i>index</i> with <i>property</i> mapped to an item model <i>role</i>.</p>
-<h3 class="fn"><a name="parent"></a>QModelIndex QGalleryItemListModel::parent ( const QModelIndex &amp; <i>parent</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="removeColumn"></a>void QGalleryItemListModel::removeColumn ( int <i>index</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parent"></a>QModelIndex QGalleryItemListModel::parent ( const QModelIndex &amp; <i>parent</i> ) const</h3>
+<h3 class="fn"><a name="removeColumn"></a>void QGalleryItemListModel::removeColumn ( int <i>index</i> )</h3>
 <p>Removes the column at <i>index</i> from a model.</p>
-<h3 class="fn"><a name="roleProperties"></a>QHash&lt;int, QString&gt; QGalleryItemListModel::roleProperties ( int <i>column</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="roleProperties"></a>QHash&lt;int, QString&gt; QGalleryItemListModel::roleProperties ( int <i>column</i> ) const</h3>
 <p>Returns the gallery properties mapped to item model roles for a <i>column</i>.</p>
 <p>See also <a href="qgalleryitemlistmodel.html#setRoleProperties">setRoleProperties</a>().</p>
-<h3 class="fn"><a name="rowCount"></a>int QGalleryItemListModel::rowCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="setData"></a>bool QGalleryItemListModel::setData ( const QModelIndex &amp; <i>index</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="rowCount"></a>int QGalleryItemListModel::rowCount ( const QModelIndex &amp; <i>parent</i> = QModelIndex() ) const</h3>
+<h3 class="fn"><a name="setData"></a>bool QGalleryItemListModel::setData ( const QModelIndex &amp; <i>index</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3>
 <p>See also <a href="qgalleryitemlistmodel.html#data">data</a>().</p>
-<h3 class="fn"><a name="setHeaderData"></a>bool QGalleryItemListModel::setHeaderData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setHeaderData"></a>bool QGalleryItemListModel::setHeaderData ( int <i>section</i>, Qt::Orientation <i>orientation</i>, const QVariant &amp; <i>value</i>, int <i>role</i> = Qt::EditRole )</h3>
 <p>See also <a href="qgalleryitemlistmodel.html#headerData">headerData</a>().</p>
-<h3 class="fn"><a name="setRoleProperties"></a>void QGalleryItemListModel::setRoleProperties ( int <i>column</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRoleProperties"></a>void QGalleryItemListModel::setRoleProperties ( int <i>column</i>, const QHash&lt;int, QString&gt; &amp; <i>properties</i> )</h3>
 <p>Sets the gallery <i>properties</i> mapped to item model roles for a <i>column</i>.</p>
 <p>See also <a href="qgalleryitemlistmodel.html#roleProperties">roleProperties</a>().</p>
 </div>
@@ -239,15 +245,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

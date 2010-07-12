@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,26 +135,29 @@
 <ul>
 <li><a href="qversitresourcehandler-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qversitresourcehandler.html#dtor.QVersitResourceHandler">~QVersitResourceHandler</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitresourcehandler.html#loadResource">loadResource</a></b> ( const QString &amp; <i>location</i>, QByteArray * <i>contents</i>, QString * <i>mimeType</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitresourcehandler.html#saveResource">saveResource</a></b> ( const QByteArray &amp; <i>contents</i>, const QVersitProperty &amp; <i>property</i>, QString * <i>location</i> ) = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitResourceHandler class is an interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing.</p>
 </div>
 <p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>, <a href="qversitcontactexporter.html">QVersitContactExporter</a>, and <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QVersitResourceHandler"></a>QVersitResourceHandler::~QVersitResourceHandler ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVersitResourceHandler"></a>QVersitResourceHandler::~QVersitResourceHandler ()<tt> [virtual]</tt></h3>
 <p>Frees any memory used by the handler.</p>
-<h3 class="fn"><a name="loadResource"></a>bool QVersitResourceHandler::loadResource ( const QString &amp; <i>location</i>, QByteArray * <i>contents</i>, QString * <i>mimeType</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadResource"></a>bool QVersitResourceHandler::loadResource ( const QString &amp; <i>location</i>, QByteArray * <i>contents</i>, QString * <i>mimeType</i> )<tt> [pure virtual]</tt></h3>
 <p>Loads a file from <i>location</i>. *<i>contents</i> is filled with the contents of the file and *<i>mimeType</i> is set to the MIME type that it is determined to be. Returns true on success, false on failure.</p>
-<h3 class="fn"><a name="saveResource"></a>bool QVersitResourceHandler::saveResource ( const QByteArray &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, QString * <i>location</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="saveResource"></a>bool QVersitResourceHandler::saveResource ( const QByteArray &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, QString * <i>location</i> )<tt> [pure virtual]</tt></h3>
 <p>Saves the binary data <i>contents</i> to a file on a persistent storage medium.</p>
 <p><i>property</i> holds the <a href="qversitproperty.html">QVersitProperty</a> which is the context in which the binary is coming from. The <a href="qversitresourcehandler.html">QVersitResourceHandler</a> can use this, for example, to determine file extension it should choose. *<i>location</i> is filled with the contents of the file. Returns true on success, false on failure.</p>
 </div>
@@ -164,15 +167,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

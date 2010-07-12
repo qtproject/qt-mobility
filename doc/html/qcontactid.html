@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactId&gt;</pre><ul>
 <li><a href="qcontactid-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactid.html#QContactId">QContactId</a></b> ()</td></tr>
@@ -150,7 +151,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactId &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactid.html#operator-eq">operator=</a></b> ( const QContactId &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactid.html#operator-eq-eq">operator==</a></b> ( const QContactId &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactId class provides information that uniquely identifies a contact in a particular manager.</p>
@@ -158,35 +160,36 @@
 <p>A &quot;null&quot; QContactId has an empty manager URI, and an invalid QContactLocalId (0).</p>
 </div>
 <p>See also QContactLocalId.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactId"></a>QContactId::QContactId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactId"></a>QContactId::QContactId ()</h3>
 <p>Constructs a new contact id</p>
-<h3 class="fn"><a name="QContactId-2"></a>QContactId::QContactId ( const QContactId &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactId-2"></a>QContactId::QContactId ( const QContactId &amp; <i>other</i> )</h3>
 <p>Constructs a new contact id as a copy of <i>other</i></p>
-<h3 class="fn"><a name="dtor.QContactId"></a>QContactId::~QContactId ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactId"></a>QContactId::~QContactId ()</h3>
 <p>Cleans up the memory in use by the contact id</p>
-<h3 class="fn"><a name="localId"></a>QContactLocalId QContactId::localId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="localId"></a>QContactLocalId QContactId::localId () const</h3>
 <p>Returns the manager-local id of the contact identified by this contact id</p>
 <p>See also <a href="qcontactid.html#setLocalId">setLocalId</a>().</p>
-<h3 class="fn"><a name="managerUri"></a>QString QContactId::managerUri () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerUri"></a>QString QContactId::managerUri () const</h3>
 <p>Returns the URI of the manager which contains the contact identified by this id</p>
 <p>See also <a href="qcontactid.html#setManagerUri">setManagerUri</a>().</p>
-<h3 class="fn"><a name="setLocalId"></a>void QContactId::setLocalId ( const QContactLocalId &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLocalId"></a>void QContactId::setLocalId ( const QContactLocalId &amp; <i>id</i> )</h3>
 <p>Sets the manager-local id of the contact identified by this contact id to <i>id</i></p>
 <p>See also <a href="qcontactid.html#localId">localId</a>().</p>
-<h3 class="fn"><a name="setManagerUri"></a>void QContactId::setManagerUri ( const QString &amp; <i>uri</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setManagerUri"></a>void QContactId::setManagerUri ( const QString &amp; <i>uri</i> )</h3>
 <p>Sets the URI of the manager which contains the contact identified by this id to <i>uri</i></p>
 <p>See also <a href="qcontactid.html#managerUri">managerUri</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactId::operator!= ( const QContactId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactId::operator!= ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if either the manager URI or local id of the contact id is different to that of <i>other</i></p>
-<h3 class="fn"><a name="operator-lt"></a>bool QContactId::operator&lt; ( const QContactId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-lt"></a>bool QContactId::operator&lt; ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if this id is less than the <i>other</i> id. This id will be considered less than the <i>other</i> id if the manager URI of this id is alphabetically less than the manager URI of the <i>other</i> id. If both ids have the same manager URI, this id will be considered less than the <i>other</i> id if the local id of this id is less than the local id of the <i>other</i> id.</p>
 <p>The invalid, empty id consists of an empty manager URI and the invalid, zero local id, and hence will be less than any non-invalid id.</p>
 <p>This operator is provided primarily to allow use of a <a href="qcontactid.html">QContactId</a> as a key in a QMap.</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactId &amp; QContactId::operator= ( const QContactId &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactId &amp; QContactId::operator= ( const QContactId &amp; <i>other</i> )</h3>
 <p>Assigns the contact id to be equal to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactId::operator== ( const QContactId &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactId::operator== ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if the contact id has the same manager URI and local id as <i>other</i></p>
 </div>
 <p /><address><hr /><div align="center">
@@ -195,15 +198,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

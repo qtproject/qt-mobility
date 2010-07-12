@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,13 +138,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoAreaMonitor&gt;</pre><ul>
 <li><a href="qgeoareamonitor-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qgeoareamonitor.html#center-prop">center</a></b> : QGeoCoordinate</li>
 <li class="fn"><b><a href="qgeoareamonitor.html#radius-prop">radius</a></b> : qreal</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#QGeoAreaMonitor">QGeoAreaMonitor</a></b> ( QObject * <i>parent</i> )</td></tr>
@@ -154,18 +156,21 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#center-prop">setCenter</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#radius-prop">setRadius</a></b> ( qreal <i>radius</i> )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#areaEntered">areaEntered</a></b> ( const QGeoPositionInfo &amp; <i>update</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#areaExited">areaExited</a></b> ( const QGeoPositionInfo &amp; <i>update</i> )</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoAreaMonitor * </td><td class="memItemRight bottomAlign"><b><a href="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.</p>
@@ -196,9 +201,10 @@
          qDebug() &lt;&lt; &quot;No longer within 100 meters, current position is&quot; &lt;&lt; update.coordinate();
      }</pre>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="center-prop"></a>center : <a href="qgeocoordinate.html">QGeoCoordinate</a></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="center-prop"></a>center : <a href="qgeocoordinate.html">QGeoCoordinate</a></h3>
 <p>This property holds the center of the area to be monitored.</p>
 <p>When the center is set, if the radius has already been set and the current position is within the monitored area, <a href="qgeoareamonitor.html#areaEntered">areaEntered</a>() is emitted immediately.</p>
 <p>By default, contains an invalid coordinate.</p>
@@ -208,7 +214,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> QGeoCoordinate </td><td class="memItemRight bottomAlign"><b>center</b> () const</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> virtual void </td><td class="memItemRight bottomAlign"><b>setCenter</b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="radius-prop"></a>radius : qreal</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="radius-prop"></a>radius : qreal</h3>
 <p>This property holds the radius of the area to be monitored, in meters.</p>
 <p>If the specified radius is less than the minimum supported radius, the radius is set to the minimum radius.</p>
 <p>When this property is set, if the center coordinate has already been set and the current position is within the monitored area, <a href="qgeoareamonitor.html#areaEntered">areaEntered</a>() is emitted immediately.</p>
@@ -220,19 +226,20 @@
 <tr><td class="memItemLeft topAlign rightAlign"> virtual void </td><td class="memItemRight bottomAlign"><b>setRadius</b> ( qreal <i>radius</i> )</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoAreaMonitor"></a>QGeoAreaMonitor::QGeoAreaMonitor ( QObject * <i>parent</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoAreaMonitor"></a>QGeoAreaMonitor::QGeoAreaMonitor ( QObject * <i>parent</i> )</h3>
 <p>Creates a monitor with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoAreaMonitor"></a>QGeoAreaMonitor::~QGeoAreaMonitor ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoAreaMonitor"></a>QGeoAreaMonitor::~QGeoAreaMonitor ()<tt> [pure virtual]</tt></h3>
 <p>Destroys the monitor.</p>
-<h3 class="fn"><a name="areaEntered"></a>void QGeoAreaMonitor::areaEntered ( const <a href="qgeopositioninfo.html">QGeoPositionInfo</a> &amp; <i>update</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="areaEntered"></a>void QGeoAreaMonitor::areaEntered ( const <a href="qgeopositioninfo.html">QGeoPositionInfo</a> &amp; <i>update</i> )<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position outside the monitored area to a position within the monitored area.</p>
 <p>The <i>update</i> holds the new position.</p>
-<h3 class="fn"><a name="areaExited"></a>void QGeoAreaMonitor::areaExited ( const <a href="qgeopositioninfo.html">QGeoPositionInfo</a> &amp; <i>update</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="areaExited"></a>void QGeoAreaMonitor::areaExited ( const <a href="qgeopositioninfo.html">QGeoPositionInfo</a> &amp; <i>update</i> )<tt> [signal]</tt></h3>
 <p>Emitted when the current position has moved from a position within the monitored area to a position outside the monitored area.</p>
 <p>The <i>update</i> holds the new position.</p>
-<h3 class="fn"><a name="createDefaultMonitor"></a>QGeoAreaMonitor * QGeoAreaMonitor::createDefaultMonitor ( QObject * <i>parent</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createDefaultMonitor"></a>QGeoAreaMonitor * QGeoAreaMonitor::createDefaultMonitor ( QObject * <i>parent</i> )<tt> [static]</tt></h3>
 <p>Creates and returns a monitor with the given <i>parent</i> that monitors areas using resources on the underlying system.</p>
 <p>Returns 0 if the system has no support for position monitoring.</p>
 </div>
@@ -242,15 +249,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

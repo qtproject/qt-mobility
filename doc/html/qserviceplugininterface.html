@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -134,28 +134,31 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QServicePluginInterface&gt;</pre><ul>
 <li><a href="qserviceplugininterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QObject * </td><td class="memItemRight bottomAlign"><b><a href="qserviceplugininterface.html#createInstance">createInstance</a></b> ( const QServiceInterfaceDescriptor &amp; <i>descriptor</i>, QServiceContext * <i>context</i>, QAbstractSecuritySession * <i>securitySession</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qserviceplugininterface.html#installService">installService</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qserviceplugininterface.html#uninstallService">uninstallService</a></b> ()</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServicePluginInterface class defines the interface that every plug-in based service must implement.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="createInstance"></a>QObject * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, QServiceContext * <i>context</i>, QAbstractSecuritySession * <i>securitySession</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createInstance"></a>QObject * QServicePluginInterface::createInstance ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, QServiceContext * <i>context</i>, QAbstractSecuritySession * <i>securitySession</i> )<tt> [pure virtual]</tt></h3>
 <p>Creates a new instance of the service specified by <i>descriptor</i>. The service may use the given <i>context</i> and <i>securitySession</i>. <i>context</i> and <i>securitySession</i> object are owned by the client of the service.</p>
 <p>This function returns a null pointer if the plug-in doesn't support the given <i>descriptor</i>.</p>
-<h3 class="fn"><a name="installService"></a>void QServicePluginInterface::installService ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="installService"></a>void QServicePluginInterface::installService ()<tt> [virtual]</tt></h3>
 <p>This function is called by <a href="qservicemanager.html">QServiceManager</a> as part of the service registration process. It can be used to initialize the environment or the creation of external settings files which may be required during the execution of the service.</p>
 <p>The default implementation for this function does nothing.</p>
 <p>See also <a href="qservicemanager.html#addService">QServiceManager::addService</a>().</p>
-<h3 class="fn"><a name="uninstallService"></a>void QServicePluginInterface::uninstallService ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="uninstallService"></a>void QServicePluginInterface::uninstallService ()<tt> [virtual]</tt></h3>
 <p>This function is called bu <a href="qservicemanager.html">QServiceManager</a> as part of the deregistration process for services. This gives the service the possibility to perform cleanup operations such as the removal of setting files on the hard drive.</p>
 <p>The default implementation for this function does nothing.</p>
 <p>See also <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
@@ -166,15 +169,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

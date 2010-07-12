@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -137,7 +137,8 @@
 <ul>
 <li><a href="qaudiooutput-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#QAudioOutput">QAudioOutput</a></b> ( const QAudioFormat &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</td></tr>
@@ -161,13 +162,15 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#stop">stop</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#suspend">suspend</a></b> ()</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#notify">notify</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qaudiooutput.html#stateChanged">stateChanged</a></b> ( QAudio::State <i>state</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioOutput class provides an interface for sending audio data to an audio output device.</p>
@@ -222,67 +225,68 @@
            break;</pre>
 </div>
 <p>See also <a href="qaudioinput.html">QAudioInput</a> and <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioOutput"></a>QAudioOutput::QAudioOutput ( const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioOutput"></a>QAudioOutput::QAudioOutput ( const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3>
 <p>Construct a new audio output and attach it to <i>parent</i>. The default audio output device is used with the output <i>format</i> parameters.</p>
-<h3 class="fn"><a name="QAudioOutput-2"></a>QAudioOutput::QAudioOutput ( const <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a> &amp; <i>audioDevice</i>, const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioOutput-2"></a>QAudioOutput::QAudioOutput ( const <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a> &amp; <i>audioDevice</i>, const <a href="qaudioformat.html">QAudioFormat</a> &amp; <i>format</i> = QAudioFormat(), QObject * <i>parent</i> = 0 )</h3>
 <p>Construct a new audio output and attach it to <i>parent</i>. The device referenced by <i>audioDevice</i> is used with the output <i>format</i> parameters.</p>
-<h3 class="fn"><a name="dtor.QAudioOutput"></a>QAudioOutput::~QAudioOutput ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAudioOutput"></a>QAudioOutput::~QAudioOutput ()</h3>
 <p>Destroys this audio output.</p>
-<h3 class="fn"><a name="bufferSize"></a>int QAudioOutput::bufferSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bufferSize"></a>int QAudioOutput::bufferSize () const</h3>
 <p>Returns the audio buffer size in bytes.</p>
 <p>If called before <a href="qaudiooutput.html#start">start</a>(), returns platform default value. If called before <a href="qaudiooutput.html#start">start</a>() but <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>() was called prior, returns value set by <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>(). If called after <a href="qaudiooutput.html#start">start</a>(), returns the actual buffer size being used. This may not be what was set previously by <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>().</p>
 <p>See also <a href="qaudiooutput.html#setBufferSize">setBufferSize</a>().</p>
-<h3 class="fn"><a name="bytesFree"></a>int QAudioOutput::bytesFree () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bytesFree"></a>int QAudioOutput::bytesFree () const</h3>
 <p>Returns the free space available in bytes in the audio buffer.</p>
 <p>NOTE: returned value is only valid while in <a href="qaudio.html#State-enum">QAudio::ActiveState</a> or <a href="qaudio.html#State-enum">QAudio::IdleState</a> state, otherwise returns zero.</p>
-<h3 class="fn"><a name="elapsedUSecs"></a>qint64 QAudioOutput::elapsedUSecs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="elapsedUSecs"></a>qint64 QAudioOutput::elapsedUSecs () const</h3>
 <p>Returns the microseconds since <a href="qaudiooutput.html#start">start</a>() was called, including time in Idle and Suspend states.</p>
-<h3 class="fn"><a name="error"></a><a href="qaudio.html#Error-enum">QAudio::Error</a> QAudioOutput::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qaudio.html#Error-enum">QAudio::Error</a> QAudioOutput::error () const</h3>
 <p>Returns the error state.</p>
-<h3 class="fn"><a name="format"></a><a href="qaudioformat.html">QAudioFormat</a> QAudioOutput::format () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="format"></a><a href="qaudioformat.html">QAudioFormat</a> QAudioOutput::format () const</h3>
 <p>Returns the <a href="qaudioformat.html">QAudioFormat</a> being used.</p>
-<h3 class="fn"><a name="notify"></a>void QAudioOutput::notify ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="notify"></a>void QAudioOutput::notify ()<tt> [signal]</tt></h3>
 <p>This signal is emitted when x ms of audio data has been processed the interval set by setNotifyInterval(x).</p>
-<h3 class="fn"><a name="notifyInterval"></a>int QAudioOutput::notifyInterval () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="notifyInterval"></a>int QAudioOutput::notifyInterval () const</h3>
 <p>Returns the notify interval in milliseconds.</p>
 <p>See also <a href="qaudiooutput.html#setNotifyInterval">setNotifyInterval</a>().</p>
-<h3 class="fn"><a name="periodSize"></a>int QAudioOutput::periodSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="periodSize"></a>int QAudioOutput::periodSize () const</h3>
 <p>Returns the period size in bytes.</p>
 <p>Note: This is the recommended write size in bytes.</p>
-<h3 class="fn"><a name="processedUSecs"></a>qint64 QAudioOutput::processedUSecs () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="processedUSecs"></a>qint64 QAudioOutput::processedUSecs () const</h3>
 <p>Returns the amount of audio data processed since <a href="qaudiooutput.html#start">start</a>() was called in microseconds.</p>
-<h3 class="fn"><a name="reset"></a>void QAudioOutput::reset ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="reset"></a>void QAudioOutput::reset ()</h3>
 <p>Drops all audio data in the buffers, resets buffers to zero.</p>
-<h3 class="fn"><a name="resume"></a>void QAudioOutput::resume ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resume"></a>void QAudioOutput::resume ()</h3>
 <p>Resumes processing audio data after a <a href="qaudiooutput.html#suspend">suspend</a>().</p>
 <p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>. Sets <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::ActiveState</a> if you previously called start(QIODevice*). Sets <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::IdleState</a> if you previously called <a href="qaudiooutput.html#start">start</a>(). emits <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
-<h3 class="fn"><a name="setBufferSize"></a>void QAudioOutput::setBufferSize ( int <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBufferSize"></a>void QAudioOutput::setBufferSize ( int <i>value</i> )</h3>
 <p>Sets the audio buffer size to <i>value</i> in bytes.</p>
 <p>Note: This function can be called anytime before <a href="qaudiooutput.html#start">start</a>(), calls to this are ignored after <a href="qaudiooutput.html#start">start</a>(). It should not be assumed that the buffer size set is the actual buffer size used, calling <a href="qaudiooutput.html#bufferSize">bufferSize</a>() anytime after <a href="qaudiooutput.html#start">start</a>() will return the actual buffer size being used.</p>
 <p>See also <a href="qaudiooutput.html#bufferSize">bufferSize</a>().</p>
-<h3 class="fn"><a name="setNotifyInterval"></a>void QAudioOutput::setNotifyInterval ( int <i>ms</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setNotifyInterval"></a>void QAudioOutput::setNotifyInterval ( int <i>ms</i> )</h3>
 <p>Sets the interval for <a href="qaudiooutput.html#notify">notify</a>() signal to be emitted. This is based on the <i>ms</i> of audio data processed not on actual real-time. The minimum resolution of the timer is platform specific and values should be checked with <a href="qaudiooutput.html#notifyInterval">notifyInterval</a>() to confirm actual value being used.</p>
 <p>See also <a href="qaudiooutput.html#notifyInterval">notifyInterval</a>().</p>
-<h3 class="fn"><a name="start"></a>void QAudioOutput::start ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="start"></a>void QAudioOutput::start ( QIODevice * <i>device</i> )</h3>
 <p>Uses the <i>device</i> as the QIODevice to transfer data. Passing a QIODevice allows the data to be transfered without any extra code. All that is required is to open the QIODevice.</p>
 <p>If able to successfully output audio data to the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::ActiveState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
 <p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
 <p>See also QIODevice.</p>
-<h3 class="fn"><a name="start-2"></a>QIODevice * QAudioOutput::start ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="start-2"></a>QIODevice * QAudioOutput::start ()</h3>
 <p>Returns a pointer to the QIODevice being used to handle the data transfer. This QIODevice can be used to write() audio data directly.</p>
 <p>If able to access the systems audio device the <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::IdleState</a>, <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::NoError</a> and the <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
 <p>If a problem occurs during this process the <a href="qaudiooutput.html#error">error</a>() is set to <a href="qaudio.html#Error-enum">QAudio::OpenError</a>, <a href="qaudiooutput.html#state">state</a>() is set to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal is emitted.</p>
 <p>See also QIODevice.</p>
-<h3 class="fn"><a name="state"></a><a href="qaudio.html#State-enum">QAudio::State</a> QAudioOutput::state () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="state"></a><a href="qaudio.html#State-enum">QAudio::State</a> QAudioOutput::state () const</h3>
 <p>Returns the state of audio processing.</p>
-<h3 class="fn"><a name="stateChanged"></a>void QAudioOutput::stateChanged ( <a href="qaudio.html#State-enum">QAudio::State</a> <i>state</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="stateChanged"></a>void QAudioOutput::stateChanged ( <a href="qaudio.html#State-enum">QAudio::State</a> <i>state</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted when the device <i>state</i> has changed. This is the current state of the audio output.</p>
-<h3 class="fn"><a name="stop"></a>void QAudioOutput::stop ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="stop"></a>void QAudioOutput::stop ()</h3>
 <p>Stops the audio output, detaching from the system resource.</p>
 <p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::StoppedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
-<h3 class="fn"><a name="suspend"></a>void QAudioOutput::suspend ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="suspend"></a>void QAudioOutput::suspend ()</h3>
 <p>Stops processing audio data, preserving buffered audio data.</p>
 <p>Sets <a href="qaudiooutput.html#error">error</a>() to <a href="qaudio.html#Error-enum">QAudio::NoError</a>, <a href="qaudiooutput.html#state">state</a>() to <a href="qaudio.html#State-enum">QAudio::SuspendedState</a> and emit <a href="qaudiooutput.html#stateChanged">stateChanged</a>() signal.</p>
 </div>
@@ -292,15 +296,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

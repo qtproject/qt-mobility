@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,13 +137,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QFeedbackHapticsInterface&gt;</pre><ul>
 <li><a href="qfeedbackhapticsinterface-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a></b> { Name, State, Enabled }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#EffectProperty-enum">EffectProperty</a></b> { Duration, Intensity, AttackTime, AttackIntensity, ..., Period }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#dtor.QFeedbackHapticsInterface">~QFeedbackHapticsInterface</a></b> ()</td></tr>
@@ -156,32 +158,36 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#setEffectState">setEffectState</a></b> ( const QFeedbackHapticsEffect * <i>effect</i>, QFeedbackEffect::State <i>state</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#updateEffectProperty">updateEffectProperty</a></b> ( const QFeedbackHapticsEffect * <i>effect</i>, EffectProperty <i>property</i> ) = 0</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QFeedbackHapticsInterface * </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#instance">instance</a></b> ()</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QFeedbackActuator </td><td class="memItemRight bottomAlign"><b><a href="qfeedbackhapticsinterface.html#createFeedbackActuator">createFeedbackActuator</a></b> ( int <i>id</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QFeedbackHapticsInterface class is the base class for objects providing custom haptics effects.</p>
 <p>This interface will be used to try to play custom effects with specific duration, intensity, envelope and period. An effect is always played on a specified actuator.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="ActuatorProperty-enum"></a>enum QFeedbackHapticsInterface::ActuatorProperty</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="ActuatorProperty-enum"></a>enum QFeedbackHapticsInterface::ActuatorProperty</h3>
 <p>This enum describes all actuator properties.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QFeedbackHapticsInterface::Name</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The actuator name.</td></tr>
 <tr><td  class="topAlign"><tt>QFeedbackHapticsInterface::State</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The actuator state.</td></tr>
 <tr><td  class="topAlign"><tt>QFeedbackHapticsInterface::Enabled</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The actuator enabled state.</td></tr>
 </table>
-<h3 class="fn"><a name="EffectProperty-enum"></a>enum QFeedbackHapticsInterface::EffectProperty</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="EffectProperty-enum"></a>enum QFeedbackHapticsInterface::EffectProperty</h3>
 <p>This enum describes all effect properties for haptics effects.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QFeedbackHapticsInterface::Duration</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The effect duration</td></tr>
@@ -193,32 +199,33 @@
 <tr><td  class="topAlign"><tt>QFeedbackHapticsInterface::Period</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">The effect period, this is an optional effect property.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QFeedbackHapticsInterface"></a>QFeedbackHapticsInterface::~QFeedbackHapticsInterface ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="actuatorProperty"></a>QVariant QFeedbackHapticsInterface::actuatorProperty ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a> <i>property</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QFeedbackHapticsInterface"></a>QFeedbackHapticsInterface::~QFeedbackHapticsInterface ()<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="actuatorProperty"></a>QVariant QFeedbackHapticsInterface::actuatorProperty ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a> <i>property</i> )<tt> [pure virtual]</tt></h3>
 <p>returns a <i>property</i> for an <i>actuator</i></p>
 <p>See also <a href="qfeedbackhapticsinterface.html#setActuatorProperty">setActuatorProperty</a>() and <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a>.</p>
-<h3 class="fn"><a name="actuators"></a>QList&lt;<a href="qfeedbackactuator.html">QFeedbackActuator</a>&gt; QFeedbackHapticsInterface::actuators ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="actuators"></a>QList&lt;<a href="qfeedbackactuator.html">QFeedbackActuator</a>&gt; QFeedbackHapticsInterface::actuators ()<tt> [pure virtual]</tt></h3>
 <p>return the available actuators on the system.</p>
-<h3 class="fn"><a name="createFeedbackActuator"></a><a href="qfeedbackactuator.html">QFeedbackActuator</a> QFeedbackHapticsInterface::createFeedbackActuator ( int <i>id</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createFeedbackActuator"></a><a href="qfeedbackactuator.html">QFeedbackActuator</a> QFeedbackHapticsInterface::createFeedbackActuator ( int <i>id</i> )<tt> [protected]</tt></h3>
 <p>Creates an instance of <a href="qfeedbackactuator.html">QFeedbackActuator</a> with the identifier <i>id</i>. That is the way of the backends to create instances of actuators. It is then up to the backends to manage the identifiers according to their needs.</p>
-<h3 class="fn"><a name="effectState"></a><a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> QFeedbackHapticsInterface::effectState ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="effectState"></a><a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> QFeedbackHapticsInterface::effectState ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i> )<tt> [pure virtual]</tt></h3>
 <p>Get the current state for the effect <i>effect</i>.</p>
 <p>See also <a href="qfeedbackhapticsinterface.html#setEffectState">setEffectState</a>().</p>
-<h3 class="fn"><a name="instance"></a>QFeedbackHapticsInterface * QFeedbackHapticsInterface::instance ()<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instance"></a>QFeedbackHapticsInterface * QFeedbackHapticsInterface::instance ()<tt> [static]</tt></h3>
 <p>returns the instance of the object managing haptics custom effects. If no backend has been loaded, this will return a null pointer.</p>
-<h3 class="fn"><a name="isActuatorCapabilitySupported"></a>bool QFeedbackHapticsInterface::isActuatorCapabilitySupported ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackactuator.html#Capability-enum">QFeedbackActuator::Capability</a> <i>capability</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isActuatorCapabilitySupported"></a>bool QFeedbackHapticsInterface::isActuatorCapabilitySupported ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackactuator.html#Capability-enum">QFeedbackActuator::Capability</a> <i>capability</i> )<tt> [pure virtual]</tt></h3>
 <p>return true if the <i>actuator</i> supports the <i>capability</i>.</p>
-<h3 class="fn"><a name="pluginPriority"></a>PluginPriority QFeedbackHapticsInterface::pluginPriority ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="pluginPriority"></a>PluginPriority QFeedbackHapticsInterface::pluginPriority ()<tt> [pure virtual]</tt></h3>
 <p>returns the priority for the plugin.</p>
-<h3 class="fn"><a name="setActuatorProperty"></a>void QFeedbackHapticsInterface::setActuatorProperty ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a> <i>property</i>, const QVariant &amp; <i>priority</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setActuatorProperty"></a>void QFeedbackHapticsInterface::setActuatorProperty ( const <a href="qfeedbackactuator.html">QFeedbackActuator</a> &amp; <i>actuator</i>, <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a> <i>property</i>, const QVariant &amp; <i>priority</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets a <i>priority</i> on the <i>actuator</i>.</p>
 <p>See also <a href="qfeedbackhapticsinterface.html#actuatorProperty">actuatorProperty</a>() and <a href="qfeedbackhapticsinterface.html#ActuatorProperty-enum">ActuatorProperty</a>.</p>
-<h3 class="fn"><a name="setEffectState"></a>void QFeedbackHapticsInterface::setEffectState ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i>, <a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> <i>state</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setEffectState"></a>void QFeedbackHapticsInterface::setEffectState ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i>, <a href="qfeedbackeffect.html#State-enum">QFeedbackEffect::State</a> <i>state</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the state to <i>state</i> for the effect <i>effect</i>. If that fails the backend will report an error by calling reportError and <i>effect</i> will in turn emit the error signal.</p>
 <p>See also <a href="qfeedbackhapticsinterface.html#effectState">effectState</a>().</p>
-<h3 class="fn"><a name="updateEffectProperty"></a>void QFeedbackHapticsInterface::updateEffectProperty ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i>, <a href="qfeedbackhapticsinterface.html#EffectProperty-enum">EffectProperty</a> <i>property</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="updateEffectProperty"></a>void QFeedbackHapticsInterface::updateEffectProperty ( const <a href="qfeedbackhapticseffect.html">QFeedbackHapticsEffect</a> * <i>effect</i>, <a href="qfeedbackhapticsinterface.html#EffectProperty-enum">EffectProperty</a> <i>property</i> )<tt> [pure virtual]</tt></h3>
 <p>Tells the backend that the property</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -227,15 +234,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

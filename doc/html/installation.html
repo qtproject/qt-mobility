@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#get-the-qt-mobility-api-package">Get the Qt Mobility API Package</a></li>
 <li class="level1"><a href="#pre-requisites-dependencies">Pre-requisites &amp; Dependencies</a></li>
@@ -143,10 +143,10 @@
 <h1 class="title">Installation Guide</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="get-the-qt-mobility-api-package"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="get-the-qt-mobility-api-package"></a>
 <h2>Get the Qt Mobility API Package</h2>
 <p>To begin, obtain the most recent distribution package from <a href="http://get.qt.nokia.com">http://get.qt.nokia.com</a></p>
-<a name="pre-requisites-dependencies"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="pre-requisites-dependencies"></a>
 <h2>Pre-requisites &amp; Dependencies</h2>
 <p>To install Qt Mobility you must already have installed Qt 4.6 or higher, visit <a href="http://get.qt.nokia.com">http://get.qt.nokia.com</a> to obtain a copy. Furthermore perl must be installed and available in the environment path. Windows environments may require the installation of a perl interpreter such as <a href="http://www.activestate.com/activeperl">ActivePerl</a>. On the Maemo 5 (Fremantle) platform PR1.2 firmware release or newer is required.</p>
 <p>Qt Mobility Project APIs are comprised of a number of domains. Some of these domains have dependencies and these are outlined below:</p>
@@ -183,7 +183,7 @@
 </p></td><td><p>N(Y)</p></td><td><p>N</p></td></tr>
 <tr class="even topAlign"><td><p>QtVersit</p></td><td><p>On all platforms, QtVersit depends on <a href="qtcontacts.html">QtContacts</a>.</p></td><td><p></p></td><td><p></p></td></tr>
 </table>
-<a name="unpacking"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="unpacking"></a>
 <h2>Unpacking</h2>
 <p>Unpack the Qt Mobility archive if you have not done so already, on Unix (X11 and Mac):</p>
 <pre class="highlightedCode brush: cpp"> cd /tmp
@@ -192,12 +192,12 @@
 <p>This creates the directory <tt>/tmp/%DISTNAME%</tt> containing the files from the archive. We only support the GNU version of the tar archiving utility. Note on some systems it is called gtar.</p>
 <p>On windows, uncompress the zip file into the directory you want Qt Mobility Project installed, extracting to <tt>C:\QtMobility</tt> will create the directory <tt>C:\QtMobility\%DISTNAME%</tt></p>
 <p>NOTE: The install path(prefix) must not contain any spaces.</p>
-<a name="building"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building"></a>
 <h2>Building</h2>
 <p>Ensure that all compile time dependencies for your particular platform have been met before building.</p>
 <p>If Qt is installed for multiple platforms it is also important to ensure that the correct version of <tt>qmake</tt> is being used.</p>
 <p><b>Note:</b> Static builds of Qt are not supported by Qt Mobility.</p>
-<a name="building-on-unix"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
 <p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into $PWD/install.</p>
@@ -214,7 +214,7 @@
  sudo make install</pre>
 <p>and enter in the appropriate password.</p>
 <p>Note that on some systems the make utility is named differently, e.g&#x2e; gmake. The configure script tells you which make utility to use.</p>
-<a name="building-on-windows"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-on-windows"></a>
 <h3>Building On Windows</h3>
 <p>To configure the Qt Mobility libraries for your machine, run configure in the package directory.</p>
 <p>To specify the installation directory you may use the -prefix option. Not passing a prefix installs the mobility libraries into an install directory within the current working directory.</p>
@@ -224,10 +224,10 @@
 <p>The actual commands needed to build and install Qt Mobility depends on your development system. To create and install the libraries and tools from a Microsoft Visual Studio command prompt, type:</p>
 <pre class="highlightedCode brush: cpp"> nmake
  nmake install</pre>
-<a name="building-for-windows-ce"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-for-windows-ce"></a>
 <h3>Building For Windows CE</h3>
 <p>The process is much the same as for Windows, although it is important to run the <tt>setcepaths</tt> script from the <tt>bin</tt> directory of the Qt for Windows CE installation to ensure that the correct headers and libraries are used.</p>
-<a name="building-for-symbian-on-windows"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-for-symbian-on-windows"></a>
 <h3>Building For Symbian On Windows</h3>
 <p>Building Qt Mobility for Symbian is not necessary as the package contains pre-built binaries for the SDK and SIS file for the device. See the <tt>symbian\install.txt</tt> file on how to deploy these.</p>
 <p>If you wish to build QtMobility yourself, run configure in the package directory. (-prefix cannot be used since the libraries are installed into the SDK directory)</p>
@@ -239,12 +239,12 @@
 <p>To create the libraries and tools for a device run:</p>
 <pre class="highlightedCode brush: cpp"> make release-gcce</pre>
 <p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
-<a name="building-for-mac-os-x"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-for-mac-os-x"></a>
 <h3>Building For Mac OS X</h3>
 <p>The process is the same as for Unix, with the additional configuration option of <tt>-sdk /Developer/SDKs/MacOSX10.5.sdk</tt> to specify an Apple SDK version other than the default.</p>
 <p>Note: QtMobility currently has no support for building with Xcode.</p>
 <p>Note: QtMobility will be built using the same frameworks configuration option that Qt was built with.</p>
-<a name="building-individual-qt-mobility-modules"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="building-individual-qt-mobility-modules"></a>
 <h3>Building Individual Qt Mobility Modules</h3>
 <p>Qt Mobility is comprised of several modules but all of these may not need to be built. To specify which modules should be built, use the <tt>-modules</tt> switch with the configure script when performing the configure step as outlined above.</p>
 <p>e.g&#x2e; To build just the bearer module:</p>
@@ -253,10 +253,10 @@
 <p>.e.g&#x2e; To build just the bearer and location modules:</p>
 <pre class="highlightedCode brush: cpp"> configure -modules &quot;bearer location&quot;</pre>
 <p>Type <tt>configure -help</tt> to see the names of the available modules.</p>
-<a name="making-the-libraries-available-to-applications"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="making-the-libraries-available-to-applications"></a>
 <h2>Making the libraries available to applications</h2>
 <p>In order to use QtMobility some environment variables need to be extended to locate the libraries, which are placed in the lib directory of the install path.</p>
-<a name="making-the-libraries-available-on-unix"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="making-the-libraries-available-on-unix"></a>
 <h3>Making the libraries available on Unix</h3>
 <p>The environment variable LD_LIBRARY_PATH should be extended to include: <tt>$TARGET_DIR/lib</tt></p>
 <p>In .profile (if your Unix shell is bash,ksh,zsh or sh), add the following lines</p>
@@ -265,11 +265,11 @@
 <p>In .login (incase your shell is csh or tcsh), add the following line:</p>
 <pre class="highlightedCode brush: cpp"> setenv LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH</pre>
 <p>If you use a different Unix shell, please modify your your environment variables accordingly.</p>
-<a name="making-the-libraries-available-on-windows"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="making-the-libraries-available-on-windows"></a>
 <h3>Making the libraries available on Windows</h3>
 <p>The environment variable PATH should be extended to include: <tt>C:\%TARGET_DIR%\lib</tt></p>
 <p>For newer versions of windows, PATH can be extended through &quot;Start-&gt;Settings-&gt;Control Panel-&gt;System-&gt;Advanced-&gt; Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
-<a name="making-the-libraries-available-on-windows-ce"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="making-the-libraries-available-on-windows-ce"></a>
 <h3>Making the libraries available on Windows CE</h3>
 <p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently. A pre-requisite for Qt Mobility applications is that the Qt libraries and plugins have been deployed as per Qt's documentation.</p>
 <p>The deployment of the libraries to the device is normally done with Microsoft Visual Studio or Microsoft ActiveSync.</p>
@@ -282,15 +282,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

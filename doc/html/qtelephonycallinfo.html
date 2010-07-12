@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -135,13 +135,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QTelephonyCallInfo&gt;</pre><ul>
 <li><a href="qtelephonycallinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a></b> { Idle, Dialing, Alerting, Connected, ..., OnHold }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycallinfo.html#CallType-enum">CallType</a></b> { Any, Text, Data, Video, Voice, Other }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycallinfo.html#QTelephonyCallInfo">QTelephonyCallInfo</a></b> ()</td></tr>
@@ -153,14 +155,16 @@
 <tr><td class="memItemLeft rightAlign topAlign"> CallType </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycallinfo.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qtelephonycallinfo.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QTelephonyCallInfo class represents a call including the type, status and other information of the call.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="CallStatus-enum"></a>enum QTelephonyCallInfo::CallStatus</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="CallStatus-enum"></a>enum QTelephonyCallInfo::CallStatus</h3>
 <p>This enum type is used to describe the status of a call. A <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object can have a status of:</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QTelephonyCallInfo::Idle</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The call status is not defined.</td></tr>
@@ -171,7 +175,7 @@
 <tr><td  class="topAlign"><tt>QTelephonyCallInfo::Incomming</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The status of the call is incomming.</td></tr>
 <tr><td  class="topAlign"><tt>QTelephonyCallInfo::OnHold</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">The status of the call is on hold.</td></tr>
 </table>
-<h3 class="fn"><a name="CallType-enum"></a>enum QTelephonyCallInfo::CallType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="CallType-enum"></a>enum QTelephonyCallInfo::CallType</h3>
 <p>This enum decribes the type of the call. A <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object can be a type of:</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QTelephonyCallInfo::Any</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The call type can be any type.</td></tr>
@@ -182,24 +186,25 @@
 <tr><td  class="topAlign"><tt>QTelephonyCallInfo::Other</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The call is a an unknown base call.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QTelephonyCallInfo"></a>QTelephonyCallInfo::QTelephonyCallInfo ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QTelephonyCallInfo"></a>QTelephonyCallInfo::QTelephonyCallInfo ()</h3>
 <p>Constructor of a <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object.</p>
-<h3 class="fn"><a name="QTelephonyCallInfo-2"></a>QTelephonyCallInfo::QTelephonyCallInfo ( const QTelephonyCallInfo &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QTelephonyCallInfo-2"></a>QTelephonyCallInfo::QTelephonyCallInfo ( const QTelephonyCallInfo &amp; <i>other</i> )</h3>
 <p><i>other</i> Object which needs to be copied from.</p>
 <p>Constructor of a <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object using a const <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a>.</p>
-<h3 class="fn"><a name="dtor.QTelephonyCallInfo"></a>QTelephonyCallInfo::~QTelephonyCallInfo ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QTelephonyCallInfo"></a>QTelephonyCallInfo::~QTelephonyCallInfo ()</h3>
 <p>Destructor of a call info object.</p>
-<h3 class="fn"><a name="remotePartyIdentifier"></a>QString QTelephonyCallInfo::remotePartyIdentifier () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="remotePartyIdentifier"></a>QString QTelephonyCallInfo::remotePartyIdentifier () const</h3>
 <p>Gives back the id of a call. The remotePartyIdentifier contains the value dependend on the call <a href="qtelephonycallinfo.html#CallType-enum">CallType</a>. It can be the phone number, IP address or something else.</p>
-<h3 class="fn"><a name="status"></a><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a> QTelephonyCallInfo::status () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="status"></a><a href="qtelephonycallinfo.html#CallStatus-enum">CallStatus</a> QTelephonyCallInfo::status () const</h3>
 <p>Gives back the status of the call. A call can be in different conditions like ringing, dropped and so on. You can use this property if you want to know about the current condition of the call.</p>
-<h3 class="fn"><a name="subType"></a>QString QTelephonyCallInfo::subType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="subType"></a>QString QTelephonyCallInfo::subType () const</h3>
 <p>Gives back the sub type of the call type (see <a href="qtelephonycallinfo.html#type">QTelephonyCallInfo::type</a>()). A subtype of a Voip call can be Skype. You can use this property to get the sub type of the call .</p>
-<h3 class="fn"><a name="type"></a><a href="qtelephonycallinfo.html#CallType-enum">CallType</a> QTelephonyCallInfo::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qtelephonycallinfo.html#CallType-enum">CallType</a> QTelephonyCallInfo::type () const</h3>
 <p>Gives back the type of the call. A call can be a VOIP, Video Voice and so on. You can use this property to get the type of the call.</p>
-<h3 class="fn"><a name="value"></a>QVariant QTelephonyCallInfo::value ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QTelephonyCallInfo::value ( const QString &amp; <i>key</i> ) const</h3>
 <p>The <i>key</i> select the value in which the user is interrested to read.</p>
 <p>Gives back a variant value. This function is for reading additional values dependent on the key parameter.</p>
 </div>
@@ -209,15 +214,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

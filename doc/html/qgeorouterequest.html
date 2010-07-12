@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoRouteRequest&gt;</pre><ul>
 <li><a href="qgeorouterequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureType</a></b> { AvoidNothing, AvoidTolls, AvoidHighways, AvoidPublicTransit, ..., AvoidMotorPoolLanes }</td></tr>
@@ -150,7 +151,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelMode</a></b> { CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#QGeoRouteRequest">QGeoRouteRequest</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>waypoints</i> = QList&lt;QGeoCoordinate&gt; () )</td></tr>
@@ -175,7 +177,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QGeoCoordinate&gt; </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#waypoints">waypoints</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoRouteRequest &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeorouterequest.html#operator-eq">operator=</a></b> ( const QGeoRouteRequest &amp; <i>other</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoRouteRequest class represents the parameters and restrictions which define a request for routing information.</p>
@@ -184,6 +187,7 @@
 <p>There are several functions in <a href="qgeoroutingmanager.html">QGeoRoutingManager</a> which can be used to check which features are supported with the current provider and authorization level.</p>
 </div>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="AvoidFeatureType-enum"></a>enum QGeoRouteRequest::AvoidFeatureType<br/>flags QGeoRouteRequest::AvoidFeatureTypes</h3>
@@ -234,73 +238,74 @@
 </table>
 <p>The TravelModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;TravelMode&gt;. It stores an OR combination of TravelMode values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoRouteRequest"></a>QGeoRouteRequest::QGeoRouteRequest ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> = QList&lt;QGeoCoordinate&gt; () )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRouteRequest"></a>QGeoRouteRequest::QGeoRouteRequest ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> = QList&lt;QGeoCoordinate&gt; () )</h3>
 <p>Constructs a request to calculate a route through the coordinates <i>waypoints</i>.</p>
 <p>The route will traverse the elements of <i>waypoints</i> in order.</p>
-<h3 class="fn"><a name="QGeoRouteRequest-2"></a>QGeoRouteRequest::QGeoRouteRequest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>origin</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRouteRequest-2"></a>QGeoRouteRequest::QGeoRouteRequest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>origin</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i> )</h3>
 <p>Constructs a request to calculate a route between <i>origin</i> and <i>destination</i>.</p>
-<h3 class="fn"><a name="QGeoRouteRequest-3"></a>QGeoRouteRequest::QGeoRouteRequest ( const QGeoRouteRequest &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoRouteRequest-3"></a>QGeoRouteRequest::QGeoRouteRequest ( const QGeoRouteRequest &amp; <i>other</i> )</h3>
 <p>Constructs a route request object from the contents of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QGeoRouteRequest"></a>QGeoRouteRequest::~QGeoRouteRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoRouteRequest"></a>QGeoRouteRequest::~QGeoRouteRequest ()</h3>
 <p>Destroys the request.</p>
-<h3 class="fn"><a name="avoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> QGeoRouteRequest::avoidFeatureTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="avoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> QGeoRouteRequest::avoidFeatureTypes () const</h3>
 <p>Returns the features which this request specifies should be avoided during the planning of the route.</p>
 <p>See also <a href="qgeorouterequest.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a>().</p>
-<h3 class="fn"><a name="excludeAreas"></a>QList&lt;<a href="qgeoboundingbox.html">QGeoBoundingBox</a>&gt; QGeoRouteRequest::excludeAreas () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="excludeAreas"></a>QList&lt;<a href="qgeoboundingbox.html">QGeoBoundingBox</a>&gt; QGeoRouteRequest::excludeAreas () const</h3>
 <p>Returns areas the route must not cross.</p>
 <p>See also <a href="qgeorouterequest.html#setExcludeAreas">setExcludeAreas</a>().</p>
-<h3 class="fn"><a name="instructionDetail"></a><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> QGeoRouteRequest::instructionDetail () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instructionDetail"></a><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> QGeoRouteRequest::instructionDetail () const</h3>
 <p>Returns the level of detail which will be used in the representation of routing instructions.</p>
 <p>See also <a href="qgeorouterequest.html#setInstructionDetail">setInstructionDetail</a>().</p>
-<h3 class="fn"><a name="numberAlternativeRoutes"></a>int QGeoRouteRequest::numberAlternativeRoutes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="numberAlternativeRoutes"></a>int QGeoRouteRequest::numberAlternativeRoutes () const</h3>
 <p>Returns the number of alternative routes which will be requested.</p>
 <p>See also <a href="qgeorouterequest.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</a>().</p>
-<h3 class="fn"><a name="routeOptimization"></a><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> QGeoRouteRequest::routeOptimization () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="routeOptimization"></a><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> QGeoRouteRequest::routeOptimization () const</h3>
 <p>Returns the optimization criteria which this request specifies should be used while planning the route.</p>
 <p>See also <a href="qgeorouterequest.html#setRouteOptimization">setRouteOptimization</a>().</p>
-<h3 class="fn"><a name="segmentDetail"></a><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> QGeoRouteRequest::segmentDetail () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="segmentDetail"></a><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> QGeoRouteRequest::segmentDetail () const</h3>
 <p>Returns the level of detail which will be used in the representation of routing segments.</p>
 <p>See also <a href="qgeorouterequest.html#setSegmentDetail">setSegmentDetail</a>().</p>
-<h3 class="fn"><a name="setAvoidFeatureTypes"></a>void QGeoRouteRequest::setAvoidFeatureTypes ( <a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> <i>avoidFeatureTypes</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAvoidFeatureTypes"></a>void QGeoRouteRequest::setAvoidFeatureTypes ( <a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> <i>avoidFeatureTypes</i> )</h3>
 <p>Sets the features to be avoided during the planning of the route to <i>avoidFeatureTypes</i>.</p>
 <p>The default value is <a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidNothing</a>.</p>
 <p>See also <a href="qgeorouterequest.html#avoidFeatureTypes">avoidFeatureTypes</a>().</p>
-<h3 class="fn"><a name="setExcludeAreas"></a>void QGeoRouteRequest::setExcludeAreas ( const QList&lt;<a href="qgeoboundingbox.html">QGeoBoundingBox</a>&gt; &amp; <i>areas</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setExcludeAreas"></a>void QGeoRouteRequest::setExcludeAreas ( const QList&lt;<a href="qgeoboundingbox.html">QGeoBoundingBox</a>&gt; &amp; <i>areas</i> )</h3>
 <p>Sets <i>areas</i> as excluded areas that the route must not cross.</p>
 <p>See also <a href="qgeorouterequest.html#excludeAreas">excludeAreas</a>().</p>
-<h3 class="fn"><a name="setInstructionDetail"></a>void QGeoRouteRequest::setInstructionDetail ( <a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> <i>instructionDetail</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInstructionDetail"></a>void QGeoRouteRequest::setInstructionDetail ( <a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> <i>instructionDetail</i> )</h3>
 <p>Sets the level of detail to use when representing routing instructions to <i>instructionDetail</i>.</p>
 <p>The default value is <a href="qgeorouterequest.html#InstructionDetail-enum">QGeoRouteRequest::BasicInstructions</a>.</p>
 <p>See also <a href="qgeorouterequest.html#instructionDetail">instructionDetail</a>().</p>
-<h3 class="fn"><a name="setNumberAlternativeRoutes"></a>void QGeoRouteRequest::setNumberAlternativeRoutes ( int <i>alternatives</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setNumberAlternativeRoutes"></a>void QGeoRouteRequest::setNumberAlternativeRoutes ( int <i>alternatives</i> )</h3>
 <p>Sets the number of alternative routes to request to <i>alternatives</i>.</p>
 <p>The default value is 0.</p>
 <p>See also <a href="qgeorouterequest.html#numberAlternativeRoutes">numberAlternativeRoutes</a>().</p>
-<h3 class="fn"><a name="setRouteOptimization"></a>void QGeoRouteRequest::setRouteOptimization ( <a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> <i>optimization</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRouteOptimization"></a>void QGeoRouteRequest::setRouteOptimization ( <a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> <i>optimization</i> )</h3>
 <p>Sets the optimization criteria to use while planning the route to <i>optimization</i>.</p>
 <p>The default value is <a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::FastestRoute</a>.</p>
 <p>See also <a href="qgeorouterequest.html#routeOptimization">routeOptimization</a>().</p>
-<h3 class="fn"><a name="setSegmentDetail"></a>void QGeoRouteRequest::setSegmentDetail ( <a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> <i>segmentDetail</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSegmentDetail"></a>void QGeoRouteRequest::setSegmentDetail ( <a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> <i>segmentDetail</i> )</h3>
 <p>Sets the level of detail to use when representing routing segments to <i>segmentDetail</i>.</p>
 <p>See also <a href="qgeorouterequest.html#segmentDetail">segmentDetail</a>().</p>
-<h3 class="fn"><a name="setTravelModes"></a>void QGeoRouteRequest::setTravelModes ( <a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> <i>travelModes</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTravelModes"></a>void QGeoRouteRequest::setTravelModes ( <a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> <i>travelModes</i> )</h3>
 <p>Sets the travel modes which should be considered during the planning of the route to <i>travelModes</i>.</p>
 <p>The default value is <a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::CarTravel</a>.</p>
 <p>See also <a href="qgeorouterequest.html#travelModes">travelModes</a>().</p>
-<h3 class="fn"><a name="setWaypoints"></a>void QGeoRouteRequest::setWaypoints ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setWaypoints"></a>void QGeoRouteRequest::setWaypoints ( const QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> )</h3>
 <p>Sets <i>waypoints</i> as the waypoints that the route should pass through.</p>
 <p>The waypoints should be given in order from origin to destination.</p>
 <p>This request will be invalid until the waypoints have been set to a list containing two or more coordinates.</p>
 <p>See also <a href="qgeorouterequest.html#waypoints">waypoints</a>().</p>
-<h3 class="fn"><a name="travelModes"></a><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> QGeoRouteRequest::travelModes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="travelModes"></a><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> QGeoRouteRequest::travelModes () const</h3>
 <p>Returns the travel modes which this request specifies should be considered during the planning of the route.</p>
 <p>See also <a href="qgeorouterequest.html#setTravelModes">setTravelModes</a>().</p>
-<h3 class="fn"><a name="waypoints"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteRequest::waypoints () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="waypoints"></a>QList&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteRequest::waypoints () const</h3>
 <p>Returns the waypoints that the route will pass through.</p>
 <p>See also <a href="qgeorouterequest.html#setWaypoints">setWaypoints</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoRouteRequest &amp; QGeoRouteRequest::operator= ( const QGeoRouteRequest &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoRouteRequest &amp; QGeoRouteRequest::operator= ( const QGeoRouteRequest &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this route request object and then returns a reference to this route request object.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -309,15 +314,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

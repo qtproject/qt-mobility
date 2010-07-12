@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,12 +138,14 @@
 <ul>
 <li><a href="qgeoplace-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeoplace.html#PlaceType-enum">PlaceType</a></b> { GeoPlaceType, LandmarkType }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoplace.html#QGeoPlace">QGeoPlace</a></b> ()</td></tr>
@@ -160,12 +162,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoPlace &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeoplace.html#operator-eq">operator=</a></b> ( const QGeoPlace &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeoplace.html#operator-eq-eq">operator==</a></b> ( const QGeoPlace &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoplace.html#QGeoPlace-3">QGeoPlace</a></b> ( QGeoPlacePrivate * <i>dd</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoPlace class represents basic information about a place.</p>
@@ -175,51 +179,53 @@
 <p>The <a href="qgeoplace.html#type">type</a>() method and <a href="qgeoplace.html#PlaceType-enum">PlaceType</a> enum could be made protected, and a public bool isLandmark() method could be provided in their place, in order to simplify the conversion from QGeoPlace to <a href="qlandmark.html">QLandmark</a> for the user.</p>
 </div>
 <p>See also <a href="qgeoplace.html#type">type</a>().</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="PlaceType-enum"></a>enum QGeoPlace::PlaceType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="PlaceType-enum"></a>enum QGeoPlace::PlaceType</h3>
 <table class="valuelist"><tr><th>Constant</th><th>Value</th></tr>
 <tr><td  class="topAlign"><tt>QGeoPlace::GeoPlaceType</tt></td><td class=" topAlign"><tt>0</tt></td></tr>
 <tr><td  class="topAlign"><tt>QGeoPlace::LandmarkType</tt></td><td class=" topAlign"><tt>1</tt></td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoPlace"></a>QGeoPlace::QGeoPlace ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPlace"></a>QGeoPlace::QGeoPlace ()</h3>
 <p>Constructs an empty place object.</p>
-<h3 class="fn"><a name="QGeoPlace-2"></a>QGeoPlace::QGeoPlace ( const QGeoPlace &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPlace-2"></a>QGeoPlace::QGeoPlace ( const QGeoPlace &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="QGeoPlace-3"></a>QGeoPlace::QGeoPlace ( QGeoPlacePrivate * <i>dd</i> )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="dtor.QGeoPlace"></a>QGeoPlace::~QGeoPlace ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoPlace-3"></a>QGeoPlace::QGeoPlace ( QGeoPlacePrivate * <i>dd</i> )<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="dtor.QGeoPlace"></a>QGeoPlace::~QGeoPlace ()<tt> [virtual]</tt></h3>
 <p>Destroys this place.</p>
-<h3 class="fn"><a name="address"></a><a href="qgeoaddress.html">QGeoAddress</a> QGeoPlace::address () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="address"></a><a href="qgeoaddress.html">QGeoAddress</a> QGeoPlace::address () const</h3>
 <p>Returns the address of this place.</p>
 <p>See also <a href="qgeoplace.html#setAddress">setAddress</a>().</p>
-<h3 class="fn"><a name="boundingBox"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoPlace::boundingBox () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="boundingBox"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoPlace::boundingBox () const</h3>
 <p>Returns a bounding box that completely encloses this place.</p>
 <p>See also <a href="qgeoplace.html#setBoundingBox">setBoundingBox</a>().</p>
-<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoPlace::coordinate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoPlace::coordinate () const</h3>
 <p>Returns the coordinate that this place is located at.</p>
 <p>See also <a href="qgeoplace.html#setCoordinate">setCoordinate</a>().</p>
-<h3 class="fn"><a name="setAddress"></a>void QGeoPlace::setAddress ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAddress"></a>void QGeoPlace::setAddress ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i> )</h3>
 <p>Sets the <i>address</i> of this place.</p>
 <p>See also <a href="qgeoplace.html#address">address</a>().</p>
-<h3 class="fn"><a name="setBoundingBox"></a>void QGeoPlace::setBoundingBox ( const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>boundingBox</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBoundingBox"></a>void QGeoPlace::setBoundingBox ( const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>boundingBox</i> )</h3>
 <p>Sets the <i>boundingBox</i> of this place.</p>
 <p>The <i>boundingBox</i> should completely enclose this place.</p>
 <p>See also <a href="qgeoplace.html#boundingBox">boundingBox</a>().</p>
-<h3 class="fn"><a name="setCoordinate"></a>void QGeoPlace::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCoordinate"></a>void QGeoPlace::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
 <p>Sets the <i>coordinate</i> that this place is located at.</p>
 <p>See also <a href="qgeoplace.html#coordinate">coordinate</a>().</p>
-<h3 class="fn"><a name="type"></a><a href="qgeoplace.html#PlaceType-enum">PlaceType</a> QGeoPlace::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qgeoplace.html#PlaceType-enum">PlaceType</a> QGeoPlace::type () const</h3>
 <p>Returns type information about this place instance.</p>
 <p>An instance of a subclass of <a href="qgeoplace.html">QGeoPlace</a> can be converted to a <a href="qgeoplace.html">QGeoPlace</a> instance and back without losing any data. The <a href="qgeoplace.html#PlaceType-enum">QGeoPlace::PlaceType</a> enum is used to indicate which subclass initially created this <a href="qgeoplace.html">QGeoPlace</a> instance.</p>
 <p>If the type corresponds to a subclass of <a href="qgeoplace.html">QGeoPlace</a> then this place object can be converted back by using the subclass constructor which takes a <a href="qgeoplace.html">QGeoPlace</a> object as an argument. If the type is <a href="qgeoplace.html#PlaceType-enum">QGeoPlace::GeoPlaceType</a> then using this place in the same subclass constructor will only initialize the coordinate, address and bounding box of the subclass.</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoPlace::operator!= ( const QGeoPlace &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoPlace::operator!= ( const QGeoPlace &amp; <i>other</i> ) const</h3>
 <p>Returns true if <i>other</i> is not equal to this place, otherwise returns false.</p>
-<h3 class="fn"><a name="operator-eq"></a>QGeoPlace &amp; QGeoPlace::operator= ( const QGeoPlace &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QGeoPlace &amp; QGeoPlace::operator= ( const QGeoPlace &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this place and returns a reference to this place.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoPlace::operator== ( const QGeoPlace &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoPlace::operator== ( const QGeoPlace &amp; <i>other</i> ) const</h3>
 <p>Returns true if <i>other</i> is equal to this place, otherwise returns false.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -228,15 +234,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

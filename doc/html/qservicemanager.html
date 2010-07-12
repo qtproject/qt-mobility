@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,12 +136,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QServiceManager&gt;</pre><ul>
 <li><a href="qservicemanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#Error-enum">Error</a></b> { NoError, StorageAccessError, InvalidServiceLocation, InvalidServiceXml, ..., UnknownError }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#QServiceManager">QServiceManager</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -163,13 +165,15 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a></b> ( const QString &amp; <i>service</i>, const QString &amp; <i>interfaceName</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#setInterfaceDefault-2">setInterfaceDefault</a></b> ( const QServiceInterfaceDescriptor &amp; <i>descriptor</i> )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#serviceAdded">serviceAdded</a></b> ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicemanager.html#serviceRemoved">serviceRemoved</a></b> ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceManager class enables the loading of service plugins and the (de)registration of services.</p>
@@ -178,9 +182,10 @@
 <p>Each plug-in may support multiple interfaces and may even provide multiple implementations for the same interface. Individual implementations are identified via <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>. For a more detailed explanation of services and how they relate to interface and their implementations please see <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>.</p>
 </div>
 <p>See also <a href="qserviceplugininterface.html">QServicePluginInterface</a>, QServiceContext, and QAbstractSecuritySession.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QServiceManager::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Error-enum"></a>enum QServiceManager::Error</h3>
 <p>Defines the possible errors for the service manager.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QServiceManager::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No error occurred.</td></tr>
@@ -196,84 +201,85 @@
 <tr><td  class="topAlign"><tt>QServiceManager::UnknownError</tt></td><td class=" topAlign"><tt>100</tt></td><td  class="topAlign">An unknown error occurred.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QServiceManager"></a>QServiceManager::QServiceManager ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QServiceManager"></a>QServiceManager::QServiceManager ( QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a service manager with the given <i>parent</i>.</p>
 <p>The scope will default to QService::UserScope.</p>
-<h3 class="fn"><a name="QServiceManager-2"></a>QServiceManager::QServiceManager ( QService::Scope <i>scope</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QServiceManager-2"></a>QServiceManager::QServiceManager ( QService::Scope <i>scope</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a service manager with the given <i>scope</i> and <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QServiceManager"></a>QServiceManager::~QServiceManager ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QServiceManager"></a>QServiceManager::~QServiceManager ()</h3>
 <p>Destroys the service manager.</p>
-<h3 class="fn"><a name="addService"></a>bool QServiceManager::addService ( const QString &amp; <i>xmlFilePath</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addService"></a>bool QServiceManager::addService ( const QString &amp; <i>xmlFilePath</i> )</h3>
 <p>Registers the service defined by the XML file at <i>xmlFilePath</i>. Returns true if the registration succeeded, and false otherwise.</p>
 <p>If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
 <p>See also <a href="qservicemanager.html#removeService">removeService</a>() and <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
-<h3 class="fn"><a name="addService-2"></a>bool QServiceManager::addService ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addService-2"></a>bool QServiceManager::addService ( QIODevice * <i>device</i> )</h3>
 <p>Registers the service defined by the XML data from the given <i>device</i>. Returns true if the registration succeeded, and false otherwise. If a previously unkown interface is added the newly registered service automatically becomes the new default service provider for the new interface.</p>
 <p>Registering a service also causes <a href="qserviceplugininterface.html#installService">QServicePluginInterface::installService</a>() to be called on the service. If the service plugin is not accessible (e.g&#x2e; if the plugin file is not found) and <tt>installService()</tt> cannot be invoked on the service, the registration fails and this method returns false.</p>
 <p>A service plugin cannot be added if another service is already registered with the same plugin file path. A service plugin also cannot be added if the service is already registered and implements any of the same interface versions that the new plugin implements.</p>
 <p>Services are always added based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
 <p>See also <a href="qservicemanager.html#removeService">removeService</a>() and <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
-<h3 class="fn"><a name="error"></a><a href="qservicemanager.html#Error-enum">Error</a> QServiceManager::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qservicemanager.html#Error-enum">Error</a> QServiceManager::error () const</h3>
 <p>Returns the type of error that last occurred.</p>
-<h3 class="fn"><a name="findInterfaces"></a>QList&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const <a href="qservicefilter.html">QServiceFilter</a> &amp; <i>filter</i> = QServiceFilter() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="findInterfaces"></a>QList&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const <a href="qservicefilter.html">QServiceFilter</a> &amp; <i>filter</i> = QServiceFilter() ) const</h3>
 <p>Returns a list of the interfaces that match the specified <i>filter</i>.</p>
-<h3 class="fn"><a name="findInterfaces-2"></a>QList&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const QString &amp; <i>serviceName</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="findInterfaces-2"></a>QList&lt;<a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>&gt; QServiceManager::findInterfaces ( const QString &amp; <i>serviceName</i> ) const</h3>
 <p>Returns a list of the interfaces provided by the service named <i>serviceName</i>. If <i>serviceName</i> is empty, this function returns a list of all available interfaces in this manager's scope.</p>
-<h3 class="fn"><a name="findServices"></a>QStringList QServiceManager::findServices ( const QString &amp; <i>interfaceName</i> = QString() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="findServices"></a>QStringList QServiceManager::findServices ( const QString &amp; <i>interfaceName</i> = QString() ) const</h3>
 <p>Returns a list of the services that provide the interface specified by <i>interfaceName</i>. If <i>interfaceName</i> is empty, this function returns a list of all available services in this manager's scope.</p>
-<h3 class="fn"><a name="interfaceDefault"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::interfaceDefault ( const QString &amp; <i>interfaceName</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="interfaceDefault"></a><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> QServiceManager::interfaceDefault ( const QString &amp; <i>interfaceName</i> ) const</h3>
 <p>Returns the default interface implementation for the given <i>interfaceName</i>.</p>
 <p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
-<h3 class="fn"><a name="loadInterface"></a>QObject * QServiceManager::loadInterface ( const QString &amp; <i>interfaceName</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadInterface"></a>QObject * QServiceManager::loadInterface ( const QString &amp; <i>interfaceName</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3>
 <p>Loads and returns the interface specified by <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>This function returns a null pointer if the requested service cannot be found.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>() and <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
-<h3 class="fn"><a name="loadInterface-2"></a>QObject * QServiceManager::loadInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadInterface-2"></a>QObject * QServiceManager::loadInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3>
 <p>Loads and returns the interface specified by <i>descriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>This function returns a null pointer if the requested service cannot be found.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
-<h3 class="fn"><a name="loadLocalTypedInterface"></a>T * QServiceManager::loadLocalTypedInterface ( const QString &amp; <i>interfaceName</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadLocalTypedInterface"></a>T * QServiceManager::loadLocalTypedInterface ( const QString &amp; <i>interfaceName</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3>
 <p>Loads the service object implementing <i>interfaceName</i>, as provided by the default service for this interface, using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from QObject.</p>
 <p>If <i>interfaceName</i> is not a known interface the returned pointer will be null.</p>
 <p>Note that using this function implies that service and client share the implementation of T which means that service and client become tightly coupled. This may cause issue during later updates as certain changes may require code changes to the service and client.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
 <p>See also <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>() and <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
-<h3 class="fn"><a name="loadLocalTypedInterface-2"></a>T * QServiceManager::loadLocalTypedInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>serviceDescriptor</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadLocalTypedInterface-2"></a>T * QServiceManager::loadLocalTypedInterface ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>serviceDescriptor</i>, QServiceContext * <i>context</i> = 0, QAbstractSecuritySession * <i>session</i> = 0 )</h3>
 <p>Loads the service object identified by <i>serviceDescriptor</i> using the given <i>context</i> and <i>session</i>. <i>context</i> and <i>session</i> object are owned by the caller of this function. The template class must be derived from QObject.</p>
 <p>If the <i>serviceDescriptor</i> is not valid the returned pointer will be null.</p>
 <p>Note that using this function implies that service and client share the implementation of T which means that service and client become tightly coupled. This may cause issue during later updates as certain changes may require code changes to the service and client.</p>
 <p>The caller takes ownership of the returned pointer.</p>
 <p>The security session object is not mandatory. If the session pointer is null, the service manager will not perform any checks. Therefore it is assumed that the service manager client is trusted as it controls whether service capabilities are enforced during service loading.</p>
-<h3 class="fn"><a name="removeService"></a>bool QServiceManager::removeService ( const QString &amp; <i>serviceName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeService"></a>bool QServiceManager::removeService ( const QString &amp; <i>serviceName</i> )</h3>
 <p>Unregisters the service specified by <i>serviceName</i>.</p>
 <p>Returns true if the unregistration succeeded, and false otherwise.</p>
 <p>If a default service implementation is removed and there are other implementations for the same interface, the service manager chooses the implementation with the highest version number as the new default. If there is more than one serivce with the same version number, the service manager makes a random choice with regards to the new default implementation. If this is not the desired behaviour the default selection should be updated via <a href="qservicemanager.html#setInterfaceDefault">setInterfaceDefault</a>().</p>
 <p>Services are always removed based on the <a href="qservicemanager.html#scope">scope</a>() of the current service manager instance.</p>
 <p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
-<h3 class="fn"><a name="scope"></a>QService::Scope QServiceManager::scope () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="scope"></a>QService::Scope QServiceManager::scope () const</h3>
 <p>Returns the scope used for registering and searching of services.</p>
-<h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="serviceAdded"></a>void QServiceManager::serviceAdded ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )<tt> [signal]</tt></h3>
 <p>This signal is emited whenever a new service with the given <i>serviceName</i> has been registered with the service manager. <i>scope</i> indicates where the service was added.</p>
 <p>If the manager scope is QService::SystemScope, it will not receive notifications about services added in the user scope.</p>
 <p>See also <a href="qservicemanager.html#addService">addService</a>().</p>
-<h3 class="fn"><a name="serviceRemoved"></a>void QServiceManager::serviceRemoved ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="serviceRemoved"></a>void QServiceManager::serviceRemoved ( const QString &amp; <i>serviceName</i>, QService::Scope <i>scope</i> )<tt> [signal]</tt></h3>
 <p>This signal is emited whenever a service with the given <i>serviceName</i> has been deregistered with the service manager. <i>scope</i> indicates where the service was added.</p>
 <p>If the manager scope is QService::SystemScope, it will not receive notifications about services removed in the user scope.</p>
 <p>See also <a href="qservicemanager.html#removeService">removeService</a>().</p>
-<h3 class="fn"><a name="setInterfaceDefault"></a>bool QServiceManager::setInterfaceDefault ( const QString &amp; <i>service</i>, const QString &amp; <i>interfaceName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInterfaceDefault"></a>bool QServiceManager::setInterfaceDefault ( const QString &amp; <i>service</i>, const QString &amp; <i>interfaceName</i> )</h3>
 <p>Sets the default interface implementation for <i>interfaceName</i> to the matching interface implementation provided by <i>service</i>.</p>
 <p>If <i>service</i> provides more than one interface implementation for <i>interfaceName</i>, the newest version of the interface is set as the default.</p>
 <p>Returns true if the operation succeeded, and false otherwise.</p>
 <p><b>Note:</b> When in system scope, the <i>service</i> must be a system-wide service rather than a user-specific service; otherwise, this will fail.</p>
 <p>See also <a href="qservicemanager.html#interfaceDefault">interfaceDefault</a>().</p>
-<h3 class="fn"><a name="setInterfaceDefault-2"></a>bool QServiceManager::setInterfaceDefault ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setInterfaceDefault-2"></a>bool QServiceManager::setInterfaceDefault ( const <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> &amp; <i>descriptor</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Sets the interface implementation specified by <i>descriptor</i> to be the default implementation for the particular interface specified in the descriptor.</p>
 <p>Returns true if the operation succeeded, and false otherwise.</p>
@@ -285,15 +291,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

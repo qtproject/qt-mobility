@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#properties">Properties</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,7 +137,8 @@
 <ul>
 <li><a href="qmagnetometerreading-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a></b> : const qreal</li>
@@ -148,7 +149,8 @@
 <ul>
 <li class="fn">1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a></b> () const</td></tr>
@@ -163,11 +165,12 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMagnetometerReading class represents one reading from the magnetometer.</p>
-<a name="qmagnetometerreading-units"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="qmagnetometerreading-units"></a>
 <h3>QMagnetometerReading Units</h3>
 <p>The magnetometer returns magnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
 <p class="centerAlign"><img src="images/sensors-coordinates2.jpg" /></p><p>The magnetometer can report on either raw magnetic flux values or geomagnetic flux values. By default it returns raw magnetic flux values. The <a href="qmagnetometer.html#returnGeoValues-prop">QMagnetometer::returnGeoValues</a> property must be set to return geomagnetic flux values.</p>
@@ -175,9 +178,10 @@
 <p>The image below shows the difference between geomagnetic (on the left) and raw (on the right) readings for a phone that is being subjected to magnetic interference.</p>
 <p class="centerAlign"><img src="images/sensors-geo-vs-raw-magnetism.jpg" /></p><p>The accuracy of each reading is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const qreal</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const qreal</h3>
 <p>This property holds the accuracy of the reading.</p>
 <p>Measured as a value from 0 to 1 with higher values being better.</p>
 <p>Note that this only changes when measuring geomagnetic flux density. Raw magnetic flux readings will always have a value of 1.</p>
@@ -186,7 +190,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> qreal </td><td class="memItemRight bottomAlign"><b>calibrationLevel</b> () const</td></tr>
 </table>
 <p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<h3 class="fn"><a name="x-prop"></a>x : const qreal</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="x-prop"></a>x : const qreal</h3>
 <p>This property holds the raw magnetic flux density on the X axis.</p>
 <p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
@@ -194,7 +198,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> qreal </td><td class="memItemRight bottomAlign"><b>x</b> () const</td></tr>
 </table>
 <p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<h3 class="fn"><a name="y-prop"></a>y : const qreal</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="y-prop"></a>y : const qreal</h3>
 <p>This property holds the raw magnetic flux density on the Y axis.</p>
 <p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
@@ -202,7 +206,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> qreal </td><td class="memItemRight bottomAlign"><b>y</b> () const</td></tr>
 </table>
 <p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<h3 class="fn"><a name="z-prop"></a>z : const qreal</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="z-prop"></a>z : const qreal</h3>
 <p>This property holds the raw magnetic flux density on the Z axis.</p>
 <p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
@@ -211,18 +215,19 @@
 </table>
 <p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="setCalibrationLevel"></a>void QMagnetometerReading::setCalibrationLevel ( qreal <i>calibrationLevel</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCalibrationLevel"></a>void QMagnetometerReading::setCalibrationLevel ( qreal <i>calibrationLevel</i> )</h3>
 <p>Sets the accuracy of the reading to <i>calibrationLevel</i>.</p>
 <p>See also <a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a>().</p>
-<h3 class="fn"><a name="setX"></a>void QMagnetometerReading::setX ( qreal <i>x</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setX"></a>void QMagnetometerReading::setX ( qreal <i>x</i> )</h3>
 <p>Sets the raw magnetic flux density on the X axis to <i>x</i>.</p>
 <p>See also <a href="qmagnetometerreading.html#x-prop">x</a>().</p>
-<h3 class="fn"><a name="setY"></a>void QMagnetometerReading::setY ( qreal <i>y</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setY"></a>void QMagnetometerReading::setY ( qreal <i>y</i> )</h3>
 <p>Sets the raw magnetic flux density on the Y axis to <i>y</i>.</p>
 <p>See also <a href="qmagnetometerreading.html#y-prop">y</a>().</p>
-<h3 class="fn"><a name="setZ"></a>void QMagnetometerReading::setZ ( qreal <i>z</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setZ"></a>void QMagnetometerReading::setZ ( qreal <i>z</i> )</h3>
 <p>Sets the raw magnetic flux density on the Z axis to <i>z</i>.</p>
 <p>See also <a href="qmagnetometerreading.html#z-prop">z</a>().</p>
 </div>
@@ -232,15 +237,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

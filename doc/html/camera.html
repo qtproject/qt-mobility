@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
@@ -139,13 +139,13 @@
 <div class="descr"/>
 <p><b>Note:</b> This API and documentation is a <b>Technology Preview</b> and is still subject to change.</p>
 <p>The Camera API provides control of system camera devices. Providing support for still or video image capture with sound support.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>The Camera API allows high level control of various aspects of still images and video. Camera is a part of the Multimedia API and this relationship is apparent when you notice that certain core classes are subclassed from some Multimedia base classes including <a href="qmediaobject.html">QMediaObject</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
-<a name="still-images"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="still-images"></a>
 <h2>Still Images</h2>
 <p>In order to capture an image we need to create a <a href="qcamera.html">QCamera</a> object and use it to initialize a <a href="qvideowidget.html">QVideoWidget</a>, so we can see where the camera is pointing - a viewfinder. The camera object is also used to initialize a new QStillImageCapture object, imageCapture. All that is then needed is to start the camera, lock it so that the settings are not changed while the image capture occurs, capture the image, and finally unlock the camera ready for the next photo.</p>
 <pre class="highlightedCode brush: cpp"> camera = new QCamera;
@@ -169,7 +169,7 @@
 <span class="comment"> //on shutter button released</span>
  camera-&gt;unlock();</pre>
 <p>Alternatively, we could have used a <a href="qvideowidget.html">QVideoWidget</a> initialized with the camera object to create a view finder.</p>
-<a name="video-clips"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="video-clips"></a>
 <h2>Video Clips</h2>
 <p>Previously we saw code that allowed the capture of a still image. Recording video requires the use of a <a href="qmediarecorder.html">QMediaRecorder</a> object and a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> for sound.</p>
 <p>To record video we need to create a camera object as before but this time as well as creating a viewfinder, we will also initialize a media recorder object and an audio source object for sound configuration details.</p>
@@ -178,13 +178,13 @@
  audioSource = new QAudioCaptureSource(camera);</pre>
 <p>Signals from the <i>mediaRecorder</i> can be connected to slots to react to changes in the state of the recorder or error events. Recording itself starts with the <a href="qmediarecorder.html#record">record()</a> function of mediaRecorder being called, this causes the signal <a href="qmediarecorder.html#stateChanged">stateChanged()</a> to be emitted. The recording process can be changed with the <a href="qmediarecorder.html#record">record()</a>, <a href="qmediarecorder.html#pause">pause()</a>, <a href="qmediarecorder.html#stop">stop()</a> and <a href="qmediarecorder.html#muted-prop">setMuted()</a> slots in <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
 <p>When the camera is in video mode, as decided by the application, then as the shutter button is pressed the camera is locked as before but instead the <a href="qmediarecorder.html#record">record()</a> function in <a href="qmediarecorder.html">QMediaRecorder</a> is used.</p>
-<a name="focus"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="focus"></a>
 <h2>Focus</h2>
 <p>Focusing is managed by the classes <a href="qcamerafocus.html">QCameraFocus</a> and <a href="qcamerafocuscontrol.html">QCameraFocusControl</a>. <a href="qcamerafocus.html">QCameraFocus</a> allows the developer to set the general policy by means of the enums for the <a href="qcamerafocus.html#FocusMode-enum">FocusMode</a> and the <a href="qcamerafocus.html#FocusPointMode-enum">FocusPointMode</a>. FocusMode deals with settings such as AutoFocus, ContinuousFocus and InfinityFocus, whereas FocusPointMode deals with the various focus zones within the view. FocusPointMode has support for face recognition, center focus and a custom focus where the focus point can be specified.</p>
-<a name="cancelling-asynchronous-operations"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="cancelling-asynchronous-operations"></a>
 <h2>Cancelling Asynchronous Operations</h2>
 <p>Various operations such as image capture and auto focusing occur asynchrously. These operations can often be cancelled by the start of a new operation as long as this is supported by the backend. For image capture, the operation can be cancelled by calling cancelCapture(). For AutoFocus, autoexposure or white balance cancellation can be done by calling <i>QCamera::unlock(<a href="qcamera.html#LockType-enum">QCamera::LockFocus</a>)</i>.</p>
-<a name="camera-controls"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="camera-controls"></a>
 <h2>Camera Controls</h2>
 <table class="generic">
 <thead><tr class="qt-style topAlign"><th>Control Name</th><th>Description</th></tr></thead>
@@ -197,7 +197,7 @@
 <tr class="odd topAlign"><td><p>locks</p></td><td><p>handles the locking and unlocking of camera devices</p></td></tr>
 <tr class="even topAlign"><td><p>viewfinder</p></td><td><p>used to set displayed items and resolution</p></td></tr>
 </table>
-<a name="classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="classes"></a>
 <h2>Classes</h2>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qcamera.html">QCamera</a></p></td><td><p>Interface for system camera devices</p></td></tr>
@@ -218,15 +218,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

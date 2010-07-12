@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -136,12 +136,14 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemSortOrder&gt;</pre><ul>
 <li><a href="qorganizeritemsortorder-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemsortorder.html#BlankPolicy-enum">BlankPolicy</a></b> { BlanksFirst, BlanksLast }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemsortorder.html#QOrganizerItemSortOrder">QOrganizerItemSortOrder</a></b> ()</td></tr>
@@ -162,65 +164,68 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QOrganizerItemSortOrder &amp; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemsortorder.html#operator-eq">operator=</a></b> ( const QOrganizerItemSortOrder &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemsortorder.html#operator-eq-eq">operator==</a></b> ( const QOrganizerItemSortOrder &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemSortOrder class defines how a list of organizeritems should be ordered according to some criteria</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="BlankPolicy-enum"></a>enum QOrganizerItemSortOrder::BlankPolicy</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="BlankPolicy-enum"></a>enum QOrganizerItemSortOrder::BlankPolicy</h3>
 <p>Enumerates the ways in which the sort order interprets blanks when sorting organizeritems</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QOrganizerItemSortOrder::BlanksFirst</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Considers blank values to evaluate to less than all other values in comparisons</td></tr>
 <tr><td  class="topAlign"><tt>QOrganizerItemSortOrder::BlanksLast</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Considers blank values to evaluate to greater than all other values in comparisons</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemSortOrder"></a>QOrganizerItemSortOrder::QOrganizerItemSortOrder ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemSortOrder"></a>QOrganizerItemSortOrder::QOrganizerItemSortOrder ()</h3>
 <p>Constructs a new sort order</p>
-<h3 class="fn"><a name="QOrganizerItemSortOrder-2"></a>QOrganizerItemSortOrder::QOrganizerItemSortOrder ( const QOrganizerItemSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemSortOrder-2"></a>QOrganizerItemSortOrder::QOrganizerItemSortOrder ( const QOrganizerItemSortOrder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> sort order</p>
-<h3 class="fn"><a name="dtor.QOrganizerItemSortOrder"></a>QOrganizerItemSortOrder::~QOrganizerItemSortOrder ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemSortOrder"></a>QOrganizerItemSortOrder::~QOrganizerItemSortOrder ()</h3>
 <p>Frees any memory in use by this sort order</p>
-<h3 class="fn"><a name="blankPolicy"></a><a href="qorganizeritemsortorder.html#BlankPolicy-enum">BlankPolicy</a> QOrganizerItemSortOrder::blankPolicy () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="blankPolicy"></a><a href="qorganizeritemsortorder.html#BlankPolicy-enum">BlankPolicy</a> QOrganizerItemSortOrder::blankPolicy () const</h3>
 <p>Returns the blank policy of the sort order</p>
 <p>See also <a href="qorganizeritemsortorder.html#setBlankPolicy">setBlankPolicy</a>().</p>
-<h3 class="fn"><a name="caseSensitivity"></a>Qt::CaseSensitivity QOrganizerItemSortOrder::caseSensitivity () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="caseSensitivity"></a>Qt::CaseSensitivity QOrganizerItemSortOrder::caseSensitivity () const</h3>
 <p>Returns the case sensitivity of the sort order</p>
 <p>See also <a href="qorganizeritemsortorder.html#setCaseSensitivity">setCaseSensitivity</a>().</p>
-<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemSortOrder::detailDefinitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemSortOrder::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected to perform sorting. Note that if a organizeritem has multiple details of the definition, the result of the sorting is undefined.</p>
 <p>See also <a href="qorganizeritemsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemSortOrder::detailFieldName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemSortOrder::detailFieldName () const</h3>
 <p>Returns the name of the field in the definition which will be inspected to perform sorting</p>
 <p>See also <a href="qorganizeritemsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="direction"></a>Qt::SortOrder QOrganizerItemSortOrder::direction () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="direction"></a>Qt::SortOrder QOrganizerItemSortOrder::direction () const</h3>
 <p>Returns the direction of the sort order</p>
 <p>See also <a href="qorganizeritemsortorder.html#setDirection">setDirection</a>().</p>
-<h3 class="fn"><a name="isValid"></a>bool QOrganizerItemSortOrder::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QOrganizerItemSortOrder::isValid () const</h3>
 <p>Returns true if the sort order is able to be used to sort a list of organizeritems; otherwise, returns false</p>
-<h3 class="fn"><a name="setBlankPolicy"></a>void QOrganizerItemSortOrder::setBlankPolicy ( <a href="qorganizeritemsortorder.html#BlankPolicy-enum">BlankPolicy</a> <i>blankPolicy</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setBlankPolicy"></a>void QOrganizerItemSortOrder::setBlankPolicy ( <a href="qorganizeritemsortorder.html#BlankPolicy-enum">BlankPolicy</a> <i>blankPolicy</i> )</h3>
 <p>Sets the sort order's policy on blank values with respect to sorting to <i>blankPolicy</i></p>
 <p>See also <a href="qorganizeritemsortorder.html#blankPolicy">blankPolicy</a>().</p>
-<h3 class="fn"><a name="setCaseSensitivity"></a>void QOrganizerItemSortOrder::setCaseSensitivity ( Qt::CaseSensitivity <i>sensitivity</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCaseSensitivity"></a>void QOrganizerItemSortOrder::setCaseSensitivity ( Qt::CaseSensitivity <i>sensitivity</i> )</h3>
 <p>Sets the case sensitivity of the sort order to <i>sensitivity</i></p>
 <p>See also <a href="qorganizeritemsortorder.html#caseSensitivity">caseSensitivity</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemSortOrder::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemSortOrder::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> )</h3>
 <p>Sets the definition name of the details which will be inspected to perform sorting to <i>definitionName</i>, and the name of those details' fields which contains the value which organizeritems will be sorted by to <i>fieldName</i></p>
 <p>See also <a href="qorganizeritemsortorder.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qorganizeritemsortorder.html#detailFieldName">detailFieldName</a>().</p>
-<h3 class="fn"><a name="setDirection"></a>void QOrganizerItemSortOrder::setDirection ( Qt::SortOrder <i>direction</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDirection"></a>void QOrganizerItemSortOrder::setDirection ( Qt::SortOrder <i>direction</i> )</h3>
 <p>Sets the sort order direction to <i>direction</i></p>
 <p>See also <a href="qorganizeritemsortorder.html#direction">direction</a>().</p>
-<h3 class="fn"><a name="operator-QList-ltQOrganizerItemSortOrder-gt"></a>QOrganizerItemSortOrder::operator QList&lt;QOrganizerItemSortOrder&gt; () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-QList-ltQOrganizerItemSortOrder-gt"></a>QOrganizerItemSortOrder::operator QList&lt;QOrganizerItemSortOrder&gt; () const</h3>
 <p>Constructs a new list of sort orders containing only the current sort order</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemSortOrder::operator!= ( const QOrganizerItemSortOrder &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemSortOrder::operator!= ( const QOrganizerItemSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is not identical to the <i>other</i> sort order</p>
 <p>See also <a href="qorganizeritemsortorder.html#operator-eq-eq">operator==</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemSortOrder &amp; QOrganizerItemSortOrder::operator= ( const QOrganizerItemSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemSortOrder &amp; QOrganizerItemSortOrder::operator= ( const QOrganizerItemSortOrder &amp; <i>other</i> )</h3>
 <p>Assigns this sort order to be equal to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemSortOrder::operator== ( const QOrganizerItemSortOrder &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemSortOrder::operator== ( const QOrganizerItemSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is identical to the <i>other</i> sort order</p>
 <p>See also <a href="qorganizeritemsortorder.html#operator-not-eq">operator!=</a>().</p>
 </div>
@@ -230,15 +235,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

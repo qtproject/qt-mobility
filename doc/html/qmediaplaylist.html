@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -141,20 +141,23 @@
 <ul>
 <li><a href="qmediaplaylist-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#Error-enum">Error</a></b> { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</a></b> { CurrentItemOnce, CurrentItemInLoop, Sequential, Loop, Random }</td></tr>
 </table>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qmediaplaylist.html#currentIndex-prop">currentIndex</a></b> : int</li>
 <li class="fn"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> : const QMediaContent</li>
 <li class="fn"><b><a href="qmediaplaylist.html#playbackMode-prop">playbackMode</a></b> : QMediaPlaylist::PlaybackMode</li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -183,7 +186,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</a></b> ( PlaybackMode <i>mode</i> )</td></tr>
 </table>
-<a name="reimplemented-public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaObject * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#mediaObject">mediaObject</a></b> () const</td></tr>
@@ -191,7 +195,8 @@
 <ul>
 <li class="fn">1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
 </ul>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#next">next</a></b> ()</td></tr>
@@ -199,7 +204,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#currentIndex-prop">setCurrentIndex</a></b> ( int <i>playlistPosition</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#shuffle">shuffle</a></b> ()</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
@@ -217,7 +223,8 @@
 <ul>
 <li class="fn">1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylist class provides a list of media content to play.</p>
@@ -238,9 +245,10 @@
 <p>Depending on playlist source implementation, most of the playlist mutating operations can be asynchronous.</p>
 </div>
 <p>See also <a href="qmediacontent.html">QMediaContent</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QMediaPlaylist::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Error-enum"></a>enum QMediaPlaylist::Error</h3>
 <p>This enum describes the <a href="qmediaplaylist.html">QMediaPlaylist</a> error codes.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMediaPlaylist::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No errors.</td></tr>
@@ -249,7 +257,7 @@
 <tr><td  class="topAlign"><tt>QMediaPlaylist::NetworkError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Network error.</td></tr>
 <tr><td  class="topAlign"><tt>QMediaPlaylist::AccessDeniedError</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">Access denied error.</td></tr>
 </table>
-<h3 class="fn"><a name="PlaybackMode-enum"></a>enum QMediaPlaylist::PlaybackMode</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="PlaybackMode-enum"></a>enum QMediaPlaylist::PlaybackMode</h3>
 <p>The QMediaPlaylist::PlaybackMode describes the order items in playlist are played.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QMediaPlaylist::CurrentItemOnce</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The current item is played only once.</td></tr>
@@ -259,9 +267,10 @@
 <tr><td  class="topAlign"><tt>QMediaPlaylist::Random</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">Play items in random order.</td></tr>
 </table>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="currentIndex-prop"></a>currentIndex : int</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentIndex-prop"></a>currentIndex : int</h3>
 <p>This property holds current position.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -272,7 +281,7 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="currentMedia-prop"></a>currentMedia : const <a href="qmediacontent.html">QMediaContent</a></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentMedia-prop"></a>currentMedia : const <a href="qmediacontent.html">QMediaContent</a></h3>
 <p>This property holds current media content.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -282,7 +291,7 @@
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="playbackMode-prop"></a>playbackMode : <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="playbackMode-prop"></a>playbackMode : <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a></h3>
 <p>This property defines the order, items in playlist are played.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -295,97 +304,98 @@
 </table>
 <p>See also <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( QObject * <i>parent</i> = 0 )</h3>
 <p>Create a new playlist object for with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()<tt> [virtual]</tt></h3>
 <p>Destroys the playlist.</p>
-<h3 class="fn"><a name="addMedia"></a>bool QMediaPlaylist::addMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addMedia"></a>bool QMediaPlaylist::addMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
 <p>Append the media <i>content</i> to the playlist.</p>
 <p>Returns true if the operation is successful, otherwise return false.</p>
-<h3 class="fn"><a name="addMedia-2"></a>bool QMediaPlaylist::addMedia ( const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addMedia-2"></a>bool QMediaPlaylist::addMedia ( const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
 <p>Append multiple media content <i>items</i> to the playlist.</p>
 <p>Returns true if the operation is successful, otherwise return false.</p>
-<h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3>
 <p>Remove all the items from the playlist.</p>
 <p>Returns true if the operation is successful, otherwise return false.</p>
-<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylist::currentIndexChanged ( int <i>position</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylist::currentIndexChanged ( int <i>position</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when playlist position changed to <i>position</i>.</p>
-<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylist::currentMediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylist::currentMediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when current media changes to <i>content</i>.</p>
-<h3 class="fn"><a name="error"></a><a href="qmediaplaylist.html#Error-enum">Error</a> QMediaPlaylist::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qmediaplaylist.html#Error-enum">Error</a> QMediaPlaylist::error () const</h3>
 <p>Returns the last error condition.</p>
-<h3 class="fn"><a name="errorString"></a>QString QMediaPlaylist::errorString () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errorString"></a>QString QMediaPlaylist::errorString () const</h3>
 <p>Returns the string describing the last error condition.</p>
-<h3 class="fn"><a name="insertMedia"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertMedia"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
 <p>Insert the media <i>content</i> to the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise false.</p>
-<h3 class="fn"><a name="insertMedia-2"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="insertMedia-2"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const QList&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
 <p>Insert multiple media content <i>items</i> to the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise false.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3>
 <p>Returns true if the playlist contains no items; otherwise returns false.</p>
 <p>See also size().</p>
-<h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylist::isReadOnly () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylist::isReadOnly () const</h3>
 <p>Returns true if the playlist can be modified; otherwise returns false.</p>
 <p>See also size().</p>
-<h3 class="fn"><a name="load"></a>void QMediaPlaylist::load ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="load"></a>void QMediaPlaylist::load ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
 <p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
 <p>New items are appended to playlist.</p>
 <p><a href="qmediaplaylist.html#loaded">QMediaPlaylist::loaded</a>() signal is emitted if playlist was loaded successfully, otherwise the playlist emits <a href="qmediaplaylist.html#loadFailed">loadFailed</a>().</p>
-<h3 class="fn"><a name="load-2"></a>void QMediaPlaylist::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="load-2"></a>void QMediaPlaylist::load ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</h3>
 <p>Load playlist from QIODevice <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
 <p>New items are appended to playlist.</p>
 <p><a href="qmediaplaylist.html#loaded">QMediaPlaylist::loaded</a>() signal is emitted if playlist was loaded successfully, otherwise the playlist emits <a href="qmediaplaylist.html#loadFailed">loadFailed</a>().</p>
-<h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylist::loadFailed ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylist::loadFailed ()<tt> [signal]</tt></h3>
 <p>Signal emitted if failed to load playlist.</p>
-<h3 class="fn"><a name="loaded"></a>void QMediaPlaylist::loaded ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="loaded"></a>void QMediaPlaylist::loaded ()<tt> [signal]</tt></h3>
 <p>Signal emitted when playlist finished loading.</p>
-<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylist::media ( int <i>index</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylist::media ( int <i>index</i> ) const</h3>
 <p>Returns the media content at <i>index</i> in the playlist.</p>
-<h3 class="fn"><a name="mediaAboutToBeInserted"></a>void QMediaPlaylist::mediaAboutToBeInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaAboutToBeInserted"></a>void QMediaPlaylist::mediaAboutToBeInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when items are to be inserted at <i>start</i> and ending at <i>end</i>.</p>
-<h3 class="fn"><a name="mediaAboutToBeRemoved"></a>void QMediaPlaylist::mediaAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaAboutToBeRemoved"></a>void QMediaPlaylist::mediaAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when item are to be deleted at <i>start</i> and ending at <i>end</i>.</p>
-<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlaylist::mediaChanged ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlaylist::mediaChanged ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted after media has been changed in the playlist between <i>start</i> and <i>end</i> positions inclusive.</p>
-<h3 class="fn"><a name="mediaCount"></a>int QMediaPlaylist::mediaCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaCount"></a>int QMediaPlaylist::mediaCount () const</h3>
 <p>Returns the number of items in the playlist.</p>
 <p>See also <a href="qmediaplaylist.html#isEmpty">isEmpty</a>().</p>
-<h3 class="fn"><a name="mediaInserted"></a>void QMediaPlaylist::mediaInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaInserted"></a>void QMediaPlaylist::mediaInserted ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted after media has been inserted into the playlist. The new items are those between <i>start</i> and <i>end</i> inclusive.</p>
-<h3 class="fn"><a name="mediaObject"></a><a href="qmediaobject.html">QMediaObject</a> * QMediaPlaylist::mediaObject () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaObject"></a><a href="qmediaobject.html">QMediaObject</a> * QMediaPlaylist::mediaObject () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediabindableinterface.html#mediaObject">QMediaBindableInterface::mediaObject</a>().</p>
 <p>Returns the <a href="qmediaobject.html">QMediaObject</a> instance that this <a href="qmediaplaylist.html">QMediaPlaylist</a> is bound too, or 0 otherwise.</p>
-<h3 class="fn"><a name="mediaRemoved"></a>void QMediaPlaylist::mediaRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mediaRemoved"></a>void QMediaPlaylist::mediaRemoved ( int <i>start</i>, int <i>end</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted after media has been removed from the playlist. The removed items are those between <i>start</i> and <i>end</i> inclusive.</p>
-<h3 class="fn"><a name="next"></a>void QMediaPlaylist::next ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="next"></a>void QMediaPlaylist::next ()<tt> [slot]</tt></h3>
 <p>Advance to the next media content in playlist.</p>
-<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylist::nextIndex ( int <i>steps</i> = 1 ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylist::nextIndex ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns the index of the item, which would be current after calling <a href="qmediaplaylist.html#next">next</a>() <i>steps</i> times.</p>
 <p>Returned value depends on the size of playlist, current position and playback mode.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
-<h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylist::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylist::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when playback mode changed to <i>mode</i>.</p>
-<h3 class="fn"><a name="previous"></a>void QMediaPlaylist::previous ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="previous"></a>void QMediaPlaylist::previous ()<tt> [slot]</tt></h3>
 <p>Return to the previous media content in playlist.</p>
-<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylist::previousIndex ( int <i>steps</i> = 1 ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylist::previousIndex ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns the index of the item, which would be current after calling <a href="qmediaplaylist.html#previous">previous</a>() <i>steps</i> times.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
-<h3 class="fn"><a name="removeMedia"></a>bool QMediaPlaylist::removeMedia ( int <i>pos</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMedia"></a>bool QMediaPlaylist::removeMedia ( int <i>pos</i> )</h3>
 <p>Remove the item from the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise return false.</p>
-<h3 class="fn"><a name="removeMedia-2"></a>bool QMediaPlaylist::removeMedia ( int <i>start</i>, int <i>end</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeMedia-2"></a>bool QMediaPlaylist::removeMedia ( int <i>start</i>, int <i>end</i> )</h3>
 <p>Remove items in the playlist from <i>start</i> to <i>end</i> inclusive.</p>
 <p>Returns true if the operation is successful, otherwise return false.</p>
-<h3 class="fn"><a name="save"></a>bool QMediaPlaylist::save ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="save"></a>bool QMediaPlaylist::save ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
 <p>Save playlist to <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name.</p>
 <p>Returns true if playlist was saved successfully, otherwise returns false.</p>
-<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylist::save ( QIODevice * <i>device</i>, const char * <i>format</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="save-2"></a>bool QMediaPlaylist::save ( QIODevice * <i>device</i>, const char * <i>format</i> )</h3>
 <p>Save playlist to QIODevice <i>device</i> using format <i>format</i>.</p>
 <p>Returns true if playlist was saved successfully, otherwise returns false.</p>
-<h3 class="fn"><a name="shuffle"></a>void QMediaPlaylist::shuffle ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="shuffle"></a>void QMediaPlaylist::shuffle ()<tt> [slot]</tt></h3>
 <p>Shuffle items in the playlist.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -394,15 +404,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

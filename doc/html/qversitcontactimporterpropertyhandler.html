@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,29 +135,32 @@
 <ul>
 <li><a href="qversitcontactimporterpropertyhandler-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler">~QVersitContactImporterPropertyHandler</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporterpropertyhandler.html#postProcessProperty">postProcessProperty</a></b> ( const QVersitDocument &amp; <i>document</i>, const QVersitProperty &amp; <i>property</i>, bool <i>alreadyProcessed</i>, int <i>contactIndex</i>, QContact * <i>contact</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qversitcontactimporterpropertyhandler.html#preProcessProperty">preProcessProperty</a></b> ( const QVersitDocument &amp; <i>document</i>, const QVersitProperty &amp; <i>property</i>, int <i>contactIndex</i>, QContact * <i>contact</i> ) = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporterPropertyHandler class is an interface for clients wishing to implement custom import behaviour for vCard properties</p>
 <p>This interface is replaced by <a href="qversitcontactimporterpropertyhandlerv2.html">QVersitContactImporterPropertyHandlerV2</a>.</p>
 </div>
 <p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QVersitContactImporterPropertyHandler"></a>QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVersitContactImporterPropertyHandler"></a>QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler ()<tt> [virtual]</tt></h3>
 <p>Frees any memory in use by this handler.</p>
-<h3 class="fn"><a name="postProcessProperty"></a>bool QVersitContactImporterPropertyHandler::postProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, bool <i>alreadyProcessed</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="postProcessProperty"></a>bool QVersitContactImporterPropertyHandler::postProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, bool <i>alreadyProcessed</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )<tt> [pure virtual]</tt></h3>
 <p>Process <i>property</i> and update <i>contact</i> with the corresponding <a href="qcontactdetail.html">QContactDetail</a>(s). <i>document</i> provides the context within which the property was found. <i>contactIndex</i> specifies the position that <i>contact</i> will take in the list returned by <a href="qversitcontactimporter.html#importDocuments">QVersitContactImporter::importDocuments</a>(). <i>alreadyProcessed</i> is true if the detail has already been processed either by <a href="qversitcontactimporterpropertyhandler.html#preProcessProperty">preProcessProperty</a>() or by <a href="qversitcontactimporter.html">QVersitContactImporter</a> itself.</p>
 <p>Returns true if the property has been handled, false otherwise.</p>
 <p>This function is called on every <a href="qversitproperty.html">QVersitProperty</a> encountered during an import. This can be used to implement support for vCard properties not supported by <a href="qversitcontactimporter.html">QVersitContactImporter</a>.</p>
-<h3 class="fn"><a name="preProcessProperty"></a>bool QVersitContactImporterPropertyHandler::preProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="preProcessProperty"></a>bool QVersitContactImporterPropertyHandler::preProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )<tt> [pure virtual]</tt></h3>
 <p>Process <i>property</i> and update <i>contact</i> with the corresponding <a href="qcontactdetail.html">QContactDetail</a>(s). <i>document</i> provides the context within which the property was found. <i>contactIndex</i> specifies the position that <i>contact</i> will take in the list returned by <a href="qversitcontactimporter.html#importDocuments">QVersitContactImporter::importDocuments</a>().</p>
 <p>Returns true if the property has been handled and requires no further processing, false otherwise.</p>
 <p>This function is called on every <a href="qversitproperty.html">QVersitProperty</a> encountered during an import. Supply this function and return true to implement custom import behaviour.</p>
@@ -168,15 +171,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

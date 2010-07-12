@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -137,7 +137,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QValueSpacePublisher&gt;</pre><ul>
 <li><a href="qvaluespacepublisher-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#QValueSpacePublisher">QValueSpacePublisher</a></b> ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -148,23 +149,27 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#path">path</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#sync">sync</a></b> ()</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#resetValue">resetValue</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#setValue">setValue</a></b> ( const QString &amp; <i>name</i>, const QVariant &amp; <i>data</i> )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#interestChanged">interestChanged</a></b> ( const QString &amp; <i>attribute</i>, bool <i>interested</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespacepublisher.html#connectNotify">connectNotify</a></b> ( const char * <i>member</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QValueSpacePublisher class allows applications to publish values in the Value Space.</p>
@@ -188,34 +193,35 @@
 <p>For performance reasons the setting of and removing of attributes is buffered internally by the QValueSpacePublisher and applied as a batch sometime later. Normally this occurs the next time the application enters the Qt event loop, but this behavior should not be relied upon. If an application must synchronize with others, the <a href="qvaluespacepublisher.html#sync">QValueSpacePublisher::sync</a>() and QValueSpacePublisher::syncAll() functions can be used to force the application of changes. This call is generally unnecessary, and should be used sparingly to prevent unnecessary load on the system.</p>
 </div>
 <p>See also <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QValueSpacePublisher"></a>QValueSpacePublisher::QValueSpacePublisher ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpacePublisher"></a>QValueSpacePublisher::QValueSpacePublisher ( const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>.</p>
-<h3 class="fn"><a name="QValueSpacePublisher-2"></a>QValueSpacePublisher::QValueSpacePublisher ( QValueSpace::LayerOptions <i>filter</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpacePublisher-2"></a>QValueSpacePublisher::QValueSpacePublisher ( QValueSpace::LayerOptions <i>filter</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>. The <i>filter</i> parameter is used to limit which layer this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will access.</p>
 <p>The constructed Value Space publisher will access the <a href="qabstractvaluespacelayer.html">layer</a> with the highest <a href="qabstractvaluespacelayer.html#order">order</a> that matches <i>filter</i> and for which <i>path</i> is a valid path.</p>
 <p>If no suitable <a href="qabstractvaluespacelayer.html">layer</a> is found, the constructed <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will be unconnected.</p>
 <p>See also <a href="qvaluespacepublisher.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpacePublisher-3"></a>QValueSpacePublisher::QValueSpacePublisher ( const QUuid &amp; <i>uuid</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QValueSpacePublisher-3"></a>QValueSpacePublisher::QValueSpacePublisher ( const QUuid &amp; <i>uuid</i>, const QString &amp; <i>path</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>. Only the layer identified by <i>uuid</i> will be accessed by this publisher.</p>
 <p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
 <p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will be unconnected.</p>
 <p>See also <a href="qvaluespacepublisher.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="dtor.QValueSpacePublisher"></a>QValueSpacePublisher::~QValueSpacePublisher ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QValueSpacePublisher"></a>QValueSpacePublisher::~QValueSpacePublisher ()<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. This will remove all values published by this publisher in non-permanent layers.</p>
-<h3 class="fn"><a name="connectNotify"></a>void QValueSpacePublisher::connectNotify ( const char * <i>member</i> )<tt> [virtual protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="connectNotify"></a>void QValueSpacePublisher::connectNotify ( const char * <i>member</i> )<tt> [virtual protected]</tt></h3>
 <p>Registers this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> for notifications when QValueSpaceSubscribers are interested in values under <a href="qvaluespacepublisher.html#path">path</a>().</p>
 <p>Generally you do not need to call this function as it is automatically called when connections are made to this classes signals. <i>member</i> is the signal that has been connected.</p>
 <p>If you reimplement this virtual function it is important that you call this implementation from your implementation.</p>
 <p>See also <a href="qvaluespacepublisher.html#interestChanged">interestChanged</a>().</p>
-<h3 class="fn"><a name="interestChanged"></a>void QValueSpacePublisher::interestChanged ( const QString &amp; <i>attribute</i>, bool <i>interested</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="interestChanged"></a>void QValueSpacePublisher::interestChanged ( const QString &amp; <i>attribute</i>, bool <i>interested</i> )<tt> [signal]</tt></h3>
 <p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> is interested in the value of <i>attribute</i>.</p>
-<h3 class="fn"><a name="isConnected"></a>bool QValueSpacePublisher::isConnected () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isConnected"></a>bool QValueSpacePublisher::isConnected () const</h3>
 <p>Returns true if this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> is connected to an available layer; otherwise returns false.</p>
-<h3 class="fn"><a name="path"></a>QString QValueSpacePublisher::path () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="path"></a>QString QValueSpacePublisher::path () const</h3>
 <p>Returns the path that this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> refers to.</p>
-<h3 class="fn"><a name="resetValue"></a>void QValueSpacePublisher::resetValue ( const QString &amp; <i>name</i> )<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resetValue"></a>void QValueSpacePublisher::resetValue ( const QString &amp; <i>name</i> )<tt> [slot]</tt></h3>
 <p>Removes the value <i>name</i> and all sub-attributes from the system.</p>
 <p>For example:</p>
 <pre class="highlightedCode brush: cpp"> QValueSpacePublisher publisher(&quot;/Device&quot;);
@@ -229,7 +235,7 @@
  publisher.sync();
 <span class="comment"> // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant();</span>
 <span class="comment"> // QValueSpaceSubscriber(&quot;/Device/State/Memory&quot;).value() == QVariant();</span></pre>
-<h3 class="fn"><a name="setValue"></a>void QValueSpacePublisher::setValue ( const QString &amp; <i>name</i>, const QVariant &amp; <i>data</i> )<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue"></a>void QValueSpacePublisher::setValue ( const QString &amp; <i>name</i>, const QVariant &amp; <i>data</i> )<tt> [slot]</tt></h3>
 <p>Sets the value <i>name</i> on the publisher to <i>data</i>. If name is empty, this call will set the value of this publisher's path.</p>
 <p>For example:</p>
 <pre class="highlightedCode brush: cpp"> QValueSpacePublisher publisher(&quot;/Device&quot;);
@@ -237,7 +243,7 @@
  publisher.sync();
 
 <span class="comment"> // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant(&quot;Starting&quot;)</span></pre>
-<h3 class="fn"><a name="sync"></a>void QValueSpacePublisher::sync ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sync"></a>void QValueSpacePublisher::sync ()</h3>
 <p>Forcibly sync all Value Space publisher using the same layer as this publisher.</p>
 <p>For performance reasons attribute changes are batched internally by <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> instances. In cases where the visibility of changes must be synchronized with other processes, calling this function will flush these batches. By the time this function returns, all other processes in the system will be able to see the attribute changes.</p>
 <p>Generally, calling this function is unnecessary.</p>
@@ -248,15 +254,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

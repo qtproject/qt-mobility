@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -139,13 +139,15 @@
 <ul>
 <li><a href="qcontactabstractrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a></b> { InvalidRequest, ContactFetchRequest, ContactLocalIdFetchRequest, ContactRemoveRequest, ..., RelationshipSaveRequest }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</td></tr>
@@ -159,20 +161,23 @@
 <tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> RequestType </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#type">type</a></b> () const</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#cancel">cancel</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#start">start</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> = 0 )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactabstractrequest.html#stateChanged">stateChanged</a></b> ( QContactAbstractRequest::State <i>newState</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them.</p>
@@ -186,9 +191,10 @@
 <p>An active request may be deleted by the client, but the client will not receive any notifications about whether the request succeeded or not, nor any results of the request.</p>
 <p>Because clients retain ownership of any request object, and may delete a request object at any time, manager engine implementors must be careful to ensure that they do not assume that a request has not been deleted at some point during processing of a request, particularly if the engine has a multithreaded implementation. It is suggested that engine implementors read the <a href="contactsengines.html">Qt Contacts Manager Engines</a> documentation for more information on this topic.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="RequestType-enum"></a>enum QContactAbstractRequest::RequestType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="RequestType-enum"></a>enum QContactAbstractRequest::RequestType</h3>
 <p>Enumerates the various possible types of asynchronous requests</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QContactAbstractRequest::InvalidRequest</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">An invalid request</td></tr>
@@ -203,7 +209,7 @@
 <tr><td  class="topAlign"><tt>QContactAbstractRequest::RelationshipRemoveRequest</tt></td><td class=" topAlign"><tt>9</tt></td><td  class="topAlign">A request to remove any relationships which match the request criteria</td></tr>
 <tr><td  class="topAlign"><tt>QContactAbstractRequest::RelationshipSaveRequest</tt></td><td class=" topAlign"><tt>10</tt></td><td  class="topAlign">A request to save a list of relationships</td></tr>
 </table>
-<h3 class="fn"><a name="State-enum"></a>enum QContactAbstractRequest::State</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="State-enum"></a>enum QContactAbstractRequest::State</h3>
 <p>Enumerates the various states that a request may be in at any given time</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QContactAbstractRequest::InactiveState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Operation not yet started</td></tr>
@@ -212,45 +218,46 @@
 <tr><td  class="topAlign"><tt>QContactAbstractRequest::FinishedState</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Operation successfully completed</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()</h3>
 <p>Cleans up the memory used by this request</p>
-<h3 class="fn"><a name="cancel"></a>bool QContactAbstractRequest::cancel ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cancel"></a>bool QContactAbstractRequest::cancel ()<tt> [slot]</tt></h3>
 <p>Attempts to cancel the request. Returns false if the request is not in the <tt>QContactAbstractRequest::Active</tt> state, or if the request is unable to be cancelled by the manager engine; otherwise returns true.</p>
-<h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactAbstractRequest::error () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactAbstractRequest::error () const</h3>
 <p>Returns the overall error of the most recent asynchronous operation</p>
-<h3 class="fn"><a name="isActive"></a>bool QContactAbstractRequest::isActive () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isActive"></a>bool QContactAbstractRequest::isActive () const</h3>
 <p>Returns true if the request is in the <tt>QContactAbstractRequest::ActiveState</tt> state; otherwise, returns false</p>
 <p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
-<h3 class="fn"><a name="isCanceled"></a>bool QContactAbstractRequest::isCanceled () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isCanceled"></a>bool QContactAbstractRequest::isCanceled () const</h3>
 <p>Returns true if the request is in the <tt>QContactAbstractRequest::CanceledState</tt>; otherwise, returns false</p>
 <p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
-<h3 class="fn"><a name="isFinished"></a>bool QContactAbstractRequest::isFinished () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFinished"></a>bool QContactAbstractRequest::isFinished () const</h3>
 <p>Returns true if the request is in the <tt>QContactAbstractRequest::FinishedState</tt>; otherwise, returns false</p>
 <p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
-<h3 class="fn"><a name="isInactive"></a>bool QContactAbstractRequest::isInactive () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isInactive"></a>bool QContactAbstractRequest::isInactive () const</h3>
 <p>Returns true if the request is in the <tt>QContactAbstractRequest::InactiveState</tt> state; otherwise, returns false</p>
 <p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
-<h3 class="fn"><a name="manager"></a><a href="qcontactmanager.html">QContactManager</a> * QContactAbstractRequest::manager () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="manager"></a><a href="qcontactmanager.html">QContactManager</a> * QContactAbstractRequest::manager () const</h3>
 <p>Returns a pointer to the manager of which this request instance requests operations</p>
 <p>See also <a href="qcontactabstractrequest.html#setManager">setManager</a>().</p>
-<h3 class="fn"><a name="resultsAvailable"></a>void QContactAbstractRequest::resultsAvailable ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resultsAvailable"></a>void QContactAbstractRequest::resultsAvailable ()<tt> [signal]</tt></h3>
 <p>This signal is emitted when new results are available. Results can include the operation error which may be accessed via <a href="qcontactabstractrequest.html#error">error</a>(), or derived-class-specific results which are accessible through the derived class API.</p>
 <p>See also <a href="qcontactabstractrequest.html#error">error</a>().</p>
-<h3 class="fn"><a name="setManager"></a>void QContactAbstractRequest::setManager ( <a href="qcontactmanager.html">QContactManager</a> * <i>manager</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setManager"></a>void QContactAbstractRequest::setManager ( <a href="qcontactmanager.html">QContactManager</a> * <i>manager</i> )</h3>
 <p>Sets the manager of which this request instance requests operations to <i>manager</i></p>
 <p>If the request is currently active, this function will return without updating the <i>manager</i> object.</p>
 <p>See also <a href="qcontactabstractrequest.html#manager">manager</a>().</p>
-<h3 class="fn"><a name="start"></a>bool QContactAbstractRequest::start ()<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="start"></a>bool QContactAbstractRequest::start ()<tt> [slot]</tt></h3>
 <p>Attempts to start the request. Returns false if the request is not in the <tt>QContactAbstractRequest::Inactive</tt>, <tt>QContactAbstractRequest::Finished</tt> or <tt>QContactAbstractRequest::Cancelled</tt> states, or if the request was unable to be performed by the manager engine; otherwise returns true.</p>
-<h3 class="fn"><a name="state"></a><a href="qcontactabstractrequest.html#State-enum">State</a> QContactAbstractRequest::state () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="state"></a><a href="qcontactabstractrequest.html#State-enum">State</a> QContactAbstractRequest::state () const</h3>
 <p>Returns the current state of the request.</p>
-<h3 class="fn"><a name="stateChanged"></a>void QContactAbstractRequest::stateChanged ( <a href="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::State</a> <i>newState</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="stateChanged"></a>void QContactAbstractRequest::stateChanged ( <a href="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::State</a> <i>newState</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted when the state of the request is changed. The new state of the request will be contained in <i>newState</i>.</p>
-<h3 class="fn"><a name="type"></a><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a> QContactAbstractRequest::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a> QContactAbstractRequest::type () const</h3>
 <p>Returns the type of this asynchronous request</p>
-<h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )<tt> [slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -259,15 +266,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

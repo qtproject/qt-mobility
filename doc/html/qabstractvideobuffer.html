@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,13 +137,15 @@
 <ul>
 <li><a href="qabstractvideobuffer-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qabstractvideobuffer.html#HandleType-enum">HandleType</a></b> { NoHandle, GLTextureHandle, XvShmImageHandle, CoreImageHandle, UserHandle }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a></b> { NotMapped, ReadOnly, WriteOnly, ReadWrite }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qabstractvideobuffer.html#QAbstractVideoBuffer">QAbstractVideoBuffer</a></b> ( HandleType <i>type</i> )</td></tr>
@@ -154,7 +156,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual MapMode </td><td class="memItemRight bottomAlign"><b><a href="qabstractvideobuffer.html#mapMode">mapMode</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qabstractvideobuffer.html#unmap">unmap</a></b> () = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAbstractVideoBuffer class is an abstraction for video data.</p>
@@ -163,9 +166,10 @@
 <p>The <a href="qabstractvideobuffer.html#handle">handle</a>() of a buffer may also be used to manipulate it's contents using type specific APIs. The type of a buffer's handle is given by the <a href="qabstractvideobuffer.html#handleType">handleType</a>() function.</p>
 </div>
 <p>See also <a href="qvideoframe.html">QVideoFrame</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="HandleType-enum"></a>enum QAbstractVideoBuffer::HandleType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="HandleType-enum"></a>enum QAbstractVideoBuffer::HandleType</h3>
 <p>Identifies the type of a video buffers handle.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QAbstractVideoBuffer::NoHandle</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The buffer has no handle, its data can only be accessed by mapping the buffer.</td></tr>
@@ -175,7 +179,7 @@
 <tr><td  class="topAlign"><tt>QAbstractVideoBuffer::UserHandle</tt></td><td class=" topAlign"><tt>1000</tt></td><td  class="topAlign">Start value for user defined handle types.</td></tr>
 </table>
 <p>See also <a href="qabstractvideobuffer.html#handleType">handleType</a>().</p>
-<h3 class="fn"><a name="MapMode-enum"></a>enum QAbstractVideoBuffer::MapMode</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="MapMode-enum"></a>enum QAbstractVideoBuffer::MapMode</h3>
 <p>Enumerates how a video buffer's data is mapped to memory.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QAbstractVideoBuffer::NotMapped</tt></td><td class=" topAlign"><tt>0x00</tt></td><td  class="topAlign">The video buffer has is not mapped to memory.</td></tr>
@@ -185,20 +189,21 @@
 </table>
 <p>See also <a href="qabstractvideobuffer.html#mapMode">mapMode</a>() and <a href="qabstractvideobuffer.html#map">map</a>().</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAbstractVideoBuffer"></a>QAbstractVideoBuffer::QAbstractVideoBuffer ( <a href="qabstractvideobuffer.html#HandleType-enum">HandleType</a> <i>type</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAbstractVideoBuffer"></a>QAbstractVideoBuffer::QAbstractVideoBuffer ( <a href="qabstractvideobuffer.html#HandleType-enum">HandleType</a> <i>type</i> )</h3>
 <p>Constructs an abstract video buffer of the given <i>type</i>.</p>
-<h3 class="fn"><a name="dtor.QAbstractVideoBuffer"></a>QAbstractVideoBuffer::~QAbstractVideoBuffer ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAbstractVideoBuffer"></a>QAbstractVideoBuffer::~QAbstractVideoBuffer ()<tt> [virtual]</tt></h3>
 <p>Destroys an abstract video buffer.</p>
-<h3 class="fn"><a name="handle"></a>QVariant QAbstractVideoBuffer::handle () const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="handle"></a>QVariant QAbstractVideoBuffer::handle () const<tt> [virtual]</tt></h3>
 <p>Returns a type specific handle to the data buffer.</p>
 <p>The type of the handle is given by <a href="qabstractvideobuffer.html#handleType">handleType</a>() function.</p>
 <p>See also <a href="qabstractvideobuffer.html#handleType">handleType</a>().</p>
-<h3 class="fn"><a name="handleType"></a><a href="qabstractvideobuffer.html#HandleType-enum">HandleType</a> QAbstractVideoBuffer::handleType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="handleType"></a><a href="qabstractvideobuffer.html#HandleType-enum">HandleType</a> QAbstractVideoBuffer::handleType () const</h3>
 <p>Returns the type of a video buffer's handle.</p>
 <p>See also <a href="qabstractvideobuffer.html#handle">handle</a>().</p>
-<h3 class="fn"><a name="map"></a>uchar * QAbstractVideoBuffer::map ( <a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a> <i>mode</i>, int * <i>numBytes</i>, int * <i>bytesPerLine</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="map"></a>uchar * QAbstractVideoBuffer::map ( <a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a> <i>mode</i>, int * <i>numBytes</i>, int * <i>bytesPerLine</i> )<tt> [pure virtual]</tt></h3>
 <p>Maps the contents of a video buffer to memory.</p>
 <p>The map <i>mode</i> indicates whether the contents of the mapped memory should be read from and/or written to the buffer. If the map mode includes the <a href="qabstractvideobuffer.html#MapMode-enum">QAbstractVideoBuffer::ReadOnly</a> flag the mapped memory will be populated with the content of the video buffer when mapped. If the map mode includes the <a href="qabstractvideobuffer.html#MapMode-enum">QAbstractVideoBuffer::WriteOnly</a> flag the content of the mapped memory will be persisted in the buffer when unmapped.</p>
 <p>When access to the data is no longer needed be sure to call the <a href="qabstractvideobuffer.html#unmap">unmap</a>() function to release the mapped memory.</p>
@@ -206,10 +211,10 @@
 <p>When access to the data is no longer needed be sure to <a href="qabstractvideobuffer.html#unmap">unmap</a>() the buffer.</p>
 <p><b>Note:</b> Writing to memory that is mapped as read-only is undefined, and may result in changes to shared data.</p>
 <p>See also <a href="qabstractvideobuffer.html#unmap">unmap</a>() and <a href="qabstractvideobuffer.html#mapMode">mapMode</a>().</p>
-<h3 class="fn"><a name="mapMode"></a><a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a> QAbstractVideoBuffer::mapMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="mapMode"></a><a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a> QAbstractVideoBuffer::mapMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns the mode a video buffer is mapped in.</p>
 <p>See also <a href="qabstractvideobuffer.html#map">map</a>().</p>
-<h3 class="fn"><a name="unmap"></a>void QAbstractVideoBuffer::unmap ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="unmap"></a>void QAbstractVideoBuffer::unmap ()<tt> [pure virtual]</tt></h3>
 <p>Releases the memory mapped by the <a href="qabstractvideobuffer.html#map">map</a>() function</p>
 <p>If the <a href="qabstractvideobuffer.html#MapMode-enum">MapMode</a> included the <a href="qabstractvideobuffer.html#MapMode-enum">QAbstractVideoBuffer::WriteOnly</a> flag this will persist the current content of the mapped memory to the video frame.</p>
 <p>See also <a href="qabstractvideobuffer.html#map">map</a>().</p>
@@ -220,15 +225,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

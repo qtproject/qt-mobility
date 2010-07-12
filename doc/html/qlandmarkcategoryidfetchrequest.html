@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkcategoryidfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkcategoryidfetchrequest.html#QLandmarkCategoryIdFetchRequest">QLandmarkCategoryIdFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -153,24 +154,26 @@
 <li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously request a list of category identifiers from a landmark manager.</p>
 <p>For a QLandmarkCategoryIdFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted as resultant category identifiers are found (these are retrievable via the callings ids()), as well as if an overall operation error occurred(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">QLandmarkAbstractRequest::error</a>()).</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkCategoryIdFetchRequest"></a>QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkCategoryIdFetchRequest"></a>QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Creates a new category identifier fetch request object with the given <i>manager</i> aand <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkCategoryIdFetchRequest"></a>QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkCategoryIdFetchRequest"></a>QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryIdFetchRequest::categoryIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryIdFetchRequest::categoryIds () const</h3>
 <p>Returns the list of category identifiers that have been found during the request.</p>
-<h3 class="fn"><a name="setSorting"></a>void QLandmarkCategoryIdFetchRequest::setSorting ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting"></a>void QLandmarkCategoryIdFetchRequest::setSorting ( const <a href="qlandmarknamesort.html">QLandmarkNameSort</a> &amp; <i>nameSort</i> )</h3>
 <p>Sets <i>nameSort</i> to specify the sorting of the returned category ids.</p>
 <p>See also <a href="qlandmarkcategoryidfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="sorting"></a><a href="qlandmarknamesort.html">QLandmarkNameSort</a> QLandmarkCategoryIdFetchRequest::sorting () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sorting"></a><a href="qlandmarknamesort.html">QLandmarkNameSort</a> QLandmarkCategoryIdFetchRequest::sorting () const</h3>
 <p>Returns the sorting of the categories. By default the sorting is case insensitive and in ascending order according to the category name.</p>
 <p>See also <a href="qlandmarkcategoryidfetchrequest.html#setSorting">setSorting</a>().</p>
 </div>
@@ -180,15 +183,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

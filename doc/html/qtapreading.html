@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -138,12 +138,14 @@
 <ul>
 <li><a href="qtapreading-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qtapreading.html#TapDirection-enum">TapDirection</a></b> { Undefined, X, Y, Z, ..., Z_Neg }</td></tr>
 </table>
-<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qtapreading.html#doubleTap-prop">doubleTap</a></b> : const bool</li>
@@ -152,7 +154,8 @@
 <ul>
 <li class="fn">1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qtapreading.html#doubleTap-prop">isDoubleTap</a></b> () const</td></tr>
@@ -163,18 +166,20 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QTapReading class represents one reading from the tap sensor.</p>
-<a name="qtapreading-units"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="qtapreading-units"></a>
 <h3>QTapReading Units</h3>
 <p>The tap sensor registers tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
 <p class="centerAlign"><img src="images/sensors-coordinates2.jpg" /></p><p>By default it returns only double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="TapDirection-enum"></a>enum QTapReading::TapDirection</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="TapDirection-enum"></a>enum QTapReading::TapDirection</h3>
 <p>The tap direction is reported as one of the six directions (X, Y, Z, positive and negative). There are 3 flags that you can use if you only care about the axis in use.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QTapReading::Undefined</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">This value means that the direction is unknown.</td></tr>
@@ -189,9 +194,10 @@
 <tr><td  class="topAlign"><tt>QTapReading::Z_Neg</tt></td><td class=" topAlign"><tt>0x0404</tt></td><td  class="topAlign">This value is returned if the tap was towards the negative Z direction.</td></tr>
 </table>
 </div>
+<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : const bool</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : const bool</h3>
 <p>This property holds a value indicating if there was a single or double tap.</p>
 <ul>
 <li>true - double tap</li>
@@ -202,7 +208,7 @@
 <tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isDoubleTap</b> () const</td></tr>
 </table>
 <p>See also <a href="qtapreading.html#qtapreading-units">QTapReading Units</a>.</p>
-<h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : const <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : const <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3>
 <p>This property holds the direction of the tap.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
@@ -210,12 +216,13 @@
 </table>
 <p>See also <a href="qtapreading.html#qtapreading-units">QTapReading Units</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="setDoubleTap"></a>void QTapReading::setDoubleTap ( bool <i>doubleTap</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDoubleTap"></a>void QTapReading::setDoubleTap ( bool <i>doubleTap</i> )</h3>
 <p>Sets the double tap status of the reading to <i>doubleTap</i>.</p>
 <p>See also <a href="qtapreading.html#doubleTap-prop">isDoubleTap</a>().</p>
-<h3 class="fn"><a name="setTapDirection"></a>void QTapReading::setTapDirection ( <a href="qtapreading.html#TapDirection-enum">TapDirection</a> <i>tapDirection</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTapDirection"></a>void QTapReading::setTapDirection ( <a href="qtapreading.html#TapDirection-enum">TapDirection</a> <i>tapDirection</i> )</h3>
 <p>Sets the tap direction to <i>tapDirection</i>.</p>
 <p>See also <a href="qtapreading.html#tapDirection-prop">tapDirection</a>().</p>
 </div>
@@ -225,15 +232,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

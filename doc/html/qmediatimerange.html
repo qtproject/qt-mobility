@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qmediatimerange-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#QMediaTimeRange">QMediaTimeRange</a></b> ()</td></tr>
@@ -164,7 +165,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMediaTimeRange &amp; </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#operator-eq">operator=</a></b> ( const QMediaTimeRange &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMediaTimeRange &amp; </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#operator-eq-2">operator=</a></b> ( const QMediaTimeInterval &amp; <i>interval</i> )</td></tr>
 </table>
-<a name="related-non-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> Q_MULTIMEDIA_EXPORT </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#operator-not-eq-12">operator!=</a></b> ( const QMediaTimeInterval &amp; <i>a</i>, const QMediaTimeInterval &amp; <i>b</i> )</td></tr>
@@ -172,7 +174,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> Q_MULTIMEDIA_EXPORT </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#operator-eq-eq-13">operator==</a></b> ( const QMediaTimeInterval &amp; <i>a</i>, const QMediaTimeInterval &amp; <i>b</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> Q_MULTIMEDIA_EXPORT </td><td class="memItemRight bottomAlign"><b><a href="qmediatimerange.html#operator-eq-eq-14">operator==</a></b> ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaTimeRange class represents a set of zero or more disjoint time intervals.</p>
@@ -181,90 +184,92 @@
 <p>When adding or removing intervals from the time range, existing intervals within the range may be expanded, trimmed, deleted, merged or split to ensure that all intervals within the time range remain distinct and disjoint. As a consequence, all intervals added or removed from a time range must be <a href="qmediatimeinterval.html#isNormal">normal</a>.</p>
 </div>
 <p>See also <a href="qmediatimeinterval.html">QMediaTimeInterval</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaTimeRange"></a>QMediaTimeRange::QMediaTimeRange ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaTimeRange"></a>QMediaTimeRange::QMediaTimeRange ()</h3>
 <p>Constructs an empty time range.</p>
-<h3 class="fn"><a name="QMediaTimeRange-2"></a>QMediaTimeRange::QMediaTimeRange ( qint64 <i>start</i>, qint64 <i>end</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaTimeRange-2"></a>QMediaTimeRange::QMediaTimeRange ( qint64 <i>start</i>, qint64 <i>end</i> )</h3>
 <p>Constructs a time range that contains an initial interval from <i>start</i> to <i>end</i> inclusive.</p>
 <p>If the interval is not <a href="qmediatimeinterval.html#isNormal">normal</a>, the resulting time range will be empty.</p>
 <p>See also <a href="qmediatimerange.html#addInterval">addInterval</a>().</p>
-<h3 class="fn"><a name="QMediaTimeRange-3"></a>QMediaTimeRange::QMediaTimeRange ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaTimeRange-3"></a>QMediaTimeRange::QMediaTimeRange ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Constructs a time range that contains an intitial interval, <i>interval</i>.</p>
 <p>If <i>interval</i> is not <a href="qmediatimeinterval.html#isNormal">normal</a>, the resulting time range will be empty.</p>
 <p>See also <a href="qmediatimerange.html#addInterval">addInterval</a>().</p>
-<h3 class="fn"><a name="QMediaTimeRange-4"></a>QMediaTimeRange::QMediaTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMediaTimeRange-4"></a>QMediaTimeRange::QMediaTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3>
 <p>Constructs a time range by copying another time <i>range</i>.</p>
-<h3 class="fn"><a name="dtor.QMediaTimeRange"></a>QMediaTimeRange::~QMediaTimeRange ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMediaTimeRange"></a>QMediaTimeRange::~QMediaTimeRange ()</h3>
 <p>Destructor.</p>
-<h3 class="fn"><a name="addInterval"></a>void QMediaTimeRange::addInterval ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addInterval"></a>void QMediaTimeRange::addInterval ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Adds the specified <i>interval</i> to the time range.</p>
 <p>Adding intervals which are not <a href="qmediatimeinterval.html#isNormal">normal</a> is invalid, and will be ignored.</p>
 <p>If the specified interval is adjacent to, or overlaps existing intervals within the time range, these intervals will be merged.</p>
 <p>This operation takes linear time</p>
 <p>See also <a href="qmediatimerange.html#removeInterval">removeInterval</a>().</p>
-<h3 class="fn"><a name="addInterval-2"></a>void QMediaTimeRange::addInterval ( qint64 <i>start</i>, qint64 <i>end</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addInterval-2"></a>void QMediaTimeRange::addInterval ( qint64 <i>start</i>, qint64 <i>end</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Adds the interval specified by <i>start</i> and <i>end</i> to the time range.</p>
 <p>See also <a href="qmediatimerange.html#addInterval">addInterval</a>().</p>
-<h3 class="fn"><a name="addTimeRange"></a>void QMediaTimeRange::addTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addTimeRange"></a>void QMediaTimeRange::addTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3>
 <p>Adds each of the intervals in <i>range</i> to this time range.</p>
 <p>Equivalent to calling <a href="qmediatimerange.html#addInterval">addInterval</a>() for each interval in <i>range</i>.</p>
-<h3 class="fn"><a name="clear"></a>void QMediaTimeRange::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QMediaTimeRange::clear ()</h3>
 <p>Removes all intervals from the time range.</p>
 <p>See also <a href="qmediatimerange.html#removeInterval">removeInterval</a>().</p>
-<h3 class="fn"><a name="contains"></a>bool QMediaTimeRange::contains ( qint64 <i>time</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="contains"></a>bool QMediaTimeRange::contains ( qint64 <i>time</i> ) const</h3>
 <p>Returns true if the specified <i>time</i> lies within the time range.</p>
-<h3 class="fn"><a name="earliestTime"></a>qint64 QMediaTimeRange::earliestTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="earliestTime"></a>qint64 QMediaTimeRange::earliestTime () const</h3>
 <p>Returns the earliest time within the time range.</p>
 <p>For empty time ranges, this value is equal to zero.</p>
 <p>See also <a href="qmediatimerange.html#latestTime">latestTime</a>().</p>
-<h3 class="fn"><a name="intervals"></a>QList&lt;<a href="qmediatimeinterval.html">QMediaTimeInterval</a>&gt; QMediaTimeRange::intervals () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="intervals"></a>QList&lt;<a href="qmediatimeinterval.html">QMediaTimeInterval</a>&gt; QMediaTimeRange::intervals () const</h3>
 <p>Returns the list of intervals covered by this time range.</p>
-<h3 class="fn"><a name="isContinuous"></a>bool QMediaTimeRange::isContinuous () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isContinuous"></a>bool QMediaTimeRange::isContinuous () const</h3>
 <p>Returns true if the time range consists of a continuous interval. That is, there is one or fewer disjoint intervals within the time range.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QMediaTimeRange::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QMediaTimeRange::isEmpty () const</h3>
 <p>Returns true if there are no intervals within the time range.</p>
 <p>See also <a href="qmediatimerange.html#intervals">intervals</a>().</p>
-<h3 class="fn"><a name="latestTime"></a>qint64 QMediaTimeRange::latestTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="latestTime"></a>qint64 QMediaTimeRange::latestTime () const</h3>
 <p>Returns the latest time within the time range.</p>
 <p>For empty time ranges, this value is equal to zero.</p>
 <p>See also <a href="qmediatimerange.html#earliestTime">earliestTime</a>().</p>
-<h3 class="fn"><a name="removeInterval"></a>void QMediaTimeRange::removeInterval ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeInterval"></a>void QMediaTimeRange::removeInterval ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Removes the specified <i>interval</i> from the time range.</p>
 <p>Removing intervals which are not <a href="qmediatimeinterval.html#isNormal">normal</a> is invalid, and will be ignored.</p>
 <p>Intervals within the time range will be trimmed, split or deleted such that no intervals within the time range include any part of the target interval.</p>
 <p>This operation takes linear time</p>
 <p>See also <a href="qmediatimerange.html#addInterval">addInterval</a>().</p>
-<h3 class="fn"><a name="removeInterval-2"></a>void QMediaTimeRange::removeInterval ( qint64 <i>start</i>, qint64 <i>end</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeInterval-2"></a>void QMediaTimeRange::removeInterval ( qint64 <i>start</i>, qint64 <i>end</i> )</h3>
 <p>This is an overloaded function.</p>
 <p>Removes the interval specified by <i>start</i> and <i>end</i> from the time range.</p>
 <p>See also <a href="qmediatimerange.html#removeInterval">removeInterval</a>().</p>
-<h3 class="fn"><a name="removeTimeRange"></a>void QMediaTimeRange::removeTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeTimeRange"></a>void QMediaTimeRange::removeTimeRange ( const QMediaTimeRange &amp; <i>range</i> )</h3>
 <p>Removes each of the intervals in <i>range</i> from this time range.</p>
 <p>Equivalent to calling <a href="qmediatimerange.html#removeInterval">removeInterval</a>() for each interval in <i>range</i>.</p>
-<h3 class="fn"><a name="operator-2b-eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator+= ( const QMediaTimeRange &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-2b-eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator+= ( const QMediaTimeRange &amp; <i>other</i> )</h3>
 <p>Adds each interval in <i>other</i> to the time range and returns the result.</p>
-<h3 class="fn"><a name="operator-2b-eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator+= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-2b-eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator+= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Adds the specified <i>interval</i> to the time range and returns the result.</p>
-<h3 class="fn"><a name="operator--eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator-= ( const QMediaTimeRange &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator--eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator-= ( const QMediaTimeRange &amp; <i>other</i> )</h3>
 <p>Removes each interval in <i>other</i> from the time range and returns the result.</p>
-<h3 class="fn"><a name="operator--eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator-= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator--eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator-= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Removes the specified <i>interval</i> from the time range and returns the result.</p>
-<h3 class="fn"><a name="operator-eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator= ( const QMediaTimeRange &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QMediaTimeRange &amp; QMediaTimeRange::operator= ( const QMediaTimeRange &amp; <i>other</i> )</h3>
 <p>Takes a copy of the <i>other</i> time range and returns itself.</p>
-<h3 class="fn"><a name="operator-eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Sets the time range to a single continuous interval, <i>interval</i>.</p>
 </div>
+<hr />
 <div class="relnonmem"/>
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-not-eq-12"></a>Q_MULTIMEDIA_EXPORT operator!= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>a</i>, const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>b</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq-12"></a>Q_MULTIMEDIA_EXPORT operator!= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>a</i>, const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>b</i> )</h3>
 <p>Returns true if <i>a</i> is not exactly equal to <i>b</i>.</p>
-<h3 class="fn"><a name="operator-not-eq-13"></a>Q_MULTIMEDIA_EXPORT operator!= ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq-13"></a>Q_MULTIMEDIA_EXPORT operator!= ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</h3>
 <p>Returns true if one or more intervals in <i>a</i> are not present in <i>b</i>.</p>
-<h3 class="fn"><a name="operator-eq-eq-13"></a>Q_MULTIMEDIA_EXPORT operator== ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>a</i>, const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>b</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq-13"></a>Q_MULTIMEDIA_EXPORT operator== ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>a</i>, const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>b</i> )</h3>
 <p>Returns true if <i>a</i> is exactly equal to <i>b</i>.</p>
-<h3 class="fn"><a name="operator-eq-eq-14"></a>Q_MULTIMEDIA_EXPORT operator== ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq-14"></a>Q_MULTIMEDIA_EXPORT operator== ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</h3>
 <p>Returns true if all intervals in <i>a</i> are present in <i>b</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -273,15 +278,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

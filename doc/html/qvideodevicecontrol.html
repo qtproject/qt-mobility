@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -141,7 +141,8 @@
 <ul>
 <li><a href="qvideodevicecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#dtor.QVideoDeviceControl">~QVideoDeviceControl</a></b> ()</td></tr>
@@ -152,67 +153,74 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#deviceName">deviceName</a></b> ( int <i>index</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual int </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#selectedDevice">selectedDevice</a></b> () const = 0</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#setSelectedDevice">setSelectedDevice</a></b> ( int <i>index</i> ) = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#devicesChanged">devicesChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#selectedDeviceChanged">selectedDeviceChanged</a></b> ( int <i>index</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#selectedDeviceChanged-2">selectedDeviceChanged</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#QVideoDeviceControl">QVideoDeviceControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvideodevicecontrol.html#QVideoDeviceControl_iid">QVideoDeviceControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoDeviceControl class provides an video device selector media control.</p>
 <p>The QVideoDeviceControl class provides descriptions of the video devices available on a system and allows one to be selected as the endpoint of a media service.</p>
 <p>The interface name of QVideoDeviceControl is <tt>com.nokia.Qt.VideoDeviceControl</tt> as defined in <a href="qvideodevicecontrol.html#QVideoDeviceControl_iid">QVideoDeviceControl_iid</a>.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVideoDeviceControl"></a>QVideoDeviceControl::QVideoDeviceControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoDeviceControl"></a>QVideoDeviceControl::QVideoDeviceControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a video device control with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QVideoDeviceControl"></a>QVideoDeviceControl::~QVideoDeviceControl ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVideoDeviceControl"></a>QVideoDeviceControl::~QVideoDeviceControl ()<tt> [virtual]</tt></h3>
 <p>Destroys a video device control.</p>
-<h3 class="fn"><a name="defaultDevice"></a>int QVideoDeviceControl::defaultDevice () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="defaultDevice"></a>int QVideoDeviceControl::defaultDevice () const<tt> [pure virtual]</tt></h3>
 <p>Returns the index of the default video device.</p>
-<h3 class="fn"><a name="deviceCount"></a>int QVideoDeviceControl::deviceCount () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="deviceCount"></a>int QVideoDeviceControl::deviceCount () const<tt> [pure virtual]</tt></h3>
 <p>Returns the number of available video devices;</p>
-<h3 class="fn"><a name="deviceDescription"></a>QString QVideoDeviceControl::deviceDescription ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="deviceDescription"></a>QString QVideoDeviceControl::deviceDescription ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a description of the video device at <i>index</i>.</p>
-<h3 class="fn"><a name="deviceIcon"></a>QIcon QVideoDeviceControl::deviceIcon ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="deviceIcon"></a>QIcon QVideoDeviceControl::deviceIcon ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns an icon for the video device at <i>index</i>.</p>
-<h3 class="fn"><a name="deviceName"></a>QString QVideoDeviceControl::deviceName ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="deviceName"></a>QString QVideoDeviceControl::deviceName ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the name of the video device at <i>index</i>.</p>
-<h3 class="fn"><a name="devicesChanged"></a>void QVideoDeviceControl::devicesChanged ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="devicesChanged"></a>void QVideoDeviceControl::devicesChanged ()<tt> [signal]</tt></h3>
 <p>Signals that the list of available video devices has changed.</p>
-<h3 class="fn"><a name="selectedDevice"></a>int QVideoDeviceControl::selectedDevice () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selectedDevice"></a>int QVideoDeviceControl::selectedDevice () const<tt> [pure virtual]</tt></h3>
 <p>Returns the index of the selected video device.</p>
 <p>See also <a href="qvideodevicecontrol.html#setSelectedDevice">setSelectedDevice</a>().</p>
-<h3 class="fn"><a name="selectedDeviceChanged"></a>void QVideoDeviceControl::selectedDeviceChanged ( int <i>index</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selectedDeviceChanged"></a>void QVideoDeviceControl::selectedDeviceChanged ( int <i>index</i> )<tt> [signal]</tt></h3>
 <p>Signals that the selected video device <i>index</i> has changed.</p>
-<h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QVideoDeviceControl::selectedDeviceChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QVideoDeviceControl::selectedDeviceChanged ( const QString &amp; <i>name</i> )<tt> [signal]</tt></h3>
 <p>Signals that the selected video device <i>name</i> has changed.</p>
-<h3 class="fn"><a name="setSelectedDevice"></a>void QVideoDeviceControl::setSelectedDevice ( int <i>index</i> )<tt> [pure virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSelectedDevice"></a>void QVideoDeviceControl::setSelectedDevice ( int <i>index</i> )<tt> [pure virtual slot]</tt></h3>
 <p>Sets the selected video device <i>index</i>.</p>
 <p>See also <a href="qvideodevicecontrol.html#selectedDevice">selectedDevice</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QVideoDeviceControl_iid"></a>QVideoDeviceControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVideoDeviceControl_iid"></a>QVideoDeviceControl_iid</h3>
 <p><tt>com.nokia.Qt.VideoDeviceControl</tt></p>
 <p>Defines the interface name of the <a href="qvideodevicecontrol.html">QVideoDeviceControl</a> class.</p>
 </div>
@@ -222,15 +230,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

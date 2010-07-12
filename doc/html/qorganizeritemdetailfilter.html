@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qorganizeritemdetailfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetailfilter.html#QOrganizerItemDetailFilter">QOrganizerItemDetailFilter</a></b> ()</td></tr>
@@ -152,37 +153,39 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qorganizeritemfilter.html#public-functions">QOrganizerItemFilter</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemDetailFilter class provides a filter based around a detail value criterion</p>
 <p>It may be used to select organizeritems which contain a detail of a particular definition with a particular value</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemDetailFilter"></a>QOrganizerItemDetailFilter::QOrganizerItemDetailFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetailFilter"></a>QOrganizerItemDetailFilter::QOrganizerItemDetailFilter ()</h3>
 <p>Constructs a new detail filter</p>
-<h3 class="fn"><a name="QOrganizerItemDetailFilter-2"></a>QOrganizerItemDetailFilter::QOrganizerItemDetailFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetailFilter-2"></a>QOrganizerItemDetailFilter::QOrganizerItemDetailFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new detail filter</p>
-<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemDetailFilter::detailDefinitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailDefinitionName"></a>QString QOrganizerItemDetailFilter::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected for matching values</p>
 <p>See also <a href="qorganizeritemdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemDetailFilter::detailFieldName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="detailFieldName"></a>QString QOrganizerItemDetailFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qorganizeritemdetailfilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<h3 class="fn"><a name="matchFlags"></a><a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> QOrganizerItemDetailFilter::matchFlags () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="matchFlags"></a><a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> QOrganizerItemDetailFilter::matchFlags () const</h3>
 <p>Returns the semantics of the value matching criterion</p>
 <p>See also <a href="qorganizeritemdetailfilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemDetailFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QOrganizerItemDetailFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which details will be matched to <i>definitionName</i>, and the name of the field in details of that definition which will contain the value criterion to <i>fieldName</i></p>
 <p>See also <a href="qorganizeritemdetailfilter.html#detailDefinitionName">detailDefinitionName</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QOrganizerItemDetailFilter::setMatchFlags ( <a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> <i>flags</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMatchFlags"></a>void QOrganizerItemDetailFilter::setMatchFlags ( <a href="qorganizeritemfilter.html#MatchFlag-enum">QOrganizerItemFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the semantics of the value matching criterion to those defined in <i>flags</i></p>
 <p>See also <a href="qorganizeritemdetailfilter.html#matchFlags">matchFlags</a>().</p>
-<h3 class="fn"><a name="setValue"></a>void QOrganizerItemDetailFilter::setValue ( const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue"></a>void QOrganizerItemDetailFilter::setValue ( const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the value criterion of the filter to <i>value</i></p>
 <p>See also <a href="qorganizeritemdetailfilter.html#value">value</a>().</p>
-<h3 class="fn"><a name="value"></a>QVariant QOrganizerItemDetailFilter::value () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>QVariant QOrganizerItemDetailFilter::value () const</h3>
 <p>Returns the value criterion of the detail filter</p>
 <p>See also <a href="qorganizeritemdetailfilter.html#setValue">setValue</a>().</p>
 </div>
@@ -192,15 +195,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

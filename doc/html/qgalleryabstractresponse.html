@@ -123,7 +123,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -137,7 +137,8 @@
 <ul>
 <li><a href="qgalleryabstractresponse-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractresponse.html#QGalleryAbstractResponse">QGalleryAbstractResponse</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -150,7 +151,8 @@
 <ul>
 <li class="fn">16 public functions inherited from <a href="qgalleryitemlist.html#public-functions">QGalleryItemList</a></li>
 </ul>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractresponse.html#finished">finished</a></b> ()</td></tr>
@@ -159,7 +161,8 @@
 <ul>
 <li class="fn">5 signals inherited from <a href="qgalleryitemlist.html#signals">QGalleryItemList</a></li>
 </ul>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryabstractresponse.html#finish">finish</a></b> ( int <i>result</i>, bool <i>idle</i> = false )</td></tr>
@@ -169,34 +172,36 @@
 <li class="fn">2 properties inherited from <a href="qgalleryitemlist.html#properties">QGalleryItemList</a></li>
 <li class="fn">1 public slot inherited from <a href="qgalleryitemlist.html#public-slots">QGalleryItemList</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryAbstractResponse class provides a base class for responses to gallery requests.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryAbstractResponse"></a>QGalleryAbstractResponse::QGalleryAbstractResponse ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryAbstractResponse"></a>QGalleryAbstractResponse::QGalleryAbstractResponse ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new gallery response.</p>
 <p>The <i>parent</i> is passed to QObject.</p>
-<h3 class="fn"><a name="dtor.QGalleryAbstractResponse"></a>QGalleryAbstractResponse::~QGalleryAbstractResponse ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGalleryAbstractResponse"></a>QGalleryAbstractResponse::~QGalleryAbstractResponse ()</h3>
 <p>Destroys a gallery response.</p>
-<h3 class="fn"><a name="cancel"></a>void QGalleryAbstractResponse::cancel ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="cancel"></a>void QGalleryAbstractResponse::cancel ()<tt> [virtual]</tt></h3>
 <p>Cancels an active or idle gallery response.</p>
 <p>The default implementation finishes the an active response with the <a href="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::Cancelled</a> result. If the reponse is idle the <a href="qgalleryabstractresponse.html#finished">finished</a>() signal will be re-emitted with idle</p>
-<h3 class="fn"><a name="finish"></a>void QGalleryAbstractResponse::finish ( int <i>result</i>, bool <i>idle</i> = false )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="finish"></a>void QGalleryAbstractResponse::finish ( int <i>result</i>, bool <i>idle</i> = false )<tt> [protected]</tt></h3>
 <p>Finalizes a gallery response, and sets the <i>result</i>.</p>
 <p>If <i>idle</i> is true the items returned by a response will be monitored for changes and updated as appropriate.</p>
-<h3 class="fn"><a name="finished"></a>void QGalleryAbstractResponse::finished ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="finished"></a>void QGalleryAbstractResponse::finished ()<tt> [signal]</tt></h3>
 <p>Signals that a response has finished.</p>
-<h3 class="fn"><a name="isIdle"></a>bool QGalleryAbstractResponse::isIdle () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isIdle"></a>bool QGalleryAbstractResponse::isIdle () const</h3>
 <p>Identifies if the items returned by a response are being monitored for changes.</p>
 <p>Returns true if a response is in an idle state, and false otherwise.</p>
-<h3 class="fn"><a name="progressChanged"></a>void QGalleryAbstractResponse::progressChanged ( int <i>current</i>, int <i>maximum</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="progressChanged"></a>void QGalleryAbstractResponse::progressChanged ( int <i>current</i>, int <i>maximum</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>current</i> or <i>maximum</i> progress of a request has changed.</p>
-<h3 class="fn"><a name="result"></a>int QGalleryAbstractResponse::result () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="result"></a>int QGalleryAbstractResponse::result () const</h3>
 <p>Returns the result of a gallery request.</p>
-<h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractResponse::waitForFinished ( int <i>msecs</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractResponse::waitForFinished ( int <i>msecs</i> )<tt> [pure virtual]</tt></h3>
 <p>Waits for <i>msecs</i> for the a response to finish.</p>
 <p>Returns true if the response has finished on return, and returns false if the wait time expires or the request is inactive or idle.</p>
 </div>
@@ -206,15 +211,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

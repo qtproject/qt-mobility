@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
@@ -145,10 +145,10 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <p>The Qt Messaging API enables access to messaging services to search and sort messages, send messages, retrieve message data, and launch the preferred messaging client on the system to either display an existing message, compose a new message, or respond to an existing message.</p>
-<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="namespace"></a>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, MIME Email and TNEF Email messages is provided. Handling of messages that have only been partially retrieved is supported.</p>
 <p>An API to access messaging services to send messages and retrieve message data is provided, as well as messaging services to compose, reply to, forward and show messages using a native application.</p>
@@ -156,9 +156,9 @@
 <p>The library provides unified access to the messaging data on a device including concurrent access to messaging data by multiple applications, and independence from the mechanism used to store the messaging data on the device.</p>
 <p>On Microsoft Windows, MAPI header files are required to be installed, we recommend installing Visual Studio Express for this purpose.</p>
 <p>On Linux QMF is required to be installed and the QMF_INCLUDEDIR and QMF_LIBDIR environment variables set to the messagingframework/src/libraries/qtopiamail and build/messagingframework/image/lib directories respectively.</p>
-<a name="reference-documentation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="reference-documentation"></a>
 <h2>Reference documentation</h2>
-<a name="main-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="main-classes"></a>
 <h3>Main classes</h3>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qmessage.html">QMessage</a></p></td><td><p>Convenient interface for working with messages</p></td></tr>
@@ -179,7 +179,7 @@
 <tr class="even topAlign"><td><p><a href="qmessageservice.html">QMessageService</a></p></td><td><p>The interface for requesting messaging service operations</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qmessagesortorder.html">QMessageSortOrder</a></p></td><td><p>Defines the parameters used for sorting a subset of queried messages from the messaging store</p></td></tr>
 </table>
-<a name="composition-and-manipulation-of-messages"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="composition-and-manipulation-of-messages"></a>
 <h2>Composition and Manipulation of Messages</h2>
 <p>The library provides a number of classes to assist with the composition and manipulation of message data. Messages of all supported types are represented uniformly. Messages can be composed of multiple parts.</p>
 <p>Classes to assist with composition and manipulation of messages:</p>
@@ -190,7 +190,7 @@
 <tr class="odd topAlign"><td><p><a href="qmessagecontentcontainer.html">QMessageContentContainer</a></p></td><td><p>Interface for an internet media (MIME) entity.</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qmessageaddress.html">QMessageAddress</a></p></td><td><p>Interface for manipulating message address strings.</p></td></tr>
 </table>
-<a name="message-accounts"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="message-accounts"></a>
 <h2>Message Accounts</h2>
 <p>The library provides classes for accessing information about messaging accounts both outgoing and incoming.</p>
 <p>Classes relating to messaging accounts:</p>
@@ -201,7 +201,7 @@
 <tr class="odd topAlign"><td><p><a href="qmessagefolderid.html">QMessageFolderId</a></p></td><td><p>Represents the messaging store identifiers for folders.</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qmessagefolder.html">QMessageFolder</a></p></td><td><p>Represents a folder of messages on the messaging store.</p></td></tr>
 </table>
-<a name="sorting-and-filtering-functionality"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="sorting-and-filtering-functionality"></a>
 <h2>Sorting and Filtering Functionality</h2>
 <p>The library provides a number of sort and filter functions to aid in selecting a useful view of data. This reduces the burden on the client of the library for managing the messaging data, as well as allowing better use of the underlying storage mechanism.</p>
 <p>Sorting is accomplished by providing a sorting object, specifying the sort order, and the message property upon which to order.</p>
@@ -218,12 +218,12 @@
 <tr class="even topAlign"><td><p><a href="qmessageaccountfilter.html">QMessageAccountFilter</a></p></td><td><p>Defines the parameters used for querying a subset of all available accounts from the messaging store.</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qmessageaccountsortorder.html">QMessageAccountSortOrder</a></p></td><td><p>Defines the parameters used for sorting accounts queried from the messaging store.</p></td></tr>
 </table>
-<a name="using-the-ordering-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="using-the-ordering-functions"></a>
 <h3>Using the Ordering Functions</h3>
 <p>An example of the use of Ordering functions can be found in the Send Message example.</p>
 <pre class="highlightedCode brush: cpp"> QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
      QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);</pre>
-<a name="using-the-filter-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="using-the-filter-functions"></a>
 <h3>Using the Filter Functions</h3>
 <p>The following code is taken from the Keep In Touch example, it demonstrates the use of filters to achieve desired effects. You can also see how the filters once constructed can be operated on by typical boolean operators, in the same way you would manipulate bit settings in C. In this way we can build more complex conditions.</p>
 <pre class="highlightedCode brush: cpp"> QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate,
@@ -238,25 +238,25 @@
 
 <span class="comment"> // Create the filter needed to locate messages to search for addresses</span>
  inclusionFilter = (outgoingFilter &amp; includeFilter &amp; ~excludeFilter);</pre>
-<a name="messaging-services"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="messaging-services"></a>
 <h2>Messaging Services</h2>
 <p>The library provides the <a href="qmessageservice.html">QMessageService</a> class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.</p>
 <p>Service actions communciate their operational status by emitting signals.</p>
 <p>Functions outside the <a href="qmessageservice.html">QMessageService</a> class should not invoke network activity. That is, only <a href="qmessageservice.html">QMessageService</a> functions should be responsible for initiating network activity (Note: this is not true for the Windows desktop and mobile platforms, where network activity can occur outside the client's control).</p>
-<a name="concurrent-access-to-messaging-data"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="concurrent-access-to-messaging-data"></a>
 <h2>Concurrent Access to Messaging Data</h2>
 <p>The library provides a level of concurrent access to messaging data by multiple clients.</p>
 <p>The concurrent access does guarantee that data won't be corrupted by concurrent access, however it does not give any guarantees as to performance of messaging data access if accessed concurrently by multiple clients.</p>
 <p>A single client may access the messaging data from multiple threads, but only one thread may access the data concurrently.</p>
-<a name="abstraction-of-messaging-data-storage-mechanism"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="abstraction-of-messaging-data-storage-mechanism"></a>
 <h2>Abstraction of Messaging Data Storage Mechanism</h2>
 <p>The library abstracts the storage method used to store messaging data.</p>
-<a name="examples"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="examples"></a>
 <h2>Examples</h2>
-<a name="keep-in-touch"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="keep-in-touch"></a>
 <h3>Keep In Touch</h3>
 <p>The <a href="keepintouch.html">Keep In Touch</a> example shows how to extract useful information from the messages stored by the system.</p>
-<a name="service-actions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="service-actions"></a>
 <h3>Service Actions</h3>
 <p>The <a href="serviceactions.html">Service Actions</a> example is a program to demonstrate how to compose, send, show, query and retrieve messages, and also react to message store events using the Qt Mobility Messaging API.</p>
 </div>
@@ -266,15 +266,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#signals">Signals</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoRoutingManager&gt;</pre><ul>
 <li><a href="qgeoroutingmanager-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutingmanager.html#dtor.QGeoRoutingManager">~QGeoRoutingManager</a></b> ()</td></tr>
@@ -154,13 +155,15 @@
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutingmanager.html#supportsRouteUpdates">supportsRouteUpdates</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoRouteReply * </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutingmanager.html#updateRoute">updateRoute</a></b> ( const QGeoRoute &amp; <i>route</i>, const QGeoCoordinate &amp; <i>position</i> )</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutingmanager.html#error">error</a></b> ( QGeoRouteReply * <i>reply</i>, QGeoRouteReply::Error <i>error</i>, QString <i>errorString</i> = QString() )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeoroutingmanager.html#finished">finished</a></b> ( QGeoRouteReply * <i>reply</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoRoutingManager class provides support for geographic routing operations.</p>
@@ -238,52 +241,53 @@
      }
  };</pre>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="dtor.QGeoRoutingManager"></a>QGeoRoutingManager::~QGeoRoutingManager ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QGeoRoutingManager"></a>QGeoRoutingManager::~QGeoRoutingManager ()</h3>
 <p>Destroys this manager.</p>
-<h3 class="fn"><a name="calculateRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingManager::calculateRoute ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="calculateRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingManager::calculateRoute ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )</h3>
 <p>Begins the calculation of the route specified by <i>request</i>.</p>
 <p>A <a href="qgeoroutereply.html">QGeoRouteReply</a> object will be returned, which can be used to manage the routing operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
 <p>Once the operation has completed, QGeoRouteReply::routes can be used to retrieve the calculated route or routes.</p>
 <p>If <i>request</i> includes features which are not supported by this manager, as reported by the methods in this manager, then a <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::UnsupportedOptionError</a> will occur.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoroutingmanager.html#finished">QGeoRoutingManager::finished</a>(), <a href="qgeoroutingmanager.html#error">QGeoRoutingManager::error</a>(), <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() or <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() with deleteLater().</p>
-<h3 class="fn"><a name="error"></a>void QGeoRoutingManager::error ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i>, <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::Error</a> <i>error</i>, QString <i>errorString</i> = QString() )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="error"></a>void QGeoRoutingManager::error ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i>, <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::Error</a> <i>error</i>, QString <i>errorString</i> = QString() )<tt> [signal]</tt></h3>
 <p>This signal is emitted when an error has been detected in the processing of <i>reply</i>. The <a href="qgeoroutingmanager.html#finished">QGeoRoutingManager::finished</a>() signal will probably follow.</p>
 <p>The error will be described by the error code <i>error</i>. If <i>errorString</i> is not empty it will contain a textual description of the error.</p>
 <p>This signal and <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() will be emitted at the same time.</p>
 <p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use deleteLater() instead.</p>
-<h3 class="fn"><a name="finished"></a>void QGeoRoutingManager::finished ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="finished"></a>void QGeoRoutingManager::finished ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted when <i>reply</i> has finished processing.</p>
 <p>If reply::error() equals <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::NoError</a> then the processing finished successfully.</p>
 <p>This signal and <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() will be emitted at the same time.</p>
 <p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use deleteLater() instead.</p>
-<h3 class="fn"><a name="managerName"></a>QString QGeoRoutingManager::managerName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerName"></a>QString QGeoRoutingManager::managerName () const</h3>
 <p>Returns the name of the engine which implements the behaviour of this routing manager.</p>
 <p>The combination of managerName() and <a href="qgeoroutingmanager.html#managerVersion">managerVersion</a>() should be unique amongst the plugin implementations.</p>
-<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoRoutingManager::managerParameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerParameters"></a>QMap&lt;QString, QString&gt; QGeoRoutingManager::managerParameters () const</h3>
 <p>Returns the parameters used in the creation of this routing manager.</p>
-<h3 class="fn"><a name="managerVersion"></a>int QGeoRoutingManager::managerVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="managerVersion"></a>int QGeoRoutingManager::managerVersion () const</h3>
 <p>Returns the version of the engine which implements the behaviour of this routin manager.</p>
 <p>The combination of <a href="qgeoroutingmanager.html#managerName">managerName</a>() and managerVersion() should be unique amongst the plugin implementations.</p>
-<h3 class="fn"><a name="supportedAvoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidFeatureTypes</a> QGeoRoutingManager::supportedAvoidFeatureTypes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedAvoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidFeatureTypes</a> QGeoRoutingManager::supportedAvoidFeatureTypes () const</h3>
 <p>Returns the types of features that this manager can avoid during route planning.</p>
-<h3 class="fn"><a name="supportedInstructionDetails"></a><a href="qgeorouterequest.html#InstructionDetail-enum">QGeoRouteRequest::InstructionDetails</a> QGeoRoutingManager::supportedInstructionDetails () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedInstructionDetails"></a><a href="qgeorouterequest.html#InstructionDetail-enum">QGeoRouteRequest::InstructionDetails</a> QGeoRoutingManager::supportedInstructionDetails () const</h3>
 <p>Returns the levels of detail for navigation instructions which can be requested by this manager.</p>
-<h3 class="fn"><a name="supportedRouteOptimizations"></a><a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::RouteOptimizations</a> QGeoRoutingManager::supportedRouteOptimizations () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedRouteOptimizations"></a><a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::RouteOptimizations</a> QGeoRoutingManager::supportedRouteOptimizations () const</h3>
 <p>Returns the route optimizations supported by this manager.</p>
-<h3 class="fn"><a name="supportedSegmentDetails"></a><a href="qgeorouterequest.html#SegmentDetail-enum">QGeoRouteRequest::SegmentDetails</a> QGeoRoutingManager::supportedSegmentDetails () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedSegmentDetails"></a><a href="qgeorouterequest.html#SegmentDetail-enum">QGeoRouteRequest::SegmentDetails</a> QGeoRoutingManager::supportedSegmentDetails () const</h3>
 <p>Returns the levels of detail for routing segments which can be requested with this manager.</p>
-<h3 class="fn"><a name="supportedTravelModes"></a><a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelModes</a> QGeoRoutingManager::supportedTravelModes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedTravelModes"></a><a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelModes</a> QGeoRoutingManager::supportedTravelModes () const</h3>
 <p>Returns the travel modes supported by this manager.</p>
-<h3 class="fn"><a name="supportsAlternativeRoutes"></a>bool QGeoRoutingManager::supportsAlternativeRoutes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportsAlternativeRoutes"></a>bool QGeoRoutingManager::supportsAlternativeRoutes () const</h3>
 <p>Returns whether this manager supports request for alternative routes.</p>
-<h3 class="fn"><a name="supportsExcludeAreas"></a>bool QGeoRoutingManager::supportsExcludeAreas () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportsExcludeAreas"></a>bool QGeoRoutingManager::supportsExcludeAreas () const</h3>
 <p>Returns whether this engine supports the exclusion of areas from routes.</p>
-<h3 class="fn"><a name="supportsRouteUpdates"></a>bool QGeoRoutingManager::supportsRouteUpdates () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportsRouteUpdates"></a>bool QGeoRoutingManager::supportsRouteUpdates () const</h3>
 <p>Returns whether this manager supports updating routes.</p>
-<h3 class="fn"><a name="updateRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingManager::updateRoute ( const <a href="qgeoroute.html">QGeoRoute</a> &amp; <i>route</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>position</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="updateRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingManager::updateRoute ( const <a href="qgeoroute.html">QGeoRoute</a> &amp; <i>route</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>position</i> )</h3>
 <p>Begins the process of updating <i>route</i> based on the current position <i>position</i>.</p>
 <p>A <a href="qgeoroutereply.html">QGeoRouteReply</a> object will be returned, which can be used to manage the routing operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
@@ -298,15 +302,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

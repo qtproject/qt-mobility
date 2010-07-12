@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -135,7 +135,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactDetailFieldDefinition&gt;</pre><ul>
 <li><a href="qcontactdetailfielddefinition-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailfielddefinition.html#QContactDetailFieldDefinition">QContactDetailFieldDefinition</a></b> ()</td></tr>
@@ -149,37 +150,39 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QContactDetailFieldDefinition &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailfielddefinition.html#operator-eq">operator=</a></b> ( const QContactDetailFieldDefinition &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailfielddefinition.html#operator-eq-eq">operator==</a></b> ( const QContactDetailFieldDefinition &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetailFieldDefinition class provides a field in a <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <p>Encapsulates information about a particular datum which may be part of a <a href="qcontactdetail.html">QContactDetail</a>, including the type and allowable values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QContactDetailFieldDefinition"></a>QContactDetailFieldDefinition::QContactDetailFieldDefinition ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailFieldDefinition"></a>QContactDetailFieldDefinition::QContactDetailFieldDefinition ()</h3>
 <p>Constructs a new field with no constraints and an invalid data type.</p>
-<h3 class="fn"><a name="QContactDetailFieldDefinition-2"></a>QContactDetailFieldDefinition::QContactDetailFieldDefinition ( const QContactDetailFieldDefinition &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QContactDetailFieldDefinition-2"></a>QContactDetailFieldDefinition::QContactDetailFieldDefinition ( const QContactDetailFieldDefinition &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> field</p>
-<h3 class="fn"><a name="dtor.QContactDetailFieldDefinition"></a>QContactDetailFieldDefinition::~QContactDetailFieldDefinition ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactDetailFieldDefinition"></a>QContactDetailFieldDefinition::~QContactDetailFieldDefinition ()</h3>
 <p>Cleans up the memory in use by the field</p>
-<h3 class="fn"><a name="allowableValues"></a>QVariantList QContactDetailFieldDefinition::allowableValues () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="allowableValues"></a>QVariantList QContactDetailFieldDefinition::allowableValues () const</h3>
 <p>Returns the list of allowable values which this field may store</p>
 <p>See also <a href="qcontactdetailfielddefinition.html#setAllowableValues">setAllowableValues</a>().</p>
-<h3 class="fn"><a name="dataType"></a>QVariant::Type QContactDetailFieldDefinition::dataType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dataType"></a>QVariant::Type QContactDetailFieldDefinition::dataType () const</h3>
 <p>Returns the data type of the field</p>
 <p>See also <a href="qcontactdetailfielddefinition.html#setDataType">setDataType</a>().</p>
-<h3 class="fn"><a name="setAllowableValues"></a>void QContactDetailFieldDefinition::setAllowableValues ( const QVariantList <i>values</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAllowableValues"></a>void QContactDetailFieldDefinition::setAllowableValues ( const QVariantList <i>values</i> )</h3>
 <p>Sets the list of allowable values which this field may store to <i>values</i></p>
 <p>See also <a href="qcontactdetailfielddefinition.html#allowableValues">allowableValues</a>().</p>
-<h3 class="fn"><a name="setDataType"></a>void QContactDetailFieldDefinition::setDataType ( QVariant::Type <i>type</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDataType"></a>void QContactDetailFieldDefinition::setDataType ( QVariant::Type <i>type</i> )</h3>
 <p>Sets the data type of the field to <i>type</i></p>
 <p>See also <a href="qcontactdetailfielddefinition.html#dataType">dataType</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailFieldDefinition::operator!= ( const QContactDetailFieldDefinition &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailFieldDefinition::operator!= ( const QContactDetailFieldDefinition &amp; <i>other</i> ) const</h3>
 <p>Returns true if the allowable values or data type of the <i>other</i> field differ from those of this field</p>
-<h3 class="fn"><a name="operator-eq"></a>QContactDetailFieldDefinition &amp; QContactDetailFieldDefinition::operator= ( const QContactDetailFieldDefinition &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QContactDetailFieldDefinition &amp; QContactDetailFieldDefinition::operator= ( const QContactDetailFieldDefinition &amp; <i>other</i> )</h3>
 <p>Assigns the field to be equal to the <i>other</i> field</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailFieldDefinition::operator== ( const QContactDetailFieldDefinition &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailFieldDefinition::operator== ( const QContactDetailFieldDefinition &amp; <i>other</i> ) const</h3>
 <p>Returns true if the allowable values and data type of the <i>other</i> field are equal to those of this field</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -188,15 +191,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

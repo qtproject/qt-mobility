@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#introduction">Introduction</a></li>
 <li class="level1"><a href="#using-the-api">Using The API</a></li>
@@ -138,11 +138,11 @@
 <h1 class="title">Organizer Synchronous API</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="introduction"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="introduction"></a>
 <h2>Introduction</h2>
 <p>The Organizer Items Synchronous API enables a client to synchronously fetch, update, or remove item data from an item manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or user interface responsiveness is not critical. Synchronous calls to an item manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
 <p>Most operations which may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
-<a name="using-the-api"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="using-the-api"></a>
 <h2>Using The API</h2>
 <p>The synchronous API offered by the Organizer Items module is available through the <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> class. It consists of three major sections:</p>
 <ul>
@@ -150,12 +150,12 @@
 <li>Schema Manipulation</li>
 <li>Organizer Item Manipulation</li>
 </ul>
-<a name="error-reporting"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="error-reporting"></a>
 <h3>Error Reporting</h3>
 <p>When a synchronous operation fails, clients need to be able to retrieve error information associated with that synchronous operation. The <a href="qorganizeritemmanager.html#error">QOrganizerItemManager::error</a>() function provides this information to clients.</p>
 <p>For some synchronous operations (for example, batch save or remove operations) it is possible that multiple errors may occur during the operation. In those cases, the synchronous function will take a pointer to a map of input index to error, which will be filled by the function as required, and the <a href="qorganizeritemmanager.html#error">QOrganizerItemManager::error</a>() function will report the overall operation error.</p>
 <p>Error reporting is handled slightly differently in the asynchronous API, in that each instance of an asynchronous request is able to report any overall operation error as well as the finer-grained map of errors, for the operation which it requested.</p>
-<a name="organizer-item-manipulation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="organizer-item-manipulation"></a>
 <h3>Organizer Item Manipulation</h3>
 <p>The most common type of operation that clients will perform involves retrieval or modification of items. The <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> class offers synchronous API to retrieve, create, update and delete items. The create and update operations are provided through the same interface. Both singular and batch operations are offered by the API.</p>
 <p>An item is identified by its <a href="qorganizeritemid.html">QOrganizerItemId</a>. This id consists of two parts: a URI which identifies the item manager which stores the item, and the local id of the item in that manager. Some operations which take a pointer to an item as an argument may modify the item during the operation; updating the item id is a common example.</p>
@@ -183,7 +183,7 @@
 </ul>
 <p>The batch save and remove functions both take an (optional) pointer to a map of errors. If the pointer is non-null, this map will be filled out with any errors which occur. The overall operation error of any batch manipulation operation may be accessed by calling <a href="qorganizeritemmanager.html#error">QOrganizerItemManager::error</a>() directly after the original synchronous call.</p>
 <p>The item manipulation functionality is also provided via asynchronous API through the <a href="qorganizeritemfetchrequest.html">QOrganizerItemFetchRequest</a>, <a href="qorganizeritemsaverequest.html">QOrganizerItemSaveRequest</a>, and <a href="qorganizeritemremoverequest.html">QOrganizerItemRemoveRequest</a> classes.</p>
-<a name="schema-manipulation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="schema-manipulation"></a>
 <h3>Schema Manipulation</h3>
 <p>The schema supported by a plugin is the list of detail definitions which are supported by the plugin. An item which contains a detail of a particular definition which is not supported by the plugin will fail to validate when the user attempts to save it in that manager. The schema also includes any access constraints which may apply to certain details or detail definitions (for example, a particular detail definition might be declared to be unique per-item in a particular manager).</p>
 <p>Every plugin will support a slightly different schema, as the schema which can be supported will depend on the semantics and limitations of the underlying storage platform on which the plugin is based. The default schema is described in the <a href="organizerschema.html">Qt Mobility Organizer schema documentation</a>, and plugins should attempt to implement that schema; however no guarantees are given to clients as to the conformance of the schemas supported by various plugins to the default schema.</p>
@@ -197,10 +197,10 @@
 </ul>
 <p>The schema manipulation functionality is also provided via asynchronous API through the <a href="qorganizeritemdetaildefinitionfetchrequest.html">QOrganizerItemDetailDefinitionFetchRequest</a>, <a href="qorganizeritemdetaildefinitionsaverequest.html">QOrganizerItemDetailDefinitionSaveRequest</a> and <a href="qorganizeritemdetaildefinitionremoverequest.html">QOrganizerItemDetailDefinitionRemoveRequest</a> classes.</p>
 <p>Note that the schema supported by a plugin may vary depending on the type of item to which the schema applies. For example, a particular plugin might support name, address, phone number, email address, and gender details for normal items, but only name, address, and phone number details for a group item.</p>
-<a name="examples-of-usage"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="examples-of-usage"></a>
 <h2>Examples Of Usage</h2>
 <p>The synchronous API provides the simplest way to access or modify the item information managed by a particular backend. It has the disadvantage that calls block until completion and is therefore most suitable only for applications which interact with local, high-speed datastores.</p>
-<a name="saving-a-new-item-to-the-default-manager"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="saving-a-new-item-to-the-default-manager"></a>
 <h3>Saving a new item to the default manager</h3>
 <p>The client creates a new non-recurring item, adds some, and saves it to the default store of the default manager.</p>
 <pre class="highlightedCode brush: cpp">     <span class="comment">// a default constructed journal will have it's date/time set to the current date/time.</span>
@@ -212,7 +212,7 @@
                      &quot;recipe that combines both marshmallows and chocolate, by next Wednesday.&quot;);
      defaultManager.saveItem(&amp;journal);</pre>
 <p>We assume the existence of various specialized leaf-classes that allow simple access to details of the item, such as priority, description and display label. These specialized leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qorganizeritemdetail.html">QOrganizerItemDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
-<a name="filtering-by-detail-definition-and-value"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
 <p>The client utilizes a default manager and asks for any items which match a particular search criteria:</p>
 <pre class="highlightedCode brush: cpp">     <span class="comment">// XXX TODO: make this more convenient.</span>
@@ -221,7 +221,7 @@
      locationFilter.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
      locationFilter.setValue(&quot;Meeting Room 8&quot;);
      QList&lt;QOrganizerItem&gt; entries = defaultManager.items(locationFilter);</pre>
-<a name="modifying-an-existing-item-and-saving-the-modifications"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="modifying-an-existing-item-and-saving-the-modifications"></a>
 <h4>Modifying an existing item and saving the modifications</h4>
 <p>The client retrieves an item, modifies one of its details, adds a new detail, and then saves the item back to the manager.</p>
 <pre class="highlightedCode brush: cpp">     journal.addComment(&quot;Serves: 8.  Ingredients: 500g Milk Chocolate, 500g Marshmallows.  Step 1: Put the marshmallows into 8 separate bowls.  Step 2: Melt the chocolate.  Step 3: Pour the chocolate over the marshmallows in the bowls.  Step 4: Put the bowls into the refrigerator for 20 minutes; serve chilled.&quot;);
@@ -233,15 +233,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

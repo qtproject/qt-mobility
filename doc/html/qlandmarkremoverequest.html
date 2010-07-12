@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmarkremoverequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkremoverequest.html#QLandmarkRemoveRequest">QLandmarkRemoveRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
@@ -154,27 +155,29 @@
 <li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkRemoveRequest class allows a client to asynchronously request that certain landmarks be removed from a landmark manager.</p>
 <p>For a QLandmarkRemoveRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either an individual items error out (individaul errors may be retrieved by calling <a href="qlandmarkremoverequest.html#errorMap">errorMap</a>()), or when an overall operation error occurs(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()).</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkRemoveRequest"></a>QLandmarkRemoveRequest::QLandmarkRemoveRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkRemoveRequest"></a>QLandmarkRemoveRequest::QLandmarkRemoveRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a landmark remove request with the given <i>manager</i> and <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkRemoveRequest"></a>QLandmarkRemoveRequest::~QLandmarkRemoveRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkRemoveRequest"></a>QLandmarkRemoveRequest::~QLandmarkRemoveRequest ()</h3>
 <p>Destroys the request object.</p>
-<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkRemoveRequest::errorMap () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errorMap"></a>QMap&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkRemoveRequest::errorMap () const</h3>
 <p>Returns the mapping of input landmark id list indices to the errors which occurred.</p>
-<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkRemoveRequest::landmarkIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkRemoveRequest::landmarkIds () const</h3>
 <p>Returns the list of identifiers of landmarks which will be removed.</p>
 <p>See also <a href="qlandmarkremoverequest.html#setLandmarkIds">setLandmarkIds</a>().</p>
-<h3 class="fn"><a name="setLandmarkId"></a>void QLandmarkRemoveRequest::setLandmarkId ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLandmarkId"></a>void QLandmarkRemoveRequest::setLandmarkId ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> )</h3>
 <p>Convenience function to set the <i>landmarkId</i> of a single landmark to be removed.</p>
 <p>See also <a href="qlandmarkremoverequest.html#setLandmarkIds">setLandmarkIds</a>().</p>
-<h3 class="fn"><a name="setLandmarkIds"></a>void QLandmarkRemoveRequest::setLandmarkIds ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLandmarkIds"></a>void QLandmarkRemoveRequest::setLandmarkIds ( const QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )</h3>
 <p>Sets the list of <i>landmarkIds</i> of landmarks which will be removed.</p>
 <p>See also <a href="qlandmarkremoverequest.html#landmarkIds">landmarkIds</a>() and <a href="qlandmarkremoverequest.html#setLandmarkId">setLandmarkId</a>().</p>
 </div>
@@ -184,15 +187,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

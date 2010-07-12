@@ -122,7 +122,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 </ul>
 </div>
@@ -130,12 +130,14 @@
 <p>The QValueSpace namespace contains miscellaneous identifiers used throughtout the Publish and Subscribe API. <a href="#details">More...</a></p>
 <pre class="highlightedCode brush: cpp"> #include &lt;QValueSpace&gt;</pre><ul>
 </ul>
-<a name="functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="functions"></a>
 <h2>Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qvaluespace.html#installLayer">installLayer</a></b> ( QAbstractValueSpaceLayer * <i>layer</i> )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER">QVALUESPACE_CONTEXTKIT_LAYER</a></b></td></tr>
@@ -144,36 +146,39 @@
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvaluespace.html#QVALUESPACE_SYMBIAN_SETTINGS_LAYER">QVALUESPACE_SYMBIAN_SETTINGS_LAYER</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qvaluespace.html#QVALUESPACE_VOLATILEREGISTRY_LAYER">QVALUESPACE_VOLATILEREGISTRY_LAYER</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QValueSpace namespace contains miscellaneous identifiers used throughtout the Publish and Subscribe API.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Function Documentation</h2>
-<h3 class="fn"><a name="installLayer"></a>void QValueSpace::installLayer ( <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> * <i>layer</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="installLayer"></a>void QValueSpace::installLayer ( <a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a> * <i>layer</i> )</h3>
 <p>Used by Value Space layer implementations to install themselves into the system. <i>layer</i> should be a pointer to the layer to install.</p>
 <p>See also <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>().</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QVALUESPACE_CONTEXTKIT_LAYER"></a>QVALUESPACE_CONTEXTKIT_LAYER</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVALUESPACE_CONTEXTKIT_LAYER"></a>QVALUESPACE_CONTEXTKIT_LAYER</h3>
 <p>The UUID of the ContextKit layer as a QUuid. The actual UUID values is {2c769b9e-d949-4cd1-848f-d32241fe07ff}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the ContextKit layer.</p>
 <p>You can test if the ContextKit layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
-<h3 class="fn"><a name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>QVALUESPACE_NONVOLATILEREGISTRY_LAYER</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER"></a>QVALUESPACE_NONVOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Non-Volatile Registry layer as a QUuid. The actual UUID value is {8e29561c-a0f0-4e89-ba56-080664abc017}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Non-Volatile Registry layer.</p>
 <p>You can test if the Non-Volatile Registry layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Non-Volatile Registry layer is only available on Windows platforms.</p>
-<h3 class="fn"><a name="QVALUESPACE_SHAREDMEMORY_LAYER"></a>QVALUESPACE_SHAREDMEMORY_LAYER</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVALUESPACE_SHAREDMEMORY_LAYER"></a>QVALUESPACE_SHAREDMEMORY_LAYER</h3>
 <p>The UUID of the Shared Memory layer as a QUuid. The actual UUID value is {d81199c1-6f60-4432-934e-0ce4d37ef252}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Shared Memory layer.</p>
 <p>You can test if the Shared Memory layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
-<h3 class="fn"><a name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER"></a>QVALUESPACE_SYMBIAN_SETTINGS_LAYER</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVALUESPACE_SYMBIAN_SETTINGS_LAYER"></a>QVALUESPACE_SYMBIAN_SETTINGS_LAYER</h3>
 <p>The UUID of the Symbian Settings layer as a QUuid. The actual UUID value is {40d7b059-66ac-442f-b222-9c8ab98b9c2d}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Symbian Settings layer.</p>
 <p>You can test if the Symbian Settings layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value.</p>
-<h3 class="fn"><a name="QVALUESPACE_VOLATILEREGISTRY_LAYER"></a>QVALUESPACE_VOLATILEREGISTRY_LAYER</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVALUESPACE_VOLATILEREGISTRY_LAYER"></a>QVALUESPACE_VOLATILEREGISTRY_LAYER</h3>
 <p>The UUID of the Volatile Registry layer as a QUuid. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Volatile Registry layer.</p>
 <p>You can test if the Volatile Registry layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Volatile Registry layer is only available on Windows platforms.</p>
@@ -184,15 +189,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

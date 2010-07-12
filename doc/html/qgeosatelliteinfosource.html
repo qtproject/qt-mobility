@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#public-slots">Public Slots</a></li>
@@ -138,31 +138,36 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QGeoSatelliteInfoSource&gt;</pre><ul>
 <li><a href="qgeosatelliteinfosource-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#QGeoSatelliteInfoSource">QGeoSatelliteInfoSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
-<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 0 ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</a></b> () = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#requestTimeout">requestTimeout</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a></b> ( const QList&lt;QGeoSatelliteInfo&gt; &amp; <i>satellites</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a></b> ( const QList&lt;QGeoSatelliteInfo&gt; &amp; <i>satellites</i> )</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QGeoSatelliteInfoSource * </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfosource.html#createDefaultSource">createDefaultSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.</p>
@@ -170,30 +175,31 @@
 <p>Call <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() and <a href="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</a>() to start and stop regular updates, or <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() to request a single update. When an update is available, <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and/or <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() will be emitted.</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default satellite source on a Windows CE device without GPS support will never provide any satellite data.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGeoSatelliteInfoSource"></a>QGeoSatelliteInfoSource::QGeoSatelliteInfoSource ( QObject * <i>parent</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGeoSatelliteInfoSource"></a>QGeoSatelliteInfoSource::QGeoSatelliteInfoSource ( QObject * <i>parent</i> )</h3>
 <p>Creates a source with the specified <i>parent</i>.</p>
-<h3 class="fn"><a name="createDefaultSource"></a>QGeoSatelliteInfoSource * QGeoSatelliteInfoSource::createDefaultSource ( QObject * <i>parent</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="createDefaultSource"></a>QGeoSatelliteInfoSource * QGeoSatelliteInfoSource::createDefaultSource ( QObject * <i>parent</i> )<tt> [static]</tt></h3>
 <p>Creates and returns a source with the specified <i>parent</i> that reads from the system's default source of satellite update information.</p>
 <p>Returns 0 if the system has no default source.</p>
-<h3 class="fn"><a name="requestTimeout"></a>void QGeoSatelliteInfoSource::requestTimeout ()<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestTimeout"></a>void QGeoSatelliteInfoSource::requestTimeout ()<tt> [signal]</tt></h3>
 <p>Emitted if <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() was called and the current satellite information could not be retrieved within the specified timeout.</p>
-<h3 class="fn"><a name="requestUpdate"></a>void QGeoSatelliteInfoSource::requestUpdate ( int <i>timeout</i> = 0 )<tt> [pure virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="requestUpdate"></a>void QGeoSatelliteInfoSource::requestUpdate ( int <i>timeout</i> = 0 )<tt> [pure virtual slot]</tt></h3>
 <p>Attempts to get the current satellite information and emit <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() with this information. If the current position cannot be found within the given <i>timeout</i> (in milliseconds), <a href="qgeosatelliteinfosource.html#requestTimeout">requestTimeout</a>() is emitted.</p>
 <p>If the timeout is zero, the timeout defaults to a reasonable timeout period as appropriate for the source.</p>
 <p>This does nothing if another update request is in progress. However it can be called even if <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
-<h3 class="fn"><a name="satellitesInUseUpdated"></a>void QGeoSatelliteInfoSource::satellitesInUseUpdated ( const QList&lt;<a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a>&gt; &amp; <i>satellites</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="satellitesInUseUpdated"></a>void QGeoSatelliteInfoSource::satellitesInUseUpdated ( const QList&lt;<a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a>&gt; &amp; <i>satellites</i> )<tt> [signal]</tt></h3>
 <p>If <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() or <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update is available on the number of satellites that are currently in use.</p>
 <p>These are the satellites that are used to get a &quot;fix&quot; - that is, those used to determine the current position.</p>
 <p>The <i>satellites</i> parameter holds the satellites currently in use.</p>
-<h3 class="fn"><a name="satellitesInViewUpdated"></a>void QGeoSatelliteInfoSource::satellitesInViewUpdated ( const QList&lt;<a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a>&gt; &amp; <i>satellites</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="satellitesInViewUpdated"></a>void QGeoSatelliteInfoSource::satellitesInViewUpdated ( const QList&lt;<a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a>&gt; &amp; <i>satellites</i> )<tt> [signal]</tt></h3>
 <p>If <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() or <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() is called, this signal is emitted when an update is available on the satellites that are currently in view.</p>
 <p>The <i>satellites</i> parameter holds the satellites currently in view.</p>
-<h3 class="fn"><a name="startUpdates"></a>void QGeoSatelliteInfoSource::startUpdates ()<tt> [pure virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="startUpdates"></a>void QGeoSatelliteInfoSource::startUpdates ()<tt> [pure virtual slot]</tt></h3>
 <p>Starts emitting updates at regular intervals. The updates will be provided whenever new satellite information becomes available.</p>
 <p>See also <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>().</p>
-<h3 class="fn"><a name="stopUpdates"></a>void QGeoSatelliteInfoSource::stopUpdates ()<tt> [pure virtual slot]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="stopUpdates"></a>void QGeoSatelliteInfoSource::stopUpdates ()<tt> [pure virtual slot]</tt></h3>
 <p>Stops emitting updates at regular intervals.</p>
 </div>
 <p /><address><hr /><div align="center">
@@ -202,15 +208,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

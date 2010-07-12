@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,13 +137,15 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemDetail&gt;</pre><ul>
 <li><a href="qorganizeritemdetail-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#AccessConstraint-enum">AccessConstraint</a></b> { NoConstraint, ReadOnly, Irremovable }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#AccessConstraint-enum">AccessConstraints</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#QOrganizerItemDetail">QOrganizerItemDetail</a></b> ()</td></tr>
@@ -173,12 +175,14 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QOrganizerItemDetail &amp; </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#operator-eq">operator=</a></b> ( const QOrganizerItemDetail &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#operator-eq-eq">operator==</a></b> ( const QOrganizerItemDetail &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemdetail.html#Q_DECLARE_CUSTOM_ORGANIZER_DETAIL">Q_DECLARE_CUSTOM_ORGANIZER_DETAIL</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemDetail class represents a single, complete detail about a organizeritem.</p>
@@ -214,6 +218,7 @@
 <span class="comment"> // otherLabel.definitionName() == QOrganizerItemDisplayLabel::DefinitionName</span></pre>
 </div>
 <p>See also <a href="qorganizeritem.html">QOrganizerItem</a>, <a href="qorganizeritemdetaildefinition.html">QOrganizerItemDetailDefinition</a>, <a href="qorganizeritemdetailfilter.html">QOrganizerItemDetailFilter</a>, <a href="qorganizeritemdetailrangefilter.html">QOrganizerItemDetailRangeFilter</a>, and <a href="qorganizeritemdetail.html#Q_DECLARE_CUSTOM_ORGANIZER_DETAIL">Q_DECLARE_CUSTOM_ORGANIZER_DETAIL</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="AccessConstraint-enum"></a>enum QOrganizerItemDetail::AccessConstraint<br/>flags QOrganizerItemDetail::AccessConstraints</h3>
@@ -225,71 +230,73 @@
 </table>
 <p>The AccessConstraints type is a typedef for <a href="qflags.html">QFlags</a>&lt;AccessConstraint&gt;. It stores an OR combination of AccessConstraint values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemDetail"></a>QOrganizerItemDetail::QOrganizerItemDetail ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetail"></a>QOrganizerItemDetail::QOrganizerItemDetail ()</h3>
 <p>Constructs a new, empty detail</p>
-<h3 class="fn"><a name="QOrganizerItemDetail-2"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const char * <i>thisDefinitionId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetail-2"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const char * <i>thisDefinitionId</i> )</h3>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i></p>
 <p>The supplied pointer must be valid for the lifetime of the program. In general this means it should be a constant, and not allocated on the stack. If you cannot meet this requirement, use the alternative constructor that takes a QString instead.</p>
-<h3 class="fn"><a name="QOrganizerItemDetail-3"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const QString &amp; <i>thisDefinitionId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetail-3"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const QString &amp; <i>thisDefinitionId</i> )</h3>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i>. The definitionId must be restricted to the Latin 1 character set.</p>
-<h3 class="fn"><a name="QOrganizerItemDetail-4"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const QOrganizerItemDetail &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemDetail-4"></a>QOrganizerItemDetail::QOrganizerItemDetail ( const QOrganizerItemDetail &amp; <i>other</i> )</h3>
 <p>Constructs a detail that is a copy of <i>other</i></p>
-<h3 class="fn"><a name="dtor.QOrganizerItemDetail"></a>QOrganizerItemDetail::~QOrganizerItemDetail ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QOrganizerItemDetail"></a>QOrganizerItemDetail::~QOrganizerItemDetail ()</h3>
 <p>Frees the memory used by this detail</p>
-<h3 class="fn"><a name="accessConstraints"></a><a href="qorganizeritemdetail.html#AccessConstraint-enum">AccessConstraints</a> QOrganizerItemDetail::accessConstraints () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="accessConstraints"></a><a href="qorganizeritemdetail.html#AccessConstraint-enum">AccessConstraints</a> QOrganizerItemDetail::accessConstraints () const</h3>
 <p>Returns the access constraints associated with the detail.</p>
 <p>Some details may not be written to, while other details may not be removed from a organizeritem.</p>
 <p>See also <a href="qorganizeritemdetail.html#AccessConstraint-enum">QOrganizerItemDetail::AccessConstraints</a>.</p>
-<h3 class="fn"><a name="definitionName"></a>QString QOrganizerItemDetail::definitionName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="definitionName"></a>QString QOrganizerItemDetail::definitionName () const</h3>
 <p>Returns the (unique) name of the definition which defines the semantics and structure of this detail. The actual <a href="qorganizeritemdetaildefinition.html">QOrganizerItemDetailDefinition</a> should be retrieved from the relevant <a href="qorganizeritemmanager.html">QOrganizerItemManager</a> using this name.</p>
-<h3 class="fn"><a name="hasValue"></a>bool QOrganizerItemDetail::hasValue ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasValue"></a>bool QOrganizerItemDetail::hasValue ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
-<h3 class="fn"><a name="hasValue-3"></a>bool QOrganizerItemDetail::hasValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="hasValue-3"></a>bool QOrganizerItemDetail::hasValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QOrganizerItemDetail::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QOrganizerItemDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note that context is stored as a value; hence, if a context is set, this function will return false.</p>
-<h3 class="fn"><a name="key"></a>int QOrganizerItemDetail::key () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="key"></a>int QOrganizerItemDetail::key () const</h3>
 <p>Returns the key of this detail.</p>
-<h3 class="fn"><a name="removeValue"></a>bool QOrganizerItemDetail::removeValue ( const QString &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeValue"></a>bool QOrganizerItemDetail::removeValue ( const QString &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise.</p>
-<h3 class="fn"><a name="removeValue-3"></a>bool QOrganizerItemDetail::removeValue ( const QLatin1Constant &amp; <i>key</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeValue-3"></a>bool QOrganizerItemDetail::removeValue ( const QLatin1Constant &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise.</p>
-<h3 class="fn"><a name="resetKey"></a>void QOrganizerItemDetail::resetKey ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resetKey"></a>void QOrganizerItemDetail::resetKey ()</h3>
 <p>Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it. This ensures that calling <a href="qorganizeritem.html#saveDetail">QOrganizerItem::saveDetail</a>() will result in a new detail being saved, rather than another detail being updated.</p>
-<h3 class="fn"><a name="setValue"></a>bool QOrganizerItemDetail::setValue ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue"></a>bool QOrganizerItemDetail::setValue ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
 <p>See also <a href="qorganizeritemdetail.html#value">value</a>().</p>
-<h3 class="fn"><a name="setValue-3"></a>bool QOrganizerItemDetail::setValue ( const QLatin1Constant &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setValue-3"></a>bool QOrganizerItemDetail::setValue ( const QLatin1Constant &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
-<h3 class="fn"><a name="value"></a>T QOrganizerItemDetail::value ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value"></a>T QOrganizerItemDetail::value ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
 <p>See also <a href="qorganizeritemdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a>T QOrganizerItemDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value-2"></a>T QOrganizerItemDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="value-3"></a>QString QOrganizerItemDetail::value ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value-3"></a>QString QOrganizerItemDetail::value ( const QString &amp; <i>key</i> ) const</h3>
 <p>This is an overloaded function.</p>
 <p>Returns the value stored in this detail for the given <i>key</i> as a QString, or an empty QString if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="value-6"></a>QString QOrganizerItemDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="value-6"></a>QString QOrganizerItemDetail::value ( const QLatin1Constant &amp; <i>key</i> ) const</h3>
 <p>This is an overloaded function.</p>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
-<h3 class="fn"><a name="variantValue"></a>QVariant QOrganizerItemDetail::variantValue ( const QString &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="variantValue"></a>QVariant QOrganizerItemDetail::variantValue ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a QVariant, or an invalid QVariant if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="variantValue-3"></a>QVariant QOrganizerItemDetail::variantValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="variantValue-3"></a>QVariant QOrganizerItemDetail::variantValue ( const QLatin1Constant &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a QVariant, or an invalid QVariant if no value for the given <i>key</i> exists</p>
-<h3 class="fn"><a name="variantValues"></a>QVariantMap QOrganizerItemDetail::variantValues () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="variantValues"></a>QVariantMap QOrganizerItemDetail::variantValues () const</h3>
 <p>Returns the values stored in this detail as a map from value key to value</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemDetail::operator!= ( const QOrganizerItemDetail &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QOrganizerItemDetail::operator!= ( const QOrganizerItemDetail &amp; <i>other</i> ) const</h3>
 <p>Returns true if the values or id of this detail is different to those of the <i>other</i> detail</p>
-<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemDetail &amp; QOrganizerItemDetail::operator= ( const QOrganizerItemDetail &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QOrganizerItemDetail &amp; QOrganizerItemDetail::operator= ( const QOrganizerItemDetail &amp; <i>other</i> )</h3>
 <p>Assigns this detail to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemDetail::operator== ( const QOrganizerItemDetail &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QOrganizerItemDetail::operator== ( const QOrganizerItemDetail &amp; <i>other</i> ) const</h3>
 <p>Compares this detail to <i>other</i>. Returns true if the definition, access constraints and values of <i>other</i> are equal to those of this detail. The keys of each detail are not considered during the comparison, in order to allow details from different organizeritems to be compared according to their values.</p>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="Q_DECLARE_CUSTOM_ORGANIZER_DETAIL"></a>Q_DECLARE_CUSTOM_ORGANIZER_DETAIL</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Q_DECLARE_CUSTOM_ORGANIZER_DETAIL"></a>Q_DECLARE_CUSTOM_ORGANIZER_DETAIL</h3>
 <p>Macro for simplifying declaring custom (leaf) detail classes.</p>
 <p>The first argument is the name of the class, and the second argument is a Latin-1 string literal naming the detail type.</p>
 <p>If you are creating a convenience class for a type of <a href="qorganizeritemdetail.html">QOrganizerItemDetail</a>, you should use this macro when declaring your class to ensure that it interoperates with other organizeritem functionality.</p>
@@ -301,15 +308,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

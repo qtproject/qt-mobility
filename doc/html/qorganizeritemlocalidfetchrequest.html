@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qorganizeritemlocalidfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemlocalidfetchrequest.html#QOrganizerItemLocalIdFetchRequest">QOrganizerItemLocalIdFetchRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -154,28 +155,30 @@
 <li class="fn">3 public slots inherited from <a href="qorganizeritemabstractrequest.html#public-slots">QOrganizerItemAbstractRequest</a></li>
 <li class="fn">2 signals inherited from <a href="qorganizeritemabstractrequest.html#signals">QOrganizerItemAbstractRequest</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemLocalIdFetchRequest class allows a client to asynchronously request a list of organizeritem ids from a organizeritems store manager.</p>
 <p>For a QOrganizerItemLocalIdFetchRequest, the <a href="qorganizeritemabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when the resultant manager-local organizeritem ids (which may be retrieved by calling ids()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qorganizeritemabstractrequest.html#error">error</a>()) is updated.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemLocalIdFetchRequest"></a>QOrganizerItemLocalIdFetchRequest::QOrganizerItemLocalIdFetchRequest ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QOrganizerItemLocalIdFetchRequest"></a>QOrganizerItemLocalIdFetchRequest::QOrganizerItemLocalIdFetchRequest ( QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a new organizeritem id fetch request whose parent is the specified <i>parent</i></p>
-<h3 class="fn"><a name="filter"></a><a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> QOrganizerItemLocalIdFetchRequest::filter () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="filter"></a><a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> QOrganizerItemLocalIdFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the organizeritems whose ids will be returned</p>
 <p>See also <a href="qorganizeritemlocalidfetchrequest.html#setFilter">setFilter</a>().</p>
-<h3 class="fn"><a name="itemIds"></a>QList&lt;QOrganizerItemLocalId&gt; QOrganizerItemLocalIdFetchRequest::itemIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="itemIds"></a>QList&lt;QOrganizerItemLocalId&gt; QOrganizerItemLocalIdFetchRequest::itemIds () const</h3>
 <p>Returns the list of ids of organizeritems which matched the request</p>
-<h3 class="fn"><a name="setFilter"></a>void QOrganizerItemLocalIdFetchRequest::setFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>filter</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFilter"></a>void QOrganizerItemLocalIdFetchRequest::setFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the filter which will be used to select the organizeritems whose ids will be returned to <i>filter</i></p>
 <p>See also <a href="qorganizeritemlocalidfetchrequest.html#filter">filter</a>().</p>
-<h3 class="fn"><a name="setSorting"></a>void QOrganizerItemLocalIdFetchRequest::setSorting ( const QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; &amp; <i>sorting</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSorting"></a>void QOrganizerItemLocalIdFetchRequest::setSorting ( const QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the future sort ordering of the result of the request to <i>sorting</i>. This function only has effect on the result if called prior to calling <tt>start()</tt></p>
 <p>See also <a href="qorganizeritemlocalidfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; QOrganizerItemLocalIdFetchRequest::sorting () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sorting"></a>QList&lt;<a href="qorganizeritemsortorder.html">QOrganizerItemSortOrder</a>&gt; QOrganizerItemLocalIdFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering which will be used to sort the result</p>
 <p>See also <a href="qorganizeritemlocalidfetchrequest.html#setSorting">setSorting</a>().</p>
 </div>
@@ -185,15 +188,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

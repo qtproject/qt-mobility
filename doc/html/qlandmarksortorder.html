@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -137,12 +137,14 @@
 <ul>
 <li><a href="qlandmarksortorder-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qlandmarksortorder.html#SortType-enum">SortType</a></b> { DefaultSort, NameSort, DistanceSort }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarksortorder.html#QLandmarkSortOrder">QLandmarkSortOrder</a></b> ()</td></tr>
@@ -155,15 +157,17 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QLandmarkSortOrder &amp; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarksortorder.html#operator-eq">operator=</a></b> ( const QLandmarkSortOrder &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qlandmarksortorder.html#operator-eq-eq">operator==</a></b> ( const QLandmarkSortOrder &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkSortOrder class serves as a base class for the different sort order types.</p>
 <p>The sort orders define how a list of landmarks should be ordered when they searched using a <a href="qlandmarkmanager.html">QLandmarkManager</a> or one of the landmark request classes.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="SortType-enum"></a>enum QLandmarkSortOrder::SortType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SortType-enum"></a>enum QLandmarkSortOrder::SortType</h3>
 <p>Defines the type of sort order.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QLandmarkSortOrder::DefaultSort</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The default sort order that does nothing</td></tr>
@@ -171,29 +175,30 @@
 <tr><td  class="topAlign"><tt>QLandmarkSortOrder::DistanceSort</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Sorts landmarks by distance from a particular coordinate.</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmarkSortOrder"></a>QLandmarkSortOrder::QLandmarkSortOrder ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkSortOrder"></a>QLandmarkSortOrder::QLandmarkSortOrder ()</h3>
 <p>Constructs a landmark sort order.</p>
 <p>The type of the sort order is InvalidSort.</p>
-<h3 class="fn"><a name="QLandmarkSortOrder-2"></a>QLandmarkSortOrder::QLandmarkSortOrder ( const QLandmarkSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmarkSortOrder-2"></a>QLandmarkSortOrder::QLandmarkSortOrder ( const QLandmarkSortOrder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmarkSortOrder"></a>QLandmarkSortOrder::~QLandmarkSortOrder ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmarkSortOrder"></a>QLandmarkSortOrder::~QLandmarkSortOrder ()<tt> [virtual]</tt></h3>
 <p>Destroys the sort order</p>
-<h3 class="fn"><a name="direction"></a>Qt::SortOrder QLandmarkSortOrder::direction () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="direction"></a>Qt::SortOrder QLandmarkSortOrder::direction () const</h3>
 <p>Returns the direction of the sort order.</p>
 <p>See also <a href="qlandmarksortorder.html#setDirection">setDirection</a>().</p>
-<h3 class="fn"><a name="setDirection"></a>void QLandmarkSortOrder::setDirection ( Qt::SortOrder <i>direction</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDirection"></a>void QLandmarkSortOrder::setDirection ( Qt::SortOrder <i>direction</i> )</h3>
 <p>Sets the <i>direction</i> of the sort order.</p>
 <p>See also <a href="qlandmarksortorder.html#direction">direction</a>().</p>
-<h3 class="fn"><a name="type"></a><a href="qlandmarksortorder.html#SortType-enum">SortType</a> QLandmarkSortOrder::type () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="type"></a><a href="qlandmarksortorder.html#SortType-enum">SortType</a> QLandmarkSortOrder::type () const</h3>
 <p>Returns the type of sort.</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkSortOrder::operator!= ( const QLandmarkSortOrder &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkSortOrder::operator!= ( const QLandmarkSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is not identical to <i>other</i>.</p>
 <p>See also <a href="qlandmarksortorder.html#operator-eq-eq">operator==</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QLandmarkSortOrder &amp; QLandmarkSortOrder::operator= ( const QLandmarkSortOrder &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QLandmarkSortOrder &amp; QLandmarkSortOrder::operator= ( const QLandmarkSortOrder &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this sort order and returns a reference to this sort order.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkSortOrder::operator== ( const QLandmarkSortOrder &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkSortOrder::operator== ( const QLandmarkSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is identical to <i>other</i>.</p>
 <p>See also <a href="qlandmarksortorder.html#operator-not-eq">operator!=</a>().</p>
 </div>
@@ -203,15 +208,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

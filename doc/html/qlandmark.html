@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
@@ -136,7 +136,8 @@
 <ul>
 <li><a href="qlandmark-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmark.html#QLandmark">QLandmark</a></b> ()</td></tr>
@@ -172,7 +173,8 @@
 <ul>
 <li class="fn">10 public functions inherited from <a href="qgeoplace.html#public-functions">QGeoPlace</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmark class represents a location or point of interest of some significance.</p>
@@ -181,94 +183,95 @@
 <p>Some landmarks may be designated as read-only, e.g&#x2e; a publically accessible landmark server may not want some of its content to be editable. Localization is only possible for landmarks that are read-only. If the landmark store supports localization, the locale may be set through a <a href="qlandmarkmanager.html">QLandmarkManager</a>'s parameters and whenever landmarks are retrieved, the translated names are used. The <tt>QLandmarkManager::isReadOnly(const QLandmarkyId &amp;)</tt> function may be used to determine if a category is read-only.</p>
 <p>Each QLandmark is an in memory representation of a landmark; it does not reflect the actual landmark state in persistent storage until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(e.g&#x2e; <a href="qlandmarkmanager.html#saveLandmark">saveLandmark()</a>, <a href="qlandmarkmanager.html#removeLandmark">removeLandmark()</a>).</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QLandmark"></a>QLandmark::QLandmark ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmark"></a>QLandmark::QLandmark ()</h3>
 <p>Constructs an new landmark.</p>
 <p>A new landmark will be assigned with invalid <a href="qlandmarkid.html">QLandmarkId</a>.</p>
-<h3 class="fn"><a name="QLandmark-2"></a>QLandmark::QLandmark ( const <a href="qgeoplace.html">QGeoPlace</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmark-2"></a>QLandmark::QLandmark ( const <a href="qgeoplace.html">QGeoPlace</a> &amp; <i>other</i> )</h3>
 <p>Constructs a new landmark from <i>other</i>.</p>
 <p>If other is a <a href="qlandmark.html">QLandmark</a> instance this is equivalent to <a href="qlandmark.html">QLandmark</a>(const <a href="qlandmark.html">QLandmark</a> &amp;other).</p>
 <p>If other::type() is <a href="qgeoplace.html">QGeoPlace</a> instance this will initialize just the coordinate and address of this landmark.</p>
 <p>Otherwise this is equivalent to <a href="qlandmark.html#QLandmark">QLandmark</a>().</p>
-<h3 class="fn"><a name="QLandmark-3"></a>QLandmark::QLandmark ( const QLandmark &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QLandmark-3"></a>QLandmark::QLandmark ( const QLandmark &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QLandmark"></a>QLandmark::~QLandmark ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QLandmark"></a>QLandmark::~QLandmark ()</h3>
 <p>Destroys the landmark.</p>
-<h3 class="fn"><a name="addCategoryId"></a>void QLandmark::addCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="addCategoryId"></a>void QLandmark::addCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
 <p>Adds another category that this landmark will be associated with via its <i>categoryId</i>.</p>
 <p>See also <a href="qlandmark.html#setCategoryIds">setCategoryIds</a>() and <a href="qlandmark.html#removeCategoryId">removeCategoryId</a>().</p>
-<h3 class="fn"><a name="attribute"></a>QVariant QLandmark::attribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>defaultValue</i> = QVariant() ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attribute"></a>QVariant QLandmark::attribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>defaultValue</i> = QVariant() ) const</h3>
 <p>Returns the value of the attribute corresponding to <i>key</i>. If the attribute doest exist, returns <i>defaultValue</i>.</p>
 <p>If no default value is specified, a default QVariant is returned.</p>
 <p>See also <a href="qlandmark.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmark::attributeKeys () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="attributeKeys"></a>QStringList QLandmark::attributeKeys () const</h3>
 <p>Returns a list of attribute keys.</p>
 <p>See also <a href="qlandmark.html#attribute">attribute</a>() and <a href="qlandmark.html#setAttribute">setAttribute</a>().</p>
-<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmark::categoryIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="categoryIds"></a>QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmark::categoryIds () const</h3>
 <p>Returns a of list identifiers of categories that this landmark belongs to.</p>
 <p>See also <a href="qlandmark.html#setCategoryIds">setCategoryIds</a>().</p>
-<h3 class="fn"><a name="clear"></a>void QLandmark::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="clear"></a>void QLandmark::clear ()</h3>
 <p>Clears all the data fields of the landmark.</p>
-<h3 class="fn"><a name="description"></a>QString QLandmark::description () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="description"></a>QString QLandmark::description () const</h3>
 <p>Returns a description of the landmark.</p>
 <p>See also <a href="qlandmark.html#setDescription">setDescription</a>().</p>
-<h3 class="fn"><a name="iconUrl"></a>QUrl QLandmark::iconUrl () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="iconUrl"></a>QUrl QLandmark::iconUrl () const</h3>
 <p>Returns the url of the landmark's icon.</p>
 <p>See also <a href="qlandmark.html#setIconUrl">setIconUrl</a>().</p>
-<h3 class="fn"><a name="landmarkId"></a><a href="qlandmarkid.html">QLandmarkId</a> QLandmark::landmarkId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="landmarkId"></a><a href="qlandmarkid.html">QLandmarkId</a> QLandmark::landmarkId () const</h3>
 <p>Returns the identifier of the landmark.</p>
 <p>See also <a href="qlandmark.html#setLandmarkId">setLandmarkId</a>().</p>
-<h3 class="fn"><a name="name"></a>QString QLandmark::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QLandmark::name () const</h3>
 <p>Returns the name of the landmark.</p>
 <p>See also <a href="qlandmark.html#setName">setName</a>().</p>
-<h3 class="fn"><a name="phone"></a>QString QLandmark::phone () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="phone"></a>QString QLandmark::phone () const</h3>
 <p>Returns the phone number of the landmark.</p>
 <p>See also <a href="qlandmark.html#setPhone">setPhone</a>().</p>
-<h3 class="fn"><a name="radius"></a>double QLandmark::radius () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="radius"></a>double QLandmark::radius () const</h3>
 <p>Returns the coverage radius of the landmark.</p>
 <p>The coverage radius is relevant for large landmarks such as cities. Note that landmark searches over a given area do not factor in the coverage radius.</p>
 <p>See also <a href="qlandmark.html#setRadius">setRadius</a>().</p>
-<h3 class="fn"><a name="removeCategoryId"></a>void QLandmark::removeCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="removeCategoryId"></a>void QLandmark::removeCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
 <p>Removes a category from a landmark, by using its <i>categoryId</i>.</p>
 <p>See also <a href="qlandmark.html#addCategoryId">addCategoryId</a>() and <a href="qlandmark.html#categoryIds">categoryIds</a>().</p>
-<h3 class="fn"><a name="setAttribute"></a>void QLandmark::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setAttribute"></a>void QLandmark::setAttribute ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
 <p>Sets the <i>value</i> of the attribute corresponding to <i>key</i>.</p>
 <p>See also <a href="qlandmark.html#attribute">attribute</a>().</p>
-<h3 class="fn"><a name="setCategoryIds"></a>void QLandmark::setCategoryIds ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCategoryIds"></a>void QLandmark::setCategoryIds ( const QList&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )</h3>
 <p>Sets the categories that this landmark belongs to via a list of <i>categoryIds</i>.</p>
 <p>See also <a href="qlandmark.html#categoryIds">categoryIds</a>(), <a href="qlandmark.html#addCategoryId">addCategoryId</a>(), and <a href="qlandmark.html#removeCategoryId">removeCategoryId</a>().</p>
-<h3 class="fn"><a name="setDescription"></a>void QLandmark::setDescription ( const QString &amp; <i>description</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDescription"></a>void QLandmark::setDescription ( const QString &amp; <i>description</i> )</h3>
 <p>Sets the <i>description</i> of the landmark.</p>
 <p>See also <a href="qlandmark.html#description">description</a>().</p>
-<h3 class="fn"><a name="setIconUrl"></a>void QLandmark::setIconUrl ( const QUrl &amp; <i>url</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setIconUrl"></a>void QLandmark::setIconUrl ( const QUrl &amp; <i>url</i> )</h3>
 <p>Sets the <i>url</i> of the landmark's icon.</p>
 <p>See also <a href="qlandmark.html#iconUrl">iconUrl</a>().</p>
-<h3 class="fn"><a name="setLandmarkId"></a>void QLandmark::setLandmarkId ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setLandmarkId"></a>void QLandmark::setLandmarkId ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
 <p>Sets the <i>id</i> of the landmark.</p>
 <p>Note that saving a new landmark using a <a href="qlandmarkmanager.html">QLandmarkManager</a> will automatically assign the landmark a valid identifier.</p>
 <p>See also <a href="qlandmark.html#landmarkId">landmarkId</a>().</p>
-<h3 class="fn"><a name="setName"></a>void QLandmark::setName ( const QString &amp; <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setName"></a>void QLandmark::setName ( const QString &amp; <i>name</i> )</h3>
 <p>Sets the <i>name</i> of the landmark.</p>
 <p>See also <a href="qlandmark.html#name">name</a>().</p>
-<h3 class="fn"><a name="setPhone"></a>void QLandmark::setPhone ( const QString &amp; <i>phone</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPhone"></a>void QLandmark::setPhone ( const QString &amp; <i>phone</i> )</h3>
 <p>Sets the <i>phone</i> number of the landmark.</p>
 <p>See also <a href="qlandmark.html#phone">phone</a>().</p>
-<h3 class="fn"><a name="setRadius"></a>void QLandmark::setRadius ( double <i>radius</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setRadius"></a>void QLandmark::setRadius ( double <i>radius</i> )</h3>
 <p>Sets the coverage <i>radius</i> of the landmark.</p>
 <p>See also <a href="qlandmark.html#radius">radius</a>().</p>
-<h3 class="fn"><a name="setUrl"></a>void QLandmark::setUrl ( const QUrl &amp; <i>url</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setUrl"></a>void QLandmark::setUrl ( const QUrl &amp; <i>url</i> )</h3>
 <p>Sets the <i>url</i> of the landmark.</p>
 <p>See also <a href="qlandmark.html#url">url</a>().</p>
-<h3 class="fn"><a name="url"></a>QUrl QLandmark::url () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="url"></a>QUrl QLandmark::url () const</h3>
 <p>Returns the url of the landmark.</p>
 <p>See also <a href="qlandmark.html#setUrl">setUrl</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmark::operator!= ( const QLandmark &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmark::operator!= ( const QLandmark &amp; <i>other</i> ) const</h3>
 <p>Returns true if this landmark not is equal to <i>other</i>, otherwise returns false.</p>
 <p>See also <a href="qlandmark.html#operator-eq-eq">operator==</a>().</p>
-<h3 class="fn"><a name="operator-eq"></a>QLandmark &amp; QLandmark::operator= ( const QLandmark &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QLandmark &amp; QLandmark::operator= ( const QLandmark &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this landmark and returns a reference to this landmark.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmark::operator== ( const QLandmark &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmark::operator== ( const QLandmark &amp; <i>other</i> ) const</h3>
 <p>Returns true if this landmark is equal to <i>other</i>, otherwise returns false.</p>
 <p>Two landmarks are considered equal if both the landmark details and identifiers are equal.</p>
 <p>See also <a href="qlandmark.html#operator-not-eq">operator!=</a>().</p>
@@ -279,15 +282,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

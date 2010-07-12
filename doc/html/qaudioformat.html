@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -138,13 +138,15 @@
 <li><a href="qaudioformat-members.html">List of all members, including inherited members</a></li>
 <li><a href="qaudioformat-obsolete.html">Obsolete members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qaudioformat.html#Endian-enum">Endian</a></b> { BigEndian, LittleEndian }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qaudioformat.html#SampleType-enum">SampleType</a></b> { Unknown, SignedInt, UnSignedInt, Float }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qaudioformat.html#QAudioFormat">QAudioFormat</a></b> ()</td></tr>
@@ -167,7 +169,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QAudioFormat &amp; </td><td class="memItemRight bottomAlign"><b><a href="qaudioformat.html#operator-eq">operator=</a></b> ( const QAudioFormat &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qaudioformat.html#operator-eq-eq">operator==</a></b> ( const QAudioFormat &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioFormat class stores audio parameter information.</p>
@@ -183,14 +186,15 @@
 </table>
 <p>You can obtain audio formats compatible with the audio device used through functions in <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a>. This class also lets you query available parameter values for a device, so that you can set the parameters yourself. See the <a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a> class description for details. You need to know the format of the audio streams you wish to play. Qt does not set up formats for you.</p>
 </div>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Endian-enum"></a>enum QAudioFormat::Endian</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Endian-enum"></a>enum QAudioFormat::Endian</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QAudioFormat::BigEndian</tt></td><td class=" topAlign"><tt>QSysInfo::BigEndian</tt></td><td  class="topAlign">samples are big endian byte order</td></tr>
 <tr><td  class="topAlign"><tt>QAudioFormat::LittleEndian</tt></td><td class=" topAlign"><tt>QSysInfo::LittleEndian</tt></td><td  class="topAlign">samples are little endian byte order</td></tr>
 </table>
-<h3 class="fn"><a name="SampleType-enum"></a>enum QAudioFormat::SampleType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="SampleType-enum"></a>enum QAudioFormat::SampleType</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QAudioFormat::Unknown</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Not Set</td></tr>
 <tr><td  class="topAlign"><tt>QAudioFormat::SignedInt</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">samples are signed integers</td></tr>
@@ -198,9 +202,10 @@
 <tr><td  class="topAlign"><tt>QAudioFormat::Float</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">samples are floats</td></tr>
 </table>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QAudioFormat"></a>QAudioFormat::QAudioFormat ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioFormat"></a>QAudioFormat::QAudioFormat ()</h3>
 <p>Construct a new audio format.</p>
 <p>Values are initialized as follows:</p>
 <ul>
@@ -210,58 +215,58 @@
 <li><a href="qaudioformat.html#byteOrder">byteOrder</a>() = <a href="qaudioformat.html#Endian-enum">QAudioFormat::Endian</a>(QSysInfo::ByteOrder)</li>
 <li><a href="qaudioformat.html#sampleType">sampleType</a>() = <a href="qaudioformat.html#SampleType-enum">QAudioFormat::Unknown</a> <tt>codec()</tt> = &quot;&quot;</li>
 </ul>
-<h3 class="fn"><a name="QAudioFormat-2"></a>QAudioFormat::QAudioFormat ( const QAudioFormat &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QAudioFormat-2"></a>QAudioFormat::QAudioFormat ( const QAudioFormat &amp; <i>other</i> )</h3>
 <p>Construct a new audio format using <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QAudioFormat"></a>QAudioFormat::~QAudioFormat ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QAudioFormat"></a>QAudioFormat::~QAudioFormat ()</h3>
 <p>Destroy this audio format.</p>
-<h3 class="fn"><a name="byteOrder"></a><a href="qaudioformat.html#Endian-enum">QAudioFormat::Endian</a> QAudioFormat::byteOrder () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byteOrder"></a><a href="qaudioformat.html#Endian-enum">QAudioFormat::Endian</a> QAudioFormat::byteOrder () const</h3>
 <p>Returns the current byteOrder value.</p>
 <p>See also <a href="qaudioformat.html#setByteOrder">setByteOrder</a>().</p>
-<h3 class="fn"><a name="channelCount"></a>int QAudioFormat::channelCount () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="channelCount"></a>int QAudioFormat::channelCount () const</h3>
 <p>Returns the current channel count value.</p>
 <p>This function was introduced in QtMobility 4.7.</p>
 <p>See also <a href="qaudioformat.html#setChannelCount">setChannelCount</a>().</p>
-<h3 class="fn"><a name="codec"></a>QString QAudioFormat::codec () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="codec"></a>QString QAudioFormat::codec () const</h3>
 <p>Returns the current codec value.</p>
 <p>See also <a href="qaudioformat.html#setCodec">setCodec</a>() and <a href="qaudiodeviceinfo.html#supportedCodecs">QAudioDeviceInfo::supportedCodecs</a>().</p>
-<h3 class="fn"><a name="isValid"></a>bool QAudioFormat::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isValid"></a>bool QAudioFormat::isValid () const</h3>
 <p>Returns true if all of the parameters are valid.</p>
-<h3 class="fn"><a name="sampleRate"></a>int QAudioFormat::sampleRate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sampleRate"></a>int QAudioFormat::sampleRate () const</h3>
 <p>Returns the current sample rate in Hertz.</p>
 <p>This function was introduced in QtMobility 4.7.</p>
 <p>See also <a href="qaudioformat.html#setSampleRate">setSampleRate</a>().</p>
-<h3 class="fn"><a name="sampleSize"></a>int QAudioFormat::sampleSize () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sampleSize"></a>int QAudioFormat::sampleSize () const</h3>
 <p>Returns the current sample size value.</p>
 <p>See also <a href="qaudioformat.html#setSampleSize">setSampleSize</a>().</p>
-<h3 class="fn"><a name="sampleType"></a><a href="qaudioformat.html#SampleType-enum">QAudioFormat::SampleType</a> QAudioFormat::sampleType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="sampleType"></a><a href="qaudioformat.html#SampleType-enum">QAudioFormat::SampleType</a> QAudioFormat::sampleType () const</h3>
 <p>Returns the current <a href="qaudioformat.html#SampleType-enum">SampleType</a> value.</p>
 <p>See also <a href="qaudioformat.html#setSampleType">setSampleType</a>().</p>
-<h3 class="fn"><a name="setByteOrder"></a>void QAudioFormat::setByteOrder ( <a href="qaudioformat.html#Endian-enum">QAudioFormat::Endian</a> <i>byteOrder</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setByteOrder"></a>void QAudioFormat::setByteOrder ( <a href="qaudioformat.html#Endian-enum">QAudioFormat::Endian</a> <i>byteOrder</i> )</h3>
 <p>Sets the byteOrder to <i>byteOrder</i>.</p>
 <p>See also <a href="qaudioformat.html#byteOrder">byteOrder</a>().</p>
-<h3 class="fn"><a name="setChannelCount"></a>void QAudioFormat::setChannelCount ( int <i>channels</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setChannelCount"></a>void QAudioFormat::setChannelCount ( int <i>channels</i> )</h3>
 <p>Sets the channel count to <i>channels</i>.</p>
 <p>This function was introduced in QtMobility 4.7.</p>
 <p>See also <a href="qaudioformat.html#channelCount">channelCount</a>().</p>
-<h3 class="fn"><a name="setCodec"></a>void QAudioFormat::setCodec ( const QString &amp; <i>codec</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCodec"></a>void QAudioFormat::setCodec ( const QString &amp; <i>codec</i> )</h3>
 <p>Sets the codec to <i>codec</i>.</p>
 <p>See also <a href="qaudioformat.html#codec">codec</a>() and <a href="qaudiodeviceinfo.html#supportedCodecs">QAudioDeviceInfo::supportedCodecs</a>().</p>
-<h3 class="fn"><a name="setSampleRate"></a>void QAudioFormat::setSampleRate ( int <i>samplerate</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSampleRate"></a>void QAudioFormat::setSampleRate ( int <i>samplerate</i> )</h3>
 <p>Sets the sample rate to <i>samplerate</i> Hertz.</p>
 <p>This function was introduced in QtMobility 4.7.</p>
 <p>See also <a href="qaudioformat.html#sampleRate">sampleRate</a>().</p>
-<h3 class="fn"><a name="setSampleSize"></a>void QAudioFormat::setSampleSize ( int <i>sampleSize</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSampleSize"></a>void QAudioFormat::setSampleSize ( int <i>sampleSize</i> )</h3>
 <p>Sets the sample size to the <i>sampleSize</i> specified.</p>
 <p>See also <a href="qaudioformat.html#sampleSize">sampleSize</a>().</p>
-<h3 class="fn"><a name="setSampleType"></a>void QAudioFormat::setSampleType ( <a href="qaudioformat.html#SampleType-enum">QAudioFormat::SampleType</a> <i>sampleType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setSampleType"></a>void QAudioFormat::setSampleType ( <a href="qaudioformat.html#SampleType-enum">QAudioFormat::SampleType</a> <i>sampleType</i> )</h3>
 <p>Sets the sampleType to <i>sampleType</i>.</p>
 <p>See also <a href="qaudioformat.html#sampleType">sampleType</a>().</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QAudioFormat::operator!= ( const QAudioFormat &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QAudioFormat::operator!= ( const QAudioFormat &amp; <i>other</i> ) const</h3>
 <p>Returns true if this <a href="qaudioformat.html">QAudioFormat</a> is not equal to the <i>other</i> <a href="qaudioformat.html">QAudioFormat</a>; otherwise returns false.</p>
 <p>All elements of <a href="qaudioformat.html">QAudioFormat</a> are used for the comparison.</p>
-<h3 class="fn"><a name="operator-eq"></a>QAudioFormat &amp; QAudioFormat::operator= ( const QAudioFormat &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq"></a>QAudioFormat &amp; QAudioFormat::operator= ( const QAudioFormat &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this <a href="qaudioformat.html">QAudioFormat</a> implementation.</p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioFormat::operator== ( const QAudioFormat &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioFormat::operator== ( const QAudioFormat &amp; <i>other</i> ) const</h3>
 <p>Returns true if this <a href="qaudioformat.html">QAudioFormat</a> is equal to the <i>other</i> <a href="qaudioformat.html">QAudioFormat</a>; otherwise returns false.</p>
 <p>All elements of <a href="qaudioformat.html">QAudioFormat</a> are used for the comparison.</p>
 </div>
@@ -271,15 +276,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

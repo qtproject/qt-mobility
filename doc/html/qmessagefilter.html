@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -136,7 +136,8 @@
 <pre class="highlightedCode brush: cpp"> #include &lt;QMessageFilter&gt;</pre><ul>
 <li><a href="qmessagefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#QMessageFilter">QMessageFilter</a></b> ()</td></tr>
@@ -152,7 +153,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> const QMessageFilter &amp; </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#operator-7c-eq">operator|=</a></b> ( const QMessageFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageFilter </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#operator-7e">operator~</a></b> () const</td></tr>
 </table>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageFilter </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#byAncestorFolderIds">byAncestorFolderIds</a></b> ( const QMessageFolderId &amp; <i>id</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )</td></tr>
@@ -182,7 +184,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageFilter </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#byType">byType</a></b> ( QMessage::Type <i>type</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QMessageFilter </td><td class="memItemRight bottomAlign"><b><a href="qmessagefilter.html#byType-2">byType</a></b> ( QMessage::TypeFlags <i>type</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageFilter class defines the parameters used for querying a subset of all available messages from the messaging store.</p>
@@ -195,117 +198,118 @@
  QMessageIdList results = QMessageManager().queryMessages(subjectFilter &amp; senderFilter);</pre>
 </div>
 <p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessage.html">QMessage</a>.</p>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMessageFilter"></a>QMessageFilter::QMessageFilter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageFilter"></a>QMessageFilter::QMessageFilter ()</h3>
 <p>Creates a <a href="qmessagefilter.html">QMessageFilter</a> without specifying matching parameters.</p>
 <p>A default-constructed filter (one for which <a href="qmessagefilter.html#isEmpty">isEmpty</a>() returns true) matches all messages.</p>
 <p>See also <a href="qmessagefilter.html#isEmpty">isEmpty</a>().</p>
-<h3 class="fn"><a name="QMessageFilter-2"></a>QMessageFilter::QMessageFilter ( const QMessageFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QMessageFilter-2"></a>QMessageFilter::QMessageFilter ( const QMessageFilter &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="dtor.QMessageFilter"></a>QMessageFilter::~QMessageFilter ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QMessageFilter"></a>QMessageFilter::~QMessageFilter ()<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
-<h3 class="fn"><a name="byAncestorFolderIds"></a>QMessageFilter QMessageFilter::byAncestorFolderIds ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byAncestorFolderIds"></a>QMessageFilter QMessageFilter::byAncestorFolderIds ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose ancestor folders' identifiers contain <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentFolderId">QMessage::parentFolderId</a>().</p>
-<h3 class="fn"><a name="byAncestorFolderIds-2"></a>QMessageFilter QMessageFilter::byAncestorFolderIds ( const <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byAncestorFolderIds-2"></a>QMessageFilter QMessageFilter::byAncestorFolderIds ( const <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose ancestor folders' identifiers contain a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentFolderId">QMessage::parentFolderId</a>().</p>
-<h3 class="fn"><a name="byId"></a>QMessageFilter QMessageFilter::byId ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byId"></a>QMessageFilter QMessageFilter::byId ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>
-<h3 class="fn"><a name="byId-2"></a>QMessageFilter QMessageFilter::byId ( const QMessageIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byId-2"></a>QMessageFilter QMessageFilter::byId ( const QMessageIdList &amp; <i>ids</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose identifier is a member of <i>ids</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>
-<h3 class="fn"><a name="byId-3"></a>QMessageFilter QMessageFilter::byId ( const QMessageFilter &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byId-3"></a>QMessageFilter QMessageFilter::byId ( const QMessageFilter &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#id">QMessage::id</a>().</p>
-<h3 class="fn"><a name="byParentAccountId"></a>QMessageFilter QMessageFilter::byParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byParentAccountId"></a>QMessageFilter QMessageFilter::byParentAccountId ( const <a href="qmessageaccountid.html">QMessageAccountId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose parent account's identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentAccountId">QMessage::parentAccountId</a>().</p>
-<h3 class="fn"><a name="byParentAccountId-2"></a>QMessageFilter QMessageFilter::byParentAccountId ( const <a href="qmessageaccountfilter.html">QMessageAccountFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byParentAccountId-2"></a>QMessageFilter QMessageFilter::byParentAccountId ( const <a href="qmessageaccountfilter.html">QMessageAccountFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose parent account's identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentAccountId">QMessage::parentAccountId</a>().</p>
-<h3 class="fn"><a name="byParentFolderId"></a>QMessageFilter QMessageFilter::byParentFolderId ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byParentFolderId"></a>QMessageFilter QMessageFilter::byParentFolderId ( const <a href="qmessagefolderid.html">QMessageFolderId</a> &amp; <i>id</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose parent folder's identifier matches <i>id</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentFolderId">QMessage::parentFolderId</a>().</p>
-<h3 class="fn"><a name="byParentFolderId-2"></a>QMessageFilter QMessageFilter::byParentFolderId ( const <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byParentFolderId-2"></a>QMessageFilter QMessageFilter::byParentFolderId ( const <a href="qmessagefolderfilter.html">QMessageFolderFilter</a> &amp; <i>filter</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose parent folder's identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentFolderId">QMessage::parentFolderId</a>().</p>
-<h3 class="fn"><a name="byPriority"></a>QMessageFilter QMessageFilter::byPriority ( <a href="qmessage.html#Priority-enum">QMessage::Priority</a> <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byPriority"></a>QMessageFilter QMessageFilter::byPriority ( <a href="qmessage.html#Priority-enum">QMessage::Priority</a> <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose priority matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
-<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose recipients include the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#to">QMessage::to</a>(), <a href="qmessage.html#cc">QMessage::cc</a>(), and <a href="qmessage.html#bcc">QMessage::bcc</a>().</p>
-<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<h3 class="fn"><a name="bySize"></a>QMessageFilter QMessageFilter::bySize ( int <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySize"></a>QMessageFilter QMessageFilter::bySize ( int <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose size matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<h3 class="fn"><a name="bySize-2"></a>QMessageFilter QMessageFilter::bySize ( int <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySize-2"></a>QMessageFilter QMessageFilter::bySize ( int <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose size matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#size">QMessage::size</a>().</p>
-<h3 class="fn"><a name="byStandardFolder"></a>QMessageFilter QMessageFilter::byStandardFolder ( <a href="qmessage.html#StandardFolder-enum">QMessage::StandardFolder</a> <i>folder</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byStandardFolder"></a>QMessageFilter QMessageFilter::byStandardFolder ( <a href="qmessage.html#StandardFolder-enum">QMessage::StandardFolder</a> <i>folder</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose standard folder location matches <i>folder</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#parentAccountId">QMessage::parentAccountId</a>().</p>
-<h3 class="fn"><a name="byStatus"></a>QMessageFilter QMessageFilter::byStatus ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byStatus"></a>QMessageFilter QMessageFilter::byStatus ( <a href="qmessage.html#Status-enum">QMessage::Status</a> <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose status matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
-<h3 class="fn"><a name="byStatus-2"></a>QMessageFilter QMessageFilter::byStatus ( <a href="qmessage.html#Status-enum">QMessage::StatusFlags</a> <i>mask</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byStatus-2"></a>QMessageFilter QMessageFilter::byStatus ( <a href="qmessage.html#Status-enum">QMessage::StatusFlags</a> <i>mask</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose status is a bitwise match to <i>mask</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
-<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const QString &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const QString &amp; <i>value</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> = QMessageDataComparator::Includes )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
-<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const QDateTime &amp; <i>value</i>, QMessageDataComparator::RelationComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
-<h3 class="fn"><a name="byType"></a>QMessageFilter QMessageFilter::byType ( <a href="qmessage.html#Type-enum">QMessage::Type</a> <i>type</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byType"></a>QMessageFilter QMessageFilter::byType ( <a href="qmessage.html#Type-enum">QMessage::Type</a> <i>type</i>, QMessageDataComparator::EqualityComparator <i>cmp</i> = QMessageDataComparator::Equal )<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose type matches <i>type</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="byType-2"></a>QMessageFilter QMessageFilter::byType ( <a href="qmessage.html#Type-enum">QMessage::TypeFlags</a> <i>type</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )<tt> [static]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="byType-2"></a>QMessageFilter QMessageFilter::byType ( <a href="qmessage.html#Type-enum">QMessage::TypeFlags</a> <i>type</i>, QMessageDataComparator::InclusionComparator <i>cmp</i> )<tt> [static]</tt></h3>
 <p>Returns a filter matching accounts whose type is a bitwise match to <i>type</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#type">QMessage::type</a>().</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QMessageFilter::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isEmpty"></a>bool QMessageFilter::isEmpty () const</h3>
 <p>Returns true if the filter remains empty after default construction; otherwise returns false.</p>
 <p>An empty filter matches all messages.</p>
 <p>The result of combining an empty filter with a non-empty filter is the original non-empty filter. This is true regardless of whether the combination is formed by an AND or an OR operation.</p>
 <p>The result of combining two empty filters is an empty filter.</p>
-<h3 class="fn"><a name="isSupported"></a>bool QMessageFilter::isSupported () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isSupported"></a>bool QMessageFilter::isSupported () const</h3>
 <p>Returns true if the filter is supported on the current platform; otherwise returns false.</p>
-<h3 class="fn"><a name="matchFlags"></a>QMessageDataComparator::MatchFlags QMessageFilter::matchFlags () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="matchFlags"></a>QMessageDataComparator::MatchFlags QMessageFilter::matchFlags () const</h3>
 <p>Return the match flags for the search filter.</p>
 <p>Default is no match flags set.</p>
 <p>See also <a href="qmessagefilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<h3 class="fn"><a name="setMatchFlags"></a>void QMessageFilter::setMatchFlags ( QMessageDataComparator::MatchFlags <i>matchFlags</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMatchFlags"></a>void QMessageFilter::setMatchFlags ( QMessageDataComparator::MatchFlags <i>matchFlags</i> )</h3>
 <p>Set the match flags for the search filter to <i>matchFlags</i>.</p>
 <p>See also <a href="qmessagefilter.html#matchFlags">matchFlags</a>().</p>
-<h3 class="fn"><a name="operator-and"></a>QMessageFilter QMessageFilter::operator&amp; ( const QMessageFilter &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-and"></a>QMessageFilter QMessageFilter::operator&amp; ( const QMessageFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical AND of this filter and the value of filter <i>other</i>.</p>
-<h3 class="fn"><a name="operator-and-eq"></a>const QMessageFilter &amp; QMessageFilter::operator&amp;= ( const QMessageFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-and-eq"></a>const QMessageFilter &amp; QMessageFilter::operator&amp;= ( const QMessageFilter &amp; <i>other</i> )</h3>
 <p>Performs a logical AND with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
-<h3 class="fn"><a name="operator-7c"></a>QMessageFilter QMessageFilter::operator| ( const QMessageFilter &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-7c"></a>QMessageFilter QMessageFilter::operator| ( const QMessageFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical OR of this filter and the value of filter <i>other</i>.</p>
-<h3 class="fn"><a name="operator-7c-eq"></a>const QMessageFilter &amp; QMessageFilter::operator|= ( const QMessageFilter &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-7c-eq"></a>const QMessageFilter &amp; QMessageFilter::operator|= ( const QMessageFilter &amp; <i>other</i> )</h3>
 <p>Performs a logical OR with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
-<h3 class="fn"><a name="operator-7e"></a>QMessageFilter QMessageFilter::operator~ () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-7e"></a>QMessageFilter QMessageFilter::operator~ () const</h3>
 <p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessagefilter.html#matchFlags">matchFlags</a>() set on the filter).</p>
 <p>If this filter is empty, the result will be a non-matching filter; if this filter is non-matching, the result will be an empty filter.</p>
 <p>See also <a href="qmessagefilter.html#isEmpty">isEmpty</a>().</p>
@@ -316,15 +320,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

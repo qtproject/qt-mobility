@@ -124,7 +124,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -141,14 +141,16 @@
 <ul>
 <li><a href="qcameraexposurecontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a></b> { ISO, Aperture, ShutterSpeed, ExposureCompensation, ..., ExtendedExposureParameter }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#ParameterFlag-enum">ParameterFlag</a></b> { AutomaticValue, ReadOnly, ContinuousRange }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#ParameterFlag-enum">ParameterFlags</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#dtor.QCameraExposureControl">~QCameraExposureControl</a></b> ()</td></tr>
@@ -169,24 +171,28 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</a></b> ( QCameraExposure::MeteringMode <i>mode</i> ) = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QVariantList </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#supportedParameterRange">supportedParameterRange</a></b> ( ExposureParameter <i>parameter</i> ) const = 0</td></tr>
 </table>
-<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#exposureParameterChanged">exposureParameterChanged</a></b> ( int <i>parameter</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#exposureParameterRangeChanged">exposureParameterRangeChanged</a></b> ( int <i>parameter</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
-<a name="protected-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl">QCameraExposureControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
-<a name="macros"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="macros"></a>
 <h2>Macros</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcameraexposurecontrol.html#QCameraExposureControl_iid">QCameraExposureControl_iid</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QCameraExposureControl class supplies control for exposure related camera parameters.</p>
@@ -195,9 +201,10 @@
 <p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
 </div>
 <p>See also QMediaService::control() and <a href="qcamera.html">QCamera</a>.</p>
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="ExposureParameter-enum"></a>enum QCameraExposureControl::ExposureParameter</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="ExposureParameter-enum"></a>enum QCameraExposureControl::ExposureParameter</h3>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QCameraExposureControl::ISO</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Camera ISO sensitivity, specified as integer value.</td></tr>
 <tr><td  class="topAlign"><tt>QCameraExposureControl::Aperture</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Lens aperture is specified as an qreal F number. The supported apertures list can change depending on the focal length, in such a case the <a href="qcameraexposurecontrol.html#exposureParameterRangeChanged">exposureParameterRangeChanged</a>() signal is emited.</td></tr>
@@ -213,62 +220,64 @@
 <h3 class="flags"><a name="ParameterFlag-enum"></a>enum QCameraExposureControl::ParameterFlag<br/>flags QCameraExposureControl::ParameterFlags</h3>
 <p>The ParameterFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;ParameterFlag&gt;. It stores an OR combination of ParameterFlag values.</p>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QCameraExposureControl"></a>QCameraExposureControl::QCameraExposureControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QCameraExposureControl"></a>QCameraExposureControl::QCameraExposureControl ( QObject * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a camera exposure control object with <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QCameraExposureControl"></a>QCameraExposureControl::~QCameraExposureControl ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QCameraExposureControl"></a>QCameraExposureControl::~QCameraExposureControl ()</h3>
 <p>Destruct the camera control object.</p>
-<h3 class="fn"><a name="exposureMode"></a><a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> QCameraExposureControl::exposureMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="exposureMode"></a><a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> QCameraExposureControl::exposureMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns the exposure mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setExposureMode">setExposureMode</a>().</p>
-<h3 class="fn"><a name="exposureParameter"></a>QVariant QCameraExposureControl::exposureParameter ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="exposureParameter"></a>QVariant QCameraExposureControl::exposureParameter ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the exposure <i>parameter</i> value, or invalid QVariant() if the value is unknown or not supported.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setExposureParameter">setExposureParameter</a>().</p>
-<h3 class="fn"><a name="exposureParameterChanged"></a>void QCameraExposureControl::exposureParameterChanged ( int <i>parameter</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="exposureParameterChanged"></a>void QCameraExposureControl::exposureParameterChanged ( int <i>parameter</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when the exposure <i>parameter</i> has changed to <i>value</i>.</p>
-<h3 class="fn"><a name="exposureParameterFlags"></a><a href="qcameraexposurecontrol.html#ParameterFlag-enum">ParameterFlags</a> QCameraExposureControl::exposureParameterFlags ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h3 class="fn"><a name="exposureParameterRangeChanged"></a>void QCameraExposureControl::exposureParameterRangeChanged ( int <i>parameter</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="exposureParameterFlags"></a><a href="qcameraexposurecontrol.html#ParameterFlag-enum">ParameterFlags</a> QCameraExposureControl::exposureParameterFlags ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="exposureParameterRangeChanged"></a>void QCameraExposureControl::exposureParameterRangeChanged ( int <i>parameter</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when the exposure <i>parameter</i> range has changed.</p>
-<h3 class="fn"><a name="extendedParameterName"></a>QString QCameraExposureControl::extendedParameterName ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="extendedParameterName"></a>QString QCameraExposureControl::extendedParameterName ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns the extended exposure <i>parameter</i> name.</p>
-<h3 class="fn"><a name="flashMode"></a><a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> QCameraExposureControl::flashMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="flashMode"></a><a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> QCameraExposureControl::flashMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns the current flash mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a>().</p>
-<h3 class="fn"><a name="flashReady"></a>void QCameraExposureControl::flashReady ( bool <i>ready</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="flashReady"></a>void QCameraExposureControl::flashReady ( bool <i>ready</i> )<tt> [signal]</tt></h3>
 <p>Signal emitted when flash state changes, flash is charged <i>ready</i>.</p>
-<h3 class="fn"><a name="isExposureModeSupported"></a>bool QCameraExposureControl::isExposureModeSupported ( <a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isExposureModeSupported"></a>bool QCameraExposureControl::isExposureModeSupported ( <a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns true if the exposure <i>mode</i> is supported.</p>
-<h3 class="fn"><a name="isFlashModeSupported"></a>bool QCameraExposureControl::isFlashModeSupported ( <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFlashModeSupported"></a>bool QCameraExposureControl::isFlashModeSupported ( <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Return true if reqested flash <i>mode</i> is supported. Some <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashMode</a> values can be combined, for example <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashManual</a> | <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashSlowSyncRearCurtain</a></p>
-<h3 class="fn"><a name="isFlashReady"></a>bool QCameraExposureControl::isFlashReady () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isFlashReady"></a>bool QCameraExposureControl::isFlashReady () const<tt> [pure virtual]</tt></h3>
 <p>Returns true if flash is charged.</p>
-<h3 class="fn"><a name="isMeteringModeSupported"></a>bool QCameraExposureControl::isMeteringModeSupported ( <a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isMeteringModeSupported"></a>bool QCameraExposureControl::isMeteringModeSupported ( <a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> <i>mode</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns true if the metering <i>mode</i> is supported.</p>
-<h3 class="fn"><a name="isParameterSupported"></a>bool QCameraExposureControl::isParameterSupported ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="isParameterSupported"></a>bool QCameraExposureControl::isParameterSupported ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns true is exposure <i>parameter</i> is supported by backend.</p>
-<h3 class="fn"><a name="meteringMode"></a><a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> QCameraExposureControl::meteringMode () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="meteringMode"></a><a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> QCameraExposureControl::meteringMode () const<tt> [pure virtual]</tt></h3>
 <p>Returns the current metering mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setMeteringMode">setMeteringMode</a>().</p>
-<h3 class="fn"><a name="setExposureMode"></a>void QCameraExposureControl::setExposureMode ( <a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setExposureMode"></a>void QCameraExposureControl::setExposureMode ( <a href="qcameraexposure.html#ExposureMode-enum">QCameraExposure::ExposureMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Set the exposure mode to <i>mode</i>.</p>
 <p>See also <a href="qcameraexposurecontrol.html#exposureMode">exposureMode</a>().</p>
-<h3 class="fn"><a name="setExposureParameter"></a>bool QCameraExposureControl::setExposureParameter ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setExposureParameter"></a>bool QCameraExposureControl::setExposureParameter ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3>
 <p>Set the exposure <i>parameter</i> to <i>value</i>. If a null or invalid QVariant is passed, backend should choose the value automaticaly, and if possible report the actual value to user with <a href="qcameraexposurecontrol.html#exposureParameter">QCameraExposureControl::exposureParameter</a>().</p>
 <p>Returns true if parameter is supported and value is correct.</p>
 <p>See also <a href="qcameraexposurecontrol.html#exposureParameter">exposureParameter</a>().</p>
-<h3 class="fn"><a name="setFlashMode"></a>void QCameraExposureControl::setFlashMode ( <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> <i>mode</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFlashMode"></a>void QCameraExposureControl::setFlashMode ( <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashModes</a> <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Set the current flash <i>mode</i>.</p>
 <p>Usually the single <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashMode</a> flag is used, but some non conflicting flags combination are also allowed, like <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashManual</a> | <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashSlowSyncRearCurtain</a>.</p>
 <p>See also <a href="qcameraexposurecontrol.html#flashMode">flashMode</a>().</p>
-<h3 class="fn"><a name="setMeteringMode"></a>void QCameraExposureControl::setMeteringMode ( <a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setMeteringMode"></a>void QCameraExposureControl::setMeteringMode ( <a href="qcameraexposure.html#MeteringMode-enum">QCameraExposure::MeteringMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3>
 <p>Set the metering mode to <i>mode</i>.</p>
 <p>See also <a href="qcameraexposurecontrol.html#meteringMode">meteringMode</a>().</p>
-<h3 class="fn"><a name="supportedParameterRange"></a>QVariantList QCameraExposureControl::supportedParameterRange ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="supportedParameterRange"></a>QVariantList QCameraExposureControl::supportedParameterRange ( <a href="qcameraexposurecontrol.html#ExposureParameter-enum">ExposureParameter</a> <i>parameter</i> ) const<tt> [pure virtual]</tt></h3>
 </div>
+<hr />
 <div class="macros"/>
 <h2>Macro Documentation</h2>
-<h3 class="fn"><a name="QCameraExposureControl_iid"></a>QCameraExposureControl_iid</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QCameraExposureControl_iid"></a>QCameraExposureControl_iid</h3>
 <p><tt>com.nokia.Qt.QCameraExposureControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qcameraexposurecontrol.html">QCameraExposureControl</a> class.</p>
 </div>
@@ -278,15 +287,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>
