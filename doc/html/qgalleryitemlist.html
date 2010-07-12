@@ -1,19 +1,129 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qgalleryitemlist.cpp -->
-  <title>Qt Mobility Project 1.1: QGalleryItemList Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QGalleryItemList</li>
+  <title>Qt 1.1: QGalleryItemList Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li>QGalleryItemList</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -25,30 +135,23 @@
 </div>
 <h1 class="title">QGalleryItemList Class Reference</h1>
 <p>The QGalleryItemList class provides an abstract interface for a list of gallery items from a gallery. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QGalleryItemList&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a>.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QGalleryItemList&gt;</pre><p>Inherited by <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a>.</p>
 <ul>
 <li><a href="qgalleryitemlist-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatus</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatusFlag</a></b> { OutOfRange, Reading, Writing }</td></tr>
 </table>
-<hr />
-<a name="properties"></a>
+<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qgalleryitemlist.html#cursorPosition-prop">cursorPosition</a></b> : int</li>
 <li class="fn"><b><a href="qgalleryitemlist.html#minimumPagedItems-prop">minimumPagedItems</a></b> : const int</li>
 </ul>
-<ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-</ul>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#QGalleryItemList">QGalleryItemList</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -70,20 +173,12 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#type">type</a></b> ( int <i>index</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QUrl </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#url">url</a></b> ( int <i>index</i> ) const = 0</td></tr>
 </table>
-<ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
-<hr />
-<a name="public-slots"></a>
+<a name="public-slots"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Slots</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#cursorPosition-prop">setCursorPosition</a></b> ( int <i>position</i> )</td></tr>
 </table>
-<ul>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-</ul>
-<hr />
-<a name="signals"></a>
+<a name="signals"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Signals</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#inserted">inserted</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
@@ -92,23 +187,11 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#removed">removed</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemlist.html#statusChanged">statusChanged</a></b> ( int <i>index</i>, int <i>count</i> )</td></tr>
 </table>
-<ul>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
-</ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryItemList class provides an abstract interface for a list of gallery items from a gallery.</p>
 </div>
-<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
 <h3 class="flags"><a name="ItemStatusFlag-enum"></a>enum QGalleryItemList::ItemStatusFlag<br/>flags QGalleryItemList::ItemStatus</h3>
@@ -120,76 +203,85 @@
 </table>
 <p>The ItemStatus type is a typedef for <a href="qflags.html">QFlags</a>&lt;ItemStatusFlag&gt;. It stores an OR combination of ItemStatusFlag values.</p>
 </div>
-<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="cursorPosition-prop"></a>cursorPosition : int</h3>
+<h3 class="fn"><a name="cursorPosition-prop"></a>cursorPosition : int</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This property holds the current position of the cache cursor.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>cursorPosition</b> () const</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> virtual void </td><td class="memItemRight bottomAlign"><b>setCursorPosition</b> ( int <i>position</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="minimumPagedItems-prop"></a>minimumPagedItems : const int</h3>
+<h3 class="fn"><a name="minimumPagedItems-prop"></a>minimumPagedItems : const int</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This property holds the minimum number of consecutive items loaded in a list.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary">
 <tr><td class="memItemLeft topAlign rightAlign"> virtual int </td><td class="memItemRight bottomAlign"><b>minimumPagedItems</b> () const</td></tr>
 </table>
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QGalleryItemList"></a>QGalleryItemList::QGalleryItemList ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QGalleryItemList"></a>QGalleryItemList::QGalleryItemList ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new gallery gallery item list.</p>
-<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<h3 class="fn"><a name="dtor.QGalleryItemList"></a>QGalleryItemList::~QGalleryItemList ()</h3>
+<p>The <i>parent</i> is passed to QObject.</p>
+<h3 class="fn"><a name="dtor.QGalleryItemList"></a>QGalleryItemList::~QGalleryItemList ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys a gallery gallery item list.</p>
-<h3 class="fn"><a name="count"></a>int QGalleryItemList::count () const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="count"></a>int QGalleryItemList::count () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the number of gallery items in a gallery item list.</p>
-<h3 class="fn"><a name="id"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QGalleryItemList::id ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="id"></a>QVariant QGalleryItemList::id ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the id of the gallery item at <i>index</i>.</p>
-<h3 class="fn"><a name="inserted"></a>void QGalleryItemList::inserted ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="inserted"></a>void QGalleryItemList::inserted ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Signals that <i>count</i> gallery items have been inserted into a gallery item list starting at <i>index</i>.</p>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QGalleryItemList::metaData ( int <i>index</i>, int <i>key</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="metaData"></a>QVariant QGalleryItemList::metaData ( int <i>index</i>, int <i>key</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the meta-data <i>key</i> value of the gallery item at <i>index</i>.</p>
 <p>See also <a href="qgalleryitemlist.html#setMetaData">setMetaData</a>().</p>
-<h3 class="fn"><a name="metaData-2"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QGalleryItemList::metaData ( int <i>index</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>property</i> ) const<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="metaData-2"></a>QVariant QGalleryItemList::metaData ( int <i>index</i>, const QString &amp; <i>property</i> ) const<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the value of a meta-data <i>property</i> for the item at <i>index</i> in a list.</p>
-<h3 class="fn"><a name="metaDataChanged"></a>void QGalleryItemList::metaDataChanged ( int <i>index</i>, int <i>count</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;int&gt; &amp; <i>keys</i> = QList&lt;int&gt; () )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="metaDataChanged"></a>void QGalleryItemList::metaDataChanged ( int <i>index</i>, int <i>count</i>, const QList&lt;int&gt; &amp; <i>keys</i> = QList&lt;int&gt; () )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Signals that the meta-data identified by <i>keys</i> of <i>count</i> gallery items starting at <i>index</i> has changed.</p>
-<h3 class="fn"><a name="moved"></a>void QGalleryItemList::moved ( int <i>from</i>, int <i>to</i>, int <i>count</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="moved"></a>void QGalleryItemList::moved ( int <i>from</i>, int <i>to</i>, int <i>count</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Signals that <i>count</i> gallery items have been moved <i>from</i> one starting index <i>to</i> another.</p>
-<h3 class="fn"><a name="propertyAttributes"></a><a href="qgalleryproperty.html#Attribute-enum">QGalleryProperty::Attributes</a> QGalleryItemList::propertyAttributes ( int <i>key</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="propertyAttributes"></a>QGalleryProperty::Attributes QGalleryItemList::propertyAttributes ( int <i>key</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the attributes of the property identified by <i>key</i>.</p>
-<h3 class="fn"><a name="propertyKey"></a>int QGalleryItemList::propertyKey ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>propertyName</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="propertyKey"></a>int QGalleryItemList::propertyKey ( const QString &amp; <i>propertyName</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a integer key for a meta-data <i>propertyName</i>.</p>
-<h3 class="fn"><a name="propertyNames"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QGalleryItemList::propertyNames () const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="propertyNames"></a>QStringList QGalleryItemList::propertyNames () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of property names an item list has meta-data values for.</p>
-<h3 class="fn"><a name="propertyType"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::Type</a> QGalleryItemList::propertyType ( int <i>key</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="propertyType"></a>QVariant::Type QGalleryItemList::propertyType ( int <i>key</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of the property identified by <i>key</i>.</p>
-<h3 class="fn"><a name="removed"></a>void QGalleryItemList::removed ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="removed"></a>void QGalleryItemList::removed ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Signals that <i>count</i> gallery items have been removed from a gallery item list starting at <i>index</i>.</p>
-<h3 class="fn"><a name="resources"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgalleryresource.html">QGalleryResource</a>&gt; QGalleryItemList::resources ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="resources"></a>QList&lt;QGalleryResource&gt; QGalleryItemList::resources ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of resources for the gallery item at <i>index</i>.</p>
-<h3 class="fn"><a name="setMetaData"></a>void QGalleryItemList::setMetaData ( int <i>index</i>, int <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setMetaData"></a>void QGalleryItemList::setMetaData ( int <i>index</i>, int <i>key</i>, const QVariant &amp; <i>value</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the meta-data <i>key</i> <i>value</i> of the gallery item at <i>index</i>.</p>
 <p>See also <a href="qgalleryitemlist.html#metaData">metaData</a>().</p>
-<h3 class="fn"><a name="setMetaData-2"></a>void QGalleryItemList::setMetaData ( int <i>index</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>property</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="setMetaData-2"></a>void QGalleryItemList::setMetaData ( int <i>index</i>, const QString &amp; <i>property</i>, const QVariant &amp; <i>value</i> )<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the <i>value</i> of a meta-data <i>property</i> for the item at <i>index</i> in a list.</p>
-<h3 class="fn"><a name="status"></a><a href="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatus</a> QGalleryItemList::status ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="status"></a><a href="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatus</a> QGalleryItemList::status ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the status of the gallery item at <i>index</i>.</p>
-<h3 class="fn"><a name="statusChanged"></a>void QGalleryItemList::statusChanged ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="statusChanged"></a>void QGalleryItemList::statusChanged ( int <i>index</i>, int <i>count</i> )<tt> [signal]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Signals that the status of <i>count</i> gallery items starting at <i>index</i> has changed.</p>
-<h3 class="fn"><a name="type"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryItemList::type ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="type"></a>QString QGalleryItemList::type ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of the gallery item at <i>index</i>.</p>
-<h3 class="fn"><a name="url"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QGalleryItemList::url ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="url"></a>QUrl QGalleryItemList::url ( int <i>index</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the URL of the gallery item at <i>index</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

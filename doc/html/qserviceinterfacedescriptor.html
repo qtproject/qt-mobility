@@ -1,142 +1,239 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qserviceinterfacedescriptor.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QServiceInterfaceDescriptor Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QServiceInterfaceDescriptor"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QServiceInterfaceDescriptor Class Reference</h1>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qserviceinterfacedescriptor.cpp -->
+  <title>Qt 1.1: QServiceInterfaceDescriptor Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li>QServiceInterfaceDescriptor</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+<li class="level2"><a href="#namespaces">Namespaces</a></li>
+</ul>
+</div>
+<h1 class="title">QServiceInterfaceDescriptor Class Reference</h1>
 <p>The QServiceInterfaceDescriptor class identifies a service implementation. <a href="#details">More...</a></p>
-<pre>    #include &lt;QServiceInterfaceDescriptor&gt;</pre><ul>
+<pre class="highlightedCode brush: cpp"> #include &lt;QServiceInterfaceDescriptor&gt;</pre><ul>
 <li><a href="qserviceinterfacedescriptor-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#Attribute-enum">Attribute</a></b> { Capabilities, Location, ServiceDescription, InterfaceDescription }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#Attribute-enum">Attribute</a></b> { Capabilities, Location, ServiceDescription, InterfaceDescription }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor">QServiceInterfaceDescriptor</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor-2">QServiceInterfaceDescriptor</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor">~QServiceInterfaceDescriptor</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#attribute">attribute</a></b> ( QServiceInterfaceDescriptor::Attribute <i>which</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#customAttribute">customAttribute</a></b> ( const QString &amp; <i>which</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#customAttributes">customAttributes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#interfaceName">interfaceName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#majorVersion">majorVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#minorVersion">minorVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QService::Scope </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#scope">scope</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#serviceName">serviceName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QServiceInterfaceDescriptor &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-eq">operator=</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor">QServiceInterfaceDescriptor</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#QServiceInterfaceDescriptor-2">QServiceInterfaceDescriptor</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#dtor.QServiceInterfaceDescriptor">~QServiceInterfaceDescriptor</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#attribute">attribute</a></b> ( QServiceInterfaceDescriptor::Attribute <i>which</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#customAttribute">customAttribute</a></b> ( const QString &amp; <i>which</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#customAttributes">customAttributes</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#interfaceName">interfaceName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#majorVersion">majorVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#minorVersion">minorVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QService::Scope </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#scope">scope</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#serviceName">serviceName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#operator-not-eq">operator!=</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QServiceInterfaceDescriptor &amp; </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#operator-eq">operator=</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qserviceinterfacedescriptor.html#operator-eq-eq">operator==</a></b> ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</td></tr>
 </table>
-<hr />
-<a name="related-non-members"></a>
-<h2>Related Non-Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-lt-lt-96">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qserviceinterfacedescriptor.html#operator-gt-gt-80">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</td></tr>
-</table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceInterfaceDescriptor class identifies a service implementation.</p>
 <p>A service can implement multiple interfaces and each interface can have multiple implementations. The QServiceInterfaceDescriptor class enscapsulates this information, as illustrated by the diagram below.</p>
-<p align="center"><img src="images/qserviceinterfacedescriptor.png" alt="Service-Interface-Implementation" /></p><p>The major version tag indicates the interface version and the minor version tag identifies the implementation version. Subsequent versions of the same interface must be binary compatible to previous versions of the same interface.</p>
+<p class="centerAlign"><img src="images/qserviceinterfacedescriptor.png" alt="Service-Interface-Implementation" /></p><p>The major version tag indicates the interface version and the minor version tag identifies the implementation version. Subsequent versions of the same interface must be binary compatible to previous versions of the same interface.</p>
 <p>In the above example service A and B implement the interface <i>com.nokia.qt.x</i>. In fact Service A provides two different implementations for the very same interface. This is indicated by the changed minor version number. Although Service B is using the same interface it's implementation actually utilizes the second version of the interface <i>com.nokia.qt.x</i>. Binary compatibility guarantees that clients who know version 1 can utilize version 2. If an existing interface has to be changed in a non-compatible way a new interface (name) is required.</p>
-<a name="namespaces"></a>
+<a name="namespaces"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>Namespaces</h3>
 <p>A QServiceInterfaceDescriptor (the quadruble of service name, interface name, interface version and implementation version) uniquely identifies a service implementation on a device. Interface names follow the java namespace convention.</p>
 <p>The namespace <i>com.nokia.qt.*</i> is reserved for future Qt development.</p>
+</div>
 <p>See also <a href="qservicefilter.html">QServiceFilter</a> and <a href="qservicemanager.html">QServiceManager</a>.</p>
-<hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QServiceInterfaceDescriptor/Attribute"></a>
-<a name="//apple_ref/cpp/econst/QServiceInterfaceDescriptor/Capabilities"></a>
-<a name="//apple_ref/cpp/econst/QServiceInterfaceDescriptor/Location"></a>
-<a name="//apple_ref/cpp/econst/QServiceInterfaceDescriptor/ServiceDescription"></a>
-<a name="//apple_ref/cpp/econst/QServiceInterfaceDescriptor/InterfaceDescription"></a>
-<h3 class="fn"><a name="Attribute-enum"></a>enum QServiceInterfaceDescriptor::Attribute</h3>
+<h3 class="fn"><a name="Attribute-enum"></a>enum QServiceInterfaceDescriptor::Attribute</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This enum describes the possible attribute types which can be attached to a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QServiceInterfaceDescriptor::Capabilities</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The capabilities attribute is a <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> and describes the capabilities that a service client would require to use the service if capability checks are enforced.</td></tr>
-<tr><td valign="top"><tt>QServiceInterfaceDescriptor::Location</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">This attribute points to the location where the plug-in providing this service is stored. If the service is plug-in based the location is the name and/or path of the plugin.</td></tr>
-<tr><td valign="top"><tt>QServiceInterfaceDescriptor::ServiceDescription</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">This attribute provides a general description for the service.</td></tr>
-<tr><td valign="top"><tt>QServiceInterfaceDescriptor::InterfaceDescription</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">This attribute provides a description for the interface implementation.</td></tr>
-</table></p>
-<hr />
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QServiceInterfaceDescriptor::Capabilities</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The capabilities attribute is a QStringList and describes the capabilities that a service client would require to use the service if capability checks are enforced.</td></tr>
+<tr><td  class="topAlign"><tt>QServiceInterfaceDescriptor::Location</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">This attribute points to the location where the plug-in providing this service is stored. If the service is plug-in based the location is the name and/or path of the plugin.</td></tr>
+<tr><td  class="topAlign"><tt>QServiceInterfaceDescriptor::ServiceDescription</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">This attribute provides a general description for the service.</td></tr>
+<tr><td  class="topAlign"><tt>QServiceInterfaceDescriptor::InterfaceDescription</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">This attribute provides a description for the interface implementation.</td></tr>
+</table>
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/QServiceInterfaceDescriptor"></a>
-<h3 class="fn"><a name="QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::QServiceInterfaceDescriptor ()</h3>
+<h3 class="fn"><a name="QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::QServiceInterfaceDescriptor ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Creates a new <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a>.</p>
-<h3 class="fn"><a name="QServiceInterfaceDescriptor-2"></a>QServiceInterfaceDescriptor::QServiceInterfaceDescriptor ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="QServiceInterfaceDescriptor-2"></a>QServiceInterfaceDescriptor::QServiceInterfaceDescriptor ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Creates a copy of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> contained in <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/~QServiceInterfaceDescriptor"></a>
-<h3 class="fn"><a name="dtor.QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor ()</h3>
+<h3 class="fn"><a name="dtor.QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys the <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/attribute"></a>
-<h3 class="fn"><a name="attribute"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QServiceInterfaceDescriptor::attribute ( <a href="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::Attribute</a> <i>which</i> ) const</h3>
-<p>Returns the value for the attribute <i>which</i>; otherwise returns an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/customAttribute"></a>
-<h3 class="fn"><a name="customAttribute"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceInterfaceDescriptor::customAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>which</i> ) const</h3>
+<h3 class="fn"><a name="attribute"></a>QVariant QServiceInterfaceDescriptor::attribute ( <a href="qserviceinterfacedescriptor.html#Attribute-enum">QServiceInterfaceDescriptor::Attribute</a> <i>which</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Returns the value for the attribute <i>which</i>; otherwise returns an invalid QVariant.</p>
+<h3 class="fn"><a name="customAttribute"></a>QString QServiceInterfaceDescriptor::customAttribute ( const QString &amp; <i>which</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the value for the custom attribute <i>which</i>; otherwise returns a null string.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/customAttributes"></a>
-<h3 class="fn"><a name="customAttributes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QServiceInterfaceDescriptor::customAttributes () const</h3>
+<h3 class="fn"><a name="customAttributes"></a>QStringList QServiceInterfaceDescriptor::customAttributes () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of custom attributes attached to the service.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/interfaceName"></a>
-<h3 class="fn"><a name="interfaceName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceInterfaceDescriptor::interfaceName () const</h3>
+<h3 class="fn"><a name="interfaceName"></a>QString QServiceInterfaceDescriptor::interfaceName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the name of the interface that is implemented.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/isValid"></a>
-<h3 class="fn"><a name="isValid"></a>bool QServiceInterfaceDescriptor::isValid () const</h3>
+<h3 class="fn"><a name="isValid"></a>bool QServiceInterfaceDescriptor::isValid () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this descriptor is valid; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/majorVersion"></a>
-<h3 class="fn"><a name="majorVersion"></a>int QServiceInterfaceDescriptor::majorVersion () const</h3>
+<h3 class="fn"><a name="majorVersion"></a>int QServiceInterfaceDescriptor::majorVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the version of the interface.</p>
 <p>Subsequent versions of an interface are binary compatible to previous versions of the same interface. If an interface is broken it must use a new interface name.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/minorVersion"></a>
-<h3 class="fn"><a name="minorVersion"></a>int QServiceInterfaceDescriptor::minorVersion () const</h3>
+<h3 class="fn"><a name="minorVersion"></a>int QServiceInterfaceDescriptor::minorVersion () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the version of the implementation.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/scope"></a>
-<h3 class="fn"><a name="scope"></a><a href="qservice.html#Scope-enum">QService::Scope</a> QServiceInterfaceDescriptor::scope () const</h3>
+<h3 class="fn"><a name="scope"></a>QService::Scope QServiceInterfaceDescriptor::scope () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this implementation is provided for all users on the system.</p>
-<p>See also <a href="qservice.html#Scope-enum">QService::Scope</a>.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/serviceName"></a>
-<h3 class="fn"><a name="serviceName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceInterfaceDescriptor::serviceName () const</h3>
+<p>See also QService::Scope.</p>
+<h3 class="fn"><a name="serviceName"></a>QString QServiceInterfaceDescriptor::serviceName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the name of service that provides this implementation.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/operator!="></a>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QServiceInterfaceDescriptor::operator!= ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QServiceInterfaceDescriptor::operator!= ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Compares a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> to <i>other</i>. Returns true if they are not equal and false otherwise.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/operator="></a>
-<h3 class="fn"><a name="operator-eq"></a>QServiceInterfaceDescriptor &amp; QServiceInterfaceDescriptor::operator= ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="operator-eq"></a>QServiceInterfaceDescriptor &amp; QServiceInterfaceDescriptor::operator= ( const QServiceInterfaceDescriptor &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Copies the content of the <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object contained in <i>other</i> into this one.</p>
-<a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/operator=="></a>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QServiceInterfaceDescriptor::operator== ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</h3>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QServiceInterfaceDescriptor::operator== ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Compares a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> to <i>other</i>. Returns true if they are equal and false otherwise.</p>
-<hr />
-<h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-96"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
-<p>Writes service interface descriptor <i>dc</i> to the stream <i>out</i> and returns a reference to the stream.</p>
-<h3 class="fn"><a name="operator-gt-gt-80"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
-<p>Reads a service interface descriptor into <i>dc</i> from the stream <i>in</i> and returns a reference to the stream.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

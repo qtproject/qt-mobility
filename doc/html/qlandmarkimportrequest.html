@@ -1,101 +1,211 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qlandmarkimportrequest.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QLandmarkImportRequest Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QLandmarkImportRequest"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkImportRequest Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
-</h1>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qlandmarkimportrequest.cpp -->
+  <title>Qt 1.1: QLandmarkImportRequest Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtlocation.html">QtLocation</a></li>
+              <li>QLandmarkImportRequest</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QLandmarkImportRequest Class Reference</h1>
 <p>The QLandmarkImportRequest class allows a client to asynchronously request that a landmark manager import a set of landmarks. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkImportRequest&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a>.</p>
+<pre class="highlightedCode brush: cpp"> #include &lt;QLandmarkImportRequest&gt;</pre><p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a>.</p>
 <ul>
 <li><a href="qlandmarkimportrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest">~QLandmarkImportRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#device">device</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#fileName">fileName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#format">format</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFileName">setFileName</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFormat">setFormat</a></b> ( const QByteArray &amp; <i>format</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest">~QLandmarkImportRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QIODevice * </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#fileName">fileName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#format">format</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QLandmarkId&gt; </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#setFileName">setFileName</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qlandmarkimportrequest.html#setFormat">setFormat</a></b> ( const QByteArray &amp; <i>format</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
+<li class="fn">2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 </ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkImportRequest class allows a client to asynchronously request that a landmark manager import a set of landmarks.</p>
 <p>For a QLandmarkImportRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when landmarks have been successfully added by the manager. The list of added landmarks may be retrieved by the ids() function. The <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal may also be emitted if an overall operational error occurs.</p>
-<hr />
+</div>
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/QLandmarkImportRequest"></a>
-<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a landmark import request with the given <i>manager</i> <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/~QLandmarkImportRequest"></a>
-<h3 class="fn"><a name="dtor.QLandmarkImportRequest"></a>QLandmarkImportRequest::~QLandmarkImportRequest ()</h3>
+<h3 class="fn"><a name="dtor.QLandmarkImportRequest"></a>QLandmarkImportRequest::~QLandmarkImportRequest ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys the request object.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/device"></a>
-<h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QLandmarkImportRequest::device () const</h3>
+<h3 class="fn"><a name="device"></a>QIODevice * QLandmarkImportRequest::device () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the device from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/fileName"></a>
-<h3 class="fn"><a name="fileName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkImportRequest::fileName () const</h3>
-<p>If the currently assigned device is a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a>, or if <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() has been called, this function returns the name of the file to be read from. In all other cases, it returns an empty string.</p>
+<h3 class="fn"><a name="fileName"></a>QString QLandmarkImportRequest::fileName () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>If the currently assigned device is a QFile, or if <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() has been called, this function returns the name of the file to be read from. In all other cases, it returns an empty string.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/format"></a>
-<h3 class="fn"><a name="format"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QLandmarkImportRequest::format () const</h3>
+<h3 class="fn"><a name="format"></a>QByteArray QLandmarkImportRequest::format () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the expected data format for the import operation. If the format is an empty byte array or not set, then during the import, an attempt is made to auto detect the format.</p>
 <p>By default no format is set.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setFormat">setFormat</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/landmarkIds"></a>
-<h3 class="fn"><a name="landmarkIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::landmarkIds () const</h3>
+<h3 class="fn"><a name="landmarkIds"></a>QList&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::landmarkIds () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns a list of identifiers of landmarks that have been imported.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setDevice"></a>
-<h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
+<h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( QIODevice * <i>device</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the <i>device</i> from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#device">device</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setFileName"></a>
-<h3 class="fn"><a name="setFileName"></a>void QLandmarkImportRequest::setFileName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )</h3>
-<p>Sets the name of the file to be read from to <i>fileName</i>. Internally, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a> will create a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> and open it in <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::WriteOnly</a> mode, and use this file to export to.</p>
+<h3 class="fn"><a name="setFileName"></a>void QLandmarkImportRequest::setFileName ( const QString &amp; <i>fileName</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>Sets the name of the file to be read from to <i>fileName</i>. Internally, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a> will create a QFile and open it in QIODevice::WriteOnly mode, and use this file to export to.</p>
 <p>See also <a href="qlandmarkimportrequest.html#fileName">fileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setFormat"></a>
-<h3 class="fn"><a name="setFormat"></a>void QLandmarkImportRequest::setFormat ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> )</h3>
+<h3 class="fn"><a name="setFormat"></a>void QLandmarkImportRequest::setFormat ( const QByteArray &amp; <i>format</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the expected data <i>format</i> for the import operation. If an empty byte array is set, then during the import, an attempt is made to auto detect the format.</p>
 <p>See also <a href="qlandmarkimportrequest.html#format">format</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

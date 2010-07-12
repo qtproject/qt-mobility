@@ -224,12 +224,6 @@ void QDeclarativeNetworkInfo::startStatusChanged()
 */
 void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 {
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
-    }
-#endif
     connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
 }

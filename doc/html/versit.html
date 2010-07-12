@@ -1,18 +1,128 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- versit.qdoc -->
-  <title>Qt Mobility Project 1.1: Versit API</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Versit API</li><div class="toc">
-<h3>Contents</h3>
+  <title>Qt 1.1: Versit API</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li>Versit API</li>            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
@@ -23,59 +133,60 @@
 <h1 class="title">Versit API</h1>
 <span class="subtitle"></span>
 <div class="descr"/>
-<a name="namespace"></a>
+<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a>
+<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Overview</h2>
-<p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
-<p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from Versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to Versit documents.</p>
+<p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCard and iCal documents (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1, vCard 3.0 and iCal 2.0 format documents.</p>
+<p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from Versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to Versit documents, and to import (QVersitOrganizerImporter) QOrganizerItems from Versit documents and export (<b class="redFont"><code>\lQVersitOrganizerExporter</code></b>}) QOrganizerItems to Versit documents.</p>
+<p>Please note that the Qt Mobility Organizer API is still under development, so the Qt Versit API classes related to importing and exporting organizer items is subject to change.</p>
 <p>Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
-<a name="usage"></a>
+<a name="usage"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Usage</h2>
-<pre class="highlightedCode brush: cpp">        <span class="comment">// Create the input vCard</span>
-        QBuffer input;
-        input.open(QBuffer::ReadWrite);
-        QByteArray inputVCard =
-            &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n&quot;;
-        input.write(inputVCard);
-        input.seek(0);
+<pre class="highlightedCode brush: cpp">     <span class="comment">// Create the input vCard</span>
+     QBuffer input;
+     input.open(QBuffer::ReadWrite);
+     QByteArray inputVCard =
+         &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n&quot;;
+     input.write(inputVCard);
+     input.seek(0);
 
-        <span class="comment">// Parse the input into QVersitDocuments</span>
-        <span class="comment">// Note: we could also use the more convenient QVersitReader(QByteArray) constructor.</span>
-        QVersitReader reader;
-        reader.setDevice(&amp;input);
-        reader.startReading(); <span class="comment">// Remember to check the return value</span>
-        reader.waitForFinished();
+     <span class="comment">// Parse the input into QVersitDocuments</span>
+     <span class="comment">// Note: we could also use the more convenient QVersitReader(QByteArray) constructor.</span>
+     QVersitReader reader;
+     reader.setDevice(&amp;input);
+     reader.startReading(); <span class="comment">// Remember to check the return value</span>
+     reader.waitForFinished();
 
-        <span class="comment">// Convert the QVersitDocuments to QContacts</span>
-        QList&lt;QVersitDocument&gt; inputDocuments = reader.results();
-        QVersitContactImporter importer;
-        if (!importer.importDocuments(inputDocuments))
-            return;
-        QList&lt;QContact&gt; contacts = importer.contacts();
-        <span class="comment">// Note that the QContacts are not saved yet.</span>
-        <span class="comment">// Use QContactManager::saveContacts() for saving if necessary</span>
+     <span class="comment">// Convert the QVersitDocuments to QContacts</span>
+     QList&lt;QVersitDocument&gt; inputDocuments = reader.results();
+     QVersitContactImporter importer;
+     if (!importer.importDocuments(inputDocuments))
+         return;
+     QList&lt;QContact&gt; contacts = importer.contacts();
+     <span class="comment">// Note that the QContacts are not saved yet.</span>
+     <span class="comment">// Use QContactManager::saveContacts() for saving if necessary</span>
 
-        <span class="comment">// Export the QContacts back to QVersitDocuments</span>
-        QVersitContactExporter exporter;
-        if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
-            return;
-        QList&lt;QVersitDocument&gt; outputDocuments = exporter.documents();
+     <span class="comment">// Export the QContacts back to QVersitDocuments</span>
+     QVersitContactExporter exporter;
+     if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
+         return;
+     QList&lt;QVersitDocument&gt; outputDocuments = exporter.documents();
 
-        <span class="comment">// Encode the QVersitDocument back to a vCard</span>
-        <span class="comment">// Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.</span>
-        QBuffer output;
-        output.open(QBuffer::ReadWrite);
-        QVersitWriter writer;
-        writer.setDevice(&amp;output);
-        writer.startWriting(outputDocuments); <span class="comment">// Remember to check the return value</span>
-        writer.waitForFinished();
+     <span class="comment">// Encode the QVersitDocument back to a vCard</span>
+     <span class="comment">// Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.</span>
+     QBuffer output;
+     output.open(QBuffer::ReadWrite);
+     QVersitWriter writer;
+     writer.setDevice(&amp;output);
+     writer.startWriting(outputDocuments); <span class="comment">// Remember to check the return value</span>
+     writer.waitForFinished();
 
-        <span class="comment">// Read the vCard back to a QByteArray</span>
-        output.seek(0);
-        QByteArray outputVCard(output.readAll());</pre>
-<a name="main-classes"></a>
+     <span class="comment">// Read the vCard back to a QByteArray</span>
+     output.seek(0);
+     QByteArray outputVCard(output.readAll());</pre>
+<a name="main-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Main Classes</h2>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
@@ -84,12 +195,25 @@
 <li><a href="qversitwriter.html">QVersitWriter</a></li>
 <li><a href="qversitcontactimporter.html">QVersitContactImporter</a></li>
 <li><a href="qversitcontactexporter.html">QVersitContactExporter</a></li>
+<li>QVersitOrganizerImporter</li>
+<li>QVersitOrganizerExporter</li>
 </ul>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>
