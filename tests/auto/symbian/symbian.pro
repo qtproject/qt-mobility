@@ -15,12 +15,12 @@ contains(mobility_modules,multimedia) {
             qradiotuner_s60
 
     contains(openmaxal_symbian_enabled, no) {
-    SUBDIRS += \             
+    SUBDIRS += \
             qmediarecorder_s60
     }
 
     contains(openmaxal_symbian_enabled, yes) {
-    SUBDIRS += \             
+    SUBDIRS += \
             qmediarecorder_xa
     }
 }

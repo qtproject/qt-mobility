@@ -5,7 +5,7 @@ DEFINES += AUDIOSOURCEUSED
 symbian:LIBS += -lmediaclientaudio \
     -lmediaclientaudioinputstream \
     -lmmfcontrollerframework \
-    -lcone \ 
+    -lcone \
     -lbafl
 
 HEADERS += $$PWD/s60audioencodercontrol.h \

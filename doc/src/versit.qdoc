@@ -43,17 +43,21 @@ to facilitate the future migration of Mobility APIs into Qt. See the
 namespace impacts on application development.
 
 \section1 Overview
-Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
-encode/write (\l{QVersitWriter}) Versit \reg documents such as vCard and iCal
-documents (\l http://www.imc.org/pdi/).
-Currently \l{QVersitReader} and \l{QVersitWriter} support
-reading and writing vCard 2.1, vCard 3.0 and iCal 2.0 format documents.
 
-Versit API also provides utilities to import (\l{QVersitContactImporter})
-QContacts from Versit documents and export (\l{QVersitContactExporter})
-QContacts to Versit documents, and to import (\l{QVersitOrganizerImporter})
-QOrganizerItems from Versit documents and export (\lQVersitOrganizerExporter})
-QOrganizerItems to Versit documents.
+The Versit API provides a library to convert \l{QContact}{QContacts} to and from
+\l{http://en.wikipedia.org/wiki/Vcard}{vCard} files.
+
+vCards are represented abstract form with the QVersitDocument class.  vCard
+files can be parsed into QVersitDocument form using QVersitReader.
+QVersitDocument objects can be written to an I/O device using QVersitWriter.
+
+\l{QVersitDocument}{QVersitDocuments} can be converted to
+\l{QContact}{QContacts} using QVersitContactImporter.  \l{QContact}{QContacts}
+can be converted to \l{QVersitDocument}{QVersitDocuments} using
+QVersitContactExporter.
+
+Currently \l{QVersitReader} and \l{QVersitWriter} support reading and writing
+vCard 2.1 and vCard 3.0 format documents.  
 
 Please note that the Qt Mobility Organizer API is still under development, so
 the Qt Versit API classes related to importing and exporting organizer items
@@ -62,7 +66,26 @@ is subject to change.
 Versit \reg is a trademark of the Internet Mail Consortium.
 
 \section1 Usage
-\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example
+The following example goes through the process of reading a vCard and importing
+it to QContact format, then exporting and writing it back out.
+
+First, let's create some data to read.  In this case, we create a QBuffer as a demonstration, but
+any QIODevice will work.
+\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - create
+
+QVersitReader can be used to parse a vCard or iCalendar from an I/O device to
+produce a list of QVersitDocuments.
+\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - read
+
+QVersitDocuments aren't very useful to the QtContacts API.  They need to be imported using the
+QVersitContactImporter.
+\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - import
+
+Conversely, QVersitContactExporter can be used to convert from QContacts to QVersitDocuments.
+\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - export
+
+To complete the exporting process, QVersitWriter can be used to write to an I/O device.
+\snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example - write
 
 \section1 Main Classes
 \list
@@ -75,4 +98,9 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitOrganizerImporter}
     \o \l{QVersitOrganizerExporter}
 \endlist
+
+\section1 Supported Features
+Please see the \l{vcardsupport}{Supported vCard Features} document for a list of vCard
+features that the Versit module
+supports.
 */
