@@ -54,12 +54,12 @@ QTM_BEGIN_NAMESPACE
 class QDeclarativePositionSource : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativePosition* position READ position NOTIFY positionChanged);
+    Q_PROPERTY(QObject* position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
-    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged);
-    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged);
-    Q_PROPERTY(PositioningMethod positioningMethod READ positioningMethod NOTIFY positioningMethodChanged);
-    Q_ENUMS(PositioningMethod);
+    Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
+    Q_PROPERTY(PositioningMethod positioningMethod READ positioningMethod NOTIFY positioningMethodChanged)
+    Q_ENUMS(PositioningMethod)
 
 public:
 
@@ -78,7 +78,7 @@ public:
     QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
-    QDeclarativePosition* position();
+    QObject* position();
     PositioningMethod positioningMethod() const;
 
 public Q_SLOTS:
@@ -102,6 +102,7 @@ private:
     QDeclarativePosition m_position;
     QUrl m_nmeaSource;
     bool m_active;
+    bool m_singleUpdate;
     int m_updateInterval;
 };
 

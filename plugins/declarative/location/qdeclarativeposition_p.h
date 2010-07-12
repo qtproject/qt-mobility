@@ -60,15 +60,15 @@ QTM_BEGIN_NAMESPACE
 class QDeclarativePosition : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged);
-    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged);
-    Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged);
-    Q_PROPERTY(double longtitude READ longtitude WRITE setLongtitude NOTIFY longtitudeChanged);
-    Q_PROPERTY(bool longtitudeValid READ isLongtitudeValid NOTIFY longtitudeValidChanged);
-    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged);
-    Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged);
-    Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged);
-    Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged);
+    Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
+    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
+    Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
+    Q_PROPERTY(double longtitude READ longtitude WRITE setLongtitude NOTIFY longtitudeChanged)
+    Q_PROPERTY(bool longtitudeValid READ isLongtitudeValid NOTIFY longtitudeValidChanged)
+    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
+    Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
+    Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged)
+    Q_PROPERTY(bool speedValid READ isSpeedValid NOTIFY speedValidChanged)
 
 public:
 

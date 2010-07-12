@@ -86,7 +86,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
     : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-      m_active(false), m_updateInterval(0)
+      m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
@@ -134,6 +134,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 #ifdef QDECLARATIVE_POSITION_DEBUG
      else {
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << nmeaSource.toLocalFile();
+        qDebug() << "QDeclarativePositionSource NMEA File was not found: " << nmeaSource.path();
     }
 #endif
     if (m_positioningMethod != positioningMethod()) {
@@ -264,6 +265,11 @@ void QDeclarativePositionSource::update() {
     if (m_positionSource) {
         // Use default timeout value
         m_positionSource->requestUpdate();
+        if (!m_active) {
+            m_active = true;
+            m_singleUpdate = true;
+            emit activeChanged(m_active);
+        }
     }
 }
 
@@ -332,7 +338,7 @@ bool QDeclarativePositionSource::isActive() const
 
 */
 
-QDeclarativePosition* QDeclarativePositionSource::position()
+QObject* QDeclarativePositionSource::position()
 {
     return &m_position;
 }
@@ -347,8 +353,14 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
         m_position.setAltitude(update.coordinate().altitude());
     }
+
     if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
         m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
+    }
+    if (m_singleUpdate && m_active) {
+        m_active = false;
+        m_singleUpdate = false;
+        emit activeChanged(m_active);
     }
     emit positionChanged();
 }

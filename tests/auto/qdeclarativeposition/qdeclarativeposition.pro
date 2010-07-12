@@ -9,7 +9,6 @@ SOURCES += tst_qdeclarativeposition.cpp
 
 # The plugin needs to be compiled as part of this test case because 
 # it is not a library you could directly link against, ie. most of the API is not exported :)
-
 #SOURCES += ../../../plugins/declarative/location/qdeclarativeposition.cpp \
 #          ../../../plugins/declarative/location/qdeclarativepositionsource.cpp
 #HEADERS += ../../../plugins/declarative/location/qdeclarativeposition_p.h \
@@ -22,12 +21,23 @@ MOBILITY += location
 
 #INCLUDEPATH += ../../../plugins/declarative/location
 
-symbian {
-    TARGET.CAPABILITY = Location
-    TARGET.EPOCHEAPSIZE = 0x100000 0x2000000
-    importFiles.sources = data
-    importFiles.path = .
-    DEPLOYMENT = importFiles
+symbian|wince* {
+    symbian {
+        addFiles.sources = data/nmealog.txt
+        addFiles.path = data
+        DEPLOYMENT += addFiles
+        # TARGET.CAPABILITY = NetworkServices Location ReadUserData
+        TARGET.CAPABILITY = All -TCB
+        TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
+    }
+    wince*: {
+        addFiles.sources = ./nmealog.txt
+        addFiles.path = data
+        DEPLOYMENT += addFiles
+    }
 } else {
+    logfile.path = $$QT_MOBILITY_PREFIX/../build/tests/bin/data
+    logfile.files = data/nmealog.txt
+    INSTALLS += logfile
     DEFINES += SRCDIR=\\\"$$PWD\\\"
 }
