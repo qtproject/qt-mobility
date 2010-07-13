@@ -31,7 +31,7 @@ symbian {
 
     # Main library
     FEEDBACK_DEPLOYMENT.sources = QtFeedback.dll
-    FEEDBACK_DEPLOYMENT.path = \sys\bin
+    FEEDBACK_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += FEEDBACK_DEPLOYMENT
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS

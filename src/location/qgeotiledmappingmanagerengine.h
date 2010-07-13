@@ -64,27 +64,18 @@ class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManage
 public:
     virtual ~QGeoTiledMappingManagerEngine();
 
+    virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
+
     virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
     virtual void removeMapData(QGeoMapData* mapData);
-
-    virtual void updateMapImage(QGeoMapData *mapData);
 
     virtual QPoint screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const;
 
     QList<QString> supportedImageFormats() const;
     QSize tileSize() const;
 
-private slots:
-    void init();
-    void tileFinished(QGeoTiledMapReply *reply);
-    void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
-
-signals:
-    void tileRequestsPrepared(QGeoTiledMapData* mapData, const QList<QGeoTiledMapRequest> &requests);
-
 protected:
     QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
-    virtual QGeoTiledMappingManagerThread* createTileManagerThread() = 0;
 
     void setSupportedImageFormats(const QList<QString> &imageFormats);
     void setTileSize(const QSize &tileSize);
@@ -95,5 +86,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapReply::Error))
 
 #endif

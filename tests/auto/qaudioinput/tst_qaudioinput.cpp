@@ -49,6 +49,8 @@
 
 #include "wavheader.h"
 
+//TESTED_COMPONENT=src/multimedia
+
 #define AUDIO_BUFFER 192000
 
 #if defined(Q_OS_SYMBIAN)

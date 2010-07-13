@@ -170,6 +170,10 @@ qreal QGeoMapData::zoomLevel() const
     return d_ptr->zoomLevel;
 }
 
+void QGeoMapData::startPanning() {}
+
+void QGeoMapData::stopPanning() {}
+
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
     in they y direction.
@@ -355,16 +359,23 @@ void QGeoMapData::setMapImage(const QPixmap &mapImage)
 /*!
     Returns the image that will be displayed in the viewport of widget().
 */
-QPixmap QGeoMapData::mapImage() const
+QPixmap& QGeoMapData::mapImage()
 {
     return d_ptr->mapImage;
+}
+
+void QGeoMapData::imageChanged(const QRectF &updateRect)
+{
+    if (d_ptr->imageChangesTriggerUpdates)
+        d_ptr->widget->update(updateRect);
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate()
-    : containerObject(new QGeoMapObject()),
+    : zoomLevel(-1.0),
+    containerObject(new QGeoMapObject()),
     imageChangesTriggerUpdates(true) {}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
@@ -397,5 +408,7 @@ QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & ot
 
     return *this;
 }
+
+#include "moc_qgeomapdata.cpp"
 
 QTM_END_NAMESPACE

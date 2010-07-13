@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/contacts
+
 #define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 #include <QApplication>

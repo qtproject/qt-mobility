@@ -40,6 +40,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include "tst_qnmeapositioninfosource.h"
 
 class tst_QNmeaPositionInfoSource_RealTime_Generic : public TestQGeoPositionInfoSource

@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
 #include <qgeopositioninfo.h>
 
 #include <QMetaType>

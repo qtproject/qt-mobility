@@ -1,18 +1,128 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- publ-subs.qdoc -->
-  <title>Qt Mobility Project 1.1: Publish and Subscribe</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li>Publish and Subscribe</li><div class="toc">
-<h3>Contents</h3>
+  <title>Qt 1.1: Publish and Subscribe</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li>Publish and Subscribe</li>            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#namespace">Namespace</a></li>
 <li class="level1"><a href="#overview">Overview</a></li>
@@ -34,19 +144,19 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <p>The Publish and Subscribe API enables applications to read item values, navigate through and subscribe to change notifications.</p>
-<a name="namespace"></a>
+<a name="namespace"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Namespace</h2>
 <p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
-<a name="overview"></a>
+<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Overview</h2>
-<p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
-<pre class="highlightedCode brush: cpp">    /Device/Buttons = 3
-    /Device/Buttons/1/Name = Menu
-    /Device/Buttons/1/Usable = true
-    /Device/Buttons/2/Name = Select
-    /Device/Buttons/2/Usable = false
-    /Device/Buttons/3/Name = Back
-    /Device/Buttons/3/Usable = true</pre>
+<p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a QVariant value. A serialized version of a simple example Value Space might look like this.</p>
+<pre class="highlightedCode brush: cpp"> /Device/Buttons = 3
+ /Device/Buttons/1/Name = Menu
+ /Device/Buttons/1/Usable = true
+ /Device/Buttons/2/Name = Select
+ /Device/Buttons/2/Usable = false
+ /Device/Buttons/3/Name = Back
+ /Device/Buttons/3/Usable = true</pre>
 <p>Existing values within the Value Space are accessed through the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class. This class provides a means to read values, receive change notifications for a given path and navigate through the Value Space.</p>
 <p>New values are added to the Value Space via the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> class. This class allows applications to publish values and receive interest notifications when applications connect to a path. Interest notifications can be used to refrain from updating values in the Value Space when there are no interested parties.</p>
 <p>Nodes in the Value Space can be thought of as representing schema objects. Obviously this is a conceptual differentiation and not a physical one, as internally the Value Space is treated as one large tree. By applying structured schema to the space &quot;explore-ability&quot; is increased. For example, the <tt>/Device/Buttons</tt> schema can be defined as containing a value representing the number of mappable buttons on a device, and a sub-item for each adhering to the <tt>MappableButton</tt> schema. The <tt>MappableButton</tt> schema itself may be defined as containing two attributes <tt>Name</tt> and <tt>Usable</tt>. Change notification is modeled in this fashion also. Were the <tt>/Device/Buttons/1/Name</tt> item to change, the <tt>/Device/Buttons/1</tt> item would also be marked as changed, and so on up the tree. This allows, for example, subscribers to <tt>/Device/Buttons</tt> to be notified when anything &quot;button&quot; related changes.</p>
@@ -65,62 +175,62 @@
 <tr class="even topAlign"><td><p><a href="#gconf-layer">GConf Layer</a></p></td><td><p>The GConf Layer provides a permanent Value Space backing store using the GConf configuration system designed for the GNOME desktop environment. The GConf Layer has an order of 0 and it's the only available layer in Maemo 5.</p></td></tr>
 </table>
 <p>The Value Space has support for both client/server and peer-to-peer layer architectures. If a layer that uses a client/server architecture is used and a server process is not provided by the underlying system it will be necessary to start one. This can be done by calling QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.</p>
-<a name="detailed-layer-descriptions"></a>
+<a name="detailed-layer-descriptions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Detailed Layer Descriptions</h2>
-<a name="shared-memory-layer"></a>
+<a name="shared-memory-layer"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>Shared Memory Layer</h3>
 <p>The Shared Memory layer stores all values in a 10MB block of shared memory which is reserved when the Value Space server initializes. As the layer creates this region at startup, it is assumed that the operating system lazily commits memory. If this assumption is invalid, the Shared Memory layer will unnecessarily consume 10MB of memory.</p>
 <p>Value Space clients read from the Shared Memory layer's shared memory region directly. A kernel lock is acquired for each read to prevent corruption. While the layer supports concurrent readers, it is possible that a faulty or malicious application could acquire and refuse to release this lock causing any layer updates to be delayed indefinitely.</p>
-<p>Only the Value Space server ever writes to the shared memory region. When clients attempt to add items to the layer, their changes are transmitted via a <a href="http://qt.nokia.com/doc/4.6/qlocalsocket.html">QLocalSocket</a> (e.g&#x2e; <tt>/tmp/qt/valuespace_shmlayer</tt> domain socket on Unix systems) to the server where the update is performed. Updates are batched in-process and sent when the process re-enters the Qt event loop. Transmission and synchronization of changes can be forced manually by the <a href="qvaluespacepublisher.html#sync">QValueSpacePublisher::sync</a>() function, although as this requires a round trip between the client and server, doing so frequently may significantly degrade performance.</p>
+<p>Only the Value Space server ever writes to the shared memory region. When clients attempt to add items to the layer, their changes are transmitted via a QLocalSocket (e.g&#x2e; <tt>/tmp/qt/valuespace_shmlayer</tt> domain socket on Unix systems) to the server where the update is performed. Updates are batched in-process and sent when the process re-enters the Qt event loop. Transmission and synchronization of changes can be forced manually by the <a href="qvaluespacepublisher.html#sync">QValueSpacePublisher::sync</a>() function, although as this requires a round trip between the client and server, doing so frequently may significantly degrade performance.</p>
 <p>Change notifications are transmitted to clients in the form of &quot;something has changed&quot; messages. Nodes within the shared memory region are versioned, which allows clients to quickly determine exactly what has changed without the need for a bulkier change notification protocol.</p>
-<a name="symbian-settings-layer"></a>
+<a name="symbian-settings-layer"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>Symbian Settings Layer</h3>
 <p>Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).</p>
-<a name="declaring-value-space-paths"></a>
+<a name="declaring-value-space-paths"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h4>Declaring Value Space Paths</h4>
 <p>Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need to somehow specify how particular paths are turned into RPropery or CRepository key definitions. Here the QCRML files come for help.</p>
 <p>QCRML files are XML files that can be used to declare available Value Space paths that are visible to the clients. Each path defines whether the actual value is stored in CRepository or RPropery as well as needed Category/Repository/Key UIDs.</p>
 <p>The following QCRML file defines Value Space paths for power state properties stored in Symbian OS Properties:</p>
-<pre class="highlightedCode brush: cpp">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;RProperty&quot; uidValue=&quot;0x10205041&quot;&gt;
-        &lt;key ref=&quot;/resources/battery/level&quot; int=&quot;0x00000001&quot;/&gt;
-        &lt;key ref=&quot;/resources/battery/status&quot; int=&quot;0x00000002&quot;/&gt;
-        &lt;key ref=&quot;/resources/charging/status&quot; int=&quot;0x00000003&quot;/&gt;
-    &lt;/repository&gt;</pre>
+<pre class="highlightedCode brush: cpp"> &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ &lt;repository target=&quot;RProperty&quot; uidValue=&quot;0x10205041&quot;&gt;
+     &lt;key ref=&quot;/resources/battery/level&quot; int=&quot;0x00000001&quot;/&gt;
+     &lt;key ref=&quot;/resources/battery/status&quot; int=&quot;0x00000002&quot;/&gt;
+     &lt;key ref=&quot;/resources/charging/status&quot; int=&quot;0x00000003&quot;/&gt;
+ &lt;/repository&gt;</pre>
 <p>The following QCRML file defines a Value Space path for the &quot;current profile id&quot; stored in Central Repository:</p>
-<pre class="highlightedCode brush: cpp">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;CRepository&quot; uidValue=&quot;0x101f8798&quot;&gt;
-        &lt;key ref=&quot;/profile/id&quot; int=&quot;0x7e000001&quot;/&gt;
-    &lt;/repository&gt;</pre>
+<pre class="highlightedCode brush: cpp"> &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+ &lt;repository target=&quot;CRepository&quot; uidValue=&quot;0x101f8798&quot;&gt;
+     &lt;key ref=&quot;/profile/id&quot; int=&quot;0x7e000001&quot;/&gt;
+ &lt;/repository&gt;</pre>
 <p>The <tt>qcrmlgen</tt> tool located in the <tt>tools</tt> directory can be used to create QCRML files.</p>
-<a name="location-of-qcrml-files"></a>
+<a name="location-of-qcrml-files"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h4>Location of QCRML Files</h4>
 <p>All the QCRML files need to be located in <tt>\resource\qt\crml</tt> directory (in any available drive) in Symbian file system.</p>
 <p>In <tt>.pro</tt> files this means that the files need to be deployed with the SIS package.</p>
 <p>Example <tt>.pro</tt> file section:</p>
-<pre class="highlightedCode brush: cpp">    symbian {
-        crml.sources = resources.qcrml profile.qcrml
-        crml.path = c:/resource/qt/crml
-        DEPLOYMENT += crml
-    }</pre>
-<a name="limitations"></a>
+<pre class="highlightedCode brush: cpp"> symbian {
+     crml.sources = resources.qcrml profile.qcrml
+     crml.path = c:/resource/qt/crml
+     DEPLOYMENT += crml
+ }</pre>
+<a name="limitations"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h4>Limitations</h4>
-<p>The underlying Symbian APIs limit the data types that can be stored natively in available backing stores. In practice this is not a problem since the unsupported data types are automatically serialized in <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.</p>
-<a name="gconf-layer"></a>
+<p>The underlying Symbian APIs limit the data types that can be stored natively in available backing stores. In practice this is not a problem since the unsupported data types are automatically serialized in QByteArray and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.</p>
+<a name="gconf-layer"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>GConf Layer</h3>
 <p>Publish and Subscribe API can be used to access the GConf configuration system.</p>
-<a name="limitations"></a>
+<a name="limitations"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h4>Limitations</h4>
-<p>GConf can natively store only a limited set of <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> data types. These types are Bool, Int, Double, String, StringList and List. When publishing other data types the values are automatically serialized and stored to GConf as BASE64 encoded strings. When reading these values they are automatically converted back to the original data types. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native applications that access the same data directly.</p>
-<a name="examples"></a>
+<p>GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double, String, StringList and List. When publishing other data types the values are automatically serialized and stored to GConf as BASE64 encoded strings. When reading these values they are automatically converted back to the original data types. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native applications that access the same data directly.</p>
+<a name="examples"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Examples</h2>
-<a name="publish-and-subscribe"></a>
+<a name="publish-and-subscribe"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>Publish and Subscribe</h3>
 <p>In the example <a href="publish-subscribe.html">Publish and Subscribe</a> the Value Space is used as a method of communicating changes in one dialog (the publisher) to another dialog (the subscriber).</p>
-<a name="battery-charging-accessing-publish-and-subscribe-from-qml"></a>
+<a name="battery-charging-accessing-publish-and-subscribe-from-qml"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h3>Battery Charging - Accessing Publish and Subscribe from QML</h3>
 <p>In the example <a href="battery-charge.html">Accessing Publish and Subscribe from QML</a> the Publish and Subscribe concept is now extended to make the publisher an input of the level of charge in a battery. A slider on the publisher dialog represents the modifiable level of charge. The Value Space acts as a communications medium between the publisher dialog and the subscriber graphical battery animation. The battery is implemented in QML and C++ with Value Space supplying the charge level for the animation to represent.</p>
-<a name="namespaces-and-classes"></a>
+<a name="namespaces-and-classes"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Namespaces and Classes</h2>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a></p></td><td><p>Support for adding new logical data layers to the Qt Value Space</p></td></tr>
@@ -131,8 +241,19 @@
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

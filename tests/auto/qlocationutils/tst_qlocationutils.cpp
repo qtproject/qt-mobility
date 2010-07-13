@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
 //#include "../../../src/location/qlocationutils_p.h"
 #include "qlocationutils_p.h"
 #include "qgeopositioninfo.h"

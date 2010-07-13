@@ -78,8 +78,9 @@ GeocodingTab::GeocodingTab(QWidget *parent) :
     m_streetNumber = new QLineEdit("");
     m_streetNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    QPushButton *requestBtn = new QPushButton(tr("Geocoding"));
+    requestBtn = new QPushButton(tr("Geocoding"));
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    requestBtn->setDisabled(true);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
     m_resultTree = new QTreeWidget();
@@ -131,6 +132,7 @@ GeocodingTab::~GeocodingTab()
 
 void GeocodingTab::initialize(QGeoSearchManager *searchManager)
 {
+    m_resultTree->clear();
     m_searchManager = searchManager;
     if (m_searchManager) {
         QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
@@ -138,7 +140,12 @@ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
         QObject::connect(m_searchManager,
                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+        if(m_searchManager->supportsGeocoding())
+            requestBtn->setDisabled(false);
     }
+    else
+        requestBtn->setDisabled(true);
+
 }
 
 void GeocodingTab::on_btnRequest_clicked()

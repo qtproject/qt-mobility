@@ -14,10 +14,10 @@ symbian{
     TARGET.CAPABILITY = ALL -TCB
 
     testplugin.sources = $${TARGET}.dll
-    testplugin.path = plugins\contacts
+    testplugin.path = plugins/contacts
     DEPLOYMENT += testplugin
 
-    target.path = plugins\contacts
+    target.path = plugins/contacts
     INSTALLS += target
 }
 

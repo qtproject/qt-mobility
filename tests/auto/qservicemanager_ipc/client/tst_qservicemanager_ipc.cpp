@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/serviceframework
+
 #include <QCoreApplication>
 #include "qservicemanager.h"
 #include "qservicefilter.h"

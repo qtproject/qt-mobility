@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include <QtTest/QtTest>
 #include <QDir>
 #include <QProcess>

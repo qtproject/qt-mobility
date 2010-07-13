@@ -70,14 +70,14 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
 
-    #TARGET.UID3 = 0x2002AC7A
+    TARGET.UID3 = 0x2002BFCD
     
     LIBS += -lefsrv
 
     # ## Organizer
     # Main library
     ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
-    ORGANIZER_DEPLOYMENT.path = \sys\bin
+    ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += ORGANIZER_DEPLOYMENT
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS
