@@ -47,6 +47,87 @@ QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
 
+/*!
+    \qmlclass NetworkInfo QDeclarativeNetworkInfo
+    \brief The NetworkInfo element allows you to receive notifications from the network.
+
+    This element is part of the \bold{QtMobility.systeminfo 1.0} module.
+    It is a convience class to make QML usage easier.
+
+    Note: To use notification signals, you need to use the start* slots.
+
+    To use this in a mode other than the default mode given by currentMode, set the mode with
+    \a useMode.
+
+    \qml
+    import Qt 4.7
+    import QtMobility.systeminfo 1.0
+
+    Rectangle {
+
+        NetworkInfo {
+            id: wlaninfo
+            useMode: NetworkInfo.WlanMode;
+        }
+        Component.onCompleted: {
+            wlaninfo.startNameChanged();
+            wlaninfo.startSignalStrengthChanged();
+        }
+        Text {
+            id: signame
+            color: "white"
+            text:  wlaninfo.networkName +" "+wlaninfo.networkSignalStrength;
+            anchors.horizontalCenter: parent.horizontalCenter;
+            anchors.verticalCenter: parent.verticalCenter;
+        }
+    }
+    \endqml
+
+\sa QSystemNetworkInfo
+*/
+/*!
+    \qmlsignal NetworkInfo::statusChanged()
+
+    This handler is called when network status has changed.
+    Note: To receive this notification, you must first call \a startStatusChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::signalStrengthChanged()
+
+    This handler is called when network signal strength has changed.
+    Note: To receive this notification, you must first call \a startSignalStrengthChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::nameChanged()
+
+    This handler is called when network name has changed.
+    Note: To receive this notification, you must first call \a startNameChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::modeChanged()
+
+    This handler is called when the systems default network mode has changed.
+    Note: To receive this notification, you must first call \a startModeChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::currentMobileCountryCodeChanged()
+
+    This handler is called when network MCC has changed.
+    Note: To receive this notification, you must first call \a startCurrentMobileCountryCodeChanged.
+*/
+/*!
+    \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged()
+
+    This handler is called when network MNC has changed.
+    Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
+*/
+
+/*!
+    \internal
+    \class QDeclarativeNetworkInfo
+    \brief The QDeclarativeNetworkInfo class provides an network info item that you can add to a QDeclarativeView.
+*/
+
 QDeclarativeNetworkInfo::QDeclarativeNetworkInfo(QObject *parent) :
     QSystemNetworkInfo(parent)
 {
@@ -57,142 +138,75 @@ QDeclarativeNetworkInfo::~QDeclarativeNetworkInfo()
 {
 }
 
-void QDeclarativeNetworkInfo::setMode(QSystemNetworkInfo::NetworkMode mode)
+/*!
+    \qmlproperty enumeration NetworkInfo::useMode
+
+    Sets this NetworkInfo to use QSystemNetworkInfo::NetworkModes. Does not set the mode of the underlaying system.
+
+    Default is whatever defaultMode is.
+*/
+
+void QDeclarativeNetworkInfo::useMode(QSystemNetworkInfo::NetworkMode mode)
 {
     m_mode = mode;
 }
 
+/*!
+    \qmlproperty string NetworkInfo::networkStatus
+
+    Returns this NetworkInfo's network status.
+*/
 QString QDeclarativeNetworkInfo::networkStatus()
 {
     return statusToString(QSystemNetworkInfo::networkStatus(m_mode));
 }
 
+/*!
+    \qmlproperty int NetworkInfo::networkSignalStrength
+
+    Returns this NetworkInfo's network signal strength.
+*/
 int QDeclarativeNetworkInfo::networkSignalStrength()
 {
     return QSystemNetworkInfo::networkSignalStrength(m_mode);
 }
 
+/*!
+    \qmlproperty string NetworkInfo::macAddress
+
+    Returns this NetworkInfo's network interface's MAC address.
+*/
 QString QDeclarativeNetworkInfo::macAddress()
 {
     return QSystemNetworkInfo::macAddress(m_mode);
 }
 
+/*!
+    \qmlproperty string NetworkInfo::networkName
+
+    Returns this NetworkInfo's network name.
+*/
 QString QDeclarativeNetworkInfo::networkName()
 {
     return QSystemNetworkInfo::networkName(m_mode);
 }
 
+/*!
+    \qmlmethod NetworkInfo::interfaceForMode()
+   Returns the QNetworkInterface for this NetworkInfo.
+
+   \sa connectNotify()
+*/
 QNetworkInterface QDeclarativeNetworkInfo::interfaceForMode()
 {
     return QSystemNetworkInfo::interfaceForMode(m_mode);
 }
 
 
-/*!
-   \internal
-
-   This function is called when the client connects to the networkSignalStrengthChanged()
-   signal.
-*/
-void QDeclarativeNetworkInfo::connectNotify(const char *signal)
-{
-//   //check for networkSignalStrengthChanged() signal connect notification
-//   //This is not required on all platforms
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
-    }
-#endif
-    qDebug() << __FUNCTION__;
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentMobileCountryCodeChanged(QString))))) {
-        connect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
-                this,SLOT(currentMobileCountryCodeChanged(QString)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentMobileNetworkCodeChanged(QString))))) {
-        connect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
-                this,SLOT(currentMobileNetworkCodeChanged(QString)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            modeChanged())))) {
-        connect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-                this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            nameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
-        connect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-                this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            signalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
-        connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-                this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            statusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
-        connect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-                this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
-    }
-}
 
 /*!
-   \internal
-
-   This function is called when the client disconnects from the networkSignalStrengthChanged()
-   signal.
-
-   \sa connectNotify()
-*/
-void QDeclarativeNetworkInfo::disconnectNotify(const char *signal)
-{
-   //check for networkSignalStrengthChanged() signal disconnect notification
-   //This is not required on all platforms
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
-    }
-#endif
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentMobileCountryCodeChanged(QString))))) {
-        disconnect(netInfo(),SIGNAL(currentMobileCountryCodeChanged(QString)),
-                this,SLOT(currentMobileCountryCodeChanged(QString)));
-    }
-
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            currentMobileNetworkCodeChanged(QString))))) {
-        disconnect(netInfo(),SIGNAL(currentMobileNetworkCodeChanged(QString)),
-                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
-        disconnect(netInfo(),SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
-        disconnect(netInfo(),SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
-        disconnect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
-    }
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
-        disconnect(netInfo(),SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
-    }
-
-}
-
-/*!
-
-   This function is needed to start statusChanged signals
+    \qmlmethod NetworkInfo::startStatusChanged()
+   This function is needed to start statusChanged notification
 
    \sa connectNotify()
 */
@@ -203,26 +217,20 @@ void QDeclarativeNetworkInfo::startStatusChanged()
 }
 
 /*!
-
-   This function is needed to start signalStrengthChanged signals
+    \qmlmethod NetworkInfo::signalStrengthChanged()
+   This function is needed to start signalStrengthChanged notification.
 
    \sa connectNotify()
 */
 void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 {
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
-    }
-#endif
     connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
 }
 
 /*!
-
-   This function is needed to start nameChanged signals
+    \qmlmethod NetworkInfo::startStatusChanged()
+   This function is needed to start statusChanged notification.
 
    \sa connectNotify()
 */
@@ -233,8 +241,8 @@ void QDeclarativeNetworkInfo::startNameChanged()
 }
 
 /*!
-
-   This function is needed to start modeChanged signals
+    \qmlmethod NetworkInfo::modeChanged()
+   This function is needed to start modeChanged notification.
 
    \sa connectNotify()
 */
@@ -245,8 +253,8 @@ void QDeclarativeNetworkInfo::startModeChanged()
 }
 
 /*!
-
-   This function is needed to start startCurrentMobileCountryCodeChanged signals
+    \qmlmethod NetworkInfo::currentMobileCountryCodeChanged()
+   This function is needed to start currentMobileCountryCodeChanged notification.
 
    \sa connectNotify()
 */
@@ -257,8 +265,8 @@ void QDeclarativeNetworkInfo::startCurrentMobileCountryCodeChanged()
 }
 
 /*!
-
-   This function is needed to start startCurrentMobileNetworkCodeChanged signals
+    \qmlmethod NetworkInfo::currentMobileNetworkCodeChanged()
+   This function is needed to start currentMobileNetworkCodeChanged notification.
 
    \sa connectNotify()
 */
@@ -272,7 +280,7 @@ void QDeclarativeNetworkInfo::startCurrentMobileNetworkCodeChanged()
    \internal
 
    This function is called when the client disconnects from the networkSignalStrengthChanged()
-   signal.
+   notification.
 
    \sa connectNotify()
 */

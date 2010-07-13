@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/bearer
+
 #include <QtTest/QtTest>
 #include <QLocalServer>
 #include <QLocalSocket>

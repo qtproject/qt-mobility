@@ -49,6 +49,7 @@
 #include <QtDBus/qdbuspendingreply.h>
 #include <QtGui/qdesktopservices.h>
 #include <QtGui/qimage.h>
+#include <QtGui/qimagereader.h>
 #include <QtGui/qpixmap.h>
 
 QTM_BEGIN_NAMESPACE
@@ -64,6 +65,8 @@ public:
     QVector<uint> imageIds;
 };
 
+#define QT_GALLERY_MEDIA_ART_STRIP_CHARACTERS \
+    "\\(.*\\)|\\{.*\\}|\\[.*\\]|<.*>|[\\(\\)_\\{\\}\\[\\]\\!@#$\\^&\\*\\+\\=\\|\\\\/\"'\\?~`]"
 
 QGalleryTrackerMediaArtColumn::QGalleryTrackerMediaArtColumn(
         int key,
@@ -71,15 +74,19 @@ QGalleryTrackerMediaArtColumn::QGalleryTrackerMediaArtColumn(
         int identifierCColumn,
         QVariant::Type type,
         const QString &flavor,
+        const QSize &dimensions,
         QObject *parent)
     : QGalleryTrackerImageColumn(parent)
     , m_identifierBColumn(identifierBColumn)
     , m_identifierCColumn(identifierCColumn)
+    , m_width(dimensions.width())
+    , m_height(dimensions.height())
     , m_type(type)
     , m_flavor(flavor)
     , m_cacheDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                  + QLatin1String("/.cache/media-art/") + flavor + QLatin1Char('-'))
-    , m_whitespace(" ")
+    , m_whitespace(QCryptographicHash::hash(" ", QCryptographicHash::Md5).toHex())
+    , m_stripRegExp(QLatin1String(QT_GALLERY_MEDIA_ART_STRIP_CHARACTERS))
     , m_keys(QList<int>() << key)
 {
 }
@@ -97,7 +104,7 @@ QGalleryTrackerMediaArtColumn::~QGalleryTrackerMediaArtColumn()
     qDeleteAll(m_loadWatchers);
 }
 
-QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createImageColumn(
+QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createThumbnailImageColumn(
         QGalleryDBusInterfaceFactory *dbus,
         int key,
         const QString &profile,
@@ -106,10 +113,14 @@ QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createImageColumn(
     Q_UNUSED(dbus);
 
     return new QGalleryTrackerMediaArtColumn(
-            key, columns.first(), columns.value(1, -1), QVariant::Image, profile);
+#ifdef Q_WS_MAEMO_5
+            key, columns.first(), columns.value(1, -1), QVariant::Image, profile, QSize(124, 124));
+#else
+            key, columns.first(), columns.value(1, -1), QVariant::Image, profile, QSize(128, 128));
+#endif
 }
 
-QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createPixmapColumn(
+QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createThumbnailPixmapColumn(
         QGalleryDBusInterfaceFactory *dbus,
         int key,
         const QString &profile,
@@ -118,7 +129,35 @@ QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createPixmapColumn(
     Q_UNUSED(dbus);
 
     return new QGalleryTrackerMediaArtColumn(
-            key, columns.first(), columns.value(1, -1), QVariant::Pixmap, profile);
+#ifdef Q_WS_MAEMO_5
+            key, columns.first(), columns.value(1, -1), QVariant::Pixmap, profile, QSize(124, 124));
+#else
+            key, columns.first(), columns.value(1, -1), QVariant::Pixmap, profile, QSize(128, 128));
+#endif
+}
+
+QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createPreviewImageColumn(
+        QGalleryDBusInterfaceFactory *dbus,
+        int key,
+        const QString &profile,
+        const QVector<int> &columns)
+{
+    Q_UNUSED(dbus);
+
+    return new QGalleryTrackerMediaArtColumn(
+            key, columns.first(), columns.value(1, -1), QVariant::Image, profile, QSize());
+}
+
+QGalleryTrackerImageColumn *QGalleryTrackerMediaArtColumn::createPreviewPixmapColumn(
+        QGalleryDBusInterfaceFactory *dbus,
+        int key,
+        const QString &profile,
+        const QVector<int> &columns)
+{
+    Q_UNUSED(dbus);
+
+    return new QGalleryTrackerMediaArtColumn(
+            key, columns.first(), columns.value(1, -1), QVariant::Pixmap, profile, QSize());
 }
 
 void QGalleryTrackerMediaArtColumn::insertImages(
@@ -225,19 +264,62 @@ void QGalleryTrackerMediaArtColumn::imagesReady(int begin, int end)
 }
 
 
-QVariant QGalleryTrackerMediaArtColumn::loadMediaArt(const QPair<QString, QString> &identifier)
-{
-    const QString hashB = QCryptographicHash::hash(!identifier.first.isEmpty()
-            ? identifier.first.toLower().toUtf8() : m_whitespace, QCryptographicHash::Md5).toHex();
 
-    const QString hashC = QCryptographicHash::hash(!identifier.second.isEmpty()
-            ? identifier.second.toLower().toUtf8() : m_whitespace, QCryptographicHash::Md5).toHex();
+
+QVariant QGalleryTrackerMediaArtColumn::loadMediaArt(
+        const QPair<QString, QString> &identifier) const
+{
+    const QString hashB = hash(identifier.first);
+    const QString hashC = hash(identifier.second);
 
     QString imagePath = m_cacheDir + hashB + QLatin1Char('-') + hashC + QLatin1String(".jpeg");
 
-    return QFile::exists(imagePath)
-            ? QImage(imagePath)
-            : QImage();
+    if (QFile::exists(imagePath)) {
+        QImageReader reader(imagePath);
+        reader.setQuality(50);
+
+        if (m_width > 0) {
+            if (reader.supportsOption(QImageIOHandler::Size)) {
+                QSize size = reader.size();
+#ifdef Q_WS_MAEMO_5
+                if (size.width() > m_width && size.height() > m_height) {
+                    size.scale(m_width, m_height, Qt::KeepAspectRatioByExpanding);
+                    reader.setScaledSize(size);
+                }
+
+                if (size.width() > m_width || size.height() > m_height) {
+                    QRect rect(0, 0, qMin(size.width(), m_width), qMin(size.height(), m_height));
+                    rect.moveCenter(QPoint(size.width() / 2, size.height() / 2));
+
+                    reader.setScaledClipRect(rect);
+                }
+#else
+                if (size.width() > m_width || size.height() > m_height) {
+                    size.scale(m_width, m_height, Qt::KeepAspectRatio);
+                    reader.setScaledSize(size);
+                }
+#endif
+            } else {
+                reader.setScaledSize(QSize(m_width, m_height));
+            }
+        }
+
+        return reader.read();
+    } else {
+        return QImage();
+
+    }
+}
+
+QString QGalleryTrackerMediaArtColumn::hash(const QString &identifier) const
+{
+    if (identifier.isEmpty()) {
+        return m_whitespace;
+    } else {
+        return QCryptographicHash::hash(
+                identifier.toLower().remove(m_stripRegExp).simplified().toUtf8(),
+                QCryptographicHash::Md5).toHex();
+    }
 }
 
 #include "moc_qgallerytrackermediaartcolumn_p.cpp"

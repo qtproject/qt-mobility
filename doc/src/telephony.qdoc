@@ -43,13 +43,13 @@
 \page telephony.html
 \ingroup mobility
 
-\title Telephony API
+\title Telephony Events API
 
 \ingroup telephony
 
-\brief The Telephony API enables access to the telephony event services.
+\brief The Telephony Events API enables access to the telephony event services.
 
-The Qt Telephony API enables access to the telephony event services to 
+The Qt Telephony Events API enables access to the telephony event services to 
 provide telephony call notification that other applications can use to 
 be notified.
 Using this API you can further get information abaout the status of all
@@ -69,7 +69,7 @@ namespace impacts on application development.
 
 \section1 Overview
 
-The telephony library provides a set of function for accessing existing calls 
+The telephony events library provides a set of function for accessing existing calls 
 and their information like.
 Using this API you are able to queries the current telephony state. e.g. no call, ringing,
 call in-progress and call on-hold.

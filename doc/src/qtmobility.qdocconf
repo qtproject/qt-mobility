@@ -146,6 +146,17 @@ tagfile                 = $QT_MOBILITY_SOURCE_TREE/doc/html/qt.tags
 base                    = file:$QT_MOBILITY_SOURCE_TREE/doc/html
 
 
+
+#imagedirs               = images \
+#                         ../../examples \
+#                         ../../doc/src/template/images
+
+#outputdir               = ../html
+#tagfile                 = ../html/qt.tags
+#base                    = file:../../doc/html
+
+
+
 HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
                           "<td align=\"left\">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \

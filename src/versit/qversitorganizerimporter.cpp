@@ -47,6 +47,19 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+  \class QVersitOrganizerImporter
+  \brief The QVersitOrganizerImporter class converts \l{QVersitDocument}{QVersitDocuments} to
+  \l{QOrganizerItem}{QOrganizerItems}.
+
+  \ingroup versit
+
+  This class is used to convert a \l{QVersitDocument}{QVersitDocuments} (which may be produced by a
+  QVersitReader) to lists of \l{QOrganizerItem}{QOrganizerItems} (which may be saved into a
+  QOrganizerItemManager.  Unless there is an error, there is a one-to-one mapping between
+  sub-documents of the input Versit document and QOrganizerItems.
+ */
+
 QVersitOrganizerImporterPropertyHandler* QVersitOrganizerImporterPropertyHandler::createBackupHandler()
 {
     // TODO

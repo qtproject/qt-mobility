@@ -76,6 +76,7 @@ private:
     QLineEdit *m_destLong;
     QLineEdit *m_destLat;
     QTreeWidget *m_resultTree;
+    QPushButton *requestBtn;
     QPushButton *updateBtn;
     QList<QGeoRoute> routes;
 };

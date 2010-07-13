@@ -159,18 +159,18 @@ void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
         d_ptr->engine->removeMapData(mapData);
 }
 
-/*!
-    Updates the map image stored in \a mapData based on the viewport 
-    data contained within \a mapData.
+///*!
+//    Updates the map image stored in \a mapData based on the viewport
+//    data contained within \a mapData.
 
-    The image may be updated incrementally, as will happen with
-    tile based mapping managers.
-*/
-void QGeoMappingManager::updateMapImage(QGeoMapData *mapData)
-{
-//    if (d_ptr->engine)
-        d_ptr->engine->updateMapImage(mapData);
-}
+//    The image may be updated incrementally, as will happen with
+//    tile based mapping managers.
+//*/
+//void QGeoMappingManager::updateMapImage(QGeoMapData *mapData)
+//{
+////    if (d_ptr->engine)
+//        d_ptr->engine->updateMapImage(mapData);
+//}
 
 /*!
     Returns a list of the map types supported by this manager.

@@ -50,13 +50,12 @@ Rectangle {
         id: wlan
         x:(parent.width / 2) - (parent.width / 4);
         y: parent.height / 2
-        //        anchors { verticalCenter: parent.verticalCenter; }
 
-        property int mode: SystemNetworkInfo.WlanMode;
+        property int mode: NetworkInfo.WlanMode;
 
-        QDeclarativeNetworkInfo {
+        NetworkInfo {
             id: wlaninfo
-            currentMode: wlan.mode;
+            useMode: wlan.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
@@ -115,13 +114,13 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter;
         }
 
-        //        Text {
-        //            id: sigmac
-        //            color: "white"
-        //            text:  wlaninfo.macAddress;
-        //            anchors.top: sigmstatus.bottom;
-        //            anchors.horizontalCenter: parent.horizontalCenter;
-        //        }
+        Text {
+            id: sigmac
+            color: "white"
+            text:  wlaninfo.macAddress;
+            anchors.top: signame.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
     }
 
 
@@ -133,11 +132,11 @@ Rectangle {
 
         property string imageSrc;
 
-        property int mode: SystemNetworkInfo.EthernetMode;
+        property int mode: NetworkInfo.EthernetMode;
 
-        QDeclarativeNetworkInfo {
+        NetworkInfo {
             id: ethinfo
-            currentMode: ethernet.mode;
+            useMode: ethernet.mode;
             property string img : getImage(networkStatus);
 
             function getImage(newStatus) {
@@ -193,13 +192,13 @@ Rectangle {
         }
 
 
-        //        Text {
-        //            id: ethersigmac
-        //            color: "white"
-        //            text:  ethinfo.macAddress;
-        //            anchors.top: ethersigmstatus.bottom;
-        //            anchors.horizontalCenter: parent.horizontalCenter;
-        //        }
+        Text {
+            id: ethersigmac
+            color: "white"
+            text:  ethinfo.macAddress;
+            anchors.top: ethersigname.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
     }
 
 }
