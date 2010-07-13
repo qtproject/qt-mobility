@@ -195,20 +195,20 @@ int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType strea
     if (m_playbin) {
         switch (streamType) {
         case QMediaStreamsControl::AudioStream:
-            g_object_set(G_OBJECT(m_playbin), "current-audio", streamNumber, NULL);
+            g_object_get(G_OBJECT(m_playbin), "current-audio", streamNumber, NULL);
             break;
         case QMediaStreamsControl::VideoStream:
-            g_object_set(G_OBJECT(m_playbin), "current-video", streamNumber, NULL);
+            g_object_get(G_OBJECT(m_playbin), "current-video", streamNumber, NULL);
             break;
         case QMediaStreamsControl::SubPictureStream:
-            g_object_set(G_OBJECT(m_playbin), "current-text", streamNumber, NULL);
+            g_object_get(G_OBJECT(m_playbin), "current-text", streamNumber, NULL);
             break;
         default:
             break;
         }
     }
 
-    if (m_usePlaybin2)
+    if (m_usePlaybin2 && streamNumber >= 0)
         streamNumber += m_playbin2StreamOffset.value(streamType,0);
 
     return streamNumber;
@@ -217,19 +217,19 @@ int QGstreamerPlayerSession::activeStream(QMediaStreamsControl::StreamType strea
 void QGstreamerPlayerSession::setActiveStream(QMediaStreamsControl::StreamType streamType, int streamNumber)
 {
 
-    if (m_usePlaybin2)
+    if (m_usePlaybin2 && streamNumber >= 0)
         streamNumber -= m_playbin2StreamOffset.value(streamType,0);
 
     if (m_playbin) {
         switch (streamType) {
         case QMediaStreamsControl::AudioStream:
-            g_object_get(G_OBJECT(m_playbin), "current-audio", &streamNumber, NULL);
+            g_object_set(G_OBJECT(m_playbin), "current-audio", &streamNumber, NULL);
             break;
         case QMediaStreamsControl::VideoStream:
-            g_object_get(G_OBJECT(m_playbin), "current-video", &streamNumber, NULL);
+            g_object_set(G_OBJECT(m_playbin), "current-video", &streamNumber, NULL);
             break;
         case QMediaStreamsControl::SubPictureStream:
-            g_object_get(G_OBJECT(m_playbin), "current-text", &streamNumber, NULL);
+            g_object_set(G_OBJECT(m_playbin), "current-text", &streamNumber, NULL);
             break;
         default:
             break;
