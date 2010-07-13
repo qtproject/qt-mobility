@@ -70,16 +70,29 @@ public:
             int identifierCColumn,
             QVariant::Type type,
             const QString &flavor,
+            const QSize &dimensions,
             QObject *parent = 0);
     ~QGalleryTrackerMediaArtColumn();
 
-    static QGalleryTrackerImageColumn *createImageColumn(
+    static QGalleryTrackerImageColumn *createThumbnailImageColumn(
             QGalleryDBusInterfaceFactory *dbus,
             int key,
             const QString &profile,
             const QVector<int> &columns);
 
-    static QGalleryTrackerImageColumn *createPixmapColumn(
+    static QGalleryTrackerImageColumn *createThumbnailPixmapColumn(
+            QGalleryDBusInterfaceFactory *dbus,
+            int key,
+            const QString &profile,
+            const QVector<int> &columns);
+
+    static QGalleryTrackerImageColumn *createPreviewImageColumn(
+            QGalleryDBusInterfaceFactory *dbus,
+            int key,
+            const QString &profile,
+            const QVector<int> &columns);
+
+    static QGalleryTrackerImageColumn *createPreviewPixmapColumn(
             QGalleryDBusInterfaceFactory *dbus,
             int key,
             const QString &profile,
@@ -114,6 +127,8 @@ private:
 
     const int m_identifierBColumn;
     const int m_identifierCColumn;
+    const int m_width;
+    const int m_height;
     const QVariant::Type m_type;
     const QString m_flavor;
     const QString m_cacheDir;
