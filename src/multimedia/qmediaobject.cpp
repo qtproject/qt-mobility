@@ -100,7 +100,7 @@ QMediaObject::~QMediaObject()
 
 QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 {
-    return QtMultimediaKit::ServiceMissingError;
+    return d_func()->service == 0 ? QtMultimediaKit::ServiceMissingError : QtMultimediaKit::NoError;
 }
 
 /*!
@@ -109,7 +109,7 @@ QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 
 bool QMediaObject::isAvailable() const
 {
-    return false;
+    return d_func()->service != 0;
 }
 
 /*!

@@ -66,6 +66,7 @@ private slots:
     void metaDataChanged();
     void metaData_data();
     void metaData();
+    void availability();
     void extendedMetaData_data() { metaData_data(); }
     void extendedMetaData();
 
@@ -471,6 +472,18 @@ void tst_QMediaObject::extendedMetaData()
     QVERIFY(extendedKeys.contains(QLatin1String("Artist")));
     QVERIFY(extendedKeys.contains(QLatin1String("Title")));
     QVERIFY(extendedKeys.contains(QLatin1String("Genre")));
+}
+
+void tst_QMediaObject::availability()
+{
+    QtTestMediaObject nullObject(0);
+    QCOMPARE(nullObject.isAvailable(), false);
+    QCOMPARE(nullObject.availabilityError(), QtMultimediaKit::ServiceMissingError);
+
+    QtTestMetaDataService service;
+    QtTestMediaObject object(&service);
+    QCOMPARE(object.isAvailable(), true);
+    QCOMPARE(object.availabilityError(), QtMultimediaKit::NoError);
 }
 
 
