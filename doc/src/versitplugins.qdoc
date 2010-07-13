@@ -57,8 +57,26 @@ Versit library will be operating under a known context.  For example, the
 library might be deployed on a device on a particular network where all of its
 peers are known to support certain properties.  In this situation, it's
 desirable for all clients of the Versit library on that device to support those
-properties through the Versit API.  In this situation, it is possible to extend
-the library globally by installing plugins that provide handlers automatically
-to all users of the library on the system.
+properties through the Versit API.  It is possible to extend the library
+globally by installing plugins that provide handlers automatically to all users
+of the library on the system.
+
+Writing a plugin involves these steps:
+\list
+\o Implement a handler class that inherits from QVersitContactHandler.
+\o Implement a plugin class that inherits from QObject and QVersitContactHandlerFactory
+   and implements the createHandler() function to create the handler class.
+\o Include the following two lines at the top of the factory declaration:
+\code
+Q_OBJECT
+Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
+\endcode
+\o Export the plugin using the Q_EXPORT_PLUGIN2 macro.
+\o Build the plugin using a suitable \tt{.pro} file.
+\o Deploy the plugin in the \tt{plugins/versit} directory.
+\endlist
+
+Please see the relevant documentation in Qt for more details on writing a
+plugin.
 
 */

@@ -47,12 +47,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
-                                              public QVersitContactExporterDetailHandlerV2
-{
-public:
-    virtual ~QVersitContactHandler() {}
-};
+// qdoc seems to find QVersitContactHandler if it is declared first.. ugh
+class QVersitContactHandler;
 
 class Q_VERSIT_EXPORT QVersitContactHandlerFactory
 {
@@ -69,6 +65,13 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ProfileTest, "Test");
     Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
 #endif
+};
+
+class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
+                                              public QVersitContactExporterDetailHandlerV2
+{
+public:
+    virtual ~QVersitContactHandler() {}
 };
 
 QTM_END_NAMESPACE

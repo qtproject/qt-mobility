@@ -48,8 +48,8 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
 
 /*!
   \class QVersitContactHandler
-  \brief The QVersitContactHandler interface is a union of the
-  QVersitContactImporterPropertyHandler and QVersitContactExporterDetailHandler interfaces.
+  \brief The QVersitContactHandler class is a union of the
+  QVersitContactImporterPropertyHandlerV2 and QVersitContactExporterDetailHandlerV2 interfaces.
   \ingroup versit-extension
  */
 
@@ -59,6 +59,7 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
   \ingroup versit-extension
 
   This class provides a simple interface for the creation of QVersitContactHandler instances.
+  Implement this interface to write a Versit plugin.  For more details, see \l{Versit Plugins}.
  */
 
 /*!
