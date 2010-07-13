@@ -90,6 +90,9 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
+    bool operator<(const QGeoMapObject &other) const;
+    bool operator>(const QGeoMapObject &other) const;
+
 signals:
     void childObjectAdded(QGeoMapObject *childObject);
     void childObjectRemoved(QGeoMapObject *childObject);
@@ -104,8 +107,6 @@ private slots:
     void childObjectDestroyed(QObject *obj);
 
 private:
-
-
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
 };
