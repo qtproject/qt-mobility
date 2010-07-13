@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 class QValueSpacePublisher;
 
 QString qCanonicalPath(const QString &path);
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
 QString qAddSimulatorPrefix(const QString &path);
 #endif
 

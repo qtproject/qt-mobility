@@ -154,7 +154,7 @@ public:
     bool disconnect(QValueSpaceSubscriber * space);
 
     const QString path;
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
     const QString originalPath;
 #endif
     const LayerList readers;
@@ -202,11 +202,11 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
 
 QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path,
                                                            QValueSpace::LayerOptions filter)
-#ifndef Q_SIMULATOR
+#ifndef QT_SIMULATOR
 :   path(qCanonicalPath(path)),
 #else
-:   path(qAddSimulatorPrefix(qCanonicalPath(path)),
-    originalPath(qCanonicalPath(path),
+:   path(qAddSimulatorPrefix(qCanonicalPath(path))),
+    originalPath(qCanonicalPath(path)),
 #endif
     readers(matchLayers(this->path, filter)), connections(0)
 {
@@ -240,11 +240,11 @@ static LayerList matchLayers(const QString &path, const QUuid &uuid)
 }
 
 QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path, const QUuid &uuid)
-#ifndef Q_SIMULATOR
+#ifndef QT_SIMULATOR
 :   path(qCanonicalPath(path)),
 #else
-:   path(qAddSimulatorPrefix(qCanonicalPath(path)),
-    originalPath(qCanonicalPath(path),
+:   path(qAddSimulatorPrefix(qCanonicalPath(path))),
+    originalPath(qCanonicalPath(path)),
 #endif
     readers(matchLayers(this->path, uuid)), connections(0)
 {
@@ -416,7 +416,7 @@ void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 
 QString QValueSpaceSubscriber::path() const
 {
-#ifndef Q_SIMULATOR
+#ifndef QT_SIMULATOR
     return d->path;
 #else
     return d->originalPath;

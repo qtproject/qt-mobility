@@ -511,7 +511,7 @@ QString qCanonicalPath(const QString &path)
     return result;
 }
 
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
 QString qAddSimulatorPrefix(const QString &path)
 {
     QString result("/SimulatorPrivate");

@@ -122,7 +122,7 @@ public:
     QValueSpacePublisherPrivate(const QString &_path, const QUuid &uuid);
 
     QString path;
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
     QString originalPath;
 #endif
 
@@ -138,7 +138,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path,
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
     originalPath = path;
     path = qAddSimulatorPrefix(path);
 #endif
@@ -172,7 +172,7 @@ QValueSpacePublisherPrivate::QValueSpacePublisherPrivate(const QString &_path, c
 :   layer(0), handle(QAbstractValueSpaceLayer::InvalidHandle), hasSet(false), hasWatch(false)
 {
     path = qCanonicalPath(_path);
-#ifdef Q_SIMULATOR
+#ifdef QT_SIMULATOR
     originalPath = path;
     path = qAddSimulatorPrefix(path);
 #endif
@@ -262,7 +262,7 @@ QValueSpacePublisher::~QValueSpacePublisher()
 */
 QString QValueSpacePublisher::path() const
 {
-#ifndef Q_SIMULATOR
+#ifndef QT_SIMULATOR
     return d->path;
 #else
     return d->originalPath;
