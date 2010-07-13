@@ -255,7 +255,7 @@
 
     \section2 Organizer
 
-    The structure and retrieval of calendar, scheduling and personal data
+    An API for management of calendar, scheduling and personal data
     from local or remote backends.   It includes the ability to create,
     edit, list, delete and lookup organizer information whether it is stored
     locally or remotely.
@@ -264,7 +264,8 @@
 
     \section2 Versit (Organizer)
 
-    Similar to Organizer above, this is a cross-platform solution.
+    This is an continuation of the Versit API to interface the Organizer API
+    with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera
 
