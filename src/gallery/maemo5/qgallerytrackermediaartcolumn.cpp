@@ -65,6 +65,8 @@ public:
     QVector<uint> imageIds;
 };
 
+#define QT_GALLERY_MEDIA_ART_STRIP_CHARACTERS \
+    "\\(.*\\)|\\{.*\\}|\\[.*\\]|<.*>|[\\(\\)_\\{\\}\\[\\]\\!@#$\\^&\\*\\+\\=\\|\\\\/\"'\\?~`]"
 
 QGalleryTrackerMediaArtColumn::QGalleryTrackerMediaArtColumn(
         int key,
@@ -83,7 +85,8 @@ QGalleryTrackerMediaArtColumn::QGalleryTrackerMediaArtColumn(
     , m_flavor(flavor)
     , m_cacheDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                  + QLatin1String("/.cache/media-art/") + flavor + QLatin1Char('-'))
-    , m_whitespace(" ")
+    , m_whitespace(QCryptographicHash::hash(" ", QCryptographicHash::Md5).toHex())
+    , m_stripRegExp(QLatin1String(QT_GALLERY_MEDIA_ART_STRIP_CHARACTERS))
     , m_keys(QList<int>() << key)
 {
 }
@@ -261,13 +264,13 @@ void QGalleryTrackerMediaArtColumn::imagesReady(int begin, int end)
 }
 
 
-QVariant QGalleryTrackerMediaArtColumn::loadMediaArt(const QPair<QString, QString> &identifier)
-{
-    const QString hashB = QCryptographicHash::hash(!identifier.first.isEmpty()
-            ? identifier.first.toLower().toUtf8() : m_whitespace, QCryptographicHash::Md5).toHex();
 
-    const QString hashC = QCryptographicHash::hash(!identifier.second.isEmpty()
-            ? identifier.second.toLower().toUtf8() : m_whitespace, QCryptographicHash::Md5).toHex();
+
+QVariant QGalleryTrackerMediaArtColumn::loadMediaArt(
+        const QPair<QString, QString> &identifier) const
+{
+    const QString hashB = hash(identifier.first);
+    const QString hashC = hash(identifier.second);
 
     QString imagePath = m_cacheDir + hashB + QLatin1Char('-') + hashC + QLatin1String(".jpeg");
 
@@ -305,6 +308,17 @@ QVariant QGalleryTrackerMediaArtColumn::loadMediaArt(const QPair<QString, QStrin
     } else {
         return QImage();
 
+    }
+}
+
+QString QGalleryTrackerMediaArtColumn::hash(const QString &identifier) const
+{
+    if (identifier.isEmpty()) {
+        return m_whitespace;
+    } else {
+        return QCryptographicHash::hash(
+                identifier.toLower().remove(m_stripRegExp).simplified().toUtf8(),
+                QCryptographicHash::Md5).toHex();
     }
 }
 

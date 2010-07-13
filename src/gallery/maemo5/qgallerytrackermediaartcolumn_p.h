@@ -123,7 +123,8 @@ private:
         QGalleryTrackerMediaArtColumn *column;
     };
 
-    QVariant loadMediaArt(const QPair<QString, QString> &identifier);
+    QVariant loadMediaArt(const QPair<QString, QString> &identifier) const;
+    QString hash(const QString &identifier) const;
 
     const int m_identifierBColumn;
     const int m_identifierCColumn;
@@ -133,6 +134,7 @@ private:
     const QString m_flavor;
     const QString m_cacheDir;
     const QByteArray m_whitespace;
+    const QRegExp m_stripRegExp;
     QList<QGalleryTrackerMediaArtLoadWatcher *> m_loadWatchers;
     const QList<int> m_keys;
     QVector<uint> m_imageIds;
