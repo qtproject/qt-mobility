@@ -11,6 +11,7 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
+            qgeocodeparser.h \
             qgeosearchreply_nokia.h \
             qgeosearchmanagerengine_nokia.h \
             qgeorouteparser.h \
@@ -19,6 +20,7 @@ HEADERS += \
             qgeoserviceproviderplugin_nokia.h
 
 SOURCES += \
+            qgeocodeparser.cpp \
             qgeosearchreply_nokia.cpp \
             qgeosearchmanagerengine_nokia.cpp \
             qgeorouteparser.cpp \

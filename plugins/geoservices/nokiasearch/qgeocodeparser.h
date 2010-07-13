@@ -39,53 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_nokia.h"
+#ifndef QGEOCODEPARSER_H
+#define QGEOCODEPARSER_H
 
-#include <qgeomappingmanagerengine.h>
-#include "qgeosearchmanagerengine_nokia.h"
-#include "qgeoroutingmanagerengine_nokia.h"
+#include <QString>
+#include <QList>
 
-#include <QtPlugin>
-#include <QNetworkProxy>
+class QXmlStreamReader;
+class QIODevice;
 
-QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
+#include <qgeoplace.h>
+#include <qgeoaddress.h>
 
-QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
+QTM_USE_NAMESPACE
 
-QString QGeoServiceProviderFactoryNokia::providerName() const
+class QGeoCodeParser
 {
-    return "nokiasearch";
-}
+public:
+    QGeoCodeParser();
+    ~QGeoCodeParser();
 
-int QGeoServiceProviderFactoryNokia::providerVersion() const
-{
-    return 1;
-}
+    bool parse(QIODevice* source);
 
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
-{
-    return new QGeoSearchManagerEngineNokia(parameters, error, errorString);
-    //return 0;
-}
+    QList<QGeoPlace> results() const;
+    QString errorString() const;
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString)const
-{
-    Q_UNUSED(parameters)
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
+private:
+    bool parseRootElement();
+    bool parsePlace(QGeoPlace *place);
 
-    return 0;
-}
+    QXmlStreamReader *m_reader;
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
-}
+    QList<QGeoPlace> m_results;
+    QString m_errorString;
+};
 
-Q_EXPORT_PLUGIN2(qtgeoservices_nokiasearch, QGeoServiceProviderFactoryNokia)
+#endif

@@ -598,7 +598,7 @@ void QGeoTiledMapData::cleanupCaches()
     QRectF cacheRect1;
     QRectF cacheRect2;
 
-    int minY = qMax(0.0, d_ptr->screenRect.y() - boundaryTiles * tileHeight);
+    int minY = qMax(qreal(0.0), d_ptr->screenRect.y() - boundaryTiles * tileHeight);
     int maxY = qMin(qreal(d_ptr->height), d_ptr->screenRect.y() + d_ptr->screenRect.height() + boundaryTiles * tileHeight);
     int height = maxY - minY;
     int minX = d_ptr->screenRect.x() - boundaryTiles * tileWidth;
