@@ -119,12 +119,23 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
         m_positionSource = 0;
     }
     m_nmeaSource = nmeaSource;
-    // Create the NMEA source based on the given data. A fine feature in QML:
-    // it has automatically set QUrl type to point to correct path.
-    QFile* file = new QFile(nmeaSource.toLocalFile());
+    // Create the NMEA source based on the given data. QML has automatically set QUrl
+    // type to point to correct path. If the file is not found, check if the file actually
+    // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
+    // it is available.
+    QString localFileName = nmeaSource.toLocalFile();
+
+    qDebug() << "---------- Filename received: " << localFileName;
+
+    QFile* file = new QFile(localFileName);
+    if (!file->exists()) {
+        localFileName.prepend(":");
+        qDebug() << "---------- After prepending: " << localFileName;
+        file->setFileName(localFileName);
+    }
     if (file->exists()) {
 #ifdef QDECLARATIVE_POSITION_DEBUG
-        qDebug() << "QDeclarativePositionSource NMEA File was found: " << nmeaSource.toLocalFile();
+        qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
         m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
         (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(file);
@@ -133,8 +144,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
      else {
-        qDebug() << "QDeclarativePositionSource NMEA File was not found: " << nmeaSource.toLocalFile();
-        qDebug() << "QDeclarativePositionSource NMEA File was not found: " << nmeaSource.path();
+        qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
     }
 #endif
     if (m_positioningMethod != positioningMethod()) {

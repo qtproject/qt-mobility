@@ -170,10 +170,11 @@ void tst_QDeclarativePosition::construction()
     QObject* obj = component.create();
     if (shouldSucceed) {
         if (obj == 0) {
-            qWarning("------------- ------------- ------------- ---------------------- ---------------- ");
-            qWarning("------------- location declarative plugin did not instantiate  ------------------ ");
-            qWarning("------------- make sure you have build and deployed the plugin ------------------ ");
-            qWarning("------------- ------------- ------------- ---------------------- ---------------- ");
+            qWarning("--------- ------------- ------------- ---------------------- ------------ ");
+            qWarning("--------- could not instantiate components from location   -------------- ");
+            qWarning("--------- declarative plugin. make sure it is built and found ------------");
+            qWarning(" ---------under {QTDIR}/imports, or c:/sys/bin on Symbian     ----------- ");
+            qWarning("--------- ------------- ------------- ---------------------- ------------ ");
         }
         QVERIFY(obj != 0);
         QCOMPARE(obj->metaObject()->className(), expectedClassName.toAscii().constData());
@@ -206,7 +207,6 @@ void tst_QDeclarativePosition::construction_data()
     QTest::newRow("Position: No properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {}" << true;
     QTest::newRow("Position: Only id property") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position}" << true;
     QTest::newRow("Position: All write properties") << "QDeclarativePosition" << "import Qt 4.7 \n import QtMobility.location 1.0 \n Position {id: position; timestamp: \"2010-07-09\"; longtitude: 61.373459; latitude: 21.611216; altitude: 325; speed: 15}" << true;
-
 }
 
 /*
@@ -235,6 +235,7 @@ void tst_QDeclarativePosition::defaultProperties()
     QCOMPARE(position_obj->property("longtitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("altitudeValid").toBool(), false);
     QCOMPARE(position_obj->property("speedValid").toBool(), false);
+
     delete source_obj;
 }
 
@@ -248,20 +249,24 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QFETCH(int, repeats);
 
     qDebug() << "1. ----- Create PositionSource";
-    // QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId; nmeaSource: \"data/nmealog.txt\"}");
     QString componentString("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionId;}");
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* source_obj = component.create();
+
+    qDebug("start printing errors");
+    if (component.isError()) qDebug() << component.errors();
+    qDebug("end printing errors");
+
     QVERIFY(source_obj != 0);
     QObject* position_obj = source_obj->property("position").value<QObject*>();
     QVERIFY(position_obj != 0);
 
     qDebug() << "2. ----- Create spies and set NMEA source";
     QList<QSignalSpy*> spies = createSpies(source_obj);
-    source_obj->setProperty("nmeaSource", "data/nmealog.txt");
+    source_obj->setProperty("nmeaSource", ":/data/nmealog.txt");
+
     source_obj->setProperty("updateInterval", 500);
-    // Verify that there is nmea source
     QVERIFY(source_obj->property("nmeaSource").toUrl().isValid());
 
     qDebug() << "3. ----- Start updates and verify that relevant signals are received.";
@@ -343,15 +348,12 @@ bool spiesAreNotEmpty(QList<QSignalSpy*> spies)
     return true;
 }
 
-
 void clearSpies(QList<QSignalSpy*> spies)
 {
     for (int i = 0; i < spies.size(); i++) {
-
         spies.at(i)->clear();
     }
 }
-
 
 QTEST_MAIN(tst_QDeclarativePosition)
 #include "tst_qdeclarativeposition.moc"
