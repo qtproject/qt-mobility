@@ -131,12 +131,6 @@ private:
 CameraBinService::CameraBinService(const QString &service, QObject *parent):
     QMediaService(parent)
 {
-    static bool initialized = false;
-    if (!initialized) {
-        initialized = true;
-        gst_init(NULL, NULL);
-    }
-
     m_captureSession = 0;
     m_cameraControl = 0;
     m_metaDataControl = 0;

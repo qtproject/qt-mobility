@@ -93,6 +93,12 @@ QStringList QGstreamerServicePlugin::keys() const
 
 QMediaService* QGstreamerServicePlugin::create(const QString &key)
 {
+    static bool initialized = false;
+    if (!initialized) {
+        initialized = true;
+        gst_init(NULL, NULL);
+    }
+
 #ifdef QMEDIA_GSTREAMER_PLAYER
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QGstreamerPlayerService;

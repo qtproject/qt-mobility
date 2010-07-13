@@ -72,13 +72,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_seekable(false),
      m_lastPosition(0),
      m_duration(-1)
-{
-    static bool initialized = false;
-    if (!initialized) {
-        initialized = true;
-        gst_init(NULL, NULL);
-    }
-
+{    
 #ifdef USE_PLAYBIN2
     m_playbin = gst_element_factory_make("playbin2", NULL);
 #else
