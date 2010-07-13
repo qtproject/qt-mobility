@@ -57,7 +57,6 @@ QTM_USE_NAMESPACE
   implement custom export behaviour for certain contact details.
 
   This interface is replaced by QVersitContactExporterDetailHandlerV2.
-  \ingroup versit
 
   \sa QVersitContactExporter
  */
@@ -95,10 +94,9 @@ QTM_USE_NAMESPACE
   \class QVersitContactExporterDetailHandlerV2
   \brief The QVersitContactExporterDetailHandlerV2 class is an interface for clients wishing to
   implement custom export behaviour for certain contact details.
+  \ingroup versit-extension
 
   This interface supercedes QVersitContactImporterPropertyHandler.
-
-  \ingroup versit
 
   \sa QVersitContactExporter
  */

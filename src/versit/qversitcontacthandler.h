@@ -62,8 +62,13 @@ public:
     virtual QString name() const = 0;
     virtual QVersitContactHandler* createHandler() const = 0;
 
+#ifdef Q_QDOC
+    static const QLatin1Constant ProfileTest;
+    static const QLatin1Constant ProfileSync;
+#else
     Q_DECLARE_LATIN1_CONSTANT(ProfileTest, "Test");
     Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
+#endif
 };
 
 QTM_END_NAMESPACE

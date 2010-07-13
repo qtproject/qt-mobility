@@ -48,10 +48,18 @@ QTM_USE_NAMESPACE
 
 QVersitPluginLoader* QVersitPluginLoader::mInstance = NULL;
 
+/*!
+ * \class QVersitPluginLoader
+ * This is a singleton class that loads Versit plugins
+ */
+
 QVersitPluginLoader::QVersitPluginLoader()
 {
 }
 
+/*!
+ * Returns the singleton instance of the QVersitPluginLoader.
+ */
 QVersitPluginLoader* QVersitPluginLoader::instance()
 {
     if (!mInstance)
@@ -75,6 +83,13 @@ void QVersitPluginLoader::loadPlugins() {
     }
 }
 
+/*!
+ * Creates and returns handlers from the plugin.  If \a profiles is empty, returns only handlers
+ * with an empty profile list are returned.  If \a profiles is nonempty, only handlers with either
+ * an empty profile list or a profile list that intersects the given \a profiles are returned.
+ *
+ * The caller is responsible for deleting all returned handlers.
+ */
 QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QSet<QString>& profiles)
 {
     loadPlugins();

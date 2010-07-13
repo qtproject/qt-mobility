@@ -63,7 +63,9 @@ Versit \reg is a trademark of the Internet Mail Consortium.
 \section1 Usage
 \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example
 
-\section1 Main Classes
+\section1 Classes
+The main classes for a client interested in importing or exporting vCard and
+iCalendar documents are:
 \list
     \o \l{QVersitProperty}
     \o \l{QVersitDocument}    
@@ -74,4 +76,9 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitOrganizerImporter}
     \o \l{QVersitOrganizerExporter}
 \endlist
+
+It is also possible to extend the behaviour of the importer and exporter classes
+by writing handlers and plugins.  For more details, please see the document on
+\l{Versit Plugins}.
+\annotatedlist versit-extension
 */

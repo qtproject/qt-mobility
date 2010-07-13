@@ -57,8 +57,6 @@ QTM_USE_NAMESPACE
 
   This interface is replaced by QVersitContactImporterPropertyHandlerV2.
 
-  \ingroup versit
-
   \sa QVersitContactImporter
  */
 
@@ -100,10 +98,9 @@ QTM_USE_NAMESPACE
   \class QVersitContactImporterPropertyHandlerV2
   \brief The QVersitContactImporterPropertyHandlerV2 class is an interface for clients wishing to
   implement custom import behaviour for vCard properties.
+  \ingroup versit-extension
 
   This interface supercedes QVersitContactImporterPropertyHandler.
-
-  \ingroup versit
 
   \sa QVersitContactImporter
  */

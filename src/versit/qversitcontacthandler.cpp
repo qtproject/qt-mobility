@@ -45,3 +45,44 @@ QTM_USE_NAMESPACE
 
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileTest, "Test");
 Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
+
+/*!
+  \class QVersitContactHandler
+  \brief The QVersitContactHandler interface is a union of the
+  QVersitContactImporterPropertyHandler and QVersitContactExporterDetailHandler interfaces.
+  \ingroup versit-extension
+ */
+
+/*!
+  \class QVersitContactHandlerFactory
+  \brief The QVersitContactHandlerFactory class provides the interface for Versit plugins.
+  \ingroup versit-extension
+
+  This class provides a simple interface for the creation of QVersitContactHandler instances.
+ */
+
+/*!
+  \fn QVersitContactHandlerFactory::~QVersitContactHandlerFactory()
+  This frees any memory used by the QVersitContactHandlerFactory.
+ */
+
+/*!
+  \fn QSet<QString> QVersitContactHandlerFactory::profiles() const
+  This function can be overridden to allow a plugin to report which profiles it is to be active
+  under.  If this (as in the default case) returns the empty set, it indicates that the plugin
+  should be loaded under all profiles.  If it returns a non-empty set, it will only be loaded for
+  those profiles that are specified by the importer/exporter class.
+ */
+
+/*!
+  \fn QString QVersitContactHandlerFactory::name() const
+  This function should return a unique string that identifies the handlers provided by this factory.
+  Typically, this will be of the form "com.nokia.qt.mobility.versit.samplehandler" with the
+  appropriate domain and handler name substituted.
+ */
+
+/*!
+  \fn QVersitContactHandler* QVersitContactHandlerFactory::createHandler() const
+  This function is called by the Versit importer or exporter class to create an instance of the
+  handler provided by this factory.
+ */
