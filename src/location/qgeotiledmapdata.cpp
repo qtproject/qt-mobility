@@ -247,7 +247,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     //scale old image
     QRectF target = oldImage.rect();
     qreal width = target.width() / (1 << qAbs(zoomDiff));
-    qreal height = target.width() / (1 << qAbs(zoomDiff));
+    qreal height = target.height() / (1 << qAbs(zoomDiff));
     qreal x = target.x() + ((target.width() - width) / 2.0);
     qreal y = target.y() + ((target.height() - height) / 2.0);
     QRectF source = QRectF(x, y, width, height);
