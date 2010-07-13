@@ -103,7 +103,7 @@ static QStringList validPluginFiles()
     // these are the plugins under tests/ which point to real service plugins
     // that can be used for testing (i.e. plugins that can be loaded, invoked)
     QStringList files;
-    files << "plugins/tst_sfw_sampleserviceplugin" << "plugins/tst_sfw_sampleserviceplugin2";
+    files << "tst_sfw_sampleserviceplugin" << "tst_sfw_sampleserviceplugin2";
     return files;
 }
 static const QStringList VALID_PLUGIN_FILES = validPluginFiles();
@@ -165,7 +165,7 @@ private:
     QString xmlTestDataPath(const QString &xmlFileName)
     {
         // On Symbian applicationDirPath returns application's private directory
-        return QCoreApplication::applicationDirPath() + "/plugins/xmldata/" + xmlFileName;
+        return QCoreApplication::applicationDirPath() + "/plugins/serviceframework/xmldata/" + xmlFileName;
     }
 
     QByteArray createServiceXml(const QString &serviceName, const QByteArray &interfaceXml, const QString &path, const QString &description = QString()) const
@@ -826,7 +826,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
     QServiceInterfaceDescriptorPrivate *priv = new QServiceInterfaceDescriptorPrivate;
     priv->interfaceName = "com.nokia.qt.TestInterfaceA";    // needed by service plugin implementation
 
-    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/serviceframework/tst_sfw_sampleserviceplugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
 #if defined (Q_OS_SYMBIAN)
@@ -839,7 +839,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
             << descriptor
             << "SampleServicePluginClass";
 
-    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
+    lib.setFileName(QCoreApplication::applicationDirPath() + "/plugins/serviceframework/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
 
@@ -856,7 +856,7 @@ void tst_QServiceManager::loadInterface_descriptor_data()
 
 void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 {
-    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_testservice2plugin");
+    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/serviceframework/tst_sfw_testservice2plugin");
     QVERIFY(lib.load());
     QVERIFY(lib.unload());
 
@@ -925,7 +925,7 @@ void tst_QServiceManager::loadInterface_testLoadedObjectAttributes()
 void tst_QServiceManager::loadLocalTypedInterface()
 {
     //ensure the plugin exists 
-    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/tst_sfw_sampleserviceplugin");
+    QLibrary lib(QCoreApplication::applicationDirPath() + "/plugins/serviceframework/tst_sfw_sampleserviceplugin");
     QCOMPARE(lib.load(), true);
     lib.unload();
 

@@ -8,7 +8,7 @@ HEADERS += filemanagerplugin.h \
 SOURCES += filemanagerplugin.cpp \
            filemanagerstorage.cpp \
            filemanagertransfer.cpp
-TARGET = serviceframework_filemanagerplugin
+TARGET = $$qtLibraryTarget(serviceframework_filemanagerplugin)
 DESTDIR = .
 
 include(../examples.pri)
@@ -17,8 +17,8 @@ MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
-    pluginDep.sources = serviceframework_filemanagerplugin.dll
-    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/{$$PLUGIN_TYPE}
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1

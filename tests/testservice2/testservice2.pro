@@ -3,8 +3,9 @@ CONFIG       += plugin testplugin
 INCLUDEPATH  += ../../src/serviceframework
 HEADERS       = testserviceplugin.h testservice.h testserviceinterface.h
 SOURCES       = testserviceplugin.cpp
-TARGET        = tst_sfw_testservice2plugin
+TARGET        = $$qtLibraryTarget(tst_sfw_testservice2plugin)
 DESTDIR = .
+PLUGIN_TYPE = serviceframework
 
 include(../../common.pri)
 CONFIG += mobility
@@ -12,8 +13,8 @@ MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
-    pluginDep.sources = tst_sfw_testservice2plugin.dll
-    pluginDep.path = $$QT_PLUGINS_BASE_DIR/plugins
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 	
     DEPLOYMENT += pluginDep
 	
@@ -27,3 +28,6 @@ xml.files = xml/testserviceplugin.xml
 xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
 build_pass:ALL_DEPS+=install_xml
+
+target.path = $${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+INSTALLS += target

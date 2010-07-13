@@ -19,7 +19,6 @@ contains(mobility_modules,serviceframework) {
     }
 }
 
-
 #BearerManagement examples
 contains(mobility_modules,bearer) {
     SUBDIRS += bearermonitor bearercloud
