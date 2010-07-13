@@ -7,7 +7,7 @@ HEADERS += bluetoothtransferplugin.h \
            bluetoothtransfer.h
 SOURCES += bluetoothtransferplugin.cpp \
            bluetoothtransfer.cpp
-TARGET = $$qtLibraryTarget(serviceframework_bluetoothtransferplugin)
+TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
 include(../examples.pri)
@@ -16,8 +16,8 @@ MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
-    pluginDep.sources = $${TARGET}.dll
-    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}    
+    pluginDep.sources = serviceframework_bluetoothtransferplugin.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1

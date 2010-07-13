@@ -8,7 +8,7 @@ HEADERS += note.h \
 SOURCES += notesmanagerplugin.cpp \
            notesmanager.cpp
 QT += sql
-TARGET = $$qtLibraryTarget(serviceframework_notesmanagerplugin)
+TARGET = serviceframework_notesmanagerplugin
 
 contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 
@@ -18,8 +18,8 @@ MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
-    pluginDep.sources = $${TARGET}.dll
-    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE} 
+    pluginDep.sources = serviceframework_notesmanagerplugin.dll
+    pluginDep.path = $$QT_PLUGINS_BASE_DIR    
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1

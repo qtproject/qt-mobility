@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
     <name>TestService</name>
-    <filepath>tst_sfw_testservice2plugin</filepath>
+    <filepath>plugins/tst_sfw_testservice2plugin</filepath>
     <description>SFW test service</description>
     <interface>
         <name>com.nokia.qt.ISimpleTypeTest</name>

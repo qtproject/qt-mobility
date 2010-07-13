@@ -74,7 +74,7 @@ void tst_serviceframework::initTestCase()
     //exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
     exampleXmlFiles << "bm_sampleservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/plugins/serviceframework/xmldata/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Addning: " << path;
         manager->addService(path);
     }
@@ -95,7 +95,7 @@ void tst_serviceframework::tst_addService_data()
     //exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
     exampleXmlFiles << "bm_sampleservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {        
-        QString path = QCoreApplication::applicationDirPath() + "/plugins/serviceframework/xmldata/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Addning: " << path;
         QTest::newRow(fileName.toAscii()) << path;
     }
@@ -126,7 +126,7 @@ void tst_serviceframework::tst_loadService_data()
     exampleXmlFiles << "bm_sampleservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         QServiceManager qsm;
-        QString path = QCoreApplication::applicationDirPath() + "/plugins/serviceframework/xmldata/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Adding: " << path;
         qsm.addService(path);
         QStringList servicesList = qsm.findServices();
