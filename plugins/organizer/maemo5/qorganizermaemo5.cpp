@@ -38,9 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qorganizermaemo5_p.h"
 #include "qtorganizer.h"
+
+#include <QDir>
+#include <QFileSystemWatcher>
 
 #include <CalendarErrors.h>
 #include <CEvent.h>
@@ -49,6 +51,9 @@
 #include <CRecurrence.h>
 
 QTM_USE_NAMESPACE
+
+static const char* CALENDAR =  "/.calendar";
+static const char* CALENDARDB = "/calendardb";
 
 QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString> &parameters, QOrganizerItemManager::Error *error)
 {
@@ -68,7 +73,24 @@ Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
 QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     : d(new QOrganizerItemMaemo5EngineData)
 {
+    QString dbPath = QDir::homePath().append(CALENDAR).append(CALENDARDB);
+    QFileSystemWatcher *databaseMonitor = new QFileSystemWatcher(this);
+    databaseMonitor->addPath(dbPath);
+    connect(databaseMonitor, SIGNAL(fileChanged(const QString &)), this, SLOT(dataChanged()));
+
     d->m_itemTransformer.setManagerUri(managerUri());
+}
+
+void QOrganizerItemMaemo5Engine::dataChanged()
+{
+    // Timer prevents from sending multiple signals
+    // when database is changed during short period of time
+    if (!m_waitTimer.isActive()) {
+        m_waitTimer.setSingleShot(true);
+        m_waitTimer.setInterval(50);
+        m_waitTimer.start();
+        emit dataChanged();
+    }
 }
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()

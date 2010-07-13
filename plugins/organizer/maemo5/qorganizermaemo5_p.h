@@ -63,6 +63,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QObject>
+#include <QTimer>
 
 #include "qorganizeritem.h"
 #include "qorganizeritemmanager.h"
@@ -169,6 +170,9 @@ public:
     bool cancelRequest(QOrganizerItemAbstractRequest *req);
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
 
+public Q_SLOTS:
+    void dataChanged();
+
 private:
     // single item saving implementation
     void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
@@ -200,7 +204,7 @@ private:
 
 private:
     QOrganizerItemMaemo5EngineData *d;
-
+    QTimer m_waitTimer;
     friend class QOrganizerItemMaemo5Factory;
 };
 
