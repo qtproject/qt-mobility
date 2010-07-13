@@ -143,6 +143,9 @@ SOURCES += qmessageid.cpp \
 	DEFINES += FREESTYLEMAILUSED
 	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
 	}
+	contains(messaging_ncnlist_enabled, no) {
+	DEFINES += NCNLISTREMOVED
+	}
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h

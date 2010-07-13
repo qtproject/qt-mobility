@@ -13,6 +13,8 @@ include (../../../common.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
+#DEFINES += QT_DEBUG_QT7
+
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \
         -framework QuartzCore -framework QTKit
