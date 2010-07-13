@@ -510,6 +510,7 @@ compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 compileTest "Maemo5 contacts dependencies" maemo5-contacts
 compileTest "Bluez" bluez
+compileTest "Gstreamer Photography" gstreamer-photography
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else

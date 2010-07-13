@@ -105,7 +105,7 @@ QMediaService* QGstreamerServicePlugin::create(const QString &key)
 #endif
 
 #ifdef QMEDIA_GSTREAMER_CAMERABIN
-    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
+    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA) && CameraBinService::isCameraBinAvailable())
         return new CameraBinService(key);
 #endif
 

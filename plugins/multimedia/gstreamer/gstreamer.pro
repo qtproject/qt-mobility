@@ -74,7 +74,7 @@ SOURCES += \
 include(mediaplayer/mediaplayer.pri)
 include(mediacapture/mediacapture.pri)
 
-maemo* {
+contains(gstreamer-photography_enabled, yes) {
     include(camerabin/camerabin.pri)
 }
 

@@ -73,6 +73,8 @@ public:
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *);
 
+    static bool isCameraBinAvailable();
+
 private:
     void setAudioPreview(GstElement*);
 

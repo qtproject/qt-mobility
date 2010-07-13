@@ -147,8 +147,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_videoWidgetFactory = 0;
     m_imageCaptureControl = 0;
 
-
-   if (service == Q_MEDIASERVICE_CAMERA) {
+    if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new CameraBinSession(this);
         m_cameraControl = new CameraBinControl(m_captureSession);
         m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
@@ -171,7 +170,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     }
     
     if (!m_captureSession) {
-        qWarning() << "Service type is not supported:" << service;
+        qWarning() << Q_FUNC_INFO << "Service type is not supported:" << service;
         return;
     }
 
@@ -195,7 +194,7 @@ QMediaControl *CameraBinService::requestControl(const char *name)
     if (!m_captureSession)
         return 0;
 
-    qDebug() << "Request control" << name;
+    //qDebug() << "Request control" << name;
 
     if (!m_videoOutput) {
         if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
@@ -265,5 +264,16 @@ void CameraBinService::releaseControl(QMediaControl *control)
         m_videoOutput = 0;
         m_captureSession->setViewfinder(0);
     }
+}
+
+bool CameraBinService::isCameraBinAvailable()
+{
+    GstElementFactory *factory = gst_element_factory_find("camerabin");
+    if (factory) {
+        gst_object_unref(GST_OBJECT(factory));
+        return true;
+    }
+
+    return false;
 }
 
