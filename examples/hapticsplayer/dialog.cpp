@@ -108,7 +108,9 @@ QFeedbackActuator Dialog::currentActuator() const
 {
     QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
     int index = ui.actuators->currentIndex();
-    return index < devs.count() ? devs.at(index) : QFeedbackActuator();
+    if (index == -1 || index > devs.count())
+        return QFeedbackActuator();
+    return devs.at(index);
 }
 
 void Dialog::actuatorChanged()
@@ -131,10 +133,17 @@ void Dialog::enabledChanged(bool on)
 
 void Dialog::playPauseClicked()
 {
-    if (effect.state() == QFeedbackEffect::Running)
+    if (effect.state() == QFeedbackEffect::Running) {
         effect.pause();
-    else
+        if (effect.state() == QFeedbackEffect::Paused || effect.state() == QFeedbackEffect::Stopped) {
+            ui.playPause->setText(tr("play"));
+        }
+    } else {
         effect.start();
+        if (effect.state() == QFeedbackEffect::Running || effect.state() == QFeedbackEffect::Loading) {
+            ui.playPause->setText(tr("pause"));
+        }
+    }
 }
 
 void Dialog::durationChanged(int duration)
