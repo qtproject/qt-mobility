@@ -325,6 +325,8 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
 
     // Checks done, create new rows into tables.
     statement = "INSERT INTO Service(ID,Name,Location) VALUES(?,?,?)";
+
+    qsrand(QTime::currentTime().msec());
     QString serviceID = QUuid::createUuid().toString();
 
     bindValues.clear();

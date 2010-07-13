@@ -188,6 +188,11 @@ void ServiceDatabaseUnitTest::testRegistration()
              << "ServiceDharma_Flame.xml";
 
     foreach(const QString &file, xmlFiles) {
+        //Check that when we register a service we reseed
+        //the random number generator so we don't have
+        //any service id clashes.  To verify this is
+        //happening we set the seed here to 1.
+        qsrand(1);
         parser.setDevice(new QFile(testdir.absoluteFilePath(file)));
         QVERIFY(parser.extractMetadata());
         QVERIFY(registerService(parser.parseResults()));
