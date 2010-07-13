@@ -70,7 +70,7 @@ QXARecodMediaService::~QXARecodMediaService()
 {
     QT_TRACE_FUNCTION_ENTRY_EXIT;
 }
-//FIXME
+
 QMediaControl* QXARecodMediaService::requestControl(const char *name)
 {
     QT_TRACE_FUNCTION_ENTRY;
@@ -85,7 +85,7 @@ QMediaControl* QXARecodMediaService::requestControl(const char *name)
     QT_TRACE_FUNCTION_EXIT;
     return 0;
 }
-//FIXME
+
 void QXARecodMediaService::releaseControl(QMediaControl *control)
 {
     Q_UNUSED(control)

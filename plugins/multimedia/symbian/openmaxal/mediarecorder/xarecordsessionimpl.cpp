@@ -102,7 +102,7 @@ m_InputDeviceId(0),
 m_ContainerType(0),
 m_BitRate(0),
 m_RateControl(0),
-m_ChannelsOut(0),
+m_ChannelsOut(1),
 m_SampleRate(0),
 m_AudioIODevCapsItf(NULL),
 m_AudioInputDeviceNames(NULL),
@@ -643,7 +643,7 @@ void XARecordSessionImpl::resetEncoderAttributes()
     m_AudioEncoderId = 0;
     m_ProfileSetting = 0;
     m_BitRate = 0;
-    m_ChannelsOut = 0;
+    m_ChannelsOut = 1;
     m_SampleRate = 0;
     m_RateControl = 0;
 }
@@ -694,12 +694,6 @@ void XARecordSessionImpl::setBitRate(TUint32 aBitRate) {
     TRACE_FUNCTION_EXIT;
 }
 
-void XARecordSessionImpl::setOptimalBitRate() {
-    TRACE_FUNCTION_ENTRY;
-    m_BitRate = 0xffffffff;
-    TRACE_FUNCTION_EXIT;
-}
-
 void XARecordSessionImpl::setChannels(TUint32 aChannels) {
     TRACE_FUNCTION_ENTRY;
     m_ChannelsOut = aChannels;
@@ -709,7 +703,7 @@ void XARecordSessionImpl::setChannels(TUint32 aChannels) {
 
 void XARecordSessionImpl::setOptimalChannelCount() {
     TRACE_FUNCTION_ENTRY;
-    m_ChannelsOut = 0xffffffff;
+    m_ChannelsOut = 1;
     TRACE_FUNCTION_EXIT;
 }
 
@@ -775,19 +769,6 @@ void XARecordSessionImpl::setVeryLowQuality()
         m_BitRate = bitrates[0];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
-        m_SampleRate = 8000 * KMilliToHz;
-    } else {
-        RArray<TInt32> samplerates;
-        TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates);
-        if ((res == KErrNone) && (samplerates.Count() > 0) ) {
-            /* Sort the array and pick the lowest bit rate */
-            samplerates.SortUnsigned();
-            m_SampleRate = samplerates[0] * KMilliToHz;
-        }
-        samplerates.Close();    
-    }    
 }
 
 void XARecordSessionImpl::setLowQuality()
@@ -801,19 +782,6 @@ void XARecordSessionImpl::setLowQuality()
         m_BitRate = bitrates[bitrates.Count()*1/4];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
-        m_SampleRate = 8000 * KMilliToHz;
-    } else {
-        RArray<TInt32> samplerates;
-        TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates);
-        if ((res == KErrNone) && (samplerates.Count() > 0) ) {
-            /* Sort the array and pick the lowest bit rate */
-            samplerates.SortUnsigned();
-            m_SampleRate = samplerates[samplerates.Count()*1/4] * KMilliToHz;
-        }
-        samplerates.Close();    
-    }    
 }
 
 void XARecordSessionImpl::setNormalQuality()
@@ -827,19 +795,6 @@ void XARecordSessionImpl::setNormalQuality()
         m_BitRate = bitrates[bitrates.Count()/2];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
-        m_SampleRate = 8000 * KMilliToHz;
-    } else {
-        RArray<TInt32> samplerates;
-        TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates);
-        if ((res == KErrNone) && (samplerates.Count() > 0) ) {
-            /* Sort the array and pick the lowest bit rate */
-            samplerates.SortUnsigned();
-            m_SampleRate = samplerates[samplerates.Count()*1/2] * KMilliToHz;
-        }
-        samplerates.Close();    
-    }    
 }
 
 void XARecordSessionImpl::setHighQuality()
@@ -853,19 +808,6 @@ void XARecordSessionImpl::setHighQuality()
         m_BitRate = bitrates[bitrates.Count()*3/4];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
-        m_SampleRate = 8000 * KMilliToHz;
-    } else {
-        RArray<TInt32> samplerates;
-        TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates);
-        if ((res == KErrNone) && (samplerates.Count() > 0) ) {
-            /* Sort the array and pick the lowest bit rate */
-            samplerates.SortUnsigned();
-            m_SampleRate = samplerates[samplerates.Count()*3/4] * KMilliToHz;
-        }
-        samplerates.Close();    
-    }    
 }
 
 void XARecordSessionImpl::setVeryHighQuality()
@@ -879,19 +821,6 @@ void XARecordSessionImpl::setVeryHighQuality()
         m_BitRate = bitrates[bitrates.Count()-1];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
-        m_SampleRate = 8000 * KMilliToHz;
-    } else {
-        RArray<TInt32> samplerates;
-        TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, samplerates);
-        if ((res == KErrNone) && (samplerates.Count() > 0) ) {
-            /* Sort the array and pick the lowest bit rate */
-            samplerates.SortUnsigned();
-            m_SampleRate = samplerates[samplerates.Count()-1] * KMilliToHz;
-        }
-        samplerates.Close();    
-    }    
 }
 
 /* Internal function */
@@ -1220,6 +1149,7 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
         if (returnValue != KErrNone)
             continue;
         m_DefaultInputDeviceIDs.Append(deviceIds[index]);
+        m_InputDeviceId = deviceIds[index];
     }
 
     TRACE_FUNCTION_EXIT;
@@ -1238,8 +1168,7 @@ TInt32 XARecordSessionImpl::setEncoderSettingsToMediaRecorder()
     TInt32 returnValue = mapError(xa_result, ETrue);
 
     settings.encoderId = m_AudioEncoderId;
-    if (m_ChannelsOut != 0xffffffff)
-        settings.channelsOut = m_ChannelsOut;
+    settings.channelsOut = m_ChannelsOut;
     if (m_SampleRate != 0xffffffff)
         settings.sampleRate = m_SampleRate;
     if ((m_BitRate != 0) && (m_BitRate != 0xffffffff))

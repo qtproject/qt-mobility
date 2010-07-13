@@ -78,6 +78,11 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     m_elementNames["3gp"] = "ffmux_3gp";
     m_elementNames["raw"] = "identity";
 
+    m_containerExtensions["matroska"] = "mkv";
+    m_containerExtensions["quicktime"] = "mov";
+    m_containerExtensions["mpegts"] = "m2t";
+    m_containerExtensions["mpeg"] = "mpg";
+
     QSet<QString> allTypes;
 
     foreach( const QByteArray& formatName, formatCandidates ) {
@@ -128,4 +133,9 @@ QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(GstElementFa
 QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(const QString &container) const
 {
     return m_streamTypes.value(container);
+}
+
+QString QGstreamerMediaContainerControl::containerExtension() const
+{
+    return m_containerExtensions.value(m_format, m_format);
 }

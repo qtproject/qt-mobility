@@ -108,7 +108,6 @@ public:
     void setContainerType(const TDesC &aURI);
     TBool setCodec(const TDesC &aURI);
     void setBitRate(TUint32 aBitRate);
-    void setOptimalBitRate();
     void setChannels(TUint32 aChannels);
     void setOptimalChannelCount();
     void setSampleRate(TUint32 aSampleRate);

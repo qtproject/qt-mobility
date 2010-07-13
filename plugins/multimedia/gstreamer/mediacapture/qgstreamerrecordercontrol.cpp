@@ -71,6 +71,7 @@ QUrl QGstreamerRecorderControl::outputLocation() const
 
 bool QGstreamerRecorderControl::setOutputLocation(const QUrl &sink)
 {
+    m_outputLocation = sink;
     m_session->setOutputLocation(sink);
     return true;
 }
@@ -108,6 +109,14 @@ qint64 QGstreamerRecorderControl::duration() const
 
 void QGstreamerRecorderControl::record()
 {
+    if (m_outputLocation.isEmpty()) {
+        QString container = m_session->mediaContainerControl()->containerExtension();
+        if (container.isEmpty())
+            container = "raw";
+
+        m_session->setOutputLocation(QUrl(generateFileName(defaultDir(), container)));
+    }
+
     m_session->dumpGraph("before-record");
     if (!m_hasPreviewState || m_session->state() != QGstreamerCaptureSession::StoppedState) {
         m_session->setState(QGstreamerCaptureSession::RecordingState);
@@ -242,4 +251,44 @@ bool QGstreamerRecorderControl::isMuted() const
 void QGstreamerRecorderControl::setMuted(bool)
 {
 
+}
+
+QDir QGstreamerRecorderControl::defaultDir() const
+{
+    QStringList dirCandidates;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    dirCandidates << QLatin1String("/home/user/MyDocs");
+#endif
+
+    dirCandidates << QDir::home().filePath("Documents");
+    dirCandidates << QDir::home().filePath("My Documents");
+    dirCandidates << QDir::homePath();
+    dirCandidates << QDir::currentPath();
+    dirCandidates << QDir::tempPath();
+
+    foreach (const QString &path, dirCandidates) {
+        QDir dir(path);
+        if (dir.exists() && QFileInfo(path).isWritable())
+            return dir;
+    }
+
+    return QDir();
+}
+
+QString QGstreamerRecorderControl::generateFileName(const QDir &dir, const QString &ext) const
+{
+
+    int lastClip = 0;
+    foreach(QString fileName, dir.entryList(QStringList() << QString("clip_*.%1").arg(ext))) {
+        int imgNumber = fileName.mid(5, fileName.size()-6-ext.length()).toInt();
+        lastClip = qMax(lastClip, imgNumber);
+    }
+
+    QString name = QString("clip_%1.%2").arg(lastClip+1,
+                                     4, //fieldWidth
+                                     10,
+                                     QLatin1Char('0')).arg(ext);
+
+    return dir.absoluteFilePath(name);
 }

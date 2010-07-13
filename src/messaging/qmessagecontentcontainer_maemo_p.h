@@ -83,8 +83,7 @@ public:
     
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
             :
-            q_ptr(contentContainer), _message(0), _available(false), _size(0),
-            _attachmentId(0)
+            q_ptr(contentContainer), _message(0), _available(false), _size(0)
 
     {
     }

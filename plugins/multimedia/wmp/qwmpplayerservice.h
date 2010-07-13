@@ -59,7 +59,10 @@ class QMediaPlaylist;
 class QVideoWindowControl;
 QT_END_NAMESPACE
 
+#ifdef QWMP_EVR
 class QEvrVideoOverlay;
+#endif
+
 class QWmpMetaData;
 class QWmpPlayerControl;
 class QWmpPlaylist;

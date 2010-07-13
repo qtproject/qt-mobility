@@ -76,11 +76,14 @@ public:
 
     static QSet<QString> supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction);
 
+    QString containerExtension() const;
+
 private:
     QString m_format;
     QStringList m_supportedContainers;
     QMap<QString,QByteArray> m_elementNames;
     QMap<QString, QString> m_containerDescriptions;
+    QMap<QString, QString> m_containerExtensions;
     QMap<QString, QSet<QString> > m_streamTypes;
 };
 

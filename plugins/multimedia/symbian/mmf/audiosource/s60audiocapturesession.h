@@ -139,6 +139,7 @@ private:
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
+    QUrl generateAudioFilePath();
 
 public slots:
     void setCaptureDevice(const QString &deviceName);

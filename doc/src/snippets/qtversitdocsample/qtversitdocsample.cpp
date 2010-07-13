@@ -196,38 +196,46 @@ int main(int argc, char *argv[])
 
 void completeExample()
 {
-    //! [Complete example]
     // Create the input vCard
+    //! [Complete example - create]
     QBuffer input;
     input.open(QBuffer::ReadWrite);
     QByteArray inputVCard =
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
     input.write(inputVCard);
     input.seek(0);
+    //! [Complete example - create]
 
     // Parse the input into QVersitDocuments
+    //! [Complete example - read]
     // Note: we could also use the more convenient QVersitReader(QByteArray) constructor.
     QVersitReader reader;
     reader.setDevice(&input);
     reader.startReading(); // Remember to check the return value
     reader.waitForFinished();
+    QList<QVersitDocument> inputDocuments = reader.results();
+    //! [Complete example - read]
 
     // Convert the QVersitDocuments to QContacts
-    QList<QVersitDocument> inputDocuments = reader.results();
+    //! [Complete example - import]
     QVersitContactImporter importer;
     if (!importer.importDocuments(inputDocuments))
         return;
     QList<QContact> contacts = importer.contacts();
     // Note that the QContacts are not saved yet.
     // Use QContactManager::saveContacts() for saving if necessary
+    //! [Complete example - import]
 
     // Export the QContacts back to QVersitDocuments
+    //! [Complete example - export]
     QVersitContactExporter exporter;
     if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
         return;
     QList<QVersitDocument> outputDocuments = exporter.documents();
+    //! [Complete example - export]
 
     // Encode the QVersitDocument back to a vCard
+    //! [Complete example - write]
     // Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.
     QBuffer output;
     output.open(QBuffer::ReadWrite);
@@ -235,11 +243,8 @@ void completeExample()
     writer.setDevice(&output);
     writer.startWriting(outputDocuments); // Remember to check the return value
     writer.waitForFinished();
-
-    // Read the vCard back to a QByteArray
-    output.seek(0);
-    QByteArray outputVCard(output.readAll());
-    //! [Complete example]
+    // output.buffer() now contains a vCard
+    //! [Complete example - write]
 }
 
 void exportExample()
