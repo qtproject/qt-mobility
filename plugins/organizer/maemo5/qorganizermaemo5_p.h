@@ -74,7 +74,6 @@
 #include "qorganizeritemchangeset.h"
 
 #include "qorganizeritemtransform.h"
-#include "qorganizerguidmapper.h"
 
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
@@ -131,9 +130,6 @@ public:
 
     // item converter instance
     OrganizerItemTransform m_itemTransformer;
-
-    // guid mapper instance
-    OrganizerGuidMapper m_guidMapper;
 };
 
 
@@ -175,7 +171,7 @@ public Q_SLOTS:
 
 private:
     // single item saving implementation
-    void checkItemIdValidity(QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
+    void checkItemIdValidity(CCalendar *cal, QOrganizerItem *checkItem, QOrganizerItemManager::Error *error);
     int doSaveItem(CCalendar *cal, QOrganizerItem *item, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
 
     // saving the occurrences
