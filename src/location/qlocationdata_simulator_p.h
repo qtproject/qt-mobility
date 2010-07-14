@@ -56,6 +56,7 @@
 #include "qmobilityglobal.h"
 #include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
+#include <QtCore/QList>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -68,17 +69,24 @@ struct QGeoPositionInfoData
     double altitude;
 
     // DateTime info
-//    int year;
-//    int month;
-//    int day;
-//    int hour;
-//    int minutes;
-//    int seconds;
-//    int miliseconds;
     QDateTime dateTime;
 
     int minimumInterval;
     bool enabled;
+};
+
+struct QGeoSatelliteInfoData
+{
+    struct SatelliteInfo
+    {
+        int prn;
+        qreal azimuth;
+        qreal elevation;
+        int signalStrength;
+        bool inUse;
+    };
+
+    QList<SatelliteInfo> satellites;
 };
 
 void qt_registerLocationTypes();
@@ -86,6 +94,8 @@ void qt_registerLocationTypes();
 QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
+Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)
+Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData::SatelliteInfo)
 
 QT_END_HEADER
 

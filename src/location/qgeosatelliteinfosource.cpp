@@ -42,6 +42,8 @@
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeosatelliteinfosource_s60_p.h"
+#elif defined(QT_SIMULATOR)
+#   include "qgeosatelliteinfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeosatelliteinfosource_wince_p.h"
 #elif defined(Q_WS_MAEMO_6)
@@ -105,6 +107,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     }
 
     return source;
+#elif defined(QT_SIMULATOR)
+    return new QGeoSatelliteInfoSourceSimulator(parent);
 #else
     Q_UNUSED(parent);
     return 0;
