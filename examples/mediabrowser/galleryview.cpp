@@ -44,8 +44,8 @@
 #include <qgalleryitemlist.h>
 #include <qgalleryqueryrequest.h>
 
-GalleryView::GalleryView(QWidget *parent)
-    : QWidget(parent)
+GalleryView::GalleryView(QWidget *parent, Qt::WindowFlags flags)
+    : QWidget(parent, flags)
     , request(new QGalleryQueryRequest(this))
     , countRequest(new QGalleryCountRequest(this))
 {
