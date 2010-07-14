@@ -69,8 +69,14 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 #ifdef QTM_PLUGIN_PATH
     paths << QLatin1String(QTM_PLUGIN_PATH);
 #endif
+
+    int originalCount = paths.count();
+    for (int i=0; i<originalCount; i++) {
+        paths.append(paths[i] + QLatin1String("/serviceframework"));
+    }
+
     for (int i=0; i<paths.count(); i++) {
-        QString libPath = QDir::toNativeSeparators(paths[i] + QLatin1String("/serviceframework")) +
+        QString libPath = QDir::toNativeSeparators(paths[i]) +
                           QDir::separator() + libNameOrPath;
         
 #ifdef Q_OS_SYMBIAN
