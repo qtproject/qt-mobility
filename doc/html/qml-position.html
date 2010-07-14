@@ -14,146 +14,52 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="qdeclarativeelements.html">QML Elements</a></li>              <li>QML Position Element</li><h1 class="title">QML Position Element</h1>
 <span class="subtitle"></span>
-<p>The Position element allows you to get information about your current position. <a href="#details">More...</a></p>
+<p>The Position element holds various positional data, such as <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, <a href="qml-position.html#altitude-prop">altitude</a> and <a href="qml-position.html#speed-prop">speed</a>. <a href="#details">More...</a></p>
 <a name="Propertiesx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Properties</h2>
 <tr class="odd topAlign"><ul>
-<li class="fn"><b><b><a href="qml-position.html#PositioningMethods-prop">PositioningMethods</a></b></b> : enumeration</li>
 <li class="fn"><b><b><a href="qml-position.html#altitude-prop">altitude</a></b></b> : double</li>
-<li class="fn"><b><b><a href="qml-position.html#altitudeLatest-prop">altitudeLatest</a></b></b> : bool</li>
+<li class="fn"><b><b><a href="qml-position.html#altitudeValid-prop">altitudeValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#latitude-prop">latitude</a></b></b> : double</li>
+<li class="fn"><b><b><a href="qml-position.html#latitudeValid-prop">latitudeValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#longtitude-prop">longtitude</a></b></b> : double</li>
-<li class="fn"><b><b><a href="qml-position.html#nmeaSource-prop">nmeaSource</a></b></b> : url</li>
-<li class="fn"><b><b><a href="qml-position.html#positionLatest-prop">positionLatest</a></b></b> : bool</li>
+<li class="fn"><b><b><a href="qml-position.html#longtitudeValid-prop">longtitudeValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#speed-prop">speed</a></b></b> : double</li>
-<li class="fn"><b><b><a href="qml-position.html#speedLatest-prop">speedLatest</a></b></b> : bool</li>
+<li class="fn"><b><b><a href="qml-position.html#speedValid-prop">speedValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#timestamp-prop">timestamp</a></b></b> : date</li>
-<li class="fn"><b><b><a href="qml-position.html#updateInterval-prop">updateInterval</a></b></b> : bool</li>
-</ul>
-<a name="Signalsx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h2>Signals</h2>
-<tr class="even topAlign"><ul>
-<li class="fn"><b><b><a href="qml-position.html#positionUpdated-signal">positionUpdated</a></b></b></li>
-</ul>
-<a name="Methods"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<h2>Methods</h2>
-<tr class="odd topAlign"><ul>
-<li class="fn"><b><b><a href="qml-position.html#startUpdates-method">startUpdates</a></b></b></li>
-<li class="fn"><b><b><a href="qml-position.html#stopUpdates-method">stopUpdates</a></b></b></li>
-<li class="fn"><b><b><a href="qml-position.html#update-method">update</a></b></b></li>
 </ul>
 <a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Detailed Description</h2>
-<p>The Position element allows you to get information about your current position. You can receive information about things such as <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, <a href="qml-position.html#speed-prop">speed</a>, and <a href="qml-position.html#altitude-prop">altitude</a>. This element is part of the <b>QtMobility.location 1.0</b> module.</p>
-<p>Support for location sources are platform dependant. When declaring a Position element, a default positioning source shall be created. Supported positioning methods are held in <a href="qml-position.html#PositioningMethods-prop">PositioningMethods</a>. As a development convinience, one may also set data file as a source (NMEA format). Location updates are not started automatically upon element declaration, see <a href="qml-position.html#startUpdates-method">startUpdates</a>.</p>
-<p>Here is very simple, self-contained, example QML to illustrate the usage:</p>
-<pre class="highlightedCode brush: cpp">    import Qt 4.7
-    import QtMobility.location 1.0
-
-    Rectangle {
-        id: page
-        width: 500
-        height: 350
-        color: &quot;green&quot;
-
-        Text {
-            id: title
-            text: &quot;Current position is: &quot;
-            font {pointSize: 12; bold: true}
-        }
-        Position {
-            id: position
-        }
-        Column {
-            id: data
-            anchors {top: title.bottom; left: title.left}
-            Text {text: &quot;*Click* here to start updates.&quot;;
-                  MouseArea {anchors.fill: parent; onClicked: position.startUpdates()}
-            }
-            Text {text: &quot;*Click* here to stop updates.&quot;;
-                  MouseArea {anchors.fill: parent; onClicked: position.stopUpdates()}
-            }
-            Text {text: &quot;latitude: &quot;   + position.latitude}
-            Text {text: &quot;longtitude: &quot;   + position.longtitude}
-            Text {text: &quot;altitude: &quot;   + position.altitude}
-            Text {text: &quot;speed: &quot; + position.speed}
-            Text {text: &quot;timestamp: &quot;  + position.timestamp}
-            Text {text: &quot;positionLatest: &quot;  + position.positionLatest}
-            Text {text: &quot;altitudeLatest: &quot;  + position.altitudeLatest}
-            Text {text: &quot;speedLatest: &quot;     + position.speedLatest}
-            Text {text: &quot;positioningMethod: &quot;     + printableMethod(position.positioningMethod)}
-            Text {text: &quot;nmeaSource: &quot;     + position.nmeaSource}
-            Text {text: &quot;updateInterval: &quot;     + position.updateInterval}
-        }
-
-        function printableMethod(method) {
-            if (method == Position.SatellitePositioningMethod)
-                return &quot;Satellite&quot;;
-            else if (method == Position.NoPositioningMethod)
-                return &quot;Not available&quot;
-            else if (method == Position.NonSatellitePositioningMethod)
-                return &quot;Non-satellite&quot;
-            else if (method == Position.AllPositioningMethods)
-                return &quot;All/multiple&quot;
-            return &quot;source error&quot;;
-        }
-    }</pre>
-<p>See also <a href="qgeopositioninfosource.html">QGeoPositionInfo</a> and <a href="qnmeapositioninfosource.html">QGeoCoordinate</a>.</p>
+<p>The Position element holds various positional data, such as <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, <a href="qml-position.html#altitude-prop">altitude</a> and <a href="qml-position.html#speed-prop">speed</a>. Not all of these are always available (e.g&#x2e; latitude and longtitude may be valid, but speed update has not been received or set manually), and hence there are corresponding validity attributes which can be used when writing applications.</p>
+<p>The main parameters are writable, so application writer can create his/her own position elements or even store (record) received updates to e.g&#x2e; later render a walked path.</p>
+<p>The Position element is part of the <b>QtMobility.location 1.0</b> module.</p>
+<p>See also <a href="qml-positionsource.html">PositionSource</a>.</p>
 <h2>Property Documentation</h2>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="PositioningMethods-prop"></a>PositioningMethods : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the supported positioning methods of the current source.</p>
-<ul>
-<li>NoPositioningMethod - No positioning methods supported (no source).</li>
-<li>SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.</li>
-<li>NonSatellitePositioningMethod - Non satellite methods are supported.</li>
-<li>AllPositioningMethods - Combination of methods are supported.</li>
-</ul>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitude-prop"></a>altitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of altitude (metres above sea level). If the property has not been set, its default value is zero.</p>
+<p>See also <a href="qml-position.html#altitudeValid-prop">altitudeValid</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, <a href="qml-position.html#latitude-prop">latitude</a>, and <a href="qml-position.html#speed-prop">speed</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitude-prop"></a>altitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of last known altitude (metres above sea level).</p>
-<p>See also <a href="qml-position.html#altitudeLatest-prop">altitudeLatest</a>.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitudeValid-prop"></a>altitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#altitude-prop">altitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#altitude-prop">altitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitudeLatest-prop"></a>altitudeLatest : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#altitude-prop">altitude</a> has been updated at current <a href="qml-position.html#timestamp-prop">timestamp</a>, i.e&#x2e; an update was received during previous update from source.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitude-prop"></a>latitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds latitude value of the geographical position (decimal degrees). A positive latitude indicates the Northern Hemisphere, and a negative latitude indicates the Southern Hemisphere. If the property has not been set, its default value is zero.</p>
+<p>See also <a href="qml-position.html#latitudeValid-prop">latitudeValid</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, <a href="qml-position.html#speed-prop">speed</a>, and <a href="qml-position.html#altitude-prop">altitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitude-prop"></a>latitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the last known latitude value of the geographical position (decimal degrees). A positive latitude indicates the Northern Hemisphere, and a negative latitude indicates the Southern Hemisphere.</p>
-<p>See also <a href="qml-position.html#positionLatest-prop">positionLatest</a>.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitudeValid-prop"></a>latitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#latitude-prop">latitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#latitude-prop">latitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longtitude-prop"></a>longtitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the last known longtitude value of the geographical position (decimal degrees). A positive longitude indicates the Eastern Hemisphere, and a negative longitude indicates the Western Hemisphere</p>
-<p>See also <a href="qml-position.html#positionLatest-prop">positionLatest</a>.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longtitude-prop"></a>longtitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the longtitude value of the geographical position (decimal degrees). A positive longitude indicates the Eastern Hemisphere, and a negative longitude indicates the Western Hemisphere If the property has not been set, its default value is zero.</p>
+<p>See also <a href="qml-position.html#longtitudeValid-prop">longtitudeValid</a>, <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#speed-prop">speed</a>, and <a href="qml-position.html#altitude-prop">altitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="nmeaSource-prop"></a>nmeaSource : url</td></tr></table></div><div class="qmldoc"><p>This property holds the source for NMEA data (file). One purpose of this property is to be of development convinience.</p>
-<p>Setting this property will override any other position source. Currently only files local to the .qml -file are supported. Nmea source is created in simulation mode, meaning that the data and time information in the NMEA source data is used to provide positional updates at the rate at which the data was originally recorded.</p>
-<p>If the source is changed, all possible previous data is expired. Also <a href="qml-position.html#update-method">update</a> and <a href="qml-position.html#startUpdates-method">startUpdates</a> need to be issued again. If nmeaSource has been set for a Position element, there is no way to revert back to non-file sources.</p>
-<p>For example if there is a file called &quot;nmealog.txt&quot; in the same folder as the .qml file:</p>
-<pre class="highlightedCode brush: cpp">    Position {
-        id: position
-        nmeaSource: &quot;nmealog.txt&quot;
-    }</pre>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longtitudeValid-prop"></a>longtitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#longtitude-prop">longtitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#longtitude-prop">longtitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="positionLatest-prop"></a>positionLatest : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#latitude-prop">latitude</a> and <a href="qml-position.html#longtitude-prop">longtitude</a> data were updated at current <a href="qml-position.html#timestamp-prop">timestamp</a>, i.e&#x2e; an update was received during previous update from source.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speed-prop"></a>speed : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of speed (groundspeed, metres / second). If the property has not been set, its default value is zero.</p>
+<p>See also <a href="qml-position.html#speedValid-prop">speedValid</a>, <a href="qml-position.html#altitude-prop">altitude</a>, <a href="qml-position.html#longtitude-prop">longtitude</a>, and <a href="qml-position.html#latitude-prop">latitude</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speed-prop"></a>speed : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of last known speed (groundspeed, metres / second).</p>
-<p>See also <a href="qml-position.html#speedLatest-prop">speedLatest</a>.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speedValid-prop"></a>speedValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#speed-prop">speed</a> has been set.</p>
+<p>See also <a href="qml-position.html#speed-prop">speed</a>.</p>
 </div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speedLatest-prop"></a>speedLatest : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#speed-prop">speed</a> has been updated at current <a href="qml-position.html#timestamp-prop">timestamp</a>, i.e&#x2e; an update was received during previous update from source.</p>
-</div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="timestamp-prop"></a>timestamp : date</td></tr></table></div><div class="qmldoc"><p>This property holds the timestamp of the previously received valid update.</p>
-<p>See also <a href="qml-position.html#positionLatest-prop">positionLatest</a>, <a href="qml-position.html#altitudeLatest-prop">altitudeLatest</a>, and <a href="qml-position.html#speedLatest-prop">speedLatest</a>.</p>
-</div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="updateInterval-prop"></a>updateInterval : bool</td></tr></table></div><div class="qmldoc"><p>This property holds the desired interval between updates (milliseconds).</p>
-<p>See also <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource::updateInterval</a>().</p>
-</div></div><br/>
-<h2>Signal Documentation</h2>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="positionUpdated-signal"></a>Position::positionUpdated ()</p></td></tr></table></div><div class="qmldoc"><p>This signal is sent when a position update has been received from the location source, regardless if any valid data has been received or any of the values changed.</p>
-<p>See also <a href="qml-position.html#updateInterval-prop">updateInterval</a>.</p>
-</div></div><br/>
-<h2>Method Documentation</h2>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="startUpdates-method"></a>Position::startUpdates ()</p></td></tr></table></div><div class="qmldoc"><p>Requests updates from the location source. Uses <a href="qml-position.html#updateInterval-prop">updateInterval</a> if set, default otherwise.</p>
-<p>See also <a href="qml-position.html#stopUpdates-method">stopUpdates</a>.</p>
-</div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="stopUpdates-method"></a>Position::stopUpdates ()</p></td></tr></table></div><div class="qmldoc"><p>Stops updates from the location source. Does not expire any previously received data.</p>
-<p>See also <a href="qml-position.html#startUpdates-method">startUpdates</a>.</p>
-</div></div><br/>
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="update-method"></a>Position::update ()</p></td></tr></table></div><div class="qmldoc"><p>Requests one update from the location source.</p>
-<p>See also <a href="qml-position.html#startUpdates-method">startUpdates</a> and <a href="qml-position.html#stopUpdates-method">stopUpdates</a>.</p>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="timestamp-prop"></a>timestamp : date</td></tr></table></div><div class="qmldoc"><p>This property holds the timestamp when this position was received. If the property has not been set, it is invalid.</p>
 </div></div><br/>
 <p>
 </p>

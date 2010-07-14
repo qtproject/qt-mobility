@@ -168,8 +168,13 @@ void tst_QDeclarativePosition::construction()
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* obj = component.create();
+
     if (shouldSucceed) {
         if (obj == 0) {
+            if (component.isError()) {
+                qDebug() << "Error(s) occured when trying to instantiate. QDeclarativeComponent::errors(): ";
+                qDebug() << component.errors();
+            }
             qWarning("--------- ------------- ------------- ---------------------- ------------ ");
             qWarning("--------- could not instantiate components from location   -------------- ");
             qWarning("--------- declarative plugin. make sure it is built and found ------------");
@@ -253,10 +258,6 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QDeclarativeComponent component(&engine);
     component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
     QObject* source_obj = component.create();
-
-    qDebug("start printing errors");
-    if (component.isError()) qDebug() << component.errors();
-    qDebug("end printing errors");
 
     QVERIFY(source_obj != 0);
     QObject* position_obj = source_obj->property("position").value<QObject*>();

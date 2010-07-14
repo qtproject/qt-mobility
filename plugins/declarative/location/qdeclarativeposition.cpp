@@ -47,6 +47,29 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass Position
+
+    \brief The Position element holds various positional data, such as \l latitude,
+    \l longtitude, \l altitude and \l speed.
+    \inherits QObject
+
+    The Position element holds various positional data, such as \l latitude,
+    \l longtitude, \l altitude and \l speed. Not all of these are always available
+    (e.g. latitude and longtitude may be valid, but speed update has not been received
+    or set manually), and hence there are corresponding validity attributes which can be
+    used when writing applications.
+
+    The main parameters are writable,
+    so application writer can create his/her own position elements or even store (record)
+    received updates to e.g. later render a walked path.
+
+    The Position element is part of the \bold{QtMobility.location 1.0} module.
+
+    \sa PositionSource
+
+*/
+
 QDeclarativePosition::QDeclarativePosition()
     : m_latitude(0), m_latitudeValid(false), m_longtitude(0), m_longtitudeValid(false),
     m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false)
@@ -57,9 +80,8 @@ QDeclarativePosition::~QDeclarativePosition()
 {
 }
 
-
 /*!
-    \qmlproperty bool PositionSource::latitudeValid
+    \qmlproperty bool Position::latitudeValid
 
     This property is true if \l latitude has been set.
 
@@ -74,7 +96,7 @@ bool QDeclarativePosition::isLatitudeValid() const
 
 
 /*!
-    \qmlproperty bool PositionSource::longtitudeValid
+    \qmlproperty bool Position::longtitudeValid
 
     This property is true if \l longtitude has been set.
 
@@ -89,7 +111,7 @@ bool QDeclarativePosition::isLongtitudeValid() const
 
 
 /*!
-    \qmlproperty bool PositionSource::speedValid
+    \qmlproperty bool Position::speedValid
 
     This property is true if \l speed has been set.
 
@@ -120,8 +142,9 @@ bool QDeclarativePosition::isAltitudeValid() const
     \qmlproperty double Position::speed
 
     This property holds the value of speed (groundspeed, metres / second).
+    If the property has not been set, its default value is zero.
 
-    \sa speedValid altitide longtitude latitude
+    \sa speedValid, altitude, longtitude, latitude
 
 */
 
@@ -143,8 +166,9 @@ double QDeclarativePosition::speed() const {
     \qmlproperty double Position::altitude
 
     This property holds the value of altitude (metres above sea level).
+    If the property has not been set, its default value is zero.
 
-    \sa speedValid longtitude latitude speed
+    \sa altitudeValid, longtitude, latitude, speed
 
 */
 
@@ -168,8 +192,9 @@ double QDeclarativePosition::altitude() const {
     This property holds the longtitude value of the geographical position
     (decimal degrees). A positive longitude indicates the Eastern Hemisphere,
     and a negative longitude indicates the Western Hemisphere
+    If the property has not been set, its default value is zero.
 
-    \sa latitude speed altitude
+    \sa longtitudeValid, latitude, speed, altitude
 
 */
 
@@ -193,8 +218,9 @@ double QDeclarativePosition::longtitude() const {
     This property holds latitude value of the geographical position
     (decimal degrees). A positive latitude indicates the Northern Hemisphere,
     and a negative latitude indicates the Southern Hemisphere.
+    If the property has not been set, its default value is zero.
 
-    \sa longtitude speed altitude
+    \sa latitudeValid, longtitude, speed, altitude
 
 */
 
@@ -216,7 +242,7 @@ double QDeclarativePosition::latitude() const {
     \qmlproperty date Position::timestamp
 
     This property holds the timestamp when this position
-    was received.
+    was received. If the property has not been set, it is invalid.
 
 */
 

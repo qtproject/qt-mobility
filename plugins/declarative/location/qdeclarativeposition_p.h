@@ -48,8 +48,8 @@
 #include <qgeopositioninfo.h>
 #include <QtDeclarative/qdeclarative.h>
 
-// Define this to get usefuld debug messages
-#define QDECLARATIVE_POSITION_DEBUG
+// Define this to get qDebug messages
+// #define QDECLARATIVE_POSITION_DEBUG
 
 #ifdef QDECLARATIVE_POSITION_DEBUG
 #include <QDebug>

@@ -56,25 +56,72 @@ QTM_BEGIN_NAMESPACE
     \inherits QObject
 
     The PositionSource element allows you to get information about your current position.
-    You can receive information about things such as \l latitude, \l longtitude, \l speed,
-    and \l altitude. This element is part of the \bold{QtMobility.location 1.0} module.
+    You can receive information about things such as \l Position::latitude,
+    \l Position::longtitude, \l Position::speed, and
+    \l Position::altitude. This element is part of the \bold{QtMobility.location 1.0} module.
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
     \l PositioningMethods. As a development convinience, one may also set data file as a source (NMEA format).
-    Location updates are not started automatically upon element declaration, see \l start \l stop \l active.
+    Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active
+    and \l update.
 
-    Here is very simple, self-contained, example QML to illustrate the usage:
+    Here is very simple self-contained example QML to illustrate the usage:
 
     \qml
     import Qt 4.7
     import QtMobility.location 1.0
 
-    Add here when modified.
+    Rectangle {
+        id: page
+        width: 350
+        height: 350
+        color: "olive"
 
+        Text {
+            id: title
+            text: "Simple position test app"
+            font {pointSize: 12; bold: true}
+        }
+        PositionSource {
+            id: positionSource
+            active: true
+            updateInterval: 1000
+        }
+        Column {
+            id: data
+            anchors {top: title.bottom; left: title.left}
+            Text {text: "<==== PositionSource ====>"}
+            Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod)}
+            Text {text: "nmeaSource: "         + positionSource.nmeaSource}
+            Text {text: "updateInterval: "     + positionSource.updateInterval}
+            Text {text: "active: "     + positionSource.active}
+            Text {text: "<==== Position ====>"}
+            Text {text: "latitude: "   + positionSource.position.latitude}
+            Text {text: "longtitude: "   + positionSource.position.longtitude}
+            Text {text: "altitude: "   + positionSource.position.altitude}
+            Text {text: "speed: " + positionSource.position.speed}
+            Text {text: "timestamp: "  + positionSource.position.timestamp}
+            Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
+            Text {text: "longtitudeValid: "  + positionSource.position.longtitudeValid}
+            Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
+            Text {text: "speedValid: "     + positionSource.position.speedValid}
+        }
+        function printableMethod(method) {
+            if (method == PositionSource.SatellitePositioningMethod)
+                return "Satellite";
+            else if (method == PositionSource.NoPositioningMethod)
+                return "Not available"
+            else if (method == PositionSource.NonSatellitePositioningMethod)
+                return "Non-satellite"
+            else if (method == PositionSource.AllPositioningMethods)
+                return "All/multiple"
+            return "source error";
+        }
+    }
     \endqml
 
-    \sa {QGeoPositionInfoSource} {QGeoPositionInfo} {QNmeaPositionInfoSource} {QGeoCoordinate}
+    \sa {QGeoPositionInfoSource}, {QGeoPositionInfo}, {QNmeaPositionInfoSource}, {QGeoCoordinate}
 
 */
 
@@ -124,13 +171,9 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     // was an embedded resource file. QUrl loses the ':' so it is added here and checked if
     // it is available.
     QString localFileName = nmeaSource.toLocalFile();
-
-    qDebug() << "---------- Filename received: " << localFileName;
-
     QFile* file = new QFile(localFileName);
     if (!file->exists()) {
         localFileName.prepend(":");
-        qDebug() << "---------- After prepending: " << localFileName;
         file->setFileName(localFileName);
     }
     if (file->exists()) {
@@ -173,14 +216,12 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
     property is to be of development convinience.
 
     Setting this property will override any other position source. Currently only
-    files local to the .qml
-    -file are supported. Nmea source is created in simulation mode, meaning that
-    the data and time information in the NMEA source data is used to provide positional
-    updates at the rate at which the data was originally recorded.
+    files local to the .qml -file are supported. Nmea source is created in simulation mode,
+    meaning that the data and time information in the NMEA source data is used to provide
+    positional updates at the rate at which the data was originally recorded.
 
-    If the source is changed, all possible previous data is expired. Also \l update and
-    \l start need to be issued again. If \l nmeaSource has been set for a Position
-    element, there is no way to revert back to non-file sources.
+    If nmeaSource has been set for a PositionSource element, there is no way to revert
+    back to non-file sources.
 
     For example if there is a file called "nmealog.txt" in the same folder as the .qml file:
 
@@ -247,7 +288,7 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     Uses \l updateInterval if set, default interval otherwise.
     If there is no source available, this method has no effect.
 
-    \sa stop active
+    \sa stop, update, active
 */
 
 void QDeclarativePositionSource::start() {
@@ -268,7 +309,7 @@ void QDeclarativePositionSource::start() {
     A convinience method to request single update from the location source.
     If there is no source available, this method has no effect.
 
-    \sa start stop
+    \sa start, stop, active
 */
 
 void QDeclarativePositionSource::update() {
@@ -287,8 +328,10 @@ void QDeclarativePositionSource::update() {
     \qmlmethod PositionSource::stop()
 
     Stops updates from the location source.
+    If there is no source available or it is not active,
+    this method has no effect.
 
-    \sa start update
+    \sa start, update, active
 */
 
 void QDeclarativePositionSource::stop() {
@@ -305,8 +348,9 @@ void QDeclarativePositionSource::stop() {
     \qmlsignal PositionSource::positionChanged()
 
     This signal is sent when a position update has been received
-    from the location source, regardless if any valid data has been received
-    or any of the values changed.
+    from the location source. Upon receiving this signal, at least
+    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp
+    members of the \l position have been update.
 
     \sa updateInterval
 
@@ -319,7 +363,7 @@ void QDeclarativePositionSource::stop() {
     active. Setting this property to false equals calling \l stop, and
     setting this property true equals calling \l start.
 
-    \sa start stop update
+    \sa start, stop, update
 
 */
 
@@ -340,11 +384,19 @@ bool QDeclarativePositionSource::isActive() const
 }
 
 /*!
-    \qmlproperty PositionSource::Position
+    \qmlproperty Position PositionSource::position
 
     This property holds the last known positional data.
 
-    \sa start stop update
+    The Position element has different positional member variables,
+    whose validity can be checked with appropriate validity functions
+    (e.g. sometimes an update does not have speed or altitude data).
+
+    However, whenever a \l positionChanged signal has been received, at least
+    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp can
+    be assumed to be valid.
+
+    \sa start, stop, update
 
 */
 
@@ -359,20 +411,22 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
         m_position.setTimestamp(update.timestamp());
         m_position.setLatitude(update.coordinate().latitude());
         m_position.setLongtitude(update.coordinate().longitude());
-    }
-    if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
-        m_position.setAltitude(update.coordinate().altitude());
-    }
 
-    if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
-        m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
+        if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
+            m_position.setAltitude(update.coordinate().altitude());
+        }
+
+        if (update.hasAttribute(QGeoPositionInfo::GroundSpeed)) {
+            m_position.setSpeed(update.attribute(QGeoPositionInfo::GroundSpeed));
+        }
+
+        emit positionChanged();
     }
     if (m_singleUpdate && m_active) {
         m_active = false;
         m_singleUpdate = false;
         emit activeChanged(m_active);
     }
-    emit positionChanged();
 }
 
 #include "moc_qdeclarativepositionsource_p.cpp"
