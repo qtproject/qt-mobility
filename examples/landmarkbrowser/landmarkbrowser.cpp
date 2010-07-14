@@ -139,6 +139,8 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
 
                     if (request->error() == QLandmarkManager::NoError) {
                         QList<QLandmark> lms = manager->landmarks(QLandmarkFilter());
+
+                        table->setUpdatesEnabled(false);
                         QLandmark lm;
                         for (int i=0;i < lms.count(); ++i){
                             lm = lms.at(i);
@@ -151,6 +153,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                             if (i %20 == 0)
                                 qApp->processEvents();
                         }
+                        table->setUpdatesEnabled(true);
                     } else {
                         QMessageBox::warning(this,"Warning", "Import Failed", QMessageBox::Ok, QMessageBox::NoButton);
                     }
@@ -172,6 +175,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                             return;
                         }
 
+                        table->setUpdatesEnabled(false);
                         QLandmark lm;
                         for ( int i =0; i < lms.count(); ++i) {
                             lm = lms.at(i);
@@ -184,6 +188,7 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                             if (i %20)
                                 qApp->processEvents();
                         }
+                        table->setUpdatesEnabled(true);
                     }  else {
                         QMessageBox::warning(this,"Warning", "Fetch Failed", QMessageBox::Ok, QMessageBox::NoButton);
                     }
