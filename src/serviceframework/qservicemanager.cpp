@@ -67,10 +67,11 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
     // try to find plug-in via QLibrary
     QStringList paths = QCoreApplication::libraryPaths();
 #ifdef QTM_PLUGIN_PATH
-    paths << QLatin1String(QTM_PLUGIN_PATH)+QLatin1String("/serviceframework");
+    paths << QLatin1String(QTM_PLUGIN_PATH);
 #endif
     for (int i=0; i<paths.count(); i++) {
-        QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
+        QString libPath = QDir::toNativeSeparators(paths[i] + QLatin1String("/serviceframework")) +
+                          QDir::separator() + libNameOrPath;
         
 #ifdef Q_OS_SYMBIAN
         QFileInfo fi(libPath);
