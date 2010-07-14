@@ -55,7 +55,7 @@ class SongView : public GalleryView
 {
     Q_OBJECT
 public:
-    SongView(QWidget *parent = 0);
+    SongView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~SongView();
 
 protected slots:

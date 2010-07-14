@@ -53,6 +53,18 @@ Dialog::Dialog()
 {
     ui.setupUi(this);
 
+#if defined(Q_WS_MAEMO_5)
+    // maemo5 style problem: title of groupboxes is rendered badly if there isn't enough space
+    // that is, the sizehint of the title area is Preferred rather than Minimum.
+    // to fix that, we manually tweak some spacers.
+    ui.verticalSpacer_2->changeSize(20, 20, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.verticalSpacer_3->changeSize(20, 20, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.verticalSpacer_4->changeSize(20, 30, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.verticalSpacer_5->changeSize(20, 30, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.verticalSpacer_6->changeSize(20, 20, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.verticalSpacer_7->changeSize(20, 30, QSizePolicy::Expanding, QSizePolicy::Fixed);
+#endif
+
     connect(ui.actuators, SIGNAL(currentIndexChanged(int)), SLOT(actuatorChanged()));
     connect(ui.enabled, SIGNAL(toggled(bool)), SLOT(enabledChanged(bool)));
     connect(ui.playPause, SIGNAL(pressed()), SLOT(playPauseClicked()));
@@ -108,7 +120,9 @@ QFeedbackActuator Dialog::currentActuator() const
 {
     QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
     int index = ui.actuators->currentIndex();
-    return index < devs.count() ? devs.at(index) : QFeedbackActuator();
+    if (index == -1 || index > devs.count())
+        return QFeedbackActuator();
+    return devs.at(index);
 }
 
 void Dialog::actuatorChanged()
@@ -131,10 +145,17 @@ void Dialog::enabledChanged(bool on)
 
 void Dialog::playPauseClicked()
 {
-    if (effect.state() == QFeedbackEffect::Running)
+    if (effect.state() == QFeedbackEffect::Running) {
         effect.pause();
-    else
+        if (effect.state() == QFeedbackEffect::Paused || effect.state() == QFeedbackEffect::Stopped) {
+            ui.playPause->setText(tr("play"));
+        }
+    } else {
         effect.start();
+        if (effect.state() == QFeedbackEffect::Running || effect.state() == QFeedbackEffect::Loading) {
+            ui.playPause->setText(tr("pause"));
+        }
+    }
 }
 
 void Dialog::durationChanged(int duration)
