@@ -55,7 +55,7 @@ class ArtistView : public GalleryView
 {
     Q_OBJECT
 public:
-    ArtistView(const QString &type, QWidget *parent = 0);
+    ArtistView(const QString &type, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~ArtistView();
 
 signals:
