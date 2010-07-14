@@ -47,7 +47,8 @@
 #include "qmlcontact.h"
 #include "qmlcontactdetail.h"
 #include "qmlcontactdetailfield.h"
-#include "imageprovider.h"
+// Qt 4.7.0b2 and rc1 have a source break - turn off for now
+// #include "imageprovider.h"
 
 QT_USE_NAMESPACE
 
@@ -67,7 +68,7 @@ public:
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
         Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
+//        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
     }
 };
 

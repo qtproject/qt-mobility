@@ -30,16 +30,19 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 # Input
 HEADERS += qmlcontactmodel.h \
-           imageprovider.h \
            qmlcontact.h \
            qmlcontactdetail.h \
            qmlcontactdetailfield.h
 
 SOURCES += plugin.cpp \
     qmlcontactmodel.cpp \
-    imageprovider.cpp \
     qmlcontact.cpp \
     qmlcontactdetail.cpp \
     qmlcontactdetailfield.cpp
+
+# Qt 4.7.0b2 and 4.7.0rc1 have a source break for declarativeimageprovider, so don't
+# compile them for now.
+# HEADERS += imageprovider.h
+# SOURCES += imageprovider.cpp
 
 INSTALLS += qmldir

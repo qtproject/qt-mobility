@@ -19,6 +19,7 @@ URL;HOME:
 URL;WORK:
 BDAY:1/01/4500
 EMAIL;PREF;INTERNET:andy@example.com
+PHOTO:http://qt.nokia.com/logo.png
 End:VCARD
 BEGIN:VCARD
 VERSION:2.1
