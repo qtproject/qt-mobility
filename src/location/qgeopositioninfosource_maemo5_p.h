@@ -67,7 +67,7 @@ public:
     int init();
 
     virtual void setUpdateInterval(int interval);
-    virtual void setPreferredPositioningMethods(PositioningMethods sources);
+    virtual void setPreferredPositioningMethods(PositioningMethods methods);
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;

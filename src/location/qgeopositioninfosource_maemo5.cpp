@@ -127,10 +127,9 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
     activateTimer();
 }
 
-void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods sources)
+void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    Q_UNUSED(sources)
-    return;
+    QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
 }
 
 int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
@@ -248,10 +247,27 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &posi
 void QGeoPositionInfoSourceMaemo::updateTimeoutElapsed()
 {
     QGeoPositionInfo position;
-    if (lastUpdateFromSatellite.isValid())
+
+    QGeoPositionInfoSource::PositioningMethods methods = preferredPositioningMethods();
+
+    if (methods.testFlag(AllPositioningMethods)) {
+        methods |= SatellitePositioningMethods;
+        methods |= NonSatellitePositioningMethods;
+    }
+
+    if (methods.testFlag(SatellitePositioningMethods) && !methods.testFlag(NonSatellitePositioningMethods)) {
+        //only SatellitePositioningMethods preferred
         position = lastUpdateFromSatellite;
-    else if (lastUpdateFromNetwork.isValid())
+    } else if (methods.testFlag(NonSatellitePositioningMethods) && !methods.testFlag(SatellitePositioningMethods)) {
+        //only NonSatellitePositioningMethods preferred
         position = lastUpdateFromNetwork;
+    } else {
+        //AllPositioningMethods or none preferred
+        if (lastUpdateFromSatellite.isValid())
+            position = lastUpdateFromSatellite;
+        else
+            position = lastUpdateFromNetwork;
+    }
 
     if (position.isValid()) {
         errorOccurred = false;
