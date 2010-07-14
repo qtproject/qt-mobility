@@ -41,7 +41,10 @@
 
 #include "qwmpplayerservice.h"
 
+#ifdef QWMP_EVR
 #include "qevrvideooverlay.h"
+#endif
+
 #include "qwmpglobal.h"
 #include "qwmpmetadata.h"
 #include "qwmpplayercontrol.h"

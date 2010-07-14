@@ -77,7 +77,7 @@ symbian {
     # ## Organizer
     # Main library
     ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
-    ORGANIZER_DEPLOYMENT.path = \sys\bin
+    ORGANIZER_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += ORGANIZER_DEPLOYMENT
     deploy.path = $$EPOCROOT
     exportheaders.sources = $$PUBLIC_HEADERS

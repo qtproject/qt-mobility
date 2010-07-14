@@ -17,14 +17,13 @@ EXPORTS
 	_ZN10QtMobility18QTelephonyCallListD0Ev @ 16 NONAME
 	_ZN10QtMobility18QTelephonyCallListD1Ev @ 17 NONAME
 	_ZN10QtMobility18QTelephonyCallListD2Ev @ 18 NONAME
-	_ZNK10QtMobility18QTelephonyCallInfo14callIdentifierEv @ 19 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo21remotePartyIdentifierEv @ 19 NONAME
 	_ZNK10QtMobility18QTelephonyCallInfo4typeEv @ 20 NONAME
 	_ZNK10QtMobility18QTelephonyCallInfo5valueERK7QString @ 21 NONAME
 	_ZNK10QtMobility18QTelephonyCallInfo6statusEv @ 22 NONAME
-	_ZNK10QtMobility18QTelephonyCallInfo6subTypEv @ 23 NONAME
-	_ZNK10QtMobility18QTelephonyCallInfo8contactsEv @ 24 NONAME
-	_ZNK10QtMobility18QTelephonyCallList10metaObjectEv @ 25 NONAME
-	_ZNK10QtMobility18QTelephonyCallList11activeCallsERKNS_18QTelephonyCallInfo8CallTypeE @ 26 NONAME
-	_ZTIN10QtMobility18QTelephonyCallListE @ 27 NONAME
-	_ZTVN10QtMobility18QTelephonyCallListE @ 28 NONAME
+	_ZNK10QtMobility18QTelephonyCallInfo7subTypeEv @ 23 NONAME
+	_ZNK10QtMobility18QTelephonyCallList10metaObjectEv @ 24 NONAME
+	_ZNK10QtMobility18QTelephonyCallList11activeCallsERKNS_18QTelephonyCallInfo8CallTypeE @ 25 NONAME
+	_ZTIN10QtMobility18QTelephonyCallListE @ 26 NONAME
+	_ZTVN10QtMobility18QTelephonyCallListE @ 27 NONAME
 

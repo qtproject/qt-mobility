@@ -96,7 +96,7 @@ void QTelephonyCallListPrivate::newChannelsSlot(const ChannelsArray& channelsarr
         if(chs.map.contains("org.freedesktop.Telepathy.Channel.InitiatorID")){
             QVariant var = chs.map.value("org.freedesktop.Telepathy.Channel.InitiatorID");
             QTelephonyCallInfoPrivate* cip = new QTelephonyCallInfoPrivate();
-            cip->callIdentifier = var.toString();
+            cip->remotePartyIdentifier = var.toString();
             callInfoList.append(QSharedDataPointer<QTelephonyCallInfoPrivate>(cip));
             emitActiveCallAdded(*cip);
         }

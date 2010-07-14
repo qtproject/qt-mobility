@@ -48,8 +48,8 @@
 #include <qgalleryitemlist.h>
 #include <qgalleryitemlistmodel.h>
 
-AlbumView::AlbumView(QWidget *parent)
-    : GalleryView(parent)
+AlbumView::AlbumView(QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
 {
     setType(QDocumentGallery::Album);
     setFields(QStringList()

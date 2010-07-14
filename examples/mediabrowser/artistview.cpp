@@ -47,8 +47,8 @@
 #include <qgalleryitemlist.h>
 #include <qgalleryitemlistmodel.h>
 
-ArtistView::ArtistView(const QString &type, QWidget *parent)
-    : GalleryView(parent)
+ArtistView::ArtistView(const QString &type, QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
 {
     setType(type);
     setFields(QStringList()

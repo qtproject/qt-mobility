@@ -78,6 +78,7 @@ public:
         NotSupportedError,
         BadArgumentError,
         InvalidManagerError,
+        ParsingError,
         UnknownError,
     };
 

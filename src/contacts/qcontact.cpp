@@ -377,10 +377,15 @@ QContactDetail QContact::detail(const QString& definitionName) const
 /*! Returns a list of details with the given \a definitionName
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -405,10 +410,15 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.

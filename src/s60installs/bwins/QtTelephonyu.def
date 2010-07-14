@@ -7,24 +7,25 @@ EXPORTS
 	??1QTelephonyCallInfo@QtMobility@@QAE@XZ @ 6 NONAME ; QtMobility::QTelephonyCallInfo::~QTelephonyCallInfo(void)
 	??1QTelephonyCallInfoPrivate@QtMobility@@QAE@XZ @ 7 NONAME ; QtMobility::QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate(void)
 	??1QTelephonyCallList@QtMobility@@UAE@XZ @ 8 NONAME ; QtMobility::QTelephonyCallList::~QTelephonyCallList(void)
-	??_EQTelephonyCallList@QtMobility@@UAE@I@Z @ 9 NONAME ; QtMobility::QTelephonyCallList::~QTelephonyCallList(unsigned int)
-	?activeCallAdded@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 10 NONAME ; void QtMobility::QTelephonyCallList::activeCallAdded(class QtMobility::QTelephonyCallInfo const &)
-	?activeCallRemoved@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 11 NONAME ; void QtMobility::QTelephonyCallList::activeCallRemoved(class QtMobility::QTelephonyCallInfo const &)
-	?activeCallStatusChanged@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 12 NONAME ; void QtMobility::QTelephonyCallList::activeCallStatusChanged(class QtMobility::QTelephonyCallInfo const &)
-	?activeCalls@QTelephonyCallList@QtMobility@@QBE?AV?$QList@VQTelephonyCallInfo@QtMobility@@@@ABW4CallType@QTelephonyCallInfo@2@@Z @ 13 NONAME ; class QList<class QtMobility::QTelephonyCallInfo> QtMobility::QTelephonyCallList::activeCalls(enum QtMobility::QTelephonyCallInfo::CallType const &) const
-	?callIdentifier@QTelephonyCallInfo@QtMobility@@QBE?AVQString@@XZ @ 14 NONAME ; class QString QtMobility::QTelephonyCallInfo::callIdentifier(void) const
-	?contacts@QTelephonyCallInfo@QtMobility@@QBE?AV?$QList@I@@XZ @ 15 NONAME ; class QList<unsigned int> QtMobility::QTelephonyCallInfo::contacts(void) const
+	??_EQTelephonyCallInfo@QtMobility@@QAE@I@Z @ 9 NONAME ; QtMobility::QTelephonyCallInfo::~QTelephonyCallInfo(unsigned int)
+	??_EQTelephonyCallInfoPrivate@QtMobility@@QAE@I@Z @ 10 NONAME ; QtMobility::QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate(unsigned int)
+	??_EQTelephonyCallList@QtMobility@@UAE@I@Z @ 11 NONAME ; QtMobility::QTelephonyCallList::~QTelephonyCallList(unsigned int)
+	?activeCallAdded@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 12 NONAME ; void QtMobility::QTelephonyCallList::activeCallAdded(class QtMobility::QTelephonyCallInfo const &)
+	?activeCallRemoved@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 13 NONAME ; void QtMobility::QTelephonyCallList::activeCallRemoved(class QtMobility::QTelephonyCallInfo const &)
+	?activeCallStatusChanged@QTelephonyCallList@QtMobility@@IAEXABVQTelephonyCallInfo@2@@Z @ 14 NONAME ; void QtMobility::QTelephonyCallList::activeCallStatusChanged(class QtMobility::QTelephonyCallInfo const &)
+	?activeCalls@QTelephonyCallList@QtMobility@@QBE?AV?$QList@VQTelephonyCallInfo@QtMobility@@@@ABW4CallType@QTelephonyCallInfo@2@@Z @ 15 NONAME ; class QList<class QtMobility::QTelephonyCallInfo> QtMobility::QTelephonyCallList::activeCalls(enum QtMobility::QTelephonyCallInfo::CallType const &) const
 	?getStaticMetaObject@QTelephonyCallList@QtMobility@@SAABUQMetaObject@@XZ @ 16 NONAME ; struct QMetaObject const & QtMobility::QTelephonyCallList::getStaticMetaObject(void)
 	?metaObject@QTelephonyCallList@QtMobility@@UBEPBUQMetaObject@@XZ @ 17 NONAME ; struct QMetaObject const * QtMobility::QTelephonyCallList::metaObject(void) const
 	?qt_metacall@QTelephonyCallList@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 18 NONAME ; int QtMobility::QTelephonyCallList::qt_metacall(enum QMetaObject::Call, int, void * *)
 	?qt_metacast@QTelephonyCallList@QtMobility@@UAEPAXPBD@Z @ 19 NONAME ; void * QtMobility::QTelephonyCallList::qt_metacast(char const *)
-	?status@QTelephonyCallInfo@QtMobility@@QBE?AW4CallStatus@12@XZ @ 20 NONAME ; enum QtMobility::QTelephonyCallInfo::CallStatus QtMobility::QTelephonyCallInfo::status(void) const
-	?subTyp@QTelephonyCallInfo@QtMobility@@QBE?AVQString@@XZ @ 21 NONAME ; class QString QtMobility::QTelephonyCallInfo::subTyp(void) const
-	?tr@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0@Z @ 22 NONAME ; class QString QtMobility::QTelephonyCallList::tr(char const *, char const *)
-	?tr@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0H@Z @ 23 NONAME ; class QString QtMobility::QTelephonyCallList::tr(char const *, char const *, int)
-	?trUtf8@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0@Z @ 24 NONAME ; class QString QtMobility::QTelephonyCallList::trUtf8(char const *, char const *)
-	?trUtf8@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0H@Z @ 25 NONAME ; class QString QtMobility::QTelephonyCallList::trUtf8(char const *, char const *, int)
-	?type@QTelephonyCallInfo@QtMobility@@QBE?AW4CallType@12@XZ @ 26 NONAME ; enum QtMobility::QTelephonyCallInfo::CallType QtMobility::QTelephonyCallInfo::type(void) const
-	?value@QTelephonyCallInfo@QtMobility@@QBE?AVQVariant@@ABVQString@@@Z @ 27 NONAME ; class QVariant QtMobility::QTelephonyCallInfo::value(class QString const &) const
-	?staticMetaObject@QTelephonyCallList@QtMobility@@2UQMetaObject@@B @ 28 NONAME ; struct QMetaObject const QtMobility::QTelephonyCallList::staticMetaObject
+	?remotePartyIdentifier@QTelephonyCallInfo@QtMobility@@QBE?AVQString@@XZ @ 20 NONAME ; class QString QtMobility::QTelephonyCallInfo::remotePartyIdentifier(void) const
+	?status@QTelephonyCallInfo@QtMobility@@QBE?AW4CallStatus@12@XZ @ 21 NONAME ; enum QtMobility::QTelephonyCallInfo::CallStatus QtMobility::QTelephonyCallInfo::status(void) const
+	?subType@QTelephonyCallInfo@QtMobility@@QBE?AVQString@@XZ @ 22 NONAME ; class QString QtMobility::QTelephonyCallInfo::subType(void) const
+	?tr@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0@Z @ 23 NONAME ; class QString QtMobility::QTelephonyCallList::tr(char const *, char const *)
+	?tr@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0H@Z @ 24 NONAME ; class QString QtMobility::QTelephonyCallList::tr(char const *, char const *, int)
+	?trUtf8@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0@Z @ 25 NONAME ; class QString QtMobility::QTelephonyCallList::trUtf8(char const *, char const *)
+	?trUtf8@QTelephonyCallList@QtMobility@@SA?AVQString@@PBD0H@Z @ 26 NONAME ; class QString QtMobility::QTelephonyCallList::trUtf8(char const *, char const *, int)
+	?type@QTelephonyCallInfo@QtMobility@@QBE?AW4CallType@12@XZ @ 27 NONAME ; enum QtMobility::QTelephonyCallInfo::CallType QtMobility::QTelephonyCallInfo::type(void) const
+	?value@QTelephonyCallInfo@QtMobility@@QBE?AVQVariant@@ABVQString@@@Z @ 28 NONAME ; class QVariant QtMobility::QTelephonyCallInfo::value(class QString const &) const
+	?staticMetaObject@QTelephonyCallList@QtMobility@@2UQMetaObject@@B @ 29 NONAME ; struct QMetaObject const QtMobility::QTelephonyCallList::staticMetaObject
 

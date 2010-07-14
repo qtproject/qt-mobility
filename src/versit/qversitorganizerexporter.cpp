@@ -48,6 +48,19 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+  \class QVersitOrganizerExporter
+  \brief The QVersitOrganizerExporter class converts \l {QOrganizerItem}{QOrganizerItems} into
+  \l {QVersitDocument}{QVersitDocuments}.
+  \ingroup versit
+
+  This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
+  in a QOrganizerItemManager) into a QVersitDocument (which may be written to an I/O device using
+  QVersitReader.  While multiple items are provided as input, a single QVersitDocument is produced
+  as output.  Unless there is an error, there is a one-to-one mapping between organizer items
+  and sub-documents of the result.
+ */
+
 QVersitOrganizerExporterDetailHandler* QVersitOrganizerExporterDetailHandler::createBackupHandler()
 {
     // TODO
@@ -100,26 +113,65 @@ bool QVersitOrganizerExporter::exportItems(
     return ok;
 }
 
+/*!
+ * Returns the document exported in the most recent call to exportItems().
+ *
+ * \sa exportItems()
+ */
 QVersitDocument QVersitOrganizerExporter::document() const
 {
     return d->mResult;
 }
 
+/*!
+ * Returns the map of errors encountered in the most recent call to exportItems().  The key is
+ * the index into the input list of organizer items and the value is the error that occurred on that
+ * item.
+ *
+ * \sa exportItems()
+ */
 QMap<int, QVersitOrganizerExporter::Error> QVersitOrganizerExporter::errors() const
 {
     return d->mErrors;
 }
 
+/*!
+ * \preliminary
+ * Sets \a handler to be the handler for processing QOrganizerItemDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
+ *
+ * Only one detail handler can be set.  If another detail handler (of any version) was
+ * previously set, it will no longer be associated with the exporter.
+ *
+ * NOTE: Detail handlers for organizer items have not been implemented yet.
+ */
 void QVersitOrganizerExporter::setDetailHandler(QVersitOrganizerExporterDetailHandler* handler)
 {
     d->mDetailHandler = handler;
 }
 
+/*!
+ * \preliminary
+ * Sets \a handler to be the handler to load files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
+ *
+ * NOTE: Resource handlers for organizer items have not been implemented yet.
+ */
 void QVersitOrganizerExporter::setResourceHandler(QVersitResourceHandler* handler)
 {
     d->mResourceHandler = handler;
 }
 
+/*!
+ * \preliminary
+ * Returns the associated resource handler.
+ *
+ * NOTE: Resource handlers for organizer items have not been implemented yet.
+ */
 QVersitResourceHandler* QVersitOrganizerExporter::resourceHandler() const
 {
     return d->mResourceHandler;

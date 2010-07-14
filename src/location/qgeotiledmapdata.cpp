@@ -44,18 +44,32 @@
 
 #include "qgeotiledmappingmanagerengine.h"
 #include "qgeotiledmappingmanagerengine_p.h"
+#include "qgeotiledmaprequest.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qgeomaprectangleobject.h"
 #include "qgeomapmarkerobject.h"
 #include "qgeomappolylineobject.h"
 #include "qgeomappolygonobject.h"
+#include "qgeomaprouteobject.h"
+#include "qgeoroutesegment.h"
+
+#include <QTimer>
 
 #include <QDebug>
 
 #define DEFAULT_ZOOMLEVEL 8
 #define PI 3.14159265
 #include <math.h>
+
+uint qHash(const QRectF& key)
+{
+    uint result = qHash(qRound(key.x()));
+    result += qHash(qRound(key.y()));
+    result += qHash(qRound(key.width()));
+    result += qHash(qRound(key.height()));
+    return result;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,7 +78,7 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidg
         d_ptr(new QGeoTiledMapDataPrivate(this))
 {
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
-    QGeoMapData::setZoomLevel(DEFAULT_ZOOMLEVEL);
+    QGeoMapData::setZoomLevel(8.0);
     d_ptr->width = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().width();
     d_ptr->height = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().height();
 }
@@ -171,6 +185,17 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     d_ptr->screenRect.moveCenter(QPointF(x, y));
     d_ptr->screenRect.moveLeft(qRound64(d_ptr->screenRect.left()));
     d_ptr->screenRect.moveTop(qRound64(d_ptr->screenRect.top()));
+
+    updateMapImage();
+}
+
+void QGeoTiledMapData::setMapType(QGeoMapWidget::MapType mapType)
+{
+    QGeoMapData::setMapType(mapType);
+
+    clearRequests();
+
+    updateMapImage();
 }
 
 QGeoCoordinate QGeoTiledMapData::center() const
@@ -221,22 +246,18 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         painter.drawPixmap(target, QGeoMapData::mapImage(), source);
     }
 
-    //recompute obj info
+    //clear obj info
     d_ptr->clearObjInfo();
-    QHashIterator<QGeoMapObject*, QGeoCompositeZValue> it(d_ptr->objToCompZValue);
-
-    while (it.hasNext()) {
-        it.next();
-        d_ptr->calculateInfo(it.key());
-    }
 
     setMapImage(pm);
 
+    clearRequests();
+    updateMapImage();
 }
 
 void QGeoTiledMapData::setViewportSize(const QSizeF &size)
 {
-    //d_ptr->protectRegion = d_ptr->screenRect;
+    d_ptr->protectRegion = d_ptr->screenRect;
     d_ptr->screenRect.setSize(size);
     QGeoMapData::setViewportSize(size);
 
@@ -245,6 +266,18 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     if (!QGeoMapData::mapImage().isNull())
         p.drawPixmap(QGeoMapData::mapImage().rect(), QGeoMapData::mapImage(), QGeoMapData::mapImage().rect());
     setMapImage(pm);
+
+    updateMapImage();
+}
+
+void QGeoTiledMapData::startPanning()
+{
+    //setImageChangesTriggerUpdates(false);
+}
+
+void QGeoTiledMapData::stopPanning()
+{
+    //setImageChangesTriggerUpdates(true);
 }
 
 void QGeoTiledMapData::pan(int dx, int dy)
@@ -264,6 +297,16 @@ void QGeoTiledMapData::pan(int dx, int dy)
 
     qreal deltaX = oldScreenRect.left() - d_ptr->screenRect.left();
     qreal deltaY = oldScreenRect.top() - d_ptr->screenRect.top();
+
+    int width = QGeoMapData::mapImage().width() - qAbs(deltaX);
+    int height = QGeoMapData::mapImage().height() - qAbs(deltaY);
+
+    if ((width <= 0) || (height <= 0)) {
+        d_ptr->protectRegion = QRectF();
+        updateMapImage();
+        return;
+    }
+
     qreal sx;
     qreal sy;
     qreal tx;
@@ -286,16 +329,225 @@ void QGeoTiledMapData::pan(int dx, int dy)
         ty = 0.0;
     }
 
-    QRectF source = QRectF(sx, sy, QGeoMapData::mapImage().width(), QGeoMapData::mapImage().height());
-    QRectF target = QRectF(tx, ty, QGeoMapData::mapImage().width(), QGeoMapData::mapImage().height());
+    QRectF source = QRectF(sx, sy, width, height);
+    QRectF target = QRectF(tx, ty, width, height);
 
-    QPixmap pm(QGeoMapData::mapImage().size());
-    QPainter p(&pm);
     if (!QGeoMapData::mapImage().isNull()) {
-        p.drawPixmap(target, QGeoMapData::mapImage(), source);
-        d_ptr->protectRegion = oldScreenRect;
-        setMapImage(pm);
+        qreal prX = d_ptr->screenRect.x() + target.x();
+        // TODO dateline fun, will probably also involve updateMapImage
+//        if (prX < 0)
+//            prX += d_ptr->width;
+//        if (prX >= d_ptr->width)
+//            prX -= d_ptr->width;
+        qreal prY = d_ptr->screenRect.y() + target.y();
+
+        d_ptr->protectRegion = QRectF(prX, prY, width, height);
+        //d_ptr->protectRegion = d_ptr->screenRect.intersected(d_ptr->protectRegion.translated(-dx, -dy));
+
+        QRegion region;
+        mapImage().scroll(-dx, -dy, source.toRect(), &region);
+
+        QPainter painter(&(mapImage()));
+        painter.setClipRegion(region);
+        painter.fillRect(mapImage().rect(), Qt::lightGray);
+        painter.end();
+
+        imageChanged(target);
     }
+
+    updateMapImage();
+}
+
+void QGeoTiledMapData::updateMapImage()
+{
+    if (zoomLevel() == -1.0)
+        return;
+
+    bool wasEmpty = (d_ptr->requests.size() == 0);
+
+    QMutableListIterator<QGeoTiledMapRequest> requestIter(d_ptr->requests);
+    while (requestIter.hasNext()) {
+        QGeoTiledMapRequest req = requestIter.next();
+
+        if (!d_ptr->screenRect.intersects(req.tileRect())) {
+            d_ptr->requestRects.remove(req.tileRect());
+            requestIter.remove();
+        }
+    }
+
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+
+    QGeoTileIterator it(d_ptr->screenRect, tiledEngine->tileSize(), qRound(zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        int col = it.col();
+        int row = it.row();
+        QRectF tileRect = it.tileRect();
+
+        // Protected region is the area that was on the screen before the
+        // start of a resize or pan.
+        // We shouldn't request tiles that are entirely contained in this
+        // region.
+        if (d_ptr->protectRegion.isNull() || !d_ptr->protectRegion.contains(tileRect.intersected(d_ptr->screenRect))) {
+            if (!d_ptr->requestRects.contains(tileRect) && !d_ptr->replyRects.contains(tileRect)) {
+                d_ptr->requests.append(QGeoTiledMapRequest(this, row, col, tileRect));
+                d_ptr->requestRects.insert(tileRect);
+            }
+        }
+    }
+
+    if (wasEmpty && d_ptr->requests.size() > 0) {
+        QTimer::singleShot(50, this, SLOT(processRequests()));
+    }
+
+    d_ptr->protectRegion = QRectF();
+}
+
+void QGeoTiledMapData::clearRequests()
+{
+    d_ptr->requests.clear();
+    d_ptr->requestRects.clear();
+}
+
+void QGeoTiledMapData::processRequests()
+{
+    QMutableSetIterator<QGeoTiledMapReply*> replyIter(d_ptr->replies);
+    //Kill off screen replies
+    while (replyIter.hasNext()) {
+        QGeoTiledMapReply *reply = replyIter.next();
+        if (!d_ptr->screenRect.intersects(reply->request().tileRect())
+            || (zoomLevel() != reply->request().zoomLevel())
+            || (mapType() != reply->request().mapType())) {
+                reply->abort();
+                d_ptr->replyRects.remove(reply->request().tileRect());
+                replyIter.remove();
+        }
+    }
+
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+
+    QMutableListIterator<QGeoTiledMapRequest> requestIter(d_ptr->requests);
+    while (requestIter.hasNext()) {
+        QGeoTiledMapRequest req = requestIter.next();
+
+        d_ptr->requestRects.remove(req.tileRect());
+        requestIter.remove();
+
+        // Do not use the requests which have pending replies or are off screen
+        if (d_ptr->replyRects.contains(req.tileRect()) || !d_ptr->screenRect.intersects(req.tileRect())) {
+            continue;
+        }
+
+        QGeoTiledMapReply *reply = tiledEngine->getTileImage(req);
+
+        if (!reply) {
+            continue;
+        }
+
+        if (reply->error() != QGeoTiledMapReply::NoError) {
+            tileError(reply->error(), reply->errorString());
+            reply->deleteLater();
+            continue;
+        }
+
+        connect(reply,
+                SIGNAL(finished()),
+                this,
+                SLOT(tileFinished()));
+
+        connect(reply,
+                SIGNAL(error(QGeoTiledMapReply::Error, QString)),
+                this,
+                SLOT(tileError(QGeoTiledMapReply::Error, QString)));
+
+        d_ptr->replies.insert(reply);
+        d_ptr->replyRects.insert(reply->request().tileRect());
+
+        break;
+    }
+}
+
+void QGeoTiledMapData::tileFinished()
+{
+    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
+
+    if (!reply)
+        return;
+
+    d_ptr->replyRects.remove(reply->request().tileRect());
+    d_ptr->replies.remove(reply);
+
+    if (reply->error() != QGeoTiledMapReply::NoError) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+    }
+
+    if ((zoomLevel() != reply->request().zoomLevel())
+            || (mapType() != reply->request().mapType())) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+    }
+
+    QPixmap tile;
+
+    if (!tile.loadFromData(reply->mapImageData(), reply->mapImageFormat().toAscii())) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+        //setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
+    }
+
+    if (tile.isNull() || tile.size().isEmpty()) {
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
+        return;
+        //setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
+    }
+
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+
+    QSize tileSize = tiledEngine->tileSize();
+
+    int tileHeight = tileSize.height();
+    int tileWidth = tileSize.width();
+    int numCols = 1 << static_cast<int>(zoomLevel());
+    qreal totalPixelWidth = static_cast<qreal>(numCols) * tileWidth;
+    QRectF tileRect(tileWidth * reply->request().column(),
+                    tileHeight * reply->request().row(),
+                    tileWidth, tileHeight);
+
+    while (tileRect.left() <= d_ptr->screenRect.right())
+    {
+        QRectF overlap = tileRect.intersected(d_ptr->screenRect);
+
+        if (!overlap.isEmpty())
+        {
+            QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
+            QRectF dest = overlap.translated(-1.0 * d_ptr->screenRect.x(), -1.0 * d_ptr->screenRect.y());
+            QPainter painter(&(mapImage()));
+            painter.drawPixmap(dest, tile, source);
+            painter.end();
+            imageChanged(dest);
+        }
+
+        tileRect.translate(totalPixelWidth, 0);
+    }
+
+    if (d_ptr->requests.size() > 0) {
+        if (reply->isCached())
+            QTimer::singleShot(50, this, SLOT(processRequests()));
+        else
+            QTimer::singleShot(0, this, SLOT(processRequests()));
+    }
+
+    QTimer::singleShot(0, reply, SLOT(deleteLater()));
+}
+
+void QGeoTiledMapData::tileError(QGeoTiledMapReply::Error error, QString errorString)
+{
+    qWarning() << errorString;
 }
 
 QRectF QGeoTiledMapData::screenRect() const
@@ -328,23 +580,30 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
     return QList<QGeoMapObject*>();
 }
 
-QPixmap QGeoTiledMapData::mapObjectsOverlay() const
+QPixmap QGeoTiledMapData::mapObjectsOverlay()
 {
+    QList<QGeoMapObject*> queue;
+    queue.append(this->mapObjects());
     bool needsPainting = false;
     QPixmap overlay(d_ptr->screenRect.width(), d_ptr->screenRect.height());
     overlay.fill(Qt::transparent);
     QPainter painter(&overlay);
 
-    QMapIterator<QGeoCompositeZValue, QGeoMapObject*> it(d_ptr->zOrderedObj);
-
-    while (it.hasNext()) {
-        it.next();
-        QGeoMapObject *obj = it.value();
+    //iterate through all map objects as defined by their (composite) zValues
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
 
         if (d_ptr->intersects(obj, d_ptr->screenRect)) {
             needsPainting = true;
             d_ptr->paintMapObject(painter, obj);
         }
+
+        //prepend children to queue
+        QList<QGeoMapObject*> children = obj->childObjects();
+        int sz = children.size();
+
+        for (int i = 0; i < sz; ++i)
+            queue.prepend(children.at(i));
     }
 
     if (needsPainting)
@@ -355,77 +614,44 @@ QPixmap QGeoTiledMapData::mapObjectsOverlay() const
 
 void QGeoTiledMapData::addMapObject(QGeoMapObject *mapObject)
 {
-    //construct composite zValue first
-    QGeoCompositeZValue zValue;
-    QGeoMapObject* parent = mapObject->parentObject();
+    //we need to connect this object's and its children's
+    //childObjectRemoved signal to keep objInfo up-to-date
+    QList<QGeoMapObject*> queue;
+    queue.append(mapObject);
 
-    if (parent && d_ptr->objToCompZValue.contains(parent))
-        zValue = d_ptr->objToCompZValue[parent];
-
-    zValue.compZValue.append(mapObject->zValue());
-    //add to internal tables
-    d_ptr->objToCompZValue.insert(mapObject, zValue);
-    d_ptr->zOrderedObj.insert(zValue, mapObject);
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+        //add all children to queue
+        queue.append(obj->childObjects());
+        
+        //connect to childObjectRemoved signal
+        connect(obj, SIGNAL(childObjectRemoved(QGeoMapObject*)),
+                this, SLOT(mapObjectRemoved(QGeoMapObject*)));
+    }
 
     d_ptr->calculateInfo(mapObject);
-
     QGeoMapData::addMapObject(mapObject);
 }
 
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoCompositeZValue::QGeoCompositeZValue() {}
-
-QGeoCompositeZValue::QGeoCompositeZValue(const QGeoCompositeZValue &other)
-    : compZValue(other.compZValue) 
-{}
-
-QGeoCompositeZValue& QGeoCompositeZValue::operator=(const QGeoCompositeZValue &other)
+void QGeoTiledMapData::removeMapObject(QGeoMapObject *mapObject)
 {
-    compZValue = other.compZValue;
-    return *this;
+    mapObjectRemoved(mapObject);
+    QGeoMapData::removeMapObject(mapObject);
 }
 
-bool QGeoCompositeZValue::operator==(const QGeoCompositeZValue &other) const
+void QGeoTiledMapData::mapObjectRemoved(QGeoMapObject *mapObject)
 {
-    if (compZValue.size() != other.compZValue.size())
-        return false;
+    //remove obj info for this mapObject and all its descendants
+    QList<QGeoMapObject*> queue;
+    queue.append(mapObject);
 
-    int sz = compZValue.size();
-
-    for (int i = 0; i < sz; i++)
-
-        if (compZValue.at(i) != other.compZValue.at(i))
-            return false;
-
-    return true;
-}
-
-bool QGeoCompositeZValue::operator<(const QGeoCompositeZValue &other) const
-{
-    int sz = compZValue.size();
-    int otherSz = other.compZValue.size();
-    
-    for (int i = 0; i < sz && i < otherSz; i++)
-
-        if (compZValue.at(i) < other.compZValue.at(i))
-            return true;
-        else if (compZValue.at(i) > other.compZValue.at(i))
-            return false;
-
-    return false;
-}
-
-uint qHash(const QGeoCompositeZValue &zValue)
-{
-    QString hashStr;
-    int len = zValue.compZValue.size();
-
-    for (int i = 0; i < len; i++)
-        hashStr += QString::number(zValue.compZValue.at(i)) + "/";
-
-    return qHash(hashStr);
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+        //add children to queue
+        queue.append(obj->childObjects());
+        obj->disconnect(this);
+        d_ptr->objInfo.remove(obj);
+    }
 }
 
 /*******************************************************************************
@@ -446,6 +672,12 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
     clearObjInfo();
+
+    QList<QGeoTiledMapReply*> replyList = replies.toList();
+    for (int i = 0; i < replyList.size(); ++i) {
+        replyList.at(i)->abort();
+        replyList.at(i)->deleteLater();
+    }
 }
 
 void QGeoTiledMapDataPrivate::clearObjInfo()
@@ -478,24 +710,25 @@ qulonglong QGeoTiledMapDataPrivate::tileKey(int row, int col, int zoomLevel)
     return result;
 }
 
-bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF &rect) const
+bool QGeoTiledMapDataPrivate::intersects(QGeoMapObject *mapObject, const QRectF &rect)
 {
     if (!mapObject)
         return false;
 
     if (!objInfo.contains(mapObject))
-        return false;
+        calculateInfo(mapObject);
 
     //TODO: consider dateline wrapping
     return rect.intersects(objInfo[mapObject]->boundingBox);
 }
 
-void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *mapObject) const
+void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *mapObject)
 {
     if (!mapObject)
         return;
+
     if (!objInfo.contains(mapObject))
-        return;
+        calculateInfo(mapObject);
 
     if (mapObject->type() == QGeoMapObject::RectangleType)
         paintMapRectangle(painter, static_cast<QGeoMapRectangleObject*>(mapObject));
@@ -504,9 +737,11 @@ void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, QGeoMapObject *m
     else if (mapObject->type() == QGeoMapObject::PolylineType ||
              mapObject->type() == QGeoMapObject::PolygonType)
         paintMapPolyline(painter, static_cast<QGeoMapPolylineObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::GeoRouteType)
+        paintMapRoute(painter, static_cast<QGeoMapRouteObject*>(mapObject));
 }
 
-void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle) const
+void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectangleObject *rectangle)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
@@ -519,7 +754,7 @@ void QGeoTiledMapDataPrivate::paintMapRectangle(QPainter &painter, QGeoMapRectan
     painter.setBrush(oldBrush);
 }
 
-void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker) const
+void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObject *marker)
 {
     QPixmap icon = marker->icon();
 
@@ -531,7 +766,7 @@ void QGeoTiledMapDataPrivate::paintMapMarker(QPainter &painter, QGeoMapMarkerObj
     painter.drawPixmap(rect, icon, QRectF(QPointF(0, 0), icon.size()));
 }
 
-void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline) const
+void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylineObject *polyline)
 {
     QPen oldPen = painter.pen();
     QBrush oldBrush = painter.brush();
@@ -547,6 +782,41 @@ void QGeoTiledMapDataPrivate::paintMapPolyline(QPainter &painter, QGeoMapPolylin
     painter.setBrush(oldBrush);
 }
 
+void QGeoTiledMapDataPrivate::paintMapRoute(QPainter &painter, QGeoMapRouteObject *route)
+{
+    QSet<int> alreadyPainted;
+    QPainterPath path;
+    QGeoTiledMapRouteInfo* info = static_cast<QGeoTiledMapRouteInfo*>(objInfo.value(route));
+    //TODO: add some type check
+    QGeoTiledMappingManagerEngine *tiledEngine = static_cast<QGeoTiledMappingManagerEngine*>(q_ptr->engine());
+    QGeoTileIterator it(screenRect, tiledEngine->tileSize(), qRound(q_ptr->zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (info->intersectedTiles.contains(key)) {
+            QListIterator<QPair<int, QLineF> > segments(info->intersectedTiles[key]);
+
+            while (segments.hasNext()) {
+                const QPair<int, QLineF> &currSegment = segments.next();
+
+                if (!alreadyPainted.contains(currSegment.first)) {
+                    path.moveTo(currSegment.second.p1());
+                    path.lineTo(currSegment.second.p2());
+                    alreadyPainted.insert(currSegment.first);
+                }
+            }
+        }
+    }
+
+    path.translate(-(screenRect.topLeft()));
+    QPen oldPen = painter.pen();
+    painter.setPen(route->pen());
+    painter.drawPath(path);
+    painter.setPen(oldPen);
+}
+
 void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
 {
     if (!mapObject)
@@ -559,8 +829,11 @@ void QGeoTiledMapDataPrivate::calculateInfo(QGeoMapObject *mapObject)
         calculateMapRectangleInfo(static_cast<QGeoMapRectangleObject*>(mapObject));
     else if (mapObject->type() == QGeoMapObject::MarkerType)
         calculateMapMarkerInfo(static_cast<QGeoMapMarkerObject*>(mapObject));
-    else if (mapObject->type() == QGeoMapObject::PolylineType || mapObject->type() == QGeoMapObject::PolygonType)
+    else if (mapObject->type() == QGeoMapObject::PolylineType || 
+             mapObject->type() == QGeoMapObject::PolygonType)
         calculateMapPolylineInfo(static_cast<QGeoMapPolylineObject*>(mapObject));
+    else if (mapObject->type() == QGeoMapObject::GeoRouteType)
+        calculateMapRouteInfo(static_cast<QGeoMapRouteObject*>(mapObject));
 }
 
 void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle)
@@ -631,5 +904,164 @@ void QGeoTiledMapDataPrivate::calculateMapPolylineInfo(QGeoMapPolylineObject *po
     if (!startPoint.isNull())
         info->path.lineTo(startPoint);
 }
+
+void QGeoTiledMapDataPrivate::calculateMapRouteInfo(QGeoMapRouteObject *route)
+{
+    qulonglong topLeftX;
+    qulonglong topLeftY;
+    qulonglong bottomRightX;
+    qulonglong bottomRightY;
+    
+    q_ptr->coordinateToWorldPixel(route->boundingBox().topLeft(), &topLeftX, &topLeftY);
+    q_ptr->coordinateToWorldPixel(route->boundingBox().bottomRight(), &bottomRightX, &bottomRightY);
+
+    QGeoTiledMapRouteInfo* info = new QGeoTiledMapRouteInfo;
+    info->boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
+    objInfo[route] = info;
+
+    quint32 minDist = route->detailLevel();
+    QGeoCoordinate last;
+    QGeoCoordinate here;
+    int lineIndex = 0;
+    QListIterator<QGeoRouteSegment> segIt(route->route().routeSegments());
+
+    while (segIt.hasNext()) {
+        QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
+
+        while (coordIt.hasNext()) {
+            QGeoCoordinate curr = coordIt.next();
+
+            //make sure first waypoint is always shown
+            if (!last.isValid()) {
+                last = curr;
+                continue;
+            }
+
+            here = curr;
+            QLineF line = connectShortest(here, last);
+            qreal dist = (line.p1() - line.p2()).manhattanLength();
+
+            if (dist >= minDist || q_ptr->zoomLevel() == q_ptr->engine()->maximumZoomLevel()) {
+                addRouteSegmentInfo(info, line, lineIndex++);
+                last = here;
+                here = QGeoCoordinate();
+            }
+        }
+    }
+
+    //make sure last waypoint is always shown
+    if (here.isValid()) {
+        QLineF line = connectShortest(here, last);
+        addRouteSegmentInfo(info, line, lineIndex++);
+    }
+}
+
+QLineF QGeoTiledMapDataPrivate::connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const
+{
+    //order from west to east
+    QGeoCoordinate pt1;
+    QGeoCoordinate pt2;
+
+    if (point1.longitude() < point2.longitude()) {
+        pt1 = point1;
+        pt2 = point2;
+    } else {
+        pt1 = point2;
+        pt2 = point1;
+    }
+
+    qulonglong x;
+    qulonglong y;
+    q_ptr->coordinateToWorldPixel(pt1, &x, &y);
+    QPointF mpt1(x, y);
+    q_ptr->coordinateToWorldPixel(pt2, &x, &y);
+    QPointF mpt2(x, y);
+
+    if (pt2.longitude() - pt1.longitude() > 180.0) {
+        mpt1.rx() += this->width;
+        return QLineF(mpt2, mpt1);
+    }
+
+    return QLineF(mpt1, mpt2);
+}
+
+void QGeoTiledMapDataPrivate::addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const
+{
+    //TODO: add some type check
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(q_ptr->engine());
+
+    QGeoTileIterator it(screenRect, tiledEngine->tileSize(), qRound(q_ptr->zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (!info->intersectedTiles.contains(key))
+            info->intersectedTiles.insert(key, QList< QPair<int, QLineF> >());
+
+        info->intersectedTiles[key].append(QPair<int, QLineF>(index, line));
+    }
+}
+
+///*******************************************************************************
+//*******************************************************************************/
+
+QGeoTileIterator::QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel)
+    : aHasNext(true), aRow(-1), aCol(-1), aScreenRect(screenRect),
+    aTileSize(tileSize), aZoomLevel(zoomLevel), aTileRect(QPointF(0,0), tileSize)
+{
+    qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
+    qulonglong y = static_cast<qulonglong>(screenRect.topLeft().y() / tileSize.height());
+
+    currTopLeft.setX(x * tileSize.width());
+    currTopLeft.setY(y * tileSize.height());
+}
+
+bool QGeoTileIterator::hasNext()
+{
+    return aHasNext;
+}
+
+QRectF QGeoTileIterator::tileRect() const
+{
+    return aTileRect;
+}
+
+void QGeoTileIterator::next()
+{
+    int numCols = 1 << aZoomLevel;
+    aCol = static_cast<int>(currTopLeft.x() / aTileSize.width()) % numCols;
+    aRow = static_cast<int>(currTopLeft.y() / aTileSize.height()) % numCols;
+    aTileRect.moveTopLeft(currTopLeft);
+
+    currTopLeft.rx() += aTileSize.width();
+
+    if (currTopLeft.x() > aScreenRect.right()) { //next row
+        qulonglong x = static_cast<qulonglong>(aScreenRect.topLeft().x() / aTileSize.width());
+        currTopLeft.setX(x * aTileSize.width());
+        currTopLeft.ry() += aTileSize.height();
+    }
+
+    if (currTopLeft.y() > aScreenRect.bottom()) //done
+        aHasNext = false;
+}
+
+int QGeoTileIterator::row() const
+{
+    return aRow;
+}
+
+int QGeoTileIterator::col() const
+{
+    return aCol;
+}
+
+int QGeoTileIterator::zoomLevel() const
+{
+    return aZoomLevel;
+}
+
+#include "moc_qgeotiledmapdata.cpp"
 
 QTM_END_NAMESPACE

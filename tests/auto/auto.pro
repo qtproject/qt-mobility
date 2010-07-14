@@ -129,7 +129,8 @@ contains(mobility_modules,telephony) {
 }
 
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \

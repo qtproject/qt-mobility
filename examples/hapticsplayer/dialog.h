@@ -45,8 +45,8 @@
 
 #include <qfeedbackactuator.h>
 #include <qfeedbackeffect.h>
-QTM_USE_NAMESPACE
 
+QTM_USE_NAMESPACE
 
 #ifndef DIALOG_H_
 #define DIALOG_H_

@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/contacts
+
 #include <QApplication>
 #include <QtTest/QtTest>
 //#include "contact.h"

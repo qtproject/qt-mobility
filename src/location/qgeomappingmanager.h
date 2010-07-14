@@ -71,7 +71,7 @@ public:
 
     QGeoMapData* createMapData(QGeoMapWidget *widget);
     void removeMapData(QGeoMapData *mapData);
-    void updateMapImage(QGeoMapData *mapData);
+    //void updateMapImage(QGeoMapData *mapData);
 
     QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 

@@ -48,6 +48,7 @@
 
 class QTreeWidget;
 class QLineEdit;
+class QPushButton;
 
 QTM_USE_NAMESPACE
 
@@ -72,5 +73,6 @@ private:
     QLineEdit *m_locLong;
     QLineEdit *m_locLat;
     QTreeWidget *m_resultTree;
+    QPushButton *requestBtn;
 };
 #endif /* ROUTETAB_H_ */

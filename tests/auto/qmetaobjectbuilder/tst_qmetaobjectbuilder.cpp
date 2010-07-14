@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/serviceframework
+
 #include <QtTest/QtTest>
 #include <QtCore/qlocale.h>
 #include <qmetaobjectbuilder_p.h>

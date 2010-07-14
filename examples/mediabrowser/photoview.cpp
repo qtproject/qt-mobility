@@ -47,8 +47,8 @@
 #include <qdocumentgallery.h>
 #include <qgalleryitemlistmodel.h>
 
-PhotoView::PhotoView(QWidget *parent)
-    : GalleryView(parent)
+PhotoView::PhotoView(QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
 {
     setType(QDocumentGallery::Image);
     setFields(QStringList()
