@@ -510,7 +510,7 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
     // Only the event and todo types contain recurrence information
     if (item->type() == QOrganizerItemType::TypeEvent) {
         m_recTransformer.beginTransformToCrecurrence();
-        const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>( item );
+        const QOrganizerEvent *event = static_cast<const QOrganizerEvent *>(item);
 
         // Add recurrence rules
         QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
@@ -525,12 +525,12 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
         // Add recurrence dates
         QList<QDate> recurrenceDates = event->recurrenceDates();
         foreach (QDate recDate, recurrenceDates)
-            m_recTransformer.addQOrganizerItemRecurrenceDate(recDate);
+            m_recTransformer.addQOrganizerItemRecurrenceDate(event->startDateTime().date(), recDate);
 
         // Add exception dates
         QList<QDate> exceptionDates = event->exceptionDates();
         foreach (QDate exceptionDate, exceptionDates)
-            m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
+            m_recTransformer.addQOrganizerItemExceptionDate(event->startDateTime().date(), exceptionDate);
 
         return m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }

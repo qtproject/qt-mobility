@@ -72,8 +72,8 @@ public: // Conversion from QRecurrence to CRecurrence
     // set rules and dates
     void addQOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule &rule);
     void addQOrganizerItemExceptionRule(const QOrganizerItemRecurrenceRule &rule);
-    void addQOrganizerItemRecurrenceDate(const QDate &date);
-    void addQOrganizerItemExceptionDate(const QDate &date);
+    void addQOrganizerItemRecurrenceDate(const QDate &itemDate, const QDate &date);
+    void addQOrganizerItemExceptionDate(const QDate &itemDate, const QDate &date);
 
     // get recurrence
     CRecurrence* crecurrence(bool *success = 0) const;
@@ -117,7 +117,7 @@ private:
 
     // common methods
     QMap<QString, Qt::DayOfWeek> icalRecurrenceWeekDayQdayOfWeekMapping() const;
-    QString createSingleDayRuleFor(const QDate& date) const;
+    QString createSingleDayRuleFor(const QDate& originalDate, const QDate& date) const;
 
 private:
     // QRecurrence -> CRecurrence
