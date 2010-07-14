@@ -41,14 +41,27 @@
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
 #include "databasemanagersession.h"
+#include <QCoreApplication>
 //#include <QThread>
 
 QTM_BEGIN_NAMESPACE
+
+static TInt Timeout(TAny *aObject);
+
+const TInt CDatabaseManagerServer::timeoutInterval = 30000000; // 30 seconds
+
+TInt Timeout(TAny *aObject)
+  {
+    ((CDatabaseManagerServer *)aObject)->Shutdown();
+    return 1;
+  }
 
 CDatabaseManagerServer::CDatabaseManagerServer()
     : CServer2(EPriorityNormal, ESharableSessions)
     , iSessionCount(0)
     {
+    iPeriodic = CPeriodic::NewL(0);
+    iPeriodic->Start(timeoutInterval, timeoutInterval, TCallBack(Timeout, this));
     }
 
 CSession2* CDatabaseManagerServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
@@ -71,6 +84,7 @@ void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
 void CDatabaseManagerServer::IncreaseSessions()
     {
     iSessionCount++;
+    iPeriodic->Cancel();
     }
 
 void CDatabaseManagerServer::DecreaseSessions()
@@ -78,9 +92,14 @@ void CDatabaseManagerServer::DecreaseSessions()
     iSessionCount--;
     if (iSessionCount <= 0)
         {
-        //QThread::currentThread()->quit();
+        iPeriodic->Start(timeoutInterval, timeoutInterval, TCallBack(Timeout, this));        
         }
     }
+
+void CDatabaseManagerServer::Shutdown()
+  {  
+  QCoreApplication::exit(0);
+  }
 
 QTM_END_NAMESPACE
 // End of File

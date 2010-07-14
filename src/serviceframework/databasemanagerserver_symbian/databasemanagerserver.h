@@ -58,13 +58,17 @@ class CDatabaseManagerServer : public CServer2
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
-        static void PanicServer(TDatabaseManagerSerververPanic aPanic);
+        static void PanicServer(TDatabaseManagerSerververPanic aPanic);        
         
         void IncreaseSessions();
         void DecreaseSessions();
+          
         
+        void Shutdown();
     private:
-        int iSessionCount;
+        static const TInt timeoutInterval;
+        int iSessionCount;        
+        CPeriodic *iPeriodic;
     };
 
 //QTM_END_NAMESPACE
