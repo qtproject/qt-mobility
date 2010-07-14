@@ -821,8 +821,8 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
 #ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::testSignalling()
 {
-    QSignalSpy spy(serviceUnique, SIGNAL(signalWithIntParam(int)));
-    QMetaObject::invokeMethod(serviceUnique, "triggerSignalWithIntParam");
+    QSignalSpy spy(serviceShared, SIGNAL(signalWithIntParam(int)));
+    QMetaObject::invokeMethod(serviceShared, "triggerSignalWithIntParam");
     QTRY_VERIFY(spy.count() == 1);
     QCOMPARE(spy.at(0).at(0).toInt(), 5);
     
@@ -938,13 +938,13 @@ void tst_QServiceManager_IPC::testSlotInvokation()
 
 #ifdef UNIQUE_TESTS
 void tst_QServiceManager_IPC::testIpcFailure()
-{
-  QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
-  int i = 0;
-  while (!ipcfailure && i++ < 50)
-      QTest::qWait(50);
-  
-  QVERIFY(ipcfailure);
+    {
+    QMetaObject::invokeMethod(serviceUnique, "testIpcFailure");
+    int i = 0;
+    while (!ipcfailure && i++ < 50)
+        QTest::qWait(50);
+    
+    QVERIFY(ipcfailure);
   
   // TODO restart the connection
 //  service = manager->loadInterface("com.nokia.qt.ipcunittest");

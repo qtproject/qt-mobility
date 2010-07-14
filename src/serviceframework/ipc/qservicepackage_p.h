@@ -80,7 +80,7 @@ public:
     QServicePackage createResponse() const;
 
     bool isValid() const;
-
+    
     QExplicitlySharedDataPointer<QServicePackagePrivate> d;
 
 #ifndef QT_NO_DATASTREAM
@@ -104,7 +104,7 @@ public:
     QServicePackagePrivate() 
         :   packageType(QServicePackage::ObjectCreation),
             typeId(QRemoteServiceIdentifier()), payload(QVariant()),
-            messageId(QUuid()), responseType(QServicePackage::NotAResponse)
+            messageId(QUuid()), instanceId(QUuid()), responseType(QServicePackage::NotAResponse)
     {
     }
 
@@ -112,12 +112,14 @@ public:
     QRemoteServiceIdentifier typeId;
     QVariant payload;
     QUuid messageId;
+    QUuid instanceId;
     QServicePackage::ResponseType responseType;
 
     virtual void clean()
     {
         packageType = QServicePackage::ObjectCreation;
         messageId = QUuid();
+        instanceId = QUuid();
         payload = QVariant();
         typeId = QRemoteServiceIdentifier();
         responseType = QServicePackage::NotAResponse;

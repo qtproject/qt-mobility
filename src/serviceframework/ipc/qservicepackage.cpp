@@ -77,6 +77,7 @@ QServicePackage QServicePackage::createResponse() const
     response.d = new QServicePackagePrivate();
     response.d->packageType = d->packageType;
     response.d->messageId = d->messageId;
+    response.d->instanceId = d->instanceId;
     response.d->responseType = QServicePackage::Failed;
 
     return response;
@@ -95,6 +96,7 @@ QDataStream &operator<<(QDataStream &out, const QServicePackage& package)
         out << (qint8) package.d->packageType;
         out << (qint8) package.d->responseType;
         out << package.d->messageId;
+        out << package.d->instanceId;
         out << package.d->typeId;
         out << package.d->payload;
     }
@@ -130,6 +132,7 @@ QDataStream &operator>>(QDataStream &in, QServicePackage& package)
         in >> data;
         package.d->responseType = (QServicePackage::ResponseType) data;
         in >> package.d->messageId;
+        in >> package.d->instanceId;
         in >> package.d->typeId;
         in >> package.d->payload;
     } else {

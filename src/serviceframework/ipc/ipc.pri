@@ -8,14 +8,22 @@ symbian {
     contains(QT_CONFIG,dbus) {
         QT += dbus network
         
-        PRIVATE_HEADERS += ipc/qremoteservicecontrol_dbus_p.h
-        SOURCES += ipc/qremoteservicecontrol_dbus_p.cpp
+        PRIVATE_HEADERS += ipc/qremoteservicecontrol_dbus_p.h \
+                           ipc/objectendpoint_dbus_p.h \
+                           ipc/proxyobject_dbus_p.h 
+        SOURCES += ipc/qremoteservicecontrol_dbus_p.cpp \
+                   ipc/objectendpoint_dbus.cpp \
+                   ipc/proxyobject_dbus.cpp
 
     } else {
         QT += network
 
-        PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h
-        SOURCES += ipc/qremoteservicecontrol_p.cpp
+        PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h \
+                           ipc/objectendpoint_p.h \
+                           ipc/proxyobject_p.h
+        SOURCES += ipc/qremoteservicecontrol_p.cpp \
+                   ipc/objectendpoint.cpp \
+                   ipc/proxyobject.cpp
     }
 }
 
@@ -25,9 +33,7 @@ PRIVATE_HEADERS += \
         ipc/qmetaobjectbuilder_p.h \
         ipc/instancemanager_p.h \
         ipc/qservicepackage_p.h \
-        ipc/objectendpoint_p.h \
         ipc/ipcendpoint_p.h \
-        ipc/proxyobject_p.h
 
 SOURCES += \
         ipc/qslotinvoker.cpp \
@@ -35,6 +41,4 @@ SOURCES += \
         ipc/qmetaobjectbuilder.cpp \
         ipc/instancemanager.cpp \
         ipc/qservicepackage.cpp \
-        ipc/objectendpoint.cpp \
         ipc/ipcendpoint.cpp \
-        ipc/proxyobject.cpp
