@@ -353,12 +353,12 @@
     Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
     <br>
     <br>
-    <table align="center" cellpadding="2" cellspacing="1" border="1">
+    <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
     <tbody>
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
     <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
@@ -366,14 +366,14 @@
     <td><b>S60 3rd Edition, Feature Pack 2</b></td>
     <td><b>S60 5th Edition</b></td>
     <td><b>Symbian^3</b></td>
-    <td><b>Maemo 5</b></td>
+    <td nowrap="nowrap"><b>Maemo 5</b></td>
     <td><b>Windows CE/Mobile<b></b></b></td>
     <td><b>Windows XP/Vista</b></td>
     <td><b>Linux</b></td>
-    <td><b>Mac OS X</b></td>
+    <td nowrap="nowrap"><b>Mac OS X</b></td>
     </tr>
     <tr>
-    <td>Service Framework (in-process)</td>
+    <td nowrap="nowrap">Service Framework (in-process)</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -529,7 +529,7 @@
     <td bgcolor="gray"></td>
     </tr>
     <tr>
-    <td>Service Framework(OOP)</td>
+    <td nowrap="nowrap">Service Framework(OOP)</td>
     <td>TP</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
