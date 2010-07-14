@@ -92,6 +92,9 @@ private:
     };
     int positionInfoState;
     
+    QGeoPositionInfo lastUpdateFromSatellite;
+    QGeoPositionInfo lastUpdateFromNetwork;
+
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
     
@@ -99,11 +102,12 @@ public slots:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
-    void newPositionUpdate();
 
 private slots:
     void requestTimeoutElapsed();
     void error();
+    void newPositionUpdate(const QGeoPositionInfo &position);
+    void updateTimeoutElapsed();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)
