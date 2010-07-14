@@ -84,7 +84,7 @@ public:
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactDetailRangeFilterPrivate *od = static_cast<const QContactDetailRangeFilterPrivate*>(other);
         if (m_defId != od->m_defId)
@@ -100,6 +100,28 @@ public:
         if (m_rangeflags != od->m_rangeflags)
             return false;
         return true;
+    }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_defId << m_fieldId << m_minValue << m_maxValue
+                << static_cast<quint32>(m_flags)
+                << static_cast<quint32>(m_rangeflags);
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            quint32 flags;
+            quint32 rangeFlags;
+            stream >> m_defId >> m_fieldId >> m_minValue >> m_maxValue >> flags >> rangeFlags;
+            m_flags = QContactFilter::MatchFlags(flags);
+            m_rangeflags = QContactDetailRangeFilter::RangeFlags(rangeFlags);
+        }
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactDetailRangeFilter, QContactFilter::ContactDetailRangeFilter)

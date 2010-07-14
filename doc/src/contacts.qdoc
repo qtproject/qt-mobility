@@ -268,8 +268,19 @@ vendor.  These pieces of data may be encapsulated in a
 \l{QContactActionDescriptor} which can be used to retrieve an instance of the
 implementation from a \l{QContactActionFactory}.
 
-When an instance of a \l{QContactAction} is created, the caller takes
-ownership of the instance, and must delete it after use.
+The QContactAction API is still under development, and is subject to change.
+In particular, it is possible that an action will no longer report a vendor
+name (as this cannot be enforced) but instead report the Qt Mobility Service
+Framework service name which identifies it.  Also, it is possible that actions
+will be extended to be invokable on either a contact, a contact plus detail
+pair, contact plus list of details pair, or list of any of the above, and that
+parameters to invocation (for example, an attachment) may be supplied by
+clients.
+
+Once the API has solidified, it is possible that some standard actions may be
+defined so that clients can perform certain tasks (e.g., open the default
+contact editor UI) with cross-platform code which is guaranteed to have native
+look and feel.
 
 \section1 Non-Client-Facing API
 

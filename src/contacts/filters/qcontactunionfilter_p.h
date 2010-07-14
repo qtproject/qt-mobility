@@ -76,12 +76,28 @@ public:
 
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactUnionFilterPrivate *od = static_cast<const QContactUnionFilterPrivate*>(other);
         if (m_filters != od->m_filters)
             return false;
         return true;
+    }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_filters;
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            stream >> m_filters;
+        }
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactUnionFilter, QContactFilter::UnionFilter)

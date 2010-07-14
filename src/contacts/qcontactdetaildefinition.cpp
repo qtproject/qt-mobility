@@ -107,6 +107,42 @@ bool QContactDetailDefinition::isEmpty() const
     return true;
 }
 
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a definition to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactDetailDefinition& definition)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetailDefinition
+    return out << formatVersion
+               << definition.name()
+               << definition.isUnique()
+               << definition.fields();
+}
+
+/*!
+ * Reads a detail definition from stream \a in into \a definition.
+ */
+QDataStream& operator>>(QDataStream& in, QContactDetailDefinition& definition)
+{
+    definition = QContactDetailDefinition();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString name;
+        bool unique;
+        QMap<QString, QContactDetailFieldDefinition> fields;
+        in >> name >> unique >> fields;
+        definition.setName(name);
+        definition.setUnique(unique);
+        definition.setFields(fields);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
+
 /*! Sets the unique identifier of this detail type to \a definitionName. */
 void QContactDetailDefinition::setName(const QString& definitionName)
 {

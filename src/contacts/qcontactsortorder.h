@@ -90,6 +90,11 @@ private:
     QSharedDataPointer<QContactSortOrderPrivate> d;
 };
 
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactSortOrder& sortOrder);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactSortOrder& sortOrder);
+#endif
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactSortOrder), Q_MOVABLE_TYPE);

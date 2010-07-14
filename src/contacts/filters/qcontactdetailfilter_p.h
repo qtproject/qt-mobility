@@ -79,7 +79,7 @@ public:
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactDetailFilterPrivate *od = static_cast<const QContactDetailFilterPrivate*>(other);
         if (m_defId != od->m_defId)
@@ -91,6 +91,24 @@ public:
         if (m_flags != od->m_flags)
             return false;
         return true;
+    }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_defId << m_fieldId << m_exactValue << static_cast<quint32>(m_flags);
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            quint32 flags;
+            stream >> m_defId >> m_fieldId >> m_exactValue >> flags;
+            m_flags = QContactFilter::MatchFlags(flags);
+        }
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactDetailFilter, QContactFilter::ContactDetailFilter)
