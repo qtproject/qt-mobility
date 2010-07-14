@@ -37,6 +37,10 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
 
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    table->setHorizontalHeaderItem(0, new QTableWidgetItem("Lat"));
+    table->setHorizontalHeaderItem(1, new QTableWidgetItem("Long"));
+    table->setHorizontalHeaderItem(2, new QTableWidgetItem("Name"));
+
     progress = new QProgressDialog (tr("Operation in progress..."),tr("Cancel"),0,0, this);
     progress->setCancelButton(0);
     progress->setWindowTitle("Please wait");
