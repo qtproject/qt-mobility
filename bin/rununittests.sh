@@ -87,6 +87,7 @@ cd $shell_path/../build/tests/bin
 ./tst_qnmeapositioninfosource_realtime_generic
 ./tst_qnmeapositioninfosource_simulation
 ./tst_qnmeapositioninfosource_simulation_generic
+./tst_qdeclarativeposition
 
 #Landmarks
 ./tst_qlandmark
