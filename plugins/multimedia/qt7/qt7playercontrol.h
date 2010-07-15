@@ -100,21 +100,6 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
-Q_SIGNALS:
-    void mediaChanged(const QMediaContent& content);
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 position);
-    void stateChanged(QMediaPlayer::State newState);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
-    void volumeChanged(int volume);
-    void mutedChanged(bool muted);
-    void videoAvailableChanged(bool videoAvailable);
-    void bufferStatusChanged(int percentFilled);
-    void seekableChanged(bool);
-    void seekRangeChanged(const QPair<qint64,qint64>&);
-    void playbackRateChanged(qreal rate);
-    void error(int error, const QString &errorString);
-
 private:
     QT7PlayerSession *m_session;
 };
