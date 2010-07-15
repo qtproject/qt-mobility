@@ -134,6 +134,13 @@ arbitrary services.
     A set of APIs that supplies that supplies system information.
  */
 
+/*!
+    \module QtTelephony
+    \title Telephony Events Module
+
+    Enables access to the telephony event services.
+ */
+
 
 
 

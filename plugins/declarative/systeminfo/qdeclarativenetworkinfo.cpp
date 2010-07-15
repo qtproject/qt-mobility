@@ -89,37 +89,37 @@ Q_GLOBAL_STATIC(QSystemNetworkInfo, netInfo)
     \qmlsignal NetworkInfo::statusChanged()
 
     This handler is called when network status has changed.
-    Note: To use this notification signal, you must first call \a startStatusChanged.
+    Note: To receive this notification, you must first call \a startStatusChanged.
 */
 /*!
     \qmlsignal NetworkInfo::signalStrengthChanged()
 
     This handler is called when network signal strength has changed.
-    Note: To use this notification signal, you must first call \a startSignalStrengthChanged.
+    Note: To receive this notification, you must first call \a startSignalStrengthChanged.
 */
 /*!
     \qmlsignal NetworkInfo::nameChanged()
 
     This handler is called when network name has changed.
-    Note: To use this notification signal, you must first call \a startNameChanged.
+    Note: To receive this notification, you must first call \a startNameChanged.
 */
 /*!
     \qmlsignal NetworkInfo::modeChanged()
 
     This handler is called when the systems default network mode has changed.
-    Note: To use this notification signal, you must first call \a startModeChanged.
+    Note: To receive this notification, you must first call \a startModeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileCountryCodeChanged()
 
     This handler is called when network MCC has changed.
-    Note: To use this notification signal, you must first call \a startCurrentMobileCountryCodeChanged.
+    Note: To receive this notification, you must first call \a startCurrentMobileCountryCodeChanged.
 */
 /*!
     \qmlsignal NetworkInfo::currentMobileNetworkCodeChanged()
 
     This handler is called when network MNC has changed.
-    Note: To use this notification signal, you must first call \a startCurrentMobileNetworkCodeChanged.
+    Note: To receive this notification, you must first call \a startCurrentMobileNetworkCodeChanged.
 */
 
 /*!
@@ -224,12 +224,6 @@ void QDeclarativeNetworkInfo::startStatusChanged()
 */
 void QDeclarativeNetworkInfo::startSignalStrengthChanged()
 {
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
-            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
-        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
-    }
-#endif
     connect(netInfo(),SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
 }

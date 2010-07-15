@@ -41,6 +41,7 @@
 
 #include <QSet>
 #include <QDebug>
+#include <QDataStream>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
@@ -376,10 +377,15 @@ QContactDetail QContact::detail(const QString& definitionName) const
 /*! Returns a list of details with the given \a definitionName
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -404,10 +410,15 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
     The definitionName string can be determined by the DefinitionName attribute
     of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
-    requesting a list of all the definition names using
-    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
-    asynchronous \l
-    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
+    requesting a list of all the definitions synchronously with
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or
+    asynchronously with a
+    \l {QContactDetailDefinitionFetchRequest}{detail definition fetch request},
+    and then inspecting the
+    \l{QContactDetailDefinition::name()}{name()} of each
+    definition.  If \a definitionName is empty, all details of any definition
+    will be returned.
+ */
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
@@ -648,6 +659,7 @@ uint qHash(const QContact &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QContact& contact)
 {
     dbg.nospace() << "QContact(" << contact.id() << ")";
@@ -656,6 +668,39 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
     }
     return dbg.maybeSpace();
 }
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a contact to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContact& contact)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContact
+    return out << formatVersion << contact.id() << contact.details() << contact.d->m_preferences;
+}
+
+/*!
+ * Reads a contact from stream \a in into \a contact.
+ */
+QDataStream& operator>>(QDataStream& in, QContact& contact)
+{
+    contact = QContact();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QContactId id;
+        QList<QContactDetail> details;
+        QMap<QString, int> preferences;
+        in >> id >> contact.d->m_details >> contact.d->m_preferences;
+        contact.setId(id);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+#endif
 
 /*!
     Retrieve the first detail in this contact supported by the given \a action.

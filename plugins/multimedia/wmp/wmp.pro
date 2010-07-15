@@ -7,16 +7,11 @@ PLUGIN_TYPE=mediaservice
 INCLUDEPATH+=../../../src/multimedia
 include(../../../common.pri)
 
-TMP_INCLUDE = $$quote($$(INCLUDE))
-TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
-for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
-
 CONFIG += mobility
 MOBILITY = multimedia
 LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 HEADERS = \
-    qevrvideooverlay.h \
     qmfactivate.h \
     qwmpevents.h \
     qwmpglobal.h \
@@ -29,7 +24,6 @@ HEADERS = \
     qwmpvideooverlay.h
 
 SOURCES = \
-    qevrvideooverlay.cpp \
     qmfactivate.cpp \
     qwmpevents.cpp \
     qwmpglobal.cpp \
@@ -40,3 +34,14 @@ SOURCES = \
     qwmpplaylistcontrol.cpp \
     qwmpserviceprovider.cpp \
     qwmpvideooverlay.cpp
+
+contains(evr_enabled, yes) {
+    HEADERS += \
+            qevrvideooverlay.h
+
+    SOURCES += \
+            qevrvideooverlay.cpp
+
+    DEFINES += \
+        QWMP_EVR
+}
