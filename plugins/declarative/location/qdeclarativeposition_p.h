@@ -57,7 +57,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativePosition : public QObject {
+class QDeclarativePosition : public QObject
+{
     Q_OBJECT
 
     Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)

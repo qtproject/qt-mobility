@@ -51,7 +51,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativePositionSource : public QObject {
+class QDeclarativePositionSource : public QObject
+{
     Q_OBJECT
 
     Q_PROPERTY(QObject* position READ position NOTIFY positionChanged)

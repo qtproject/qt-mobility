@@ -49,8 +49,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     # Allow writable DLL data
     TARGET.EPOCALLOWDLLDATA = 1
-    # Symbian packaging rules (e.g. vendorinfo, default icon)
-    include($$QT_SOURCE_TREE/examples/symbianpkgrules.pri)
     # Target UID, makes every Symbian app unique
     TARGET.UID3 = 0x20033007
     # Specifies what files shall be deployed: the plugin itself and the qmldir file.

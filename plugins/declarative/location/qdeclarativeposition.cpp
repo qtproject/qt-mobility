@@ -71,8 +71,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativePosition::QDeclarativePosition()
-    : m_latitude(0), m_latitudeValid(false), m_longtitude(0), m_longtitudeValid(false),
-    m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false)
+        : m_latitude(0), m_latitudeValid(false), m_longtitude(0), m_longtitudeValid(false),
+        m_altitude(0), m_altitudeValid(false), m_speed(0), m_speedValid(false)
 {
 }
 
@@ -158,7 +158,8 @@ void QDeclarativePosition::setSpeed(double speed)
     emit speedChanged(m_speed);
 }
 
-double QDeclarativePosition::speed() const {
+double QDeclarativePosition::speed() const
+{
     return m_speed;
 }
 
@@ -182,7 +183,8 @@ void QDeclarativePosition::setAltitude(double altitude)
     emit altitudeChanged(m_altitude);
 }
 
-double QDeclarativePosition::altitude() const {
+double QDeclarativePosition::altitude() const
+{
     return m_altitude;
 }
 
@@ -208,7 +210,8 @@ void QDeclarativePosition::setLongtitude(double longtitude)
     emit longtitudeChanged(m_longtitude);
 }
 
-double QDeclarativePosition::longtitude() const {
+double QDeclarativePosition::longtitude() const
+{
     return m_longtitude;
 }
 
@@ -234,8 +237,9 @@ void QDeclarativePosition::setLatitude(double latitude)
     emit latitudeChanged(m_latitude);
 }
 
-double QDeclarativePosition::latitude() const {
-   return m_latitude;
+double QDeclarativePosition::latitude() const
+{
+    return m_latitude;
 }
 
 /*!

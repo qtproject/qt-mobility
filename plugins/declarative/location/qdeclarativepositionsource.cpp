@@ -132,8 +132,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()
-    : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-      m_active(false), m_singleUpdate(false), m_updateInterval(0)
+        : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
+        m_active(false), m_singleUpdate(false), m_updateInterval(0)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
@@ -186,7 +186,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
-     else {
+    else {
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
     }
 #endif
@@ -272,11 +272,12 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     if (m_positionSource) {
         QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
         if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            return QDeclarativePositionSource::SatellitePositioningMethod; }
-        else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            return QDeclarativePositionSource::NonSatellitePositioningMethod; }
-        else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
-            return QDeclarativePositionSource::AllPositioningMethods; }
+            return QDeclarativePositionSource::SatellitePositioningMethod;
+        } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            return QDeclarativePositionSource::NonSatellitePositioningMethod;
+        } else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
+            return QDeclarativePositionSource::AllPositioningMethods;
+        }
     }
     return QDeclarativePositionSource::NoPositioningMethod;
 }
@@ -291,7 +292,8 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     \sa stop, update, active
 */
 
-void QDeclarativePositionSource::start() {
+void QDeclarativePositionSource::start()
+{
     if (m_positionSource) {
         // Safe to set, setting zero means using default value
         m_positionSource->setUpdateInterval(m_updateInterval);
@@ -312,7 +314,8 @@ void QDeclarativePositionSource::start() {
     \sa start, stop, active
 */
 
-void QDeclarativePositionSource::update() {
+void QDeclarativePositionSource::update()
+{
     if (m_positionSource) {
         // Use default timeout value
         m_positionSource->requestUpdate();
@@ -334,7 +337,8 @@ void QDeclarativePositionSource::update() {
     \sa start, update, active
 */
 
-void QDeclarativePositionSource::stop() {
+void QDeclarativePositionSource::stop()
+{
     if (m_positionSource) {
         m_positionSource->stopUpdates();
         if (m_active) {
