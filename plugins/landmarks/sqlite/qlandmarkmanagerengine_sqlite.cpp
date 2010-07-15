@@ -2039,7 +2039,7 @@ bool importLandmarksGpx(const QString &connectionName,
     } else if (state == QLandmarkFileHandlerGpx::ErrorState){
         if (errorString)
             *errorString = gpxHandler->errorString();
-        if (*error)
+        if (error)
             *error = QLandmarkManager::ParsingError;
             result = false;
     } else if (state == QLandmarkFileHandlerGpx::CanceledState) {
