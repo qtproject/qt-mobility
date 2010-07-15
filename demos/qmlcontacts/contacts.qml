@@ -105,9 +105,15 @@ Rectangle {
                                 anchors.fill: parent;
                                 anchors.margins: 2;
 
-                                pixmap: model.decoration
+//                                pixmap: model.decoration;
                                 source: model.avatar;
                                 fillMode: Image.PreserveAspectFit
+                            }
+                            Image {
+                                anchors.fill: parent;
+                                anchors.margins: 2;
+                                source: "contents/default.svg";
+                                opacity: avatar.status == Image.Ready ? 0 : 1;
                             }
                         }
                     }

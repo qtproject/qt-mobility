@@ -82,7 +82,6 @@ public:
                                    QList<QContactDetail>* updatedDetails) = 0;
     virtual void documentProcessed(const QVersitDocument& document,
                                    QContact* contact) = 0;
-    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter

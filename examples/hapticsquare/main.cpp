@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFIELDDEFINITION_H
-#define QCONTACTDETAILFIELDDEFINITION_H
+#include <QtGui/QApplication>
+#include "dialog.h"
 
-#include <QList>
-#include <QVariant>
-#include <QSharedDataPointer>
-
-#include "qtcontactsglobal.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QContactDetailFieldDefinitionPrivate;
-class Q_CONTACTS_EXPORT QContactDetailFieldDefinition
+int main(int argc, char *argv[])
 {
-public:
-    QContactDetailFieldDefinition();
-    ~QContactDetailFieldDefinition();
-
-    QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other);
-    QContactDetailFieldDefinition& operator=(const QContactDetailFieldDefinition& other);
-
-    QVariant::Type dataType() const;
-    void setDataType(QVariant::Type type);
-
-    QVariantList allowableValues() const;
-    void setAllowableValues(const QVariantList values);
-
-    bool operator==(const QContactDetailFieldDefinition& other) const;
-    bool operator!=(const QContactDetailFieldDefinition& other) const;
-
-private:
-    QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
-};
-
-#ifndef QT_NO_DATASTREAM
-Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition);
-Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition);
-#endif
-
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailFieldDefinition), Q_MOVABLE_TYPE);
-
-#endif
+    QApplication a(argc, argv);
+    a.addLibraryPath("../../plugins"); // allows the plugins to be loaded
+    Dialog w;
+    w.showMaximized();
+    return a.exec();
+}

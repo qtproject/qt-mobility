@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,47 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILFIELDDEFINITION_H
-#define QCONTACTDETAILFIELDDEFINITION_H
+#include <qmobilityglobal.h>
+#include <qfeedbackeffect.h>
 
-#include <QList>
-#include <QVariant>
-#include <QSharedDataPointer>
+#include <QDialog>
+class QPushButton;
 
-#include "qtcontactsglobal.h"
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+#ifndef DIALOG_H_
+#define DIALOG_H_
 
-class QContactDetailFieldDefinitionPrivate;
-class Q_CONTACTS_EXPORT QContactDetailFieldDefinition
+class Dialog : public QDialog
 {
+    Q_OBJECT
+
 public:
-    QContactDetailFieldDefinition();
-    ~QContactDetailFieldDefinition();
+    Dialog();
+    ~Dialog();
 
-    QContactDetailFieldDefinition(const QContactDetailFieldDefinition& other);
-    QContactDetailFieldDefinition& operator=(const QContactDetailFieldDefinition& other);
-
-    QVariant::Type dataType() const;
-    void setDataType(QVariant::Type type);
-
-    QVariantList allowableValues() const;
-    void setAllowableValues(const QVariantList values);
-
-    bool operator==(const QContactDetailFieldDefinition& other) const;
-    bool operator!=(const QContactDetailFieldDefinition& other) const;
+private Q_SLOTS:
+    void playRumble();
+    void playOcean(bool toggleState);
+    void playButtonClick();
+    void playNegativeEffect();
 
 private:
-    QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
+    QPushButton *m_btnRumble;
+    QPushButton *m_btnOcean;
+    QPushButton *m_btnButtonClick;
+    QPushButton *m_btnNegativeEffect;
+
+    QFeedbackHapticsEffect m_rumble;
+    QFeedbackHapticsEffect m_ocean;
 };
 
-#ifndef QT_NO_DATASTREAM
-Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition);
-Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition);
 #endif
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactDetailFieldDefinition), Q_MOVABLE_TYPE);
-
-#endif

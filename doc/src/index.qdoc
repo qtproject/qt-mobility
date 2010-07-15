@@ -255,7 +255,7 @@
 
     \section2 Organizer
 
-    The structure and retrieval of calendar, scheduling and personal data
+    An API for management of calendar, scheduling and personal data
     from local or remote backends.   It includes the ability to create,
     edit, list, delete and lookup organizer information whether it is stored
     locally or remotely.
@@ -264,7 +264,8 @@
 
     \section2 Versit (Organizer)
 
-    Similar to Organizer above, this is a cross-platform solution.
+    This is an continuation of the Versit API to interface the Organizer API
+    with iCalendar documents using the same framework as for vCards.
 
     \section2 Camera
 
@@ -296,11 +297,11 @@
 
     \section2 Telephony
 
-    The Qt Telephony API enables access to the telephony event services to 
+    The Qt Telephony Events API enables access to the telephony event services to 
     provide telephony call notification that other applications can use to 
     be notified.
 
-    For more details, see the \l {Telephony API}{Telephony Overview}.
+    For more details, see the \l {Telephony Events API}{Telephony Overview}.
     
     \section1 The QtMobility Namespace 
 
@@ -352,27 +353,27 @@
     Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
     <br>
     <br>
-    <table align="center" cellpadding="2" cellspacing="1" border="1">
+    <table align="center" cellpadding="2" cellspacing="1" border="1" rules="all">
     <tbody>
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
     <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 1</b></td>
-    <td width="9%"><b>S60 3rd Edition, Feature Pack 2</b></td>
-    <td width="9%"><b>S60 5th Edition</b></td>
-    <td width="9%"><b>Symbian^3</b></td>
-    <td width="9%"><b>Maemo 5</b></td>
-    <td width="9%"><b>Windows CE/Mobile<b></b></b></td>
-    <td width="9%"><b>Windows XP/Vista</b></td>
-    <td width="9%"><b>Linux</b></td>
-    <td width="9%"><b>Mac OS X</b></td>
+    <td><b>S60 3rd Edition, Feature Pack 1</b></td>
+    <td><b>S60 3rd Edition, Feature Pack 2</b></td>
+    <td><b>S60 5th Edition</b></td>
+    <td><b>Symbian^3</b></td>
+    <td nowrap="nowrap"><b>Maemo 5</b></td>
+    <td><b>Windows CE/Mobile<b></b></b></td>
+    <td><b>Windows XP/Vista</b></td>
+    <td><b>Linux</b></td>
+    <td nowrap="nowrap"><b>Mac OS X</b></td>
     </tr>
     <tr>
-    <td>Service Framework (in-process)</td>
+    <td nowrap="nowrap">Service Framework (in-process)</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -509,18 +510,18 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     </tr>
     <tr>
     <td>Camera</td>
     <td>TP</td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -528,7 +529,7 @@
     <td bgcolor="gray"></td>
     </tr>
     <tr>
-    <td>Service Framework(OOP)</td>
+    <td nowrap="nowrap">Service Framework(OOP)</td>
     <td>TP</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -536,17 +537,17 @@
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <tr>
     <td>Organizer</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -556,10 +557,10 @@
     <tr>
     <td>Landmarks</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
@@ -569,10 +570,10 @@
     <tr>
     <td>Document Gallery</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -595,11 +596,11 @@
     <tr>
     <td>Feedback</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -608,10 +609,10 @@
     <tr>
     <td>Telephony Events</td>
     <td>TP</td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
