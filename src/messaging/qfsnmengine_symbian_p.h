@@ -54,6 +54,9 @@
 #include <nmapimessageenvelope.h>
 #include <nmapifolder.h>
 #include <nmapimailboxlisting.h>
+#include <nmapienvelopelisting.h>
+#include <nmapimessagesearch.h>
+#include <nmapicommon.h>
 
 #include "qmessagemanager.h"
 #include "qmessagestore_symbian_p.h"
@@ -61,7 +64,6 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
-
 
 using namespace EmailClientApi;
 
@@ -90,7 +92,19 @@ struct FSMessageQueryInfo
 
 struct FSSearchOperation
 {
+    enum FSSearchOperationType {
+        SearchFolder,
+        SearchAccount
+    };
 
+    enum FSSearchOperationStatus {
+        SearchActive,
+        SearchQueued
+    };
+    NmApiEnvelopeListing* m_FolderSearch;
+    NmApiMessageSearch* m_AccountSearch;
+    FSSearchOperationType m_Type;
+    FSSearchOperationStatus m_Status;
 };
 
 
@@ -229,17 +243,13 @@ public:
 
     
 public slots:
-    void SearchCompleted();
+    void searchOperationCompleted();
+    void searchCompleted();
 
 private:
-    void filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
-                                const QMessageSortOrder& sortOrder,
-                                const QString body = QString(),
-                                QMessageDataComparator::MatchFlags matchFlags = 0);
-    
-   // void getAllMessagesL(TEmailSortCriteria& sortCriteria);
-   // void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
-   // void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
+    //void getAllMessagesL();
+    void getFolderSpecificMessages(QMessageFolder& messageFolder);
+    void getAccountSpecificMessages(QMessageAccount& messageAccount, NmApiMailSortCriteria& sortCriteria);
     
     bool fillsSearchKeyCriteria(QMessageId& messageId);
 
