@@ -112,6 +112,7 @@ contains(mobility_modules,sensors) {
 
 contains(mobility_modules,gallery) {
     SUBDIRS += \
+        documentproperties \
         mediabrowser
 
     contains(QT_CONFIG, webkit): SUBDIRS += documentshare
