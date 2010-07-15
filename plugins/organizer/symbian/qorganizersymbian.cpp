@@ -47,6 +47,7 @@
 #include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
 #include "organizeritemguidtransform.h"
+#include "organizeritemrequestserviceprovider.h"
 
 //QTM_USE_NAMESPACE
 
@@ -88,6 +89,7 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait->Start();
     
+    m_requestServiceProvider = COrganizerItemRequestsServiceProvider::NewL(*this);
     // Create change notification filter
     TCalTime minTime;
     minTime.SetTimeUtcL(TCalTime::MinTime());
@@ -107,7 +109,8 @@ QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
     m_calSession->StopChangeNotification();
-    
+
+	delete m_requestServiceProvider;
     delete m_activeSchedulerWait;
     delete m_entryView;
     delete m_calSession;
@@ -482,6 +485,7 @@ bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definiti
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
+    m_requestServiceProvider->StartRequest(req);
     /*
         TODO
 
@@ -519,7 +523,8 @@ bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* re
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-    return QOrganizerItemManagerEngine::startRequest(req);
+	return true;
+    //return QOrganizerItemManagerEngine::startRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
@@ -753,4 +758,9 @@ bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerIt
         }
     }
     return *qtError == QOrganizerItemManager::NoError;
+}
+
+CCalEntryView* QOrganizerItemSymbianEngine::entryView()
+{
+    return m_entryView;
 }
