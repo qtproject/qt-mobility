@@ -104,8 +104,15 @@ to change notifications.
 /*!
     \module QtMultimediaKit
     \title  QtMultimediaKit Module
-    \brief  The QtMultimediaKit Module provides APIs to play and record media, and manage a collection of media content.
+    \brief  The QtMultimediaKit module provides APIs to play and record media, and manage a collection of media content.
     
+    This module delivers an easy to use interface to multimedia functions. The
+    developer is able to render images, video and sound and record sound in a
+    variety of formats.
+
+    QtMultimediaKit contains both the low level APIs previously found in Qt 4.6
+    and also the High level Multimedia APIs that were introduced earlier in Qt
+    Mobility.
 */
 
 
