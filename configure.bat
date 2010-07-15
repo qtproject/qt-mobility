@@ -68,8 +68,8 @@ if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
 if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
 if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
-echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
-echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
+echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH:\=/% > %QMAKE_CACHE%
+echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH:\=/% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
 :cmdline_parsing
@@ -358,7 +358,7 @@ set QT_MOBILITY_PREFIX=%CD%
 cd /D %CURRENTDIR%
 
 :endprefixProcessing
-echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX% >> %PROJECT_CONFIG%
+echo QT_MOBILITY_PREFIX = %QT_MOBILITY_PREFIX:\=/% >> %PROJECT_CONFIG%
 
 echo build_unit_tests = %BUILD_UNITTESTS% >> %PROJECT_CONFIG%
 set BUILD_UNITTESTS=
@@ -516,9 +516,10 @@ REM compile tests go here.
 for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
 if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
-goto noTests
+goto windowsTests
 
 :symbianTests
+
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
@@ -531,10 +532,20 @@ call :compileTest Symbian_Hb hb_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-REM call :compileTest OpenMaxAl_support openmaxal_symbian
+call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 call :compileTest IMMERSION immersion
+
+goto noTests
+
+:windowsTests
+
+call :compileTest DirectShow directshow
+call :compileTest WindowsMediaSDK wmsdk
+call :compileTest WindowMediaPlayer wmp
+call :compileTest EnhancedVideoRenderer evr
+
 :noTests
 
 echo End of compile tests

@@ -45,6 +45,7 @@
 #include "qsensormanager.h"
 #include <QDebug>
 #include <QMetaProperty>
+#include <QTimer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -216,6 +217,16 @@ bool QSensor::isBusy() const
 
     This is true if the sensor is active (returning values). This is false otherwise.
 */
+void QSensor::setActive(bool active)
+{
+    if (active == d->active)
+        return;
+
+    if (active)
+        QTimer::singleShot(0, this, SLOT(start())); // delay ensures all properties have been set if using QML
+    else
+        stop();
+}
 
 bool QSensor::isActive() const
 {
@@ -313,6 +324,7 @@ bool QSensor::start()
     d->busy = false;
     // Backend will update the flags appropriately
     d->backend->start();
+    Q_EMIT activeChanged();
     return d->active;
 }
 
@@ -329,6 +341,7 @@ void QSensor::stop()
         return;
     d->active = false;
     d->backend->stop();
+    Q_EMIT activeChanged();
 }
 
 /*!

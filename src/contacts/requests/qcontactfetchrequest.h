@@ -71,9 +71,6 @@ public:
     QList<QContactSortOrder> sorting() const;
     QContactFetchHint fetchHint() const;
 
-    void Q_DECL_DEPRECATED setDefinitionRestrictions(const QStringList& definitionNames);
-    QStringList Q_DECL_DEPRECATED definitionRestrictions() const;
-
     /* Results */
     QList<QContact> contacts() const;
 

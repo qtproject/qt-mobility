@@ -1438,11 +1438,10 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
                 for (int j = 0; j < descriptors.count(); j++) {
                     QContactAction* action = QContactAction::action(descriptors.at(j));
 
-                    QContactFilter d = action->contactFilter(af.value());
+                    QContactFilter d = action->contactFilter();
                     delete action; // clean up.
-                    if (!QContactManagerEngine::validateActionFilter(d))
-                        return QString();
-                    
+                    //if (!QContactManagerEngine::validateActionFilter(d))
+                    //    return QString();
                     str = convertFilterToQueryString(d);
                     if (str.isEmpty())
                         return QString();

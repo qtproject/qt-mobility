@@ -73,9 +73,9 @@ public:
     virtual ~QContactAction() = 0;
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
+    virtual QVariantMap metaData() const = 0;
 
-    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
+    virtual QContactFilter contactFilter() const = 0; // use for matching
     virtual bool isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const = 0;
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
 

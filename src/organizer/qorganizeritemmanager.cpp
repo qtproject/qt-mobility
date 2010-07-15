@@ -56,6 +56,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemManager
   \brief The QOrganizerItemManager class provides an interface which allows clients with access to organizer item information stored in a particular backend.
+
+  \inmodule QtOrganizer
   \ingroup organizer-main
 
   This class provides an abstraction of a datastore or aggregation of datastores which contains organizer item information.

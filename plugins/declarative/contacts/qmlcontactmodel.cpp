@@ -284,7 +284,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             return c.localId();
         case AvatarRole:
             //Just let the imager provider deal with it
-            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
+            // return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
+            return c.detail<QContactAvatar>().imageUrl();
         case Qt::DecorationRole:
             {
                 QContactThumbnail t = c.detail<QContactThumbnail>();

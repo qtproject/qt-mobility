@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include <qvaluespace_p.h>
 #include <qvaluespacesubscriber.h>
 #include <qvaluespacepublisher.h>

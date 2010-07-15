@@ -319,7 +319,7 @@ private Q_SLOTS:
 
 };
 
-class QRunLoopThread : public QThread
+class QRunLoopThread : public QObject
 {
     Q_OBJECT
 
@@ -329,19 +329,21 @@ public:
     bool keepRunning;
     void stop();
 
-protected:
-    void run();
+public Q_SLOTS:
+   void doWork();
 
+protected:
+   QThread t;
 private:
     void startNetworkChangeLoop();
     QMutex mutex;
-    SCDynamicStoreRef storeSession;// = NULL;
+    SCDynamicStoreRef storeSession;
     CFRunLoopSourceRef runloopSource;
 
 private Q_SLOTS:
 };
 
-class QLangLoopThread : public QThread
+class QLangLoopThread : public QObject
 {
     Q_OBJECT
 
@@ -351,15 +353,15 @@ public:
     bool keepRunning;
     void stop();
 
-protected:
-    void run();
+public Q_SLOTS:
+    void doWork();
 
 private:
     QMutex mutex;
-private Q_SLOTS:
+    QThread t;
 };
 
-class QDASessionThread : public QThread
+class QDASessionThread : public QObject
 {
     Q_OBJECT
 
@@ -369,19 +371,20 @@ public:
     bool keepRunning;
     void stop();
     DASessionRef session;
+public Q_SLOTS:
+    void doWork();
 Q_SIGNALS:
     void logicalDrivesChanged(bool added,const QString & vol);
 
 protected:
-    void run();
+    QThread t;
 
 private:
     QMutex mutex;
 
-private Q_SLOTS:
 };
 
-class QBluetoothListenerThread : public QThread
+class QBluetoothListenerThread : public QObject
 {
     Q_OBJECT
 
@@ -389,16 +392,17 @@ public:
     QBluetoothListenerThread(QObject *parent = 0);
     ~QBluetoothListenerThread();
     bool keepRunning;
+    QThread t;
 
 public Q_SLOTS:
     void emitBtPower(bool);
     void stop();
+    void doWork();
 
 Q_SIGNALS:
     void bluetoothPower(bool);
 
 protected:
-    void run();
     IONotificationPortRef port;
     CFRunLoopRef rl;
     CFRunLoopSourceRef rls;

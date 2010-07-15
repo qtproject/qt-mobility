@@ -41,6 +41,7 @@
 
 #include "qgeopositioninfosource_maemo5_p.h"
 #include "liblocationwrapper_p.h"
+#include <qnumeric.h>
 
 using namespace std;
 
@@ -55,11 +56,13 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
     timerInterval = DEFAULT_UPDATE_INTERVAL;
     updateTimer = new QTimer(this);
     updateTimer->setSingleShot(true);
-    connect(updateTimer, SIGNAL(timeout()), this, SLOT(newPositionUpdate()));
+    connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateTimeoutElapsed()));
 
     requestTimer = new QTimer(this);
     requestTimer->setSingleShot(true);
     connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeoutElapsed()));
+
+    connect(LiblocationWrapper::instance(), SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(newPositionUpdate(QGeoPositionInfo)));
 
     errorOccurred = false;
     errorSent = false;
@@ -84,7 +87,16 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supportedPositioningMethods() const
 {
-    return availableMethods;
+    QGeoPositionInfoSource::PositioningMethods methods;
+
+    if (!GConfItem("/system/nokia/location/gps-disabled").value().toBool())
+        methods |= SatellitePositioningMethods;
+    if (!GConfItem("/system/nokia/location/network-disabled").value().toBool())
+        methods |= NonSatellitePositioningMethods;
+    if (methods.testFlag(SatellitePositioningMethods) && methods.testFlag(NonSatellitePositioningMethods))
+        methods |= AllPositioningMethods;
+
+    return methods;
 }
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
@@ -117,10 +129,9 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
     activateTimer();
 }
 
-void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods sources)
+void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods methods)
 {
-    Q_UNUSED(sources)
-    return;
+    QGeoPositionInfoSource::setPreferredPositioningMethods(methods);
 }
 
 int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
@@ -188,9 +199,79 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
     requestTimer->start(timeoutForRequest);
 }
 
-void QGeoPositionInfoSourceMaemo::newPositionUpdate()
+void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &position)
+{    
+    /*
+        Invalid fixes have NaN for horizontal accuracy regardless of
+        whether they come from satellite or non-satellite position methods.
+
+        Satellite fixes always have LOCATION_GPS_DEVICE_TIME_SET.
+        If this is not set and we have a numeric value for horizontal
+        accuracy then we are dealing with a non-satellite based positioning
+        method.
+
+        Since QGeoPositionInfo instances are only considered valid if
+        they have a valid coordinate and a valid timestamp, we use
+        the current date and time as the timestamp for the network based
+        positioning.  This will help in the case where someone wants to
+        reply a journey from a log file.
+
+        Based on some logging it looks like satellite and non-satellite
+        methods can be distinguished (after the initial fix) by whether
+        the time has been set and / or whether the horizontal accuracy
+        is above or below around 500 metres.  Using the timestamp
+        appears to be more definitive than using the accuracy.
+    */
+
+    const bool horizontalAccuracyDefined = !qIsNaN(position.attribute(QGeoPositionInfo::HorizontalAccuracy));
+    const bool hasTimeStamp = !position.timestamp().isNull();
+
+    if (horizontalAccuracyDefined) {
+        if (hasTimeStamp) {
+            //Valid satellite fix
+            lastUpdateFromSatellite = position;
+        } else {
+            //Valid non-satellite fix
+            QGeoPositionInfo networkPosition(position);
+            networkPosition.setTimestamp(QDateTime::currentDateTime());
+            lastUpdateFromNetwork = networkPosition;
+        }
+    } else {
+        //Invalid position update
+        if (hasTimeStamp) {
+            lastUpdateFromSatellite = QGeoPositionInfo();
+        } else {
+            lastUpdateFromNetwork = QGeoPositionInfo();
+        }
+    }
+}
+
+void QGeoPositionInfoSourceMaemo::updateTimeoutElapsed()
 {
-    if (LiblocationWrapper::instance()->fixIsValid()) {
+    QGeoPositionInfo position;
+
+    QGeoPositionInfoSource::PositioningMethods methods = preferredPositioningMethods();
+
+    if (methods.testFlag(AllPositioningMethods)) {
+        methods |= SatellitePositioningMethods;
+        methods |= NonSatellitePositioningMethods;
+    }
+
+    if (methods.testFlag(SatellitePositioningMethods) && !methods.testFlag(NonSatellitePositioningMethods)) {
+        //only SatellitePositioningMethods preferred
+        position = lastUpdateFromSatellite;
+    } else if (methods.testFlag(NonSatellitePositioningMethods) && !methods.testFlag(SatellitePositioningMethods)) {
+        //only NonSatellitePositioningMethods preferred
+        position = lastUpdateFromNetwork;
+    } else {
+        //AllPositioningMethods or none preferred
+        if (lastUpdateFromSatellite.isValid())
+            position = lastUpdateFromSatellite;
+        else
+            position = lastUpdateFromNetwork;
+    }
+
+    if (position.isValid()) {
         errorOccurred = false;
         errorSent = false;
 
@@ -205,16 +286,16 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate()
             // Ensure that requested position fix is emitted even though
             // powersave is active and GPS would normally be off.
             if ((positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive) &&
-                    (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)) {
-                emit positionUpdated(LiblocationWrapper::instance()->position());
+               (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)) {
+                emit positionUpdated(position);
             }
         }
 
         // Make sure that if update is triggered when waking up, there
         // is no false position update.
         if (!((positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive) &&
-                (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)))
-            emit positionUpdated(LiblocationWrapper::instance()->position());
+             (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)))
+            emit positionUpdated(position);
     } else {
         // if an error occurs when we are updating periodically and we haven't
         // sent an error since the last fix...

@@ -60,26 +60,27 @@ public:
     ~QTelephonyCallInfo();
 
     enum CallType {
-        Unknown = 0,
-        Any,
-        Voip,
+        Any = 0,
+        Text,
+        Data,
+        Video,
         Voice,
-        Video
+        Other
     };
 
     enum CallStatus {
-        Undefined = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
+        Idle = 0,
+        Dialing,
+        Alerting,
+        Connected,
+        Disconnecting,
+        Incomming,
+        OnHold
     };
 
-    QString callIdentifier() const;
-    QList< quint32 > contacts() const;
+    QString remotePartyIdentifier() const;
     CallType type() const;
-    QString subTyp() const;
+    QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;
 private:

@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
+  \inmodule QtOrganizer
+
   \ingroup organizer-main
 
   It allows a client to asynchronously request some functionality of a

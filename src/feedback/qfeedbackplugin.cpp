@@ -55,6 +55,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QFeedbackInterface
     \ingroup feedback
+    \inmodule QtFeedback
 
     \brief The QFeedbackInterface class is the base class for interfaces providing feedback.
 
