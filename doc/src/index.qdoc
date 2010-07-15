@@ -212,11 +212,13 @@
 
     \section2 Location
 
-    The C++ API is one layer of this feature. This API provides an easy to
+    The location API is composed of 3 components. Location positioning, 
+    landmarks, and mapping and navigation.  The location positioning API provides an easy to 
     use interface that encapsulates basic geographical information obtained
     from satellite or other sources about the user, including latitude and
-    longitude, bearing, speed and altitude. It will enable a range of
-    geographical applications, for example, maps.
+    longitude, bearing, speed and altitude.  The Landmarks API allows storage and 
+    retrieval of points of interests while the Maps and Navigation API provides
+    mapping, geocoding and routing functionality.
     
     For more details, see the \l {Location} {Location API overview}.
 
