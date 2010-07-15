@@ -1,9 +1,9 @@
 INCLUDEPATH += $$PWD
 LIBS += -lmediaclientvideo \
-	-lmediaclientaudio \
-	-lws32 \
-	-lfbscli \
-	-lcone \
+    -lmediaclientaudio \
+    -lws32 \
+    -lfbscli \
+    -lcone \
     -lmmfcontrollerframework \
     -lefsrv \
     -lbitgdi \
@@ -17,7 +17,7 @@ LIBS += -lmediaclientvideo \
 DEFINES += HAS_MEDIA_PLAYER
 
 drm_supported {
-    LIBS + = -ldrmaudioplayutility
+    LIBS += -ldrmaudioplayutility
     DEFINES += S60_DRM_SUPPORTED
 }
 
@@ -77,7 +77,7 @@ contains(S60_VERSION, 3.1) {
 
 }
 
-exists($$[QT_INSTALL_HEADERS]\QtGui\private\qwidget_p.h) {
+exists($$[QT_INSTALL_HEADERS]/QtGui/private/qwidget_p.h) {
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
     message("Enabling use of private QWidget methods")
 }

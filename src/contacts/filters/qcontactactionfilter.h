@@ -54,12 +54,10 @@ public:
     QContactActionFilter(const QContactFilter& other);
 
     void setActionName(const QString& action);
-    void setValue(const QVariant& value);
     void setVendor(const QString& vendorName, int implementationVersion = -1);
 
     /* Accessors */
     QString actionName() const;
-    QVariant value() const;
     QString vendorName() const;
     int implementationVersion() const;
 

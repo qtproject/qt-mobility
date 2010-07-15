@@ -42,19 +42,19 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
+#include "qdeclarativenetworkinfo_p.h"
 #include "qsysteminfo.h"
-
 QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QSystemInfo);
-QML_DECLARE_TYPE(QSystemNetworkInfo);
-QML_DECLARE_TYPE(QSystemDisplayInfo);
-QML_DECLARE_TYPE(QSystemDeviceInfo);
-QML_DECLARE_TYPE(QSystemScreenSaver);
-QML_DECLARE_TYPE(QSystemStorageInfo);
-
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemNetworkInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemDisplayInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemDeviceInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemScreenSaver));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QSystemStorageInfo));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeNetworkInfo));
 
 class QSystemInfoDeclarativeModule : public QDeclarativeExtensionPlugin
 {
@@ -64,12 +64,12 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.systeminfo"));
 
-        qmlRegisterType<QSystemInfo>(uri, 1, 0, "SystemInfo");
-        qmlRegisterType<QSystemNetworkInfo>(uri, 1, 0, "SystemNetworkInfo");
-        qmlRegisterType<QSystemDisplayInfo>(uri, 1, 0, "SystemDisplayInfo");
-        qmlRegisterType<QSystemDeviceInfo>(uri, 1, 0, "SystemDeviceInfo");
-        qmlRegisterType<QSystemScreenSaver>(uri, 1, 0, "SystemScreenSaver");
-        qmlRegisterType<QSystemStorageInfo>(uri, 1, 0, "SystemStorageInfo");
+        qmlRegisterType<QSystemInfo>(uri, 1, 0, "GeneralInfo");
+        qmlRegisterType<QSystemDisplayInfo>(uri, 1, 0, "DisplayInfo");
+        qmlRegisterType<QSystemDeviceInfo>(uri, 1, 0, "DeviceInfo");
+        qmlRegisterType<QDeclarativeNetworkInfo>(uri,1, 0, "NetworkInfo");
+        qmlRegisterType<QSystemScreenSaver>(uri, 1, 0, "ScreenSaver");
+        qmlRegisterType<QSystemStorageInfo>(uri, 1, 0, "StorageInfo");
     }
 };
 

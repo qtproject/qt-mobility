@@ -46,3 +46,4 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
 
+# The symbian UID reserved for this plug-in is 0x2002BFCC

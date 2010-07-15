@@ -74,8 +74,6 @@ public:
     void stop();
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     bool inited();
-    QGeoPositionInfo position();
-    bool fixIsValid();
     bool isActive();
     QList<QGeoSatelliteInfo> satellitesInView();
     QList<QGeoSatelliteInfo> satellitesInUse();
@@ -96,6 +94,7 @@ private:
     QGeoPositionInfo lastSatUpdate;
     bool validLastUpdate;
     bool validLastSatUpdate;
+    bool fromSatellite;
 
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
@@ -112,10 +111,8 @@ private:
     };
     int locationState;
 
-private slots:
-    void setLocation(const QGeoPositionInfo &update, bool locationValid);
-
 signals:
+    void positionUpdated(const QGeoPositionInfo &position);
     void error();
 };
 

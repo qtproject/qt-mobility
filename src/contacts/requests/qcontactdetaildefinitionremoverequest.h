@@ -68,9 +68,6 @@ public:
     /* Results */
     QMap<int, QContactManager::Error> errorMap() const;
 
-    /* deprecated - to be removed after the transition period has elapsed */
-    void Q_DECL_DEPRECATED setDefinitionNames(const QString& contactType, const QStringList& names);
-
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRemoveRequest)
     friend class QContactManagerEngine;

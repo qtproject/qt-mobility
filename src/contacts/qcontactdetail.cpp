@@ -43,6 +43,7 @@
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -481,27 +482,48 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 }
 #endif
 
+#ifndef QT_NO_DATASTREAM
 /*!
- * \deprecated
- * Sets the preferred actions for this detail to be the given list of \a preferredActions.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
+ * Writes \a detail to the stream \a out.
  */
-void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
+QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
 {
-    d->m_preferredActions = preferredActions;
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetail
+    return out << formatVersion
+               << detail.definitionName()
+               << static_cast<quint32>(detail.accessConstraints())
+               << detail.variantValues();
 }
 
 /*!
- * \deprecated
- * Returns the list of preferred actions for this detail.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
+ * Reads a contact detail from stream \a in into \a detail.
  */
-QList<QContactActionDescriptor> QContactDetail::preferredActions() const
+QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
 {
-    return d->m_preferredActions;
+    detail = QContactDetail();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        quint32 accessConstraintsInt;
+        QVariantMap values;
+        in >> definitionName >> accessConstraintsInt >> values;
+
+        detail = QContactDetail(definitionName);
+        QContactDetail::AccessConstraints accessConstraints(accessConstraintsInt);
+        detail.d->m_access = accessConstraints;
+
+        QMapIterator<QString, QVariant> it(values);
+        while (it.hasNext()) {
+            it.next();
+            detail.setValue(it.key(), it.value());
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
 }
+#endif
 
 /*!
     Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.

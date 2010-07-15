@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include <QTest>
 #include <QMetaType>
 #include <QSignalSpy>

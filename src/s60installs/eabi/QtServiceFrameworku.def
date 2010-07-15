@@ -109,4 +109,20 @@ EXPORTS
 	_ZTVN10QtMobility15QServiceManagerE @ 108 NONAME
 	_ZTVN10QtMobility23QServicePluginInterfaceE @ 109 NONAME
 	_ZTVN10QtMobility24QAbstractSecuritySessionE @ 110 NONAME
+	_ZN10QtMobility21QRemoteServiceControl11qt_metacallEN11QMetaObject4CallEiPPv @ 111 NONAME
+	_ZN10QtMobility21QRemoteServiceControl11qt_metacastEPKc @ 112 NONAME
+	_ZN10QtMobility21QRemoteServiceControl15publishServicesERK7QString @ 113 NONAME
+	_ZN10QtMobility21QRemoteServiceControl16staticMetaObjectE @ 114 NONAME DATA 16
+	_ZN10QtMobility21QRemoteServiceControl19getStaticMetaObjectEv @ 115 NONAME
+	_ZN10QtMobility21QRemoteServiceControlC1EP7QObject @ 116 NONAME
+	_ZN10QtMobility21QRemoteServiceControlC2EP7QObject @ 117 NONAME
+	_ZN10QtMobility21QRemoteServiceControlD0Ev @ 118 NONAME
+	_ZN10QtMobility21QRemoteServiceControlD1Ev @ 119 NONAME
+	_ZN10QtMobility21QRemoteServiceControlD2Ev @ 120 NONAME
+	_ZN10QtMobility27QRemoteServiceClassRegister12registerTypeEPK11QMetaObjectPFP7QObjectvEPFNS_24QRemoteServiceIdentifierEvENS0_12InstanceTypeE @ 121 NONAME
+	_ZNK10QtMobility21QRemoteServiceControl10metaObjectEv @ 122 NONAME
+	_ZNK10QtMobility27QRemoteServiceClassRegister10metaObjectERKNS_24QRemoteServiceIdentifierE @ 123 NONAME
+	_ZNK10QtMobility27QRemoteServiceClassRegister5typesEv @ 124 NONAME
+	_ZTIN10QtMobility21QRemoteServiceControlE @ 125 NONAME
+	_ZTVN10QtMobility21QRemoteServiceControlE @ 126 NONAME
 

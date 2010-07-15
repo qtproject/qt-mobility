@@ -47,6 +47,7 @@
 
 #include "qtcontactsglobal.h"
 
+class QDataStream;
 QTM_BEGIN_NAMESPACE
 
 typedef quint32 QContactLocalId;
@@ -78,6 +79,10 @@ private:
 Q_CONTACTS_EXPORT uint qHash(const QContactId& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactId& id);
+#endif
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactId& id);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactId& id);
 #endif
 
 QTM_END_NAMESPACE

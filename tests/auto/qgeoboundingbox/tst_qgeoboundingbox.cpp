@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include <QtTest/QtTest>
 #include <qgeoboundingbox.h>
 #include <qgeocoordinate.h>
