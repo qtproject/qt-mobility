@@ -43,6 +43,7 @@
 #include <qfeedbackactuator.h>
 #include <qfeedbackeffect.h>
 
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 
@@ -50,8 +51,56 @@ void completeExample();
 
 void completeExample()
 {
-    //TODO..
-//! [Complete example]
-    // Coming soon...
-//! [Complete example]
+//! [Play the system theme button click effect]
+    QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBasicButton);
+//! [Play the system theme button click effect]
+
+//! [Play the system theme bounce effect]
+    QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeBounceEffect);
+//! [Play the system theme bounce effect]
+
+//! [Define a custom haptic effect]
+    QFeedbackHapticsEffect rumble;
+    rumble.setAttackIntensity(0.0);
+    rumble.setAttackTime(250);
+    rumble.setIntensity(1.0);
+    rumble.setDuration(100);
+    rumble.setFadeTime(250);
+    rumble.setFadeIntensity(0.0);
+//! [Define a custom haptic effect]
+
+//! [Start playing a custom haptic effect]
+    rumble.start();
+//! [Start playing a custom haptic effect]
+
+//! [Pause a custom haptic effect]
+    rumble.pause();
+//! [Pause a custom haptic effect]
+
+//! [Stop playing a custom haptic effect]
+    rumble.stop();
+//! [Stop playing a custom haptic effect]
+
+//! [Query the state of a custom haptic effect]
+    if (rumble.state() == QFeedbackEffect::Stopped)
+        qDebug() << "The device has stopped rumbling!";
+//! [Query the state of a custom haptic effect]
+
+//! [Set the actuator which should play the custom effect]
+    QFeedbackActuator actuator; // default system actuator
+    QList<QFeedbackActuator> actuators = QFeedbackActuator::actuators();
+    foreach (const QFeedbackActuator& temp, actuators) {
+        if (temp.name() == "ExampleActuatorName") {
+            actuator = temp;
+        }
+    }
+    rumble.setActuator(actuator);
+//! [Set the actuator which should play the custom effect]
+
+//! [Play a haptic effect from a file]
+    QFeedbackFileEffect hapticTune;
+    hapticTune.setFileName("mySavedRumble.ifr");
+    hapticTune.load();
+    hapticTune.start();
+//! [Play a haptic effect from a file]
 }

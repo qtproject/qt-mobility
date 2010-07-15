@@ -47,9 +47,6 @@
 \brief Landmarks allows management of landmark data, these examples show
 how it is done.
 
-\ingroup navigation
-\ingroup mobility
-
 \note This API and documentation is a \bold {Technology Preview} and is still
 subject to change.
 

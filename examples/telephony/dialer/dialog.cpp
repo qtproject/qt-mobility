@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include "dialog.h"
-#include "ui_dialog.h"
 
 #if defined(Q_WS_MAEMO_5)
 # include "dialer_maemo.h"
@@ -58,42 +57,40 @@
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Dialog),
     dialer(0)
 {
     dialer = new Dialer;
 
-    ui->setupUi(this);
+    ui.setupUi(this);
     this->setWindowTitle("Dialer");
 
-    connect(ui->pushButtonDial, SIGNAL(released()), SLOT(dial()));
-    connect(ui->pushButton0, SIGNAL(released()), SLOT(button0()));
-    connect(ui->pushButton1, SIGNAL(released()), SLOT(button1()));
-    connect(ui->pushButton2, SIGNAL(released()), SLOT(button2()));
-    connect(ui->pushButton3, SIGNAL(released()), SLOT(button3()));
-    connect(ui->pushButton4, SIGNAL(released()), SLOT(button4()));
-    connect(ui->pushButton5, SIGNAL(released()), SLOT(button5()));
-    connect(ui->pushButton6, SIGNAL(released()), SLOT(button6()));
-    connect(ui->pushButton7, SIGNAL(released()), SLOT(button7()));
-    connect(ui->pushButton8, SIGNAL(released()), SLOT(button8()));
-    connect(ui->pushButton9, SIGNAL(released()), SLOT(button9()));
-    setTabOrder(ui->lineEditPhoneNumber, ui->pushButton1);
-    setTabOrder(ui->pushButton1, ui->pushButton2);
-    setTabOrder(ui->pushButton2, ui->pushButton3);
-    setTabOrder(ui->pushButton3, ui->pushButton4);
-    setTabOrder(ui->pushButton4, ui->pushButton5);
-    setTabOrder(ui->pushButton5, ui->pushButton6);
-    setTabOrder(ui->pushButton6, ui->pushButton7);
-    setTabOrder(ui->pushButton7, ui->pushButton8);
-    setTabOrder(ui->pushButton8, ui->pushButton9);
-    setTabOrder(ui->pushButton9, ui->pushButton0);
-    setTabOrder(ui->pushButton0, ui->pushButtonDial);
+    connect(ui.pushButtonDial, SIGNAL(released()), SLOT(dial()));
+    connect(ui.pushButton0, SIGNAL(released()), SLOT(button0()));
+    connect(ui.pushButton1, SIGNAL(released()), SLOT(button1()));
+    connect(ui.pushButton2, SIGNAL(released()), SLOT(button2()));
+    connect(ui.pushButton3, SIGNAL(released()), SLOT(button3()));
+    connect(ui.pushButton4, SIGNAL(released()), SLOT(button4()));
+    connect(ui.pushButton5, SIGNAL(released()), SLOT(button5()));
+    connect(ui.pushButton6, SIGNAL(released()), SLOT(button6()));
+    connect(ui.pushButton7, SIGNAL(released()), SLOT(button7()));
+    connect(ui.pushButton8, SIGNAL(released()), SLOT(button8()));
+    connect(ui.pushButton9, SIGNAL(released()), SLOT(button9()));
+    setTabOrder(ui.lineEditPhoneNumber, ui.pushButton1);
+    setTabOrder(ui.pushButton1, ui.pushButton2);
+    setTabOrder(ui.pushButton2, ui.pushButton3);
+    setTabOrder(ui.pushButton3, ui.pushButton4);
+    setTabOrder(ui.pushButton4, ui.pushButton5);
+    setTabOrder(ui.pushButton5, ui.pushButton6);
+    setTabOrder(ui.pushButton6, ui.pushButton7);
+    setTabOrder(ui.pushButton7, ui.pushButton8);
+    setTabOrder(ui.pushButton8, ui.pushButton9);
+    setTabOrder(ui.pushButton9, ui.pushButton0);
+    setTabOrder(ui.pushButton0, ui.pushButtonDial);
 }
 
 Dialog::~Dialog()
 {
     if(dialer) delete dialer;
-    delete ui;
 }
 
 void Dialog::changeEvent(QEvent *e)
@@ -101,7 +98,7 @@ void Dialog::changeEvent(QEvent *e)
     QDialog::changeEvent(e);
     switch (e->type()) {
     case QEvent::LanguageChange:
-        ui->retranslateUi(this);
+        ui.retranslateUi(this);
         break;
     default:
         break;
@@ -112,15 +109,15 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::dial()
 {
-    dialer->dial(ui->lineEditPhoneNumber->text());
-    ui->lineEditPhoneNumber->clear();
+    dialer->dial(ui.lineEditPhoneNumber->text());
+    ui.lineEditPhoneNumber->clear();
 }
 
 void Dialog::addNumber(int val)
 {
-    QString txtval = ui->lineEditPhoneNumber->text();
+    QString txtval = ui.lineEditPhoneNumber->text();
     txtval += QString().setNum(val, 10);
-    ui->lineEditPhoneNumber->setText(txtval);
+    ui.lineEditPhoneNumber->setText(txtval);
 }
 
 

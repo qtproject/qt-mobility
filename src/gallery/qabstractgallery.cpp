@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup gallery
     \ingroup gallery-galleries
 
+    \inmodule QtGallery
+
     \brief The QAbstractGallery class provides a base class for gallery
     implementations.
 */
