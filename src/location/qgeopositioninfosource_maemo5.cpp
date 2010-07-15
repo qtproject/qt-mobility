@@ -51,8 +51,6 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
     : QGeoPositionInfoSource(parent)
 {
     // default values    
-    availableMethods = SatellitePositioningMethods;
-
     timerInterval = DEFAULT_UPDATE_INTERVAL;
     updateTimer = new QTimer(this);
     updateTimer->setSingleShot(true);
