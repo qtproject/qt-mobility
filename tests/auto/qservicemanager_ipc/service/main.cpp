@@ -114,7 +114,6 @@ public:
 
     Q_INVOKABLE void setConfirmationHash(uint hash)
     {
-        qDebug() << "I DID IT CUNT";
         m_hash = hash;
     }
 
