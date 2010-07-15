@@ -763,9 +763,12 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     // Returns InvalidItemTypeError if the type won't be recognized later
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
-    CComponent *component = d->m_itemTransformer.createCComponent(cal, item);
-    if (!component)
+    CComponent *component = d->m_itemTransformer.createCComponent(cal, item, error);
+    qDebug() << "main, 767, error = " << *error;
+    if (!component || *error != QOrganizerItemManager::NoError) {
+        delete component;
         return calError;
+    }
 
     // Read the given GUID
     item->setGuid(QString::fromStdString(component->getGUid()));
@@ -1048,9 +1051,14 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
     // This is done before saving the parent, so we don't have to rollback
     // the parent changes if the component creation fails.
     calError = CALENDAR_OPERATION_SUCCESSFUL;
-    CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence);
+    CComponent *component = d->m_itemTransformer.createCComponent(cal, occurrence, error);
+    qDebug() << "main, 1053, error = " << *error;
     if (!component) {
         *error = QOrganizerItemManager::UnspecifiedError;
+        return calError;
+    }
+    if (*error != QOrganizerItemManager::NoError) {
+        delete component;
         return calError;
     }
     // TODO: The custom detail fields should be iterated and the corresponding
@@ -1064,7 +1072,15 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             qDebug() << "saving parent modification failed";
             // saving the parent modifications failed
             // we must not save the occurrence either
+            delete component;
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
+            return calError;
+        }
+        if (*error != QOrganizerItemManager::NoError) {
+            qDebug() << "saving parent modification failed";
+            // saving the parent modifications failed
+            // we must not save the occurrence either
+            delete component;
             return calError;
         }
     }

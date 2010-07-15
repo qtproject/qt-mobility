@@ -87,10 +87,10 @@ public: // transform functions
 
     // conversions between CComponent and QOrganizerItem (common details for all items)
     void fillInCommonCComponentDetails(QOrganizerItem *item, CComponent *component, bool setId = true);
-    CComponent* createCComponent(CCalendar *cal, const QOrganizerItem *item);
+    CComponent* createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
     // recurrence information conversions
-    CRecurrence* createCRecurrence(const QOrganizerItem *item);
+    CRecurrence* createCRecurrence(const QOrganizerItem *item, QOrganizerItemManager::Error *error);
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError(int calError) const;

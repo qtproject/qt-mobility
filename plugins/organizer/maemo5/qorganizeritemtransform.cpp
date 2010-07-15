@@ -329,8 +329,10 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
     }
 }
 
-CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item)
+CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrganizerItem *item, QOrganizerItemManager::Error *error)
 {
+    *error = QOrganizerItemManager::InvalidItemTypeError;
+
     QOrganizerItemLocalId itemId = item->localId();
     QString itemIdStr = QString::number(itemId);
     int calId = cal->getCalendarId();
@@ -339,6 +341,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
     if (item->type() == QOrganizerItemType::TypeEvent
         || item->type() == QOrganizerItemType::TypeEventOccurrence) {
+
+        *error = QOrganizerItemManager::NoError;
 
         CEvent *cevent = cal->getEvent(itemIdStr.toStdString(), calError);
         if (!cevent) {
@@ -372,7 +376,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         if (item->type() == QOrganizerItemType::TypeEvent) {
             // Build and set the recurrence information for the event
-            CRecurrence *recurrence = createCRecurrence(item);
+            CRecurrence *recurrence = createCRecurrence(item, error);
+            qDebug() << "itemtransform, 380: Error = " << *error;
             cevent->setRecurrence(recurrence);
             delete recurrence; // setting makes a copy
             recurrence = 0;
@@ -383,6 +388,8 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     }
     else if (item->type() == QOrganizerItemType::TypeTodo
             || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+
+        *error = QOrganizerItemManager::NoError;
 
         CTodo *ctodo = cal->getTodo(itemIdStr.toStdString(), calError);
         if (!ctodo) {
@@ -425,7 +432,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         ctodo->setPercentComplete(todo->progressPercentage());
 
         // Build and set the recurrence information for the todo
-        CRecurrence *recurrence = createCRecurrence(item);
+        CRecurrence *recurrence = createCRecurrence(item, error);
         ctodo->setRecurrence(recurrence);
         delete recurrence; // setting makes a copy
         recurrence = 0;
@@ -433,6 +440,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         retn = ctodo;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
+        *error = QOrganizerItemManager::NoError;
         CJournal *cjournal = cal->getJournal(itemIdStr.toStdString(), calError);
         if (!cjournal) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -454,6 +462,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         retn = cjournal;
     }
     else if (item->type() == QOrganizerItemType::TypeNote) {
+        *error = QOrganizerItemManager::NotSupportedError;
         // TODO
     }
 
@@ -505,8 +514,10 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
     return retn;
 }
 
-CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item)
+CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* item, QOrganizerItemManager::Error *error)
 {
+    *error = QOrganizerItemManager::NoError;
+
     // Only the event and todo types contain recurrence information
     if (item->type() == QOrganizerItemType::TypeEvent) {
         m_recTransformer.beginTransformToCrecurrence();
@@ -523,14 +534,31 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
             m_recTransformer.addQOrganizerItemExceptionRule(rule);
 
         // Add recurrence dates
+        QDate dateLimit = event->startDateTime().date().addYears(6);
         QList<QDate> recurrenceDates = event->recurrenceDates();
-        foreach (QDate recDate, recurrenceDates)
-            m_recTransformer.addQOrganizerItemRecurrenceDate(event->startDateTime().date(), recDate);
+        foreach (QDate recDate, recurrenceDates) {
+            // Because recurrence dates are simulated with setting an appropriate
+            // recurrence rule, no date must be set 6 years or more after
+            // the current event's date. Otherwise setting a correct rule would be impossible.
+            if (recDate >= dateLimit)
+                *error = QOrganizerItemManager::NotSupportedError;
+
+            // Still set the date, let the caller decise what to do
+            m_recTransformer.addQOrganizerItemRecurrenceDate(recDate);
+        }
 
         // Add exception dates
         QList<QDate> exceptionDates = event->exceptionDates();
-        foreach (QDate exceptionDate, exceptionDates)
-            m_recTransformer.addQOrganizerItemExceptionDate(event->startDateTime().date(), exceptionDate);
+        foreach (QDate exceptionDate, exceptionDates) {
+            // Because exception dates are simulated with setting an appropriate
+            // exception rule, no date must be set 6 years or more after
+            // the current event's date. Otherwise setting a correct rule would be impossible.
+            if (exceptionDate >= dateLimit)
+                *error = QOrganizerItemManager::NotSupportedError;
+
+            // Still set the date, let the caller decise what to do
+            m_recTransformer.addQOrganizerItemExceptionDate(exceptionDate);
+        }
 
         return m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }
@@ -541,6 +569,8 @@ CRecurrence* OrganizerItemTransform::createCRecurrence(const QOrganizerItem* ite
 
         // TODO
     }
+
+    qDebug() << "itemtransform, 573: Error = " << *error;
 
     return 0; // no recurrence information for this item type
 }
