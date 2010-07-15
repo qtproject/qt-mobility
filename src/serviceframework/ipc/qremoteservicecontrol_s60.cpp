@@ -333,12 +333,12 @@ TInt RServiceSession::StartServer()
 #else
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
         qDebug() << "RServiceSession::StartServer() GTR Service not found from Kernel. Starting a process.";
-        qDebug() << "RServiceSession::StartServer() OTR TODO hard coded to start test service: " << "qservicemanager_ipc_service";
+        qDebug() << "RServiceSession::StartServer() OTR TODO hard coded to start test service: " << iServerAddress;
 #endif
         TRequestStatus status;
         RProcess serviceServerProcess;
-        _LIT(KServiceProviderServer, "qservicemanager_ipc_service");
-        ret = serviceServerProcess.Create(KServiceProviderServer, KNullDesC);
+        //_LIT(KServiceProviderServer, "qservicemanager_ipc_service");
+        ret = serviceServerProcess.Create(serviceAddressPtr, KNullDesC);
         if (ret != KErrNone) {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
             qDebug() << "RTR RProcess::Create failed";
