@@ -602,6 +602,7 @@ static bool qt_writeCondition(
 #define QT_GALLERY_FILE_PROPERTYS \
     QT_GALLERY_FILE_MIMETYPE_PROPERTY, \
     QT_GALLERY_ITEM_PROPERTY("fileName"    , "File:Name"     , String  , CanRead | CanSort | CanFilter), \
+    QT_GALLERY_ITEM_PROPERTY("path"        , "File:Path"     , String  , CanRead | CanSort | CanFilter), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Contents" , String  , QGalleryProperty::Attributes()),*/ \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Link"     , String  , QGalleryProperty::Attributes()),*/ \
     QT_GALLERY_ITEM_PROPERTY("fileSize"    , "File:Size"     , Int     , QGalleryProperty::Attributes()), \
