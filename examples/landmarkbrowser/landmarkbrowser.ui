@@ -13,7 +13,39 @@
   <property name="windowTitle">
    <string>Landmark Browser</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="fetchLandmarks">
+       <property name="text">
+        <string>Fetch Landmarks</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="addLandmark">
+       <property name="text">
+        <string>Add Landmark</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="deleteLandmarks">
+       <property name="text">
+        <string>Delete Landmarks</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="importLandmarks">
+       <property name="text">
+        <string>Import Landmarks</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QTableWidget" name="table">
      <property name="sizePolicy">
@@ -35,38 +67,6 @@
      <column/>
      <column/>
     </widget>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QPushButton" name="fetchLandmarks">
-       <property name="text">
-        <string>Fetch Landmarks</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="addLandmark">
-       <property name="text">
-        <string>Add Landmark</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteLandmarks">
-       <property name="text">
-        <string>Delete Landmarks</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="importLandmarks">
-       <property name="text">
-        <string>Import Landmarks</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
