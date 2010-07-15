@@ -174,10 +174,10 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_imageEncodeControl = new CameraBinImageEncoder(this);
     m_recorderControl = new CameraBinRecorder(this);
     m_mediaContainerControl = new CameraBinContainer(this);
-    m_cameraExposureControl = new CameraBinExposure(*m_pipeline, this);
-    m_cameraFocusControl = new CameraBinFocus(*m_pipeline, this);
-    m_imageProcessingControl = new CameraBinImageProcessing(*m_pipeline, this);
-    m_cameraLocksControl = new CameraBinLocks(*m_pipeline, this);
+    m_cameraExposureControl = new CameraBinExposure(this);
+    m_cameraFocusControl = new CameraBinFocus(this);
+    m_imageProcessingControl = new CameraBinImageProcessing(this);
+    m_cameraLocksControl = new CameraBinLocks(this);
 }
 
 CameraBinSession::~CameraBinSession()
@@ -187,6 +187,23 @@ CameraBinSession::~CameraBinSession()
         gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
         gstUnref(m_pipeline);
     }
+}
+
+GstPhotography *CameraBinSession::photography()
+{
+    if (GST_IS_PHOTOGRAPHY(m_pipeline)) {
+        return GST_PHOTOGRAPHY(m_pipeline);
+    } else if (m_videoSrc && GST_IS_PHOTOGRAPHY(m_videoSrc)) {
+        return GST_PHOTOGRAPHY(m_videoSrc);
+    } else {
+        GstElement *src = 0;
+        g_object_get(m_pipeline, VIDEO_SOURCE_PROPERTY, &src, NULL);
+
+        if (src && GST_IS_PHOTOGRAPHY(src))
+            return GST_PHOTOGRAPHY(src);
+    }
+
+    return 0;
 }
 
 bool CameraBinSession::setupCameraBin()
@@ -208,7 +225,8 @@ bool CameraBinSession::setupCameraBin()
     }
 
     if (m_videoInputHasChanged) {
-        g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, buildVideoSrc(), NULL);
+        m_videoSrc = buildVideoSrc();
+        g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
         updateVideoSourceCaps();
         m_videoInputHasChanged = false;
     }
@@ -275,13 +293,16 @@ GstElement *CameraBinSession::buildVideoSrc()
     if (m_videoInputFactory) {
         videoSrc = m_videoInputFactory->buildElement();
     } else {
-#ifndef Q_WS_MAEMO_5
-        videoSrc = gst_element_factory_make("v4l2src", "camera_source");
-#else
         videoSrc = gst_element_factory_make("v4l2camsrc", "camera_source");
-#endif
-    if (videoSrc && !m_inputDevice.isEmpty() )
-        g_object_set(G_OBJECT(videoSrc), "device", m_inputDevice.toLocal8Bit().constData(), NULL);
+
+        if (!videoSrc)
+            videoSrc = gst_element_factory_make("v4l2src", "camera_source");
+
+        if (!videoSrc)
+            gst_element_factory_make("autovideosrc", "camera_source");
+
+        if (videoSrc && !m_inputDevice.isEmpty() )
+            g_object_set(G_OBJECT(videoSrc), "device", m_inputDevice.toLocal8Bit().constData(), NULL);
     }
 
     return videoSrc;
@@ -422,7 +443,8 @@ void CameraBinSession::setState(QCamera::State newState)
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
         if (m_state == QCamera::IdleState && m_videoInputHasChanged) {
-            g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, buildVideoSrc(), NULL);
+            m_videoSrc = buildVideoSrc();
+            g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
             updateVideoSourceCaps();
             m_videoInputHasChanged = false;
         }

@@ -60,7 +60,7 @@ class CameraBinImageProcessing : public QCameraImageProcessingControl
     Q_OBJECT
 
 public:
-    CameraBinImageProcessing(GstElement &camerabin, CameraBinSession *session);
+    CameraBinImageProcessing(CameraBinSession *session);
     virtual ~CameraBinImageProcessing();
 
     QCameraImageProcessing::WhiteBalanceMode whiteBalanceMode() const;
@@ -85,7 +85,6 @@ private:
 
 private:
     CameraBinSession *m_session;
-    GstElement &m_camerabin;
     QMap<QCameraImageProcessingControl::ProcessingParameter, int> m_values;
     QMap<GstWhiteBalanceMode, QCameraImageProcessing::WhiteBalanceMode> m_mappedWbValues;
     QList<QByteArray> m_presets;

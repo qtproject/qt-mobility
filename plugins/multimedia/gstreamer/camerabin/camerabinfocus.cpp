@@ -46,10 +46,9 @@
 
 #include <QDebug>
 
-CameraBinFocus::CameraBinFocus(GstElement &camerabin, CameraBinSession *session)
+CameraBinFocus::CameraBinFocus(CameraBinSession *session)
     :QCameraFocusControl(session),
      m_session(session),
-     m_camerabin(camerabin),
      m_focusMode(QCameraFocus::AutoFocus)
 {
 }
@@ -93,7 +92,7 @@ qreal CameraBinFocus::opticalZoom() const
 qreal CameraBinFocus::digitalZoom() const
 {
     gint zoomFactor = 0;
-    g_object_get(GST_BIN(&m_camerabin), "zoom", &zoomFactor, NULL);
+    g_object_get(GST_BIN(m_session->cameraBin()), "zoom", &zoomFactor, NULL);
     return zoomFactor/100.0;
 }
 
@@ -101,7 +100,7 @@ void CameraBinFocus::zoomTo(qreal optical, qreal digital)
 {
     Q_UNUSED(optical);
     digital = qBound(qreal(1.0), digital, qreal(10.0));
-    g_object_set(GST_BIN(&m_camerabin), "zoom", qRound(digital*100.0), NULL);
+    g_object_set(GST_BIN(m_session->cameraBin()), "zoom", qRound(digital*100.0), NULL);
     emit digitalZoomChanged(digital);
 }
 

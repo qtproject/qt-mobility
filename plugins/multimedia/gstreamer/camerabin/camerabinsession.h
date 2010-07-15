@@ -48,9 +48,9 @@
 #include <QtCore/qdir.h>
 
 #include <gst/gst.h>
+#include <gst/interfaces/photography.h>
 
 #include "qgstreamerbushelper.h"
-
 #include "qcamera.h"
 
 
@@ -86,6 +86,9 @@ class CameraBinSession : public QObject, public QGstreamerSyncEventFilter
 public:
     CameraBinSession(QObject *parent);
     ~CameraBinSession();
+
+    GstPhotography *photography();
+    GstElement *cameraBin() { return m_pipeline; }
 
     QList< QPair<int,int> > supportedFrameRates(const QSize &frameSize, bool *continuous) const;
     QList<QSize> supportedResolutions( QPair<int,int> rate, bool *continuous) const;
