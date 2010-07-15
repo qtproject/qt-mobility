@@ -132,7 +132,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 
     Each landmark consists of a number of properties such as name,
-    coordinates, descriptoin etc.  Landmarks may also be assigned a set of
+    coordinates, description etc.  Landmarks may also be assigned a set of
     generic attributes which may be accessed and modified by using the attribute()
     and setAttribute() functions.
 

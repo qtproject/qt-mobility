@@ -106,8 +106,8 @@ void LandmarkBrowser::on_addLandmark_clicked()
     QLandmark lm = addDialog.landmark();
     manager->saveLandmark(&lm);
     table->insertRow(table->rowCount());
-    table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',10)));
-    table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',10)));
+    table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2)));
+    table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
     table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
     table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
 }
@@ -123,31 +123,11 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
         switch (request->type()) {
             case QLandmarkAbstractRequest::ImportRequest : {
                     if (request->error() == QLandmarkManager::NoError) {
-                        table->setUpdatesEnabled(false);
-                        for(int i = table->rowCount() -1;  i >= 0; --i) {
-                            if (i %20 == 0)
-                                qApp->processEvents();
-                            table->removeRow(i);
-                        }
-
-                        QLandmark lm;
-                        QList<QLandmark> lms = manager->landmarks(QLandmarkFilter());
-                        for (int i=0;i < lms.count(); ++i){
-                            lm = lms.at(i);
-                            table->insertRow(table->rowCount());
-                            table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',10)));
-                            table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',10)));
-                            table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
-                            table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
-
-                            if (i %20 == 0)
-                                qApp->processEvents();
-                        }
-                        table->setUpdatesEnabled(true);
+                        landmarkFetch->start();
                     } else {
                         QMessageBox::warning(this,"Warning", "Import Failed", QMessageBox::Ok, QMessageBox::NoButton);
+                        progress->hide();
                     }
-                    progress->hide();
                 break;
             }
             case QLandmarkAbstractRequest::LandmarkFetchRequest: {
@@ -158,22 +138,19 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                                 qApp->processEvents();
                             table->removeRow(i);
                         }
-                        table->setUpdatesEnabled(true);
 
-                        QList<QLandmark> lms = landmarkFetch->landmarks();
-                        if (lms.count() == 0) {
-                            QMessageBox::information(this,"Information", "No landmarks found", QMessageBox::Ok, QMessageBox::NoButton);
-                            progress->hide();
-                            return;
-                        }
+                        QList<QLandmark> lms;
+                        if (request->type() == QLandmarkAbstractRequest::LandmarkFetchRequest)
+                            lms = landmarkFetch->landmarks();
+                        else
+                            lms = manager->landmarks(QLandmarkFilter());
 
                         QLandmark lm;
-                        table->setUpdatesEnabled(false);
                         for ( int i =0; i < lms.count(); ++i) {
                             lm = lms.at(i);
                             table->insertRow(table->rowCount());
-                            table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',10)));
-                            table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',10)));
+                            table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',2)));
+                            table->setItem(table->rowCount()-1,1,new QTableWidgetItem(QString::number(lm.coordinate().longitude(),'f',2)));
                             table->setItem(table->rowCount()-1,2,new QTableWidgetItem(lm.name()));
                             table->setItem(table->rowCount()-1,3,new QTableWidgetItem(lm.landmarkId().localId()));
 

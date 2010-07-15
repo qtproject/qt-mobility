@@ -91,7 +91,6 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     Defines the possible states of asynchronous requests.
     \value  InactiveState Operation not yet started.
     \value  ActiveState Operation started, not yet finished.
-    \value  CanceledState Operation is finished due to cancelation.
     \value  FinishedState Operation completed.  (Can be mean either successful or
             unsuccessful completion).
 */
