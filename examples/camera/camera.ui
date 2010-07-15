@@ -142,7 +142,7 @@
         <item row="0" column="0">
          <widget class="QPushButton" name="takeImageButton">
           <property name="text">
-           <string>Take Image</string>
+           <string>Capture Photo</string>
           </property>
          </widget>
         </item>
