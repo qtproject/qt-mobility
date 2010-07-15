@@ -22,7 +22,6 @@ public:
 
 private slots:
    void on_importLandmarks_clicked();
-   void on_fetchLandmarks_clicked();
    void on_deleteLandmarks_clicked();
    void on_addLandmark_clicked();
    void fetchHandler(QLandmarkAbstractRequest::State state);

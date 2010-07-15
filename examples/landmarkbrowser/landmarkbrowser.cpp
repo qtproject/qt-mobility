@@ -43,9 +43,11 @@ LandmarkBrowser::LandmarkBrowser(QWidget *parent, Qt::WindowFlags flags)
     table->setHorizontalHeaderItem(1, new QTableWidgetItem("Long"));
     table->setHorizontalHeaderItem(2, new QTableWidgetItem("Name"));
 
-    progress = new QProgressDialog (tr("Operation in progress..."),tr("Cancel"),0,0, this);
+    progress = new QProgressDialog (tr("Please wait..."),tr("Cancel"),0,0, this);
     progress->setCancelButton(0);
-    progress->setWindowTitle("Please wait");
+    progress->setWindowTitle(tr("Loading Landmarks"));
+    landmarkFetch->start();
+    progress->show();
 }
 
 LandmarkBrowser::~LandmarkBrowser()
@@ -65,15 +67,9 @@ void LandmarkBrowser::on_importLandmarks_clicked()
         landmarkImport->setFileName(fileName);
         landmarkImport->setFormat("GpxV1.1");
         landmarkImport->start();
-
+        progress->setWindowTitle(tr("Importing Landmarks"));
         progress->show();
     }
-}
-
-void LandmarkBrowser::on_fetchLandmarks_clicked()
-{
-    landmarkFetch->start();
-    progress->show();
 }
 
 void LandmarkBrowser::on_deleteLandmarks_clicked()
