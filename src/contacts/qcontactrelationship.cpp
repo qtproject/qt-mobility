@@ -49,6 +49,7 @@
 #include <QString>
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -96,13 +97,6 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasMember, "HasMember");
  * The relationship type which identifies the first contact as aggregating the second contact into a metacontact
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Aggregates, "Aggregates");
-
-/*!
- * \variable QContactRelationship::Is
- * \deprecated
- * Deprecated - use QContactRelationship::IsSameAs instead.
- */
-Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Is, "IsSameAs");
 
 /*!
  * \variable QContactRelationship::IsSameAs
@@ -189,6 +183,39 @@ QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
     dbg.nospace() << "QContactRelationship(" << rel.first() << ' ' << rel.relationshipType()
             << ' ' << rel.second() << ')';
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a rel to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactRelationship& rel)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactRelationship
+    return out << formatVersion << rel.first() << rel.relationshipType() << rel.second();
+}
+
+/*!
+ * Reads a contact relationship from stream \a in into \a rel.
+ */
+QDataStream& operator>>(QDataStream& in, QContactRelationship& rel)
+{
+    rel = QContactRelationship();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QContactId first;
+        QString relationshipType;
+        QContactId second;
+        in >> first >> relationshipType >> second;
+        rel.setFirst(first);
+        rel.setRelationshipType(relationshipType);
+        rel.setSecond(second);
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
 }
 #endif
 

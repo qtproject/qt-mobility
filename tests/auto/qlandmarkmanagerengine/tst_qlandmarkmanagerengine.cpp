@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/location
+
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
 #include <qlandmark.h>

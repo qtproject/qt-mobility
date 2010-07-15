@@ -28,15 +28,17 @@
 /*!
 
 \page feedback.html
-\title QtFeedback Module
+\title Feedback
 
 \brief An API enabling a client to control the vibration of the device (when a vibrator is used)
  or the piezo feedback from the screen.
 
 \ingroup mobility
 
-The Feedback API enables a client to control the vibration of the device (when a vibrator is used)
-or the piezo feedback from the screen. This is part of the Qt Mobility Project.
+The Feedback API enables a client to control the vibration of the device
+(when a vibrator is used) or the piezo feedback from the screen.
+
+This is part of the Qt Mobility Project.
 
 \tableofcontents
 
@@ -48,19 +50,106 @@ to facilitate the future migration of Mobility APIs into Qt. See the
 namespace impacts on application development.
 
 \section1 Overview
-The Feedback API provides an abstract feedback effect class \l{QFeedbackEffect} and a set of concrete feedback effect classes
-(\l{QFeedbackHapticsEffect},\l{QFeedbackFileEffect}) which allow clients to play different kinds of feedback effects.
 
-Device backends can implement these effects by implementing the related  \l{QFeedbackInterface} interfaces as plugins:
+The Feedback API allows application developers to implement tactile feedback
+in their applications.  The API provides abstractions for various types of
+tactile feedback, and allows custom implementations of these types of feedback.
 
+The QFeedbackEffect class provides a simple interface to allow developers to
+start, stop or pause the playback of an effect.  It is an abstract class which
+is implemented by QFeedbackHapticsEffect and QFeedbackFileEffect.  In addition,
+it allows the instantaneous playback of tactile effects which match the system
+theme.
+
+A QFeedbackHapticsEffect is a custom effect which allows a program to play a
+haptic effect on an actuator.  Such an effect might have a duration, intensity,
+and envelope of playback (including attack time and intensity, and fade time
+and intensity), as well as a period if it is a periodic effect.
+
+A QFeedbackFileEffect is a haptic tune saved in a file which may be played
+back.  These tunes must be created by a third-party application which can
+create tune files which are understood by the QFeedbackFileInterface plugin
+which is used to play back the file effect on the device.
+
+For the vast majority of use cases, the QFeedbackEffect, QFeedbackHapticsEffect
+and QFeedbackFileEffect classes are the only classes which developers will use
+in their programs.  There are some special cases, however, where they may wish
+to implement their own feedback plugin.  The Qt Mobility Feedback API allows
+third party developers to implement QFeedbackInterface in a plugin which may be
+loaded by the plugin loading mechanism to play feedback effects.
+
+Note that in any application, only the highest priority plugin for each of the
+three types of feedback will be used to provide the feedback effects, except
+for file feedback plugins (where only the highest priority plugin for each
+supported mime-type is used).  The interface classes which must be implemented
+by a plugin to provide effects to clients are:
 \list
     \o \l{QFeedbackHapticsInterface} for \l{QFeedbackHapticsEffect}
     \o \l{QFeedbackFileInterface} for \l{QFeedbackFileEffect}
-    \o \l{QFeedbackThemeInterface} for the builtin theme effects (\l{QFeedbackEffect::ThemeEffect}).
+    \o \l{QFeedbackThemeInterface} for the built-in theme effects (\l{QFeedbackEffect::ThemeEffect}).
 \endlist
 
+Generally, the device platform will provide an implementation of each of the
+three different interfaces, which will be the default plugins used for the
+various QFeedbackEffects.
+
+Please note that the plugin API is under active development and subject to
+change.
+
 \section1 Usage
-\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Complete example
+
+The most common use of the API is to play system theme effects for user
+interface interaction notifications (e.g., button clicks, etc).  These types
+of system theme effects can be played instantaneously, but cannot be paused or
+stopped.  They are played via the static QFeedbackEffect::playThemeEffect()
+function:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play the system theme button click effect
+
+There are many different theme effects defined, to cover a variety of
+interactions and notifications, to allow an application to maintain greater
+consistency with the platform user experience.
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play the system theme bounce effect
+
+The next most common use of the API is to define a custom effect which can be
+used to notify the user of application-specific events or to increase the
+immersiveness of an application.  A custom haptic effect may be defined in the
+following manner:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Define a custom haptic effect
+Note that no periodicity was defined for the effect, although that can be done
+by calling QFeedbackHapticEffect::setPeriod() if required.
+
+Once the effect has been defined, it may be played via the API offered in the
+QFeedbackEffect base class:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Start playing a custom haptic effect
+
+Custom haptic effects are stateful, and so they may be paused:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Pause a custom haptic effect
+
+Or stopped:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Stop playing a custom haptic effect
+
+Certain operations cannot be performed on an effect if it is in a certain
+state.  The current state of the effect may be queried via the base-class API:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Query the state of a custom haptic effect
+
+All custom effects are played using a particular
+\l{QFeedbackActuator}{device actuator}.  By default, the effect is played via
+the actuator which the current haptic effect provider plugin considers to be
+the system default actuator, and so most application developers will not need
+to change which actuator is used.  In some cases, however, it may be desirable
+to set which actuator the effect is played on; doing so requires prior
+knowledge of either the name or the id of the actuator on which the developer
+wishes the effect to be played:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Set the actuator which should play the custom effect
+
+Finally, there is software available which allows haptic tunes to be saved to
+file, for later playback.  If the haptic file effect provider plugin on the
+system understands that file format, the file can be played on device:
+\snippet ../../doc/src/snippets/qtfeedbackdocsample/qtfeedbackdocsample.cpp Play a haptic effect from a file
+
+If you wish to see a simple example application which demonstrates some of
+the above code in use, please see the \l{hapticsquare}{Hapticsquare} example
+application.
 
 \section1 Main Classes
 \list
@@ -69,5 +158,11 @@ Device backends can implement these effects by implementing the related  \l{QFee
     \o \l{QFeedbackFileEffect}
     \o \l{QFeedbackActuator}
     \o \l{QFeedbackInterface}
+\endlist
+
+\section1 Examples
+\list
+    \o \l{hapticsquare}{Hapticsquare}
+    \o \l{hapticsplayer}{HapticsPlayer}
 \endlist
 */

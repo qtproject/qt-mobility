@@ -44,29 +44,161 @@ import QtMobility.systeminfo 1.0
 Rectangle {
     width: 640
     height: 480
-//    color: "#343434"
+    color: "#343434"
 
-    SystemNetworkInfo {
-        id: netinfo
-    }
+    Item {
+        id: wlan
+        x:(parent.width / 2) - (parent.width / 4);
+        y: parent.height / 2
 
-        property int currentMode;
-        function getSignal() {
-            return netinfo.networkSignalStrength(netinfo.currentMode)
+        property int mode: NetworkInfo.WlanMode;
+
+        NetworkInfo {
+            id: wlaninfo
+            useMode: wlan.mode;
+            property string img : getImage(networkStatus);
+
+            function getImage(newStatus) {
+                if(newStatus == "Connected") {
+                    return "images/wlan.svg";
+                }
+                if(newStatus == "Searching") {
+                    //                    return "images/wlan.svg";
+                }
+                if(newStatus == "No Network Available") {
+                    return "images/wlan-noavail.svg";
+                }
+            }
+
+            onStatusChanged : {
+                img = getImage(newStatus)
+            }
+        }
+
+        Component.onCompleted: {
+            wlaninfo.startNameChanged();
+            wlaninfo.startSignalStrengthChanged();
+            wlaninfo.startStatusChanged();
+            wlaninfo.startModeChanged();
         }
 
         Image {
-            id: wifi
-            source : "images/wlan.svg"
+            id: wifiimg
+            source : wlaninfo.img;
             anchors.horizontalCenter: parent.horizontalCenter;
             anchors.verticalCenter: parent.verticalCenter;
         }
+
         Text {
             id: signalText
-            text: netinfo.networkName(netinfo.currentMode) + " "+getSignal();
-            anchors.top: wifi.bottom;
+            color: "white"
+            text: wlaninfo.networkSignalStrength
+            anchors.top: wifiimg.bottom;
             anchors.horizontalCenter: parent.horizontalCenter;
         }
-//    }
+
+
+        Text {
+            id: sigmstatus
+            color: "white"
+            text: wlaninfo.networkStatus;
+            anchors.top: signalText.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+
+        Text {
+            id: signame
+            color: "white"
+            text:  wlaninfo.networkName;
+            anchors.top: sigmstatus.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+
+        Text {
+            id: sigmac
+            color: "white"
+            text:  wlaninfo.macAddress;
+            anchors.top: signame.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+    }
+
+
+
+    Item {
+        id: ethernet
+        x:(parent.width / 2) + (parent.width / 4);
+        anchors { verticalCenter: parent.verticalCenter; }
+
+        property string imageSrc;
+
+        property int mode: NetworkInfo.EthernetMode;
+
+        NetworkInfo {
+            id: ethinfo
+            useMode: ethernet.mode;
+            property string img : getImage(networkStatus);
+
+            function getImage(newStatus) {
+                if(newStatus == "Connected") {
+                    return "images/lan.svg";
+                }
+                if(newStatus == "No Network Available") {
+                    return "images/lan-noavail.svg";
+                }
+            }
+
+            onStatusChanged : {
+                img = getImage(newStatus)
+            }
+        }
+
+        Component.onCompleted: {
+            ethinfo.startNameChanged();
+            ethinfo.startSignalStrengthChanged();
+            ethinfo.startStatusChanged();
+            ethinfo.startModeChanged();
+        }
+
+        Image {
+            id: ether
+            source :  ethinfo.img
+            anchors.horizontalCenter: parent.horizontalCenter;
+            anchors.verticalCenter: parent.verticalCenter;
+        }
+
+        Text {
+            id: ethersignalText
+            color: "white"
+            text: ethinfo.networkSignalStrength
+            anchors.top: ether.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+
+        Text {
+            id: ethersigmstatus
+            color: "white"
+            text: ethinfo.networkStatus;
+            anchors.top: ethersignalText.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+
+        Text {
+            id: ethersigname
+            color: "white"
+            text:  ethinfo.networkName;
+            anchors.top: ethersigmstatus.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+
+
+        Text {
+            id: ethersigmac
+            color: "white"
+            text:  ethinfo.macAddress;
+            anchors.top: ethersigname.bottom;
+            anchors.horizontalCenter: parent.horizontalCenter;
+        }
+    }
 
 }

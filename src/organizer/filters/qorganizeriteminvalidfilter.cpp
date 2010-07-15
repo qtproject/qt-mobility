@@ -45,7 +45,8 @@
 /*!
   \class QOrganizerItemInvalidFilter
   \brief The QOrganizerItemInvalidFilter class matches no organizeritems.
-   \ingroup organizer-filters
+  \inmodule QtOrganizer
+  \ingroup organizer-filters
  
   This class provides a filter which will never match any organizeritems
  */

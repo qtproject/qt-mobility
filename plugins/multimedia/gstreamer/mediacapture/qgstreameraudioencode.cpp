@@ -51,9 +51,20 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    codecCandidates << "audio/PCM"; //<< "audio/AMR" << "audio/AMR-WB" << "audio/speex";
+#else
     codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM"
                     << "audio/PCM" << "audio/AMR" << "audio/AMR-WB";
+#endif
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    m_elementNames["audio/PCM"] = "audioresample";
+    m_elementNames["audio/AMR"] = "nokiaamrnbenc";
+    m_elementNames["audio/AMR-WB"] = "nokiaamrwbenc";
+    m_elementNames["audio/speex"] = "speexenc";
+#else
     m_elementNames["audio/mpeg"] = "lamemp3enc";
     m_elementNames["audio/vorbis"] = "vorbisenc";
     m_elementNames["audio/speex"] = "speexenc";
@@ -61,7 +72,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "amrnbenc";
     m_elementNames["audio/AMR-WB"] = "amrwbenc";
-
+#endif
 
     m_codecOptions["audio/vorbis"] = QStringList() << "min-bitrate" << "max-bitrate";
     m_codecOptions["audio/mpeg"] = QStringList() << "mode";

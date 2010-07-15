@@ -77,26 +77,66 @@
 
     \title Document Gallery
 
-    \brief Provides an API for navigating and managing collections of documents
-    and media.
+    \ingroup mobility
+
+    \brief An API to navigate and query documents using their meta-data.
+
+    \note This API and documentation is a \bold {Technology Preview} and
+    is still subject to change.
+
+
+    \section1 Namespace
+
+    The QtMobility APIs are placed into the \i{QtMobility} namespace. This
+    is done to facilitate the future migration of Mobility APIs into Qt. See
+    the \l {Quickstart Example}{Quickstart guide} for an example on how the
+    namespace impacts on application development.
+
 
     \section1 Overview
 
-    The Document Gallery provides a meta-data focused API for managing
-    collections of documents and media.
 
-    The primary interface to items in a gallery is the QGalleryItemList class
-    which provides accessors for reading and writing the meta-data of a set
-    of items.
+    The Document Gallery provides an API for navigating and querying documents
+    using their meta-data. The common use case would be populating the media
+    selection views of a music player, or image viewer. It also provides API's
+    for querying and editing the meta-data of individual documents.
 
-    A QGalleryItemList cannot be created directly, instead an instance must be
-    requested from a gallery using one of the gallery request classes.
+    Typically all files in user directories should be available in the
+    document gallery. The principal types are Audio, Video, Image, and
+    (Office) Document, but files can also be categorized as a File, Folder,
+    Text, or Playlist. There are also some meta-types composed from the
+    meta-data of files, these are Artist, Album, AudioGenre, and PhotoAlbum.
+
+    The document gallery API is composed of a set of asynchronous request
+    (\l QGalleryAbstractRequest) classes which talk to the system file indexing
+    service, this would be tracker on Maemo platforms, the meta-data system
+    (MDS) on Symbian and potentially Windows Search, or Spotlight on macs.
+    There are four requests; \l QGalleryQueryRequest takes a type, a parent
+    item, and some filtering criteria (\l QGalleryFilter) and returns
+    meta-data for all matching items in a \l QGalleryItemList.
+    \l QGalleryItemRequest takes an item ID and returns meta-data for just that
+    item. \l QGalleryUrlRequest takes the URL of an item and resolves the ID
+    and type of that item. And \l QGalleryRemoveRequest takes an item ID and
+    removes that item from the gallery.
+
+    The requests operate on implementations of the \l QAbstractGallery.
+    The default implementation is \l QDocumentGallery, but it's possible to
+    create alternative implementations which talk to a media server or web
+    services.
+
+    The primary interface to items in a gallery is the \l QGalleryItemList
+    class which provides accessors for reading and writing the meta-data of a
+    set of items.
+
+    A \l QGalleryItemList cannot be created directly, instead an instance
+    must be requested from a gallery using one of the gallery request classes.
+
 
     \section2 Requests
 
-    The gallery request classes inherit from QGalleryAbstractRequest and are
-    used to fetch items from a gallery, or to initiate service provided by a
-    gallery.
+    The gallery request classes inherit from \l QGalleryAbstractRequest and
+    are used to fetch items from a gallery, or to initiate service provided
+    by a gallery.
 
     \annotatedlist gallery-requests
 
@@ -117,5 +157,7 @@
     \section1 Examples
 
     \annotatedlist gallery-examples
+
+
 */
 

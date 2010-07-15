@@ -64,6 +64,23 @@ to change notifications.
 */
 
 /*!
+    \module QtOrganizer
+
+    \title QtOrganizer Module
+
+    \brief The QtOrganizer module offers classes that allow
+    you to manage calendar, scheduling and personal data.
+
+*/
+
+/*!
+    \module QtFeedback
+    \title QtFeedback Module
+    \brief The QtFeedback module offers classes that allow
+    you to manage tactile feedback and device vibration.
+*/
+
+/*!
     \module QtLocation
     \title  QtLocation Module
     \brief  The QtLocation module provides geographical support for position
@@ -115,6 +132,13 @@ arbitrary services.
     \title System Information Classes
 
     A set of APIs that supplies that supplies system information.
+ */
+
+/*!
+    \module QtTelephony
+    \title Telephony Events Module
+
+    Enables access to the telephony event services.
  */
 
 

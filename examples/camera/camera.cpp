@@ -283,9 +283,7 @@ void Camera::updateCaptureMode()
 {
     int tabIndex = ui->captureWidget->currentIndex();
     QCamera::CaptureMode captureMode = tabIndex == 0 ? QCamera::CaptureStillImage : QCamera::CaptureVideo;
-    if (camera->captureMode() != captureMode) {
-        camera->setCaptureMode(captureMode);
-    }
+    camera->setCaptureMode(captureMode);
 }
 
 void Camera::updateCameraState(QCamera::State state)

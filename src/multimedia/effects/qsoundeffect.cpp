@@ -209,3 +209,5 @@ void QSoundEffect::play()
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qsoundeffect.cpp"

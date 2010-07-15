@@ -73,7 +73,7 @@ public:
     QContactActionDescriptor actionDescriptor() const;
     QVariantMap metaData() const;
 
-    QContactFilter contactFilter(const QVariant& value) const;
+    QContactFilter contactFilter() const;
     bool isDetailSupported(const QContactDetail& detail, const QContact& contact = QContact()) const;
     QList<QContactDetail> supportedDetails(const QContact& contact) const;
     bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& params = QVariantMap());

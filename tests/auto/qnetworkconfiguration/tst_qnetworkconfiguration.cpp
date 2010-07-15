@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/bearer
+
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
 #include "../../../src/bearer/qnetworkconfiguration.h"

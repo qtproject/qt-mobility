@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/documentgallery
+
 #include <QtTest/QtTest>
 
 #include <qgalleryurlrequest.h>

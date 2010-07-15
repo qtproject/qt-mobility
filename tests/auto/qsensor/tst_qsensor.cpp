@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/sensors
+
 #include <QObject>
 #include <QTest>
 #include <QDebug>

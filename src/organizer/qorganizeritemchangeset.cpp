@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
    simplify the emission of state-change signals from
    QOrganizerItemManagerEngine implementations.
 
+  \inmodule QtOrganizer
+
    This class can be utilised by backend implementations to ensure
    correct emission of the \l QOrganizerItemManagerEngine::dataChanged(), \l
    QOrganizerItemManagerEngine::itemsAdded(), \l
