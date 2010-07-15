@@ -19,6 +19,9 @@ include(requests/requests.pri)
 PUBLIC_HEADERS += \
     qcontact.h \
     qcontactabstractrequest.h \
+    qcontactaction.h \
+    qcontactactiondescriptor.h \
+    qcontactactionfactory.h \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
@@ -38,6 +41,7 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
+    qcontactactiondescriptor_p.h \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
@@ -52,6 +56,9 @@ PRIVATE_HEADERS += \
 SOURCES += \
     qcontact.cpp \
     qcontactabstractrequest.cpp \
+    qcontactaction.cpp \
+    qcontactactiondescriptor.cpp \
+    qcontactactionfactory.cpp \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
@@ -95,7 +102,7 @@ symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = CAP_GENERAL_DLL
     TARGET.UID3 = 0x2002AC7A
 
     LIBS += -lefsrv

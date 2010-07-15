@@ -113,6 +113,20 @@ QList<QObject*> QMLContactModel::details(int id) const
         return m_contactMap.value(id)->details();
     return QList<QObject*>();
 }
+
+QMLContact* QMLContactModel::detailModel(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id);
+    return 0;
+}
+
+QList<QObject*> QMLContactModel::detailFields(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id)->detailFields();
+    return QList<QObject*>();
+}
 void QMLContactModel::exposeContactsToQML()
 {
     foreach (const QContact& c, m_contacts) {

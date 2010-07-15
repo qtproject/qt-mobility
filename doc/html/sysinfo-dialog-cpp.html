@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: dialog.cpp Example File (sysinfo/dialog.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt Mobility Project 1.1: dialog.cpp Example File (sysinfo/dialog.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">dialog.cpp Example File<br /><span class="small-subtitle">sysinfo/dialog.cpp</span>
-</h1>
-<pre><span class="comment">    /****************************************************************************
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">dialog.cpp Example File</h1>
+<span class="small-subtitle">sysinfo/dialog.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
     **
     ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
@@ -59,7 +59,7 @@
 
     Dialog::Dialog() :
         QWidget(),
-        saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
+        saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
     {
         setupUi(this);
         setupGeneral();
@@ -225,6 +225,10 @@
         }
 
         inputMethodLabel-&gt;setText(inputs.join(&quot; &quot;));
+
+        bluetoothPowerLabel-&gt;setText((di-&gt;currentBluetoothPowerState() ? &quot;On&quot; : &quot;Off&quot;));
+        connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
     }
 
     void Dialog::updateDeviceLockedState()
@@ -241,22 +245,60 @@
     void Dialog::setupDisplay()
     {
         QSystemDisplayInfo di;
-        brightnessLineEdit-&gt;setText(QString::number(di.displayBrightness(0)));
-        colorDepthLineEdit-&gt;setText(QString::number(di.colorDepth((0))));
+        brightnessLabel-&gt;setText(QString::number(di.displayBrightness(0)));
+        colorDepthLabel-&gt;setText(QString::number(di.colorDepth((0))));
 
+        QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+        QString orientStr;
+        switch(orientation) {
+        case QSystemDisplayInfo::Landscape:
+            orientStr=&quot;Landscape&quot;;
+            break;
+        case QSystemDisplayInfo::Portrait:
+            orientStr=&quot;Portrait&quot;;
+            break;
+        case QSystemDisplayInfo::InvertedLandscape:
+            orientStr=&quot;Inverted Landscape&quot;;
+            break;
+        case QSystemDisplayInfo::InvertedPortrait:
+            orientStr=&quot;Inverted Portrait&quot;;
+            break;
+        default:
+            orientStr=&quot;Orientation unknown&quot;;
+            break;
+        }
+
+        orientationLabel-&gt;setText(orientStr);
+
+        contrastLabel-&gt;setText(QString::number(di.contrast((0))));
+
+        dpiWidthLabel-&gt;setText(QString::number(di.getDPIWidth(0)));
+        dpiHeightLabel-&gt;setText(QString::number(di.getDPIHeight((0))));
+
+        physicalHeightLabel-&gt;setText(QString::number(di.physicalHeight(0)));
+        physicalWidthLabel-&gt;setText(QString::number(di.physicalWidth((0))));
     }
 
     void Dialog::setupStorage()
     {
-        QSystemStorageInfo mi;
-        storageTreeWidget-&gt;clear();
+        if(!sti) {
+        sti = new QSystemStorageInfo(this);
         storageTreeWidget-&gt;header()-&gt;setResizeMode(QHeaderView::ResizeToContents);
+        connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
+        connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
+        }
+        updateStorage();
+    }
 
-        QStringList vols = mi.logicalDrives();
+    void Dialog::updateStorage()
+    {
+        storageTreeWidget-&gt;clear();
+
+        QStringList vols = sti-&gt;logicalDrives();
         foreach(QString volName, vols) {
             QString type;
             QSystemStorageInfo::DriveType volType;
-            volType = mi.typeForDrive(volName);
+            volType = sti-&gt;typeForDrive(volName);
             if(volType == QSystemStorageInfo::InternalDrive) {
                 type =  &quot;Internal&quot;;
             }
@@ -273,8 +315,8 @@
             QStringList items;
             items &lt;&lt; volName;
             items &lt;&lt; type;
-            items &lt;&lt; QString::number(mi.totalDiskSpace(volName));
-            items &lt;&lt; QString::number(mi.availableDiskSpace(volName));
+            items &lt;&lt; QString::number(sti-&gt;totalDiskSpace(volName));
+            items &lt;&lt; QString::number(sti-&gt;availableDiskSpace(volName));
             QTreeWidgetItem *item = new QTreeWidgetItem(items);
             storageTreeWidget-&gt;addTopLevelItem(item);
         }
@@ -747,11 +789,22 @@
             };
             simStatusLabel-&gt;setText(simstring);
         }
+    }
+
+    void Dialog::storageChanged()
+    {
+        setupStorage();
+    }
+
+    void Dialog::bluetoothChanged(bool b)
+    {
+        bluetoothPowerLabel-&gt;setText((b ? &quot;On&quot; : &quot;Off&quot;));
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

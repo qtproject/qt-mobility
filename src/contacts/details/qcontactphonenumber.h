@@ -72,6 +72,8 @@ public:
     static const QLatin1Constant SubTypeMessagingCapable;
     static const QLatin1Constant SubTypeAssistant;
     static const QLatin1Constant SubTypeDtmfMenu;
+
+    static const QLatin1Constant SubTypeFacsimile; // deprecated key
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
     Q_DECLARE_LATIN1_CONSTANT(FieldNumber, "PhoneNumber");
@@ -88,6 +90,9 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, "MessagingCapable");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, "Assistant");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, "DtmfMenu");
+
+    // deprecated keys
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFacsimile, "Fax");
 #endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}

@@ -54,6 +54,8 @@
   \brief The QContactFilter class is used to select contacts made available
   through a QContactManager.
 
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class is used as a parameter to various functions offered by QContactManager, to allow
@@ -67,7 +69,7 @@
   \value ContactDetailFilter A filter which matches contacts containing one or more details of a particular definition with a particular value
   \value ContactDetailRangeFilter A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
   \value ChangeLogFilter A filter which matches contacts whose timestamps have been updated since some particular date and time
-  \omitvalue ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+  \value ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
   \value RelationshipFilter A filter which matches contacts which participate in a particular type of relationship, or relationship with a specified contact
   \value IntersectionFilter A filter which matches all contacts that are matched by all filters it includes
   \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes

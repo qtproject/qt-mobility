@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMetaDataReaderControl
+    \inmodule QtMultimediaKit
     \ingroup multimedia-serv
 
     \preliminary

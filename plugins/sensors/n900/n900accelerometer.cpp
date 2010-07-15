@@ -55,10 +55,8 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
     // Details derived from the kernel driver
-    //addDataRate(100, 100); // 100Hz
-    //addDataRate(400, 400); // 400Hz
-    //addOutputRange(-22.418, 22.418, 0.17651); // 2G
-    //addOutputRange(-89.672, 89.672, 0.70608); // 8G
+    addDataRate(100, 100); // 100Hz
+    addOutputRange(-22.418, 22.418, 0.17651); // 2G
     setDescription(QLatin1String("lis302dl"));
 }
 
@@ -68,25 +66,6 @@ void n900accelerometer::start()
 
     if (!QFile::exists(QLatin1String(filename)))
         goto error;
-
-    // Configure the range
-    if (sensor()->outputRange() != -1) {
-        fd = fopen(range, "w");
-        if (!fd) goto error;
-        if (sensor()->outputRange() == 0)
-            fprintf(fd, "normal\n");
-        else
-            fprintf(fd, "full\n");
-        fclose(fd);
-    }
-
-    // Configure the rate
-    if (sensor()->dataRate() != 0) {
-        fd = fopen(rate, "w");
-        if (!fd) goto error;
-        fprintf(fd, "%d\n", sensor()->dataRate());
-        fclose(fd);
-    }
 
     n900filebasedsensor::start();
     return;

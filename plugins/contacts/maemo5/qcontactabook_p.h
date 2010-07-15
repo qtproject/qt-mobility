@@ -103,6 +103,7 @@ private:
   OssoABookContact* getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
   
   /* Filtering */
+  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */

@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qcameraexposure.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QCameraExposure Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QCameraExposure"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCameraExposure Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
+<p>The QCameraExposure class provides interface for exposure related camera settings. <a href="#details">More...</a></p>
+<pre>    #include &lt;QCameraExposure&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qcameraexposure-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposurePortrait }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#FlashMode-enum">FlashMode</a></b> { FlashOff, FlashOn, FlashAuto, FlashRedEyeReduction, ..., FlashManual }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#FlashMode-enum">FlashModes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#MeteringMode-enum">MeteringMode</a></b> { MeteringAverage, MeteringSpot, MeteringMatrix }</td></tr>
+</table>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qcameraexposure.html#aperture-prop">aperture</a></b> : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposure.html#exposureCompensation-prop">exposureCompensation</a></b> : qreal</div></li>
+<li><div class="fn"><b><a href="qcameraexposure.html#isoSensitivity-prop">isoSensitivity</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qcameraexposure.html#shutterSpeed-prop">shutterSpeed</a></b> : qreal</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#aperture-prop">aperture</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#exposureCompensation-prop">exposureCompensation</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ExposureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#exposureMode">exposureMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#flashMode">flashMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isAvailable">isAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isExposureModeSupported">isExposureModeSupported</a></b> ( ExposureMode <i>mode</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isFlashModeSupported">isFlashModeSupported</a></b> ( FlashModes <i>mode</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isFlashReady">isFlashReady</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isMeteringModeSupported">isMeteringModeSupported</a></b> ( MeteringMode <i>mode</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isoSensitivity-prop">isoSensitivity</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MeteringMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#meteringMode">meteringMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#shutterSpeed-prop">shutterSpeed</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#supportedApertures">supportedApertures</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#supportedIsoSensitivities">supportedIsoSensitivities</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setAutoAperture">setAutoAperture</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#exposureCompensation-prop">setExposureCompensation</a></b> ( qreal <i>ev</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setExposureMode">setExposureMode</a></b> ( ExposureMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setFlashMode">setFlashMode</a></b> ( FlashModes <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#aperture-prop">setManualAperture</a></b> ( qreal <i>aperture</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isoSensitivity-prop">setManualIsoSensitivity</a></b> ( int <i>iso</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#shutterSpeed-prop">setManualShutterSpeed</a></b> ( qreal <i>seconds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#setMeteringMode">setMeteringMode</a></b> ( MeteringMode <i>mode</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#apertureRangeChanged">apertureRangeChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#shutterSpeedRangeChanged">shutterSpeedRangeChanged</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QCameraExposure class provides interface for exposure related camera settings.</p>
+<p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
+<p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QCameraExposure/ExposureMode"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureManual"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureAuto"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureNight"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureBacklight"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureSpotlight"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureSports"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureSnow"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureBeach"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureLargeAperture"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposureSmallAperture"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/ExposurePortrait"></a>
+<h3 class="fn"><a name="ExposureMode-enum"></a>enum QCameraExposure::ExposureMode</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureManual</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Manual mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureAuto</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Automatic mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureNight</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Night mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureBacklight</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Backlight exposure mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureSpotlight</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Spotlight exposure mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureSports</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Spots exposure mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureSnow</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Snow exposure mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureBeach</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Beach exposure mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureLargeAperture</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">Use larger aperture with small depth of field.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposureSmallAperture</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">Use smaller aperture.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::ExposurePortrait</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">Portrait exposure mode.</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QCameraExposure/FlashMode"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashOff"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashOn"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashAuto"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashRedEyeReduction"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashFill"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashTorch"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashSlowSyncFrontCurtain"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashSlowSyncRearCurtain"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/FlashManual"></a>
+<a name="//apple_ref/cpp/tdef/QCameraExposure/FlashModes"></a>
+<h3 class="flags"><a name="FlashMode-enum"></a>enum QCameraExposure::FlashMode<br />flags QCameraExposure::FlashModes</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashOff</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">Flash is Off.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashOn</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">Flash is On.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashAuto</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">Automatic flash.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashRedEyeReduction</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">Red eye reduction flash.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashFill</tt></td><td align="center" valign="top"><tt>0x10</tt></td><td valign="top">Use flash to fillin shadows.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashTorch</tt></td><td align="center" valign="top"><tt>0x20</tt></td><td valign="top">Constant light source, useful for focusing and video capture.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashSlowSyncFrontCurtain</tt></td><td align="center" valign="top"><tt>0x40</tt></td><td valign="top">Use the flash in conjunction with a slow shutter speed. This mode allows better exposure of distant objects and/or motion blur effect.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashSlowSyncRearCurtain</tt></td><td align="center" valign="top"><tt>0x80</tt></td><td valign="top">The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::FlashManual</tt></td><td align="center" valign="top"><tt>0x100</tt></td><td valign="top">Flash power is manualy set.</td></tr>
+</table></p>
+<p>The FlashModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FlashMode&gt;. It stores an OR combination of FlashMode values.</p>
+<a name="//apple_ref/cpp/tag/QCameraExposure/MeteringMode"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/MeteringAverage"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/MeteringSpot"></a>
+<a name="//apple_ref/cpp/econst/QCameraExposure/MeteringMatrix"></a>
+<h3 class="fn"><a name="MeteringMode-enum"></a>enum QCameraExposure::MeteringMode</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QCameraExposure::MeteringAverage</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Center weighted average metering mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::MeteringSpot</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Spot metering mode.</td></tr>
+<tr><td valign="top"><tt>QCameraExposure::MeteringMatrix</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Matrix metering mode.</td></tr>
+</table></p>
+<hr />
+<h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QCameraExposure/aperture"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setManualAperture"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/apertureChanged"></a>
+<h3 class="fn"><a name="aperture-prop"></a>aperture : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds lens aperture is specified as an F number, the ratio of the focal length to effective aperture diameter.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>aperture</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setManualAperture</b> ( qreal <i>aperture</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCameraExposure/exposureCompensation"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setExposureCompensation"></a>
+<h3 class="fn"><a name="exposureCompensation-prop"></a>exposureCompensation : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds camera exposure compensation, in EV.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>exposureCompensation</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setExposureCompensation</b> ( qreal <i>ev</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isoSensitivity"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setManualIsoSensitivity"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isoSensitivityChanged"></a>
+<h3 class="fn"><a name="isoSensitivity-prop"></a>isoSensitivity : int</h3>
+<p>This property holds the sensor ISO sensitivity.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>isoSensitivity</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setManualIsoSensitivity</b> ( int <i>iso</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCameraExposure/shutterSpeed"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setManualShutterSpeed"></a>
+<a name="//apple_ref/cpp/instm/QCameraExposure/shutterSpeedChanged"></a>
+<h3 class="fn"><a name="shutterSpeed-prop"></a>shutterSpeed : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds the effective length of time the shutter is open in seconds.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>shutterSpeed</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setManualShutterSpeed</b> ( qreal <i>seconds</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposure.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
+</table>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QCameraExposure/apertureChanged"></a>
+<h3 class="fn"><a name="apertureChanged"></a>void QCameraExposure::apertureChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when aperature changes to <i>value</i>.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/apertureRangeChanged"></a>
+<h3 class="fn"><a name="apertureRangeChanged"></a>void QCameraExposure::apertureRangeChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when aperature range has changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/exposureMode"></a>
+<h3 class="fn"><a name="exposureMode"></a><a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a> QCameraExposure::exposureMode () const</h3>
+<p>Returns the exposure mode being used.</p>
+<p>See also <a href="qcameraexposure.html#setExposureMode">setExposureMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/flashMode"></a>
+<h3 class="fn"><a name="flashMode"></a><a href="qcameraexposure.html#FlashMode-enum">FlashModes</a> QCameraExposure::flashMode () const</h3>
+<p>Returns the flash mode being used.</p>
+<p>See also <a href="qcameraexposure.html#setFlashMode">setFlashMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/flashReady"></a>
+<h3 class="fn"><a name="flashReady"></a>void QCameraExposure::flashReady ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when flash status changed, flash is ready if <i>ready</i> true.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QCameraExposure::isAvailable () const</h3>
+<p>Returns true if exposure settings are supported by this camera.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isExposureModeSupported"></a>
+<h3 class="fn"><a name="isExposureModeSupported"></a>bool QCameraExposure::isExposureModeSupported ( <a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a> <i>mode</i> ) const</h3>
+<p>Returns true if the exposure <i>mode</i> is supported.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isFlashModeSupported"></a>
+<h3 class="fn"><a name="isFlashModeSupported"></a>bool QCameraExposure::isFlashModeSupported ( <a href="qcameraexposure.html#FlashMode-enum">FlashModes</a> <i>mode</i> ) const</h3>
+<p>Returns true if the flash <i>mode</i> is supported.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isFlashReady"></a>
+<h3 class="fn"><a name="isFlashReady"></a>bool QCameraExposure::isFlashReady () const</h3>
+<p>Returns true if flash is charged.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isMeteringModeSupported"></a>
+<h3 class="fn"><a name="isMeteringModeSupported"></a>bool QCameraExposure::isMeteringModeSupported ( <a href="qcameraexposure.html#MeteringMode-enum">MeteringMode</a> <i>mode</i> ) const</h3>
+<p>Returns true if the metering <i>mode</i> is supported.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/isoSensitivityChanged"></a>
+<h3 class="fn"><a name="isoSensitivityChanged"></a>void QCameraExposure::isoSensitivityChanged ( int <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when sensitivity changes to <i>value</i>.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/meteringMode"></a>
+<h3 class="fn"><a name="meteringMode"></a><a href="qcameraexposure.html#MeteringMode-enum">MeteringMode</a> QCameraExposure::meteringMode () const</h3>
+<p>Returns the metering mode being used.</p>
+<p>See also <a href="qcameraexposure.html#setMeteringMode">setMeteringMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setAutoAperture"></a>
+<h3 class="fn"><a name="setAutoAperture"></a>void QCameraExposure::setAutoAperture ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Turn on auto aperture</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setAutoIsoSensitivity"></a>
+<h3 class="fn"><a name="setAutoIsoSensitivity"></a>void QCameraExposure::setAutoIsoSensitivity ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Turn on auto sensitivity</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setAutoShutterSpeed"></a>
+<h3 class="fn"><a name="setAutoShutterSpeed"></a>void QCameraExposure::setAutoShutterSpeed ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Turn on auto shutter speed</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setExposureMode"></a>
+<h3 class="fn"><a name="setExposureMode"></a>void QCameraExposure::setExposureMode ( <a href="qcameraexposure.html#ExposureMode-enum">ExposureMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Set exposure mode to <i>mode</i></p>
+<p>See also <a href="qcameraexposure.html#exposureMode">exposureMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setFlashMode"></a>
+<h3 class="fn"><a name="setFlashMode"></a>void QCameraExposure::setFlashMode ( <a href="qcameraexposure.html#FlashMode-enum">FlashModes</a> <i>mode</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Set the flash mode to <i>mode</i>.</p>
+<p>Usually the single <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashMode</a> flag is used, but some non conflicting flags combination are also allowed, like <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashManual</a> | <a href="qcameraexposure.html#FlashMode-enum">QCameraExposure::FlashSlowSyncRearCurtain</a>.</p>
+<p>See also <a href="qcameraexposure.html#flashMode">flashMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/setMeteringMode"></a>
+<h3 class="fn"><a name="setMeteringMode"></a>void QCameraExposure::setMeteringMode ( <a href="qcameraexposure.html#MeteringMode-enum">MeteringMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Sets the metering mode to <i>mode</i>.</p>
+<p>See also <a href="qcameraexposure.html#meteringMode">meteringMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/shutterSpeedChanged"></a>
+<h3 class="fn"><a name="shutterSpeedChanged"></a>void QCameraExposure::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>speed</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a camera's shutter <i>speed</i> has changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/shutterSpeedRangeChanged"></a>
+<h3 class="fn"><a name="shutterSpeedRangeChanged"></a>void QCameraExposure::shutterSpeedRangeChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when the shutter speed range has changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/supportedApertures"></a>
+<h3 class="fn"><a name="supportedApertures"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCameraExposure::supportedApertures ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of aperture values camera supports. The apertures list can change depending on the focal length, in such a case the <a href="qcameraexposure.html#apertureRangeChanged">apertureRangeChanged</a>() signal is emited.</p>
+<p>If the camera supports arbitrary aperture values within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/supportedIsoSensitivities"></a>
+<h3 class="fn"><a name="supportedIsoSensitivities"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;int&gt; QCameraExposure::supportedIsoSensitivities ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of ISO senitivities camera supports.</p>
+<p>If the camera supports arbitrary ISO sensitivities within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QCameraExposure/supportedShutterSpeeds"></a>
+<h3 class="fn"><a name="supportedShutterSpeeds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCameraExposure::supportedShutterSpeeds ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of shutter speed values in seconds camera supports.</p>
+<p>If the camera supports arbitrary shutter speed values within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

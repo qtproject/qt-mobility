@@ -109,6 +109,7 @@ protected:
     bool setMediaObject(QMediaObject *object);
 
 protected:
+    QVideoWidget(QVideoWidgetPrivate &dd, QWidget *parent);
     QVideoWidgetPrivate *d_ptr;
 
 private:

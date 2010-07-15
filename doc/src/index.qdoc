@@ -4,37 +4,23 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -318,8 +304,7 @@
     <tr>
     <td rowspan="2">&nbsp;</td>
     <td rowspan="2"><b>API Maturity Level</b></td>
-    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
-
+    <td colspan="7" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
     <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
     </tr>
     <tr>
@@ -330,7 +315,6 @@
     <td width="9%"><b>Maemo 5</b></td>
     <td width="9%"><b>Windows CE/Mobile<b></b></b></td>
     <td width="9%"><b>Windows XP/Vista</b></td>
-
     <td width="9%"><b>Linux</b></td>
     <td width="9%"><b>Mac OS X</b></td>
     </tr>
@@ -344,7 +328,6 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     </tr>
@@ -360,7 +343,6 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
-
     </tr>
     <tr>
     <td>Bearer Management</td>
@@ -376,7 +358,6 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-
     <td>Publish and Subscribe</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
@@ -391,7 +372,6 @@
     </tr>
     <tr>
     <td>Contacts</td>
-
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -406,7 +386,6 @@
     <tr>
     <td>Location</td>
     <td>FINAL</td>
-
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -422,7 +401,6 @@
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -438,7 +416,6 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -454,13 +431,12 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
-
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     </tr>
     <tr>
-    <td>Versit</td>
+    <td>Versit(vCard)</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -470,8 +446,124 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-
     <td bgcolor="green"></td>
+    </tr>
+    <tr>
+    <td>Versit(iCal)</td>
+    <td>TP</td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    </tr>
+    <tr>
+    <td>Camera</td>
+    <td>TP</td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Service Framework(OOP)</td>
+    <td>TP</td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    </tr>
+    <tr>
+    <td>Organizer</td>
+    <td>TP</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Landmarks</td>
+    <td>TP</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Document Gallery</td>
+    <td>TP</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Maps/Navigation</td>
+    <td>TP</td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow"></td>
+    </tr>
+    <tr>
+    <td>Vibra</td>
+    <td>TP</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    </tr>
+    <tr>
+    <td>Telephony Events</td>
+    <td>TP</td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     </tr>
     <p></p>
     <p></p>

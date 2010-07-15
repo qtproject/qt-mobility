@@ -86,7 +86,6 @@ private slots: // Tests
     void testDefaultCodec();
     void testReading();
     void testResult();
-    void testSetVersionFromProperty();
     void testParseNextVersitProperty();
     void testParseNextVersitProperty_data();
     void testParseVersitDocument();

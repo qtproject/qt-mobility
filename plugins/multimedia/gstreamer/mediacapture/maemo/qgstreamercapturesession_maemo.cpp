@@ -44,8 +44,14 @@
 #include "qgstreamermediacontainercontrol_maemo.h"
 #include "qgstreameraudioencode_maemo.h"
 #include "qgstreamervideoencode_maemo.h"
+#include "qgstreamerimageencode_maemo.h"
+#include "qgstreamercameraexposurecontrol_maemo.h"
+#include "qgstreamercamerafocuscontrol_maemo.h"
+#include "qgstreamerimageprocessingcontrol_maemo.h"
+#include "qgstreamercameralockscontrol_maemo.h"
 #include "qgstreamerbushelper.h"
 #include <qmediarecorder.h>
+#include <gst/interfaces/photography.h>
 #include <gst/gsttagsetter.h>
 #include <gst/gstversion.h>
 
@@ -68,6 +74,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     :QObject(parent),
      m_state(StoppedState),
      m_pendingState(StoppedState),
+     m_muted(false),
      m_waitingForEos(false),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
@@ -87,6 +94,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
 {
     if (m_captureMode == AudioAndVideo) {
         m_pipeline = gst_element_factory_make("camerabin", "camerabin");
+        g_signal_connect(G_OBJECT(m_pipeline), "img-done", G_CALLBACK(imgCaptured), this);
     } else if (m_captureMode & Audio) {
         m_pipeline = gst_pipeline_new("audio-capture-pipeline");
         m_audioSrc = gst_element_factory_make("pulsesrc", "pulsesrc");
@@ -113,8 +121,13 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     connect(m_busHelper, SIGNAL(message(QGstreamerMessage)), SLOT(busMessage(QGstreamerMessage)));
     m_audioEncodeControl = new QGstreamerAudioEncode(this);
     m_videoEncodeControl = new QGstreamerVideoEncode(this);
+    m_imageEncodeControl = new QGstreamerImageEncode(this);
     m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
+    m_cameraExposureControl = new QGstreamerCameraExposureControl(*m_pipeline, this);
+    m_cameraFocusControl = new QGstreamerCameraFocusControl(*m_pipeline, this);
+    m_imageProcessingControl = new QGstreamerImageProcessingControl(*m_pipeline, this);
+    m_cameraLocksControl = new QGstreamerCameraLocksControl(*m_pipeline, this);
 }
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
@@ -189,6 +202,24 @@ GstElement *QGstreamerCaptureSession::buildVideoSrc()
     }
 
     return videoSrc;
+}
+
+void QGstreamerCaptureSession::captureImage(int requestId, const QString &fileName)
+{
+    m_requestId = requestId;
+    QSize resolution = m_imageEncodeControl->imageSettings().resolution();
+    if (!resolution.isEmpty())
+        g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-image-res", resolution.width(), resolution.height(), NULL);
+    
+    GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
+    g_object_set(G_OBJECT(m_pipeline), "preview-caps", previewCaps, NULL);
+    gstUnref(previewCaps);
+
+    g_object_set(G_OBJECT(m_pipeline), "filename", fileName.toLocal8Bit().constData(), NULL);
+
+    g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-start", NULL);
+
+    m_imageFileName = fileName;
 }
 
 QUrl QGstreamerCaptureSession::outputLocation() const
@@ -307,6 +338,22 @@ qint64 QGstreamerCaptureSession::duration() const
         return 0;
 }
 
+bool QGstreamerCaptureSession::isMuted() const
+{
+    return m_muted;
+}
+
+void QGstreamerCaptureSession::setMuted(bool muted)
+{
+    if (m_muted != muted) {
+        m_muted = muted;
+
+        if (m_pipeline)
+            g_object_set(G_OBJECT(m_pipeline), "mute", m_muted, NULL);
+        emit mutedChanged(m_muted);
+    }
+}
+
 void QGstreamerCaptureSession::setCaptureDevice(const QString &deviceName)
 {
     m_captureDevice = deviceName;
@@ -365,6 +412,53 @@ bool QGstreamerCaptureSession::processSyncMessage(const QGstreamerMessage &messa
     GstBuffer *buffer = NULL;
 
     if (gm && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT) {
+        if (gst_structure_has_name(gm->structure, "preview-image"))
+        {
+            st = gst_message_get_structure(gm);
+            if (gst_structure_has_field_typed(st, "buffer", GST_TYPE_BUFFER)) {
+                image = gst_structure_get_value(st, "buffer");
+                if (image) {
+                    buffer = gst_value_get_buffer(image);
+
+                    QImage img;
+
+                    GstCaps *caps = gst_buffer_get_caps(buffer);
+                    if (caps) {
+                        GstStructure *structure = gst_caps_get_structure(caps, 0);
+                        gint width = 0;
+                        gint height = 0;
+
+                        if (structure &&
+                            gst_structure_get_int(structure, "width", &width) &&
+                            gst_structure_get_int(structure, "height", &height) &&
+                            width > 0 && height > 0) {
+                            if (qstrcmp(gst_structure_get_name(structure), "video/x-raw-rgb") == 0) {
+                                QImage::Format format = QImage::Format_Invalid;
+                                int bpp = 0;
+                                gst_structure_get_int(structure, "bpp", &bpp);
+
+                                if (bpp == 24)
+                                    format = QImage::Format_RGB888;
+                                else if (bpp == 32)
+                                    format = QImage::Format_RGB32;
+
+                                if (format != QImage::Format_Invalid) {
+                                    img = QImage((const uchar *)buffer->data, width, height, format);
+                                    img.bits(); //detach
+                                 }
+                            }
+                        }
+                        gstUnref(caps);
+
+                        emit imageExposed(m_requestId);
+                        emit imageCaptured(m_requestId, img);
+                    }
+
+                }
+                return true;
+            }
+        }
+
         if (gst_structure_has_name(gm->structure, "prepare-xwindow-id")) {
             if (m_audioPreviewFactory)
                 m_audioPreviewFactory->prepareWinId();
@@ -373,6 +467,27 @@ bool QGstreamerCaptureSession::processSyncMessage(const QGstreamerMessage &messa
                 m_videoPreviewFactory->prepareWinId();
 
             return true;
+        }
+
+        if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE)) {
+            gint status = GST_PHOTOGRAPHY_FOCUS_STATUS_NONE;
+            gst_structure_get_int (gm->structure, "status", &status);
+            switch (status) {
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_FAIL:
+                emit focusStatusChanged(QCamera::Unlocked, QCamera::LockFailed);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_SUCCESS:
+                    emit focusStatusChanged(QCamera::Locked, QCamera::UserRequest);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_NONE:
+                    emit focusStatusChanged(QCamera::Unlocked, QCamera::UserRequest);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_RUNNING:
+                    emit focusStatusChanged(QCamera::Searching, QCamera::UserRequest);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -461,3 +576,20 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
         }
     }
 }
+
+void QGstreamerCaptureSession::processSavedImage(const QString &filename)
+{
+    emit imageSaved(m_requestId, filename);
+    emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+}
+
+static gboolean imgCaptured(GstElement *camera,
+                        const gchar *filename,
+                        gpointer user_data)
+{
+    Q_UNUSED(camera);
+    QGstreamerCaptureSession *session = (QGstreamerCaptureSession *)user_data;
+    session->processSavedImage(QString::fromUtf8(filename));
+    return true;
+}
+

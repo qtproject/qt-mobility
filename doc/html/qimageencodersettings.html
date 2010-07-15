@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaencodersettings.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QImageEncoderSettings Class Reference</title>
+  <title>Qt Mobility Project 1.1: QImageEncoderSettings Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -42,7 +42,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QImageEncoderSettings class provides a set of image encoder settings.</p>
-<p>A image encoder settings object is used to specify the image encoder settings used by QStillImageCapture. Image encoder settings are selected by constructing a QImageEncoderSettings object, setting the desired properties and then passing it to a QStillImageCapture instance using the QStillImageCapture::setImageSettings() function.</p>
+<p>A image encoder settings object is used to specify the image encoder settings used by <a href="qcameraimagecapture.html">QCameraImageCapture</a>. Image encoder settings are selected by constructing a QImageEncoderSettings object, setting the desired properties and then passing it to a <a href="qcameraimagecapture.html">QCameraImageCapture</a> instance using the QCameraImageCapture::setImageSettings() function.</p>
 <pre>    QImageEncoderSettings imageSettings;
     imageSettings.setCodec(&quot;image/jpeg&quot;);
     imageSettings.setResolution(1600, 1200);
@@ -68,7 +68,7 @@
 <p>Identifies if a image encoder settings object is uninitalized.</p>
 <p>Returns true if the settings are null, and false if they are not.</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/quality"></a>
-<h3 class="fn"><a name="quality"></a><a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> QImageEncoderSettings::quality () const</h3>
+<h3 class="fn"><a name="quality"></a>QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality () const</h3>
 <p>Returns the image encoding quality.</p>
 <p>See also <a href="qimageencodersettings.html#setQuality">setQuality</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/resolution"></a>
@@ -80,7 +80,7 @@
 <p>Sets the image <i>codec</i>.</p>
 <p>See also <a href="qimageencodersettings.html#codec">codec</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/setQuality"></a>
-<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( <a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> <i>quality</i> )</h3>
+<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( QtMultimediaKit::EncodingQuality <i>quality</i> )</h3>
 <p>Sets the image encoding <i>quality</i>.</p>
 <p>See also <a href="qimageencodersettings.html#quality">quality</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/setResolution"></a>
@@ -106,6 +106,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

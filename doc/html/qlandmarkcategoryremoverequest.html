@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkcategoryremoverequest.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QLandmarkCategoryRemoveRequest Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkCategoryRemoveRequest"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkCategoryRemoveRequest Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
+<p>The QLandmarkCategoryRemoveRequest class allows a client to asynchronously request that certain categories be removed from a landmark manager. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkCategoryRemoveRequest&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a>.</p>
+<ul>
+<li><a href="qlandmarkcategoryremoverequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#QLandmarkCategoryRemoveRequest">QLandmarkCategoryRemoveRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#dtor.QLandmarkCategoryRemoveRequest">~QLandmarkCategoryRemoveRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QLandmarkManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>3 public slots inherited from <a href="qlandmarkabstractrequest.html#public-slots">QLandmarkAbstractRequest</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkCategoryRemoveRequest class allows a client to asynchronously request that certain categories be removed from a landmark manager.</p>
+<p>For a QLandmarkCategoryRemoveRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either an individual items error out (individaul errors may be retrieved by calling <a href="qlandmarkcategoryremoverequest.html#errorMap">errorMap</a>()) or an overall operation error occurs(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">QLandmarkAbstractRequest::error</a>()).</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/QLandmarkCategoryRemoveRequest"></a>
+<h3 class="fn"><a name="QLandmarkCategoryRemoveRequest"></a>QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a category remove request with the given <i>manager</i> and <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/~QLandmarkCategoryRemoveRequest"></a>
+<h3 class="fn"><a name="dtor.QLandmarkCategoryRemoveRequest"></a>QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest ()</h3>
+<p>Destroys the request object.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/categoryIds"></a>
+<h3 class="fn"><a name="categoryIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryRemoveRequest::categoryIds () const</h3>
+<p>Returns the list of identifiers of categories which will be removed.</p>
+<p>See also <a href="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/errorMap"></a>
+<h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkCategoryRemoveRequest::errorMap () const</h3>
+<p>Returns the mapping of input category id list indices to the errors which occurred.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/setCategoryId"></a>
+<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategoryRemoveRequest::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
+<p>Convenience function to set the <i>categoryId</i> of a sisngle category to be removed.</p>
+<p>See also <a href="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/setCategoryIds"></a>
+<h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryRemoveRequest::setCategoryIds ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )</h3>
+<p>Sets the list of <i>categoryIds</i> of categories which will be removed.</p>
+<p>See also <a href="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</a>() and <a href="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

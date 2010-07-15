@@ -23,7 +23,7 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
 symbian {
     TARGET.EPOCALLOWDLLDATA=1

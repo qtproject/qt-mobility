@@ -45,6 +45,9 @@
 
 /*!
   \class QContactInvalidEngine
+  
+  \inmodule QtContacts
+  
   \brief The QContactInvalidEngine class provides an implementation of
   QContactManagerEngine whose functions always return an error.
   

@@ -1,0 +1,272 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//! @file
+//! @SYMTestSuiteName	CntPerfTestServer Suite
+//! @SYMScriptTestEnvironment
+
+PRINT Run all Contact View CRUD Operations related tests
+
+LOAD_SUITE CntPerfTestServer
+
+START_TESTCASE	PIM-APPENG-CONTACTS-SUBVIEWS-I-0025-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-SUBVIEWS-I-0025-HP-0001
+//! @SYMTestCaseDesc 		Create a Sub view over an existing local view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Sub view over an existing local view.
+//! 				2. Specify the valid view boundary criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Sub view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Sub view based on a local view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer PrepareDataTestStep 	      C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini preparedata_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_9_1
+// RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_9_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_9_3
+
+END_TESTCASE PIM-APPENG-CONTACTS-SUBVIEWS-I-0025-HP-0001
+
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-SUBVIEWS-I-0027-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-SUBVIEWS-I-0027-HP-0001
+//! @SYMTestCaseDesc 		Create a Sub view over an existing remote view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Sub view over an existing remote view.
+//! 				2. Specify the valid view boundary criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Sub view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Sub view based on a remote view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer PrepareDataTestStep 	      C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini preparedata_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_10_1
+// RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_10_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_10_3
+
+END_TESTCASE PIM-APPENG-CONTACTS-SUBVIEWS-I-0027-HP-0001
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0004-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0004-HP
+//! @SYMTestCaseDesc 		CRUD operations on Contacts local view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct Contacts local view.
+//!				2. Perform CRUD Operations on contacts database.
+//!				3. Validate view count of the local view at the end of each CRUD Operations.
+//!				4. Validate contact view notifications received by the local view 
+//!				   as a result of CRUD operations
+//! @SYMTestExpectedResults 	Contacts Local View is updated correctly when a CRUD Operation is performed 
+//!				on the database	and all relevant contact view notifications are received.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP     2000 CntPerfTestServer PrepareDataTestStep c:\cntviewtest\configs\TestContactViewCRUDOperationsStep.ini preparedata_1
+RUN_TEST_STEP     2000 CntPerfTestServer TestContactViewCRUDOperationsStep c:\cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_1 
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0004-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0005-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0005-HP
+//! @SYMTestCaseDesc 		CRUD operations on Contacts remote view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct Contacts remote view.
+//!				2. Perform CRUD Operations on contacts database.
+//!				3. Validate view count of the remote view at the end of each CRUD Operations.
+//!				4. Validate contact view notifications received by the local view 
+//!				   as a result of CRUD operations
+//! @SYMTestExpectedResults 	Contacts remote view is updated correctly when a CRUD Operation is performed 
+//!				on the database	and all relevant contact view notifications are received.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP      2000 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_2 
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0005-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0008-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0008-HP-0001
+//! @SYMTestCaseDesc 		CRUD operations on Contacts Find View built over an existing local view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Find view over an existing local view.
+//! 				2. Specify the desired search criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Find view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Find view based on a local view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_3_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_3_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_3_3
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0008-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0011-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0011-HP-0001
+//! @SYMTestCaseDesc 		CRUD operations on Contacts Find View built over an existing remote view
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Find view over an existing remote view.
+//! 				2. Specify the desired search criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Find view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contact Find view based on a remote view is updated correctly when a CRUD Operation is 
+//!				performed on the database and all relevant contact view notifications are received.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_4_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_4_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_4_3
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0011-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0015-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0015-HP-0001
+//! @SYMTestCaseDesc 		Create a Filtered view over an existing local view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Filtered view over an existing local view.
+//! 				2. Specify the desired view filter criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the filtered view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Filtered view based on a local view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_5_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_5_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_5_3
+
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0015-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0017-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0017-HP-0001
+//! @SYMTestCaseDesc 		Create a Filtered view over an existing remote view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Filtered view over an existing remote view.
+//! 				2. Specify the desired view filter criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the filtered view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Filtered view based on a remote view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_6_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_6_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_6_3
+
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0017-HP-0001
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0020-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0020-HP-0001
+//! @SYMTestCaseDesc 		Create a Group view over an existing local view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Group view over an existing local view.
+//! 				2. Specify the desired group criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Group view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Filtered view based on a local view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_7_1
+// RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_7_2
+RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_7_3
+
+RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_12_1
+// RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_12_2
+RUN_TEST_STEP      1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_12_3
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0020-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0023-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0023-HP-0001
+//! @SYMTestCaseDesc 		Create a Group view over an existing remote view and access the same
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Group view over an existing remote view.
+//! 				2. Specify the desired view filter criteria as part of construction.
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Group view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Group view based on a remote view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_8_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_8_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_8_3
+
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_13_1
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_13_2
+RUN_TEST_STEP       1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_13_3
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0023-HP-0001
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0030-HP-0001
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0030-HP-0001
+//! @SYMTestCaseDesc 		CRUD operations on Concatenated View
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1. Construct a Concatenated view
+//! 				3. Perform CRUD Operations on contacts database.
+//! 				4. Validate that the view count of the Concatenated view at the end of each CRUD Operation.
+//! 				5. Validate the contact view notifications received
+//! @SYMTestExpectedResults 	Contacts Concatenated view based on a remote view is updated correctly when a CRUD Operation 
+//!				is performed on the database and all relevant contact view notifications are received
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP     1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_11_1
+RUN_TEST_STEP     1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_11_3
+RUN_TEST_STEP     1500 CntPerfTestServer TestContactViewCRUDOperationsStep C:\Cntviewtest\configs\TestContactViewCRUDOperationsStep.ini CRUDOperations_11_2
+
+
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0030-HP-0001
+
+
+
+PRINT Completed Contact View CRUD Operations related tests
+
+
+

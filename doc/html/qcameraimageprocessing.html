@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qcameraimageprocessing.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QCameraImageProcessing Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QCameraImageProcessing"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QCameraImageProcessing Class Reference<br /><span class="small-subtitle">[<a href="qtmultimediakit.html">QtMultimediaKit</a> module]</span>
+</h1>
+<p>The QCameraImageProcessing class provides interface for focus and zoom related camera settings. <a href="#details">More...</a></p>
+<pre>    #include &lt;QCameraImageProcessing&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qcameraimageprocessing-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a></b> { WhiteBalanceManual, WhiteBalanceAuto, WhiteBalanceSunlight, WhiteBalanceCloudy, ..., WhiteBalanceVendor }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#contrast">contrast</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#denoisingLevel">denoisingLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#isAvailable">isAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#isDenoisingSupported">isDenoisingSupported</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#isSharpeningSupported">isSharpeningSupported</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#isWhiteBalanceModeSupported">isWhiteBalanceModeSupported</a></b> ( WhiteBalanceMode <i>mode</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#manualWhiteBalance">manualWhiteBalance</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#saturation">saturation</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setContrast">setContrast</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setDenoisingLevel">setDenoisingLevel</a></b> ( int <i>level</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setManualWhiteBalance">setManualWhiteBalance</a></b> ( int <i>colorTemperature</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setSaturation">setSaturation</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setSharpeningLevel">setSharpeningLevel</a></b> ( int <i>level</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#setWhiteBalanceMode">setWhiteBalanceMode</a></b> ( WhiteBalanceMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#sharpeningLevel">sharpeningLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraimageprocessing.html#whiteBalanceMode">whiteBalanceMode</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QCameraImageProcessing class provides interface for focus and zoom related camera settings.</p>
+<p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
+<p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QCameraImageProcessing/WhiteBalanceMode"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceManual"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceAuto"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceSunlight"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceCloudy"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceShade"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceTungsten"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceFluorescent"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceIncandescent"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceFlash"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceSunset"></a>
+<a name="//apple_ref/cpp/econst/QCameraImageProcessing/WhiteBalanceVendor"></a>
+<h3 class="fn"><a name="WhiteBalanceMode-enum"></a>enum QCameraImageProcessing::WhiteBalanceMode</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceManual</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Manual white balance. In this mode the white balance should be set with <a href="qcameraimageprocessing.html#setManualWhiteBalance">setManualWhiteBalance</a>()</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceAuto</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Auto white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceSunlight</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Sunlight white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceCloudy</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Cloudy white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceShade</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Shade white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceTungsten</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Tungsten white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceFluorescent</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">Fluorescent white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceIncandescent</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Incandescent white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceFlash</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">Flash white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceSunset</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">Sunset white balance mode.</td></tr>
+<tr><td valign="top"><tt>QCameraImageProcessing::WhiteBalanceVendor</tt></td><td align="center" valign="top"><tt>1000</tt></td><td valign="top">Vendor defined white balance mode.</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/contrast"></a>
+<h3 class="fn"><a name="contrast"></a>int QCameraImageProcessing::contrast () const</h3>
+<p>Return the contrast.</p>
+<p>See also <a href="qcameraimageprocessing.html#setContrast">setContrast</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/denoisingLevel"></a>
+<h3 class="fn"><a name="denoisingLevel"></a>int QCameraImageProcessing::denoisingLevel () const</h3>
+<p>Returns the denoising level.</p>
+<p>See also <a href="qcameraimageprocessing.html#setDenoisingLevel">setDenoisingLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QCameraImageProcessing::isAvailable () const</h3>
+<p>Returns true if image processing related settings are supported by this camera.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/isDenoisingSupported"></a>
+<h3 class="fn"><a name="isDenoisingSupported"></a>bool QCameraImageProcessing::isDenoisingSupported () const</h3>
+<p>Returns true if denoising is supported.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/isSharpeningSupported"></a>
+<h3 class="fn"><a name="isSharpeningSupported"></a>bool QCameraImageProcessing::isSharpeningSupported () const</h3>
+<p>Identifies if sharpening is supported.</p>
+<p>Returns true if sharpening is supported; and false if it is not.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/isWhiteBalanceModeSupported"></a>
+<h3 class="fn"><a name="isWhiteBalanceModeSupported"></a>bool QCameraImageProcessing::isWhiteBalanceModeSupported ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> ) const</h3>
+<p>Returns true if the white balance <i>mode</i> is supported.</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/manualWhiteBalance"></a>
+<h3 class="fn"><a name="manualWhiteBalance"></a>int QCameraImageProcessing::manualWhiteBalance () const</h3>
+<p>Returns the current color temperature if the manual white balance is active, otherwise the return value is undefined.</p>
+<p>See also <a href="qcameraimageprocessing.html#setManualWhiteBalance">setManualWhiteBalance</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/saturation"></a>
+<h3 class="fn"><a name="saturation"></a>int QCameraImageProcessing::saturation () const</h3>
+<p>Returns the saturation value.</p>
+<p>See also <a href="qcameraimageprocessing.html#setSaturation">setSaturation</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setContrast"></a>
+<h3 class="fn"><a name="setContrast"></a>void QCameraImageProcessing::setContrast ( int <i>value</i> )</h3>
+<p>Set the contrast to <i>value</i>.</p>
+<p>Valid contrast values range between -100 and 100, the default is 0.</p>
+<p>See also <a href="qcameraimageprocessing.html#contrast">contrast</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setDenoisingLevel"></a>
+<h3 class="fn"><a name="setDenoisingLevel"></a>void QCameraImageProcessing::setDenoisingLevel ( int <i>level</i> )</h3>
+<p>Sets the denoising <i>level</i>.</p>
+<p>Valid denoising level values range between -1 for default denoising level, 0 for denoising disabled and 100 for maximum denoising applied.</p>
+<p>See also <a href="qcameraimageprocessing.html#denoisingLevel">denoisingLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setManualWhiteBalance"></a>
+<h3 class="fn"><a name="setManualWhiteBalance"></a>void QCameraImageProcessing::setManualWhiteBalance ( int <i>colorTemperature</i> )</h3>
+<p>Sets manual white balance to <i>colorTemperature</i></p>
+<p>See also <a href="qcameraimageprocessing.html#manualWhiteBalance">manualWhiteBalance</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setSaturation"></a>
+<h3 class="fn"><a name="setSaturation"></a>void QCameraImageProcessing::setSaturation ( int <i>value</i> )</h3>
+<p>Sets the saturation value to <i>value</i>.</p>
+<p>Valid saturation values range between -100 and 100, the default is 0.</p>
+<p>See also <a href="qcameraimageprocessing.html#saturation">saturation</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setSharpeningLevel"></a>
+<h3 class="fn"><a name="setSharpeningLevel"></a>void QCameraImageProcessing::setSharpeningLevel ( int <i>level</i> )</h3>
+<p>Sets the sharpening <i>level</i>.</p>
+<p>Valid sharpening level values range between -1 for default sharpening level, 0 for sharpening disabled and 100 for maximum sharpening applied.</p>
+<p>See also <a href="qcameraimageprocessing.html#sharpeningLevel">sharpeningLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/setWhiteBalanceMode"></a>
+<h3 class="fn"><a name="setWhiteBalanceMode"></a>void QCameraImageProcessing::setWhiteBalanceMode ( <a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> <i>mode</i> )</h3>
+<p>Sets the white balance to <i>mode</i>.</p>
+<p>See also <a href="qcameraimageprocessing.html#whiteBalanceMode">whiteBalanceMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/sharpeningLevel"></a>
+<h3 class="fn"><a name="sharpeningLevel"></a>int QCameraImageProcessing::sharpeningLevel () const</h3>
+<p>Returns the sharpening level.</p>
+<p>See also <a href="qcameraimageprocessing.html#setSharpeningLevel">setSharpeningLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraImageProcessing/whiteBalanceMode"></a>
+<h3 class="fn"><a name="whiteBalanceMode"></a><a href="qcameraimageprocessing.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> QCameraImageProcessing::whiteBalanceMode () const</h3>
+<p>Returns the white balance mode being used.</p>
+<p>See also <a href="qcameraimageprocessing.html#setWhiteBalanceMode">setWhiteBalanceMode</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

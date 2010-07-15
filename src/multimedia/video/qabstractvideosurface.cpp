@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
     \class QAbstractVideoSurface
     \brief The QAbstractVideoSurface class is a base class for video presentation surfaces.
     \since 4.6
+    \inmodule QtMultimediaKit
 
     The QAbstractVideoSurface class defines the standard interface that video producers use to
     inter-operate with video presentation surfaces.  It is not supposed to be instantiated directly.

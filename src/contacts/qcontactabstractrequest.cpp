@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
+  \inmodule QtContacts
+
   \ingroup contacts-main
 
   It allows a client to asynchronously request some functionality of a
@@ -181,16 +183,7 @@ QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate*
 /*! Cleans up the memory used by this request */
 QContactAbstractRequest::~QContactAbstractRequest()
 {
-    if (d_ptr) {
-        QMutexLocker ml(&d_ptr->m_mutex);
-        QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-        ml.unlock();
-        if (engine) {
-            engine->requestDestroyed(this);
-        }
-
-        delete d_ptr;
-    }
+     delete d_ptr;
 }
 
 /*!
@@ -242,6 +235,16 @@ QContactManager::Error QContactAbstractRequest::error() const
 {
     QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_error;
+}
+
+/*!
+  \deprecated
+  Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
+  This function is deprecated and will be removed after the transition period has elapsed.  Use errorMap() instead.
+ */
+QList<QContactManager::Error> QContactAbstractRequest::errors() const
+{
+    return QList<QContactManager::Error>();
 }
 
 /*!

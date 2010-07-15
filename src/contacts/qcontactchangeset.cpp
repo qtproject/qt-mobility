@@ -49,6 +49,8 @@ QTM_BEGIN_NAMESPACE
 /*!
    \class QContactChangeSet
   
+  \inmodule QtContacts
+  
    \brief The QContactChangeSet class provides a simple API to
    simplify the emission of state-change signals from
    QContactManagerEngine implementations.
@@ -357,5 +359,100 @@ void QContactChangeSet::emitSignals(QContactManagerEngine *engine)
             emit engine->selfContactIdChanged(d->m_oldAndNewSelfContactId.first, d->m_oldAndNewSelfContactId.second);
     }
 }
+
+
+/*!
+  \deprecated
+   Returns a reference to the set of ids of contacts which have been added to
+   the database.
+
+   Don't use this.. use the const version instead.
+ */
+QSet<QContactLocalId>& QContactChangeSet::addedContacts()
+{
+    return d->m_addedContacts;
+}
+
+/*!
+  \deprecated
+   Returns a reference to the set of ids of contacts which have been changed in
+   the database.
+
+   Don't use this.. use the const version instead.
+ */
+QSet<QContactLocalId>& QContactChangeSet::changedContacts()
+{
+    return d->m_changedContacts;
+}
+
+/*!
+  \deprecated
+   Returns a reference to the set of ids of contacts which have been removed from
+   the database.
+
+   Don't use this.. use the const version instead.
+ */
+QSet<QContactLocalId>& QContactChangeSet::removedContacts()
+{
+    return d->m_removedContacts;
+}
+
+/*!
+  \deprecated
+   Returns a reference to the set of ids of contacts which have been affected
+   by the addition of relationships to the database.
+
+   Don't use this.. use the const version instead.
+ */
+QSet<QContactLocalId>& QContactChangeSet::addedRelationshipsContacts()
+{
+    return d->m_addedRelationships;
+}
+
+/*!
+  \deprecated
+   Returns a reference to the set of ids of contacts which have been affected
+   by the removal of relationships from the database.
+
+   Don't use this.. use the const version instead.
+ */
+QSet<QContactLocalId>& QContactChangeSet::removedRelationshipsContacts()
+{
+    return d->m_removedRelationships;
+}
+
+/*!
+  \deprecated
+   Returns a reference to the pair of ids which represents the
+   old and new self contact ids.  The first id in the pair is the
+   old self contact id, while the second id in the pair is the
+   new self contact id.  If the new id is different to the old id
+   at the point in time when emitSignals() is called,
+   the QContactManagerEngine::selfContactIdChanged() signal will be emitted.
+
+   Don't use this.. use the const version instead.
+ */
+QPair<QContactLocalId, QContactLocalId>& QContactChangeSet::oldAndNewSelfContactId()
+{
+    return d->m_oldAndNewSelfContactId;
+}
+
+/*!
+  \deprecated
+   Clears all flags and sets of ids in this change set
+
+   Use clearAll() instead.
+ */
+void QContactChangeSet::clear()
+{
+    d->m_dataChanged = false;
+    d->m_addedContacts.clear();
+    d->m_changedContacts.clear();
+    d->m_removedContacts.clear();
+    d->m_addedRelationships.clear();
+    d->m_removedRelationships.clear();
+    d->m_oldAndNewSelfContactId = QPair<QContactLocalId, QContactLocalId>();
+}
+
 
 QTM_END_NAMESPACE

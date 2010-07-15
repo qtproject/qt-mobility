@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeoboundingbox.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QGeoBoundingBox Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoBoundingBox"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoBoundingBox Class Reference<br /><span class="small-subtitle">[<a href="qtlocation.html">QtLocation</a> module]</span>
+</h1>
+<p>The QGeoBoundingBox class defines a rectangular geographic area. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoBoundingBox&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
+<ul>
+<li><a href="qgeoboundingbox-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox">QGeoBoundingBox</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-2">QGeoBoundingBox</a></b> ( const QGeoCoordinate &amp; <i>center</i>, double <i>degreesWidth</i>, double <i>degreesHeight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-3">QGeoBoundingBox</a></b> ( const QGeoCoordinate &amp; <i>topLeft</i>, const QGeoCoordinate &amp; <i>bottomRight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-4">QGeoBoundingBox</a></b> ( const QGeoBoundingBox &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#dtor.QGeoBoundingBox">~QGeoBoundingBox</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#bottomLeft">bottomLeft</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#bottomRight">bottomRight</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#center">center</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#contains">contains</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#contains-2">contains</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#height">height</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#intersected">intersected</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#intersects">intersects</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#isEmpty">isEmpty</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#setHeight">setHeight</a></b> ( double <i>degreesHeight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#setWidth">setWidth</a></b> ( double <i>degreesWidth</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#topLeft">topLeft</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#topRight">topRight</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#translate">translate</a></b> ( double <i>degreesLatitude</i>, double <i>degreesLongitude</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#translated">translated</a></b> ( double <i>degreesLatitude</i>, double <i>degreesLongitude</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#united">united</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#width">width</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-not-eq">operator!=</a></b> ( const QGeoBoundingBox &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-and">operator&amp;</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-and-eq">operator&amp;=</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-eq">operator=</a></b> ( const QGeoBoundingBox &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-eq-eq">operator==</a></b> ( const QGeoBoundingBox &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-7c">operator|</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-7c-eq">operator|=</a></b> ( const QGeoBoundingBox &amp; <i>boundingBox</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoBoundingBox class defines a rectangular geographic area.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/QGeoBoundingBox"></a>
+<h3 class="fn"><a name="QGeoBoundingBox"></a>QGeoBoundingBox::QGeoBoundingBox ()</h3>
+<h3 class="fn"><a name="QGeoBoundingBox-2"></a>QGeoBoundingBox::QGeoBoundingBox ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i>, double <i>degreesWidth</i>, double <i>degreesHeight</i> )</h3>
+<h3 class="fn"><a name="QGeoBoundingBox-3"></a>QGeoBoundingBox::QGeoBoundingBox ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> )</h3>
+<h3 class="fn"><a name="QGeoBoundingBox-4"></a>QGeoBoundingBox::QGeoBoundingBox ( const QGeoBoundingBox &amp; <i>other</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/~QGeoBoundingBox"></a>
+<h3 class="fn"><a name="dtor.QGeoBoundingBox"></a>QGeoBoundingBox::~QGeoBoundingBox ()</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/bottomLeft"></a>
+<h3 class="fn"><a name="bottomLeft"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::bottomLeft () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/bottomRight"></a>
+<h3 class="fn"><a name="bottomRight"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::bottomRight () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/center"></a>
+<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::center () const</h3>
+<p>See also <a href="qgeoboundingbox.html#setCenter">setCenter</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/contains"></a>
+<h3 class="fn"><a name="contains"></a>bool QGeoBoundingBox::contains ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
+<h3 class="fn"><a name="contains-2"></a>bool QGeoBoundingBox::contains ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/height"></a>
+<h3 class="fn"><a name="height"></a>double QGeoBoundingBox::height ()</h3>
+<p>See also <a href="qgeoboundingbox.html#setHeight">setHeight</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/intersected"></a>
+<h3 class="fn"><a name="intersected"></a>QGeoBoundingBox QGeoBoundingBox::intersected ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/intersects"></a>
+<h3 class="fn"><a name="intersects"></a>bool QGeoBoundingBox::intersects ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/isEmpty"></a>
+<h3 class="fn"><a name="isEmpty"></a>bool QGeoBoundingBox::isEmpty () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/isValid"></a>
+<h3 class="fn"><a name="isValid"></a>bool QGeoBoundingBox::isValid () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/setCenter"></a>
+<h3 class="fn"><a name="setCenter"></a>void QGeoBoundingBox::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3>
+<p>See also <a href="qgeoboundingbox.html#center">center</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/setHeight"></a>
+<h3 class="fn"><a name="setHeight"></a>void QGeoBoundingBox::setHeight ( double <i>degreesHeight</i> )</h3>
+<p>See also <a href="qgeoboundingbox.html#height">height</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/setWidth"></a>
+<h3 class="fn"><a name="setWidth"></a>void QGeoBoundingBox::setWidth ( double <i>degreesWidth</i> )</h3>
+<p>See also <a href="qgeoboundingbox.html#width">width</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/topLeft"></a>
+<h3 class="fn"><a name="topLeft"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::topLeft () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/topRight"></a>
+<h3 class="fn"><a name="topRight"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::topRight () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/translate"></a>
+<h3 class="fn"><a name="translate"></a>void QGeoBoundingBox::translate ( double <i>degreesLatitude</i>, double <i>degreesLongitude</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/translated"></a>
+<h3 class="fn"><a name="translated"></a>QGeoBoundingBox QGeoBoundingBox::translated ( double <i>degreesLatitude</i>, double <i>degreesLongitude</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/united"></a>
+<h3 class="fn"><a name="united"></a>QGeoBoundingBox QGeoBoundingBox::united ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/width"></a>
+<h3 class="fn"><a name="width"></a>double QGeoBoundingBox::width () const</h3>
+<p>See also <a href="qgeoboundingbox.html#setWidth">setWidth</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoBoundingBox::operator!= ( const QGeoBoundingBox &amp; <i>other</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator&amp;"></a>
+<h3 class="fn"><a name="operator-and"></a>QGeoBoundingBox QGeoBoundingBox::operator&amp; ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator&amp;="></a>
+<h3 class="fn"><a name="operator-and-eq"></a>QGeoBoundingBox &amp; QGeoBoundingBox::operator&amp;= ( const QGeoBoundingBox &amp; <i>boundingBox</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoBoundingBox &amp; QGeoBoundingBox::operator= ( const QGeoBoundingBox &amp; <i>other</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoBoundingBox::operator== ( const QGeoBoundingBox &amp; <i>other</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator|"></a>
+<h3 class="fn"><a name="operator-7c"></a>QGeoBoundingBox QGeoBoundingBox::operator| ( const QGeoBoundingBox &amp; <i>boundingBox</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator|="></a>
+<h3 class="fn"><a name="operator-7c-eq"></a>QGeoBoundingBox &amp; QGeoBoundingBox::operator|= ( const QGeoBoundingBox &amp; <i>boundingBox</i> )</h3>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -1,19 +1,27 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- servicebrowser.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Service Browser Example</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- servicebrowser.qdoc -->
+  <title>Qt Mobility Project 1.1: Service Browser Example</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Service Browser Example<br /><span class="subtitle"></span>
-</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="all-examples.html">Examples</a></li>              <li><a href="examples-servicebrowser.html"></a></li>              <li>Service Browser Example</li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#servicebrowser-class-definition">ServiceBrowser Class Definition</a></li>
+<li class="level1"><a href="#servicebrowser-class-implementation">ServiceBrowser Class Implementation</a></li>
+<li class="level2"><a href="#invoking-attributes-an-example">Invoking attributes: an example</a></li>
+</ul>
+</div>
+<h1 class="title">Service Browser Example</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <p>Files:</p>
 <ul>
 <li><a href="servicebrowser-servicebrowser-cpp.html">servicebrowser/servicebrowser.cpp</a></li>
@@ -29,7 +37,7 @@
 <li>Look up the attributes for an interface implementation using the meta-object system</li>
 <li>Set a default interface implementation</li>
 </ul>
-<p align="center"><img src="images/servicebrowser.png" alt="Screenshot of the Service Browser example" /></p><p>The application window is split into three panes.</p>
+<p class="centerAlign"><img src="images/servicebrowser.png" alt="Screenshot of the Service Browser example" /></p><p>The application window is split into three panes.</p>
 <p>The top-left pane shows all the services that are registered within the Service Framework. For this example, the <a href="filemanagerplugin.html">filemanagerplugin</a> and <a href="bluetoothtransferplugin.html">bluetoothtransferplugin</a> services included in the <tt>examples/</tt> directory have been registered, and so are visible in this pane.</p>
 <p>The bottom-left pane shows the interfaces implemented by the service selected in the top-left pane. Each entry in this list shows:</p>
 <ul>
@@ -41,7 +49,7 @@
 <a name="servicebrowser-class-definition"></a>
 <h2>ServiceBrowser Class Definition</h2>
 <p>The ServiceBrowser class inherits from <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>. It has several slots for reloading the lists in the three information panes, and for changing the default implementation for an interface.</p>
-<pre>    class ServiceBrowser : public QWidget
+<pre class="highlightedCode brush: cpp">    class ServiceBrowser : public QWidget
     {
         Q_OBJECT
     public:
@@ -60,7 +68,7 @@
     };</pre>
 <a name="servicebrowser-class-implementation"></a>
 <h2>ServiceBrowser Class Implementation</h2>
-<pre>    ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
+<pre class="highlightedCode brush: cpp">    ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
         : QWidget(parent, flags)
     {
         serviceManager = new QServiceManager(this);
@@ -73,7 +81,7 @@
         setWindowTitle(tr(&quot;Services Browser&quot;));
     }</pre>
 <p>The constructor registers the &quot;FileManagerService&quot; and &quot;BluetoothTransferService&quot; services that are provided by the <a href="filemanagerplugin.html">filemanagerplugin</a> and <a href="bluetoothtransferplugin.html">bluetoothtransferplugin</a> projects in the <tt>examples/</tt> directory. It also calls <tt>reloadServicesList()</tt> to show these two newly registered services in the top-left pane.</p>
-<pre>    void ServiceBrowser::reloadServicesList()
+<pre class="highlightedCode brush: cpp">    void ServiceBrowser::reloadServicesList()
     {
         servicesListWidget-&gt;clear();
 
@@ -84,7 +92,7 @@
         servicesListWidget-&gt;addItem(showAllServicesItem);
     }</pre>
 <p>When the services list in the top-left pane needs to be refreshed, we call <a href="qservicemanager.html#findServices">QServiceManager::findServices</a>() to get a <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> of all services that are currently registered with the service framework.</p>
-<pre>    void ServiceBrowser::reloadInterfaceImplementationsList()
+<pre class="highlightedCode brush: cpp">    void ServiceBrowser::reloadInterfaceImplementationsList()
     {
         ...
         ...
@@ -116,7 +124,7 @@
 <p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
 <p>The example maps each entry in the interface implementations list to its corresponding <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object using the <a href="http://qt.nokia.com/doc/4.6/qlistwidgetitem.html#setData">QListWidgetItem::setData</a>() method.</p>
 <p>Note how we also call QServiceManager::defaultServiceInterface() to determine whether an interface implementation is the default for that interface.</p>
-<pre>    void ServiceBrowser::reloadAttributesList()
+<pre class="highlightedCode brush: cpp">    void ServiceBrowser::reloadAttributesList()
     {
         QListWidgetItem *item = interfacesListWidget-&gt;currentItem();
         if (!item)
@@ -134,7 +142,7 @@
         ...</pre>
 <p>The <tt>reloadAttributesList()</tt> method creates the list in the right-hand pane that shows the attributes of an interface implementation that can be invoked through the Qt meta-object system.</p>
 <p><a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() is called to get an instance of the identified interface implementation. This method finds the corresponding service plugin and returns the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> instance provided by the service plugin's <a href="qserviceplugininterface.html#createInstance">QServicePluginInterface::createInstance</a>() method.</p>
-<pre>        ...
+<pre class="highlightedCode brush: cpp">        ...
         const QMetaObject *metaObject = implementationRef-&gt;metaObject();
         attributesGroup-&gt;setTitle(tr(&quot;Invokable attributes for %1 class&quot;)
                 .arg(QString(metaObject-&gt;className())));
@@ -153,7 +161,7 @@
 <h3>Invoking attributes: an example</h3>
 <p>Here is an example of invoking attributes on an implementation, using the <a href="filemanagerplugin.html">FileManagerPlugin</a> that is shown in the Service Browser.</p>
 <p>The <a href="filemanagerplugin.html">FileManagerPlugin</a> provides a service called &quot;FileManagerService&quot; in its <tt>filemanagerplugin.xml</tt> service definition. When FileManagerPlugin::createInstance() is called, if the com.nokia.qt.examples.FileStorage interface is requested, it returns an instance of the FileManagerStorage class. The FileManagerStorage class is defined like this:</p>
-<pre>    class FileManagerStorage : public QObject
+<pre class="highlightedCode brush: cpp">    class FileManagerStorage : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(QString workingDirectory READ workingDirectory WRITE setWorkingDirectory)
@@ -174,17 +182,18 @@
         QString directory;
     };</pre>
 <p>So if, in the ServiceBrowser application, we select the com.nokia.qt.examples.FileStorage implementation provided by FileManagerService, the browser would display all the dynamically invokable attributes of the FileManagerStorage class:</p>
-<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> parent.)</p>
+<p class="centerAlign"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> parent.)</p>
 <p>To invoke the <tt>copyFile()</tt> slot, for example:</p>
-<pre>    QObject *interfaceImpl = QServiceManager::loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;, 0, 0);
+<pre class="highlightedCode brush: cpp">    QObject *interfaceImpl = QServiceManager::loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;, 0, 0);
     QMetaObject::invokeMethod(interfaceImpl, &quot;copyFile&quot;,
                               Q_ARG(QString, &quot;path/to/file.txt&quot;),
                               Q_ARG(QString, &quot;new/path/to/file.txt&quot;));</pre>
 <p>Of course, the <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() call here assumes the FileManagerStorage implementation is the default for the com.nokia.qt.examples.FileStorage interface. Otherwise, it would have to pass a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object to <a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() instead of just the interface name to ensure the correct implementation is loaded.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

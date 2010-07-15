@@ -2543,8 +2543,16 @@ void tst_QContactManager::actionPreferences()
     c.saveDetail(&p3);
     c.saveDetail(&u);
 
+    // set a preference for dialing a particular saved phonenumber.
+    c.setPreferredDetail("Dial", p2);
+
     QVERIFY(cm->saveContact(&c));          // save the contact
     QContact loaded = cm->contact(c.id().localId()); // reload the contact
+
+    // test that the preference was saved correctly.
+    QContactDetail pref = loaded.preferredDetail("Dial");
+    QVERIFY(pref == p2);
+
     cm->removeContact(c.id().localId());
 }
 

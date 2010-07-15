@@ -53,10 +53,18 @@ static QString normalizePropertyName(const QString& name)
 
 
 QMLContact::QMLContact(QObject *parent)
-    :QObject(parent),
+    :QAbstractListModel(parent),
     m_contactMap(0)
 {
-   connect(&m_saveRequest, SIGNAL(resultAvailable()), this, SLOT(onContactSaved()));
+    QHash<int, QByteArray> roleNames;
+    roleNames = QAbstractItemModel::roleNames();
+    roleNames.insert(DetailNameRole, "detailName");
+    roleNames.insert(DetailFieldKeyRole, "key");
+    roleNames.insert(DetailFieldValueRole, "value");
+    roleNames.insert(DetailFieldRole, "field");
+    setRoleNames(roleNames);
+
+    connect(&m_saveRequest, SIGNAL(resultsAvailable()), this, SLOT(onContactSaved()));
 }
 
 void QMLContact::setManager(QContactManager* manager)
@@ -76,11 +84,13 @@ void QMLContact::setContact(const QContact& c)
         delete detail;
     }
     m_details.clear();
+    m_detailFields.clear();
 
     m_contactMap = new QDeclarativePropertyMap(this);
 
 
     QList<QContactDetail> details = m_contact.details();
+
     foreach (const QContactDetail& detail, details) {
       QMLContactDetail* qd = new QMLContactDetail(this);
 
@@ -96,7 +106,9 @@ void QMLContact::setContact(const QContact& c)
       qd->setName(normalizePropertyName(detail.definitionName()));
       m_details.append(qd);
       qd->setDetailPropertyMap(dm);
-      m_detailMaps.append(dm);;
+      m_detailMaps.append(dm);
+
+      m_detailFields << qd->fields();
       m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
     }
 }
@@ -117,12 +129,7 @@ QContact QMLContact::contact() const
 
 QList<QObject*> QMLContact::detailFields() const
 {
-    QList<QObject*> fields;
-    foreach (QObject* o, m_details) {
-        QMLContactDetail* detail = qobject_cast<QMLContactDetail*>(o);
-        fields << detail->fields();
-    }
-    return fields;
+    return m_detailFields;
 }
 QList<QObject*> QMLContact::details() const
 {
@@ -167,3 +174,34 @@ void QMLContact::onContactSaved()
    }
 }
 
+
+
+int QMLContact::contactId() const
+{
+    return m_contact.localId();
+}
+
+int QMLContact::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return m_detailFields.count();
+}
+
+QVariant QMLContact::data(const QModelIndex &index, int role) const
+{
+    QMLContactDetailField* field = qobject_cast<QMLContactDetailField*>(m_detailFields[index.row()]);
+    if (field) {
+        switch(role) {
+            case Qt::DisplayRole:
+            case DetailFieldKeyRole:
+                return field->key();
+            case DetailNameRole:
+                return field->detailName();
+            case DetailFieldValueRole:
+                return field->value();
+            case DetailFieldRole:
+                return QVariant::fromValue((QObject*)field);
+        }
+    }
+    return QVariant();
+}

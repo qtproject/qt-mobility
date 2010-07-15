@@ -66,6 +66,15 @@ public:
     void setDataChanged(bool dataChanged);
     bool dataChanged();
 
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & addedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & changedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & removedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & addedRelationshipsContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & removedRelationshipsContacts();
+    QPair<QContactLocalId, QContactLocalId> Q_DECL_DEPRECATED & oldAndNewSelfContactId();
+
+    void Q_DECL_DEPRECATED clear();
+
     QSet<QContactLocalId> addedContacts() const;
     void insertAddedContact(QContactLocalId addedContactId);
     void insertAddedContacts(const QList<QContactLocalId>& addedContactIds);

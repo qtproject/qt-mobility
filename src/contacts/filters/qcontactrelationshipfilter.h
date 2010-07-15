@@ -61,14 +61,29 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
+    // this enum is DEPRECATED - use QContactRelationship::Role instead!
+    // enum Q_DECL_VARIABLE_DEPRECATED Role {
+    enum Role {
+        First = 0,
+        Second,
+        Either
+    };
+
     void setRelationshipType(const QString& relationshipType);
     void setRelatedContactId(const QContactId& relatedContactId);
     void setRelatedContactRole(QContactRelationship::Role relatedContactRole);
+    void Q_DECL_DEPRECATED setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole);
 
     QString relationshipType() const;
     QContactId relatedContactId() const;
     QContactRelationship::Role relatedContactRole() const;
+    //QContactRelationshipFilter::Role Q_DECL_DEPRECATED relatedContactRole() const; // cannot deprecated as signature is the same.
 
+    // deprecated and will be removed after transition period has elapsed.  replaced by setRelatedContactRole / setRelatedContactId.
+    void Q_DECL_DEPRECATED setRole(QContactRelationshipFilter::Role roleInRelationship);
+    void Q_DECL_DEPRECATED setOtherParticipantId(const QContactId& contactId);
+    QContactRelationshipFilter::Role Q_DECL_DEPRECATED role() const;
+    QContactId Q_DECL_DEPRECATED otherParticipantId() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMetaDataWriterControl
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

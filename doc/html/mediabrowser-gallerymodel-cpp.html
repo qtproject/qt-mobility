@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt Mobility Project 1.1: gallerymodel.cpp Example File (mediabrowser/gallerymodel.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">gallerymodel.cpp Example File</h1>
+<span class="small-subtitle">mediabrowser/gallerymodel.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode brush: cpp"><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;gallerymodel.h&quot;
+
+    #include &quot;qgalleryitemlist.h&quot;
+
+    GalleryModel::GalleryModel(QObject *parent)
+        : QAbstractItemModel(parent)
+        , mediaList(0)
+        , columnNames(1)
+        , displayKeys(1, -1)
+        , displayFields(1)
+        , decorationKeys(1, -1)
+        , decorationFields(1)
+    {
+    }
+
+    GalleryModel::~GalleryModel()
+    {
+    }
+
+    QVariant GalleryModel::data(const QModelIndex &amp;index, int role) const
+    {
+        if (index.isValid()) {
+            int key = -1;
+
+            if (role == Qt::DisplayRole || role == Qt::EditRole)
+                key = displayKeys.at(index.column());
+            else if (role == Qt::DecorationRole)
+                key = decorationKeys.at(index.column());
+            else if (role &gt;= Qt::UserRole)
+                key = userKeys.at(role - Qt::UserRole);
+
+            if (key &gt;= 0)
+                return mediaList-&gt;metaData(index.row(), key);
+        }
+        return QVariant();
+    }
+
+    bool GalleryModel::setData(const QModelIndex &amp;index, const QVariant &amp;value, int role)
+    {
+        if (index.isValid() &amp;&amp; role == Qt::EditRole) {
+            int key = displayKeys.at(index.column());
+
+            if (key &gt;= 0) {
+                mediaList-&gt;setMetaData(index.row(), key, value);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Qt::ItemFlags GalleryModel::flags(const QModelIndex &amp;index) const
+    {
+        Qt::ItemFlags flags = Qt::ItemIsEnabled;
+
+        if (index.isValid()) {
+            int key = displayKeys.at(index.column());
+
+            if (key &gt;= 0 &amp;&amp; mediaList-&gt;propertyAttributes(key) &amp; QGalleryProperty::CanWrite)
+                flags |= Qt::ItemIsEditable;
+
+            const int row = index.row();
+            <span class="comment">// Ideally we'd use the scroll position of the view to set the cursor position</span>
+            if (row &lt; mediaList-&gt;count() - 1) {
+                const int position = mediaList-&gt;cursorPosition();
+                const int pageSize = mediaList-&gt;minimumPagedItems();
+
+                if (row - 32 &lt; position &amp;&amp; position &gt; 0)
+                    mediaList-&gt;setCursorPosition(qMax(0, row - 32));
+                else if (row + 32 &gt; position + pageSize)
+                    mediaList-&gt;setCursorPosition(qMax(0, row + 32 - pageSize));
+            }
+        }
+
+        return flags;
+    }
+
+    QModelIndex GalleryModel::index(int row, int column, const QModelIndex &amp;parent) const
+    {
+        if (!parent.isValid() &amp;&amp; mediaList
+                &amp;&amp; row &gt;= 0 &amp;&amp; row &lt; mediaList-&gt;count()
+                &amp;&amp; column &gt;= 0 &amp;&amp; column &lt; displayFields.count()) {
+
+            return createIndex(row, column);
+        }
+        return QModelIndex();
+    }
+
+    QModelIndex GalleryModel::parent(const QModelIndex &amp;) const
+    {
+        return QModelIndex();
+    }
+
+    QVariant GalleryModel::headerData(int section, Qt::Orientation orientation, int role) const
+    {
+        return orientation == Qt::Horizontal &amp;&amp; role == Qt::DisplayRole
+                ? columnNames.value(section)
+                : QVariant();
+    }
+
+    int GalleryModel::rowCount(const QModelIndex &amp;parent) const
+    {
+        return !parent.isValid() &amp;&amp; mediaList
+                ? mediaList-&gt;count()
+                : 0;
+    }
+
+    int GalleryModel::columnCount(const QModelIndex &amp;parent) const
+    {
+        return !parent.isValid() ? displayFields.count() : 0;
+    }
+
+    void GalleryModel::setColumnCount(int count)
+    {
+        if (displayFields.count() &gt; count) {
+            beginRemoveColumns(QModelIndex(), count, displayFields.count() - 1);
+
+            columnNames.resize(count);
+            displayFields.resize(count);
+            displayKeys.resize(count);
+            decorationFields.resize(count);
+            decorationKeys.resize(count);
+
+            endRemoveColumns();
+        } else if (displayFields.count() &lt; count) {
+            int index = displayFields.count();
+
+            beginInsertColumns(QModelIndex(), index, count - 1);
+
+            columnNames.resize(count);
+            displayFields.resize(count);
+            displayKeys.fill(-1, count);
+            decorationFields.resize(count);
+            decorationKeys.fill(-1, count);
+
+            endInsertColumns();
+        }
+    }
+
+    QGalleryItemList *GalleryModel::list() const
+    {
+        return mediaList;
+    }
+
+    void GalleryModel::setList(QGalleryItemList *list)
+    {
+        beginResetModel();
+
+        if (mediaList) {
+            disconnect(mediaList, SIGNAL(inserted(int,int)), this, SLOT(inserted(int,int)));
+            disconnect(mediaList, SIGNAL(removed(int,int)), this, SLOT(removed(int,int)));
+            disconnect(mediaList, SIGNAL(moved(int,int,int)), this, SLOT(moved(int,int,int)));
+            disconnect(mediaList, SIGNAL(metaDataChanged(int,int,QList&lt;int&gt;)),
+                    this, SLOT(metaDataChanged(int,int,QList&lt;int&gt;)));
+
+            displayKeys.fill(-1);
+            decorationKeys.fill(-1);
+            userKeys.fill(-1);
+        }
+
+        mediaList = list;
+
+        if (mediaList) {
+            for (int i = 0; i &lt; displayFields.count(); ++i)
+                displayKeys[i] = mediaList-&gt;propertyKey(displayFields.at(i));
+
+            for (int i = 0; i &lt; decorationFields.count(); ++i)
+                decorationKeys[i] = mediaList-&gt;propertyKey(decorationFields.at(i));
+
+            for (int i = 0; i &lt; userFields.count(); ++i)
+                userKeys[i] = mediaList-&gt;propertyKey(userFields.at(i));
+
+            connect(mediaList, SIGNAL(inserted(int,int)), this, SLOT(inserted(int,int)));
+            connect(mediaList, SIGNAL(removed(int,int)), this, SLOT(removed(int,int)));
+            connect(mediaList, SIGNAL(moved(int,int,int)), this, SLOT(moved(int,int,int)));
+            connect(mediaList, SIGNAL(metaDataChanged(int,int,QList&lt;int&gt;)),
+                       this, SLOT(metaDataChanged(int,int,QList&lt;int&gt;)));
+        }
+        endResetModel();
+    }
+
+    QString GalleryModel::columnName(int column) const
+    {
+        return columnNames.at(column);
+    }
+
+    void GalleryModel::setColumnName(int column, const QString &amp;name)
+    {
+        columnNames[column] = name;
+
+        emit headerDataChanged(Qt::Horizontal, column, column);
+    }
+
+    QString GalleryModel::displayFieldForColumn(int column) const
+    {
+        return displayFields.at(column);
+    }
+
+    void GalleryModel::setDisplayFieldForColumn(int column, const QString &amp;field)
+    {
+        displayFields[column] = field;
+
+        if (mediaList) {
+            displayKeys[column] = mediaList-&gt;propertyKey(field);
+
+            emit dataChanged(createIndex(0, column), createIndex(mediaList-&gt;count() - 1, column));
+        }
+    }
+
+    QString GalleryModel::decorationFieldForColumn(int column) const
+    {
+        return decorationFields.at(column);
+    }
+
+    void GalleryModel::setDecorationFieldForColumn(int column, const QString &amp;field)
+    {
+        decorationFields[column] = field;
+
+        if (mediaList) {
+            decorationKeys[column] = mediaList-&gt;propertyKey(field);
+
+            emit dataChanged(createIndex(0, column), createIndex(mediaList-&gt;count() - 1, column));
+        }
+    }
+
+    QVector&lt;QString&gt; GalleryModel::userRoleFields() const
+    {
+        return userFields;
+    }
+
+    void GalleryModel::setUserRoleFields(const QVector&lt;QString&gt; &amp;fields)
+    {
+        userFields = fields;
+        userKeys.fill(-1, userFields.count());
+
+        if (mediaList) {
+            for (int i = 0; i &lt; userFields.count(); ++i)
+                userKeys[i] = mediaList-&gt;propertyKey(userFields.at(i));
+
+            emit dataChanged(
+                    createIndex(0, 0),
+                    createIndex(mediaList-&gt;count() - 1, displayFields.count()));
+        }
+    }
+
+    void GalleryModel::removed(int index, int count)
+    {
+        beginRemoveRows(QModelIndex(), index, index + count - 1);
+        endRemoveRows();
+    }
+
+    void GalleryModel::inserted(int index, int count)
+    {
+        beginInsertRows(QModelIndex(), index, index + count - 1);
+        endInsertRows();
+    }
+
+    void GalleryModel::moved(int from, int to, int count)
+    {
+        beginMoveRows(QModelIndex(), from, from + count - 1, QModelIndex(), to);
+    }
+
+    void GalleryModel::metaDataChanged(int index, int count, const QList&lt;int&gt; &amp;)
+    {
+        emit dataChanged(
+                createIndex(index, 0),
+                createIndex(index + count -1, displayFields.count() - 1));
+    }</pre>
+</div>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>
