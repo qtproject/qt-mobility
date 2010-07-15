@@ -124,12 +124,12 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    !mac:SUBDIRS += telephony
+    unix:!mac:!maemo* {SUBDIRS += telephony}
 }
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer
+    SUBDIRS += hapticsplayer hapticsquare
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

@@ -68,6 +68,7 @@ private slots:
     void contexts();
     void values();
     void hash();
+    void datastream();
     void traits();
     void keys();
     void detailUris();
@@ -690,6 +691,23 @@ void tst_QContactDetail::hash()
     set.insert(detail2);
     set.insert(detail3);
     QCOMPARE(set.size(), 2);
+}
+
+void tst_QContactDetail::datastream()
+{
+    QByteArray buffer;
+    QDataStream stream1(&buffer, QIODevice::WriteOnly);
+    QContactDetail detailIn("definition");
+    detailIn.setValue("key1", "value1");
+    detailIn.setValue("key2", "value2");
+    stream1 << detailIn;
+
+    QVERIFY(buffer.size() > 0);
+
+    QDataStream stream2(buffer);
+    QContactDetail detailOut;
+    stream2 >> detailOut;
+    QCOMPARE(detailOut, detailIn);
 }
 
 void tst_QContactDetail::traits()

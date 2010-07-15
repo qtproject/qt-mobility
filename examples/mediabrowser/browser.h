@@ -65,14 +65,21 @@ public:
     ~Browser();
 
 public slots:
-    void showArtists(const QVariant &containerId = QVariant(), const QString &title = QString());
-    void showAlbumArtists(
-            const QVariant &containerId = QVariant(), const QString &title = QString());
-    void showAlbums(const QVariant &containerId = QVariant(), const QString &title = QString());
-    void showSongs(const QVariant &containerId = QVariant(), const QString &title = QString());
-    void showPhotos(const QVariant &containerId = QVariant(), const QString &title = QString());
+    void showArtists();
+    void showArtists(const QVariant &containerId, const QString &title);
+    void showAlbumArtists();
+    void showAlbumArtists(const QVariant &containerId, const QString &title);
+    void showAlbums();
+    void showAlbums(const QVariant &containerId, const QString &title);
+    void showSongs();
+    void showSongs(const QVariant &containerId, const QString &title);
+    void showPhotos();
+    void showPhotos(const QVariant &containerId, const QString &title);
 
 private:
+    void showView(GalleryView *GalleryView, const QString &title);
+    void showView(GalleryView *GalleryView, const QVariant &containerId, const QString &title);
+
     QDocumentGallery *gallery;
     QStackedWidget *stack;
     GalleryView *artistView;

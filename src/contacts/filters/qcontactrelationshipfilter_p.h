@@ -83,7 +83,7 @@ public:
     {
     }
 
-    virtual bool compare(const QContactFilterPrivate* other) const
+    bool compare(const QContactFilterPrivate* other) const
     {
         const QContactRelationshipFilterPrivate *od = static_cast<const QContactRelationshipFilterPrivate*>(other);
         if (m_relatedContactRole != od->m_relatedContactRole)
@@ -93,6 +93,24 @@ public:
         if (m_relationshipType != od->m_relationshipType)
             return false;
         return true;
+    }
+
+    QDataStream& outputToStream(QDataStream& stream, quint8 formatVersion) const
+    {
+        if (formatVersion == 1) {
+            stream << m_relationshipType << m_relatedContactId << static_cast<quint32>(m_relatedContactRole);
+        }
+        return stream;
+    }
+
+    QDataStream& inputFromStream(QDataStream& stream, quint8 formatVersion)
+    {
+        if (formatVersion == 1) {
+            quint32 role;
+            stream >> m_relationshipType >> m_relatedContactId >> role;
+            m_relatedContactRole = QContactRelationship::Role(role);
+        }
+        return stream;
     }
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)

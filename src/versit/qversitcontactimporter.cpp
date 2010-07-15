@@ -138,11 +138,6 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-  \fn int QVersitContactImporterPropertyHandlerV2::version() const
-  Returns the version of the handler.  Currently, always returns 2.
-*/
-
-/*!
   \class QVersitContactImporter
   \brief The QVersitContactImporter class converts \l{QVersitDocument}{QVersitDocuments} to
   \l{QContact}{QContacts}.
@@ -302,8 +297,7 @@ void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHa
  */
 void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler)
 {
-    if (handler)
-        d->mPropertyHandlerVersion = handler->version();
+    d->mPropertyHandlerVersion = 2;
     d->mPropertyHandler = 0;
     d->mPropertyHandler2 = handler;
 }

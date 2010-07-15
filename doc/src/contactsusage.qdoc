@@ -36,6 +36,94 @@
 \section1 Introduction
 
 This section provides some examples of common usage of the Qt Contacts API.
+The most common use of the API is to retrieve a contact and then display
+certain details of that contact.  To do so, several steps must be taken:
+\list
+   \o A contact manager must be instantiated
+   \o The contact must be retrieved from the manager
+   \o The required details of the contact must be selected from the contact
+\endlist
+
+The first step is usually as simple as:
+\code
+    QContactManager cm; // instantiate the default manager
+\endcode
+
+The second step requires either a filtering operation, or, if the id of the
+contact is already known, a direct selection operation.  If you are interested
+in all contacts, a "default filter" retrieve operation is used.  The retrieval
+operations may either be \l{Contacts Synchronous API}{synchronous} or
+\l{Contacts Asynchronous API}{asynchronous}; we recommend using asynchronous
+operations for applications which require a responsive user interface.
+For simplicity, however, the example below uses the synchronous API to
+retrieve all contacts:
+\code
+    QList<QContact> allContacts = cm.contacts();
+\endcode
+
+The third step may be performed in several ways.  The recommended way is to
+utilize the templated detail accessor, if you know which type of detail you
+are interested in:
+\code
+    QContact firstContact = allContacts.first();
+    qDebug() << "The first contact has a phone number:" << firstContact.detail<QContactPhoneNumber>().number();
+\endcode
+
+Alternatively, you can use the base \l QContactDetail class methods to select
+the detail in which you are interested in, and the field keys specified in the
+derived class to select the value which you are interested in:
+\code
+    qDebug() << "The first contact has a phone number:" << firstContact.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
+\endcode
+
+Note that in each case, if the contact did not have a phone number detail,
+the return value of QContact::detail() is an empty detail.  Also note that in
+the first case, the return value will be of the QContactPhoneNumber detail
+type, whereas in the second case, the return value will be of the
+QContactDetail (base-class detail) type -- although the actual detail returned
+in both cases is exactly the same.
+
+If you wish to retrieve all of the details of a contact, you may do something
+similar to:
+\code
+    QList<QContactDetail> allDetails = firstContact.details();
+\endcode
+
+Alternatively, if you wish only to retrieve the details which are of some
+particular type, you can use either the templated or non-templated accessor:
+\code
+    QList<QContactPhoneNumber> allPhoneNumbers = firstContact.details<QContactPhoneNumber>();
+    QList<QContactDetail> allPhoneNumbers2 = firstContact.details(QContactPhoneNumber::DefinitionName);
+\endcode
+
+Note that in each case, if the contact did not have any phone number details,
+the return value of QContact::details() is an empty list.  Also note that in
+the first case, the return value will be a list of the QContactPhoneNumber
+detail type, whereas in the second case, the return value will be a list of
+the QContactDetail (base-class detail) type -- although the actual details
+returned in both cases will be exactly the same.
+
+The next most common use of the API is to save a contact.  Such an operation
+consists of two steps:
+\list
+   \o Saving a detail in a contact
+   \o Saving the contact in a manager
+\endlist
+
+Removing a contact is done similarly to saving a contact.  An example of these
+two operations is given below.  Note that it uses the synchronous API to save
+and remove the contact, although in a real application we recommend using the
+asynchronous API to perform such manager-related operations.
+\code
+    QContactPhoneNumber newPhoneNumber;       // create the detail to add
+    newPhoneNumber.setNumber("12345");        // set the value(s) to save
+    firstContact.saveDetail(&newPhoneNumber); // save the detail in the contact
+    cm.saveContact(&firstContact);            // save the contact in the manager
+    cm.removeContact(firstContact.localId()); // remove the contact from the manager
+\endcode
+
+That's it!  For more in-depth discussion of usage of the API, see the sections
+below.
 
 \section1 Manager Settings And Configuration
 
