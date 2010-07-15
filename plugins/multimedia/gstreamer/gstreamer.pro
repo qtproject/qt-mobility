@@ -56,7 +56,7 @@ SOURCES += \
     qgstreamervideoinputdevicecontrol.cpp
 
 
-!win32:!embedded:!mac:!symbian {
+!win32:!embedded:!mac:!symbian:!simulator {
     LIBS += -lXv -lX11 -lXext
 
     HEADERS += \
