@@ -65,18 +65,12 @@ class CameraBinExposure;
 class CameraBinFocus;
 class CameraBinImageProcessing;
 class CameraBinLocks;
+class QGstreamerVideoRendererInterface;
 
 class QGstreamerElementFactory
 {
 public:
     virtual GstElement *buildElement() = 0;
-    virtual void prepareWinId() {}
-};
-
-class QGstreamerVideoInput : public QGstreamerElementFactory
-{
-public:
-
 };
 
 class CameraBinSession : public QObject, public QGstreamerSyncEventFilter
@@ -116,11 +110,11 @@ public:
     QGstreamerElementFactory *audioInput() const { return m_audioInputFactory; }
     void setAudioInput(QGstreamerElementFactory *audioInput);
 
-    QGstreamerVideoInput *videoInput() const { return m_videoInputFactory; }
-    void setVideoInput(QGstreamerVideoInput *videoInput);
+    QGstreamerElementFactory *videoInput() const { return m_videoInputFactory; }
+    void setVideoInput(QGstreamerElementFactory *videoInput);
 
-    QGstreamerElementFactory *videoPreview() const { return m_viewfinderFactory; }
-    void setViewfinder(QGstreamerElementFactory *videoPreview);
+    QGstreamerVideoRendererInterface *videoPreview() const { return m_viewfinder; }
+    void setViewfinder(QGstreamerVideoRendererInterface *viewfinder);
 
     void captureImage(int requestId, const QString &fileName);
 
@@ -176,8 +170,8 @@ private:
     QMap<QByteArray, QVariant> m_metaData;
 
     QGstreamerElementFactory *m_audioInputFactory;
-    QGstreamerVideoInput *m_videoInputFactory;
-    QGstreamerElementFactory *m_viewfinderFactory;
+    QGstreamerElementFactory *m_videoInputFactory;
+    QGstreamerVideoRendererInterface *m_viewfinder;
 
     CameraBinAudioEncoder *m_audioEncodeControl;
     CameraBinVideoEncoder *m_videoEncodeControl;
@@ -193,7 +187,7 @@ private:
     GstBus* m_bus;
     GstElement *m_pipeline;
     GstElement *m_videoSrc;
-    bool m_viewfinderFactoryHasChanged;
+    bool m_viewfinderHasChanged;
     bool m_videoInputHasChanged;
 
     GstCaps *m_sourceCaps;

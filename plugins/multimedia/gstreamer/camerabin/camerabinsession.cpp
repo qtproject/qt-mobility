@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "camerabinsession.h"
 #include "camerabinrecorder.h"
 #include "camerabincontainer.h"
@@ -50,6 +49,7 @@
 #include "camerabinimageprocessing.h"
 #include "camerabinlocks.h"
 #include "qgstreamerbushelper.h"
+#include "qgstreamervideorendererinterface.h"
 #include <qmediarecorder.h>
 #include <gst/interfaces/photography.h>
 #include <gst/gsttagsetter.h>
@@ -145,10 +145,10 @@ CameraBinSession::CameraBinSession(QObject *parent)
      m_captureMode(QCamera::CaptureDisabled),
      m_audioInputFactory(0),
      m_videoInputFactory(0),
-     m_viewfinderFactory(0),
+     m_viewfinder(0),
      m_pipeline(0),
      m_videoSrc(0),
-     m_viewfinderFactoryHasChanged(false),
+     m_viewfinderHasChanged(false),
      m_videoInputHasChanged(false),
      m_sourceCaps(0),
      m_audioSrc(0),
@@ -231,12 +231,9 @@ bool CameraBinSession::setupCameraBin()
         m_videoInputHasChanged = false;
     }
 
-    if (m_viewfinderFactory) {
-        //temporary disabled for the current camerabin due to gstreamer bug 623802
-#ifdef Q_WS_MAEMO_5
-        GstElement *preview = m_viewfinderFactory->buildElement();
+    if (m_viewfinder) {
+        GstElement *preview = m_viewfinder->videoSink();
         g_object_set(G_OBJECT(m_pipeline), VIEWFINDER_SINK_PROPERTY, preview, NULL);
-#endif
     }
 
     GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
@@ -411,16 +408,16 @@ void CameraBinSession::setAudioInput(QGstreamerElementFactory *audioInput)
     m_audioInputFactory = audioInput;
 }
 
-void CameraBinSession::setVideoInput(QGstreamerVideoInput *videoInput)
+void CameraBinSession::setVideoInput(QGstreamerElementFactory *videoInput)
 {
     m_videoInputFactory = videoInput;
     m_videoInputHasChanged = true;
 }
 
-void CameraBinSession::setViewfinder(QGstreamerElementFactory *viewfinder)
+void CameraBinSession::setViewfinder(QGstreamerVideoRendererInterface *viewfinder)
 {
-    m_viewfinderFactory = viewfinder;
-    m_viewfinderFactoryHasChanged = true;
+    m_viewfinder = viewfinder;
+    m_viewfinderHasChanged = true;
 }
 
 QCamera::State CameraBinSession::state() const
@@ -594,8 +591,8 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
         }
 
         if (gst_structure_has_name(gm->structure, "prepare-xwindow-id")) {
-            if (m_viewfinderFactory)
-                m_viewfinderFactory->prepareWinId();
+            if (m_viewfinder)
+                m_viewfinder->precessNewStream();
 
             return true;
         }
