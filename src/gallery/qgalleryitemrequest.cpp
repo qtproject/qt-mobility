@@ -66,6 +66,8 @@ public:
     \ingroup gallery
     \ingroup gallery-requests
 
+    \inmodule QtGallery
+
     \brief The QGalleryItemRequest class provides a request for an item from a
     gallery.
 */

@@ -283,8 +283,11 @@
 
     \section2 Document Gallery
 
-    The Document Gallery provides a meta-data focused API for managing
-    collections of documents and media.
+    An API for accessing collections of documents and media and their meta-data.
+
+    The Document Gallery provides an interface to a searchable index of
+    document meta-data.  The gallery may be queried to discover the meta-data
+    of documents, or to discover documents with desired meta-data.
 
     For more details, see the \l {Document Gallery}{Document Gallery overview}.
     

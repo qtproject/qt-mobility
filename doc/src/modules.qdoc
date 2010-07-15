@@ -161,8 +161,10 @@ arbitrary services.
     Enables access to the telephony event services.
  */
 
-
-
-
+/*!
+    \module QtGallery
+    \title QtGallery Module
+    \brief The QtGallery module provides access to a gallery of documents.
+*/
 
 

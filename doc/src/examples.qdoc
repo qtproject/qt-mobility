@@ -46,6 +46,13 @@
     \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
+    \section2 Document Gallery
+
+    \list
+    \o \l{mediabrowser}{Media Browser}
+    \o \l{documentshare}{Document Share}
+    \endlist
+
     \section2 Location
 
     \list
