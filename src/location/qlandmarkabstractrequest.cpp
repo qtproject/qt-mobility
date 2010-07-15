@@ -169,16 +169,6 @@ bool QLandmarkAbstractRequest::isFinished() const
 }
 
 /*!
-    Returns true if the request is in the \c QLandmarkAbstractRequest::Canceled state;
-    otherwise, returns false.
-    \sa state()
-*/
-bool QLandmarkAbstractRequest::isCanceled() const
-{
-    return d_ptr->state == QLandmarkAbstractRequest::CanceledState;
-}
-
-/*!
     Returns the error of the most recent asynchronous operation.
     \sa errorString()
 */
@@ -284,7 +274,6 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     switch(d_ptr->state) {
         case QLandmarkAbstractRequest::ActiveState:
             return engine->waitForRequestFinished(this, msecs);
-        case QLandmarkAbstractRequest::CanceledState:
         case QLandmarkAbstractRequest::FinishedState:
             return true;
         default:

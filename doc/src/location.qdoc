@@ -397,7 +397,18 @@ their personal offline landmarks store.
 
 \annotatedlist maps-places
 
-\section2 Implementing backends
+\section2 The Nokia plugin
+
+Qt Mobility comes with a plugin which makes use of the Nokia services 
+relevant to the Maps and Navigation API.
+
+The latest version has the plugin name "nokia" and has plugin version 1.
+
+From the beta release onwards, the use of this plugin will be subject 
+to terms and conditions that will be contained within or linked from this 
+documentation.
+
+\section2 Implementing plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as 
 many of the ManagerEngine classes as they want to provide implementations for.

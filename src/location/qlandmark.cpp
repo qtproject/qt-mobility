@@ -124,7 +124,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \class QLandmark
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
 
     \brief The QLandmark class represents a location or point of interest
