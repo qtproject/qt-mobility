@@ -158,6 +158,7 @@ etc) which are reported by the manager on request.  The manager therefore
 provides access to detail definitions and organizer items stored in different
 datastores, in a platform and datastore independent manner.
 
+
 \section3 Meta Data API
 
 The API offered by the QOrganizerItemManager exposes functionality which is
@@ -244,6 +245,7 @@ provided via synchronous API only.
 For more detailed documentation on the synchronous API, see the
 \l{Organizer Synchronous API}.
 
+
 \section1 Non-Client-Facing API
 
 The non-client-facing API allows third party developers to implement a manager
@@ -265,6 +267,102 @@ A manager backend may be implemented by subclassing
 
 See \l{Qt Organizer Manager Engines} for more information on available engines
 and how to write your own engine.
+
+
+\section1 On-going Development
+
+There are several areas of API which are actively being developed, which are
+not included in the Technical Preview.  These include:
+\list
+  \o Multiple Calendar Support
+  \o Timezone Support
+  \o Result Pagination Support
+  \o All-day and Multiple-day Event Support
+\endlist
+
+Each of these areas is complex and may have important ramifications to related
+areas of the API, and so are discussed separately below.
+
+\section2 Multiple Calendar Support
+
+One aspect of the Qt Mobility Organizer API which is still under discussion
+and active development is the ability to support multiple "calendars" for
+different contexts.  Currently, no API is offered to support multiple
+calendars.  It is still undecided how multiple calendars should be supported
+by the API (some possibilities, in no particular order, include: each calendar
+is modeled as a separate manager; each calendar is modeled as a top-level
+item, and API for manipulating these calendars is offered via
+QOrganizerItemManager and through various subclasses of
+QOrganizerItemAbstractRequest; calendars are supported only as a
+QOrganizerItemTag detail in each item; etc).
+
+The semantics of events stored in multiple calendars is also under discussion.
+Multiple calendar support has the potential to introduce possibly confusing
+semantics (for example: sharing of event data versus duplication of event
+data) and so we need to carefully consider how current calendar and scheduling
+backends work, in order to determine what is technically feasible and what is
+most intuitive for the application developer, before mandating some particular
+set of semantics related to multiple calendar support.
+
+\section2 Timezone Support
+
+A critical part of the API which is still under development is support for
+different time zones.  In general, dates are considered to be
+timezone-independent (that is, floating dates), whereas datetimes should
+include timezone information.  The exact manner in which timezone information
+should be offered to clients in the API is still under discussion.
+
+One possible solution would be to offer a QOrganizerTimezone class which
+provides API to allow clients to transform a particular datetime into another
+datetime in a different timezone.  A more complete solution might be to add
+timezone support to QDateTime directly, however this would require extensive
+modifications to Qt and so may not be possible due to technical reasons (e.g.,
+binary compatibility promises, release scheduling, etc).
+
+\section2 Result Pagination
+
+Often, clients will want a single "page" of results from a single filtering
+operation at a time.  The advantage of an API to allow this is that memory use
+decreases, and results may be returned faster (since there are less of them to
+instantiate).
+
+We see two main use cases for pagination:
+\list
+  \o Limiting results to a single offset plus a count
+  \o Limiting results to a single count (implied offset of zero)
+\endlist
+
+The first is more general, and support on some platforms is limited or even
+non-existent.  Emulation of such a feature obviates any potential benefits
+which might be derived from offering the API in the first place (as emulating
+the feature would use more memory and be less performant that simply returning
+all results of the filtering operation).  Paging of results is possible to
+achieve manually using the current API (by retrieving a list of ids, and then
+manually retrieving pages of items manually by id) but may be suboptimal.
+
+The second is supported on most platforms, and is the more common use case.
+It may be implemented by extending QOrganizerItemFetchHint to include a
+maximum count parameter, which may be ignored by backends if the backend does
+not support the feature.
+
+In short, discussion about result pagination is still on-going, as it is a
+complex topic with far-reaching ramifications given that we must maintain
+consistency between the various modules of the Qt Mobility project.
+
+\section2 All-day and Multiple-day Event Support
+
+Several options for supporting all-day and multiple-day events have been
+considered.  One possible method of supporting all-day events is to allow the
+start date time of the event to be set to a date without a time component,
+while another might be to explicitly set the start and end date times to cover
+an entire 24 hour period (the currently supported solution).
+We envision that multiple-day events will be supported in the same manner as
+all-day events.
+
+Finally, the way in which all-day and multiple-day events are supported may
+depend on the way in which timezone support is implemented.  As such, this
+aspect of the API will be considered iteratively as support for timezone
+information matures.
 
 \section1 Using the API
 

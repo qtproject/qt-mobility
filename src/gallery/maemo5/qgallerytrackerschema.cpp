@@ -948,25 +948,25 @@ static const QGalleryThumbnailProperty qt_galleryAlbumThumbnailPropertyList[] =
             "album",
             Image,
             qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createImageColumn),
+            QGalleryTrackerMediaArtColumn::createThumbnailImageColumn),
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "thumbnailPixmap",
             "album",
             Pixmap,
             qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createPixmapColumn),
+            QGalleryTrackerMediaArtColumn::createThumbnailPixmapColumn),
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "previewImage",
             "album",
             Image,
             qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createImageColumn),
+            QGalleryTrackerMediaArtColumn::createPreviewImageColumn),
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "previewPixmap",
             "album",
             Pixmap,
             qt_galleryAlbumIdentity,
-            QGalleryTrackerMediaArtColumn::createPixmapColumn)
+            QGalleryTrackerMediaArtColumn::createPreviewPixmapColumn)
 };
 
 static void qt_writeAlbumIdCondition(

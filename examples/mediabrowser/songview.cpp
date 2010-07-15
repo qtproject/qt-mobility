@@ -45,8 +45,8 @@
 #include <qdocumentgallery.h>
 #include <qgalleryitemlistmodel.h>
 
-SongView::SongView(QWidget *parent)
-    : GalleryView(parent)
+SongView::SongView(QWidget *parent, Qt::WindowFlags flags)
+    : GalleryView(parent, flags)
     , model(0)
 {
     setType(QDocumentGallery::Audio);
