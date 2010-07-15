@@ -129,7 +129,7 @@ contains(mobility_modules,telephony) {
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer
+    SUBDIRS += hapticsplayer hapticsquare
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES
