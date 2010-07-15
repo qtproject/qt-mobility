@@ -1,4 +1,3 @@
-#include "landmarkbrowser.h"
 #include <QDebug>
 #include <qlandmarkfilter.h>
 #include <qlandmark.h>
@@ -8,6 +7,9 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QProgressBar>
+
+#include "landmarkbrowser.h"
+#include "landmarkadddialog.cpp"
 
 QTM_USE_NAMESPACE
 
@@ -100,11 +102,12 @@ void LandmarkBrowser::on_deleteLandmarks_clicked()
 
 void LandmarkBrowser::on_addLandmark_clicked()
 {
-    QLandmark lm;
-    double latitude = latitudeLineEdit->text().toDouble();
-    double longitude = longitudeLineEdit->text().toDouble();
-    lm.setCoordinate(QGeoCoordinate(latitude, longitude));
-    lm.setName(nameLineEdit->text());
+    LandmarkAddDialog addDialog(this);
+    if (!addDialog.exec()) {
+        return;
+    }
+
+    QLandmark lm = addDialog.landmark();
     manager->saveLandmark(&lm);
     table->insertRow(table->rowCount());
     table->setItem(table->rowCount()-1,0,new QTableWidgetItem(QString::number(lm.coordinate().latitude(),'f',10)));
@@ -123,17 +126,16 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
             return;
         switch (request->type()) {
             case QLandmarkAbstractRequest::ImportRequest : {
-                    for(int i = table->rowCount() -1;  i >= 0; --i) {
-                        if (i %20 == 0)
-                            qApp->processEvents();
-                        table->removeRow(i);
-                    }
-
                     if (request->error() == QLandmarkManager::NoError) {
-                        QList<QLandmark> lms = manager->landmarks(QLandmarkFilter());
-
                         table->setUpdatesEnabled(false);
+                        for(int i = table->rowCount() -1;  i >= 0; --i) {
+                            if (i %20 == 0)
+                                qApp->processEvents();
+                            table->removeRow(i);
+                        }
+
                         QLandmark lm;
+                        QList<QLandmark> lms = manager->landmarks(QLandmarkFilter());
                         for (int i=0;i < lms.count(); ++i){
                             lm = lms.at(i);
                             table->insertRow(table->rowCount());
@@ -153,13 +155,15 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                 break;
             }
             case QLandmarkAbstractRequest::LandmarkFetchRequest: {
-                    for(int i = table->rowCount() -1;  i >= 0; --i) {
-                        if (i %20 == 0)
-                            qApp->processEvents();
-                        table->removeRow(i);
-                    }
-
                     if (landmarkFetch->error() == QLandmarkManager::NoError) {
+                        table->setUpdatesEnabled(false);
+                        for(int i = table->rowCount() -1;  i >= 0; --i) {
+                            if (i %20 == 0)
+                                qApp->processEvents();
+                            table->removeRow(i);
+                        }
+                        table->setUpdatesEnabled(true);
+
                         QList<QLandmark> lms = landmarkFetch->landmarks();
                         if (lms.count() == 0) {
                             QMessageBox::information(this,"Information", "No landmarks found", QMessageBox::Ok, QMessageBox::NoButton);
@@ -167,8 +171,8 @@ void LandmarkBrowser::fetchHandler(QLandmarkAbstractRequest::State state)
                             return;
                         }
 
-                        table->setUpdatesEnabled(false);
                         QLandmark lm;
+                        table->setUpdatesEnabled(false);
                         for ( int i =0; i < lms.count(); ++i) {
                             lm = lms.at(i);
                             table->insertRow(table->rowCount());
