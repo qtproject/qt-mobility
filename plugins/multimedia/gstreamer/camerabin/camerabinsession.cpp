@@ -122,7 +122,7 @@
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
 #define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) 640, height = (int) 480"
+    "video/x-raw-rgb, width = (int) [640, 800], height = (int) [320, 480]"
 
 // Function prototypes
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
