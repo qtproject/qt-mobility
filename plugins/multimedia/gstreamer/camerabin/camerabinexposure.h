@@ -57,7 +57,7 @@ class Q_MULTIMEDIA_EXPORT CameraBinExposure : public QCameraExposureControl
     Q_OBJECT
 
 public:
-    CameraBinExposure(GstElement &camerabin, CameraBinSession *session);
+    CameraBinExposure(CameraBinSession *session);
     virtual ~CameraBinExposure();
 
     QCameraExposure::FlashModes flashMode() const;
@@ -83,7 +83,6 @@ public:
     QString extendedParameterName(ExposureParameter parameter);
 
 private:
-    GstElement &m_camerabin;
     CameraBinSession *m_session;    
 };
 
