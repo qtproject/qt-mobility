@@ -37,6 +37,9 @@ contains(mobility_modules,location) {
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine
 
+     contains(QT_CONFIG, declarative) {
+         SUBDIRS += qdeclarativeposition
+     }
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }

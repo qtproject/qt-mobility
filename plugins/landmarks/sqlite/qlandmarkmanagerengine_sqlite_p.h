@@ -135,7 +135,7 @@ public:
                          const QByteArray &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::Error *error,
-                         QString *errorString);
+                         QString *errorString) const;
 
     QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const;
@@ -169,6 +169,8 @@ public slots:
                                            const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
                                             QLandmarkAbstractRequest::State newState);
+    void updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
+                                     QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
 public:
@@ -187,15 +189,6 @@ private:
                                 QLandmarkManager::Error *error,
                                 QString *errorString,
                                 bool *removed);
-
-    bool exportLandmarksLmx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
-    bool exportLandmarksGpx(QIODevice *device,
-                            QList<QLandmarkId> landmarkIds,
-                            QLandmarkManager::Error *error,
-                            QString *errorString);
 
     QString m_dbFilename;
     QString m_dbConnectionName;

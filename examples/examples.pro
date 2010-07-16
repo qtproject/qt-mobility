@@ -49,6 +49,9 @@ contains(mobility_modules,location) {
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
+	contains(QT_CONFIG, declarative) {
+	        sources.files += declarative_loc_flickr
+	}
     }
 }
 
