@@ -53,6 +53,13 @@
     \o \l{documentshare}{Document Share}
     \endlist
 
+    \section2 Feedback
+
+    \list
+    \o \l{hapticsplayer}{Haptics Player}
+    \o \l{hapticsquare}{Haptic Square}
+    \endlist
+
     \section2 Location
 
     \list
@@ -80,6 +87,13 @@
     \o \l{player}{Player}
     \o \l{radio}{Radio}
     \o \l{slideshow}{Slideshow}
+    \endlist
+
+    \section2 Organizer
+
+    \list
+    \o \l{calendardemo}{Calendar Demo}
+    \o \l{timescape}{QML Time Scape Demo}
     \endlist
 
     \section2 Publish and Subscribe
