@@ -271,7 +271,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
     //scale old image
     QRectF target = oldImage.rect();
     qreal width = target.width() / (1 << qAbs(zoomDiff));
-    qreal height = target.width() / (1 << qAbs(zoomDiff));
+    qreal height = target.height() / (1 << qAbs(zoomDiff));
     qreal x = target.x() + ((target.width() - width) / 2.0);
     qreal y = target.y() + ((target.height() - height) / 2.0);
     QRectF source = QRectF(x, y, width, height);
@@ -635,7 +635,7 @@ void QGeoTiledMapData::cleanupCaches()
     QRectF cacheRect1;
     QRectF cacheRect2;
 
-    int minY = qMax(0.0, d->screenRect.y() - boundaryTiles * tileHeight);
+    int minY = qMax(qreal(0.0), d->screenRect.y() - boundaryTiles * tileHeight);
     int maxY = qMin(qreal(d->height), d->screenRect.y() + d->screenRect.height() + boundaryTiles * tileHeight);
     int height = maxY - minY;
     int minX = d->screenRect.x() - boundaryTiles * tileWidth;
@@ -694,9 +694,74 @@ QList<QGeoMapObject*> QGeoTiledMapData::visibleMapObjects()
     return visibleObjects;
 }
 
+/*!
+    Returns the list of map objects managed by this map which are visible and
+    which are within a pixel \a radius from the \a screenPosition.
+    The returned map objects are ordered ascendingly on their zIndices.
+
+    Note that this method takes into consideration potentially set QPen widths of map objects.
+    It therefore needs to operate on a pixel comparison and can potentially be slow.
+*/
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
 {
-    return QList<QGeoMapObject*>();
+    QPointF worldPosition = screenPosition - d_ptr->screenRect.topLeft();
+    QRectF worldRect(0., 0., 2*radius, 2*radius);
+    worldRect.moveCenter(worldPosition);
+    QSize imgSize = worldRect.size().toSize();
+    QRgb paintColor = HIT_DETECTION_COLOR;
+    QRgb emptyColor = qRgba(0, 0, 0, 0);
+    QList<QGeoMapObject*> mapObjs;
+    QList<QGeoMapObject*> queue(this->mapObjects());
+
+    //iterate through all map objects as defined by their (composite) zValues
+    while (queue.size() > 0) {
+        QGeoMapObject *obj = queue.takeFirst();
+
+        if (obj->isVisible()) {
+            //prepend children to queue
+            QList<QGeoMapObject*> children = obj->childObjects();
+            int sz = children.size();
+
+            for (int i = 0; i < sz; ++i)
+                queue.prepend(children.at(i));
+
+            //Now test whether map object intersects circle with center at 
+            //screenPosition and given radius.
+            //
+            //The idea is that we construct a rectangle that exactly contains the
+            //circle. The circle is then drawn (and filled out) with a semi-transparent
+            //color. We then paint the current map object with the same semi-transparent
+            //color into the rectangle. If then any pixel is different from the background
+            //color and this semi-transparent paint color, the map object must have intersected
+            //(i.e. over-painted parts of) the circle.
+            QImage buffer(imgSize, QImage::Format_ARGB32);
+            QPainter painter(&buffer);
+            painter.fillRect(0, 0, imgSize.width(), imgSize.height(), QColor(emptyColor));
+            painter.setPen(QColor(paintColor));
+            painter.setBrush(QBrush(QColor(paintColor)));
+            painter.drawEllipse(0, 0, imgSize.width(), imgSize.height());
+            d_ptr->paintMapObject(painter, worldRect, obj, true);
+
+            //now test whether any pixels in buffer have been over-painted
+            for (int x = 0; x < imgSize.width(); x++) {
+                bool pixelSet = false;
+
+                for (int y = 0; y < imgSize.height(); y++) {
+                    QRgb pixel = buffer.pixel(x, y);
+
+                    if (pixel != emptyColor && pixel != paintColor) {
+                        mapObjs.append(obj);
+                        pixelSet = true;
+                        break;
+                    }
+                }
+                if (pixelSet)
+                    break;
+            }
+        }
+    }
+
+    return mapObjs;
 }
 
 /*!
@@ -1030,9 +1095,6 @@ void QGeoTiledMapPolylineObjectInfo::update()
             path = QPainterPath(startPoint);
         }
     }
-
-    if (!startPoint.isNull())
-        path.lineTo(startPoint);
 }
 
 /*******************************************************************************

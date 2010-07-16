@@ -100,6 +100,9 @@ public:
     void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
     void update();
 
+    bool operator<(const QGeoMapObject &other) const;
+    bool operator>(const QGeoMapObject &other) const;
+
 signals:
     void childObjectAdded(QGeoMapObject *childObject);
     void childObjectRemoved(QGeoMapObject *childObject);
