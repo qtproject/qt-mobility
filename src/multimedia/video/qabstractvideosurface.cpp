@@ -281,6 +281,34 @@ void QAbstractVideoSurface::setError(Error error)
     d->error = error;
 }
 
+/*!
+   \property QAbstractVideoSurface::nativeResolution
+
+   The native resolution of video surface.
+   This is the resolution of video frames the surface
+   can render with optimal quality and/or performance.
+
+   The native resolution is not always known and can be changed during playback.
+ */
+
+QSize QAbstractVideoSurface::nativeResolution() const
+{
+    return d_func()->nativeResolution;
+}
+
+/*!
+    Set the video surface native \a resolution.
+ */
+void QAbstractVideoSurface::setNativeResolution(const QSize &resolution)
+{
+    Q_D(QAbstractVideoSurface);
+    if (d->nativeResolution != resolution) {
+        d->nativeResolution = resolution;
+        emit nativeResolutionChanged(resolution);
+    }
+}
+
 QT_END_NAMESPACE
 
 #include "moc_qabstractvideosurface.cpp"
+
