@@ -59,7 +59,7 @@ QTM_USE_NAMESPACE
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
-  which can be for example a file or a memory buffer.
+  which can be, for example, a file or a memory buffer.
   The reading can be done asynchronously, and the
   waitForFinished() function can be used to make a blocking
   read.

@@ -164,7 +164,10 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
     if(iScaleRange && iUnit == ESensevChannelUnitAcceleration)
         {
 	qoutputrangelist rangeList = sensor()->outputRanges();
-	TReal maxValue = rangeList[sensor()->outputRange()].maximum;
+        int outputRange = sensor()->outputRange();
+        if (outputRange == -1)
+            outputRange = 0;
+	TReal maxValue = rangeList[outputRange].maximum;
         x = (x/iScaleRange) * maxValue;
         y = (y/iScaleRange) * maxValue;
         z = (z/iScaleRange) * maxValue;        

@@ -157,6 +157,11 @@ wince* {
     LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
+
+    ### Landmarks
+    LANDMARKS.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLandmarks).dll
+    LANDMARKS.path = .
+    DEPLOYMENT += LANDMARKS
 }
 
 symbian {

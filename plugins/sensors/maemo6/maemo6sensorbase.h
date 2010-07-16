@@ -46,10 +46,9 @@
 #include <sensormanagerinterface.h>
 #include <abstractsensor_i.h>
 
-
 QTM_USE_NAMESPACE
 
-class maemo6sensorbase : public QSensorBackend
+        class maemo6sensorbase : public QSensorBackend
 {
 public:
     maemo6sensorbase(QSensor *sensor);
@@ -75,9 +74,35 @@ protected:
         m_sensorInterface = T::controlInterface(sensorName);
         if (!m_sensorInterface) {
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
-
         }
+
         initDone = true;
+
+        if (sensorName=="alssensor") return; // SensorFW returns lux values, plugin enumerated values
+
+
+        //metadata
+        int l = m_sensorInterface->getAvailableIntervals().size();
+        for (int i=0; i<l; i++){
+            qreal intervalMax = ((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).max;
+            qreal rateMin = intervalMax<1 ? 1 : 1/intervalMax * 1000;
+            rateMin = rateMin<1 ? 1 : rateMin;
+            qreal intervalMin =((DataRange)(m_sensorInterface->getAvailableIntervals().at(i))).min;
+            intervalMin = intervalMin<1 ? 10: intervalMin;     // do not divide with 0
+            qreal rateMax = 1/intervalMin * 1000;
+            //            qreal rateMax = (intervalMin<1) ? rateMin : 1/intervalMin * 1000; // TODO: replace the two lines above with this one once sensord does provide interval>0
+            addDataRate(rateMin, rateMax);
+        }
+
+        l = m_sensorInterface->getAvailableDataRanges().size();
+
+        for (int i=0; i<l; i++){
+            qreal rangeMin = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
+            qreal rangeMax =((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).max;
+            qreal resolution = ((DataRange)(m_sensorInterface->getAvailableDataRanges().at(i))).min;
+            addOutputRange(rangeMin, rangeMax, resolution);
+        }
+        setDescription(m_sensorInterface->property("description").toString());
     };
 
 private:

@@ -16,6 +16,12 @@ SOURCES = \
     main.cpp \
     audiorecorder.cpp
 
+maemo*: {
+    FORMS += audiorecorder_small.ui
+} else {
+    FORMS += audiorecorder.ui
+}
+
 symbian: {
     TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData 
 }

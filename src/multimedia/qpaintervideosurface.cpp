@@ -765,10 +765,10 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
 
         const GLfloat v_array[] =
         {
-            target.left()     , vBottom,
-            target.right() + 1, vBottom,
-            target.left()     , vTop,
-            target.right() + 1, vTop
+            GLfloat(target.left())     , GLfloat(vBottom),
+            GLfloat(target.right() + 1), GLfloat(vBottom),
+            GLfloat(target.left())     , GLfloat(vTop),
+            GLfloat(target.right() + 1), GLfloat(vTop)
         };
 
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -1085,25 +1085,25 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const GLfloat positionMatrix[4][4] =
         {
             {
-                /*(0,0)*/ wfactor * transform.m11() - transform.m13(),
-                /*(0,1)*/ hfactor * transform.m12() + transform.m13(),
+                /*(0,0)*/ GLfloat(wfactor * transform.m11() - transform.m13()),
+                /*(0,1)*/ GLfloat(hfactor * transform.m12() + transform.m13()),
                 /*(0,2)*/ 0.0,
-                /*(0,3)*/ transform.m13()
+                /*(0,3)*/ GLfloat(transform.m13())
             }, {
-                /*(1,0)*/ wfactor * transform.m21() - transform.m23(),
-                /*(1,1)*/ hfactor * transform.m22() + transform.m23(),
+                /*(1,0)*/ GLfloat(wfactor * transform.m21() - transform.m23()),
+                /*(1,1)*/ GLfloat(hfactor * transform.m22() + transform.m23()),
                 /*(1,2)*/ 0.0,
-                /*(1,3)*/ transform.m23()
+                /*(1,3)*/ GLfloat(transform.m23())
             }, {
                 /*(2,0)*/ 0.0,
                 /*(2,1)*/ 0.0,
                 /*(2,2)*/ -1.0,
                 /*(2,3)*/ 0.0
             }, {
-                /*(3,0)*/ wfactor * transform.dx() - transform.m33(),
-                /*(3,1)*/ hfactor * transform.dy() + transform.m33(),
+                /*(3,0)*/ GLfloat(wfactor * transform.dx() - transform.m33()),
+                /*(3,1)*/ GLfloat(hfactor * transform.dy() + transform.m33()),
                 /*(3,2)*/ 0.0,
-                /*(3,3)*/ transform.m33()
+                /*(3,3)*/ GLfloat(transform.m33())
             }
         };
 
@@ -1117,10 +1117,10 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         const GLfloat vertexCoordArray[] =
         {
-            target.left()     , vBottom,
-            target.right() + 1, vBottom,
-            target.left()     , vTop,
-            target.right() + 1, vTop
+            GLfloat(target.left())     , GLfloat(vBottom),
+            GLfloat(target.right() + 1), GLfloat(vBottom),
+            GLfloat(target.left())     , GLfloat(vTop),
+            GLfloat(target.right() + 1), GLfloat(vTop)
         };
 
         const GLfloat txLeft = source.left() / m_frameSize.width();

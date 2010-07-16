@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactAbstractRequest class provides a mechanism for
   asynchronous requests to be made of a manager if it supports them.
 
+  \inmodule QtContacts
+
   \ingroup contacts-main
 
   It allows a client to asynchronously request some functionality of a
@@ -181,16 +183,7 @@ QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate*
 /*! Cleans up the memory used by this request */
 QContactAbstractRequest::~QContactAbstractRequest()
 {
-    if (d_ptr) {
-        QMutexLocker ml(&d_ptr->m_mutex);
-        QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-        ml.unlock();
-        if (engine) {
-            engine->requestDestroyed(this);
-        }
-
-        delete d_ptr;
-    }
+     delete d_ptr;
 }
 
 /*!
@@ -317,6 +310,10 @@ bool QContactAbstractRequest::cancel()
     If \a msecs is zero, this function will block indefinitely.
     Returns true if the request was cancelled or completed successfully within the given period, otherwise false.
     Some backends are unable to support this operation safely, and will return false immediately.
+
+    Note that any signals generated while waiting for the request to complete may be queued and delivered
+    some time after this function has returned, when the calling thread's event loop is dispatched.  If your code
+    depends on your slots being invoked, you may need to process events after calling this function.
  */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {

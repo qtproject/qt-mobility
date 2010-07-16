@@ -50,6 +50,9 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactRelationshipFilter class provides a filter based
   around relationship criteria.
   
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-filters
  
   It may be used to select contacts which are involved in relationships
@@ -145,5 +148,6 @@ QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() cons
     Q_D(const QContactRelationshipFilter);
     return d->m_relatedContactRole;
 }
+
 
 QTM_END_NAMESPACE

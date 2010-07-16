@@ -197,12 +197,15 @@ public:
     QStringList logicalDrives();
     QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
+public Q_SLOTS:
+    void notificationArrived();
+
 private:
-    QHash<QString, QString> mountEntriesHash;
+    QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool,const QString&);
 
 };
 

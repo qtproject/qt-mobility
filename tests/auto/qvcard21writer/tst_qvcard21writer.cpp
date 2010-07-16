@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qvcard21writer.h"
 #ifdef QT_BUILD_INTERNAL
 #include "qvcard21writer_p.h"
@@ -147,7 +149,8 @@ END:VCARD\r\n\
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
     property.insertParameter(QString::fromAscii("X-PARAMETER"),QString::fromAscii("VALUE"));
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard21Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));

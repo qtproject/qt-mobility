@@ -13,7 +13,7 @@ symbian {
     path=$$MW_LAYER_PUBLIC_EXPORT_PATH("")
 
     exportPath=$$EPOCROOT"."$$dirname(path)
-    nativePath=$$replace(exportPath, /,\)
+    nativePath=$$replace(exportPath,/,\\)
     exists($$nativePath) {
     } else {
         system($$QMAKE_MKDIR $$nativePath)

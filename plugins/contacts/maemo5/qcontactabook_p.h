@@ -103,6 +103,7 @@ private:
   OssoABookContact* getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
   
   /* Filtering */
+  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */
@@ -118,7 +119,9 @@ private:
   QContactGender* getGenderDetail(EContact *eContact) const;
   QContactGuid* getGuidDetail(EContact *eContact) const;
   QContactNote* getNoteDetail(EContact *eContact) const;
-  QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
+  void getOnlineAccountAndPresenceDetails(EContact *eContact, 
+                                         QList<QContactOnlineAccount*>& onlineAccounts,
+                                         QList<QContactPresence*>& presences) const;
   QContactOrganization* getOrganizationDetail(EContact *eContact) const;
   QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const;
   QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;

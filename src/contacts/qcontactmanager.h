@@ -61,6 +61,8 @@
 QTM_BEGIN_NAMESPACE
 
 class QContactFilter;
+class QContactAction;
+
 class QContactManagerData;
 class Q_CONTACTS_EXPORT QContactManager : public QObject
 {
@@ -84,7 +86,7 @@ public:
     QString managerUri() const;                        // managerName + managerParameters
     int managerVersion() const;
 
-    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // replaces the above.
+    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
     /* The values of the Error enum are still to be decided! */
@@ -112,17 +114,19 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
+
     QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
     QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint = QContactFetchHint()) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store
+
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
-    QContact compatibleContact(const QContact& original); // Preliminary function!
+    QContact compatibleContact(const QContact& original);
 
     /* Synthesize the display label of a contact */
     QString synthesizedContactDisplayLabel(const QContact& contact) const;
@@ -148,7 +152,7 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        Groups = 0,               // backend supports QContactType::TypeGroup type contacts (convenience for clients... should be deprecated)
+        Groups = 0,               // backend supports QContactType::TypeGroup type contacts (convenience for clients)
         ActionPreferences,        // per-contact action preferences
         MutableDefinitions,
         Relationships,
@@ -159,7 +163,7 @@ public:
         ChangeLogs
     };
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
-    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QContactType::TypeContact) const; // replaces the above
+    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QContactType::TypeContact) const;
     QList<QVariant::Type> supportedDataTypes() const;
     bool isFilterSupported(const QContactFilter& filter) const;
     QStringList supportedContactTypes() const;
