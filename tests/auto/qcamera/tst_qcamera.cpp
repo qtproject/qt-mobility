@@ -221,7 +221,7 @@ public:
             QTimer::singleShot(5, this, SLOT(captured()));
             return m_captureRequest;
         } else {
-            emit error(QCameraImageCapture::NotReadyError,
+            emit error(-1, QCameraImageCapture::NotReadyError,
                        QLatin1String("Could not capture in stopped state"));
         }
 

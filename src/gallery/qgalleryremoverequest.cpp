@@ -62,6 +62,8 @@ public:
     \ingroup gallery
     \ingroup gallery-requests
 
+    \inmodule QtGallery
+
     \brief The QGalleryRemoveRequest class provides a request which removes
     items from a gallery.
 */

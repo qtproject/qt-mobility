@@ -225,6 +225,8 @@ public:
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryIntersectionFilter class provides a filter which matches
     the intersection of two or more meta-data filters.
 */
@@ -457,6 +459,8 @@ void QGalleryIntersectionFilter::clear()
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryUnionFilter class provides a filter which matches the
     union of two or more meta-data filters.
 */
@@ -683,6 +687,8 @@ void QGalleryUnionFilter::clear()
     \ingroup gallery
     \ingroup gallery-filters
 
+    \inmodule QtGallery
+
     \brief The QGalleryMetaDataFilter class provides a filter which accepts
     items with meta-data properties matching a specific value.
 */
@@ -885,6 +891,8 @@ QGalleryMetaDataFilter QGalleryMetaDataFilter::operator !() const
 
     \ingroup gallery
     \ingroup gallery-filters
+
+    \inmodule QtGallery
 
     \brief The QGalleryFilter class provides filtering criteria for gallery
     requests.

@@ -77,6 +77,8 @@ public:
 /*!
     \class QGalleryUrlRequest
 
+    \inmodule QtGallery
+
     \brief The QGalleryUrlRequest class provides a request for an item
     identified by a URL from a gallery.
 */

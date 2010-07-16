@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup gallery
 
+    \inmodule QtGallery
+
     \brief The QGalleryResource class provides a resource identifier for a
     gallery gallery item.
 */
@@ -162,6 +164,8 @@ QVariant QGalleryResource::attribute(int key) const
     \class QGalleryItemList
 
     \ingroup gallery
+
+    \inmodule QtGallery
 
     \brief The QGalleryItemList class provides an abstract interface for a
     list of gallery items from a gallery.

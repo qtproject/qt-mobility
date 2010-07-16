@@ -49,7 +49,7 @@ Rectangle {
     id: screen
     color: "#343434"
 
-    SystemStorageInfo {
+    StorageInfo {
         id: storageinfo
         onLogicalDrivesChanged: updateList;
     }
