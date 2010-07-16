@@ -1499,7 +1499,8 @@ bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId
 bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
                     QMap<int, QLandmarkManager::Error> *errorMap,
                     QLandmarkManager::Error *error,
-                    QString *errorString, const QString &managerUri)
+                    QString *errorString, const QString &managerUri,
+                    QueryRun *queryRun = 0)
 {
     QList<QLandmarkId> removedIds;
 
@@ -1511,6 +1512,17 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
     for (int i = 0; i < landmarkIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
+
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Landmark remove was canceled";
+            if (errorMap) {
+                for (i; i < landmarkIds.size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
         bool result = removeLandmark(connectionName, landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
 
@@ -2314,11 +2326,7 @@ void QueryRun::run()
         {
             QLandmarkRemoveRequest *removeRequest = static_cast<QLandmarkRemoveRequest *> (request);
             QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
-            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri);
-            if (this->isCanceled) {
-                error = QLandmarkManager::CancelError;
-                errorString = "Landmark remove request was canceled";
-            }
+            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri, this);
 
             QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
                                       Q_ARG(QLandmarkRemoveRequest *,removeRequest),
