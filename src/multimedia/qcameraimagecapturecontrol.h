@@ -73,7 +73,7 @@ Q_SIGNALS:
     void imageCaptured(int id, const QImage &preview);
     void imageSaved(int id, const QString &fileName);
 
-    void error(int error, const QString &errorString);
+    void error(int id, int error, const QString &errorString);
 
 protected:
     QCameraImageCaptureControl(QObject* parent = 0);

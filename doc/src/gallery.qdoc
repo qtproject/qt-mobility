@@ -40,13 +40,6 @@
 ****************************************************************************/
 
 /*!
-    \group gallery
-    \title Document Gallery
-
-    API to find and manage documents.
-*/
-
-/*!
     \group gallery-requests
     \title Document Gallery Requests
 
@@ -74,6 +67,7 @@
 
 /*!
     \page gallery.html
+    \group gallery
 
     \title Document Gallery
 

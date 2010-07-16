@@ -45,12 +45,11 @@
 
 #include <QDebug>
 
-CameraBinExposure::CameraBinExposure(GstElement &camerabin, CameraBinSession *session)
+CameraBinExposure::CameraBinExposure(CameraBinSession *session)
     :QCameraExposureControl(session),
-     m_camerabin(camerabin),
      m_session(session)
 {
-    GstPhotoCaps caps = gst_photography_get_capabilities(GST_PHOTOGRAPHY(&m_camerabin));
+    GstPhotoCaps caps = gst_photography_get_capabilities(m_session->photography());
     qDebug() << "Camera caps:" << caps;
 }
 
@@ -61,7 +60,7 @@ CameraBinExposure::~CameraBinExposure()
 QCameraExposure::FlashModes CameraBinExposure::flashMode() const
 {
     GstFlashMode flashMode;
-    gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
+    gst_photography_get_flash_mode(m_session->photography(), &flashMode);
 
     QCameraExposure::FlashModes modes;
     switch (flashMode) {
@@ -80,7 +79,7 @@ QCameraExposure::FlashModes CameraBinExposure::flashMode() const
 void CameraBinExposure::setFlashMode(QCameraExposure::FlashModes mode)
 {
     GstFlashMode flashMode;
-    gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
+    gst_photography_get_flash_mode(m_session->photography(), &flashMode);
 
     if (mode.testFlag(QCameraExposure::FlashAuto)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
     else if (mode.testFlag(QCameraExposure::FlashOff)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
@@ -88,7 +87,7 @@ void CameraBinExposure::setFlashMode(QCameraExposure::FlashModes mode)
     else if (mode.testFlag(QCameraExposure::FlashFill)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN;
     else if (mode.testFlag(QCameraExposure::FlashRedEyeReduction)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
 
-    gst_photography_set_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), flashMode);
+    gst_photography_set_flash_mode(m_session->photography(), flashMode);
 }
 
 bool CameraBinExposure::isFlashModeSupported(QCameraExposure::FlashModes mode) const
@@ -108,7 +107,7 @@ bool CameraBinExposure::isFlashReady() const
 QCameraExposure::ExposureMode CameraBinExposure::exposureMode() const
 {
     GstSceneMode sceneMode;
-    gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
+    gst_photography_get_scene_mode(m_session->photography(), &sceneMode);
 
     switch (sceneMode) {
     case GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT: return QCameraExposure::ExposurePortrait;
@@ -127,7 +126,7 @@ QCameraExposure::ExposureMode CameraBinExposure::exposureMode() const
 void CameraBinExposure::setExposureMode(QCameraExposure::ExposureMode mode)
 {
     GstSceneMode sceneMode;
-    gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
+    gst_photography_get_scene_mode(m_session->photography(), &sceneMode);
 
     switch (mode) {
     case QCameraExposure::ExposureManual: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_MANUAL; break;
@@ -139,7 +138,7 @@ void CameraBinExposure::setExposureMode(QCameraExposure::ExposureMode mode)
         break;
     }
 
-    gst_photography_set_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), sceneMode);
+    gst_photography_set_scene_mode(m_session->photography(), sceneMode);
 }
 
 bool CameraBinExposure::isExposureModeSupported(QCameraExposure::ExposureMode mode) const
@@ -188,13 +187,13 @@ QVariant CameraBinExposure::exposureParameter(ExposureParameter parameter) const
     case QCameraExposureControl::ExposureCompensation:
         {
             gfloat ev;
-            gst_photography_get_ev_compensation(GST_PHOTOGRAPHY(&m_camerabin), &ev);
+            gst_photography_get_ev_compensation(m_session->photography(), &ev);
             return QVariant(ev);
         }
     case QCameraExposureControl::ISO:
         {
             guint isoSpeed = 0;
-            gst_photography_get_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), &isoSpeed);
+            gst_photography_get_iso_speed(m_session->photography(), &isoSpeed);
             return QVariant(isoSpeed);
         }
     case QCameraExposureControl::Aperture:
@@ -202,7 +201,7 @@ QVariant CameraBinExposure::exposureParameter(ExposureParameter parameter) const
     case QCameraExposureControl::ShutterSpeed:
         {
             guint32 shutterSpeed = 0;
-            gst_photography_get_exposure(GST_PHOTOGRAPHY(&m_camerabin), &shutterSpeed);
+            gst_photography_get_exposure(m_session->photography(), &shutterSpeed);
 
             return QVariant(shutterSpeed/1000000.0);
         }
@@ -253,16 +252,16 @@ bool CameraBinExposure::setExposureParameter(ExposureParameter parameter, const 
 {
     switch (parameter) {
     case QCameraExposureControl::ExposureCompensation:
-        gst_photography_set_ev_compensation(GST_PHOTOGRAPHY(&m_camerabin), value.toReal());
+        gst_photography_set_ev_compensation(m_session->photography(), value.toReal());
         break;
     case QCameraExposureControl::ISO:
-        gst_photography_set_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), value.toInt());
+        gst_photography_set_iso_speed(m_session->photography(), value.toInt());
         break;
     case QCameraExposureControl::Aperture:
-        gst_photography_set_aperture(GST_PHOTOGRAPHY(&m_camerabin), guint(value.toReal()*1000000));
+        gst_photography_set_aperture(m_session->photography(), guint(value.toReal()*1000000));
         break;
     case QCameraExposureControl::ShutterSpeed:
-        gst_photography_set_exposure(GST_PHOTOGRAPHY(&m_camerabin), guint(value.toReal()*1000000));
+        gst_photography_set_exposure(m_session->photography(), guint(value.toReal()*1000000));
         break;
     default:
         return false;
