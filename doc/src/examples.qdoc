@@ -62,6 +62,8 @@
     \o \l{lightmaps}{LightMaps}
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
+    \o \l{mapviewer}{Map Viewer}
+    \o \l{qgeoapiui}{QGeoApiUi}
     \endlist
 
     \section2 Messaging
