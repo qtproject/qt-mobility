@@ -614,10 +614,10 @@
     <tr>
     <td>Telephony Events</td>
     <td>TP</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="gray"></td>
     <td bgcolor="yellow"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
