@@ -115,7 +115,7 @@ public:
     QCameraImageCapture::Error error;
     QString errorString;
 
-    void _q_error(int error, const QString &errorString);
+    void _q_error(int id, int error, const QString &errorString);
     void _q_readyChanged(bool);
 
     void unsetError() { error = QCameraImageCapture::NoError; errorString.clear(); }
@@ -131,14 +131,14 @@ QCameraImageCapturePrivate::QCameraImageCapturePrivate():
 {
 }
 
-void QCameraImageCapturePrivate::_q_error(int error, const QString &errorString)
+void QCameraImageCapturePrivate::_q_error(int id, int error, const QString &errorString)
 {
     Q_Q(QCameraImageCapture);
 
     this->error = QCameraImageCapture::Error(error);
     this->errorString = errorString;
 
-    emit q->error(this->error);
+    emit q->error(id, this->error, errorString);
 }
 
 void QCameraImageCapturePrivate::_q_readyChanged(bool ready)
@@ -202,8 +202,8 @@ bool QCameraImageCapture::setMediaObject(QMediaObject *mediaObject)
                        this, SIGNAL(imageSaved(int,QString)));
             disconnect(d->control, SIGNAL(readyForCaptureChanged(bool)),
                        this, SLOT(_q_readyChanged(bool)));
-            disconnect(d->control, SIGNAL(error(int,QString)),
-                       this, SLOT(_q_error(int,QString)));
+            disconnect(d->control, SIGNAL(error(int,int,QString)),
+                       this, SLOT(_q_error(int,int,QString)));
 
             QMediaService *service = d->mediaObject->service();
             service->releaseControl(d->control);
@@ -403,7 +403,7 @@ int QCameraImageCapture::capture(const QString &file)
         d->error = NotSupportedFeatureError;
         d->errorString = tr("Device does not support images capture.");
 
-        emit error(d->error);
+        emit error(-1, d->error, d->errorString);
     }
 
     return -1;
@@ -425,7 +425,7 @@ void QCameraImageCapture::cancelCapture()
         d->error = NotSupportedFeatureError;
         d->errorString = tr("Device does not support images capture.");
 
-        emit error(d->error);
+        emit error(-1, d->error, d->errorString);
     }
 }
 
@@ -442,9 +442,10 @@ void QCameraImageCapture::cancelCapture()
 */
 
 /*!
-    \fn QCameraImageCapture::error(QCameraImageCapture::Error error)
+    \fn QCameraImageCapture::error(int id, QCameraImageCapture::Error error, const QString &errorString)
 
-    Signals that an \a error has occurred.
+    Signals that the capture request \a id has failed with an \a error
+    and \a errorString description.
 */
 
 

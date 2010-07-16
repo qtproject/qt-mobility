@@ -431,7 +431,7 @@ For more information on this topic, see please see the documentation on
 \section2 Synchronization and Serialization
 
 The organizer API is used by another Qt Mobility module: the
-\l {Versit API} {Versit}* module.  It allows
+\l {Versit} {Versit}* module.  It allows
 serialization of a QOrganizerItem into an iCalendar document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

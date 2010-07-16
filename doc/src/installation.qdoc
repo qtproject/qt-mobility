@@ -70,6 +70,11 @@ these domains have dependencies and these are outlined below:
     \o Y
     \o N
 \row
+    \o Document Gallery
+    \o The Maemo 5 backend depends on QtDBus and \l {http://project.gnome.org/Tracker}{Tracker}.
+    \o N(Y)
+    \o Y
+\row
     \o Location
     \o The Symbian backend uses the LBT (Location Based Triggering) library for area notifications.
        Area notifications will be disabled at compile time if the LBT library is not found.

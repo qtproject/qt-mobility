@@ -73,6 +73,8 @@ public:
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *);
 
+    static bool isCameraBinAvailable();
+
 private:
     void setAudioPreview(GstElement*);
 
@@ -86,11 +88,8 @@ private:
     QMediaControl *m_videoOutput;
 
     QGstreamerVideoRenderer *m_videoRenderer;
-    QGstreamerElementFactory *m_videoRendererFactory;
     QGstreamerVideoOverlay *m_videoWindow;
-    QGstreamerElementFactory *m_videoWindowFactory;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
-    QGstreamerElementFactory *m_videoWidgetFactory;
     CameraBinImageCapture *m_imageCaptureControl;
 };
 
