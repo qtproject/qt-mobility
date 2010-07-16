@@ -127,16 +127,6 @@
 // Function prototypes
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
 
-QT_BEGIN_NAMESPACE
-static inline uint qHash(const QSize& key) { return uint(key.width()*256+key.height()); }
-
-static bool operator<(const QSize &s1, const QSize s2)
-{
-    return s1.width()*s1.height() < s2.width()*s2.height();
-}
-QT_END_NAMESPACE
-
-
 CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
      m_state(QCamera::StoppedState),
@@ -251,8 +241,6 @@ void CameraBinSession::updateVideoSourceCaps()
     }
 
     g_object_get(G_OBJECT(m_pipeline), VIDEO_SOURCE_CAPS_PROPERTY, &m_sourceCaps, NULL);
-
-    qDebug() << "Video source caps:" << gst_caps_to_string(m_sourceCaps);
 }
 
 void CameraBinSession::setupCaptureResolution()
@@ -260,7 +248,9 @@ void CameraBinSession::setupCaptureResolution()
     if (m_captureMode == QCamera::CaptureStillImage) {
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
         if (!resolution.isEmpty()) {
+#if CAMERABIN_DEBUG
             qDebug() << "image resolution" << resolution;
+#endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
         }
     }
@@ -269,7 +259,9 @@ void CameraBinSession::setupCaptureResolution()
         QSize resolution = m_videoEncodeControl->videoSettings().resolution();
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
         if (!resolution.isEmpty() || framerate > 0) {
-            qDebug() << "image resolution" << resolution;
+#if CAMERABIN_DEBUG
+            qDebug() << "video resolution" << resolution;
+#endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline),
                                   SET_VIDEO_RESOLUTION_FPS,
                                   resolution.width(),
@@ -280,9 +272,6 @@ void CameraBinSession::setupCaptureResolution()
         }
     }
 }
-
-#define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
-
 
 GstElement *CameraBinSession::buildVideoSrc()
 {
@@ -316,7 +305,10 @@ void CameraBinSession::captureImage(int requestId, const QString &fileName)
 
     QSize resolution = m_imageEncodeControl->imageSettings().resolution();
     if (!resolution.isEmpty()) {
+
+#if CAMERABIN_DEBUG
         qDebug() << "Set image resolution" << resolution;
+#endif
         g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
     }
 
@@ -700,7 +692,10 @@ static gboolean imgCaptured(GstElement *camera,
                         const gchar *filename,
                         gpointer user_data)
 {
-    qDebug() << "Image done" << filename;
+#if CAMERABIN_DEBUG
+    qDebug() << "Image saved" << filename;
+#endif
+
     Q_UNUSED(camera);
     CameraBinSession *session = (CameraBinSession *)user_data;
     session->processSavedImage(QString::fromUtf8(filename));
@@ -739,6 +734,8 @@ void CameraBinSession::stopVideoRecording()
     g_signal_emit_by_name(G_OBJECT(m_pipeline), CAPTURE_STOP, NULL);
 }
 
+//internal, only used by CameraBinSession::supportedFrameRates.
+//recursively fills the list of framerates res from value data.
 static void readValue(const GValue *value, QList< QPair<int,int> > *res, bool *continuous)
 {
     if (GST_VALUE_HOLDS_FRACTION(value)) {
@@ -814,8 +811,10 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
         readValue(rateValue, &res, continuous);
     }
 
-    //qDebug() << "Supported rates:" << gst_caps_to_string(caps);
-    //qDebug() << res;
+#if CAMERABIN_DEBUG
+    qDebug() << "Supported rates:" << gst_caps_to_string(caps);
+    qDebug() << res;
+#endif
 
     gst_caps_unref(caps);
 
@@ -897,8 +896,10 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
         }
     }
 
-    //qDebug() << "Supported resolutions:" << gst_caps_to_string(caps);
-    //qDebug() << res;
+#if CAMERABIN_DEBUG
+    qDebug() << "Supported resolutions:" << gst_caps_to_string(caps);
+    qDebug() << res;
+#endif
 
     gst_caps_unref(caps);
 
