@@ -492,7 +492,7 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         << rrule;*/
     
     // TODO: should this fail? (daily recurring event that has "days of week" set..?)
-    QList<Qt::DayOfWeek> daysOfWeek;
+    /*QList<Qt::DayOfWeek> daysOfWeek;
     daysOfWeek.append(Qt::Monday);
     rrule.setDaysOfWeek(daysOfWeek);
 
