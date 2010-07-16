@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QTelephonyCallInfo
     \ingroup telephony
+    \inmodule QtTelephony
     \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
 */
 
@@ -77,14 +78,6 @@ QTM_BEGIN_NAMESPACE
     \value Video       The call is a video based call.
     \value Voice       The call is a voice based call.
     \value Other       The call is a an unknown base call.
-*/
-
-/*!
-    \class QTelephonyCallInfo
-
-    \ingroup telephony
-
-    \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
 */
 
 /*!

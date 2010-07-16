@@ -90,3 +90,4 @@ The library provides a number of classes and signals and properties to assist wi
 Another application can use this library to get informed about incomming calls, accessing calls information and more of the current system.
 Basically the library provides an easy access of call information of different OS system (here it is Linux and the DBus system).
 
+*/
