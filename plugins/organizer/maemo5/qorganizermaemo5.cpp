@@ -272,9 +272,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     std::vector<CEvent*> events = cal->getEvents(calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
-        for (int i = 0; i < events.size(); ++i)
+        std::vector<CEvent*>::const_iterator event;
+        for (event = events.begin(); event != events.end(); ++event)
         {
-            CEvent* cevent = events[i];
+            CEvent* cevent = *event;
             QOrganizerItemLocalId eventId = QString::fromStdString(cevent->getId()).toUInt();
             QOrganizerItem item = internalFetchItem(eventId, fetchMinimalData(), error, true);
             retn << item;
@@ -285,9 +286,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     std::vector<CTodo*> todos = cal->getTodos(calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
-        for (int i = 0; i < todos.size(); ++i)
+        std::vector<CTodo*>::const_iterator todo;
+        for (todo = todos.begin(); todo != todos.end(); ++todo)
         {
-            CTodo* ctodo = todos[i];
+            CTodo* ctodo = *todo;
             QOrganizerItemLocalId todoId = QString::fromStdString(ctodo->getId()).toUInt();
             QOrganizerItem item = internalFetchItem(todoId, fetchMinimalData(), error, true);
             retn << item;
@@ -298,9 +300,10 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     std::vector<CJournal*> journals = cal->getJournals(calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
-        for (int i = 0; i < journals.size(); ++i)
+        std::vector<CJournal*>::const_iterator journal;
+        for (journal = journals.begin(); journal != journals.end(); ++journal)
         {
-            CJournal* cjournal = journals[i];
+            CJournal* cjournal = *journal;
             QOrganizerItemLocalId journalId = QString::fromStdString(cjournal->getId()).toUInt();
             QOrganizerItem item = internalFetchItem(journalId, fetchMinimalData(), error, true);
             retn << item;
@@ -310,81 +313,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 
     cleanupCal(cal);
     return retn;
-
-    /*
-    *error = QOrganizerItemManager::NoError;
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    QList<QOrganizerItem> retn;
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-
-    std::vector<CEvent*> events = cal->getEvents(calError);
-    for (int i = 0; i < events.size(); ++i)
-    {
-        CEvent* cevent = events[i];
-        QOrganizerEvent event = d->m_itemTransformer.convertCEventToQEvent(cevent);
-        d->m_itemTransformer.fillInCommonCComponentDetails(&event, cevent);
-        delete cevent;
-        retn.append(event);
-    }
-
-    std::vector<CTodo*> todos = cal->getTodos(calError);
-    for (int i = 0; i < todos.size(); ++i)
-    {
-        CTodo* ctodo = todos[i];
-        QOrganizerTodo todo = d->m_itemTransformer.convertCTodoToQTodo(ctodo);
-        d->m_itemTransformer.fillInCommonCComponentDetails(&todo, ctodo);
-        delete ctodo;
-        retn.append(todo);
-    }
-
-    std::vector<CJournal*> journals = cal->getJournals(calError);
-    for (int i = 0; i < journals.size(); ++i)
-    {
-        CJournal* cjournal = journals[i];
-        QOrganizerJournal journal = d->m_itemTransformer.convertCJournalToQJournal(cjournal);
-        d->m_itemTransformer.fillInCommonCComponentDetails(&journal, cjournal);
-        delete cjournal;
-        retn.append(journal);
-    }
-
-    cleanupCal(cal);
-    return retn;
-    */
-
-    /*
-        TODO
-
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-    */
-
-    /*
-
-    Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
-
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
-    QList<QOrganizerItem> ret;
-
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
-        }
-    }
-
-    /* An alternative formulation, depending on how your engine is implemented is just:
-
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
-            ret.append(item(id, fetchHint, error);
-        }
-     */
-
-    //return ret;
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
