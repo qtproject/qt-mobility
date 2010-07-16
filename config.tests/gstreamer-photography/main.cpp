@@ -39,71 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QT7PLAYERCONTROL_H
-#define QT7PLAYERCONTROL_H
+#define GST_USE_UNSTABLE_API
 
-#include <QtCore/qobject.h>
+#include <gst/interfaces/photography.h>
+#include <gst/interfaces/photography-enumtypes.h>
 
-#include <qmediaplayercontrol.h>
-#include <qmediaplayer.h>
-
-#include <QtGui/qmacdefines_mac.h>
-
-
-QT_BEGIN_NAMESPACE
-
-class QT7PlayerSession;
-class QT7PlayerService;
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-
-class QT7PlayerControl : public QMediaPlayerControl
+int main(int argc, char** argv)
 {
-Q_OBJECT
-public:
-    QT7PlayerControl(QObject *parent = 0);
-    ~QT7PlayerControl();
-
-    void setSession(QT7PlayerSession *session);
-
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent &content, QIODevice *stream);
-
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isAudioAvailable() const;
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
-private:
-    QT7PlayerSession *m_session;
-};
-
-QT_END_NAMESPACE
-
-#endif
+    return 0;
+}

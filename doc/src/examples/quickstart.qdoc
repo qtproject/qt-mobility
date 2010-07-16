@@ -108,19 +108,19 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {Qt Service Framework} {Service Framework}
     \o serviceframework
 \row
-    \o \l {Sensor API}
+    \o \l {Sensor}{Sensors}
     \o sensors
 \row
     \o \l {System Information}
     \o systeminfo
 \row
-    \o \l {Versit API}{Versit}
+    \o \l {Versit}{Versit}
     \o versit
 \row
     \o \l {Document Gallery}
     \o gallery
 \row
-    \o \l {Telephony Events API}{Telephony Events}
+    \o \l {Telephony Events}{Telephony Events}
     \o telephony
 \row
     \o \l {Organizer}
@@ -171,19 +171,19 @@ on which parts of an API is utilized by an application.
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.
 \row
-    \o \l {Sensor API}
+    \o \l {Sensor}
     \o ReadDeviceData
 \row
     \o \l {System Information}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
 \row
-    \o \l {Versit API}
+    \o \l {Versit}
     \o No additional capabilities required.
 \row
     \o \l {Document Gallery}
     \o ???
 \row
-    \o \l {Telephony Events API}{Telephony Events}
+    \o \l {Telephony Events}{Telephony Events}
     \o ???
 \row
     \o \l {Organizer}

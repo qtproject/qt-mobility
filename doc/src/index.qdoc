@@ -61,8 +61,8 @@
 
     \section2 Introducing the Qt Mobility APIs
 
-    Qt Mobility covers a wide range of features and technologies so it best
-    to regard it not as a single API but as a collection of APIs or frameworks.
+    Qt Mobility covers a wide range of features and technologies so it is best
+    to regard it not as a single API, but as a collection of APIs or frameworks.
 
     This release contains the following APIs:
 
@@ -245,13 +245,13 @@
     sensors such as screen orientation (portrait, landscape) and low-level,
     real-time sensors such as accelerometer data.
 
-    For more details see the \l{Sensors API}{Sensors API overview}.
+    For more details see the \l{Sensors}{Sensors API overview}.
 
     \section2 Versit (vCard)
 
     An API to manage Versit \reg documents, such as vCards.
 
-    For more details see the \l{Versit API}{Versit API overview}.
+    For more details see the \l{Versit}{Versit API overview}.
 
     \section1 Preview APIs
 
@@ -285,8 +285,11 @@
 
     \section2 Document Gallery
 
-    The Document Gallery provides a meta-data focused API for managing
-    collections of documents and media.
+    An API for accessing collections of documents and media and their meta-data.
+
+    The Document Gallery provides an interface to a searchable index of
+    document meta-data.  The gallery may be queried to discover the meta-data
+    of documents, or to discover documents with desired meta-data.
 
     For more details, see the \l {Document Gallery}{Document Gallery overview}.
     
@@ -303,7 +306,7 @@
     provide telephony call notification that other applications can use to 
     be notified.
 
-    For more details, see the \l {Telephony Events API}{Telephony Overview}.
+    For more details, see the \l {Telephony Events}{Telephony Overview}.
     
     \section1 The QtMobility Namespace 
 

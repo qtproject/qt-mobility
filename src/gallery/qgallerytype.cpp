@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup gallery
 
+    \inmodule QtGallery
+
     \brief The QGalleryType class provides an identifier for a gallery item
     type.
 */

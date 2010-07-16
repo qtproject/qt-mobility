@@ -92,7 +92,7 @@ Q_SIGNALS:
     void activeChanged(bool active);
     void nmeaSourceChanged(QUrl nmeaSource);
     void updateIntervalChanged(int updateInterval);
-    void positioningMethodChanged(PositioningMethod positioningMethod);
+    void positioningMethodChanged(QDeclarativePositionSource::PositioningMethod positioningMethod);
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);
