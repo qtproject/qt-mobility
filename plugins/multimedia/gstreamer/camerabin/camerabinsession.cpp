@@ -429,6 +429,10 @@ void CameraBinSession::setState(QCamera::State newState)
     switch (newState) {
     case QCamera::StoppedState:
     case QCamera::IdleState:
+        //focus is lost when the state is changed from Active to Idle
+        if (m_state == QCamera::ActiveState)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
         if (m_state == QCamera::IdleState && m_videoInputHasChanged) {
