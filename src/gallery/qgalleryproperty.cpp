@@ -46,6 +46,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGalleryProperty
 
+    \inmodule QtGallery
+
     \brief The QGalleryProperty class provides an identifier for a gallery
     property.
 */

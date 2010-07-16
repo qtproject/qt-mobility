@@ -74,6 +74,8 @@ public:
     \ingroup gallery
     \ingroup gallery-requests
 
+    \inmodule QtGallery
+
     \brief The QGalleryQueryRequest class provides a request for a set of
     items from a gallery.
 

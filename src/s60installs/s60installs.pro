@@ -53,6 +53,14 @@ isEmpty(QT_LIBINFIX):symbian {
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtgeoservices_nokia.dll
         pluginstubs += "\"$$QT_MOBILITY_BUILD_TREE/plugins/geoservices/nokia/qmakepluginstubs/qtgeoservices_nokia.qtplugin\" - \"!:\\resource\\qt\\plugins\\geoservices\\qtgeoservices_nokia.qtplugin\""
+        contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_location.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmakepluginstubs\\declarative_location.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\declarative_location.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\location\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\location\\qmldir\""
+        }
     }
 
 
@@ -203,7 +211,8 @@ isEmpty(QT_LIBINFIX):symbian {
     }
 
     !isEmpty(pluginstubs):qtmobilitydeployment.pkg_postrules += pluginstubs
-
+    !isEmpty(qmldirs):qtmobilitydeployment.pkg_postrules += qmldirs
+ 
     qtmobilitydeployment.path = /sys/bin
 
     DEPLOYMENT += qtmobilitydeployment

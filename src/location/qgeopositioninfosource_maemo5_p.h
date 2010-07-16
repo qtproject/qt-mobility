@@ -78,13 +78,12 @@ public:
     int init();
 
     virtual void setUpdateInterval(int interval);
-    virtual void setPreferredPositioningMethods(PositioningMethods sources);
+    virtual void setPreferredPositioningMethods(PositioningMethods methods);
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;
 
 private:
-    PositioningMethods availableMethods;
     bool positionInited;
     QTimer *updateTimer;
     QTimer *requestTimer;
@@ -103,6 +102,9 @@ private:
         PowersaveActive = 8
     };
     int positionInfoState;
+    
+    QGeoPositionInfo lastUpdateFromSatellite;
+    QGeoPositionInfo lastUpdateFromNetwork;
 
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
@@ -111,11 +113,12 @@ public slots:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
-    void newPositionUpdate();
 
 private slots:
     void requestTimeoutElapsed();
     void error();
+    void newPositionUpdate(const QGeoPositionInfo &position);
+    void updateTimeoutElapsed();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)

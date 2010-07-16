@@ -105,6 +105,8 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \ingroup gallery
     \ingroup gallery-requests
 
+    \inmodule QtGallery
+
     \brief The QGalleryAbstractRequest class provides a base class for gallery
     requests.
 */

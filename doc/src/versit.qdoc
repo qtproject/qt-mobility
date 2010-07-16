@@ -28,7 +28,7 @@
 /*!
 
 \page versit.html
-\title Versit API
+\title Versit
 \brief An API to import and export to the vCard and iCalendar formats.
 
 \ingroup mobility

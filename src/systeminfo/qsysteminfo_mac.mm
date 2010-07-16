@@ -599,10 +599,10 @@ void QRunLoopThread::stop()
     QMutexLocker locker(&mutex);
     CFRunLoopStop(CFRunLoopGetCurrent());
     keepRunning = false;
-#ifdef MAC_SDK_10_6
-    [listener release];
-    [delegate release];
-#endif
+//#ifdef MAC_SDK_10_6
+//    [listener release];
+//    [delegate release];
+//#endif
     t.quit();
     t.wait();
 }
@@ -617,13 +617,13 @@ void QRunLoopThread::doWork()
     } else {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         startNetworkChangeLoop();
-        delegate = [[RemoteDeviceRSSIHostControllerDelegate alloc] init];
+        delegate = [[[RemoteDeviceRSSIHostControllerDelegate alloc] init] autorelease];
 
         mutex.lock();
         keepRunning = true;
         mutex.unlock();
 
-        listener = [[QtMNSListener alloc] init];
+        listener = [[[QtMNSListener alloc] init] autorelease];
 
         SInt32 result;
         while (keepRunning &&
@@ -1204,6 +1204,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 #ifdef  MAC_SDK_10_6
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             IOBluetoothHostController* controller = IOBluetoothHostController.defaultController;
+
             if (controller != NULL) {
 
                 NSArray *devices = [IOBluetoothDevice recentDevices:0];
@@ -1800,6 +1801,7 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
         if(!btThread) {
             btThread = new QBluetoothListenerThread();
             connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
+            btThread->doWork();
              btThreadOk = true;
         }
     }
