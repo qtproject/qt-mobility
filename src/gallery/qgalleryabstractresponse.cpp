@@ -48,6 +48,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup gallery
 
+    \inmodule QtGallery
+
     \brief The QGalleryAbstractResponse class provides a base class for
     responses to gallery requests.
 */

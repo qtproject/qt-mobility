@@ -56,7 +56,6 @@ public:
     enum State {
         InactiveState = 0,
         ActiveState,
-        CanceledState,
         FinishedState
     };
 
@@ -83,7 +82,6 @@ public:
     bool isInactive()const;
     bool isActive() const;
     bool isFinished() const;
-    bool isCanceled() const;
 
     QLandmarkManager::Error error() const;
     QString errorString() const;

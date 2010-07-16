@@ -248,6 +248,8 @@ void QGalleryItemListModelPrivate::_q_metaDataChanged(int index, int count, cons
 
     \ingroup gallery
 
+    \inmodule QtGallery
+
     \brief The QGalleryItemListModel class provides a QAbstractItemModel
     wrapper for  QGalleryItemList.
 

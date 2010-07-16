@@ -61,8 +61,8 @@
 
     \section2 Introducing the Qt Mobility APIs
 
-    Qt Mobility covers a wide range of features and technologies so it best
-    to regard it not as a single API but as a collection of APIs or frameworks.
+    Qt Mobility covers a wide range of features and technologies so it is best
+    to regard it not as a single API, but as a collection of APIs or frameworks.
 
     This release contains the following APIs:
 
@@ -212,11 +212,13 @@
 
     \section2 Location
 
-    The C++ API is one layer of this feature. This API provides an easy to
+    The location API is composed of 3 components. Location positioning, 
+    landmarks, and mapping and navigation.  The location positioning API provides an easy to 
     use interface that encapsulates basic geographical information obtained
     from satellite or other sources about the user, including latitude and
-    longitude, bearing, speed and altitude. It will enable a range of
-    geographical applications, for example, maps.
+    longitude, bearing, speed and altitude.  The Landmarks API allows storage and 
+    retrieval of points of interests while the Maps and Navigation API provides
+    mapping, geocoding and routing functionality.
     
     For more details, see the \l {Location} {Location API overview}.
 
@@ -283,8 +285,11 @@
 
     \section2 Document Gallery
 
-    The Document Gallery provides a meta-data focused API for managing
-    collections of documents and media.
+    An API for accessing collections of documents and media and their meta-data.
+
+    The Document Gallery provides an interface to a searchable index of
+    document meta-data.  The gallery may be queried to discover the meta-data
+    of documents, or to discover documents with desired meta-data.
 
     For more details, see the \l {Document Gallery}{Document Gallery overview}.
     
