@@ -50,6 +50,23 @@
 #include <CTodo.h>
 #include <CRecurrence.h>
 
+/**
+ * entryType enum
+ * This enum is from the Maemo5 calendar backend file Common.h
+ * The enumeration is pasted here to avoid including Common.h file,
+ * which contains dependencies to DBUS handling and other components
+ * that are not actually needed here.
+*/
+enum entryType {
+    E_CALENDAR = 0,
+    E_EVENT,
+    E_TODO,
+    E_JOURNAL,
+    E_BDAY,
+    E_SPARE,
+    E_VTIMEZONE
+};
+
 QTM_USE_NAMESPACE
 
 static const char* CALENDAR =  "/.calendar";
@@ -235,6 +252,42 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, QOrganizerItemManager::Error *error) const
 {
+    // TODO: Make this method to use filters and sortorders
+
+    *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItemLocalId> retn;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<std::string>::const_iterator id;
+
+    // Append event ids
+    std::vector<std::string> eventIds = cal->getIdList(E_EVENT, calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (*error != QOrganizerItemManager::NoError)
+        return retn;
+    for (id = eventIds.begin(); id != eventIds.end(); ++id)
+        retn << QString::fromStdString(*id).toUInt();
+
+    // Append todo ids
+    std::vector<std::string> todoIds = cal->getIdList(E_TODO, calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (*error != QOrganizerItemManager::NoError)
+        return retn;
+    for (id = todoIds.begin(); id != todoIds.end(); ++id)
+        retn << QString::fromStdString(*id).toUInt();
+
+    // Append journal ids
+    std::vector<std::string> journalIds = cal->getIdList(E_JOURNAL, calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (*error != QOrganizerItemManager::NoError)
+        return retn;
+    for (id = journalIds.begin(); id != journalIds.end(); ++id)
+        retn << QString::fromStdString(*id).toUInt();
+
+    return retn;
+
+
     /*
         TODO
 
@@ -245,7 +298,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
 
         If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
     */
-
+/*
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
 
     QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
@@ -258,11 +311,14 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
     }
 
     return QOrganizerItemManagerEngine::sortItems(retn, sortOrders);
+    */
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
 {
     // TODO: This implementation doesn't support any filters, sort orders or fetch hints yet
+
+    // TODO: For performance, make this method to use itemIds()
 
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
