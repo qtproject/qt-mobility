@@ -331,29 +331,35 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     
     // Get guid from item. New guid is generated if empty.
     HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    CCalEntry *entry;
     
     // If guid was defined in item check if it matches to something
     if (!item->guid().isEmpty()) {
         RPointerArray<CCalEntry> calEntryArray;
         m_entryView->FetchL(*globalUid, calEntryArray);
-        if (calEntryArray.Count())            
-            isNewEntry = false; // found at least one existing entry with this guid
+        if (calEntryArray.Count()) {
+            entry = m_entryView->FetchL(TCalLocalUid(item->localId())); 
+            isNewEntry = false;
+        }
+             // found at least one existing entry with this guid
         calEntryArray.ResetAndDestroy();
     }
-    
+    if (isNewEntry) {
     // Create entry
     CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
     CCalEntry::TMethod method = CCalEntry::EMethodAdd; // TODO
     TInt seqNum = 0; // TODO
     //TCalTime recurrenceId; // TODO
     //CalCommon::TRecurrenceRange recurrenceRange; // TODO
-    CCalEntry *entry = CCalEntry::NewL(type, globalUid, method, seqNum);
-    CleanupStack::Pop(globalUid); // ownership passed?
+    entry = CCalEntry::NewL(type, globalUid, method, seqNum);
+     // ownership passed?
+    }
+    CleanupStack::Pop(globalUid);
     CleanupStack::PushL(entry);
 
     // Use old local id if we are updating and entry
-    if (!isNewEntry)
-        entry->SetLocalUidL(TCalLocalUid(item->localId()));
+    //if (!isNewEntry)
+      //  entry->SetLocalUidL(TCalLocalUid(item->localId()));
         
     // Transform QOrganizerItem -> CCalEntry    
     m_itemTransform.toEntryL(*item, entry);
@@ -363,7 +369,13 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt count(0);
+    if (isNewEntry) {
     m_entryView->StoreL(entries, count);
+    }
+    else {
+    entry->SetLastModifiedDateL();
+    m_entryView->StoreL(entries, count);
+    }
     const TInt expectedCount(1);
     if (count != expectedCount) {
         // The documentation states about count "On return, this
