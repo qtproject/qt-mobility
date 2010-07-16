@@ -109,27 +109,9 @@ qreal QGeoMapCircleObject::radius() const
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::CircleType;
-}
-
-QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(const QGeoMapCircleObjectPrivate &other)
-    : QGeoMapObjectPrivate(other),
-    center(other.center),
-    radius(other.radius) {}
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
-
-QGeoMapCircleObjectPrivate& QGeoMapCircleObjectPrivate::operator= (const QGeoMapCircleObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    center = other.center;
-    radius = other.radius;
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

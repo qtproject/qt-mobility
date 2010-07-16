@@ -93,22 +93,9 @@ void QGeoMapRectangleObject::setBrush(const QBrush &aBrush)
 *******************************************************************************/
 
 QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::RectangleType;
-}
-
-QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other)
-    : QGeoMapObjectPrivate(other) {}
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
-
-QGeoMapRectangleObjectPrivate& QGeoMapRectangleObjectPrivate::operator= (const QGeoMapRectangleObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

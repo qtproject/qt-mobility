@@ -84,22 +84,9 @@ QGeoCoordinate QGeoMapMarkerObject::coordinate() const
 *******************************************************************************/
 
 QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::MarkerType;
-}
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(const QGeoMapMarkerObjectPrivate &other)
-    : QGeoMapObjectPrivate(other) {}
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
 
 QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
-
-QGeoMapMarkerObjectPrivate& QGeoMapMarkerObjectPrivate::operator= (const QGeoMapMarkerObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

@@ -45,20 +45,51 @@
 #include "qgeomapobject.h"
 
 #include <QList>
-#include <QMultiMap>
+#include <QRectF>
+#include <QSharedPointer>
 #include "qgeoboundingbox.h"
+
+class QPainter;
+//class QPainterPath;
+//class QStyleOptionGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
+class QGeoMapDataPrivate;
+
+class QGeoMapObjectInfo
+{
+public:
+    QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    virtual ~QGeoMapObjectInfo();
+
+    //virtual QPainterPath shape() const = 0;
+    //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent) = 0;
+
+    virtual bool intersects(const QRectF& rect) const;
+    virtual void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection) = 0;
+    virtual void update() = 0;
+
+    const QGeoMapObjectPrivate* mapObjectPrivate;
+    QRectF boundingBox;
+
+private:
+    Q_DISABLE_COPY(QGeoMapObjectInfo)
+};
 
 class QGeoMapObjectPrivate
 {
 public:
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QSharedPointer<QGeoMapDataPrivate> mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
     virtual ~QGeoMapObjectPrivate();
-    QGeoMapObjectPrivate& operator= (const QGeoMapObjectPrivate &other);
+
+    void setMapData(QSharedPointer<QGeoMapDataPrivate> mapData);
+
+    bool intersects(const QRectF& rect) const;
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
 
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
@@ -67,9 +98,13 @@ public:
     bool isVisible;
     QGeoBoundingBox boundingBox;
 
+    QSharedPointer<QGeoMapDataPrivate> mapData;
+    QGeoMapObjectInfo* info;
+
 private:
     QGeoMapObject *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapObject)
+    Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };
 
 QTM_END_NAMESPACE

@@ -53,9 +53,7 @@ class QGeoMapMarkerObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapMarkerObjectPrivate(const QGeoMapMarkerObjectPrivate &other);
     ~QGeoMapMarkerObjectPrivate();
-    QGeoMapMarkerObjectPrivate& operator= (const QGeoMapMarkerObjectPrivate &other);
 
     QPixmap icon;
     QPoint anchor;

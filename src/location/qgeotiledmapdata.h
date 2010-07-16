@@ -89,9 +89,10 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-protected:
+//protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
     virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+protected:
 
     virtual void updateMapImage();
     void clearRequests();
@@ -109,7 +110,8 @@ private slots:
 private:
     void cleanupCaches();
 
-    QGeoTiledMapDataPrivate *d_ptr;
+    //QGeoTiledMapDataPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
 };

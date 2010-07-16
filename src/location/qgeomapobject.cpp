@@ -42,6 +42,8 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 
+#include "qgeomapdata_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -83,6 +85,12 @@ QTM_BEGIN_NAMESPACE
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
     : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
+
+/*!
+    Constructs a new root map object associated with \a mapData.
+*/
+QGeoMapObject::QGeoMapObject(QSharedPointer<QGeoMapDataPrivate> mapData)
+    : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
 
 /*!
   \internal
@@ -231,10 +239,15 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 {
     Q_D(QGeoMapObject);
 
-    if (!childObject)
+    if (!childObject || d->children.contains(childObject))
         return;
 
+    if (childObject->d_ptr->parent && (childObject->d_ptr->parent != this)) {
+        childObject->d_ptr->parent->removeChildObject(childObject);
+    }
+
     childObject->d_ptr->parent = this;
+    childObject->d_ptr->setMapData(d_ptr->mapData);
 
     //binary search for proper insert slot
     int a = 0;
@@ -275,6 +288,7 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     if (childObject) {
         if (d->children.removeAll(childObject) > 0) {
             childObject->d_ptr->parent = 0;
+            childObject->d_ptr->mapData.clear();
             emit childObjectRemoved(childObject);
         }
     }
@@ -290,22 +304,45 @@ QList<QGeoMapObject*> QGeoMapObject::childObjects() const
     return d->children;
 }
 
+bool QGeoMapObject::intersects(const QRectF &rect) const
+{
+    Q_D(const QGeoMapObject);
+    return d->intersects(rect);
+}
+
+void QGeoMapObject::paint(QPainter *painter, const QRectF &viewPort, bool hitDetection)
+{
+    Q_D(QGeoMapObject);
+    d->paint(painter, viewPort, hitDetection);
+}
+
+void QGeoMapObject::update()
+{
+    Q_D(QGeoMapObject);
+    d->update();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : type(QGeoMapObject::ContainerType),
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
+    : type(type),
     parent(parent),
-    q_ptr(impl) {}
+    info(0),
+    q_ptr(impl)
+{
+    if (parent) {
+        mapData = parent->d_ptr->mapData;
+        info = mapData->createObjectInfo(this);
+    }
+}
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other)
-    : type(other.type),
-    parent(other.parent),
-    children(other.children),
-    zValue(other.zValue),
-    isVisible(other.isVisible),
-    boundingBox(other.boundingBox),
-    q_ptr(other.q_ptr) {}
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QSharedPointer<QGeoMapDataPrivate> mapData, QGeoMapObject::Type type)
+    : type(type),
+    parent(0),
+    info(0),
+    q_ptr(impl),
+    mapData(mapData) {}
 
 QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
     if (parent) {
@@ -319,20 +356,60 @@ QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
     }
 
     children.clear();
+
+    if (info)
+        delete info;
 }
 
-QGeoMapObjectPrivate& QGeoMapObjectPrivate::operator= (const QGeoMapObjectPrivate &other)
+void QGeoMapObjectPrivate::setMapData(QSharedPointer<QGeoMapDataPrivate> mapData)
 {
-    type = other.type;
-    parent = other.parent;
-    children = other.children;
-    zValue = other.zValue;
-    isVisible = other.isVisible;
-    boundingBox = other.boundingBox;
-    q_ptr = other.q_ptr;
-
-    return *this;
+    this->mapData = mapData;
+    if (!info)
+        info = mapData->createObjectInfo(this);
+    int size = children.size();
+    for (int i = 0; i < size; ++i)
+        children[i]->d_ptr->setMapData(mapData);
 }
+
+bool QGeoMapObjectPrivate::intersects(const QRectF &rect) const
+{
+    if (info)
+        return info->intersects(rect);
+    return false;
+}
+
+void QGeoMapObjectPrivate::paint(QPainter *painter, const QRectF &viewPort, bool hitDetection)
+{
+    if (info)
+        info->paint(painter, viewPort, hitDetection);
+}
+
+void QGeoMapObjectPrivate::update()
+{
+    if (mapData.isNull())
+        return;
+
+    if (!info)
+        info = mapData->createObjectInfo(this);
+
+    info->update();
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoMapObjectInfo::QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) :
+        mapObjectPrivate(mapObjectPrivate) {}
+
+QGeoMapObjectInfo::~QGeoMapObjectInfo() {}
+
+bool QGeoMapObjectInfo::intersects(const QRectF &rect) const
+{
+    return boundingBox.intersects(rect);
+}
+
+/*******************************************************************************
+*******************************************************************************/
 
 #include "moc_qgeomapobject.cpp"
 

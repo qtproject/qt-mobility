@@ -54,6 +54,7 @@
 //
 
 #include "qgeomapwidget.h"
+#include "qgeomapobject.h"
 
 #include "qgeocoordinate.h"
 #include <QList>
@@ -62,26 +63,34 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
 
+class QGeoMapObjectInfo;
+
 class QGeoMapDataPrivate
 {
 public:
-    QGeoMapDataPrivate();
+    QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     QGeoMapDataPrivate(const QGeoMapDataPrivate &other);
     virtual ~QGeoMapDataPrivate();
     QGeoMapDataPrivate& operator= (const QGeoMapDataPrivate &other);
 
-    QGeoMapWidget *widget;
+    QGeoMapObjectInfo* createObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+
     QGeoMappingManagerEngine *engine;
+    QGeoMapWidget *widget;
+    QGeoMapObject* containerObject;
 
     qreal zoomLevel;
     QGeoCoordinate center;
     QSizeF viewportSize;
     QGeoMapWidget::MapType mapType;
 
-    QGeoMapObject* containerObject;
-
-    bool imageChangesTriggerUpdates;
-    QPixmap mapImage;
+protected:
+    virtual QGeoMapObjectInfo* createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    virtual QGeoMapObjectInfo* createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    virtual QGeoMapObjectInfo* createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    virtual QGeoMapObjectInfo* createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    virtual QGeoMapObjectInfo* createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    virtual QGeoMapObjectInfo* createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
 };
 
 QTM_END_NAMESPACE

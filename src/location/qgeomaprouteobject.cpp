@@ -97,27 +97,12 @@ quint32 QGeoMapRouteObject::detailLevel() const
 *******************************************************************************/
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
 {
-    type = QGeoMapObject::GeoRouteType;
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
 }
 
-QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other)
-    : QGeoMapObjectPrivate(other), pen(other.pen), route(other.route), detailLevel(other.detailLevel)
-{}
-
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
-
-QGeoMapRouteObjectPrivate& QGeoMapRouteObjectPrivate::operator= (const QGeoMapRouteObjectPrivate &other)
-{
-    route = other.route;
-    pen = other.pen;
-    detailLevel = other.detailLevel;
-    QGeoMapObjectPrivate::operator=(other);
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

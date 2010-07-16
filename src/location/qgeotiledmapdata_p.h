@@ -53,8 +53,9 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
+#include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
 
 #include <QRectF>
 #include <QHash>
@@ -72,6 +73,14 @@ class QGeoMapRectangleObject;
 class QGeoMapMarkerObject;
 class QGeoMapPolylineObject;
 class QGeoMapRouteObject;
+
+class QGeoMapRectangleObjectPrivate;
+class QGeoMapCircleObjectPrivate;
+class QGeoMapMarkerObjectPrivate;
+class QGeoMapPolylineObjectPrivate;
+class QGeoMapPolygonObjectPrivate;
+class QGeoMapRouteObjectPrivate;
+
 class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
@@ -91,34 +100,103 @@ struct QGeoTiledMapRouteInfo : public QGeoTiledMapObjectInfo
     QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
 };
 
-class QGeoTiledMapDataPrivate
+class QGeoTiledMapRectangleObjectInfo : public QGeoMapObjectInfo
 {
 public:
-    QGeoTiledMapDataPrivate(QGeoTiledMapData *q);
+    QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapRectangleObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    const QGeoMapRectangleObjectPrivate* rectangle;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+};
+
+class QGeoTiledMapCircleObjectInfo : public QGeoMapObjectInfo
+{
+public:
+    QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapCircleObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    const QGeoMapCircleObjectPrivate* circle;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+};
+
+class QGeoTiledMapPolylineObjectInfo : public QGeoMapObjectInfo
+{
+public:
+    QGeoTiledMapPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapPolylineObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    const QGeoMapPolylineObjectPrivate* polyline;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+
+    QPainterPath path;
+};
+
+class QGeoTiledMapPolygonObjectInfo : public QGeoMapObjectInfo
+{
+public:
+    QGeoTiledMapPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapPolygonObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    const QGeoMapPolygonObjectPrivate* polygon;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+
+    QPainterPath path;
+};
+
+class QGeoTiledMapMarkerObjectInfo : public QGeoMapObjectInfo
+{
+public:
+    QGeoTiledMapMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapMarkerObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    const QGeoMapMarkerObjectPrivate* marker;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+};
+
+class QGeoTiledMapRouteObjectInfo : public QGeoMapObjectInfo
+{
+public:
+    QGeoTiledMapRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapRouteObjectInfo();
+
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
+    qulonglong tileKey(int row, int col, int zoomLevel) const;
+    QLineF connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const;
+    void addRouteSegmentInfo(const QLineF &line, int index);
+
+    const QGeoMapRouteObjectPrivate* route;
+    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+
+    QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
+};
+
+class QGeoTiledMapDataPrivate : public QGeoMapDataPrivate
+{
+public:
+    QGeoTiledMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget, QGeoTiledMapData *q);
     QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other);
     ~QGeoTiledMapDataPrivate();
     QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
 
-    static qulonglong tileKey(int row, int col, int zoomLevel);
-
-    void calculateInfo(QGeoMapObject *mapObject);
-    void calculateMapRectangleInfo(QGeoMapRectangleObject *rectangle);
-    void calculateMapMarkerInfo(QGeoMapMarkerObject *marker);
-    void calculateMapPolylineInfo(QGeoMapPolylineObject *polyline);
-    void calculateMapRouteInfo(QGeoMapRouteObject *route);
-    void addRouteSegmentInfo(QGeoTiledMapRouteInfo *info, const QLineF &line, int index) const;
-
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
-
-    void paintMapObject(QPainter &painter, const QRectF &viewPort, QGeoMapObject *mapObject, bool hitDetection = false);
-    void paintMapRectangle(QPainter &painter, const QRectF &viewPort, QGeoMapRectangleObject *rectangle, bool hitDetection);
-    void paintMapMarker(QPainter &painter, const QRectF &viewPort, QGeoMapMarkerObject *marker, bool hitDetection);
-    void paintMapPolyline(QPainter &painter, const QRectF &viewPort, QGeoMapPolylineObject *polyline, bool hitDetection);
-    void paintMapRoute(QPainter &painter, const QRectF &viewPort, QGeoMapRouteObject *route, bool hitDetection);
-
-    void clearObjInfo();
-
-    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
     qulonglong width;
     qulonglong height;
@@ -139,6 +217,14 @@ public:
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
+
+protected:
+    QGeoMapObjectInfo* createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QGeoMapObjectInfo* createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QGeoMapObjectInfo* createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QGeoMapObjectInfo* createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QGeoMapObjectInfo* createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QGeoMapObjectInfo* createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
 };
 
 class QGeoTileIterator

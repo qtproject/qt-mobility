@@ -45,7 +45,11 @@
 #include "qmobilityglobal.h"
 
 #include <QList>
+#include <QSharedPointer>
 #include <QObject>
+
+class QPainter;
+class QRectF;
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,6 +57,8 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
+
+class QGeoMapDataPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
@@ -90,6 +96,10 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
+    bool intersects(const QRectF &rect) const;
+    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
+    void update();
+
 signals:
     void childObjectAdded(QGeoMapObject *childObject);
     void childObjectRemoved(QGeoMapObject *childObject);
@@ -104,10 +114,12 @@ private slots:
     void childObjectDestroyed(QObject *obj);
 
 private:
-
+    QGeoMapObject(QSharedPointer<QGeoMapDataPrivate> mapData);
 
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
+
+    friend class QGeoMapDataPrivate;
 };
 
 QTM_END_NAMESPACE
