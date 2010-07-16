@@ -262,9 +262,56 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
 {
-    // TODO: This quick implementation is provided only to make the demo application to work
-    // It doesn't support any filters, sort orders or fetch hints
+    // TODO: This implementation doesn't support any filters, sort orders or fetch hints yet
 
+    *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItem> retn;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<CEvent*> events = cal->getEvents(calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+        for (int i = 0; i < events.size(); ++i)
+        {
+            CEvent* cevent = events[i];
+            QOrganizerItemLocalId eventId = QString::fromStdString(cevent->getId()).toUInt();
+            QOrganizerItem item = internalFetchItem(eventId, fetchMinimalData(), error, true);
+            retn << item;
+            delete cevent;
+        }
+    }
+
+    std::vector<CTodo*> todos = cal->getTodos(calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+        for (int i = 0; i < todos.size(); ++i)
+        {
+            CTodo* ctodo = todos[i];
+            QOrganizerItemLocalId todoId = QString::fromStdString(ctodo->getId()).toUInt();
+            QOrganizerItem item = internalFetchItem(todoId, fetchMinimalData(), error, true);
+            retn << item;
+            delete ctodo;
+        }
+    }
+
+    std::vector<CJournal*> journals = cal->getJournals(calError);
+    *error = d->m_itemTransformer.calErrorToManagerError(calError);
+    if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+        for (int i = 0; i < journals.size(); ++i)
+        {
+            CJournal* cjournal = journals[i];
+            QOrganizerItemLocalId journalId = QString::fromStdString(cjournal->getId()).toUInt();
+            QOrganizerItem item = internalFetchItem(journalId, fetchMinimalData(), error, true);
+            retn << item;
+            delete cjournal;
+        }
+    }
+
+    cleanupCal(cal);
+    return retn;
+
+    /*
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItem> retn;
@@ -302,6 +349,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 
     cleanupCal(cal);
     return retn;
+    */
 
     /*
         TODO
@@ -387,6 +435,35 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error)
 {
+    /*
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    CTodo *ctodo = new CTodo();
+    ctodo->setDue(QDateTime(QDate(2010,7,15),QTime(12,0,0)).toTime_t());
+    ctodo->setSummary(QString("Todo summary").toStdString());
+
+    CEvent *cevent = new CEvent();
+    cevent->setDateStart(QDateTime(QDate(2010,7,17),QTime(12,0,0)).toTime_t());
+    cevent->setDateEnd(QDateTime(QDate(2010,7,17),QTime(14,0,0)).toTime_t());
+    cevent->setSummary(QString("Event summary").toStdString());
+
+    CRecurrence* rec = new CRecurrence();
+    rec->setRtype(1); // daily
+    std::vector< CRecurrenceRule* > rules;
+    CRecurrenceRule* rrule = new CRecurrenceRule();
+    rrule->setRuleType(RECURRENCE_RULE);
+    rrule->setRrule(QString("FREQ=DAILY;COUNT=5;INTERVAL=1").toStdString());
+    rules.push_back(rrule);
+    rec->setRecurrenceRule(rules);
+    ctodo->setRecurrence(rec);
+
+    int calError;
+    cal->addTodo(ctodo,calError);
+    cal->addEvent(cevent,calError);
+
+
+    return true;
+    */
+
     /*
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
 
