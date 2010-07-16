@@ -73,6 +73,7 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
 /*!
     \class QSensor
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensor class represents a single hardware sensor.
 
@@ -485,6 +486,7 @@ int QSensor::error() const
 /*!
     \class QSensorFilter
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensorFilter class provides an efficient
            callback facility for asynchronous notifications of
@@ -549,6 +551,7 @@ void QSensorFilter::setSensor(QSensor *sensor)
 /*!
     \class QSensorReading
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensorReading class holds the readings from the sensor.
 
