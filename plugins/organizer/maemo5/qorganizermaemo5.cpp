@@ -318,13 +318,21 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 {
     // TODO: This implementation doesn't support any filters, sort orders or fetch hints yet
 
-    // TODO: For performance, make this method to use itemIds()
-
     *error = QOrganizerItemManager::NoError;
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
     QList<QOrganizerItem> retn;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
 
+    QList<QOrganizerItemLocalId> ids = itemIds(filter, sortOrders, error);
+    if (*error != QOrganizerItemManager::NoError)
+        return QList<QOrganizerItem>();
+
+    QList<QOrganizerItemLocalId>::const_iterator id;
+    for (id = ids.constBegin(); id != ids.constEnd(); ++id)
+        retn << internalFetchItem(*id, fetchMinimalData(), error, true);
+
+    return retn;
+
+    /* // Previous implementation without itemIds():
     std::vector<CEvent*> events = cal->getEvents(calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
@@ -369,6 +377,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 
     cleanupCal(cal);
     return retn;
+    */
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
