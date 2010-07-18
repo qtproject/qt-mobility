@@ -704,7 +704,9 @@ QList<QGeoMapObject*> QGeoTiledMapData::visibleMapObjects()
 */
 QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
 {
-    QPointF worldPosition = screenPosition - d_ptr->screenRect.topLeft();
+    Q_D(QGeoTiledMapData);
+
+    QPointF worldPosition = screenPosition - d->screenRect.topLeft();
     QRectF worldRect(0., 0., 2*radius, 2*radius);
     worldRect.moveCenter(worldPosition);
     QSize imgSize = worldRect.size().toSize();
@@ -740,7 +742,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
             painter.setPen(QColor(paintColor));
             painter.setBrush(QBrush(QColor(paintColor)));
             painter.drawEllipse(0, 0, imgSize.width(), imgSize.height());
-            d_ptr->paintMapObject(painter, worldRect, obj, true);
+            obj->paint(&painter, worldRect, true);
 
             //now test whether any pixels in buffer have been over-painted
             for (int x = 0; x < imgSize.width(); x++) {
