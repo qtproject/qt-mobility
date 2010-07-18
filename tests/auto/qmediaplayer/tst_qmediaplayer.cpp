@@ -281,6 +281,7 @@ private slots:
     void testPosition();
     void testVolume();
     void testMuted();
+    void testIsAvailable();
     void testVideoAvailable();
     void testBufferStatus();
     void testSeekable();
@@ -386,6 +387,8 @@ void tst_QMediaPlayer::testNullService()
     QCOMPARE(player.isSeekable(), false);
     QCOMPARE(player.playbackRate(), qreal(0));
     QCOMPARE(player.error(), QMediaPlayer::ServiceMissingError);
+    QCOMPARE(player.isAvailable(), false);
+    QCOMPARE(player.availabilityError(), QtMultimediaKit::ServiceMissingError);
 
     {
         QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -663,8 +666,14 @@ void tst_QMediaPlayer::testErrorString()
     QVERIFY(player->errorString() == errorString);
 }
 
-void tst_QMediaPlayer::testService()
+void tst_QMediaPlayer::testIsAvailable()
 {
+    QCOMPARE(player->isAvailable(), true);
+    QCOMPARE(player->availabilityError(), QtMultimediaKit::NoError);
+}
+
+void tst_QMediaPlayer::testService()
+{    
     /*
     QFETCH_GLOBAL(bool, valid);
 
