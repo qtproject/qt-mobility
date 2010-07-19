@@ -43,7 +43,7 @@ contains(mobility_modules,location) {
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
     contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        SUBDIRS += qmlcontacts
+        sources.files += qmlcontacts
     }
 }
 

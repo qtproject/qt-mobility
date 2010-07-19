@@ -44,6 +44,7 @@
 #include <sys/sem.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <unistd.h>
 #include <QRegExp>
 #include <QCryptographicHash>
 #include <QDir>

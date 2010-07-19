@@ -25,3 +25,8 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
 
+symbian {
+    TARGET.EPOCALLOWDLLDATA=1
+    TARGET.CAPABILITY = All -Tcb
+    load(armcc_warnings)
+}

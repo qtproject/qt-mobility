@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,28 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <MNcnNotification.h>
 
-/*!
-    \example qmlcontacts
-    \title Sample QML-based Phonebook Example
-
-    \tableofcontents
-
-    \section1 Phone Book
-
-    This example shows how to write a simple read-only phonebook with the \l{Contacts}{Contacts API},
-    with a user interface declared with the QML declarative language.
-
-    \section2 Motivation
-    This application was written to provide an example to developers of how to use the Qt Mobility Contacts API,
-    and an example of integration with QML.
-
-    \section2 Interface
-    The interface is simplistic and merely provides an example that may provide a starting point
-    for developers interested in designing QML-based interfaces for projects which use Qt Mobility APIs.
-
-    \section2 Known Issues
-    The example is not intended to be feature complete.  Only a very limited subset of detail types are
-    supported by the application.  It exercises only a very small portion of the Qt Contacts API.
-    The example is read-only and not performant.
-*/
+int main(int, char**)
+{
+    return 0;
+}

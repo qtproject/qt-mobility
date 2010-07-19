@@ -56,11 +56,14 @@ QStringList QT7ServicePlugin::keys() const
 
 QMediaService* QT7ServicePlugin::create(QString const& key)
 {
+#ifdef QT_DEBUG_QT7
     qDebug() << "QT7ServicePlugin::create" << key;
+#endif
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QT7PlayerService;
 
-    qDebug() << "unsupported key:" << key;
+    qWarning() << "unsupported key:" << key;
+
     return 0;
 }
 

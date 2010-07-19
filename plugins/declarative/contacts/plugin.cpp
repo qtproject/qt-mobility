@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,40 +38,40 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTDETAIL_H
-#define QMLCONTACTDETAIL_H
 
-#include <QDeclarativePropertyMap>
-#include "qcontact.h"
-#include "qcontactdetail.h"
+#include <QApplication>
+#include <QtDeclarative>
+#include <QDeclarativeExtensionPlugin>
+#include <QDebug>
+#include "qmlcontactmodel.h"
+#include "qmlcontact.h"
+#include "qmlcontactdetail.h"
+#include "qmlcontactdetailfield.h"
+#include "imageprovider.h"
 
-QTM_USE_NAMESPACE;
+QT_USE_NAMESPACE
 
-class QMLContactDetail : public QObject
+
+class QContactQmlPlugin : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    void registerTypes(const char *uri)
+    {
+        Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
+        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
+        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
+        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
+        qmlRegisterType<QMLContactDetailField>(uri, 1, 0, "QmlContactDetailField");
+    }
 
-    explicit QMLContactDetail(QObject* parent = 0);
-    void setDetailPropertyMap(QDeclarativePropertyMap* map);
-    QDeclarativePropertyMap* propertyMap() const;
-    Q_INVOKABLE QList<QObject*> fields() const;
-    Q_INVOKABLE bool isDetailChanged() const;
-    QContactDetail detail() const;
-    QString name() const;
-    void setName(const QString& name);
-
-signals:
-    void nameChanged();
-private slots:
-    void detailChanged(const QString &key, const QVariant &value);
-
-private:
-    bool m_contactChanged;
-    QDeclarativePropertyMap* m_map;
-    QString m_detailName;
-    QList<QObject*> m_fields;
+    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
+        Q_UNUSED(uri);
+        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
+    }
 };
 
-#endif // QMLCONTACTDETAIL_H
+#include "plugin.moc"
+
+Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
+

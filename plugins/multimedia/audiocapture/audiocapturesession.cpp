@@ -41,6 +41,7 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qdir.h>
 #include <qaudiodeviceinfo.h>
 
 #include "../../../src/multimedia/qmediarecorder.h"
@@ -60,7 +61,7 @@ AudioCaptureSession::AudioCaptureSession(QObject *parent):
     m_format.setSampleSize(8);
     m_format.setSampleType(QAudioFormat::UnSignedInt);
     m_format.setCodec("audio/pcm");
-    wavFile = false;
+    wavFile = true;
 }
 
 AudioCaptureSession::~AudioCaptureSession()
@@ -148,14 +149,15 @@ QString AudioCaptureSession::containerDescription(const QString &formatMimeType)
 void AudioCaptureSession::setContainerMimeType(const QString &formatMimeType)
 {
     if (!formatMimeType.contains(QLatin1String("audio/x-wav")) &&
-            !formatMimeType.contains(QLatin1String("audio/pcm")))
+        !formatMimeType.contains(QLatin1String("audio/pcm")) &&
+        !formatMimeType.isEmpty())
         return;
 
     if(m_deviceInfo) {
         if (!m_deviceInfo->supportedCodecs().contains(QLatin1String("audio/pcm")))
             return;
 
-        if (formatMimeType.contains(QLatin1String("audio/x-wav"))) {
+        if (formatMimeType.isEmpty() || formatMimeType.contains(QLatin1String("audio/x-wav"))) {
             wavFile = true;
             m_format.setCodec("audio/pcm");
         } else {
@@ -175,17 +177,12 @@ QString AudioCaptureSession::containerMimeType() const
 
 QUrl AudioCaptureSession::outputLocation() const
 {
-    return m_sink;
+    return m_actualSink;
 }
 
 bool AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
-    m_sink = sink;
-    if(sink.toLocalFile().length() > 0)
-        file.setFileName(sink.toLocalFile());
-    else
-        file.setFileName(sink.toString());
-
+    m_sink = m_actualSink = sink;
     return true;
 }
 
@@ -199,11 +196,63 @@ int AudioCaptureSession::state() const
     return int(m_state);
 }
 
+QDir AudioCaptureSession::defaultDir() const
+{
+    QStringList dirCandidates;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    dirCandidates << QLatin1String("/home/user/MyDocs");
+#endif
+
+    dirCandidates << QDir::home().filePath("Documents");
+    dirCandidates << QDir::home().filePath("My Documents");
+    dirCandidates << QDir::homePath();
+    dirCandidates << QDir::currentPath();
+    dirCandidates << QDir::tempPath();
+
+    foreach (const QString &path, dirCandidates) {
+        QDir dir(path);
+        if (dir.exists() && QFileInfo(path).isWritable())
+            return dir;
+    }
+
+    return QDir();
+}
+
+QString AudioCaptureSession::generateFileName(const QDir &dir, const QString &ext) const
+{
+
+    int lastClip = 0;
+    foreach(QString fileName, dir.entryList(QStringList() << QString("clip_*.%1").arg(ext))) {
+        int imgNumber = fileName.mid(5, fileName.size()-6-ext.length()).toInt();
+        lastClip = qMax(lastClip, imgNumber);
+    }
+
+    QString name = QString("clip_%1.%2").arg(lastClip+1,
+                                     4, //fieldWidth
+                                     10,
+                                     QLatin1Char('0')).arg(ext);
+
+    return dir.absoluteFilePath(name);
+}
+
 void AudioCaptureSession::record()
 {
     if(!m_audioInput) {
         setFormat(m_format);
     }
+
+    m_actualSink = m_sink;
+
+    if (m_actualSink.isEmpty()) {
+        QString ext = wavFile ? QLatin1String("wav") : QLatin1String("raw");
+        m_actualSink = generateFileName(defaultDir(), ext);
+    }
+
+    if(m_actualSink.toLocalFile().length() > 0)
+        file.setFileName(m_actualSink.toLocalFile());
+    else
+        file.setFileName(m_actualSink.toString());
 
     if(m_audioInput) {
         if(m_state == QMediaRecorder::StoppedState) {
