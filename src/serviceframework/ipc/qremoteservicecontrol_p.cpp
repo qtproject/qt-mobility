@@ -47,6 +47,7 @@
 #include <QLocalSocket>
 #include <QDataStream>
 #include <QTimer>
+#include <QProcess>
 
 QTM_BEGIN_NAMESPACE
 
@@ -129,7 +130,7 @@ void QRemoteServiceControlPrivate::processIncoming()
 bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 {
     //other IPC mechanisms such as dbus may have to publish the
-    //meta object definition for all registered service types
+    //meta object definition for all registered service types        
     QLocalServer::removeServer(ident);
     qDebug() << "Start listening for incoming connections";
     localServer = new QLocalServer(this);
@@ -150,11 +151,38 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
-    //location format:  protocol:address
-    socket->connectToServer(location.section(':', 1, 1));
+    //location format:  protocol:address    
+    QString address = location.section(':', 1, 1);
+    socket->connectToServer(address);
     if (!socket->isValid()) {
-        qWarning() << "Cannot connect to remote service" << location;
-        return 0;
+        qWarning() << "Cannot connect to remote service, trying to start service " << location;
+        // try starting the service by hand
+        QProcess *service = new QProcess();
+        service->start(address);
+        service->waitForStarted();
+        if(service->error() != QProcess::UnknownError || service->state() != QProcess::Running) {
+            qWarning() << "Unable to start service " << address << service->error() << service->errorString() << service->state();
+            return false;
+        }
+        int i;
+        socket->connectToServer(address);
+        for(i = 0; !socket->isValid() && i < 100; i++){
+            if(service->state() != QProcess::Running){
+                qWarning() << "Service died on startup" << service->errorString();
+                return false;
+            }
+            struct timespec tm;
+            tm.tv_sec = 0;
+            tm.tv_nsec = 1000000;
+            nanosleep(&tm, 0x0);
+            socket->connectToServer(address);
+            // keep trying for a while
+        }
+        qDebug() << "Number of loops: "  << i;
+        if(!socket->isValid()){
+            qWarning() << "Server failed to start within waiting period";
+            return false;
+        }
     }
     LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(socket);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
