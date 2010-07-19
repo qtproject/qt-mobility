@@ -120,7 +120,7 @@ QFeedbackActuator Dialog::currentActuator() const
 {
     QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
     int index = ui.actuators->currentIndex();
-    if (index == -1 || index > devs.count())
+    if (index == -1 || devs.count() == 0 || index > devs.count())
         return QFeedbackActuator();
     return devs.at(index);
 }
