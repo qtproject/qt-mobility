@@ -55,7 +55,7 @@ EventLoggerEngine* EventLoggerEngine::instance()
 }
 
 
-EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
+EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent), _filterId(0)
 {
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;
