@@ -47,25 +47,25 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemSaveRequest
   \brief The QOrganizerItemSaveRequest class allows a client to asynchronously
-    request that certain organizeritems be saved to a organizeritems store.
+    request that certain organizer items be saved to an organizer item store.
   \inmodule QtOrganizer
 
   For a QOrganizerItemSaveRequest, the resultsAvailable() signal will be emitted when
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
-  organizeritems (which may be retrieved by calling organizeritems()), are updated, as well as if
+  organizer items (which may be retrieved by calling items()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizer-requests
  */
 
-/*! Constructs a new organizeritem save request whose parent is the specified \a parent */
+/*! Constructs a new organizer item save request whose parent is the specified \a parent */
 QOrganizerItemSaveRequest::QOrganizerItemSaveRequest(QObject* parent)
     : QOrganizerItemAbstractRequest(new QOrganizerItemSaveRequestPrivate, parent)
 {
 }
 
 /*!
-  Sets the organizeritem to be saved to \a organizeritem.
+  Sets the organizer item to be saved to \a organizeritem.
   Equivalent to calling:
   \code
       setOrganizerItems(QList<QOrganizerItem>() << organizeritem);
@@ -78,15 +78,15 @@ void QOrganizerItemSaveRequest::setItem(const QOrganizerItem& organizeritem)
     d->m_organizeritems.append(organizeritem);
 }
 
-/*! Sets the list of organizeritems to be saved to \a organizeritems */
+/*! Sets the list of organizer items to be saved to \a organizeritems */
 void QOrganizerItemSaveRequest::setItems(const QList<QOrganizerItem>& organizeritems)
 {
     Q_D(QOrganizerItemSaveRequest);
     d->m_organizeritems = organizeritems;
 }
 
-/*! Returns the list of organizeritems which will be saved if called prior to calling \c start(),
-    otherwise returns the list of organizeritems as they were saved in the organizeritems store */
+/*! Returns the list of organizer items which will be saved if called prior to calling \c start(),
+    otherwise returns the list of organizer items as they were saved in the organizer item store */
 QList<QOrganizerItem> QOrganizerItemSaveRequest::items() const
 {
     Q_D(const QOrganizerItemSaveRequest);
