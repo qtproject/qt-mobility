@@ -1079,7 +1079,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
             qDebug() << "No original date";
             // The original date is not valid => this is a new exception occurrence, not generated
             // Add exception days covering the occurrence's period
-            // Add exception dates to the parent
             QDate periodStart = occurrence->startDateTime().date();
             QDate periodEnd = occurrence->endDateTime().date();
 
@@ -1337,9 +1336,8 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
         }
     }
     else if (occurrence->type() == QOrganizerItemType::TypeTodoOccurrence) {
-
-        // TODO: This is not completed yet, make it much like the event case...
-        return QOrganizerItem();
+        // In Maemo5 parent of a todo occurrence is the occurrence itself
+        parentId = occurrence->localId();
     }
     else {
         return QOrganizerItem(); // other types can't have a parent
