@@ -94,7 +94,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     m_scrollAreaLayout->addWidget(m_typeComboBox);
 
 #ifdef Q_WS_X11
-    scrollAreaLayout->addLayout(hbLayout);
+    m_scrollAreaLayout->addLayout(hbLayout);
 #endif
 
     QScrollArea *scrollArea = new QScrollArea(this);
