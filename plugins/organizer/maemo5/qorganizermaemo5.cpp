@@ -54,7 +54,7 @@
  * entryType enum
  * This enum is from the Maemo5 calendar backend file Common.h
  * The enumeration is pasted here to avoid including Common.h file,
- * which contains dependencies to DBUS handling and other components
+ * which contains dependencies to D-Bus handling and other components
  * that are not actually needed here.
 */
 enum entryType {
@@ -182,8 +182,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                 }
             }
 
-            // Now we have got the simple occurrences that are generated with the recurrence rules
-            // But events can have also occurrence that are not generated with rules, but saved as
+            // Now we have got the simple occurrences that are generated with the recurrence rules.
+            // Events can have also occurrence that are not generated with rules, but saved as
             // events (because they have become modified). Those occurrences are saved with GUID set
             // equal to the generator event's GUID.
             QString eventType = QOrganizerItemType::TypeEvent;
@@ -235,9 +235,18 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
         if (ctodo && *error == QOrganizerItemManager::NoError)
         {
-            // TODO
-            // Note that in Maemo5 todos can't have occurrences
+            // In Maemo5, only one occurrence per todo. It has the same id as the parent
+            QDateTime instanceStartDate = QDateTime::fromTime_t(ctodo->getDateStart());
+            QDateTime instanceDueDate = QDateTime::fromTime_t(ctodo->getDue());
+            if ((instanceStartDate >= periodStart && instanceStartDate <= periodEnd)
+                || (instanceDueDate >= periodStart && instanceDueDate <= periodEnd)) {
+                // Instance start time or instance due time is in period
+                QOrganizerTodoOccurrence todoOcc = d->m_itemTransformer.convertCTodoToQTodoOccurrence(ctodo);
+                d->m_itemTransformer.fillInCommonCComponentDetails(&todoOcc, ctodo);
+                retn << todoOcc;
+            }
         }
+        delete ctodo;
     }
     else
     {
@@ -246,6 +255,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     }
 
     cleanupCal( cal );
+
 
     return retn;
 }
@@ -316,8 +326,6 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter &filter, const QList<QOrganizerItemSortOrder> &sortOrders, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error) const
 {
-    // TODO: This implementation doesn't support any filters, sort orders or fetch hints yet
-
     *error = QOrganizerItemManager::NoError;
     QList<QOrganizerItem> retn;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
@@ -328,7 +336,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 
     QList<QOrganizerItemLocalId>::const_iterator id;
     for (id = ids.constBegin(); id != ids.constEnd(); ++id)
-        retn << internalFetchItem(*id, fetchMinimalData(), error, true);
+        retn << internalFetchItem(*id, fetchHint, error, true);
 
     return retn;
 
@@ -697,6 +705,8 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
     if (checkItem->type() == QOrganizerItemType::TypeTodoOccurrence)
         todoOccurrence = static_cast<QOrganizerTodoOccurrence *>(checkItem);
 
+    // TODO: Maybe here should be added a GUID check: if item is NOT an occurrence, setting duplicate GUIDs should be disallowed
+
     // If the item is not an occurrence, no more checks are needed
     if (!eventOccurrence && !todoOccurrence)
         return;
@@ -722,6 +732,8 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
             }
         }
         else {
+            // The parent ID was not set, so the GUID is always set here.
+            // Must find at least one event with the given GUID.
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             std::vector<CEvent*> eventsWithGuid = cal->getEvents(eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
@@ -736,21 +748,10 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return;
             }
-
-            /*
-            if(d->m_guidMapper.itemIds(eventOccurrence->guid(), QOrganizerItemType::TypeEvent).isEmpty()) {
-                // The parent ID was not set, so the GUID is always set here.
-                // Must find at least one event with the given GUID.
-                // If not, then the occurrence is not valid.
-                *error = QOrganizerItemManager::InvalidOccurrenceError;
-                return;
-            }
-            */
         }
 
-        // If both parent ID and GUID are both set, they must be consistent
+        // If both parent ID and GUID are set, they must be consistent
         if (eventOccurrence->parentLocalId() && !eventOccurrence->guid().isEmpty()) {
-            // Assumes that the parent item is fetched earlier
             if (eventOccurrence->guid() != parent.guid()) {
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return;
@@ -766,22 +767,21 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
             return;
         }
 
-        // Parent ID must point to a todo
-        QOrganizerItem parent;
         if (todoOccurrence->parentLocalId()) {
-            parent = item(todoOccurrence->parentLocalId(), fetchMinimalData(), error);
-            if (*error != QOrganizerItemManager::NoError)
-                return;
-            if (parent.type() != QOrganizerItemType::TypeTodo) {
+            // Parent ID must point to this occurrence due to restrictions in Maemo5 todos
+            if (todoOccurrence->parentLocalId() != todoOccurrence->localId()) {
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return;
             }
         }
         else {
+            qDebug() << "Guid check";
+            // Must find at least one todo with the GUID from the DB
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             std::vector<CTodo*> todosWithGuid = cal->getTodos(todoOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             int numberOfTodos = todosWithGuid.size();
+            qDebug() << "Number of todos = " << numberOfTodos;
             for (int i = 0; i < numberOfTodos; ++i)
                 delete todosWithGuid[i];
 
@@ -789,25 +789,6 @@ void QOrganizerItemMaemo5Engine::checkItemIdValidity(CCalendar *cal, QOrganizerI
                 return;
 
             if (!numberOfTodos) {
-                *error = QOrganizerItemManager::InvalidOccurrenceError;
-                return;
-            }
-
-            /*
-            if(d->m_guidMapper.itemIds(todoOccurrence->guid(), QOrganizerItemType::TypeTodo).isEmpty()) {
-                // The parent ID was not set, so the GUID is always set here.
-                // Must find at least one todo with the given GUID.
-                // If not, then the occurrence is not valid.
-                *error = QOrganizerItemManager::InvalidOccurrenceError;
-                return;
-            }
-            */
-        }
-
-        // If both parent ID and GUID are set, they must be consistent
-        if (todoOccurrence->parentLocalId() && !todoOccurrence->guid().isEmpty()) {
-            // Assumes that the parent item is fetched earlier
-            if (todoOccurrence->guid() != parent.guid()) {
                 *error = QOrganizerItemManager::InvalidOccurrenceError;
                 return;
             }
@@ -834,7 +815,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
     CComponent *component = d->m_itemTransformer.createCComponent(cal, item, error);
-    qDebug() << "main, 767, error = " << *error;
     if (!component || *error != QOrganizerItemManager::NoError) {
         delete component;
         return calError;
@@ -896,6 +876,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     }
     else if (item->type() == QOrganizerItemType::TypeEventOccurrence)
     {
+        qDebug() << "Event occurrence type recognized";
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(item);
 
         QOrganizerItem parentItem = parentOf(cal, eventOccurrence, error);
@@ -921,10 +902,28 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         qDebug() << "doSaveItem: event occurrence saving ended with return value " << calError;
         return calError;
     }
-    else if (item->type() == QOrganizerItemType::TypeTodo) {
-        qDebug() << "Todo type recognized";
+    else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
+        qDebug() << "Todo or todo occurrence type recognized";
         CTodo* ctodo = static_cast<CTodo *>(component);
         QString ctodoId = QString::fromStdString(ctodo->getId());
+
+        // A todo occurrence can never be a new item. If local id is empty, set it according
+        // to the GUID.
+        if (item->type() == QOrganizerItemType::TypeTodoOccurrence && ctodoId.isEmpty()) {
+            calError = CALENDAR_OPERATION_SUCCESSFUL;
+            std::vector<CTodo*> todosWithGuid = cal->getTodos(item->guid().toStdString(), calError);
+            *error = d->m_itemTransformer.calErrorToManagerError(calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
+                delete ctodo;
+                return calError;
+            }
+            ctodo->setId(todosWithGuid[0]->getId()); // this is safe as validity check has passed
+            ctodoId = QString::fromStdString(ctodo->getId());
+            int count = todosWithGuid.size();
+            for (int i = 0; i < count; ++i)
+                delete todosWithGuid[i];
+        }
+
         if (!ctodoId.isEmpty()) {
             // CTodo ID is not empty, the todo already exists in calendar
             cal->modifyTodo(ctodo, calError);
@@ -967,10 +966,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         delete ctodo;
         return calError;
-    }
-    else if (item->type() == QOrganizerItemType::TypeTodoOccurrence)
-    {
-        // TODO
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
         CJournal* cjournal = static_cast<CJournal *>(component);
@@ -1246,6 +1241,7 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
         }
         target.insert(index, *occ);
     }
+    /*
     else if (occurrence->type() == QOrganizerItemType::TypeTodoOccurrence)
     {
         QOrganizerTodoOccurrence *occ = static_cast<QOrganizerTodoOccurrence *>(occurrence);
@@ -1257,7 +1253,7 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
             ++index;
         }
         target.insert(index, *occ);
-    }
+    }*/
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerItem *occurrence, QOrganizerItemManager::Error *error) const
@@ -1421,8 +1417,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerIte
         }
     }
 
-
-    // TODO: How about todo occurrences?
     CTodo *todo = cal->getTodoOrNull(nativeId, calError);
     *error = d->m_itemTransformer.calErrorToManagerError(calError);
     if (todo) {
@@ -1461,87 +1455,47 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
     if (guid.isEmpty())
         return false; // items with no GUID are never considered as occurrences
 
-    if (typeStr == QOrganizerItemType::TypeEvent || typeStr == QOrganizerItemType::TypeTodo) {
+    if (typeStr == QOrganizerItemType::TypeEvent) {
         // if item contains recurrence information, it can't be an occurrence
         if (containsRecurrenceInformation(ccomponent))
             return false;
 
         //qDebug() << QString::fromStdString(ccomponent->getId()) << " does not contain recurrence information";
 
-        if (typeStr == QOrganizerItemType::TypeEvent) {
-            // if no duplicate GUIDs are found, event can't be an occurrence
-            int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
-            *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            if (eventsWithGuid.size() < 2) {
-                for(int i = 0; i < eventsWithGuid.size(); ++i)
-                    delete eventsWithGuid[i];
-                return false;
-            }
-
-            //qDebug() << "Duplicate guids found";
-
-            // Items with duplicate GUID are found and this item does not contain recurrence
-            // information. Now check if any of the items with the equal GUID contains recurrence
-            // information. If there's at least one such, then this item clearly is an occurrence.
-            bool returnTrue = false;
-            QString ccomponentId = QString::fromStdString(ccomponent->getId());
-            for(int i = 0; i < eventsWithGuid.size(); ++i) {
-                CEvent *currEvent = eventsWithGuid[i];
-                if (currEvent && QString::fromStdString(currEvent->getId()) != ccomponentId) { // exclude itself
-                    if (containsRecurrenceInformation(currEvent)) {
-                        returnTrue = true;
-                        break;
-                    }
-               }
-            }
+        // if no duplicate GUIDs are found, event can't be an occurrence
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        if (eventsWithGuid.size() < 2) {
             for(int i = 0; i < eventsWithGuid.size(); ++i)
                 delete eventsWithGuid[i];
-
-            if (returnTrue)
-                return true;
-        }
-        else if (typeStr == QOrganizerItemType::TypeTodo) {
-            // if no duplicate GUIDs are found, todo can't be an occurrence
-            int calError = CALENDAR_OPERATION_SUCCESSFUL;
-            std::vector<CTodo*> todosWithGuid = cal->getTodos(guid.toStdString(), calError);
-            *error = d->m_itemTransformer.calErrorToManagerError(calError);
-            if (todosWithGuid.size() < 2) {
-                for(int i = 0; i < todosWithGuid.size(); ++i)
-                    delete todosWithGuid[i];
-                return false;
-            }
-
-            //qDebug() << "Duplicate guids found";
-
-            // Items with duplicate GUID are found and this item does not contain recurrence
-            // information. Now check if any of the items with the equal GUID contains recurrence
-            // information. If there's at least one such, then this item clearly is an occurrence.
-            bool returnTrue = false;
-            QString ccomponentId = QString::fromStdString(ccomponent->getId());
-            for(int i = 0; i < todosWithGuid.size(); ++i) {
-                CTodo *currTodo = todosWithGuid[i];
-                if (currTodo && QString::fromStdString(currTodo->getId()) != ccomponentId) { // exclude itself
-                    if (containsRecurrenceInformation(currTodo)) {
-                        returnTrue = true;
-                        break;
-                    }
-               }
-            }
-            for(int i = 0; i < todosWithGuid.size(); ++i)
-                delete todosWithGuid[i];
-
-            if (returnTrue)
-                return true;
+            return false;
         }
 
-        // None of items contains recurrence information. For some other
-        // reason there are multiple items with equal GUID in calendar DB.
-        return false;
+        //qDebug() << "Duplicate guids found";
 
+        // Items with duplicate GUID are found and this item does not contain recurrence
+        // information. Now check if any of the items with the equal GUID contains recurrence
+        // information. If there's at least one such, then this item clearly is an occurrence.
+        bool returnValue = false;
+        QString ccomponentId = QString::fromStdString(ccomponent->getId());
+        for(int i = 0; i < eventsWithGuid.size(); ++i) {
+            CEvent *currEvent = eventsWithGuid[i];
+            if (currEvent && QString::fromStdString(currEvent->getId()) != ccomponentId) { // exclude itself
+                if (containsRecurrenceInformation(currEvent)) {
+                    returnValue = true;
+                    break;
+                }
+            }
+        }
+        for(int i = 0; i < eventsWithGuid.size(); ++i)
+            delete eventsWithGuid[i];
+
+        return returnValue;
     }
-    else if (typeStr == QOrganizerItemType::TypeJournal || typeStr == QOrganizerItemType::TypeNote) {
-        return false; // these types have no occurrences
+    else if (typeStr == QOrganizerItemType::TypeTodo || typeStr == QOrganizerItemType::TypeJournal
+             || typeStr == QOrganizerItemType::TypeNote) {
+        return false; // these types have no occurrences saved in DB
     }
     else {
         return true; // an occurrence type was given

@@ -82,7 +82,7 @@ public: // transform functions
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent *cevent, const QDateTime &instanceStartDate, const QDateTime &instanceEndDate, QOrganizerItemLocalId parentLocalId);
 
     QOrganizerTodo convertCTodoToQTodo(CTodo *ctodo);
-    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo *ctodo, const QString &calendarName);
+    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo *ctodo);
     QOrganizerJournal convertCJournalToQJournal(CJournal *cjournal );
 
     // conversions between CComponent and QOrganizerItem (common details for all items)

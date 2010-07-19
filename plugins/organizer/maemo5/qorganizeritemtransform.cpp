@@ -176,14 +176,10 @@ QOrganizerTodo OrganizerItemTransform::convertCTodoToQTodo(CTodo *ctodo)
     if (!tempdt.isNull())
         retn.setDueDateTime(tempdt);
 
+    // Completed time
     tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
     if (!tempdt.isNull())
         retn.setFinishedDateTime(tempdt);
-    tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
-    if (!tempdt.isNull())
-        retn.setStartDateTime(tempdt);
-
-    // TODO: How all the time fields of todos should be mapped????
 
     // Percent complete
     tempint = ctodo->getPercentComplete();
@@ -193,46 +189,66 @@ QOrganizerTodo OrganizerItemTransform::convertCTodoToQTodo(CTodo *ctodo)
     // Status
     retn.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
+    // Location geo coordinates
+    QString tempstr = QString::fromStdString(ctodo->getGeo());
+    if (!tempstr.isNull()) {
+        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
+        il.setGeoLocation(tempstr);
+        retn.saveDetail(&il);
+    }
+
     return retn;
 }
 
-QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(CTodo *ctodo, const QString &calendarName)
+QOrganizerTodoOccurrence OrganizerItemTransform::convertCTodoToQTodoOccurrence(CTodo *ctodo)
 {
-    // TODO: The code in this method is from the Proof of Concept
-    // TODO: Replace the Proof of Concept codes at some point
-
     QOrganizerTodoOccurrence retn;
+
+    // Keep the following details same as in convertCTodoToQTodo:
+
+    // Priority
     int tempint = ctodo->getPriority();
     if (tempint != -1)
         retn.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
+
+    // Date start
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
         retn.setStartDateTime(tempdt);
-    QString tempstr = QString::fromStdString(ctodo->getSummary());
-    if (!tempstr.isEmpty())
-        retn.setDisplayLabel(tempstr);
+
+    // Due
     tempdt = QDateTime::fromTime_t(ctodo->getDue());
     if (!tempdt.isNull())
         retn.setDueDateTime(tempdt);
-    tempint = ctodo->getPercentComplete();
-    if (tempint != -1)
-        retn.setProgressPercentage(tempint);
+
+    // Completed time
     tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
     if (!tempdt.isNull())
         retn.setFinishedDateTime(tempdt);
-    tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
-    if (!tempdt.isNull())
-        retn.setStartDateTime(tempdt);
 
-    // status is always available..
-    // TODO: Commented out, check this!
-    //ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
+    // Percent complete
+    tempint = ctodo->getPercentComplete();
+    if (tempint != -1)
+        retn.setProgressPercentage(tempint);
 
-    // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
+    // Status
+    retn.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
-    // TODO: These were removed from API, check if these are still needed?
-    //ret.setParentItemId(rId);
-    //ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDue())); // XXX TODO: verify this is the correct field to use as the instance date...
+    // Location geo coordinates
+    QString tempstr = QString::fromStdString(ctodo->getGeo());
+    if (!tempstr.isNull()) {
+        QOrganizerItemLocation il = retn.detail<QOrganizerItemLocation>();
+        il.setGeoLocation(tempstr);
+        retn.saveDetail(&il);
+    }
+
+    // Only the following are occurrence specific details:
+
+    // In maemo, the parent id is the same as this id (todo's only have one occurrence)
+    retn.setParentLocalId(QString::fromStdString(ctodo->getId()).toUInt());
+
+    // Original date
+    retn.setOriginalDate(retn.startDateTime().date()); // XXX TODO: verify this is the correct field to use as the instance date...
 
     return retn;
 }
@@ -295,12 +311,6 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         tempstr = QString::fromStdString(component->getGUid());
         if(!tempstr.isEmpty())
             ig.setGuid(tempstr);
-        else {
-            /*
-            ig.setGuid(randomGuid()); // no GUID was set, generate a random GUID
-            qDebug() << "GUID " << ig.guid() << " given to item with label " << item->displayLabel();
-            */
-        }
         item->saveDetail(&ig);
 
         // Set component ID
@@ -405,37 +415,33 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         // Set the todo specific details:
         const QOrganizerTodo *todo = static_cast<const QOrganizerTodo *>(item);
 
-        // Location geo coordinates
-        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
-            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
-
         // Priority
         if (!todo->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
             ctodo->setPriority(static_cast<int>(todo->priority()));
 
-        // Start date
-        // TODO: ctodo->setDateStart and ctodo->setDue actually affect to the
-        // same attribute of CTodo instance... How should these be set?
+        // Date start
+        if (!todo->startDateTime().isNull())
+            ctodo->setDateStart(todo->startDateTime().toTime_t());
 
         // Due date
         if (!todo->dueDateTime().isNull())
             ctodo->setDue(todo->dueDateTime().toTime_t());
-        // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
 
-        // TODO: How shall all these time fields be set??????
-        /*
+        // Completed time
         if (!todo->finishedDateTime().isNull())
-            ctodo->setDateStart(todo->finishedDateTime().toTime_t());
-        */
+            ctodo->setCompleted(todo->finishedDateTime().toTime_t());
 
-        // Progress percentage
+        // Percent complete
         ctodo->setPercentComplete(todo->progressPercentage());
 
-        // Build and set the recurrence information for the todo
-        CRecurrence *recurrence = createCRecurrence(item, error);
-        ctodo->setRecurrence(recurrence);
-        delete recurrence; // setting makes a copy
-        recurrence = 0;
+        // Status
+        ctodo->setStatus(todo->status());
+
+        // Location geo coordinates
+        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
+            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+
+        // Recurrence is not set as todos can't contain any recurrence information in Maemo5
 
         retn = ctodo;
     }
