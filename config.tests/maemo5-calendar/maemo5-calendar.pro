@@ -8,4 +8,4 @@ SOURCES += main.cpp
 QT+=core
 
 CONFIG += link_pkgconfig
-PKGCONFIG += calendar-backend calendar-backend-dev 
+PKGCONFIG += calendar-backend 
