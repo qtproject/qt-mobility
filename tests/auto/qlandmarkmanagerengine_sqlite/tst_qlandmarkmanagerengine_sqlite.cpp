@@ -839,6 +839,34 @@ private slots:
         QCOMPARE(landmarks.count(), 0);
         QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
+        //test cancel
+        landmarks.clear();
+        QLandmark lm;
+        for (int i =0; i < 1000; i++) {
+            lm.clear();
+            lm.setName(QString("LM") + QString::number(i));
+            landmarks.append(lm);
+        }
+
+        saveRequest.setLandmarks(landmarks);
+        saveRequest.start();
+        QTest::qWait(500);
+        saveRequest.cancel();
+        QVERIFY(waitForAsync(spy, &saveRequest,QLandmarkManager::CancelError));
+        bool foundCancelError = false;
+        for (int i=0; i < saveRequest.landmarks().count(); ++i) {
+            if (saveRequest.errorMap().value(i) == QLandmarkManager::CancelError) {
+                foundCancelError = true;
+                for (int j=i; j < saveRequest.landmarks().count(); ++j) {
+                    QVERIFY(saveRequest.errorMap().value(j) == QLandmarkManager::CancelError);
+                }
+            } else {
+                QVERIFY(saveRequest.errorMap().value(i) == QLandmarkManager::NoError);
+            }
+
+        }
+        QVERIFY(foundCancelError);
+
         //TODO: notifications QCOMPARE(spyAdd.count(), 1);
         //TODO: notifications QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
     }
@@ -2065,6 +2093,41 @@ private slots:
         for (int i = 0; i < lmIds3.size(); ++i) {
             QCOMPARE(m_manager->landmark(lmIds3.at(i)).landmarkId().isValid(), false);
         }
+
+        //test canceling the remove request
+        QList<QLandmark> landmarks;
+        landmarks.clear();
+        QLandmark lm;
+        for (int i =0; i < 1000; i++) {
+            lm.clear();
+            lm.setName(QString("LM") + QString::number(i));
+            landmarks.append(lm);
+        }
+
+        QVERIFY(m_manager->saveLandmarks(&landmarks));
+
+        QList<QLandmarkId> lmIds;
+        for (int i=0; i < landmarks.count(); ++i) {
+            lmIds.append(landmarks.at(i).landmarkId());
+        }
+
+        removeRequest.setLandmarkIds(lmIds);
+        removeRequest.start();
+        QTest::qWait(500);
+        removeRequest.cancel();
+        QVERIFY(waitForAsync(spy, &removeRequest,QLandmarkManager::CancelError));
+        bool foundCancelError = false;
+        for (int i=0; i < removeRequest.landmarkIds().count(); ++i) {
+            if (removeRequest.errorMap().value(i) == QLandmarkManager::CancelError) {
+                foundCancelError = true;
+                for (int j=i; j < removeRequest.landmarkIds().count(); ++j) {
+                    QVERIFY(removeRequest.errorMap().value(j) == QLandmarkManager::CancelError);
+                }
+            } else {
+                QVERIFY(removeRequest.errorMap().value(i) == QLandmarkManager::NoError);
+            }
+        }
+        QVERIFY(foundCancelError);
     }
 
     void listCategoryIds() {

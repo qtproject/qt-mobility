@@ -45,7 +45,7 @@
 #include <QDateTime>
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtDeclarative/qdeclarativecomponent.h>
-// #include "qdeclarativeposition_p.h"
+#include "qdeclarativepositionsource_p.h"
 #include <QString>
 
 // Eventually these will make it into qtestcase.h
@@ -100,6 +100,10 @@
 #define SRCDIR "."
 #endif
 
+QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QDeclarativePositionSource::PositioningMethod)
+
 // Helper functions to avoid repetitive signal spy usage
 QList<QSignalSpy*> createSpies(QObject* source_obj);
 QList<QSignalSpy*> createSourceSpies(QObject* source_obj);
@@ -107,8 +111,6 @@ QList<QSignalSpy*> createPositionSpies(QObject* position_obj);
 bool spiesAreEmpty(QList<QSignalSpy*> spies);
 bool spiesAreNotEmpty(QList<QSignalSpy*> spies);
 void clearSpies(QList<QSignalSpy*> spies);
-
-//QTM_USE_NAMESPACE
 
 class tst_QDeclarativePosition : public QObject
 {
@@ -131,6 +133,12 @@ private slots:
 
     void basicNmeaSource();
     void basicNmeaSource_data();
+    void changeNmeaSource();
+
+    void activism();
+
+private:
+    QObject* createPositionSource(const QString& componentString);
     
 private:
     // Engine is needed for instantiating declarative components
@@ -146,7 +154,8 @@ tst_QDeclarativePosition::~tst_QDeclarativePosition()
 }
 
 void tst_QDeclarativePosition::initTestCase()
-{ 
+{
+    qRegisterMetaType<QDeclarativePositionSource::PositioningMethod>("QDeclarativePositionSource::PositioningMethod");
 }
 
 void tst_QDeclarativePosition::cleanupTestCase()
@@ -265,8 +274,10 @@ void tst_QDeclarativePosition::basicNmeaSource()
 
     qDebug() << "2. ----- Create spies and set NMEA source";
     QList<QSignalSpy*> spies = createSpies(source_obj);
+    QSignalSpy positionMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
     source_obj->setProperty("nmeaSource", ":/data/nmealog.txt");
-
+    QVERIFY(!positionMethodChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
     source_obj->setProperty("updateInterval", 500);
     QVERIFY(source_obj->property("nmeaSource").toUrl().isValid());
 
@@ -297,6 +308,124 @@ void tst_QDeclarativePosition::basicNmeaSource_data()
     QTest::addColumn<int>("repeats");
     QTest::newRow("periodic updates") << "start" << 10;
     QTest::newRow("single shot update") << "update" << 10;
+}
+
+void tst_QDeclarativePosition::changeNmeaSource()
+{
+    // Create position source with nmea source
+    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
+    QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
+    QSignalSpy nmeaSourceChangedSpy(source_obj, SIGNAL(nmeaSourceChanged(QUrl)));
+    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
+    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged(bool)));
+    qDebug() << "1. ----- Change (nonactive) to same source";
+    source_obj->setProperty("nmeaSource", "/data/nmealog.txt");
+    QVERIFY(nmeaSourceChangedSpy.isEmpty());
+    positioningMethodChangedSpy.clear();
+
+    qDebug() << "2. ----- Change (nonactive) to different valid source";
+    source_obj->setProperty("nmeaSource", "/data/nmealog2.txt");
+    QVERIFY(!nmeaSourceChangedSpy.isEmpty());
+    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "/data/nmealog2.txt");
+    QVERIFY(positionChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
+
+    QVERIFY(positioningMethodChangedSpy.isEmpty());
+    nmeaSourceChangedSpy.clear();
+
+    qDebug() << "3. ----- Change (nonactive) to different invalid source";
+    source_obj->setProperty("nmeaSource", "nonexistentlog.txt");
+    QVERIFY(!nmeaSourceChangedSpy.isEmpty());
+    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "nonexistentlog.txt");
+    QVERIFY(positionChangedSpy.isEmpty());
+
+    QTRY_VERIFY(!positioningMethodChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::NoPositioningMethod);
+    nmeaSourceChangedSpy.clear();
+    positioningMethodChangedSpy.clear();
+
+    qDebug() << "4. ----- Change (nonactive) invalid back to valid source";
+    source_obj->setProperty("nmeaSource", "/data/nmealog.txt");
+    QVERIFY(!nmeaSourceChangedSpy.isEmpty());
+    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "/data/nmealog.txt");
+    QVERIFY(positionChangedSpy.isEmpty());
+    QVERIFY(!positioningMethodChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
+    nmeaSourceChangedSpy.clear();
+    positioningMethodChangedSpy.clear();
+
+    qDebug() << "5. ----- Change (active) valid source to another valid source";
+    QVERIFY(activeChangedSpy.isEmpty()); // none previous steps should set as active
+    source_obj->setProperty("active", true);
+    QTRY_VERIFY(!positionChangedSpy.isEmpty());
+    QVERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
+    activeChangedSpy.clear();
+    source_obj->setProperty("nmeaSource", "/data/nmealog2.txt");
+    QTRY_VERIFY(!positionChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.isEmpty()); // Should remain active
+    QVERIFY(positioningMethodChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
+    nmeaSourceChangedSpy.clear();
+    positionChangedSpy.clear();
+    positioningMethodChangedSpy.clear();
+    activeChangedSpy.clear();
+
+    qDebug() << "6. ----- Change (active) valid source to invalid source";
+    source_obj->setProperty("nmeaSource", "nonexistentlog.txt");
+    QTRY_VERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
+    QVERIFY(!positioningMethodChangedSpy.isEmpty());
+    QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::NoPositioningMethod);
+    QVERIFY(!nmeaSourceChangedSpy.isEmpty());
+    QVERIFY(nmeaSourceChangedSpy.first().at(0).toUrl().toLocalFile() == "nonexistentlog.txt");
+
+    delete source_obj;
+}
+
+void tst_QDeclarativePosition::activism()
+{
+    QObject* source_obj = createPositionSource("import Qt 4.7 \n import QtMobility.location 1.0 \n PositionSource {id: positionSource; nmeaSource: \"/data/nmealog.txt\"}");
+    QSignalSpy positionChangedSpy(source_obj, SIGNAL(positionChanged()));
+    QSignalSpy positioningMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
+    QSignalSpy activeChangedSpy(source_obj, SIGNAL(activeChanged(bool)));
+
+    qDebug() << "1. ----- basic activity checks (setting on and off)";
+    QVERIFY(source_obj->property("active").toBool() == false);
+    source_obj->setProperty("active", false);
+    QVERIFY(source_obj->property("active").toBool() == false);
+    source_obj->setProperty("active", true);
+    QTRY_VERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
+    QVERIFY(source_obj->property("active").toBool() == true);
+    QTRY_VERIFY(!positionChangedSpy.isEmpty());
+    activeChangedSpy.clear();
+    source_obj->setProperty("active", false);
+    QVERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
+    QVERIFY(source_obj->property("active").toBool() == false);
+    QVERIFY(positioningMethodChangedSpy.isEmpty());
+    activeChangedSpy.clear();
+    positionChangedSpy.clear();
+
+    qDebug() << "2. ----- stopping during single-shot update";
+    source_obj->metaObject()->invokeMethod(source_obj, "update", Qt::DirectConnection);
+    QTRY_VERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == true);
+    activeChangedSpy.clear();
+    source_obj->setProperty("active", false);
+    QTRY_VERIFY(!activeChangedSpy.isEmpty());
+    QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
+    QVERIFY(positionChangedSpy.isEmpty());
+}
+
+QObject* tst_QDeclarativePosition::createPositionSource(const QString& componentString)
+{
+    QDeclarativeComponent component(&engine);
+    component.setData(componentString.toLatin1(), QUrl::fromLocalFile(""));
+    QObject* source_obj = component.create();
+    Q_ASSERT(source_obj != 0);
+    return source_obj;
 }
 
 QList<QSignalSpy*> createSpies(QObject* source_obj)

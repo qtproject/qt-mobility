@@ -156,7 +156,7 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
 
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
-    if (nmeaSource == m_nmeaSource) {
+    if (nmeaSource.toLocalFile() == m_nmeaSource.toLocalFile()) {
         return;
     }
     // The current position source needs to be deleted in any case,
@@ -184,12 +184,20 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
         (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(file);
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-    }
+        if (m_active && !m_singleUpdate) {
+            // Keep on updating even though source changed
+            QTimer::singleShot(0, this, SLOT(start()));
+        }
+    } else {
 #ifdef QDECLARATIVE_POSITION_DEBUG
-    else {
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
-    }
 #endif
+        if (m_active) {
+            m_active = false;
+            m_singleUpdate = false;
+            emit activeChanged(m_active);
+        }
+    }
     if (m_positioningMethod != positioningMethod()) {
         m_positioningMethod = positioningMethod();
         emit positioningMethodChanged(m_positioningMethod);
@@ -272,13 +280,17 @@ QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positi
     if (m_positionSource) {
         QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
         if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
+            //qDebug() << "Returning satellite: " << QDeclarativePositionSource::SatellitePositioningMethod;
             return QDeclarativePositionSource::SatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            //qDebug() << "Returning non-satellite: " << QDeclarativePositionSource::NonSatellitePositioningMethod;
             return QDeclarativePositionSource::NonSatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
+            //qDebug() << "Returning all: " << QDeclarativePositionSource::AllPositioningMethods;
             return QDeclarativePositionSource::AllPositioningMethods;
         }
     }
+    //qDebug() << "Returning no-positioning: " << QDeclarativePositionSource::NoPositioningMethod;
     return QDeclarativePositionSource::NoPositioningMethod;
 }
 

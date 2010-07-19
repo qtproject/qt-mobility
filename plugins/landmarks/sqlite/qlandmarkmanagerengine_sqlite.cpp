@@ -1368,8 +1368,10 @@ bool saveLandmark(const QString &connectionName, QLandmark* landmark,
 bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
-        QString *errorString, const QString &managerUri)
+        QString *errorString, const QString &managerUri, QueryRun *queryRun =0)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
     bool noErrors = true;
@@ -1382,6 +1384,17 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
         loopErrorString = "";
         bool added = false;
         bool changed = false;
+
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Landmark save was canceled";
+            if (errorMap) {
+                for (i; i < landmark->size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
         bool result = saveLandmark(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, &added, &changed, managerUri);
         if (errorMap)
@@ -1486,7 +1499,8 @@ bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId
 bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
                     QMap<int, QLandmarkManager::Error> *errorMap,
                     QLandmarkManager::Error *error,
-                    QString *errorString, const QString &managerUri)
+                    QString *errorString, const QString &managerUri,
+                    QueryRun *queryRun = 0)
 {
     QList<QLandmarkId> removedIds;
 
@@ -1498,6 +1512,17 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
     for (int i = 0; i < landmarkIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
+
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Landmark remove was canceled";
+            if (errorMap) {
+                for (i; i < landmarkIds.size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
         bool result = removeLandmark(connectionName, landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
 
@@ -2285,13 +2310,7 @@ void QueryRun::run()
         {
             QLandmarkSaveRequest *saveRequest = static_cast<QLandmarkSaveRequest *> (request);
             QList<QLandmark> lms = saveRequest->landmarks();
-            saveLandmarks(connectionName, &lms, &errorMap, &error, &errorString, managerUri);
-
-            if (this->isCanceled) {
-                lms.clear();
-                error = QLandmarkManager::CancelError;
-                errorString = "Landmark save request canceled";
-            }
+            saveLandmarks(connectionName, &lms, &errorMap, &error, &errorString, managerUri, this);
 
             QMetaObject::invokeMethod(engine, "updateLandmarkSaveRequest",
                                       Q_ARG(QLandmarkSaveRequest *,saveRequest),
@@ -2307,11 +2326,7 @@ void QueryRun::run()
         {
             QLandmarkRemoveRequest *removeRequest = static_cast<QLandmarkRemoveRequest *> (request);
             QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
-            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri);
-            if (this->isCanceled) {
-                error = QLandmarkManager::CancelError;
-                errorString = "Landmark remove request was canceled";
-            }
+            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri, this);
 
             QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
                                       Q_ARG(QLandmarkRemoveRequest *,removeRequest),
