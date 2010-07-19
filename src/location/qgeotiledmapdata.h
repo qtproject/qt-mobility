@@ -79,9 +79,6 @@ public:
     void stopPanning();
     void pan(int dx, int dy);
 
-    //QRectF screenRect() const;
-    QRectF screenRect2() const;
-
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);

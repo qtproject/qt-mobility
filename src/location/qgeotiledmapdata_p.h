@@ -204,7 +204,6 @@ public:
     QSize maxZoomSize;
 
     QRectF screenRect;
-    QRectF screenRect2;
 
     QSet<QRectF> requestRects;
     QSet<QRectF> replyRects;
