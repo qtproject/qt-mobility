@@ -57,7 +57,7 @@ class CameraBinLocks  : public QCameraLocksControl
     Q_OBJECT
 
 public:
-    CameraBinLocks(GstElement &camerabin, CameraBinSession *session);
+    CameraBinLocks(CameraBinSession *session);
     virtual ~CameraBinLocks();
 
     QCamera::LockTypes supportedLocks() const;
@@ -72,7 +72,6 @@ private slots:
 
 private:
     CameraBinSession *m_session;
-    GstElement &m_camerabin;
     QCamera::LockStatus m_focusStatus;
 };
 

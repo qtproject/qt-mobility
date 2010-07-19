@@ -13,94 +13,33 @@
   <property name="windowTitle">
    <string>Landmark Browser</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="controlsLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QPushButton" name="importLandmarks">
-         <property name="text">
-          <string>Import Landmarks</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="fetchLandmarks">
-         <property name="text">
-          <string>Fetch Landmarks</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="deleteLandmarks">
-         <property name="text">
-          <string>Delete Landmarks</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="addLandmark">
-         <property name="text">
-          <string>Add Landmark</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Latitude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="latitudeLineEdit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Longitude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="longitudeLineEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="nameLineEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="addLandmark">
+       <property name="text">
+        <string>Add Landmark</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="deleteLandmarks">
+       <property name="text">
+        <string>Delete Landmarks</string>
        </property>
-      </spacer>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="importLandmarks">
+       <property name="text">
+        <string>Import Landmarks</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item row="0" column="1">
+   <item>
     <widget class="QTableWidget" name="table">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

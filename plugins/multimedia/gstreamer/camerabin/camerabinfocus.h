@@ -57,7 +57,7 @@ class CameraBinFocus  : public QCameraFocusControl
     Q_OBJECT
 
 public:
-    CameraBinFocus(GstElement &camerabin, CameraBinSession *session);
+    CameraBinFocus(CameraBinSession *session);
     virtual ~CameraBinFocus();
 
     QCameraFocus::FocusMode focusMode() const;
@@ -81,7 +81,6 @@ public:
 
 private:
     CameraBinSession *m_session;
-    GstElement &m_camerabin;
     QCameraFocus::FocusMode m_focusMode;
 };
 

@@ -32,21 +32,21 @@
     \group location
     \title Location API
 
-    The Location API provides a library for distributing and receiving
-    location data using arbitrary data sources.
+    The Location API provides a library for location positioning, landmark 
+    management, and mapping and navigation.
 */
 
 /*!
 \page location-overview.html
 
 \title Location
-\brief The Location API provides a library for distributing and receiving
-location data using arbitrary data sources.
+\brief The Location API provides a library for location positioning, landmark management
+and mapping and navigation.
 
 \ingroup mobility
 
-The Location API provides a library for distributing and receiving location
-data using arbitrary data sources.
+The Location API provides a library for location positioning, landmark management
+and mapping and navigation.
 
 \tableofcontents
 
@@ -266,7 +266,23 @@ the current location.
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
 
-A landmark is a location of some significance, also known as a point of interest.
+A landmark is a location of some significance, also known as a point of interest 
+and are represented as QLandmark objects.  Related landmarks may be grouped into
+categories(QLandmarkCategory) such as restaurants or accommodation and each landmark can belong to more
+than one category. 
+
+A landmark datastore is represented by a QLandmarkManager. The QLandmarkManager
+may be used to save, fetch and remove both landmarks and categories.  When fetching
+landmarks we can provide various filters and sort orders to define the searching
+criteria and the order in which landmarks are returned.  The QLandmarkManager also 
+provides functionality to import and export landmarks as well as provide notifications
+whenever changes are detected.  It should be noted that the Landmarks API provides
+both synchronous and asynchronous mechanisms to perform the above operations.  
+Synchronous operations are provided the QLandmarkManager itself while the asynchronous
+operations are provided by various  \l {Asynchronous Landmark Requests} {request classes}.
+It is generally recommended that the asynchronous \l {Asynchronous Landmark Requests} {request classes} classes be used as they are not subject to blocking which can be an issue if 
+a datastore contains a significantly large number of landmarks or if the datastore is being accessed over a network.
+
 
 \section2 Landmark Examples
 
@@ -397,7 +413,18 @@ their personal offline landmarks store.
 
 \annotatedlist maps-places
 
-\section2 Implementing backends
+\section2 The Nokia plugin
+
+Qt Mobility comes with a plugin which makes use of the Nokia services 
+relevant to the Maps and Navigation API.
+
+The latest version has the plugin name "nokia" and has plugin version 1.
+
+From the beta release onwards, the use of this plugin will be subject 
+to terms and conditions that will be contained within or linked from this 
+documentation.
+
+\section2 Implementing plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as 
 many of the ManagerEngine classes as they want to provide implementations for.

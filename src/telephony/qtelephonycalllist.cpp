@@ -82,6 +82,7 @@ QTM_BEGIN_NAMESPACE
     \class QTelephonyCallList
 
     \ingroup telephony
+    \inmodule QtTelephony
 
     \brief The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.
 
