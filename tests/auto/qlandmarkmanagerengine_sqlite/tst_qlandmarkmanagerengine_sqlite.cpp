@@ -220,7 +220,6 @@ private:
             if (!(cats.at(i).categoryId() == catIds.at(i)))
                 return false;
          }
-
         return true;
     }
 
@@ -343,6 +342,43 @@ private slots:
 
         // add  - with attributes
         // get present
+    }
+
+    void categoryFetchCancelAsync() {
+        QLandmarkCategory cat;
+        for(int i=0; i < 350; ++i) {
+            cat.clear();
+            cat.setName(QString("CAT") + QString::number(i));
+            QVERIFY(m_manager->saveCategory(&cat));
+        }
+
+        QLandmarkCategoryFetchRequest catFetchRequest(m_manager);
+        QSignalSpy spy(&catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catFetchRequest.start();
+        QTest::qWait(50);
+        catFetchRequest.cancel();
+        QVERIFY(waitForAsync(spy, &catFetchRequest, QLandmarkManager::CancelError));
+        QCOMPARE(catFetchRequest.categories().count(), 0);
+
+        /*
+        Testing cancel for category id fetch is difficult because on
+        desktop, the operation is too quick to cancel.  We could
+        try populating the database with enough categories but
+        that would take a very long time.
+
+        for(int i=0; i < 3550; ++i) {
+            cat.clear();
+            cat.setName(QString("CAT") + QString::number(i));
+            QVERIFY(m_manager->saveCategory(&cat));
+        }
+
+        QLandmarkCategoryIdFetchRequest catIdFetchRequest(m_manager);
+        QSignalSpy spy2(&catIdFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catIdFetchRequest.start();
+        QTest::qWait(10);
+        catIdFetchRequest.cancel();
+        QVERIFY(waitForAsync(spy2, &catIdFetchRequest, QLandmarkManager::CancelError));
+        */
     }
 
     void retrieveLandmark() {
@@ -505,9 +541,9 @@ private slots:
         fetchRequest.cancel();
         QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
         QCOMPARE(fetchRequest.landmarks().count(), 0);
-        QLandmarkIdFetchRequest idFetchRequest(m_manager);
 
         //test canceling of a landmark id fetch
+        QLandmarkIdFetchRequest idFetchRequest(m_manager);
         idFetchRequest.setFilter(unionFilter);
         QSignalSpy spy2(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         idFetchRequest.start();
