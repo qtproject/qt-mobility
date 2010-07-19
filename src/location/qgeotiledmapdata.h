@@ -79,7 +79,8 @@ public:
     void stopPanning();
     void pan(int dx, int dy);
 
-    QRectF screenRect() const;
+    //QRectF screenRect() const;
+    QRectF screenRect2() const;
 
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
@@ -89,10 +90,10 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-//protected:
+    virtual void coordinateToWorldPixelOld(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
+protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
     virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
-protected:
 
     virtual void updateMapImage();
     void clearRequests();

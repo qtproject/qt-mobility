@@ -138,7 +138,7 @@ public:
     const QGeoMapPolylineObjectPrivate* polyline;
     QSharedPointer<QGeoTiledMapDataPrivate> mapData;
 
-    QPainterPath path;
+    QList<QPoint> points;
 };
 
 class QGeoTiledMapPolygonObjectInfo : public QGeoMapObjectInfo
@@ -153,7 +153,7 @@ public:
     const QGeoMapPolygonObjectPrivate* polygon;
     QSharedPointer<QGeoTiledMapDataPrivate> mapData;
 
-    QPainterPath path;
+    QList<QPoint> points;
 };
 
 class QGeoTiledMapMarkerObjectInfo : public QGeoMapObjectInfo
@@ -198,10 +198,13 @@ public:
 
     bool intersects(QGeoMapObject *mapObject, const QRectF &rect);
 
-    qulonglong width;
-    qulonglong height;
+    void updateScreenRect();
+
+    QPoint maxZoomCenter;
+    QSize maxZoomSize;
 
     QRectF screenRect;
+    QRectF screenRect2;
 
     QSet<QRectF> requestRects;
     QSet<QRectF> replyRects;
