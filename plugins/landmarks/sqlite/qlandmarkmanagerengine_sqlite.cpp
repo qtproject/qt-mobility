@@ -1589,7 +1589,8 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
 QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
                                        const QLandmarkNameSort &nameSort,
                                        QLandmarkManager::Error *error, QString *errorString,
-                                       const QString &managerUri)
+                                       const QString &managerUri,
+                                       QueryRun *queryRun = 0)
 {
     QList<QLandmarkCategoryId> result;
 
@@ -1615,6 +1616,13 @@ QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
     }
 
     while (query.next()) {
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Fetch operation was canceled";
+            result.clear();
+            return result;
+        }
+
         QLandmarkCategoryId id;
         id.setManagerUri(managerUri);
         id.setLocalId(QString::number(query.value(0).toInt()));
@@ -1709,7 +1717,8 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
                 const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                 const QLandmarkNameSort &nameSort,
                 QLandmarkManager::Error *error, QString *errorString,
-                const QString &managerUri, bool needAll)
+                const QString &managerUri, bool needAll,
+                QueryRun *queryRun = 0)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -1720,8 +1729,7 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
     QList<QLandmarkCategory> result;
     QList<QLandmarkCategoryId> ids = landmarkCategoryIds;
     if (ids.size() == 0) {
-
-        ids = ::categoryIds(connectionName, nameSort, error, errorString, managerUri);
+        ids = ::categoryIds(connectionName, nameSort, error, errorString, managerUri, queryRun);
         if (*error != QLandmarkManager::NoError) {
             return result;
         }
@@ -1730,6 +1738,13 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
     for (int i = 0; i < ids.size(); ++i) {
         *error = QLandmarkManager::NoError;
         (*errorString).clear();
+
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Fetch operation was canceled";
+            result.clear();
+            return result;
+        }
 
         QLandmarkCategory cat = ::category(connectionName,ids.at(i), error,errorString, managerUri);
         if (*error == QLandmarkManager::NoError)
@@ -2357,13 +2372,7 @@ void QueryRun::run()
             {
                 QLandmarkCategoryIdFetchRequest *catIdFetchRequest = static_cast<QLandmarkCategoryIdFetchRequest *> (request);
                 QLandmarkNameSort nameSort = catIdFetchRequest->sorting();
-                QList<QLandmarkCategoryId> catIds = ::categoryIds(connectionName, nameSort, &error, &errorString, managerUri);
-
-                if (this->isCanceled) {
-                    catIds.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Category id fetch request was canceled";
-                }
+                QList<QLandmarkCategoryId> catIds = ::categoryIds(connectionName, nameSort, &error, &errorString, managerUri,this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
                                           Q_ARG(QLandmarkCategoryIdFetchRequest *,catIdFetchRequest),
@@ -2382,13 +2391,7 @@ void QueryRun::run()
                 if (categoryIds.count() > 0 && fetchRequest->matchingScheme() == QLandmarkCategoryFetchRequest::MatchAll)
                     needAll = true;
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
-                QList <QLandmarkCategory> cats = ::categories(connectionName, categoryIds, nameSort, &error, &errorString, managerUri, needAll);
-
-                if (this->isCanceled) {
-                    cats.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Category fetch request canceled";
-                }
+                QList <QLandmarkCategory> cats = ::categories(connectionName, categoryIds, nameSort, &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
                                           Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
@@ -3297,7 +3300,8 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
 bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* request)
 {
     m_requestRunHash.value(request)->isCanceled = true;
-        if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
+
+    if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
         if (m_requestRunHash.value(request)->gpxHandler) {
             m_requestRunHash.value(request)->gpxHandler->cancel();
             QMetaObject::invokeMethod(m_requestRunHash.value(request)->gpxHandler,
