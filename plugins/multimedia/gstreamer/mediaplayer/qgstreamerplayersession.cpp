@@ -319,6 +319,11 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 
     if (m_state == QMediaPlayer::StoppedState) {
         m_pendingVideoSink = 0;
+        GstState sinkState = GST_STATE_NULL;
+        GstState sinkPendingState = GST_STATE_NULL;
+        gst_element_get_state(m_videoSink, &sinkState, &sinkPendingState, GST_CLOCK_TIME_NONE);
+
+        gst_element_set_state(m_videoSink, GST_STATE_NULL);
         gst_element_unlink(m_videoScale, m_videoSink);
 
         gst_bin_remove(GST_BIN(m_videoOutputBin), m_videoSink);
@@ -327,7 +332,7 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 
         gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
         gst_element_link(m_videoScale, m_videoSink);
-
+        gst_element_set_state(m_videoSink, sinkPendingState);
     } else {
         if (m_pendingVideoSink) {
             m_pendingVideoSink = videoSink;
