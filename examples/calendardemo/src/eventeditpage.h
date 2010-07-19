@@ -48,6 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItemManager;
+class QOrganizerItemSaveRequest;
 class QOrganizerEvent;
 class QOrganizerItem;
 QTM_END_NAMESPACE
@@ -56,6 +57,8 @@ QTM_USE_NAMESPACE
 class QComboBox;
 class QLineEdit;
 class QDateTimeEdit;
+class QVBoxLayout;
+class QString;
 
 class EventEditPage : public QWidget
 {
@@ -67,8 +70,11 @@ public:
 
 public Q_SLOTS:
     void cancelClicked();
-    void saveClicked();
+    void saveOrNextClicked();
     void eventChanged(QOrganizerItemManager *manager, const QOrganizerEvent &event);
+    void handleRepeatIndexChanged(const QString);
+    void handlemultipleEntriesToBeCreated(int);
+    void handleCountChanged(int);
 
 Q_SIGNALS:
     void showDayPage();
@@ -79,10 +85,17 @@ protected: // from QWidget
 private:
     QOrganizerItemManager *m_manager;
     QOrganizerEvent m_organizerEvent;
+    QList<QOrganizerItem> m_listOfEvents;
+    QOrganizerItemSaveRequest *m_saveItemRequest;
+    QVBoxLayout *m_scrollAreaLayout;
+    QAction *m_saveOrNextSoftKey;
     QComboBox *m_typeComboBox;
     QLineEdit *m_subjectEdit;
     QDateTimeEdit *m_startTimeEdit;
     QDateTimeEdit *m_endTimeEdit;
+    int m_numOfEntiresToBeCreated;
+    bool m_countFieldAdded;
+    bool m_multipleEntries;
 };
 
 #endif // EVENTEDITPAGE_H_

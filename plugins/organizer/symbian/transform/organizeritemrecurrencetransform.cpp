@@ -43,7 +43,6 @@
 #include "qorganizereventtimerange.h"
 #include <calrrule.h>
 
-
 void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
     // *** Repeat rules / RDate / ExDate Methods ***
@@ -87,9 +86,12 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
     // TODO: Also other item types may have a recurrence item
     QOrganizerEventTimeRange timerange = item.detail(QOrganizerEventTimeRange::DefinitionName);
 
-    if (recurrence.recurrenceRules().count())
+    if (recurrence.recurrenceRules().count()) {
         entry->SetRRuleL(toCalRRuleL(recurrence.recurrenceRules(), timerange.startDateTime()));
-
+    } else {
+        entry->ClearRepeatingPropertiesL();
+    }
+    
     if (recurrence.recurrenceDates().count()) {
         RArray<TCalTime> calRDates;
         toTCalTimesL(recurrence.recurrenceDates(), calRDates);
@@ -99,9 +101,9 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
     if (recurrence.exceptionDates().count()) {
         RArray<TCalTime> calExDates;
         toTCalTimesL(recurrence.exceptionDates(), calExDates);
-        entry->SetRDatesL(calExDates);
+        entry->SetExceptionDatesL(calExDates);
     }
-
+    
     //  TODO: what about recurrence.exceptionRules()? there is no match in native API.
 }
 
@@ -133,7 +135,7 @@ QList<QDate> OrganizerItemRecurrenceTransform::toQDatesL(const RArray<TCalTime> 
 QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecurrenceRulesL(const TCalRRule &calrrule) const
 {
     // TODO: only conversion for "day of week" is implemented
-
+    QList<QOrganizerItemRecurrenceRule> rrules;
     QOrganizerItemRecurrenceRule rrule;
 
     if (calrrule.Type() == TCalRRule::EWeekly) {
@@ -146,8 +148,14 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
             daysOfWeek.append(toDayOfWeekL(byDay[i]));
         }
         CleanupStack::PopAndDestroy(&byDay);
-
+        
+        //Set start of week
         rrule.setDaysOfWeek(daysOfWeek);
+        if (calrrule.WkSt()) {
+            Qt::DayOfWeek startOfWeek = toDayOfWeekL(calrrule.WkSt());
+            if(Qt::Monday != startOfWeek)
+               rrule.setWeekStart(startOfWeek);
+        }
     } else if(calrrule.Type() == TCalRRule::EMonthly) {
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
 
@@ -181,23 +189,22 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecu
         if (months.count()) {
             rrule.setMonths(months);
         }
+    } else if (calrrule.Type() == TCalRRule::EDaily) {
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily); 
     } else {
-        // TODO: Implement the rest of the types
-        User::Leave(KErrNotReady);
+        return rrules;
     }
 
     // Count has higher priority than end date
     if (calrrule.Count()) {
         rrule.setCount(calrrule.Count());
-    } else if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
+        
+    }else if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
         rrule.setEndDate(toQDateTimeL(calrrule.Until()).date());
-    }
+    }    
+    // Set the interval
+    rrule.setInterval(calrrule.Interval());
 
-    //TODO: rrule.setInterval(calrrule.Interval());
-    // TODO: other frequencies?
-    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
-
-    QList<QOrganizerItemRecurrenceRule> rrules;
     rrules.append(rrule);
     return rrules;
 }
@@ -208,21 +215,31 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
     if (recrules.count()) {
         // TODO: only taking the first available into account
         QOrganizerItemRecurrenceRule rrule = recrules[0];
-
+        
+        //Entries with position parameter are set as not supported.
+        if(rrule.positions().count()) {
+           User::Leave(KErrNotSupported);
+        }
+        
+        // Set the start date
+        calRule.SetDtStart(toTCalTimeL(startDateTime));
+        
+        // Set the count else the end date
+        if (rrule.count()) {
+            calRule.SetCount(rrule.count());
+        
+        } else if (rrule.endDate().isValid()) {
+            if (rrule.endDate() < startDateTime.date()) {
+                // End date before start date!
+                User::Leave(KErrArgument);
+            }
+            calRule.SetUntil(toTCalTimeL(rrule.endDate()));
+        }
+        // Set the interval(default is 1)
+        calRule.SetInterval(rrule.interval());
+    
         if (rrule.frequency() == QOrganizerItemRecurrenceRule::Weekly) {
             calRule.SetType(TCalRRule::EWeekly);
-            calRule.SetDtStart(toTCalTimeL(startDateTime));
-            if (rrule.count()) {
-                calRule.SetCount(rrule.count());
-            }
-            if (rrule.endDate().isValid()) {
-                if (rrule.endDate() < startDateTime.date()) {
-                    // End date before start date!
-                    User::Leave(KErrArgument);
-                }
-                calRule.SetUntil(toTCalTimeL(rrule.endDate()));
-            }
-
             RArray<TDay> byDay;
             // TODO: how about daysOfMonth, daysOfYear and so on?
             foreach (Qt::DayOfWeek dayOfWeek, rrule.daysOfWeek()) {
@@ -232,16 +249,16 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             // TODO: Symbian calendar server does not allow storing weekly
             // recurrence without "by day" data! This means that a client
             // must set "days of week" for a QOrganizerItemRecurrenceRule
-            if (byDay.Count()){
+            if (byDay.Count()) {
                 calRule.SetByDay(byDay);
             }
             byDay.Close();
-
-            //TODO: ? calRule.SetWkSt(EMonday);
-            //TODO: ? calRule.SetInterval(rrule.interval());
+            // Set start of the week 
+            if (rrule.weekStart()!= (Qt::Monday)) {
+                calRule.SetWkSt(toTDayL(rrule.weekStart()));
+            }
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Monthly) {
             calRule.SetType(TCalRRule::EMonthly);
-
             // TODO: how about daysOfWeek, daysOfYear and so on?
             if (!rrule.daysOfMonth().isEmpty()) {
                 RArray<TInt> byMonthDay;
@@ -252,17 +269,11 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
                 }
                 calRule.SetByMonthDay(byMonthDay);
                 CleanupStack::PopAndDestroy(&byMonthDay);
-            } else if (!rrule.daysOfWeek().isEmpty() && !rrule.positions().isEmpty()) {
-                // TODO: Symbian does not support positions; is there anything
-                // we can do in this situation?
-                User::Leave(KErrNotSupported);
-            } else {
-                User::Leave(KErrNotReady);
-            }
+            } 
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Yearly) {
             // TODO: does not work, the test case that tests this has been disabled also
             calRule.SetType(TCalRRule::EYearly);
-
+            
             if (rrule.months().count()) {
                 RArray<TMonth> byMonth;
                 CleanupClosePushL(byMonth);
@@ -274,12 +285,13 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             } else {
                 User::Leave(KErrNotReady);
             }
+        // Converting the daily recurrance rule with interval and occurance     
+        } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Daily) {
+            calRule.SetType(TCalRRule::EDaily);
         } else {
-            // TODO: implement the rest of the frequencies
             User::Leave(KErrNotReady);
         }
     }
-
     return calRule;
 }
 

@@ -46,14 +46,14 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemSortOrder
-  \brief The QOrganizerItemSortOrder class defines how a list of organizeritems should be ordered according to some criteria
+  \brief The QOrganizerItemSortOrder class defines how a list of organizer items should be ordered according to some criteria
 
   \inmodule QtOrganizer
  */
 
 /*!
  * \enum QOrganizerItemSortOrder::BlankPolicy
- * Enumerates the ways in which the sort order interprets blanks when sorting organizeritems
+ * Enumerates the ways in which the sort order interprets blanks when sorting organizer items
  * \value BlanksFirst Considers blank values to evaluate to less than all other values in comparisons
  * \value BlanksLast Considers blank values to evaluate to greater than all other values in comparisons
  */
@@ -105,7 +105,7 @@ QOrganizerItemSortOrder& QOrganizerItemSortOrder::operator=(const QOrganizerItem
 }
 
 /*!
- * Returns true if the sort order is able to be used to sort a list of organizeritems; otherwise, returns false
+ * Returns true if the sort order is able to be used to sort a list of organizer items; otherwise, returns false
  */
 bool QOrganizerItemSortOrder::isValid() const
 {
@@ -132,7 +132,7 @@ bool QOrganizerItemSortOrder::operator ==(const QOrganizerItemSortOrder& other) 
 
 /*!
  * Sets the definition name of the details which will be inspected to perform sorting to \a definitionName,
- * and the name of those details' fields which contains the value which organizeritems will be sorted by to \a fieldName
+ * and the name of those details' fields which contains the value which organizer items will be sorted by to \a fieldName
  * \sa detailDefinitionName(), detailFieldName()
  */
 void QOrganizerItemSortOrder::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
@@ -166,7 +166,7 @@ void QOrganizerItemSortOrder::setDirection(Qt::SortOrder direction)
 
 /*!
  * Returns the definition name of the details which will be inspected to perform sorting.
- * Note that if a organizeritem has multiple details of the definition, the result of the sorting
+ * Note that if an organizer item has multiple details of the definition, the result of the sorting
  * is undefined.
  * \sa setDetailDefinitionName()
  */

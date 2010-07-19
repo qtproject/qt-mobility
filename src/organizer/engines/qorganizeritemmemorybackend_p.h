@@ -105,11 +105,11 @@ public:
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
 
-    QOrganizerItemLocalId m_selfOrganizerItemId;               // the "MyCard" organizeritem id
-    QList<QOrganizerItem> m_organizeritems;                    // list of organizeritems
-    QList<QOrganizerItemLocalId> m_organizeritemIds;           // list of organizeritem Id's
+    QOrganizerItemLocalId m_selfOrganizerItemId;               // the "MyCard" organizer item id
+    QList<QOrganizerItem> m_organizeritems;                    // list of organizer items
+    QList<QOrganizerItemLocalId> m_organizeritemIds;           // list of organizer item Id's
     QList<QString> m_definitionIds;                // list of definition types (id's)
-    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizeritem type to map of definition name to definitions.
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definitions; // map of organizer item type to map of definition name to definitions.
     QOrganizerItemLocalId m_nextOrganizerItemId;
     bool m_anonymous;                              // Is this backend ever shared?
 
