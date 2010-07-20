@@ -159,14 +159,6 @@ contains(mobility_modules,multimedia) {
         qvideoframe \
         qvideosurfaceformat
 
-    symbian: {
-        #symbian spesific autotests
-        SUBDIRS += symbian 
-        SUBDIRS -= \
-                qmediaplayer_s60 \
-                qradiotuner_s60 \
-                qmediaobject_s60 \
-                qmediarecorder_s60
     }
 }
 #Messaging
