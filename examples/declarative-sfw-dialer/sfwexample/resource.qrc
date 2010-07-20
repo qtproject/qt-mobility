@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/" >
-        <file>sfwexample.qml</file>
-        <file>DialScreen.qml</file>
-        <file>DialButton.qml</file>
-        <file>ServiceList.qml</file>
-    </qresource>
-</RCC>

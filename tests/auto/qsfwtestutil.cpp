@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -89,19 +89,12 @@ QString QSfwTestUtil::systemDirectory()
 
 QString QSfwTestUtil::tempSettingsPath(const char *path)
 {
-#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
-    // On emulator, use hardcoded path instead of private directories to
-    // enable a shared database.
-    Q_UNUSED(path);
-    return QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
-#else
     // Temporary path for files that are specified explictly in the constructor.
     //QString tempPath = QDir::tempPath();
     QString tempPath = QCoreApplication::applicationDirPath();
     if (tempPath.endsWith("/"))
         tempPath.truncate(tempPath.size() - 1);
     return QDir::toNativeSeparators(tempPath + "/QtServiceFramework_tests/" + QLatin1String(path));
-#endif
 }
 
 void QSfwTestUtil::removeDirectory(const QString &path)
@@ -116,36 +109,38 @@ void QSfwTestUtil::removeDirectory(const QString &path)
             QFile::Permissions perms = QFile::permissions(file.canonicalFilePath());
             perms = perms | QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
             QFile::setPermissions(file.canonicalFilePath(), perms);
-
             removeDirectory(file.canonicalFilePath());
         }
     }
     dir.rmpath(path);
 }
 
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+#if defined(Q_OS_SYMBIAN)
 #include <e32base.h>
-#include <f32file.h>
-void QSfwTestUtil::removeDatabases()
+void QSfwTestUtil::removeDatabases_symbian()
 {
-    TFindServer findServer(_L("SFWDatabaseManagerServer"));
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
+    QDir dir("C:/Data/temp/QtServiceFW");
+#else
+    TFindServer findServer(_L("!qsfwdatabasemanagerserver"));
     TFullName name;
     if (findServer.Next(name) == KErrNone)
     {
         RProcess dbServer;
-        if (dbServer.Open(_L("SFWDatabaseManagerServer")) == KErrNone)
+        if (dbServer.Open(_L("qsfwdatabasemanagerserver")) == KErrNone)
         {
             dbServer.Kill(KErrNone);
             dbServer.Close();    
         }
     }    
 
-    RFs fs;
-    fs.Connect();
-    CleanupClosePushL(fs);
-    CFileMan* fileMan=CFileMan::NewL(fs);
-    CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\2002AC7F\\Nokia\\")); //Server's fixed UID3
-    CleanupStack::PopAndDestroy(2, &fs);    
+    QDir dir("c:/private/2002AC7F");
+#endif
+
+    QString qtVersion(qVersion());
+    qtVersion = qtVersion.left(qtVersion.size() - 2); //strip off patch version
+    QString dbIdentifier = "_system";
+    QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
+    QFile::remove(QDir::toNativeSeparators(dir.path() + QDir::separator() + dbName));
 }
 #endif

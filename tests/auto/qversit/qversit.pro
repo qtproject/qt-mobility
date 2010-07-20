@@ -2,8 +2,14 @@ QT += testlib
 TEMPLATE = app
 TARGET = tst_qversit
 
+symbian*: {
+    VERSIT_TESTDATA.sources = testdata/*
+    VERSIT_TESTDATA.path = testdata
+    DEPLOYMENT += VERSIT_TESTDATA
+}
+
 wince* {
-    DEFINES+= TESTDATA_DIR=\\\".\\\"
+    DEFINES+= TESTDATA_DIR=\\\"./\\\"
 }else:!symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }
@@ -22,8 +28,7 @@ INCLUDEPATH += . \
 HEADERS += tst_qversit.h
 SOURCES += tst_qversit.cpp
 CONFIG += mobility
-MOBILITY = contacts \
-    versit
+MOBILITY += contacts versit organizer
 symbian: { 
     TARGET.CAPABILITY = ALL \
         -TCB

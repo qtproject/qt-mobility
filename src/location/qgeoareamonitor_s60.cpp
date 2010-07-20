@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -221,10 +221,11 @@ void QGeoAreaMonitorS60::TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo
     TDateTime datetime = pos.Time().DateTime();
     QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
                  QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
-                       datetime.MicroSecond() / 1000));
+                       datetime.MicroSecond() / 1000),
+                Qt::UTC);
 
     //store the time stamp
-    aQInfo.setDateTime(dt);
+    aQInfo.setTimestamp(dt);
 
     //store the horizontal accuracy
     aQInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,7 @@
 
 #include <qmediastreamscontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 
@@ -58,7 +58,7 @@ public:
     virtual int streamCount();
     virtual StreamType streamType(int streamNumber);
 
-    virtual QVariant metaData(int streamNumber, QtMedia::MetaData key);
+    virtual QVariant metaData(int streamNumber, QtMultimediaKit::MetaData key);
 
     virtual bool isActive(int streamNumber);
     virtual void setActive(int streamNumber, bool state);

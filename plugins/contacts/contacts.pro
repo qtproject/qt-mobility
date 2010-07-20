@@ -6,17 +6,23 @@ include(../../common.pri)
 
 symbian {
     SUBDIRS += symbian
+
+    ## temporarily disable building symbian-specific unit tests.
     #contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
     
     # SIM backend depends on etel MM APIs
     contains(symbiancntsim_enabled, yes) {
         SUBDIRS += symbiansim
+
+        ## temporarily disable building symbian-specific unit tests.
         #contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
+
         message("Symbian SIM backend enabled")
     } else {
         message("Symbian SIM backend disabled")
     }
 }
 wince*:SUBDIRS += wince
-maemo6:SUBDIRS += qtcontacts-tracker
-maemo5:SUBDIRS += maemo5
+maemo5 {
+    contains(maemo5-contacts_enabled, yes): SUBDIRS += maemo5
+}

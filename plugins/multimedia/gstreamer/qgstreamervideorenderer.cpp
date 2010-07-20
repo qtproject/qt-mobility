@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@
 #include <gst/gst.h>
 
 QGstreamerVideoRenderer::QGstreamerVideoRenderer(QObject *parent)
-    :QVideoRendererControl(parent),m_videoSink(0)
+    :QVideoRendererControl(parent),m_videoSink(0), m_surface(0)
 {
 }
 
@@ -77,6 +77,15 @@ QAbstractVideoSurface *QGstreamerVideoRenderer::surface() const
 
 void QGstreamerVideoRenderer::setSurface(QAbstractVideoSurface *surface)
 {
-    m_surface = surface;
+    if (m_surface != surface) {
+        if (m_videoSink)
+            gst_object_unref(GST_OBJECT(m_videoSink));
+
+        m_videoSink = 0;
+        
+        m_surface = surface;
+
+        emit sinkChanged();
+    }
 }
 

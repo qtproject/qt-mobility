@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -92,7 +92,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
         
         /**
-         * DataError is called to indicate an error, fatal errors are inrecoverable
+         * DataError is called to indicate an error, fatal errors are unrecoverable
          */
         void  DataError(CSensrvChannel &aChannel, TSensrvErrorSeverity aError);
         
@@ -154,6 +154,49 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         void InitializeL();
         
         /*
+         * SetProperty is used to set property to the channel
+         */         
+        TInt SetProperty(TSensrvPropertyId aPropertyId, TSensrvPropertyType aPropertyType, TSensrvArrayIndex aArrayIndex, TReal aValue);
+        
+        /*
+         * SetMeasurementRange is used to check measurement range type and set the measurement range
+         */
+        TInt SetMeasurementRange();
+        
+        /*
+         * SetDataRate is used to calculate appropriate data rate for given interval and set that interval to the channel
+         */
+        TInt SetDataRate();
+        
+        /*
+         * SetProperties is used to set properties on the channel before start data listening 
+         */
+        void SetProperties();
+        
+        /*
+         * GetPropertiesL used to get the properties from sensor server and sets as metadata for Qt.
+         */
+        void GetPropertiesL();
+       
+        /*
+         * GetDescription used to get description of sensor from symbian and set
+         * as description in Qt
+         */
+        void GetDescription();
+        
+        /*
+         * GetDataRate used to get available datarates from symbian and set
+         * as availableDataRates in Qt
+         */
+        void GetDataRate();
+        
+        /*
+         * GetMeasurementrangeAndAccuracy used to get measurement ranges and accuracy from
+         * symbian and set as outputRanges in Qt
+         */
+        virtual void GetMeasurementrangeAndAccuracy();
+        
+        /*
          * Close is used to release all the sensor server objects
          * May change when error handling is supported by mobility apis
          */
@@ -187,11 +230,8 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          */
         void StopListeningL();
         
-        /*
-         * timerEvent is called when timer expires, this is used for supporting time based
-         * sensor update policies
-         */
-        void timerEvent(QTimerEvent *aTimerEvent);
+    private:
+        TSensrvPropertyType propertyType(TSensrvPropertyId, TInt&);
 
     protected:
         TSensorBackendDataSym iBackendData;

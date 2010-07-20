@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,8 +49,8 @@ IMPLEMENT_READING(QAmbientLightReading)
 /*!
     \class QAmbientLightReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
-    \preliminary
     \brief The QAmbientLightReading class represents one reading from the
            ambient light sensor.
 
@@ -67,7 +67,7 @@ IMPLEMENT_READING(QAmbientLightReading)
 
     \value Undefined  The light level is unknown.
     \value Dark       It is dark.
-    \value Twilight   It is darkish.
+    \value Twilight   It is moderately dark.
     \value Light      It is light (eg. internal lights).
     \value Bright     It is bright (eg. shade).
     \value Sunny      It is very bright (eg. direct sunlight).
@@ -99,8 +99,8 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
 /*!
     \class QAmbientLightFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
-    \preliminary
     \brief The QAmbientLightFilter class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to QAmbientLightReading
@@ -115,13 +115,13 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
     \sa QSensorFilter::filter()
 */
 
-const char *QAmbientLightSensor::type("QAmbientLightSensor");
+char const * const QAmbientLightSensor::type("QAmbientLightSensor");
 
 /*!
     \class QAmbientLightSensor
     \ingroup sensors_type
+    \inmodule QtSensors
 
-    \preliminary
     \brief The QAmbientLightSensor class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.

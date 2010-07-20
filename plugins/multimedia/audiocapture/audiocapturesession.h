@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,16 +44,17 @@
 
 #include <QFile>
 #include <QUrl>
+#include <QDir>
 
 #include "audioencodercontrol.h"
 #include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
-#include <QtMultimedia/qaudioformat.h>
-#include <QtMultimedia/qaudioinput.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudioformat.h>
+#include <qaudioinput.h>
+#include <qaudiodeviceinfo.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureSession : public QObject
 {
@@ -93,9 +94,13 @@ private slots:
     void notify();
 
 private:
+    QDir defaultDir() const;
+    QString generateFileName(const QDir &dir, const QString &ext) const;
+
     QFile file;
     QString m_captureDevice;
     QUrl m_sink;
+    QUrl m_actualSink;
     QMediaRecorder::State m_state;
     QAudioInput *m_audioInput;
     QAudioDeviceInfo *m_deviceInfo;

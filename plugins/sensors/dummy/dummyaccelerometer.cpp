@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,12 +43,13 @@
 #include <QDebug>
 #include <QtGlobal>
 
-const char *dummyaccelerometer::id("dummy.accelerometer");
+char const * const dummyaccelerometer::id("dummy.accelerometer");
 
 dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
     : dummycommon(sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
+    addDataRate(100, 100); // 100Hz
 }
 
 void dummyaccelerometer::poll()

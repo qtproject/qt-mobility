@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -193,7 +193,7 @@ TInt PathMapper::RPathMapperServerSession::StartServer()
     if (findServer.Next(name) != KErrNone) {
         TRequestStatus status;
         RProcess server;
-        ret = server.Create(KPSPathMapperServerName, KNullDesC);
+        ret = server.Create(KPSPathMapperServerProcess, KNullDesC);
         if(ret != KErrNone) {
             return ret;
         }

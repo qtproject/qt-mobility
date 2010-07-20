@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,28 +46,32 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaServicePrivate;
-class Q_MEDIA_EXPORT QMediaService : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaService : public QObject
 {
     Q_OBJECT
 
 public:
     ~QMediaService();
 
-    virtual QMediaControl* control(const char *name) const = 0;
+    virtual QMediaControl* requestControl(const char *name) = 0;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
-    template <typename T> inline T control() const {
-        if (QObject *object = control(qmediacontrol_iid<T>())) {
-            return qobject_cast<T>(object);
+    template <typename T> inline T requestControl() {
+        if (QMediaControl *control = requestControl(qmediacontrol_iid<T>())) {
+            if (T typedControl = qobject_cast<T>(control))
+                return typedControl;
+            releaseControl(control);
         }
         return 0;
     }
 #endif
+
+    virtual void releaseControl(QMediaControl *control) = 0;
 
 protected:
     QMediaService(QObject* parent);
@@ -79,7 +83,7 @@ private:
     Q_DECLARE_PRIVATE(QMediaService)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIASERVICE_H
 

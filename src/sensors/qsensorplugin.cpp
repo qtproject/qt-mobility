@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,6 +44,7 @@
 /*!
     \class QSensorPluginInterface
     \ingroup sensors_backend
+    \inmodule QtSensors
     \brief The QSensorPluginInterface class is the pure virtual interface to sensor plugins.
 
     The QSensorPluginInterface class is implemented in sensor plugins to register sensor

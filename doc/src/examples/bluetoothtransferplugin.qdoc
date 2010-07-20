@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,4 +44,17 @@
     \title Bluetooth Transfer Plugin Example
 
     This example shows how to write a service plugin for the \l{Qt Service Framework}{Service Framework}.
+
+    \section1 Registering the Service
+    The service can be registered by using the function \l{QServiceManager::}{addService()}, this takes a path to the XML file that describes the service, \i{bluetoothtransferservice.xml}.
+
+    \section1 Writing the Plugin
+    To implement a plugin it is necessary to create a new plugin class derived from QObject and QServicePluginInterface. The function QServicePluginInterface::createInstance() is implemented to return the appropriate instantiated object based on the interface name passed into the function. Since there is only one interface name for this example there is no test involved, so we can simply create the object implementing the service and return its pointer.
+
+    \snippet ../../examples/bluetoothtransferplugin/bluetoothtransferplugin.cpp createinstance
+
+    The implementation of the service BluetoothTransfer is simply a test function for this example. The BluetoothTransfer class is very simple, with only an empty constructor and the sendFile() function
+
+    \snippet ../../examples/bluetoothtransferplugin/bluetoothtransfer.cpp sendFile
+    
 */

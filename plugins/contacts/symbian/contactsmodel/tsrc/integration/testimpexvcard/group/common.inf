@@ -1,0 +1,144 @@
+/*
+* Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*
+*/
+
+
+PRJ_TESTEXPORTS
+../scripts/TestImpExvCard.script			c:/citeximvcard/scripts/testimpexvcard.script
+../testdata/ExportBDayLocal/ExportBDayLocal.ini		c:/citeximvcard/testdata/exportbdaylocal/exportbdaylocal.ini
+../testdata/ExportBDayLocal/ExportBDayLocalFile.vcf	c:/citeximvcard/testdata/exportbdaylocal/exportbdaylocalfile.vcf
+../testdata/ExportNoBDay/ExportNoBDayFile.vcf		c:/citeximvcard/testdata/exportnobday/exportnobdayfile.vcf
+../testdata/ExportRevUTC/ExportRevUTCFile.vcf		c:/citeximvcard/testdata/exportrevutc/exportrevutcfile.vcf
+../testdata/ImportBDay/ExpectedBDAY.ini			c:/citeximvcard/testdata/importbday/expectedbday.ini		
+../testdata/ImportBDay/ImportBDay0.vcf			c:/citeximvcard/testdata/importbday/importbday0.vcf
+../testdata/ImportBDay/ImportBDay1.vcf			c:/citeximvcard/testdata/importbday/importbday1.vcf
+../testdata/ImportBDay/ImportBDay2.vcf			c:/citeximvcard/testdata/importbday/importbday2.vcf
+../testdata/ImportNoBDay/ImportNoBDay0.vcf		c:/citeximvcard/testdata/importnobday/importnobday0.vcf
+../testdata/ImportNoBDay/ImportNoBDay1.vcf		c:/citeximvcard/testdata/importnobday/importnobday1.vcf
+../testdata/ImportNoRev/ImportNoREV0.vcf		c:/citeximvcard/testdata/importnorev/importnorev0.vcf
+../testdata/ImportNoRev/ImportNoREV1.vcf		c:/citeximvcard/testdata/importnorev/importnorev1.vcf
+../testdata/ImportREVLocal/ExpectedUTC.ini		c:/citeximvcard/testdata/importrevlocal/expectedutc.ini
+../testdata/ImportREVLocal/ImportREVLocal0.vcf		c:/citeximvcard/testdata/importrevlocal/importrevlocal0.vcf
+../testdata/ImportREVLocal/ImportREVLocal1.vcf		c:/citeximvcard/testdata/importrevlocal/importrevlocal1.vcf
+../testdata/ImportREVLocalTZ/ExpectedUTC.ini		c:/citeximvcard/testdata/importrevlocaltz/expectedutc.ini
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ0.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz0.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ1.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz1.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ2.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz2.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ3.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz3.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ4.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz4.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ5.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz5.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ6.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz6.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ7.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz7.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ8.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz8.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ9.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz9.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ10.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz10.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ11.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz11.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ12.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz12.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ13.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz13.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ14.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz14.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ15.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz15.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ16.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz16.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ17.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz17.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ18.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz18.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ19.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz19.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ20.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz20.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ21.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz21.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ22.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz22.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ23.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz23.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ24.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz24.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ25.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz25.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ26.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz26.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ27.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz27.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ28.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz28.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ29.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz29.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ30.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz30.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ31.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz31.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ32.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz32.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ33.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz33.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ34.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz34.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ35.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz35.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ36.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz36.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ37.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz37.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ38.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz38.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ39.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz39.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ40.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz40.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ41.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz41.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ42.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz42.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ43.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz43.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ44.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz44.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ45.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz45.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ46.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz46.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ47.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz47.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ48.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz48.vcf
+../testdata/ImportREVLocalTZ/ImportREVLocalTZ49.vcf	c:/citeximvcard/testdata/importrevlocaltz/importrevlocaltz49.vcf
+../testdata/ImportRevUTC/ExpectedUTC.ini		c:/citeximvcard/testdata/importrevutc/expectedutc.ini
+../testdata/ImportRevUTC/ImportRevUTC0.vcf		c:/citeximvcard/testdata/importrevutc/importrevutc0.vcf
+../testdata/ImportRevUTC/ImportRevUTC1.vcf		c:/citeximvcard/testdata/importrevutc/importrevutc1.vcf
+../testdata/ImportRevUTC/ImportRevUTC2.vcf		c:/citeximvcard/testdata/importrevutc/importrevutc2.vcf
+../testdata/ImportOOM/ImportOOM.vcf				c:/citeximvcard/testdata/importoom/importoom.vcf
+
+// Import and Export for PREQ1286
+../scripts/ImportExportTestCases.script			c:/importexporttestcases.script
+../scripts/ImportExportTestCases.ini			c:/importexporttestcases.ini
+../testdata/PREQ1286/ImportAnniMergeMode2File.vcf	c:/1286testdata/importannimergemode2file.vcf
+../testdata/PREQ1286/ImportAnniMergeMode3File.vcf	c:/1286testdata/importannimergemode3file.vcf
+../testdata/PREQ1286/ImportAsstMergeMode2File.vcf	c:/1286testdata/importasstmergemode2file.vcf
+../testdata/PREQ1286/ImportAsstMergeMode3File.vcf	c:/1286testdata/importasstmergemode3file.vcf
+../testdata/PREQ1286/ImportAsstTelMergeMode2File.vcf	c:/1286testdata/importassttelmergemode2file.vcf
+../testdata/PREQ1286/ImportAsstTelMergeMode3File.vcf	c:/1286testdata/importassttelmergemode3file.vcf
+../testdata/PREQ1286/ImportChildrenMergeMode2File.vcf	c:/1286testdata/importchildrenmergemode2file.vcf
+../testdata/PREQ1286/ImportChildrenMergeMode3File.vcf	c:/1286testdata/importchildrenmergemode3file.vcf
+../testdata/PREQ1286/ImportClassMergeMode2File.vcf	c:/1286testdata/importclassmergemode2file.vcf
+../testdata/PREQ1286/ImportClassMergeMode3File.vcf	c:/1286testdata/importclassmergemode3file.vcf
+../testdata/PREQ1286/ImportCompanyMergeMode2File.vcf	c:/1286testdata/importcompanymergemode2file.vcf
+../testdata/PREQ1286/ImportCompanyMergeMode3File.vcf	c:/1286testdata/importcompanymergemode3file.vcf
+../testdata/PREQ1286/ImportDeptMergeMode2File.vcf	c:/1286testdata/importdeptmergemode2file.vcf
+../testdata/PREQ1286/ImportDeptMergeMode3File.vcf	c:/1286testdata/importdeptmergemode3file.vcf
+../testdata/PREQ1286/ImportSpouseMergeMode2File.vcf	c:/1286testdata/importspousemergemode2file.vcf
+../testdata/PREQ1286/ImportSpouseMergeMode3File.vcf	c:/1286testdata/importspousemergemode3file.vcf
+
+//Import corrupt data
+../testdata/PREQ1286/ImportAsstCorruptData.vcf		c:/1286testdata/importasstcorruptdata.vcf
+../testdata/PREQ1286/ImportAsstTelCorruptData.vcf	c:/1286testdata/importassttelcorruptdata.vcf
+../testdata/PREQ1286/ImportAnniCorruptData.vcf		c:/1286testdata/importannicorruptdata.vcf
+../testdata/PREQ1286/ImportSpouseCorruptData.vcf	c:/1286testdata/importspousecorruptdata.vcf
+../testdata/PREQ1286/ImportChildrenCorruptData.vcf	c:/1286testdata/importchildrencorruptdata.vcf
+../testdata/PREQ1286/ImportClassCorruptData.vcf		c:/1286testdata/importclasscorruptdata.vcf
+../testdata/PREQ1286/ImportDeptCorruptData.vcf		c:/1286testdata/importdeptcorruptdata.vcf
+../testdata/PREQ1286/ImportCompanyCorruptData.vcf	c:/1286testdata/importcompanycorruptdata.vcf
+
+// Import and Export for PBAP Export- PREQ1375
+../scripts/TestImpExvCardPBAP.script			c:/citeximvcard/scripts/testimpexvcardpbap.script
+../scripts/TestImpExvCardPBAPHW.script			c:/citeximvcard/scripts/testimpexvcardpbaphw.script
+../testdata/PBAPExport/TestvCardImportExport.ini	c:/citeximvcard/testdata/pbapexport/testvcardimportexport.ini
+../testdata/PBAPExport/vCard1.vcf			c:/citeximvcard/testdata/pbapexport/vcard1.vcf
+../testdata/PBAPExport/vCard2.vcf			c:/citeximvcard/testdata/pbapexport/vcard2.vcf
+../testdata/PBAPExport/vCard3.vcf			c:/citeximvcard/testdata/pbapexport/vcard3.vcf
+../testdata/PBAPExport/vCard4.vcf			c:/citeximvcard/testdata/pbapexport/vcard4.vcf
+../testdata/PBAPExport/vCard5.vcf			c:/citeximvcard/testdata/pbapexport/vcard5.vcf
+../testdata/PBAPExport/vCard6.vcf			c:/citeximvcard/testdata/pbapexport/vcard6.vcf
+../testdata/PBAPExport/vCard9.vcf			c:/citeximvcard/testdata/pbapexport/vcard9.vcf
+../testdata/PBAPExport/vCard11.vcf			c:/citeximvcard/testdata/pbapexport/vcard11.vcf
+../testdata/PBAPExport/vcard100.vcf			c:/citeximvcard/testdata/pbapexport/vcard100.vcf
+../testdata/PBAPExport/ExportIntraprop30.vcf		c:/citeximvcard/testdata/pbapexport/exportintraprop30.vcf
+../testdata/PBAPExport/Export3.vcf			c:/citeximvcard/testdata/pbapexport/export3.vcf
+../testdata/PBAPExport/Export2.vcf			c:/citeximvcard/testdata/pbapexport/export2.vcf
+../testdata/PBAPExport/Export1.vcf			c:/citeximvcard/testdata/pbapexport/export1.vcf
+../testdata/PBAPExport/ExportTel.vcf			c:/citeximvcard/testdata/pbapexport/exporttel.vcf
+../testdata/PBAPExport/ExportTel30.vcf			c:/citeximvcard/testdata/pbapexport/exporttel30.vcf
+../testdata/PBAPExport/vCardEmpty.vcf			c:/citeximvcard/testdata/pbapexport/vcardempty.vcf
+
+TEF_CntModelCIT.iby /epoc32/rom/include/tef_cntmodelcit.iby

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,7 +70,7 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[1], &time))
-            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setTimestamp(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 5 && parts[3].count() == 1 && parts[5].count() == 1) {
@@ -105,7 +105,7 @@ static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 5 && parts[5].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[5], &time))
-            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setTimestamp(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 4 && parts[2].count() == 1 && parts[4].count() == 1) {
@@ -177,7 +177,7 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
         info->setCoordinate(coord);
 
-    info->setDateTime(QDateTime(date, time, Qt::UTC));
+    info->setTimestamp(QDateTime(date, time, Qt::UTC));
 }
 
 static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
@@ -224,7 +224,7 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
             date.setDate(year, month, day);
     }
 
-    info->setDateTime(QDateTime(date, time, Qt::UTC));
+    info->setTimestamp(QDateTime(date, time, Qt::UTC));
 }
 
 bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)

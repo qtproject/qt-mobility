@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -78,6 +78,9 @@ public:
     static void filterMessages(QMessageIdList& messageIds, const QMessageFilter& filter);
     static void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder);
     static void applyOffsetAndLimitToMessageIdList(QMessageIdList& messageIds, int limit, int offset);
+
+    static void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter);
+    static void handleNestedFiltersFromMessageFilter(QMessageFilter &filter);
 
 private:
    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);

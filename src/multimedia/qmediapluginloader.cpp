@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#include <qmediapluginloader_p.h>
+#include "qmediapluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include "qmediaserviceproviderplugin.h"
+#include "qmobilitypluginsearch.h"
 
-QTM_BEGIN_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 
 typedef QMap<QString,QObjectList> ObjectListMap;
 Q_GLOBAL_STATIC(ObjectListMap, staticMediaPlugins);
@@ -97,39 +97,25 @@ void QMediaPluginLoader::load()
             }
         }
     } else {
-        QStringList     paths = QCoreApplication::libraryPaths();
-
-#ifdef QTM_PLUGIN_PATH
-        paths << QTM_PLUGIN_PATH;
-#endif
-
-        foreach (QString const &path, paths) {
-            QString     pluginPathName(path + m_location);
-            QDir        pluginDir(pluginPathName);
-
-            if (!pluginDir.exists())
-                continue;
-
-            foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
-                QPluginLoader   loader(pluginPathName + pluginLib);
-
-                QObject *o = loader.instance();
-                if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                    QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
-                    if (p != 0) {
-                        foreach (QString const &key, p->keys())
-                            m_instances.insertMulti(key, o);
-                    }
-
-                    continue;
-                } else {
-                    qWarning() << "QMediaPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
+        QStringList plugins = QTM_PREPEND_NAMESPACE(mobilityPlugins)(m_location);
+        for (int i=0; i < plugins.count(); i++) {
+            QPluginLoader   loader(plugins.at(i));
+            QObject *o = loader.instance();
+            if (o != 0 && o->qt_metacast(m_iid) != 0) {
+                QFactoryInterface* p = qobject_cast<QFactoryInterface*>(o);
+                if (p != 0) {
+                    foreach (QString const &key, p->keys())
+                        m_instances.insertMulti(key, o);
                 }
-                delete o;
-                loader.unload();
+
+                continue;
+            } else {
+                qWarning() << "QMediaPluginLoader: Failed to load plugin: " << plugins.at(i) << loader.errorString();
             }
+            delete o;
+            loader.unload();
         }
     }
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

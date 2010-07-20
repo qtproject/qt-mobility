@@ -47,6 +47,8 @@ QTM_BEGIN_NAMESPACE
   \class QContactActionFactory
   \brief The QContactActionFactory class provides an interface for clients
   to retrieve instances of action implementations
+  \inmodule QtContacts
+  \ingroup contacts-actions
  */
 
 QContactActionFactory::~QContactActionFactory()

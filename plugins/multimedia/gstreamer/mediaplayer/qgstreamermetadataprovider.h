@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,13 +42,13 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 
-class QGstreamerMetaDataProvider : public QMetaDataControl
+class QGstreamerMetaDataProvider : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
@@ -58,12 +58,10 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
 private slots:

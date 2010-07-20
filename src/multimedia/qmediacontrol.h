@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,10 +49,10 @@
 #include <QtCore/qvariant.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaControlPrivate;
-class Q_MEDIA_EXPORT QMediaControl : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaControl : public QObject
 {
     Q_OBJECT
 
@@ -74,6 +74,6 @@ template <typename T> const char *qmediacontrol_iid() { return 0; }
 #define Q_MEDIA_DECLARE_CONTROL(Class, IId) \
     template <> inline const char *qmediacontrol_iid<Class *>() { return IId; }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIACONTROL_H

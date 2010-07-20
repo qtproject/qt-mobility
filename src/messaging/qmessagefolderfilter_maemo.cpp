@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -161,21 +161,17 @@ bool QMessageFolderFilterPrivate::filter(const QMessageFolder &messageFolder, co
             }
         } else if (filter._comparatorType == QMessageFolderFilterPrivate::Inclusion) {
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(filter._comparatorValue));
-            if (filter._ids.count() > 0) { // QMessageIdList
-                if (cmp == QMessageDataComparator::Includes) {
-                    if (filter._ids.contains(messageFolder.id())) {
-                        retVal = true;
-                    }
-                } else { // Excludes
-                    if (!filter._ids.contains(messageFolder.id())) {
-                        retVal = true;
-                    }
+            if (cmp == QMessageDataComparator::Includes) {
+                if (filter._ids.isEmpty()) {
+                    retVal = false;
+                } else if (filter._ids.contains(messageFolder.id())) {
+                    retVal = true;
                 }
-            } else { // QMessageFilter
-                if (cmp == QMessageDataComparator::Includes) {
-                    // Not supported
-                } else { // Excludes
-                                        // Not supported
+            } else { // Excludes
+                if (filter._ids.isEmpty()) {
+                    retVal = true;
+                } if (!filter._ids.contains(messageFolder.id())) {
+                    retVal = true;
                 }
             }
         }

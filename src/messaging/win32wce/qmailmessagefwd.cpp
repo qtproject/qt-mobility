@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,6 @@
 
 /*!
     \class QMailMessageHeaderFieldFwd
-    \preliminary
     \brief The QMailMessageHeaderFieldFwd class declares enumerations used by QMailMessageHeaderField
    
     QMailMessageHeaderFieldFwd allows QMailMessageHeaderField::FieldType 
@@ -59,7 +58,6 @@
 
 /*!
     \class QMailMessageContentDispositionFwd
-    \preliminary
     \brief The QMailMessageContentDispositionFwd class declares enumerations used by QMailMessageContentDisposition
    
     QMailMessageContentDispositionFwd allows QMailMessageContentDisposition::DispositionType 
@@ -78,7 +76,6 @@
 
 /*!
     \class QMailMessageBodyFwd
-    \preliminary
     \brief The QMailMessageBodyFwd class declares enumerations used by QMailMessageBody
    
     QMailMessageBodyFwd allows QMailMessageBody::TransferEncoding and QMailMessageBody::EncodingStatus
@@ -122,7 +119,6 @@
 
 /*!
     \class QMailMessagePartContainerFwd
-    \preliminary
     \brief The QMailMessagePartContainerFwd class declares enumerations used by QMailMessagePartContainer
    
     QMailMessagePartContainerFwd allows QMailMessagePartContainerFwd::MultipartType
@@ -148,7 +144,6 @@
 
 /*!
     \class QMailMessagePartFwd 
-    \preliminary
     \brief The QMailMessagePartFwd class declares enumerations used by QMailMessagePart
    
     QMailMessagePartFwd allows QMailMessagePartFwd::ReferenceType
@@ -167,7 +162,6 @@
 
 /*!
     \class QMailMessageMetaDataFwd
-    \preliminary
     \brief The QMailMessageMetaDataFwd class declares enumerations used by QMailMessageMetaData
    
     QMailMessageMetaDataFwd allows QMailMessageMetaData::MessageType, QMailMessageMetaData::ContentType and QMailMessageMetaData::ResponseType
@@ -227,7 +221,6 @@
 
 /*!
     \class QMailMessageFwd
-    \preliminary
     \brief The QMailMessageFwd class declares enumerations used by QMailMessage
    
     QMailMessageFwd allows QMailMessage::AttachmentsAction and QMailMessage::EncodingFormat

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,15 +56,15 @@ class Q_CONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAccountUri;
-    const char* FieldServiceProvider;
-    const char* FieldCapabilities;
-    const char* FieldSubTypes;
-    const char* SubTypeSip;
-    const char* SubTypeSipVoip;
-    const char* SubTypeImpp;
-    const char* SubTypeVideoShare;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldAccountUri;
+    static const QLatin1Constant FieldServiceProvider;
+    static const QLatin1Constant FieldCapabilities;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant SubTypeSip;
+    static const QLatin1Constant SubTypeSipVoip;
+    static const QLatin1Constant SubTypeImpp;
+    static const QLatin1Constant SubTypeVideoShare;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -490,6 +490,7 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         return false;
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegQueryValueEx failed with error" << result;
+        *data = QVariant();
         if (createdHandle)
             removeHandle(handle);
         return false;
@@ -578,7 +579,12 @@ QSet<QString> RegistryLayer::children(Handle handle)
         DWORD subKeySize = MAX_KEY_LENGTH;
 
         result = RegEnumKeyEx(key, i, subKey, &subKeySize, 0, 0, 0, 0);
-        if (result == ERROR_NO_MORE_ITEMS)
+        if (result == ERROR_KEY_DELETED) {
+            QMetaObject::invokeMethod(this, "emitHandleChanged", Qt::QueuedConnection,
+                                      Q_ARG(void *, key));
+            break;
+        }
+        if (result != ERROR_SUCCESS)
             break;
 
         foundChildren << QString::fromWCharArray(subKey, subKeySize);
@@ -591,7 +597,12 @@ QSet<QString> RegistryLayer::children(Handle handle)
         DWORD valueNameSize = MAX_NAME_LENGTH;
 
         result = RegEnumValue(key, i, valueName, &valueNameSize, 0, 0, 0, 0);
-        if (result == ERROR_NO_MORE_ITEMS)
+        if (result == ERROR_KEY_DELETED) {
+            QMetaObject::invokeMethod(this, "emitHandleChanged", Qt::QueuedConnection,
+                                      Q_ARG(void *, key));
+            break;
+        }
+        if (result != ERROR_SUCCESS)
             break;
 
         foundChildren << QString::fromWCharArray(valueName, valueNameSize);

@@ -56,8 +56,8 @@ class Q_CONTACTS_EXPORT QContactTag : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldTag;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTag;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
     Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");

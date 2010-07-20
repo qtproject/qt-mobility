@@ -34,7 +34,7 @@ symbian {
 
     DEPENDPATH += psmapperserver_symbian
     INCLUDEPATH += psmapperserver_symbian \
-               $${EPOCROOT}epoc32\include\platform
+               $${EPOCROOT}epoc32/include/platform
 
     HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian_p.h
@@ -47,7 +47,7 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
-    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll PSPathMapperServer.exe
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll qpspathmapperserver.exe
     QtPublishSubscribeDeployment.path = /sys/bin
     DEPLOYMENT += QtPublishSubscribeDeployment
 }

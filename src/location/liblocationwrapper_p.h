@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,7 @@
 #include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
 
-#include "gconfitem.h"
+#include "gconfitem_p.h"
 
 extern "C" {
    #include <glib.h>
@@ -74,8 +74,6 @@ public:
     void stop();
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     bool inited();
-    QGeoPositionInfo position();
-    bool fixIsValid();
     bool isActive();
     QList<QGeoSatelliteInfo> satellitesInView();
     QList<QGeoSatelliteInfo> satellitesInUse();
@@ -96,6 +94,7 @@ private:
     QGeoPositionInfo lastSatUpdate;
     bool validLastUpdate;
     bool validLastSatUpdate;
+    bool fromSatellite;
 
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
@@ -112,8 +111,9 @@ private:
     };
     int locationState;
 
-private slots:
-    void setLocation(const QGeoPositionInfo &update, bool location3D);
+signals:
+    void positionUpdated(const QGeoPositionInfo &position);
+    void error();
 };
 
 QTM_END_NAMESPACE

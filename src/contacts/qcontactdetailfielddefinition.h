@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -66,18 +66,17 @@ public:
     QVariantList allowableValues() const;
     void setAllowableValues(const QVariantList values);
 
-    /* Access constraint stuff to be removed wk 3 */
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly
-    };
-
     bool operator==(const QContactDetailFieldDefinition& other) const;
     bool operator!=(const QContactDetailFieldDefinition& other) const;
 
 private:
     QSharedDataPointer<QContactDetailFieldDefinitionPrivate> d;
 };
+
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetailFieldDefinition& definition);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetailFieldDefinition& definition);
+#endif
 
 QTM_END_NAMESPACE
 

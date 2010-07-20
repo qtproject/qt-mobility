@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,17 @@
 #ifndef QGEOPOSITIONINFOSOURCEMAEMO5_H
 #define QGEOPOSITIONINFOSOURCEMAEMO5_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QTimer>
 #include "qgeopositioninfosource.h"
 
@@ -67,45 +78,47 @@ public:
     int init();
 
     virtual void setUpdateInterval(int interval);
-    virtual void setPreferredPositioningMethods(PositioningMethods sources);
+    virtual void setPreferredPositioningMethods(PositioningMethods methods);
     virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;
 
 private:
-    PositioningMethods availableMethods;
     bool positionInited;
     QTimer *updateTimer;
     QTimer *requestTimer;
     int timerInterval;
+    bool errorOccurred;
+    bool errorSent;
+
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
-    int lowSignalLevelCount;
-    
+
     enum PositionInfoState {
         Undefined = 0,
         Started = 1,
         Stopped = 2,
         RequestActive = 4,
-        RequestSingleShot = 8,
-        PowersaveActive = 16,
-        TogglePowersave = 32,
-        SignalLevelLow = 64,        
+        PowersaveActive = 8
     };
     int positionInfoState;
     
+    QGeoPositionInfo lastUpdateFromSatellite;
+    QGeoPositionInfo lastUpdateFromNetwork;
+
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
-    
+
 public slots:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
-    void newPositionUpdate();
 
 private slots:
     void requestTimeoutElapsed();
+    void error();
+    void newPositionUpdate(const QGeoPositionInfo &position);
+    void updateTimeoutElapsed();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)

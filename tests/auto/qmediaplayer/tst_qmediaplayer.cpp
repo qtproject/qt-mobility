@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,8 +49,9 @@
 #include <qmediaservice.h>
 #include <qmediastreamscontrol.h>
 
+//TESTED_COMPONENT=src/multimedia
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class AutoConnection
 {
 public:
@@ -155,9 +156,9 @@ public:
     StreamType streamType(int index) { return _streams.at(index).type; }
     void setStreamType(int index, StreamType type) { _streams[index].type = type; }
 
-    QVariant metaData(int index, QtMedia::MetaData key) {
+    QVariant metaData(int index, QtMultimediaKit::MetaData key) {
         return _streams.at(index).metaData.value(key); }
-    void setMetaData(int index, QtMedia::MetaData key, const QVariant &value) {
+    void setMetaData(int index, QtMultimediaKit::MetaData key, const QVariant &value) {
         _streams[index].metaData.insert(key, value); }
 
     bool isActive(int index) { return _streams.at(index).active; }
@@ -168,7 +169,7 @@ private:
     {
         Stream() : type(UnknownStream), active(false) {}
         StreamType type;
-        QMap<QtMedia::MetaData, QVariant> metaData;
+        QMap<QtMultimediaKit::MetaData, QVariant> metaData;
         bool active;
     };
 
@@ -192,12 +193,16 @@ public:
         delete mockStreamsControl;
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
             return mockControl;
 
         return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
     }
 
     void setState(QMediaPlayer::State state) { emit mockControl->stateChanged(mockControl->_state = state); }
@@ -277,6 +282,7 @@ private slots:
     void testPosition();
     void testVolume();
     void testMuted();
+    void testIsAvailable();
     void testVideoAvailable();
     void testBufferStatus();
     void testSeekable();
@@ -382,6 +388,8 @@ void tst_QMediaPlayer::testNullService()
     QCOMPARE(player.isSeekable(), false);
     QCOMPARE(player.playbackRate(), qreal(0));
     QCOMPARE(player.error(), QMediaPlayer::ServiceMissingError);
+    QCOMPARE(player.isAvailable(), false);
+    QCOMPARE(player.availabilityError(), QtMultimediaKit::ServiceMissingError);
 
     {
         QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -446,7 +454,7 @@ void tst_QMediaPlayer::testNullService()
         QCOMPARE(spy.count(), 0);
     } {
         QMediaPlaylist playlist;
-        playlist.setMediaObject(&player);
+        player.setPlaylist(&playlist);
 
         QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
         QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -659,8 +667,14 @@ void tst_QMediaPlayer::testErrorString()
     QVERIFY(player->errorString() == errorString);
 }
 
-void tst_QMediaPlayer::testService()
+void tst_QMediaPlayer::testIsAvailable()
 {
+    QCOMPARE(player->isAvailable(), true);
+    QCOMPARE(player->availabilityError(), QtMultimediaKit::NoError);
+}
+
+void tst_QMediaPlayer::testService()
+{    
     /*
     QFETCH_GLOBAL(bool, valid);
 
@@ -772,10 +786,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::LoadingMedia);
     QCOMPARE(statusSpy.count(), 1);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::LoadingMedia);
 
@@ -783,10 +793,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::LoadedMedia);
     QCOMPARE(statusSpy.count(), 2);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::LoadedMedia);
 
@@ -798,10 +804,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::StalledMedia);
     QCOMPARE(statusSpy.count(), 3);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::StalledMedia);
 
@@ -815,10 +817,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::BufferingMedia);
     QCOMPARE(statusSpy.count(), 4);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::BufferingMedia);
 
@@ -832,10 +830,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::BufferedMedia);
     QCOMPARE(statusSpy.count(), 5);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::BufferedMedia);
 
@@ -847,10 +841,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::EndOfMedia);
     QCOMPARE(statusSpy.count(), 6);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::EndOfMedia);
 }
@@ -867,7 +857,7 @@ void tst_QMediaPlayer::testPlaylist()
     mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
 
     QMediaPlaylist *playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
+    player->setPlaylist(playlist);
 
     QSignalSpy stateSpy(player, SIGNAL(stateChanged(QMediaPlayer::State)));
     QSignalSpy mediaSpy(player, SIGNAL(mediaChanged(QMediaContent)));
@@ -1008,8 +998,7 @@ void tst_QMediaPlayer::testPlaylist()
 
     // Test the player can bind to playlist again
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
-    QCOMPARE(playlist->mediaObject(), qobject_cast<QMediaObject*>(player));
+    player->setPlaylist(playlist);
 
     QCOMPARE(player->media(), QMediaContent());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
@@ -1032,14 +1021,27 @@ void tst_QMediaPlayer::testPlaylist()
     playlist2->setCurrentIndex(2);
 
     player->play();
-    playlist2->setMediaObject(player);
-    QCOMPARE(playlist2->mediaObject(), qobject_cast<QMediaObject*>(player));
-    QVERIFY(playlist->mediaObject() == 0);
+    player->setPlaylist(playlist2);
     QCOMPARE(player->media(), playlist2->currentMedia());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
 
     playlist2->setCurrentIndex(1);
     QCOMPARE(player->media(), playlist2->currentMedia());
+
+    {
+        QMediaPlaylist playlist;
+        playlist.addMedia(content1);
+        playlist.addMedia(content2);
+        playlist.addMedia(content3);
+        playlist.setCurrentIndex(1);
+
+        player->setPlaylist(&playlist);
+        QCOMPARE(player->playlist(), &playlist);
+        QCOMPARE(player->media(), content2);
+    } //playlist should be detached now
+
+    QVERIFY(player->playlist() == 0);
+    QCOMPARE(player->media(), QMediaContent());
 }
 
 QTEST_MAIN(tst_QMediaPlayer)

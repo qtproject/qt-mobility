@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -135,6 +135,7 @@ public:
     /* URI reporting */
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
+    /*! \reimp */
     int managerVersion() const {return 1;}
 
     virtual QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
@@ -144,13 +145,13 @@ public:
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
-    /* Return a pruned or modified contact which is valid and can be saved in the backend */
-    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error)
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const
     {
         return QContactManagerEngine::compatibleContact(original, error);
     }
 
-    /* Synthesize the display label of a contact */
+    /*! \reimp */
     virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
     {
         return QContactManagerEngine::synthesizedDisplayLabel(contact, error);
@@ -165,11 +166,12 @@ public:
     virtual bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
-    /* Validation for saving */
+    /*! \reimp */
     virtual bool validateContact(const QContact& contact, QContactManager::Error* error) const
     {
         return QContactManagerEngine::validateContact(contact, error);
     }
+    /*! \reimp */
     virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const
     {
         return QContactManagerEngine::validateDefinition(def, error);
@@ -177,6 +179,7 @@ public:
 
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
+    /*! \reimp */
     virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const
     {
         return QContactManagerEngine::detailDefinition(definitionId, contactType, error);
@@ -195,6 +198,7 @@ public:
     virtual bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const;
     virtual bool isFilterSupported(const QContactFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
+    /*! \reimp */
     virtual QStringList supportedContactTypes() const
     {
         return QContactManagerEngine::supportedContactTypes();

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -76,7 +76,6 @@ public:
         m_id(other.m_id),
         m_details(other.m_details),
         m_relationshipsCache(other.m_relationshipsCache),
-        m_reorderedRelationshipsCache(other.m_reorderedRelationshipsCache),
         m_preferences(other.m_preferences)
     {
     }
@@ -86,7 +85,6 @@ public:
     QContactId m_id;
     QList<QContactDetail> m_details;
     QList<QContactRelationship> m_relationshipsCache;
-    QList<QContactRelationship> m_reorderedRelationshipsCache;
     QMap<QString, int> m_preferences;
 };
 

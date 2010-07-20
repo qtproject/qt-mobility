@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,10 +43,10 @@
 
 #include <QtCore>
 #include <QObject>
-#include "qserviceplugininterface.h"
-#include "qserviceinterfacedescriptor.h"
-#include "qservicecontext.h"
-#include "qabstractsecuritysession.h"
+#include "../../src/serviceframework/qserviceplugininterface.h"
+#include "../../src/serviceframework/qserviceinterfacedescriptor.h"
+#include "../../src/serviceframework/qservicecontext.h"
+#include "../../src/serviceframework/qabstractsecuritysession.h"
 
 QTM_USE_NAMESPACE
 

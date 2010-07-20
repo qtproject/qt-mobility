@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAbstractSecuritySession
+    \inmodule QtServiceFramework
     \ingroup servicefw
     \brief The QAbstractSecuritySession class provides a generic mechanism to enable
     permission checks for services.
@@ -78,7 +79,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constrcuts an abstract item model with the given \a parent.
+    Constructs an abstract security session with the given \a parent.
 */
 QAbstractSecuritySession::QAbstractSecuritySession(QObject* parent)
     : QObject(parent)

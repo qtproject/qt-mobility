@@ -102,7 +102,7 @@ symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = CAP_GENERAL_DLL
     TARGET.UID3 = 0x2002AC7A
 
     LIBS += -lefsrv
@@ -110,7 +110,7 @@ symbian {
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
-    CONTACTS_DEPLOYMENT.path = \sys\bin
+    CONTACTS_DEPLOYMENT.path = /sys/bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 

@@ -3,18 +3,19 @@ TEMPLATE = subdirs
 include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+    SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext \
-           icheck
+           qmetaobjectbuilder \
+           icheck \
+           qservicemanager_ipc \
+           qremoteserviceclassregister \
+           servicedatabase
+         # databasemanager # disabled from auto builds
 
-# servicedatabase is not compiled into the serviceframework library on symbian,
-# special handling is needed
-    !symbian:SUBDIRS+=servicedatabase
 }
 
 contains(mobility_modules,bearer) {
@@ -25,19 +26,33 @@ contains(mobility_modules,bearer) {
 
 contains(mobility_modules,location) {
     SUBDIRS += qgeocoordinate \                 #Location
+          qgeoboundingbox \
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource
+          qnmeapositioninfosource \
+          #qlandmarkmanagerplugins \
+          qlandmarkmanagerengine
 
+     contains(QT_CONFIG, declarative) {
+         SUBDIRS += qdeclarativeposition
+     }
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
+
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
+contains(mobility_modules,landmarks) {
+    SUBDIRS += qlandmark \                      #Landmark
+            qlandmarkcategory
+}
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
@@ -66,6 +81,10 @@ contains(mobility_modules,systeminfo) {
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+    maemo6: {
+          #maemo6 spesific autotests
+          SUBDIRS += maemo6
+    }
 }
 
 contains(mobility_modules,contacts) {
@@ -80,7 +99,15 @@ contains(mobility_modules,contacts) {
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
-            qcontactrelationship
+            qcontactrelationship \
+            qlatin1constant
+    # This needs glibc:
+    linux*: SUBDIRS += qcontactmemusage
+}
+
+contains(mobility_modules,organizer) {
+    # Organizer
+    SUBDIRS += qorganizeritemmanager
 }
 
 contains(mobility_modules,versit) {
@@ -92,14 +119,21 @@ contains(mobility_modules,versit) {
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
+            qversitorganizerexporter \
+            qversitorganizerimporter \
             qversitproperty \
             qversitreader \
-            qversitutils \
             qversitwriter
 }
 
+contains(mobility_modules,telephony) {
+    # TODO change this when other backends are developed
+    linux-*: SUBDIRS += qtelephony
+}
+
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \
@@ -114,9 +148,16 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qcamera \
         qpaintervideosurface \
         qvideowidget \
-        qmediatimerange
+        qmediatimerange \
+        qaudiodeviceinfo \
+        qaudiooutput \
+        qaudioinput \
+        qaudioformat \
+        qvideoframe \
+        qvideosurfaceformat
 
     symbian: {
         #symbian spesific autotests
@@ -138,3 +179,33 @@ contains(mobility_modules,messaging) {
         qmessageservice
     }
 }
+
+# Sensors
+contains(mobility_modules,sensors) {
+    SUBDIRS += qsensor
+}
+
+#Document Gallery
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        qdocumentgallery \
+        qgalleryabstractrequest \
+        qgalleryabstractresponse \
+        qgallerybaseresponse \
+        qgallerycountrequest \
+        qgalleryitemlist \
+        qgalleryitemlistmodel \
+        qgalleryitemrequest \
+        qgalleryqueryrequest \
+        qgalleryremoverequest \
+        qgalleryresource \
+        qgalleryurlrequest
+
+    !unix: SUBDIRS += qgalleryfilter
+
+    unix: contains(QT_CONFIG, dbus) {
+        SUBDIRS += \
+                qgallerytrackeritemlist_maemo5
+    }
+}
+

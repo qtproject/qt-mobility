@@ -1,10 +1,12 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(gstengine)
+TARGET = $$qtLibraryTarget(qgstengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../../common.pri)
-INCLUDEPATH+=../../../src/multimedia
+INCLUDEPATH+=../../../src/multimedia \
+             ../../../src/multimedia/video \
+             ../../../src/multimedia/audio
 
 CONFIG += mobility
 MOBILITY = multimedia
@@ -26,52 +28,53 @@ PKGCONFIG += \
     gstreamer-audio-0.10 \
     gstreamer-video-0.10
 
+maemo* {
+  PKGCONFIG +=gstreamer-plugins-bad-0.10
+}
+
 # Input
 HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
-    qgstreamervideooutputcontrol.h \
     qgstreamervideorendererinterface.h \
-    qgstreamervideowidget.h \
     qgstreamerserviceplugin.h \
     qgstreameraudioinputendpointselector.h \
+    qgstreamervideorenderer.h \
+    qgstvideobuffer.h \
+    qvideosurfacegstsink.h \
     qgstreamervideoinputdevicecontrol.h
 
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
-    qgstreamervideooutputcontrol.cpp \
     qgstreamervideorendererinterface.cpp \
-    qgstreamervideowidget.cpp \
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputendpointselector.cpp \
+    qgstreamervideorenderer.cpp \
+    qgstvideobuffer.cpp \
+    qvideosurfacegstsink.cpp \
     qgstreamervideoinputdevicecontrol.cpp
 
-contains(QT_CONFIG, multimedia) {
-    QT += multimedia
 
-    SOURCES += \
-        qgstreamervideooverlay.cpp \
-        qgstreamervideorenderer.cpp \
-        qgstvideobuffer.cpp \
-        qvideosurfacegstsink.cpp \
-        qx11videosurface.cpp \
-        qgstxvimagebuffer.cpp
+!win32:!embedded:!mac:!symbian {
+    LIBS += -lXv -lX11 -lXext
 
     HEADERS += \
         qgstreamervideooverlay.h \
-        qgstreamervideorenderer.h \
-        qgstvideobuffer.h \
-        qvideosurfacegstsink.h \
+        qgstreamervideowidget.h \
         qx11videosurface.h \
         qgstxvimagebuffer.h
 
-
-    LIBS += -lXv
+    SOURCES += \
+        qgstreamervideooverlay.cpp \
+        qgstreamervideowidget.cpp \
+        qx11videosurface.cpp \
+        qgstxvimagebuffer.cpp
 }
-
 include(mediaplayer/mediaplayer.pri)
 include(mediacapture/mediacapture.pri)
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target
+contains(gstreamer-photography_enabled, yes) {
+    include(camerabin/camerabin.pri)
+}
+

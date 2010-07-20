@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactFetchHint
+  
+  \inmodule QtContacts
+  
   \brief The QContactFetchHint class provides hints to the manager about which contact
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
@@ -70,6 +73,19 @@ QTM_BEGIN_NAMESPACE
   using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
   replace the previously saved contact in the backend).
+ */
+
+/*!
+  \enum QContactFetchHint::OptimizationHint
+
+  This enum defines flags which may be set to inform the backend that the client does
+  not require certain information.  The backend may safely ignore the hint, but then
+  must return the full set of information relating to the optimization hint.
+
+  \value AllRequired Tells the backend that all information is required
+  \value NoRelationships Tells the backend that the client does not require retrieved contacts to include a cache of relationships
+  \value NoActionPreferences Tells the backend that the client does not require retrieved contacts to include a cache of action preferences
+  \value NoBinaryBlobs Tells the backend that the client does not require retrieved contacts to include binary blobs such as thumbnail images
  */
 
 /*!
@@ -181,5 +197,36 @@ void QContactFetchHint::setOptimizationHints(OptimizationHints hints)
 {
     d->m_optimizationHints = hints;
 }
+
+#ifndef QT_NO_DATASTREAM
+QDataStream& operator<<(QDataStream& out, const QContactFetchHint& hint)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactFetchHint
+    return out << formatVersion
+               << hint.detailDefinitionsHint()
+               << hint.relationshipTypesHint()
+               << static_cast<quint32>(hint.optimizationHints());
+}
+
+QDataStream& operator>>(QDataStream& in, QContactFetchHint& hint)
+{
+    hint = QContactFetchHint();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QStringList detailDefinitionHints;
+        QStringList relationshipTypeHints;
+        quint32 optimizations;
+        in >> detailDefinitionHints >> relationshipTypeHints >> optimizations;
+        hint.setDetailDefinitionsHint(detailDefinitionHints);
+        hint.setRelationshipTypesHint(relationshipTypeHints);
+        hint.setOptimizationHints(QContactFetchHint::OptimizationHints(optimizations));
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+
+#endif
 
 QTM_END_NAMESPACE

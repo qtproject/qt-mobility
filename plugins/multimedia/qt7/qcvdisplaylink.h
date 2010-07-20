@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,9 +47,9 @@
 
 #include <qmobilityglobal.h>
 
-#include <CoreVideo/CVDisplayLink.h>
+#include <QuartzCore/CVDisplayLink.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QCvDisplayLink : public QObject
 {
@@ -82,7 +82,7 @@ private:
     CVTimeStamp m_frameTimeStamp;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
 

@@ -1,24 +1,27 @@
+TARGET = bearermonitor
+QT = core gui network
+
+INCLUDEPATH += ../../src/bearer
+include(../examples.pri)
+
+CONFIG += mobility
+MOBILITY = bearer
+
 HEADERS = sessionwidget.h \
           bearermonitor.h
 
 SOURCES = main.cpp \
           bearermonitor.cpp \
           sessionwidget.cpp
-          
-FORMS = bearermonitor_240_320.ui \
-        bearermonitor_640_480.ui \
-        sessionwidget.ui
 
-TARGET = bearermonitor
-
-QT = core gui network
-
-INCLUDEPATH += ../../src/bearer
-
-include(../examples.pri)
-
-CONFIG += mobility
-MOBILITY = bearer
+maemo5|maemo6 {
+  FORMS = bearermonitor_maemo.ui \
+          sessionwidget_maemo.ui
+} else {
+  FORMS = bearermonitor_240_320.ui \
+          bearermonitor_640_480.ui \
+          sessionwidget.ui
+}
 
 win32:!wince*:LIBS += -lWs2_32
 wince*:LIBS += -lWs2

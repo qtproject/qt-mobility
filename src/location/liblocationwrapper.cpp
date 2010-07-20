@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,18 +41,20 @@
 
 #include "liblocationwrapper_p.h"
 
+#include <QDateTime>
+
 using namespace std;
 
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(LiblocationWrapper, LocationEngine)
-        
+
 LiblocationWrapper *LiblocationWrapper::instance()
 {
     return LocationEngine();
 }
 
-LiblocationWrapper::~LiblocationWrapper() 
+LiblocationWrapper::~LiblocationWrapper()
 {
     if (locationDevice)
         g_object_unref(locationDevice);
@@ -73,18 +75,18 @@ bool LiblocationWrapper::inited()
                          "preferred-method", LOCATION_METHOD_USER_SELECTED,
                          "preferred-interval", LOCATION_INTERVAL_1S,
                          NULL);
-            locationDevice = 
-                    (LocationGPSDevice*)g_object_new(LOCATION_TYPE_GPS_DEVICE, 
-                                                     NULL);
-        
+            locationDevice =
+                (LocationGPSDevice*)g_object_new(LOCATION_TYPE_GPS_DEVICE,
+                                                 NULL);
+
             if (locationDevice) {
                 errorHandlerId =
                     g_signal_connect(G_OBJECT(locationControl), "error-verbose",
-                                     G_CALLBACK(&locationError), 
+                                     G_CALLBACK(&locationError),
                                      static_cast<void*>(this));
                 posChangedId =
                     g_signal_connect(G_OBJECT(locationDevice), "changed",
-                                     G_CALLBACK(&locationChanged), 
+                                     G_CALLBACK(&locationChanged),
                                      static_cast<void*>(this));
                 locationState = LiblocationWrapper::Inited;
                 retval = true;
@@ -101,58 +103,61 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
                                        gint errorCode, gpointer data)
 {
     Q_UNUSED(device);
-    Q_UNUSED(data);
     QString locationError;
 
     switch (errorCode) {
-    case LOCATION_ERROR_USER_REJECTED_DIALOG:
-        locationError = "User didn't enable requested methods";
-        break;
-    case LOCATION_ERROR_USER_REJECTED_SETTINGS:
-        locationError = "User changed settings, which disabled location.";
-        break;
-    case LOCATION_ERROR_BT_GPS_NOT_AVAILABLE:
-        locationError = "Problems with BT GPS";
-        break;
-    case LOCATION_ERROR_METHOD_NOT_ALLOWED_IN_OFFLINE_MODE:
-        locationError = "Requested method is not allowed in offline mode";
-        break;
-    case LOCATION_ERROR_SYSTEM:
-        locationError = "System error.";
-        break;
-    default:
-        locationError = "Unknown error.";
+        case LOCATION_ERROR_USER_REJECTED_DIALOG:
+            locationError = "User didn't enable requested methods";
+            break;
+        case LOCATION_ERROR_USER_REJECTED_SETTINGS:
+            locationError = "User changed settings, which disabled location.";
+            break;
+        case LOCATION_ERROR_BT_GPS_NOT_AVAILABLE:
+            locationError = "Problems with BT GPS";
+            break;
+        case LOCATION_ERROR_METHOD_NOT_ALLOWED_IN_OFFLINE_MODE:
+            locationError = "Requested method is not allowed in offline mode";
+            break;
+        case LOCATION_ERROR_SYSTEM:
+            locationError = "System error.";
+            break;
+        default:
+            locationError = "Unknown error.";
     }
 
     qDebug() << "Location error:" << locationError;
+
+    LiblocationWrapper *object;
+    object = (LiblocationWrapper *)data;
+    emit object->error();
 }
 
 void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
-                                                 gpointer data)
+        gpointer data)
 {
     QGeoPositionInfo posInfo;
     QGeoCoordinate coordinate;
     QGeoSatelliteInfo satInfo;
     int satellitesInUseCount = 0;
     LiblocationWrapper *object;
-    
+
     if (!data || !device) {
         return;
     }
-    
+
     object = (LiblocationWrapper *)data;
 
     if (device) {
         if (device->fix) {
             if (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) {
-                posInfo.setDateTime(QDateTime::fromTime_t(device->fix->time));
+                posInfo.setTimestamp(QDateTime::fromTime_t(device->fix->time));
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_LATLONG_SET) {
                 coordinate.setLatitude(device->fix->latitude);
                 coordinate.setLongitude(device->fix->longitude);
                 posInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy,
-                                     device->fix->eph);
+                                     device->fix->eph / 100.0);
                 posInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy,
                                      device->fix->epv);
             }
@@ -163,79 +168,53 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_SPEED_SET) {
                 posInfo.setAttribute(QGeoPositionInfo::GroundSpeed,
-                                     device->fix->speed);
+                                     device->fix->speed / 3.6);
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_CLIMB_SET) {
                 posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed,
                                      device->fix->climb);
             }
-  
+
             if (device->fix->fields & LOCATION_GPS_DEVICE_TRACK_SET) {
                 posInfo.setAttribute(QGeoPositionInfo::Direction,
                                      device->fix->track);
             }
         }
-        
+
         if (device->satellites_in_view) {
             QList<QGeoSatelliteInfo> satsInView;
             QList<QGeoSatelliteInfo> satsInUse;
             unsigned int i;
-            for (i=0;i<device->satellites->len;i++) {
+            for (i = 0;i < device->satellites->len;i++) {
                 LocationGPSDeviceSatellite *satData =
                     (LocationGPSDeviceSatellite *)g_ptr_array_index(device->satellites,
-                                                                    i);
+                            i);
                 satInfo.setSignalStrength(satData->signal_strength);
                 satInfo.setPrnNumber(satData->prn);
-                satInfo.setAttribute(QGeoSatelliteInfo::Elevation, 
+                satInfo.setAttribute(QGeoSatelliteInfo::Elevation,
                                      satData->elevation);
-                satInfo.setAttribute(QGeoSatelliteInfo::Azimuth, 
+                satInfo.setAttribute(QGeoSatelliteInfo::Azimuth,
                                      satData->azimuth);
-    
+
                 satsInView.append(satInfo);
                 if (satData->in_use) {
                     satellitesInUseCount++;
                     satsInUse.append(satInfo);
                 }
             }
-            
+
             if (!satsInView.isEmpty())
                 object->satellitesInViewUpdated(satsInView);
-            
+
             if (!satsInUse.isEmpty())
                 object->satellitesInUseUpdated(satsInUse);
-        }        
+        }
     }
-       
+
     posInfo.setCoordinate(coordinate);
 
-    // Only position updates with time (3D) are provided.
-    if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
-        ((satellitesInUseCount >= 3) && 
-         (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))){
-        object->setLocation(posInfo, true);
-    } else {
-        object->setLocation(posInfo, false);
-    }
-}
-
-void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
-                                     bool location3D)
-{
-    if (!location3D)
-        validLastSatUpdate = false;
-    else
-        validLastSatUpdate = true;
-    lastSatUpdate = update;
-}
-
-QGeoPositionInfo LiblocationWrapper::position() {
-    return lastSatUpdate;
-}
-
-bool LiblocationWrapper::fixIsValid()
-{
-    return validLastSatUpdate;
+    emit object->positionUpdated(posInfo);
 }
 
 QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -249,7 +228,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
     double speed;
     double track;
     double climb;
-    
+
     GConfItem lastKnownPositionTime("/system/nokia/location/lastknown/time");
     GConfItem lastKnownPositionLatitude("/system/nokia/location/lastknown/latitude");
     GConfItem lastKnownPositionLongitude("/system/nokia/location/lastknown/longitude");
@@ -257,14 +236,14 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
     GConfItem lastKnownPositionSpeed("/system/nokia/location/lastknown/speed");
     GConfItem lastKnownPositionTrack("/system/nokia/location/lastknown/track");
     GConfItem lastKnownPositionClimb("/system/nokia/location/lastknown/climb");
-    
+
     if (validLastSatUpdate)
         return lastSatUpdate;
 
     if (!fromSatellitePositioningMethodsOnly)
         if (validLastUpdate)
             return lastUpdate;
-    
+
     time = lastKnownPositionTime.value().toDouble();
     latitude = lastKnownPositionLatitude.value().toDouble();
     longitude = lastKnownPositionLongitude.value().toDouble();
@@ -272,7 +251,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
     speed = lastKnownPositionSpeed.value().toDouble();
     track = lastKnownPositionTrack.value().toDouble();
     climb = lastKnownPositionClimb.value().toDouble();
-        
+
     if (longitude && latitude) {
         coordinate.setLongitude(longitude);
         coordinate.setLatitude(latitude);
@@ -281,22 +260,22 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
         }
         posInfo.setCoordinate(coordinate);
     }
-        
+
     if (speed) {
         posInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
     }
-    
+
     if (track) {
         posInfo.setAttribute(QGeoPositionInfo::Direction, track);
     }
-    
+
     if (climb) {
-        posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed, climb);        
+        posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed, climb);
     }
 
     // Only positions with time (3D) are provided.
     if (time) {
-        posInfo.setDateTime(QDateTime::fromTime_t(time));
+        posInfo.setTimestamp(QDateTime::fromTime_t(time));
         return posInfo;
     }
 
@@ -327,23 +306,23 @@ void LiblocationWrapper::start() {
     startcounter++;
 
     if ((locationState & LiblocationWrapper::Inited) &&
-        !(locationState & LiblocationWrapper::Started)) {
+            !(locationState & LiblocationWrapper::Started)) {
         if (!errorHandlerId) {
             errorHandlerId =
                 g_signal_connect(G_OBJECT(locationControl), "error-verbose",
-                                 G_CALLBACK(&locationError), 
+                                 G_CALLBACK(&locationError),
                                  static_cast<void*>(this));
         }
 
         if (!posChangedId) {
             posChangedId =
                 g_signal_connect(G_OBJECT(locationDevice), "changed",
-                                 G_CALLBACK(&locationChanged), 
+                                 G_CALLBACK(&locationChanged),
                                  static_cast<void*>(this));
         }
 
         location_gpsd_control_start(locationControl);
-        
+
         locationState |= LiblocationWrapper::Started;
         locationState &= ~LiblocationWrapper::Stopped;
     }
@@ -357,12 +336,12 @@ void LiblocationWrapper::stop() {
     
     if ((locationState & (LiblocationWrapper::Started |
                           LiblocationWrapper::Inited)) &&
-        !(locationState & LiblocationWrapper::Stopped)) {
+            !(locationState & LiblocationWrapper::Stopped)) {
         if (errorHandlerId)
-            g_signal_handler_disconnect(G_OBJECT(locationControl), 
+            g_signal_handler_disconnect(G_OBJECT(locationControl),
                                         errorHandlerId);
         if (posChangedId)
-            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
+            g_signal_handler_disconnect(G_OBJECT(locationDevice),
                                         posChangedId);
         errorHandlerId = 0;
         posChangedId = 0;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,18 +55,22 @@ class s60SensorApiSensorPlugin : public QObject, public QSensorPluginInterface, 
 public:
     void registerSensors()
     {
+#if !defined(HAS_NO_SENSOR_PROVISION)
         QSensorManager::registerBackend(QAccelerometer::type, QS60SensorApiAccelerometer::id, this);
+#endif
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
+#if !defined(HAS_NO_SENSOR_PROVISION)
         if (sensor->identifier() == QS60SensorApiAccelerometer::id)
             return new QS60SensorApiAccelerometer(sensor);
+#endif
 
         return 0;
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_s60SensorApi, s60SensorApiSensorPlugin)
+Q_EXPORT_PLUGIN2(qtsensors_s60sensorapi, s60SensorApiSensorPlugin)
 
 #include "main.moc"

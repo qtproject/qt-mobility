@@ -22,18 +22,11 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_servicedatabase.cpp \
             
+CONFIG+=testcase
 CONFIG += mobility
 MOBILITY = serviceframework
 
 symbian {
-    libBlock = \
-        "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY SFWDatabaseManagerServer.lib" \
-        "$${LITERAL_HASH}endif"
-	DEFINES += QT_NODLL
-    MMP_RULES += libBlock
-    SOURCES += servicedatabase.cpp
-    HEADERS += servicedatabase_p.h
     TARGET.CAPABILITY = ALL -TCB
 }
 

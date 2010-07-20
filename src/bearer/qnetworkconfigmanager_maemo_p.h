@@ -61,7 +61,6 @@
 
 #include "qnetworkconfigmanager.h"
 #include "qnetworkconfiguration_maemo_p.h"
-#include "qnetworksession_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 

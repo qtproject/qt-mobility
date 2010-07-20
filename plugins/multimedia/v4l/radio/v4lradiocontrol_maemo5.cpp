@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,6 +51,39 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#define HEADPHONE_STATE_FILE "/sys/devices/platform/gpio-switch/headphone/state"
+#define HEADPHONE_CONNECTED_STATE "connected"
+#define HEADPHONE_DISCONNECTED_STATE "disconnected"
+
+#define FMRXENABLER_DBUS_SERVICE "de.pycage.FMRXEnabler"
+#define FMRXENABLER_DBUS_OBJ_PATH "/de/pycage/FMRXEnabler"
+#define FMRXENABLER_DBUS_IFACE_NAME "de.pycage.FMRXEnabler"
+
+gboolean
+state_file_changed(GIOChannel* source, GIOCondition /*condition*/, gpointer data)
+{
+    V4LRadioControl* radioControl = (V4LRadioControl*)data;
+    gchar* result;
+
+    g_io_channel_seek_position(source, 0, G_SEEK_SET, NULL);
+    g_io_channel_read_line(source, &result, NULL, NULL, NULL);
+    g_strstrip(result);
+
+    if (g_ascii_strcasecmp(result, HEADPHONE_DISCONNECTED_STATE) == 0) {
+        radioControl->enablePipeline(false);
+    } else if (g_ascii_strcasecmp(result, HEADPHONE_CONNECTED_STATE) == 0) {
+        // Wait 400ms until audio is routed again to headphone to prevent sound coming from speakers
+        QTimer::singleShot(400,radioControl,SLOT(enablePipeline()));
+    }
+
+#ifdef MULTIMEDIA_MAEMO_DEBUG
+    qDebug() << "Headphone is now" << result;
+#endif
+
+    g_free(result);
+    return true;
+}
+
 V4LRadioControl::V4LRadioControl(QObject *parent)
     : QRadioTunerControl(parent)
     , fd(1)
@@ -64,14 +97,26 @@ V4LRadioControl::V4LRadioControl(QObject *parent)
     , pipeline(0)
 {
     if (QDBusConnection::systemBus().isConnected()) {
-        FMRXEnablerIFace = new QDBusInterface("de.pycage.FMRXEnabler",
-                                             "/de/pycage/FMRXEnabler",
-                                             "de.pycage.FMRXEnabler",
-                                             QDBusConnection::systemBus());
+        FMRXEnablerIFace = new QDBusInterface(FMRXENABLER_DBUS_SERVICE,
+                                              FMRXENABLER_DBUS_OBJ_PATH,
+                                              FMRXENABLER_DBUS_IFACE_NAME,
+                                              QDBusConnection::systemBus());
+    }
+
+    createGstPipeline();
+
+    GIOChannel* headphoneStateFile = NULL;
+    headphoneStateFile = g_io_channel_new_file(HEADPHONE_STATE_FILE, "r", NULL);
+    if (headphoneStateFile != NULL) {
+        g_io_add_watch(headphoneStateFile, G_IO_PRI, state_file_changed, this);
+    } else {
+#ifdef MULTIMEDIA_MAEMO_DEBUG
+        qWarning() << QString("File %1 can't be read!").arg(HEADPHONE_STATE_FILE) ;
+        qWarning() << "Monitoring headphone state isn't possible!";
+#endif
     }
 
     enableFMRX();
-    createGstPipeline();
     initRadio();
     setupHeadPhone();
 
@@ -80,7 +125,6 @@ V4LRadioControl::V4LRadioControl(QObject *parent)
     timer = new QTimer(this);
     timer->setInterval(200);
     connect(timer,SIGNAL(timeout()),this,SLOT(search()));
-    timer->start();
 
     tickTimer = new QTimer(this);
     tickTimer->setInterval(10000);
@@ -98,6 +142,14 @@ V4LRadioControl::~V4LRadioControl()
 
     if(fd > 0)
         ::close(fd);
+}
+
+void V4LRadioControl::enablePipeline(bool enable)
+{
+    if (enable == true)
+        gst_element_set_state (pipeline, GST_STATE_PLAYING);
+    else
+        gst_element_set_state (pipeline, GST_STATE_NULL);
 }
 
 void V4LRadioControl::enableFMRX()
@@ -135,12 +187,12 @@ bool V4LRadioControl::isAvailable() const
     return available;
 }
 
-QtMedia::AvailabilityError V4LRadioControl::availabilityError() const
+QtMultimediaKit::AvailabilityError V4LRadioControl::availabilityError() const
 {
     if (fd > 0)
-        return QtMedia::NoError;
+        return QtMultimediaKit::NoError;
     else
-        return QtMedia::ResourceError;
+        return QtMultimediaKit::ResourceError;
 }
 
 QRadioTuner::State V4LRadioControl::state() const
@@ -264,6 +316,12 @@ void V4LRadioControl::setFrequency(int frequency)
             ::ioctl(fd, VIDIOC_S_FREQUENCY, &freq);
             currentFreq = f;
             emit frequencyChanged(currentFreq);
+	    
+            int signal = signalStrength();
+            if(sig != signal) {
+                sig = signal;
+                emit signalStrengthChanged(sig);
+            }
         }
     }
 }
@@ -381,13 +439,12 @@ int V4LRadioControl::volume() const
 
     snd_hctl_close(hctl);
 
-    return (volume/63.0) * 100;
+    return (volume/118.0) * 100;
 }
 
 void V4LRadioControl::setVolume(int volume)
 {
-
-    int vol = (volume / 100.0) * 63; // 63 is a headphone max setting
+    int vol = (volume / 100.0) * 118; // 118 is a headphone max setting
     callAmixer("Line DAC Playback Volume", QString().setNum(vol)+QString(",")+QString().setNum(vol));
 }
 
@@ -412,7 +469,7 @@ void V4LRadioControl::setupHeadPhone()
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Right DAC_R1 Mixer HP Switch"] = "off";
     settings["Line DAC Playback Switch"] = "on";
-    settings["Line DAC Playback Volume"] = "63,63"; // Volume is set to 100%
+    settings["Line DAC Playback Volume"] = "118,118"; // Volume is set to 100%
     settings["HPCOM DAC Playback Switch"] = "off";
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Left DAC_L1 Mixer Line Switch"] = "on";
@@ -480,12 +537,14 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
     snd_ctl_elem_value_set_id(control, id);
 
     tmp = 0;
-    for (int idx = 0; idx < count && idx < 128; idx++)
+    for (uint idx = 0; idx < count && idx < 128; idx++)
     {
         switch (type)
         {
             case SND_CTL_ELEM_TYPE_BOOLEAN:
+#ifdef MULTIMEDIA_MAEMO_DEBUG
                 qDebug() << "SND_CTL_ELEM_TYPE_BOOLEAN" << SND_CTL_ELEM_TYPE_BOOLEAN;
+#endif
                 if ((value == "on") ||(value == "1"))
                 {
                     tmp = 1;
@@ -497,7 +556,9 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
                 snd_ctl_elem_value_set_enumerated(control, idx, tmp);
                 break;
             case SND_CTL_ELEM_TYPE_INTEGER:
+#ifdef MULTIMEDIA_MAEMO_DEBUG
                 qDebug() << "SND_CTL_ELEM_TYPE_INTEGER" << SND_CTL_ELEM_TYPE_INTEGER;
+#endif
                 tmp = atoi(value.toAscii());
                 if (tmp <  snd_ctl_elem_info_get_min(info))
                     tmp = snd_ctl_elem_info_get_min(info);
@@ -553,28 +614,31 @@ bool V4LRadioControl::isSearching() const
 void V4LRadioControl::cancelSearch()
 {
     scanning = false;
+    timer->stop();
 }
 
 void V4LRadioControl::searchForward()
 {
     // Scan up
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
     forward  = true;
+    timer->start();
 }
 
 void V4LRadioControl::searchBackward()
 {
     // Scan down
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
     forward  = false;
+    timer->start();
 }
 
 void V4LRadioControl::start()
@@ -600,12 +664,6 @@ QString V4LRadioControl::errorString() const
 
 void V4LRadioControl::search()
 {
-    int signal = signalStrength();
-    if(sig != signal) {
-        sig = signal;
-        emit signalStrengthChanged(sig);
-    }
-
     if(!scanning) return;
 
     if(forward) {
@@ -613,7 +671,17 @@ void V4LRadioControl::search()
     } else {
         setFrequency(currentFreq-step);
     }
-    emit signalStrengthChanged(signalStrength());
+    
+    int signal = signalStrength();
+    if(sig != signal) {
+        sig = signal;
+        emit signalStrengthChanged(sig);
+    }
+    
+    if (signal > 25) {
+        cancelSearch();
+        return;
+    }
 }
 
 bool V4LRadioControl::initRadio()
@@ -632,8 +700,7 @@ bool V4LRadioControl::initRadio()
         // Capabilites
         memset(&cap, 0, sizeof(cap));
         if(::ioctl(fd, VIDIOC_QUERYCAP, &cap ) >= 0) {
-            if(((cap.capabilities & V4L2_CAP_RADIO) == 0) && ((cap.capabilities & V4L2_CAP_AUDIO) == 0))
-                available = true;
+            available = true;
         }
 
         tuner.index = 0;

@@ -39,10 +39,12 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/bearer
+
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
-#include "qnetworkconfiguration.h"
-#include "qnetworkconfigmanager.h"
+#include "../../../src/bearer/qnetworkconfiguration.h"
+#include "../../../src/bearer/qnetworkconfigmanager.h"
 
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>

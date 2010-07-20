@@ -1,43 +1,30 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 
 /*!
 
@@ -51,7 +38,7 @@
 
 The \l{Contacts}{Qt Contacts API} makes use of detail leaf classes
 which provide certain well-known functionality.  In order to develop a backend engine which
-can service clients or provide synchronisation to other backends, the schema must be
+can service clients or provide synchronization to other backends, the schema must be
 known.
 
 \section1 Schema Definition
@@ -77,16 +64,10 @@ The leaf details that form the default schema are as follows:
 \annotatedlist contacts-details
 
 
-In the default schema, each of these definitions have various access and uniqueness constraints.
-Additionally, fields of the definitions may have an access constraint of read-only defined for them.
-
 \section2 Detail Definition Uniqueness
 
 A uniqueness constraint on a detail definition means that for any \l{QContact}, only one detail of that
-definition may be saved.  Generally, it is information for which a contradicting detail would mean
-inability to identify the contact.  Please note that some details, such as \l{QContactBirthday} or
-\l{QContactName}, do not have a uniqueness constraint, since in different contexts, different information
-may be valid.
+definition may be saved.
 
 The leaf classes which have a uniqueness constraint in the default schema are as follows:
 \list
@@ -96,43 +77,55 @@ The leaf classes which have a uniqueness constraint in the default schema are as
     \o \l{QContactGuid}
 \endlist
 
-\section2 Detail Definition Access Constraints
+\section2 Detail Access Constraints
 
-An access constraint on a detail definition means that for any detail of that definition in a \l{QContact},
-the specified access constraints apply.  For example, the \l{QContactDisplayLabel} is defined in the default
-schema as a read-only detail definition; meaning that details of that type in a contact cannot be created, modified or deleted by
-the client, but are provided by the backend (in the case of \l{QContactDisplayLabel}, automatically synthesized
-by the backend from various details of the contact).
+Some details in a contact retrieved from a manager may have access constraints set.
+An access constraint on a detail means that the detail may not be removed (if the access constraint is \c QContactDetail::Irremovable)
+or updated (if the access constraint is \c QContactDetail::ReadOnly) by the client.  If the client attempts to save an updated
+version of a read-only detail in a contact, or remove a detail which is irremovable from a contact, the operation will succeed;
+however those updates to the contact will be ignored by the manager when the contact is saved there.
 
-There are three possible detail definition-level access constraints: read-only, create-only and no-constraint.
-A read-only constraint ensures that clients cannot create, delete or modify details of that definition; a create-only
-constraint ensures that clients cannot modify details of that definition, but can create them (with whichever
-values they see fit); if no constraint is specified, details of that definition may be created, modified or deleted as required.
+For example, the \l{QContactDisplayLabel} is defined in the default schema as a read-only, irremovable detail,
+meaning that it may not be modified or deleted by the client, but are provided by the backend (in the case
+of \l{QContactDisplayLabel}, automatically synthesized by the backend from various details of the contact, like
+the \l{QContactName}, \l{QContactNickname}, etc).
 
-Please see the documentation of \l{QContactDetailDefinition} for more information on access constraints.
+There are three possible detail access constraints: read-only, irremovable and no constraint.
+A read-only constraint ensures that clients cannot modify the values stored in such details in the persistent
+copy of the contact (that is, the contact as it is stored in the manager); the irremovable constaint ensures
+that a particular detail may not be removed by clients.  In general, most details which are read only will
+also be irremovable, and vice versa.  One exception to this is the \l{QContactType} detail, which is
+irremovable but may be updated by clients as desired.
+Details with no constraint may be added, updated and removed as desired by the client.  Changes to such details
+in a contact will be persisted in the manager when the client calls \l{QContactManager::saveContact()}.
+
+Please see the documentation of \l{QContactDetail} for more information on access constraints.
 
 The leaf classes which have access constraints in the default schema are as follows:
 \list
-    \o \l{QContactGuid} is \c QContactDetailDefinition::CreateOnly
-    \o \l{QContactSyncTarget} is \c QContactDetailDefinition::CreateOnly
-    \o \l{QContactTimestamp} is \c QContactDetailDefinition::ReadOnly
-    \o \l{QContactDisplayLabel} is \c QContactDetailDefinition::ReadOnly
+    \o \l{QContactGuid} is \c QContactDetail::ReadOnly and \c QContactDetail::Irremovable
+    \o \l{QContactSyncTarget} is \c QContactDetail::ReadOnly and \c QContactDetail::Irremovable
+    \o \l{QContactTimestamp} is \c QContactDetail::ReadOnly and \c QContactDetail::Irremovable
+    \o \l{QContactPresence} is \c QContactDetail::ReadOnly and \c QContactDetail::Irremovable
+    \o \l{QContactDisplayLabel} is \c QContactDetail::ReadOnly and \c QContactDetail::Irremovable
+    \o \l{QContactType} is \c QContactDetail::Irremovable
 \endlist
 
 Furthermore, in the default schema, every contact is required to have at least two details by default: a \l{QContactType} which describes
 the type of entity that the contact represents (for example, a person or a group), and a \l{QContactDisplayLabel} which holds
 the default display label for the contact.
 
-\section2 Field Access Constraints
+\section2 Backend-provided Details
 
-Furthermore, some fields of some definitions are also constrained to be read-only.  This is information which is generated or automatically
-provided by the backend, which is related to user-provided information that is also stored in the detail.
+As described in the section on detail access constraints, some details are provided by the backend,
+such as \l{QContactDisplayLabel} and \l{QContactPresence}.  When the client attempts to save a \l{QContact}
+that contains these details, these details will be ignored by the backend (since any values in this field
+are synthesized by the backend).  This means that while clients may (for example) add a
+\l{QContactPresence} detail to a \l{QContact}, it will not be persisted in the manager when the
+client attempts to save that contact.
 
-The eponymous example of this is the \l{QContactOnlineAccount} leaf detail, which has unconstrained fields which store the URI and service
-provider of the account, and several read-only fields in which are stored presence information, status messages, and service availability.
+Precisely which details are backend-provided is backend specific; some backends provide more details
+than others.
 
-Currently, the \l{QContactOnlineAccount} is the only leaf detail with field-level access constraints.  Every field in details of this
-type are \c QContactDetailDefinition::ReadOnly except for \c QContactOnlineAccount::FieldAccountUri and
-\c QContactOnlineAccount::FieldServiceProvider, which have no constraint.
 
 */

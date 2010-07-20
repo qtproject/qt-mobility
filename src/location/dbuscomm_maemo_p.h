@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,51 +42,85 @@
 #ifndef DBUSCOMM_MAEMO_H
 #define DBUSCOMM_MAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 #include <QtDBus/QtDBus>
 
 #include "qgeopositioninfo.h"
+#include "qgeosatelliteinfo.h"
 #include "qgeopositioninfosource.h"
+#include "qgeosatelliteinfosource.h"
 #include "dbusserver_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class DBusServer;
-class DBusComm: public QObject
+class DBusComm: public QObject, DBusServerIF
 {
     Q_OBJECT
 
+
+public:
+    enum Command {CommandStart = 1,      CommandStop = 2,     CommandOneShot = 3, 
+                  CommandSetMethods = 4, CommandSetInterval = 8, 
+                  CommandSatStart = 16,  CommandSatStop = 32, CommandSatOneShot = 48};
+
+    DBusComm(QObject *parent = 0);
+    int  init();
+    bool sendDBusRegister();
+    bool sendConfigRequest(Command command, QGeoPositionInfoSource::PositioningMethods method, 
+                           int interval) const;
+    QGeoPositionInfo& requestLastKnownPosition(bool satelliteMethodOnly);
+    QGeoPositionInfoSource::PositioningMethods availableMethods() const;
+    int minimumInterval() const;
+
+Q_SIGNALS:
+    void receivedPositionUpdate(const QGeoPositionInfo &update);
+    void receivedSatellitesInView(const QList<QGeoSatelliteInfo> &update);
+    void receivedSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
+
+    void serviceDisconnected();
+    void serviceConnected();
+
 private:
+    static const QString positioningdService;
+    static const QString positioningdPath;
+    static const QString positioningdInterface;
+
+    // from DBusServerIF
+    void receivePositionUpdate(const QGeoPositionInfo &update);
+    void receiveSatellitesInView(const QList<QGeoSatelliteInfo> &info);
+    void receiveSatellitesInUse(const QList<QGeoSatelliteInfo> &info);
+    void receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval);
+
     QDBusInterface *positioningdProxy;
     DBusServer* dbusServer;
     QObject serverObj;
-
-    QString positioningdService;
-    QString positioningdPath;
-    QString positioningdInterface;
     QString myService;
     QString myPath;
-    QString myInterface;
-    int     clientId;
+    int clientId;
+    int minimumUpdateInterval;
+    QGeoPositionInfoSource::PositioningMethods availablePositioningMethods;
+    QDBusServiceWatcher *serviceDisconnectWatcher;
+    QDBusServiceWatcher *serviceConnectWatcher;
+    bool createUniqueName();
 
-    void createUniqueName();
+    Q_DISABLE_COPY(DBusComm)
 
-public:
-    enum cmds {CmdStart = 1, CmdStop = 2, CmdOneShot = 3, CmdSetMethods = 4, CmdSetInterval = 8};
+private Q_SLOTS:
+    void onServiceDisconnect(const QString &name);
+    void onServiceConnect(const QString &name);
 
-    DBusComm();
-    int  init();
-    bool sendDBusRegister();
-    int  sessionConfigRequest(const int command, const int method,
-                              const int interval) const;
-    int receiveDBusMessage(const QByteArray &message); // called by D-Bus server
-    int receivePositionUpdate(const QGeoPositionInfo &update); // called by D-Bus server
-    int receiveSettings(const QGeoPositionInfoSource::PositioningMethod methods,
-                        const int interval);
-signals:
-    void receivedMessage(const QByteArray &msg);
-    void receivedPositionUpdate(const QGeoPositionInfo &update);
 };
 
 QTM_END_NAMESPACE

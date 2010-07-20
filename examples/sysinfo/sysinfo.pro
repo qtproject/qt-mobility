@@ -1,6 +1,6 @@
 QT       += network
 
-TARGET = sysinfo
+TARGET = qsysinfo
 TEMPLATE = app
 
 
@@ -37,7 +37,7 @@ unix: {
 }
 
 symbian {
-    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData WriteUserData UserEnvironment Location  ReadDeviceData TrustedUI
+    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location  ReadDeviceData
     TARGET.UID3 = 0x2002ac7e
     FORMS    += dialog_s60.ui
 }

@@ -1,40 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -45,7 +44,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -143,8 +142,10 @@ void Dialog::tabChanged(int index)
 void Dialog::setupGeneral()
 {
     delete systemInfo;
+//! [lang]
     systemInfo = new QSystemInfo(this);
     curLanguageLineEdit->setText( systemInfo->currentLanguage());
+//! [lang]
     languagesComboBox->clear();
     languagesComboBox->insertItems(0,systemInfo->availableLanguages());
     countryCodeLabel->setText(systemInfo->currentCountryCode());
@@ -153,11 +154,17 @@ void Dialog::setupGeneral()
 void Dialog::setupDevice()
 {
     delete di;
+//! [createdi]
     di = new QSystemDeviceInfo(this);
+//! [createdi]
+//! [batteryLevel]
     batteryLevelBar->setValue(di->batteryLevel());
+//! [batteryLevel]
 
+//! [sig batteryLevelChanged]
     connect(di,SIGNAL(batteryLevelChanged(int)),
             this,SLOT(updateBatteryStatus(int)));
+//! [sig batteryLevelChanged]
 
     connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
             this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
@@ -167,9 +174,13 @@ void Dialog::setupDevice()
 
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
+//! [manuf-id]
     manufacturerLabel->setText(di->manufacturer());
+//! [manuf-id]
     modelLabel->setText(di->model());
+//! [productName]
     productLabel->setText(di->productName());
+//! [productName]
 
     deviceLockPushButton->setChecked(di->isDeviceLocked());
 
@@ -189,6 +200,7 @@ void Dialog::setupDevice()
         radioButton->setChecked(true);
     }
 
+//! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
     if((methods & QSystemDeviceInfo::Keys)){
@@ -197,6 +209,7 @@ void Dialog::setupDevice()
     if((methods & QSystemDeviceInfo::Keypad)) {
         inputs << "Keypad";
     }
+//! [inputMethod flags]
     if((methods & QSystemDeviceInfo::Keyboard)) {
         inputs << "Keyboard";
     }
@@ -211,6 +224,10 @@ void Dialog::setupDevice()
     }
 
     inputMethodLabel->setText(inputs.join(" "));
+
+    bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
+    connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
 }
 
 void Dialog::updateDeviceLockedState()
@@ -228,22 +245,61 @@ void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 void Dialog::setupDisplay()
 {
     QSystemDisplayInfo di;
-    brightnessLineEdit->setText(QString::number(di.displayBrightness(0)));
-    colorDepthLineEdit->setText(QString::number(di.colorDepth((0))));
+    brightnessLabel->setText(QString::number(di.displayBrightness(0)));
+    colorDepthLabel->setText(QString::number(di.colorDepth((0))));
 
+    QSystemDisplayInfo::DisplayOrientation orientation = di.getOrientation(0);
+    QString orientStr;
+    switch(orientation) {
+    case QSystemDisplayInfo::Landscape:
+        orientStr="Landscape";
+        break;
+    case QSystemDisplayInfo::Portrait:
+        orientStr="Portrait";
+        break;
+    case QSystemDisplayInfo::InvertedLandscape:
+        orientStr="Inverted Landscape";
+        break;
+    case QSystemDisplayInfo::InvertedPortrait:
+        orientStr="Inverted Portrait";
+        break;
+    default:
+        orientStr="Orientation unknown";
+        break;
+    }
+
+    orientationLabel->setText(orientStr);
+
+    contrastLabel->setText(QString::number(di.contrast((0))));
+
+    dpiWidthLabel->setText(QString::number(di.getDPIWidth(0)));
+    dpiHeightLabel->setText(QString::number(di.getDPIHeight((0))));
+
+    physicalHeightLabel->setText(QString::number(di.physicalHeight(0)));
+    physicalWidthLabel->setText(QString::number(di.physicalWidth((0))));
 }
 
 void Dialog::setupStorage()
 {
-    QSystemStorageInfo mi;
-    storageTreeWidget->clear();
+    if(!sti) {
+    sti = new QSystemStorageInfo(this);
     storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
 
-    QStringList vols = mi.logicalDrives();
+    connect(sti,SIGNAL(logicalDriveChanged(bool,const QString &)),
+            this,SLOT(storageChanged(bool ,const QString &)));
+    }
+    updateStorage();
+}
+
+void Dialog::updateStorage()
+{
+    storageTreeWidget->clear();
+
+    QStringList vols = sti->logicalDrives();
     foreach(QString volName, vols) {
         QString type;
         QSystemStorageInfo::DriveType volType;
-        volType = mi.typeForDrive(volName);
+        volType = sti->typeForDrive(volName);
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
@@ -260,23 +316,28 @@ void Dialog::setupStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(mi.totalDiskSpace(volName));
-        items << QString::number(mi.availableDiskSpace(volName));
+        items << QString::number(sti->totalDiskSpace(volName));
+        items << QString::number(sti->availableDiskSpace(volName));
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
 }
 
+
 void Dialog::setupNetwork()
 {
     delete ni;
+//! [networkInfo]
     ni = new QSystemNetworkInfo(this);
+//! [networkInfo]
 
     connect(netStatusComboBox,SIGNAL(activated(int)),
             this, SLOT(netStatusComboActivated(int)));
 
+//! [sig strength]
     connect(ni,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)),
             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+//! [sig strength]
 
     connect(ni,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
             this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
@@ -325,13 +386,19 @@ void Dialog::getVersion(int index)
         versionLineEdit->setText("");
         break;
     case 1:
+//! [OS ver]
         version = QSystemInfo::Os;
+//! [OS ver]
         break;
     case 2:
+//! [Qt ver]
         version = QSystemInfo::QtCore;
+//! [Qt ver]
         break;
     case 3:
+//! [Firm ver]
         version = QSystemInfo::Firmware;
+//! [Firm ver]
         break;
     };
 
@@ -341,13 +408,17 @@ void Dialog::getVersion(int index)
 
 void Dialog::getFeature(int index)
 {
+//! [feature]
     QSystemInfo::Feature feature;
     switch(index) {
+//! [feature]
     case 0:
         return;
         break;
+//! [feature-bluetooth]
     case 1:
         feature = QSystemInfo::BluetoothFeature;
+//! [feature-bluetooth]
         break;
     case 2:
         feature = QSystemInfo::CameraFeature;
@@ -386,8 +457,10 @@ void Dialog::getFeature(int index)
         feature = QSystemInfo::HapticsFeature;
         break;
     };
+//! [feature test]
     QSystemInfo si;
     featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
+//! [feature test]
 }
 
 void Dialog::setupSaver()
@@ -741,4 +814,14 @@ void Dialog::updateSimStatus()
     }
 }
 
+
+void Dialog::storageChanged(bool added,const QString &vol)
+{
+    setupStorage();
+}
+
+void Dialog::bluetoothChanged(bool b)
+{
+    bluetoothPowerLabel->setText((b ? "On" : "Off"));
+}
 

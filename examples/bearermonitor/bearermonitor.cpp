@@ -1,40 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -43,7 +42,7 @@
 #include "sessionwidget.h"
 
 #include <QDebug>
-
+#include <QMessageBox>
 #ifdef Q_OS_WIN
 #include <winsock2.h>
 #undef interface
@@ -57,15 +56,20 @@ BearerMonitor::BearerMonitor(QWidget *parent)
 :   QWidget(parent)
 {
     setupUi(this);
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    newSessionButton->hide();
+    deleteSessionButton->hide();
+#else
     delete tabWidget->currentWidget();
     sessionGroup->hide();
-#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
+#endif
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     setWindowState(Qt::WindowMaximized);
 #endif
     updateConfigurations();
-
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     onlineStateChanged(!manager.allConfigurations(QNetworkConfiguration::Active).isEmpty());
-
+#endif
     QNetworkConfiguration defaultConfiguration = manager.defaultConfiguration();
     for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = treeWidget->topLevelItem(i);
@@ -76,7 +80,7 @@ BearerMonitor::BearerMonitor(QWidget *parent)
             break;
         }
     }
-
+    connect(&manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
     connect(&manager, SIGNAL(configurationAdded(const QNetworkConfiguration&)),
             this, SLOT(configurationAdded(const QNetworkConfiguration&)));
     connect(&manager, SIGNAL(configurationRemoved(const QNetworkConfiguration&)),
@@ -84,7 +88,6 @@ BearerMonitor::BearerMonitor(QWidget *parent)
     connect(&manager, SIGNAL(configurationChanged(const QNetworkConfiguration&)),
             this, SLOT(configurationChanged(const QNetworkConfiguration)));
     connect(&manager, SIGNAL(updateCompleted()), this, SLOT(updateConfigurations()));
-    connect(&manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
 
 #ifdef Q_OS_WIN
     connect(registerButton, SIGNAL(clicked()), this, SLOT(registerNetwork()));
@@ -101,11 +104,16 @@ BearerMonitor::BearerMonitor(QWidget *parent)
 
     connect(newSessionButton, SIGNAL(clicked()),
             this, SLOT(createNewSession()));
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     connect(deleteSessionButton, SIGNAL(clicked()),
             this, SLOT(deleteSession()));
-
+#endif
     connect(scanButton, SIGNAL(clicked()),
             this, SLOT(performScan()));
+
+    // Just in case update all configurations so that all
+    // configurations are up to date.
+    manager.updateConfigurations();
 }
 
 BearerMonitor::~BearerMonitor()
@@ -204,6 +212,10 @@ void BearerMonitor::updateConfigurations()
     progressBar->hide();
     scanButton->show();
 
+    // Just in case update online state, on Symbian platform
+    // WLAN scan needs to be triggered initially to have their true state.
+    onlineStateChanged(manager.isOnline());
+
     QList<QTreeWidgetItem *> items = treeWidget->findItems(QLatin1String("*"), Qt::MatchWildcard);
     QMap<QString, QTreeWidgetItem *> itemMap;
     while (!items.isEmpty()) {
@@ -234,15 +246,22 @@ void BearerMonitor::updateConfigurations()
 void BearerMonitor::onlineStateChanged(bool isOnline)
 {
     if (isOnline)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        QMessageBox::information(this, "Connection state changed", "Online", QMessageBox::Close);
+    else
+        QMessageBox::information(this, "Connection state changed", "Offline", QMessageBox::Close);
+#else
         onlineState->setText(tr("Online"));
     else
         onlineState->setText(tr("Offline"));
+#endif
 }
 
 #ifdef Q_OS_WIN
 void BearerMonitor::registerNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
+    if (!item) return;
 
     QNetworkConfiguration configuration =
         manager.configurationFromIdentifier(item->data(0, Qt::UserRole).toString());
@@ -264,6 +283,7 @@ void BearerMonitor::registerNetwork()
 void BearerMonitor::unregisterNetwork()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
+    if (!item) return;
 
     QNetworkConfiguration configuration =
         manager.configurationFromIdentifier(item->data(0, Qt::UserRole).toString());
@@ -362,7 +382,9 @@ void BearerMonitor::createSessionFor(QTreeWidgetItem *item)
 
     tabWidget->addTab(session, conf.name());
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     sessionGroup->show();
+#endif
 
     sessionWidgets.append(session);
 }
@@ -370,10 +392,12 @@ void BearerMonitor::createSessionFor(QTreeWidgetItem *item)
 void BearerMonitor::createNewSession()
 {
     QTreeWidgetItem *item = treeWidget->currentItem();
+    if (!item) return;
 
     createSessionFor(item);
 }
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
 void BearerMonitor::deleteSession()
 {
     SessionWidget *session = qobject_cast<SessionWidget *>(tabWidget->currentWidget());
@@ -386,6 +410,7 @@ void BearerMonitor::deleteSession()
             sessionGroup->hide();
     }
 }
+#endif
 
 void BearerMonitor::performScan()
 {

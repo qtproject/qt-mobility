@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,7 @@
 #include <QtGui/qmacdefines_mac.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 class QT7PlayerService;
@@ -100,25 +100,10 @@ public Q_SLOTS:
     void setVolume(int volume);
     void setMuted(bool muted);
 
-Q_SIGNALS:
-    void mediaChanged(const QMediaContent& content);
-    void durationChanged(qint64 duration);
-    void positionChanged(qint64 position);
-    void stateChanged(QMediaPlayer::State newState);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus status);
-    void volumeChanged(int volume);
-    void mutedChanged(bool muted);
-    void videoAvailableChanged(bool videoAvailable);
-    void bufferStatusChanged(int percentFilled);
-    void seekableChanged(bool);
-    void seekRangeChanged(const QPair<qint64,qint64>&);
-    void playbackRateChanged(qreal rate);
-    void error(int error, const QString &errorString);
-
 private:
     QT7PlayerSession *m_session;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationshipFilter
   \brief The QContactRelationshipFilter class provides a filter based
   around relationship criteria.
+  
+  
+  \inmodule QtContacts
   
   \ingroup contacts-filters
  
@@ -145,5 +148,6 @@ QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() cons
     Q_D(const QContactRelationshipFilter);
     return d->m_relatedContactRole;
 }
+
 
 QTM_END_NAMESPACE

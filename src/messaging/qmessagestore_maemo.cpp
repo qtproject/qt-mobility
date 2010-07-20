@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -73,7 +73,7 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 { 
     q_ptr = store;
     p_ptr = new QMessageStorePrivatePlatform(this, store);
-    p_ptr->el=new EventLoggerEngine();
+    p_ptr->el= EventLoggerEngine::instance();
 }
 
 void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
@@ -101,9 +101,10 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    qDebug() << "QMessageStore::QMessageStore";
  //   d_ptr->initialize(this);
-    qDebug() << "QMessageStore::QMessageStore exit";
+    // be sure that singletons are initialized
+    EventLoggerEngine::instance();
+    TelepathyEngine::instance();
 }
 
 QMessageStore::~QMessageStore()
@@ -127,31 +128,69 @@ QMessageManager::Error QMessageStore::error() const
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    QMessageIdList messageIds;
+
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
+    bool isFiltered = false;
+    bool isSorted = false;
+    
+    messageIds = ModestEngine::instance()->queryMessagesSync(handledFilter, sortOrder, limit, offset,
+                                                             isFiltered, isSorted);
+    
+    messageIds += EventLoggerEngine::instance()->filterAndOrderMessages(handledFilter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+
+    if (!isFiltered) {
+        MessagingHelper::filterMessages(messageIds, handledFilter);
+    }
+    if (!isSorted) {
+        MessagingHelper::orderMessages(messageIds, sortOrder);
+    }
+    MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
+
+    ModestEngine::instance()->clearHeaderCache();
+
+    return messageIds;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(body)
-    Q_UNUSED(matchFlags)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+    QMessageIdList messageIds;
+
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
+    bool isFiltered = false;
+    bool isSorted = false;
+    messageIds = ModestEngine::instance()->queryMessagesSync(handledFilter, body, matchFlags, sortOrder,
+                                                             limit, offset, isFiltered, isSorted);
+
+    messageIds +=EventLoggerEngine::instance()->filterAndOrderMessages(handledFilter,sortOrder,body,matchFlags);
+
+    if (!isFiltered) {
+        MessagingHelper::filterMessages(messageIds, handledFilter);
+    }
+    if (!isSorted) {
+        MessagingHelper::orderMessages(messageIds, sortOrder);
+    }
+    MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
+
+    ModestEngine::instance()->clearHeaderCache();
+
+    return messageIds;
 }
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageFolderIdList folderIds;
 
+    QMessageFolderFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromFolderFilter(handledFilter);
+
     bool isFiltered = false;
     bool isSorted = false;
-    folderIds = ModestEngine::instance()->queryFolders(filter, sortOrder, limit, offset, isFiltered, isSorted);
+    folderIds = ModestEngine::instance()->queryFolders(handledFilter, sortOrder, limit, offset, isFiltered, isSorted);
     if (!isFiltered) {
         MessagingHelper::filterFolders(folderIds, filter);
     }
@@ -187,8 +226,16 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    int count = 0;
+
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
+    count += ModestEngine::instance()->countMessagesSync(handledFilter);
+
+    ModestEngine::instance()->clearHeaderCache();
+
+    return count;
 }
 
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
@@ -214,27 +261,113 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
     if (id.toString().startsWith("MO_")) {
         return ModestEngine::instance()->removeMessage(id, option);
     }
-
-    return false;
+    return EventLoggerEngine::instance()->deleteMessage(id);
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(option)
-    return true; // stub
+    QMessageIdList ids = queryMessages(filter, QMessageSortOrder(), 0, 0);
+
+    for (int i=0; i < ids.count(); i++) {
+        if (ids[i].toString().startsWith("MO_")) {
+            if (!ModestEngine::instance()->removeMessage(ids[i], option)) {
+                return false;
+            } 
+	} else 
+	  if(!EventLoggerEngine::instance()->deleteMessage(ids[i]))
+	    return false;
+    }
+    return true;
 }
 
 bool QMessageStore::addMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    bool retVal = true;
+
+    QMessageAccountId accountId = m->parentAccountId();
+    QMessage::Type msgType = QMessage::NoType;
+
+    // Check message type
+    if (m->type() == QMessage::AnyType || m->type() == QMessage::NoType) {
+        if (accountId.isValid()) {
+            // ParentAccountId was defined => Message type can be read
+            // from parent account
+            QMessageAccount account = QMessageAccount(accountId);
+            QMessage::TypeFlags types = account.messageTypes();
+            if (types & QMessage::Sms) {
+                msgType = QMessage::Sms;
+            } else if (account.messageTypes() & QMessage::InstantMessage) {
+                msgType = QMessage::InstantMessage;
+            } else if (types & QMessage::Mms) {
+                msgType = QMessage::Mms;
+            } else if (types & QMessage::Email) {
+                msgType = QMessage::Email;
+            }
+        }
+        if (msgType == QMessage::NoType) {
+            retVal = false;
+        }
+    }
+
+    if (retVal) {
+        // Check account
+        if (!accountId.isValid()) {
+            accountId = QMessageAccount::defaultAccount(m->type());
+            if (!accountId.isValid()) {
+                retVal = false;
+            }
+        }
+    }
+
+    QMessageAccount account(accountId);
+    if (retVal) {
+        // Check account/message type compatibility
+        if (!(account.messageTypes() & m->type()) && (msgType == QMessage::NoType)) {
+            retVal = false;
+        }
+    }
+
+    if (retVal) {
+        // Set default account if unset
+        if (!m->parentAccountId().isValid()) {
+            m->setParentAccountId(accountId);
+        }
+
+        if (account.messageTypes() & QMessage::Sms) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for SMS";
+        } else if (account.messageTypes() & QMessage::InstantMessage) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for Instant Message";
+        } else if (account.messageTypes() & QMessage::Mms) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for MMS";
+        } else if (account.messageTypes() & QMessage::Email) {
+            retVal = ModestEngine::instance()->addMessage(*m);
+        }
+    }
+
+    return retVal;
 }
 
 bool QMessageStore::updateMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    bool retVal = false;
+
+    if (m->type() == QMessage::Sms) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for SMS";
+    } else if (m->type() == QMessage::InstantMessage) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for Instant Message";
+    } else if (m->type() == QMessage::Mms) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for Instant MMS";
+    } else if (m->type() == QMessage::Email) {
+        retVal = ModestEngine::instance()->updateMessage(*m);
+    }
+
+    return retVal;
 }
 
 QMessage QMessageStore::message(const QMessageId& id) const
@@ -242,7 +375,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
     if (id.toString().startsWith("MO_")) {
         return ModestEngine::instance()->message(id);
     } else {
-        return d_ptr->p_ptr->el->getMessage(id);
+        return d_ptr->p_ptr->el->message(id);
     }
 }
 

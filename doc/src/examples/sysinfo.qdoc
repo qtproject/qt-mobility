@@ -1,0 +1,103 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \example sysinfo
+    \title System Information Example
+
+
+    \image sysinfo.png
+    
+
+    The System Information example uses a tabbed dialog, with each tab
+    representing a particular type of data: versions, network and so on.
+
+    To access the information, the example creates objects belonging to the System Information classes
+
+    \annotatedlist systeminfo
+
+    Here are some examples that show how the example application reads the
+    device information.
+
+    The current language
+
+    \snippet ../../examples/sysinfo/dialog.cpp  lang
+
+    Device information, starting with the battery level
+
+    \snippet ../../examples/sysinfo/dialog.cpp  createdi
+    \dots
+    \snippet ../../examples/sysinfo/dialog.cpp  batteryLevel
+
+    The manufacturer id and the product name
+    
+    \snippet ../../examples/sysinfo/dialog.cpp  manuf-id
+    \dots
+    \snippet ../../examples/sysinfo/dialog.cpp  productName
+
+    And there are signals that can be used to update progress bars and other
+    indicators. An example is when the battery level changes, the batteryLevelChanged() signal is emitted
+
+    \snippet ../../examples/sysinfo/dialog.cpp  sig batteryLevelChanged
+
+
+    Other information is stored as bitwise flags. The following code shows
+    the input methods being determined using flags.
+
+    \snippet ../../examples/sysinfo/dialog.cpp  inputMethod flags
+
+    Various capabilities of the device can be found by testing for features.
+    In the example a Feature combo box, on the General tab, has a hard coded
+    list of features. When a listed feature is selected the getFeature()
+    function is called with the index which is handled by applying a test to
+    the corresponding feature.
+
+    \snippet ../../examples/sysinfo/dialog.cpp  feature
+    \dots
+    \snippet ../../examples/sysinfo/dialog.cpp  feature-bluetooth
+    \dots
+    \snippet ../../examples/sysinfo/dialog.cpp  feature test
+
+
+*/
+
+
+

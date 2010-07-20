@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,12 +51,14 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainer
-    \preliminary
 
     \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
     and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 
     partially retrieved.
 
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     A QMessageContentContainer object can either directly contain media such as text, 

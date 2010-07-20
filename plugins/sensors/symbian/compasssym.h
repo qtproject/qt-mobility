@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -108,7 +108,7 @@ public:
     /**
      * Holds the id of the compass
      */
-    static const char *id;
+    static char const * const id;
     
 private:     
     QCompassReading iReading;

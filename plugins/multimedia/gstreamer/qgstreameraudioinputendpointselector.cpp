@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -104,8 +104,10 @@ void QGstreamerAudioInputEndpointSelector::update()
 {
     m_names.clear();
     m_descriptions.clear();
+#ifndef Q_WS_MAEMO_5
     updateAlsaDevices();
     updateOssDevices();
+#endif
     updatePulseDevices();
     if (m_names.size() > 0)
         m_audioInput = m_names.at(0);

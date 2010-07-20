@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -148,11 +148,24 @@ protected:
     void setupNetworkInfo();
 
 private Q_SLOTS:
+    void bluetoothNetworkStatusCheck();
+#if defined(Q_WS_MAEMO_6)
+    // Slots only available in Maemo6
+    void slotSignalStrengthChanged(int percent, int dbm);
+    void slotOperatorChanged(const QString &mnc, const QString &mcc);
+    void slotOperatorNameChanged(const QString &name);
+    void slotRegistrationChanged(const QString &status);
+    void slotCellChanged(const QString &type, int id, int lac);
+#endif
+
+#if defined(Q_WS_MAEMO_5)
+    // Slots only available in Maemo5
     void cellNetworkSignalStrengthChanged(uchar,uchar);
     void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+#endif
     void usbCableAction();
     void wlanSignalStrengthCheck();
 
@@ -169,6 +182,7 @@ private:
     };
 
     int cellSignalStrength;
+    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
     int currentCellId;
     int currentCellNetworkStatus;
     int currentEthernetSignalStrength;
@@ -181,6 +195,8 @@ private:
     int radioAccessTechnology;
     int iWlanStrengthCheckEnabled;
     QTimer *wlanSignalStrengthTimer;
+
+    QMap<QString,int> csStatusMaemo6;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -257,22 +273,15 @@ public:
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
-    bool isScreenLockEnabled();
-    bool isScreenSaverActive();
 
 private Q_SLOTS:
-    void display_blanking_pause();
+    void wakeUpDisplay();
 
-private:    //data
-    bool m_screenSaverInhibited;
+private:
     QTimer *ssTimer;
-
-protected:
-    QString screenPath;
-    QString settingsPath;
-    bool screenSaverSecure;
-    uint currentPid;
-
+#if !defined(QT_NO_DBUS)
+    QDBusInterface *mceConnectionInterface;
+#endif
 };
 
 QTM_END_NAMESPACE

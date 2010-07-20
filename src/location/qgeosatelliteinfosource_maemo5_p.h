@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,17 @@
 #ifndef QGEOSATELLITEINFOSOURCE_MAEMO5_H
 #define QGEOSATELLITEINFOSOURCE_MAEMO5_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include <QTimer>
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
@@ -60,7 +71,7 @@ class LiblocationWrapper;
 class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
-    
+
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
 
@@ -74,16 +85,13 @@ private:
     int timerInterval;
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
 
     enum SatelliteInfoState {
         Undefined = 0,
         Started = 1,
         Stopped = 2,
         RequestActive = 4,
-        RequestSingleShot = 8,
-        PowersaveActive = 16,
-        TogglePowersave = 32        
+        PowersaveActive = 8
     };
     int satelliteInfoState;
 
@@ -92,7 +100,7 @@ public slots:
     void stopUpdates();
     void requestUpdate(int timeout = 5000);
     void satelliteStatus();
-    
+
 signals:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);

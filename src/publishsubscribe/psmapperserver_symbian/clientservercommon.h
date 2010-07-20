@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,8 @@
 
 #include <e32base.h>
 
-_LIT(KPSPathMapperServerName, "PSPathMapperServer");
+_LIT(KPSPathMapperServerName, "!qpspathmapperserver");
+_LIT(KPSPathMapperServerProcess, "qpspathmapperserver");
 
 const TUint KServerMajorVersionNumber = 0;
 const TUint KServerMinorVersionNumber = 1;

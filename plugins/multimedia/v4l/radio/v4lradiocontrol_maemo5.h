@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,7 +52,7 @@
 
 #include <alsa/asoundlib.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 
@@ -64,7 +64,7 @@ public:
     ~V4LRadioControl();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     QRadioTuner::State state() const;
 
@@ -100,6 +100,9 @@ public:
 
     QRadioTuner::Error error() const;
     QString errorString() const;
+
+public slots:
+    void enablePipeline(bool enable = true);
 
 private slots:
     void search();

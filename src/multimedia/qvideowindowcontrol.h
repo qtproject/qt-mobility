@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,14 +42,14 @@
 #ifndef QVIDEOWINDOWCONTROL_H
 #define QVIDEOWINDOWCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qvideowidget.h>
+#include "qmediacontrol.h"
+#include "qvideowidget.h"
 
 #include <QtGui/qwidget.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QVideoWindowControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QVideoWindowControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -99,6 +99,6 @@ protected:
 #define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
