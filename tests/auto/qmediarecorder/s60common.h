@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef TST_QMEDIARECORDER_XA_MACROS_H
-#define TST_QMEDIARECORDER_XA_MACROS_H
+#ifndef S60COMMON_H
+#define S60COMMON_H
+
+QT_USE_NAMESPACE
 
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -56,22 +58,4 @@
     }                                           \
     QVERIFY(a)
 
-#define QTEST_MAIN_S60(TestObject) \
-    int main(int argc, char *argv[]) { \
-        char *new_argv[3]; \
-        QApplication app(argc, argv); \
-        \
-        QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log"; \
-        QByteArray   bytes  = str.toAscii(); \
-        \
-        char arg1[] = "-o"; \
-        \
-        new_argv[0] = argv[0]; \
-        new_argv[1] = arg1; \
-        new_argv[2] = bytes.data(); \
-        \
-        TestObject tc; \
-        return QTest::qExec(&tc, 3, new_argv); \
-    }
-
-#endif /* TST_QMEDIARECORDER_XA_MACROS_H */
+#endif //S60COMMON_H 

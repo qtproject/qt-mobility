@@ -40,21 +40,22 @@
 ****************************************************************************/
 
 #include "tst_qmediarecorder_xa.h"
-#include "tst_qmediarecorder_xa_macros.h"
 
-void tst_QMediaRecorder::initTestCase()
+QT_USE_NAMESPACE
+
+void tst_QMediaRecorder_xa::initTestCase()
 {
     audiosource = new QAudioCaptureSource;
     audiocapture = new QMediaRecorder(audiosource);
 }
 
-void tst_QMediaRecorder::cleanupTestCase()
+void tst_QMediaRecorder_xa::cleanupTestCase()
 {
     delete audiocapture;
     delete audiosource;
 }
 
-void tst_QMediaRecorder::testMediaRecorderObject()
+void tst_QMediaRecorder_xa::testMediaRecorderObject()
 {
     //audioocontainer types
     QCOMPARE(audiocapture->audioCodecDescription("pcm"), QString("pcm"));
@@ -78,7 +79,7 @@ void tst_QMediaRecorder::testMediaRecorderObject()
     QCOMPARE(audiocapture->supportedContainers().count(), 3); // "audio/wav", "audio/amr", "audio/mpeg"
 }
 
-void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
+void tst_QMediaRecorder_xa::testDefaultAudioEncodingSettings()
 {
     QAudioEncoderSettings audioSettings = audiocapture->audioSettings();
     QCOMPARE(audioSettings.codec(), QString("pcm"));
@@ -90,7 +91,7 @@ void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
     QCOMPARE(audioSettings.sampleRate(), -1);
 }
 
-void tst_QMediaRecorder::testAudioRecordingLocationOnly()
+void tst_QMediaRecorder_xa::testAudioRecordingLocationOnly()
 {
     QSignalSpy stateSignal(audiocapture,SIGNAL(stateChanged(QMediaRecorder::State)));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -113,7 +114,7 @@ void tst_QMediaRecorder::testAudioRecordingLocationOnly()
     QCOMPARE(stateSignal.count(), 3);
 }
 
-void tst_QMediaRecorder::testAudioRecording_data()
+void tst_QMediaRecorder_xa::testAudioRecording_data()
 {
     QTest::addColumn<QString>("mime"); // "audio/wav", "audio/amr", "audio/mpeg"
     QTest::addColumn<QString>("codec"); // "pcm", "amr", "aac"
@@ -210,14 +211,14 @@ void tst_QMediaRecorder::testAudioRecording_data()
     QTest::newRow("aac veryhighqual") << "audio/mpeg" << "aac" << "veryhighqual" << "mp4" << "preset" << -5 << 48000 << -1;
     }
 
-void tst_QMediaRecorder::testAudioRecording()
+void tst_QMediaRecorder_xa::testAudioRecording()
 {
     QFETCH(QString, mime);
     QFETCH(QString, codec);
     QFETCH(QString, filename_desc);
     QFETCH(QString, filename_ext);
     QFETCH(QString, settings);
-    
+
     QSignalSpy stateSignal(audiocapture,SIGNAL(stateChanged(QMediaRecorder::State)));
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), filename_desc, filename_ext));
     QAudioEncoderSettings audioSettings;
@@ -294,20 +295,20 @@ void tst_QMediaRecorder::testAudioRecording()
     QCOMPARE(stateSignal.count(), expectedSignalCount);
     /* testAudioRecording() function gets executed for each rown in the table.
      * If and when all tests in the table passes, test log will just contain one
-     * entry 'PASS   : tst_QMediaRecorder::testAudioRecording()'. To figure out
+     * entry 'PASS   : tst_QMediaRecorder_xa::testAudioRecording()'. To figure out
      * which test in the loop completed successfully, just print a debug message
      * which also goes into the test log generated.*/
     qDebug() << "----> PASS";
 }
 
-void tst_QMediaRecorder::testOutputLocation()
+void tst_QMediaRecorder_xa::testOutputLocation()
 {
     audiocapture->setOutputLocation(QUrl("test.wav"));
     QUrl s = audiocapture->outputLocation();
     QCOMPARE(s.toString(), QString("test.wav"));
 }
 
-QUrl tst_QMediaRecorder::nextFileName(QDir outputDir, QString appendName, QString ext)
+QUrl tst_QMediaRecorder_xa::nextFileName(QDir outputDir, QString appendName, QString ext)
 {
     int lastImage = 0;
     int fileCount = 0;
@@ -322,7 +323,3 @@ QUrl tst_QMediaRecorder::nextFileName(QDir outputDir, QString appendName, QStrin
     QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath() + QString("/testclip_%1").arg(lastImage+1 , 4, 10, QLatin1Char('0')) + appendName + "." + ext));
     return location;
 }
-
-QTEST_MAIN_S60(tst_QMediaRecorder)
-
-#include "moc_tst_qmediarecorder_xa.cpp"
