@@ -46,7 +46,6 @@
 
 #include <QList>
 #include <QRectF>
-#include <QSharedPointer>
 #include "qgeoboundingbox.h"
 
 class QPainter;
@@ -82,10 +81,10 @@ class QGeoMapObjectPrivate
 {
 public:
     QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QSharedPointer<QGeoMapDataPrivate> mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
     virtual ~QGeoMapObjectPrivate();
 
-    void setMapData(QSharedPointer<QGeoMapDataPrivate> mapData);
+    void setMapData(QGeoMapDataPrivate *mapData);
 
     bool intersects(const QRectF& rect) const;
     void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
@@ -98,8 +97,8 @@ public:
     bool isVisible;
     QGeoBoundingBox boundingBox;
 
-    QSharedPointer<QGeoMapDataPrivate> mapData;
-    QGeoMapObjectInfo* info;
+    QGeoMapDataPrivate *mapData;
+    QGeoMapObjectInfo *info;
 
 private:
     QGeoMapObject *q_ptr;

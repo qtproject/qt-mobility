@@ -51,7 +51,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
 /*!
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRectF &tileRect)
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRect &tileRect)
         : d_ptr(new QGeoTiledMapRequestPrivate())
 {
     d_ptr->mapData = mapData;
@@ -127,7 +127,7 @@ int QGeoTiledMapRequest::column() const
 
 /*!
 */
-QRectF QGeoTiledMapRequest::tileRect() const
+QRect QGeoTiledMapRequest::tileRect() const
 {
     return d_ptr->tileRect;
 }

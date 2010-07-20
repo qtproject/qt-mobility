@@ -85,21 +85,6 @@ class QGeoTiledMapData;
 class QGeoTiledMapRequest;
 class QGeoTiledMapReply;
 
-struct QGeoTiledMapObjectInfo
-{
-    QRectF boundingBox;
-};
-
-struct QGeoTiledMapPolylineInfo : public QGeoTiledMapObjectInfo
-{
-    QPainterPath path;
-};
-
-struct QGeoTiledMapRouteInfo : public QGeoTiledMapObjectInfo
-{
-    QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
-};
-
 class QGeoTiledMapRectangleObjectInfo : public QGeoMapObjectInfo
 {
 public:
@@ -110,7 +95,7 @@ public:
     void update();
 
     const QGeoMapRectangleObjectPrivate* rectangle;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 };
 
 class QGeoTiledMapCircleObjectInfo : public QGeoMapObjectInfo
@@ -123,7 +108,7 @@ public:
     void update();
 
     const QGeoMapCircleObjectPrivate* circle;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 };
 
 class QGeoTiledMapPolylineObjectInfo : public QGeoMapObjectInfo
@@ -136,7 +121,7 @@ public:
     void update();
 
     const QGeoMapPolylineObjectPrivate* polyline;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 
     QList<QPoint> points;
 };
@@ -151,7 +136,7 @@ public:
     void update();
 
     const QGeoMapPolygonObjectPrivate* polygon;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 
     QList<QPoint> points;
 };
@@ -166,7 +151,7 @@ public:
     void update();
 
     const QGeoMapMarkerObjectPrivate* marker;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 };
 
 class QGeoTiledMapRouteObjectInfo : public QGeoMapObjectInfo
@@ -183,7 +168,7 @@ public:
     void addRouteSegmentInfo(const QLineF &line, int index);
 
     const QGeoMapRouteObjectPrivate* route;
-    QSharedPointer<QGeoTiledMapDataPrivate> mapData;
+    QGeoTiledMapDataPrivate *mapData;
 
     QHash<qulonglong, QList< QPair<int, QLineF> > > intersectedTiles;
 };
@@ -200,8 +185,11 @@ public:
 
     void updateScreenRect();
 
+    int zoomFactor;
+
     QPoint maxZoomCenter;
     QSize maxZoomSize;
+    QRect maxZoomScreenRect;
 
     QRectF screenRect;
 
@@ -214,8 +202,6 @@ public:
     QCache<QGeoTiledMapRequest, QPixmap> cache;
     QCache<QGeoTiledMapRequest, QPixmap> zoomCache;
     QPixmap emptyTile;
-
-    QHash<QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)
@@ -232,24 +218,24 @@ protected:
 class QGeoTileIterator
 {
 public:
-    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
+    QGeoTileIterator(const QRect &screenRect, const QSize &tileSize, int zoomLevel);
 
     bool hasNext();
     void next();
     int row() const;
     int col() const;
     int zoomLevel() const;
-    QRectF tileRect() const;
+    QRect tileRect() const;
 
 private:
     bool aHasNext;
     int aRow;
     int aCol;
-    QRectF aScreenRect;
+    QRect aScreenRect;
     QSize aTileSize;
     int aZoomLevel;
-    QPointF currTopLeft;
-    QRectF aTileRect;
+    QPoint currTopLeft;
+    QRect aTileRect;
 };
 
 QTM_END_NAMESPACE

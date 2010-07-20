@@ -90,7 +90,7 @@ QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
 /*!
     Constructs a new root map object associated with \a mapData.
 */
-QGeoMapObject::QGeoMapObject(QSharedPointer<QGeoMapDataPrivate> mapData)
+QGeoMapObject::QGeoMapObject(QGeoMapDataPrivate *mapData)
     : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
 
 /*!
@@ -129,9 +129,13 @@ QGeoMapObject::Type QGeoMapObject::type() const
 void QGeoMapObject::setZValue(int zValue)
 {
     Q_D(QGeoMapObject);
-    int oldZValue = d->zValue;
+    bool reinsert = (d->zValue != zValue);
     d->zValue = zValue;
-    emit zValueChanged(zValue, oldZValue);
+
+    if (reinsert && d->parent) {
+        d->parent->removeChildObject(this);
+        d->parent->addChildObject(this);
+    }
 }
 
 /*!
@@ -253,16 +257,6 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
     //binary search
     QList<QGeoMapObject*>::iterator i = qUpperBound(d->children.begin(), d->children.end(), childObject);
     d->children.insert(i, childObject);
-
-    connect(childObject, SIGNAL(destroyed(QObject*)),
-            this, SLOT(childObjectDestroyed(QObject*)));
-    emit childObjectAdded(childObject);
-}
-
-void QGeoMapObject::childObjectDestroyed(QObject *obj)
-{
-    Q_D(QGeoMapObject);
-    d->children.removeAll(static_cast<QGeoMapObject*>(obj));
 }
 
 /*!
@@ -279,8 +273,7 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     if (childObject) {
         if (d->children.removeAll(childObject) > 0) {
             childObject->d_ptr->parent = 0;
-            childObject->d_ptr->mapData.clear();
-            emit childObjectRemoved(childObject);
+            childObject->d_ptr->mapData = 0;
         }
     }
 }
@@ -332,7 +325,8 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
     : type(type),
     parent(parent),
     info(0),
-    q_ptr(impl)
+    q_ptr(impl),
+    mapData(0)
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
@@ -340,7 +334,7 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
     }
 }
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QSharedPointer<QGeoMapDataPrivate> mapData, QGeoMapObject::Type type)
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type)
     : type(type),
     parent(0),
     info(0),
@@ -364,7 +358,7 @@ QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
         delete info;
 }
 
-void QGeoMapObjectPrivate::setMapData(QSharedPointer<QGeoMapDataPrivate> mapData)
+void QGeoMapObjectPrivate::setMapData(QGeoMapDataPrivate *mapData)
 {
     this->mapData = mapData;
     if (!info)
@@ -389,7 +383,7 @@ void QGeoMapObjectPrivate::paint(QPainter *painter, const QRectF &viewPort, bool
 
 void QGeoMapObjectPrivate::update()
 {
-    if (mapData.isNull())
+    if (!mapData)
         return;
 
     if (!info)

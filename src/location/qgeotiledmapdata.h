@@ -70,7 +70,6 @@ public:
     void setMapType(QGeoMapWidget::MapType mapType);
 
     void addMapObject(QGeoMapObject *mapObject);
-    void removeMapObject(QGeoMapObject *mapObject);
 
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
@@ -87,11 +86,10 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    virtual void coordinateToWorldPixelOld(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
     virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
 
+protected:
     virtual void updateMapImage();
     void clearRequests();
 
@@ -102,8 +100,6 @@ private slots:
     void processRequests();
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error error, QString errorString);
-
-    void mapObjectRemoved(QGeoMapObject *mapObject);
 
 private:
     void cleanupCaches();

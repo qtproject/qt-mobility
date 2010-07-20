@@ -348,7 +348,7 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMap
     widget(widget),
     zoomLevel(-1.0)
 {
-    containerObject = new QGeoMapObject(QSharedPointer<QGeoMapDataPrivate>(this));
+    containerObject = new QGeoMapObject(this);
 }
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
