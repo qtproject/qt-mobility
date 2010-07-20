@@ -417,38 +417,44 @@ void QVideoSurfaceGLPainter::initRgbTextureInfo(
 
 void QVideoSurfaceGLPainter::initYuv420PTextureInfo(const QSize &size)
 {
+    int bytesPerLine = (size.width() + 3) & ~3;
+    int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
+
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
-    m_textureWidths[0] = size.width();
+    m_textureWidths[0] = bytesPerLine;
     m_textureHeights[0] = size.height();
     m_textureOffsets[0] = 0;
-    m_textureWidths[1] = size.width() / 2;
+    m_textureWidths[1] = bytesPerLine2;
     m_textureHeights[1] = size.height() / 2;
-    m_textureOffsets[1] = size.width() * size.height();
-    m_textureWidths[2] = size.width() / 2;
+    m_textureOffsets[1] = bytesPerLine * size.height();
+    m_textureWidths[2] = bytesPerLine2;
     m_textureHeights[2] = size.height() / 2;
-    m_textureOffsets[2] = size.width() * size.height() * 5 / 4;
+    m_textureOffsets[2] = bytesPerLine * size.height() + bytesPerLine2 * size.height()/2;
 }
 
 void QVideoSurfaceGLPainter::initYv12TextureInfo(const QSize &size)
 {
+    int bytesPerLine = (size.width() + 3) & ~3;
+    int bytesPerLine2 = (size.width() / 2 + 3) & ~3;
+
     m_yuv = true;
     m_textureInternalFormat = GL_LUMINANCE;
     m_textureFormat = GL_LUMINANCE;
     m_textureType = GL_UNSIGNED_BYTE;
     m_textureCount = 3;
-    m_textureWidths[0] = size.width();
+    m_textureWidths[0] = bytesPerLine;
     m_textureHeights[0] = size.height();
     m_textureOffsets[0] = 0;
-    m_textureWidths[1] = size.width() / 2;
+    m_textureWidths[1] = bytesPerLine2;
     m_textureHeights[1] = size.height() / 2;
-    m_textureOffsets[1] = size.width() * size.height() * 5 / 4;
-    m_textureWidths[2] = size.width() / 2;
+    m_textureOffsets[1] = bytesPerLine * size.height() + bytesPerLine2 * size.height()/2;
+    m_textureWidths[2] = bytesPerLine2;
     m_textureHeights[2] = size.height() / 2;
-    m_textureOffsets[2] = size.width() * size.height();
+    m_textureOffsets[2] = bytesPerLine * size.height();
 }
 
 #ifndef QT_OPENGL_ES
