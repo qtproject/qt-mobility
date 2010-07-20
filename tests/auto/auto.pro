@@ -127,8 +127,6 @@ contains(mobility_modules,multimedia) {
         qaudioformat \
         qvideoframe \
         qvideosurfaceformat
-
-    }
 }
 #Messaging
 contains(mobility_modules,messaging) {
