@@ -1097,20 +1097,6 @@ int QOrganizerItemMaemo5Engine::saveEventOccurrence(CCalendar *cal, QOrganizerEv
         }
     }
 
-    // The parent must always contain some recurrence information, otherwise it won't be
-    // recognized as parent anymore if there are more than one items with GUID in DB.
-    // So add something dummy if there's nothing.
-    if (parent->recurrenceRules().isEmpty())
-    {
-        QOrganizerItemRecurrenceRule dummyRule;
-        dummyRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
-        dummyRule.setCount(0);
-        QList<QOrganizerItemRecurrenceRule> rrules = parent->recurrenceRules();
-        rrules << dummyRule;
-        parent->setRecurrenceRules(rrules);
-        parentModified = true;
-    }
-
     // Create a CComponent from occurrence
     // This is done before saving the parent, so we don't have to rollback
     // the parent changes if the component creation fails.
@@ -1257,58 +1243,50 @@ void QOrganizerItemMaemo5Engine::insertOccurenceSortedByStartDate(QOrganizerItem
 
 QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerItem *occurrence, QOrganizerItemManager::Error *error) const
 {
-    //qDebug() << "parentOf()";
     // the occurrence is supposed be valid when this method becomes called
-    QOrganizerItemLocalId parentId;
+    QOrganizerItemLocalId parentLocalId = 0;
     if (occurrence->type() == QOrganizerItemType::TypeEventOccurrence) {
         QOrganizerEventOccurrence *eventOccurrence = static_cast<QOrganizerEventOccurrence *>(occurrence);
         if (eventOccurrence->parentLocalId()) {
             // the simple case: parent local id was set
-            //qDebug() << "Simple case";
-            parentId = eventOccurrence->parentLocalId();
+            parentLocalId = eventOccurrence->parentLocalId();
         }
         else {
-            //qDebug() << "GUID case";
+            qDebug() << "GUID case";
 
             // parent local id was not set, fetch with [GUID,originalDate]
-            //QList<QString> ids = d->m_guidMapper.itemIds(eventOccurrence->guid(), QOrganizerItemType::TypeEvent);
-
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
             std::vector<CEvent*> parentCands = cal->getEvents(eventOccurrence->guid().toStdString(), calError);
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             std::vector<CEvent*>::iterator pCand;
-            for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand) {
-                QOrganizerItemLocalId parentLocalId = QString::fromStdString((*pCand)->getId()).toUInt();
-                delete *pCand;
-                QOrganizerItem parentCandidate = internalFetchItem(parentLocalId, fetchMinimalData(), error, false);
-                if (*error == QOrganizerItemManager::NoError) {
-                    //qDebug() << "Parent candidate got";
 
+            qDebug() << "Candidate count = " << parentCands.size();
+
+            // Check if some event contains recurrence information and then that the given
+            // occurrence is one of the occurrences obtained from the recurrence information.
+            for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand) {
+                QOrganizerItemLocalId candidateLocalId = QString::fromStdString((*pCand)->getId()).toUInt();
+
+                QOrganizerItem parentCandidate = internalFetchItem(candidateLocalId, fetchMinimalData(), error, false);
+                if (*error == QOrganizerItemManager::NoError) {
                     // parent candidate must be an event here as events were requested from the GUID mapper
                     QOrganizerEvent *parentCandidateEvent = static_cast<QOrganizerEvent *>(&parentCandidate);
 
-                    // Event must have some recurrence information OR it must be the only item stored in
-                    // the database with the occurrence's GUID, otherwise it can't be a parent
-                    // TODO: Ensure that the last condition is necessary and valid!...
                     if (!parentCandidateEvent->recurrenceDates().isEmpty()
-                        || !parentCandidateEvent->recurrenceRules().isEmpty()
-                        || parentCands.size() == 1) {
-
-                        //qDebug() << "rec info";
+                        || !parentCandidateEvent->recurrenceRules().isEmpty()) {
 
                         if (eventOccurrence->originalDate() == QDate()) {
-                            // the occurrence is a completely new one, not modified
-                            parentId = parentLocalId;
+                            // The given occurrence is a new one, not previously saved in the DB.
+                            // If there is an event with recurrence information, it must be the parent.
+                            parentLocalId = candidateLocalId;
                             break; // parent event found
                         }
                         else {
-                            // Occurrence has existed before.
-                            // Get the instances (occurrences) of the possible parent event. If there's a match
+                            // The given occurrence has existed before.
+                            // Get the occurrences of the parent candidate event. If there's a match
                             // to our occurrence's originalDate, then we have found the parent.
                             QDateTime periodStart = QDateTime(eventOccurrence->originalDate(), QTime(0,0,0));
                             QDateTime periodEnd = QDateTime(eventOccurrence->originalDate(), QTime(23,59,59,999));
-
-                            //qDebug() << "Period: " << periodStart << " - " << periodEnd;
 
                             QList<QOrganizerItem> parentCandidateOccurrences =
                                     itemInstances(*parentCandidateEvent, periodStart, periodEnd, 0, error);
@@ -1320,31 +1298,68 @@ QOrganizerItem QOrganizerItemMaemo5Engine::parentOf(CCalendar *cal, QOrganizerIt
 
                             // Because the period was set, it's enough to just check if we got any
                             if (!parentCandidateOccurrences.isEmpty()) {
-                                parentId = parentLocalId;
+                                parentLocalId = candidateLocalId;
                                 break; // parent event found
                             }
                         }
                     }
-                    else qDebug() << "NO rec info";
                 }
                 else if (*error == QOrganizerItemManager::DoesNotExistError) {
-                    // tried to get an item that does not exist
-                    // it is not a serious error here, so just reset the error
+                    // Tried to get an item that does not exist.
+                    // It is not a serious error here, so just reset the error.
                     *error = QOrganizerItemManager::NoError;
                 }
+            }
+
+            qDebug() << "parentLocalId = " << parentLocalId;
+
+            if (parentLocalId)
+            {
+                // Parent local id got, just free the resources
+                for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand)
+                    delete *pCand;
+            }
+            else {
+                // None of the parent candidates contained recurrence information
+                // => return the earliest created event as parent
+
+                qDebug() << "Trying the resolve the first one";
+
+                CEvent *firstCreated = 0;
+                if (parentCands.size() > 0) {
+                    firstCreated = parentCands[0];
+                    for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand) {
+                        if ((*pCand)->getCreatedTime() < firstCreated->getCreatedTime()) {
+                            firstCreated = *pCand;
+                        }
+                        else if((*pCand)->getCreatedTime() == firstCreated->getCreatedTime()
+                            && (*pCand)->getId() < firstCreated->getId()) {
+                            firstCreated = *pCand; // if two entries are created exactly at the same time, consider one with the smaller id as earlier
+                        }
+                    }
+                }
+
+                if (firstCreated) {
+                    // the firstly created event resolved, return it as parent
+                    parentLocalId = QString::fromStdString(firstCreated->getId()).toUInt();
+                }
+
+                // Free the resources
+                for (pCand = parentCands.begin(); pCand != parentCands.end(); ++pCand)
+                    delete *pCand;
             }
         }
     }
     else if (occurrence->type() == QOrganizerItemType::TypeTodoOccurrence) {
         // In Maemo5 parent of a todo occurrence is the occurrence itself
-        parentId = occurrence->localId();
+        parentLocalId = occurrence->localId();
     }
     else {
         return QOrganizerItem(); // other types can't have a parent
     }
 
-    // Parent id got, now fetch & return the parent
-    return internalFetchItem(parentId, fetchMinimalData(), error, false);
+    // Parent local id got, now fetch & return the parent
+    return internalFetchItem(parentLocalId, fetchMinimalData(), error, false);
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::internalFetchItem(const QOrganizerItemLocalId &itemId, const QOrganizerItemFetchHint &fetchHint, QOrganizerItemManager::Error *error, bool fetchOccurrences) const
@@ -1451,49 +1466,64 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
     *error = QOrganizerItemManager::NoError;
     QString guid = QString::fromStdString(ccomponent->getGUid());
     if (guid.isEmpty())
-        return false; // items with no GUID are never considered as occurrences
+        return false; // possible items with no GUID are never considered as occurrences
 
     if (typeStr == QOrganizerItemType::TypeEvent) {
+
+        qDebug() << "event";
+
         // if item contains recurrence information, it can't be an occurrence
         if (containsRecurrenceInformation(ccomponent))
             return false;
 
-        //qDebug() << QString::fromStdString(ccomponent->getId()) << " does not contain recurrence information";
-
         // if no duplicate GUIDs are found, event can't be an occurrence
         int calError = CALENDAR_OPERATION_SUCCESSFUL;
         std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
+        int eventsWithGuidSize = eventsWithGuid.size();
         *error = d->m_itemTransformer.calErrorToManagerError(calError);
-        if (eventsWithGuid.size() < 2) {
-            for(int i = 0; i < eventsWithGuid.size(); ++i)
+        if (eventsWithGuidSize < 2) {
+            for(int i = 0; i < eventsWithGuidSize; ++i)
                 delete eventsWithGuid[i];
             return false;
         }
 
-        //qDebug() << "Duplicate guids found";
-
-        // Items with duplicate GUID are found and this item does not contain recurrence
-        // information. Now check if any of the items with the equal GUID contains recurrence
-        // information. If there's at least one such, then this item clearly is an occurrence.
-        bool returnValue = false;
+        // Now check if any of the events with the equal GUID contains recurrence
+        // information. If there's at least one such, then this item is an occurrence.
         QString ccomponentId = QString::fromStdString(ccomponent->getId());
-        for(int i = 0; i < eventsWithGuid.size(); ++i) {
+        for (int i = 0; i < eventsWithGuidSize; ++i) {
             CEvent *currEvent = eventsWithGuid[i];
             if (currEvent && QString::fromStdString(currEvent->getId()) != ccomponentId) { // exclude itself
                 if (containsRecurrenceInformation(currEvent)) {
-                    returnValue = true;
-                    break;
+                    for(int j = 0; j < eventsWithGuidSize; ++j)
+                        delete eventsWithGuid[j];
+                    return true;
                 }
             }
         }
-        for(int i = 0; i < eventsWithGuid.size(); ++i)
+
+        // There are multiple events with equal GUID and no event contains recurrence information.
+        // If this event is created first, it is consider as a parent, otherwise an occurrence.
+        CEvent* firstCreated = eventsWithGuid[0]; // always contains >= 2 events here
+        for (int i = 1; i < eventsWithGuidSize; ++i) {
+            CEvent *currEvent = eventsWithGuid[i];
+            if (currEvent->getCreatedTime() < firstCreated->getCreatedTime()) {
+                firstCreated = currEvent;
+            }
+            else if (currEvent->getCreatedTime() == firstCreated->getCreatedTime()
+                && currEvent->getId() < firstCreated->getId()) {
+                firstCreated = currEvent; // if two entries are created exactly at the same time, consider one with the smaller id as earlier
+            }
+        }
+
+        bool returnValue = (ccomponent->getId() != firstCreated->getId());
+        for(int i = 0; i < eventsWithGuidSize; ++i)
             delete eventsWithGuid[i];
 
         return returnValue;
     }
     else if (typeStr == QOrganizerItemType::TypeTodo || typeStr == QOrganizerItemType::TypeJournal
              || typeStr == QOrganizerItemType::TypeNote) {
-        return false; // these types have no occurrences saved in DB
+        return false; // these types never have occurrences saved in the DB
     }
     else {
         return true; // an occurrence type was given
