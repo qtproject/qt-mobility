@@ -222,6 +222,7 @@ public:
     QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame);
 
     void updateColors(int brightness, int contrast, int hue, int saturation);
+    void viewportDestroyed();
 
 protected:
     void initRgbTextureInfo(GLenum internalFormat, GLuint format, GLenum type, const QSize &size);
@@ -269,6 +270,11 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
 
 QVideoSurfaceGLPainter::~QVideoSurfaceGLPainter()
 {
+}
+
+void QVideoSurfaceGLPainter::viewportDestroyed()
+{
+    m_context = 0;
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGLPainter::supportedPixelFormats(
@@ -714,11 +720,13 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
 
 void QVideoSurfaceArbFpPainter::stop()
 {
-    m_context->makeCurrent();
+    if (m_context) {
+        m_context->makeCurrent();
 
-    if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
-        glDeleteTextures(m_textureCount, m_textureIds);
-    glDeleteProgramsARB(1, &m_programId);
+        if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
+            glDeleteTextures(m_textureCount, m_textureIds);
+        glDeleteProgramsARB(1, &m_programId);
+    }
 
     m_textureCount = 0;
     m_programId = 0;
@@ -1050,10 +1058,13 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
 
 void QVideoSurfaceGlslPainter::stop()
 {
-    m_context->makeCurrent();
+    if (m_context) {
+        m_context->makeCurrent();
 
-    if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
-        glDeleteTextures(m_textureCount, m_textureIds);
+        if (m_handleType != QAbstractVideoBuffer::GLTextureHandle)
+            glDeleteTextures(m_textureCount, m_textureIds);
+    }
+
     m_program.removeAllShaders();
 
     m_textureCount = 0;
@@ -1529,6 +1540,18 @@ void QPainterVideoSurface::setShaderType(ShaderType type)
 }
 
 #endif
+
+void QPainterVideoSurface::viewportDestroyed()
+{
+    if (m_painter) {
+        m_painter->viewportDestroyed();
+
+        setError(ResourceError);
+        stop();
+        delete m_painter;
+        m_painter = 0;
+    }
+}
 
 void QPainterVideoSurface::createPainter()
 {
