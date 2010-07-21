@@ -61,8 +61,8 @@
 
     \section2 Introducing the Qt Mobility APIs
 
-    Qt Mobility covers a wide range of features and technologies so it is best
-    to regard it not as a single API, but as a collection of APIs or frameworks.
+    Qt Mobility covers a wide range of features and technologies. It is best
+    regarded not as a single API but as a collection of APIs or frameworks.
 
     This release contains the following APIs:
 
