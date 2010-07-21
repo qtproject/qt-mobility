@@ -97,9 +97,6 @@ CameraBinAudioEncoder::CameraBinAudioEncoder(QObject *parent)
             gst_object_unref(GST_OBJECT(factory));
         }
     }
-
-    if (!m_codecs.isEmpty())
-        m_audioSettings.setCodec(m_codecs[0]);
 }
 
 CameraBinAudioEncoder::~CameraBinAudioEncoder()

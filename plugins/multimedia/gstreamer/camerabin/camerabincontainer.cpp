@@ -77,9 +77,6 @@ CameraBinContainer::CameraBinContainer(QObject *parent)
             gst_object_unref(GST_OBJECT(factory));
         }
     }
-
-    if (!m_supportedContainers.isEmpty())
-        setContainerMimeType(m_supportedContainers[0]);
 }
 
 QSet<QString> CameraBinContainer::supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction)
