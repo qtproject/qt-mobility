@@ -58,6 +58,7 @@ QTM_USE_NAMESPACE
   This interface is replaced by QVersitContactImporterPropertyHandlerV2.
 
   \ingroup versit
+  \inmodule QtVersit
 
   \sa QVersitContactImporter
  */

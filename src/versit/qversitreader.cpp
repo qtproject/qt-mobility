@@ -55,6 +55,7 @@ QTM_USE_NAMESPACE
   \class QVersitReader
   \brief The QVersitReader class reads Versit documents such as vCards from a device.
   \ingroup versit
+  \inmodule QtVersit
 
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
