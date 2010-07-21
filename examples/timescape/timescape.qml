@@ -1,5 +1,5 @@
 import Qt 4.7
-import QtMobility.organizer 1.0
+import QtMobility.organizer 1.1
 import "contents" as TimeScape
 
 Rectangle {
