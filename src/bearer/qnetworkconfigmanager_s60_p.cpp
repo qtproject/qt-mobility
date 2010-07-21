@@ -642,7 +642,7 @@ void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
             User::WaitForRequest(status);
             QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             if (!priv.data()) {
                 // If IAP was not found, check if the update was about EasyWLAN
                 priv = configurationFromEasyWlan(apId, connectionId);
@@ -944,7 +944,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
 
             QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             if (!priv.data()) {
                 // Check if status was regarding EasyWLAN
                 priv = configurationFromEasyWlan(apId, connectionId);
@@ -964,7 +964,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             User::WaitForRequest(status);
             QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             if (!priv.data()) {
                 // Check for EasyWLAN
                 priv = configurationFromEasyWlan(apId, connectionId);
@@ -1060,7 +1060,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         User::WaitForRequest(status);
         QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
         if (!priv.data()) {
             // If IAP was not found, check if the update was about EasyWLAN
             priv = configurationFromEasyWlan(apId, connectionId);
@@ -1080,7 +1080,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
     }
 }
 
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
 // Tries to derive configuration from EasyWLAN.
 // First checks if the interface brought up was EasyWLAN, then derives the real SSID,
 // and looks up configuration based on that one.

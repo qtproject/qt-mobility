@@ -353,7 +353,7 @@ void QNetworkSessionPrivate::open()
     }
     
     if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             // With One Click Connectivity (Symbian^3 onwards) it is possible
             // to connect silently, without any popups.
             TConnPrefList pref;
@@ -378,7 +378,7 @@ void QNetworkSessionPrivate::open()
                 newState(QNetworkSession::Connecting);
             }
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
         // On Symbian^3 if service network is not reachable, it triggers a UI (aka EasyWLAN) where
         // user can create new IAPs. To detect this, we need to store the number of IAPs
         // there was before connection was started.
@@ -859,7 +859,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
     if (iapId == 0) {
         _LIT(KSetting, "IAP\\Id");
         iConnection.GetIntSetting(KSetting, iapId);
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
         // Check if this is an Easy WLAN configuration. On Symbian^3 RConnection may report
         // the used configuration as 'EasyWLAN' IAP ID if someone has just opened the configuration
         // from WLAN Scan dialog, _and_ that connection is still up. We need to find the
@@ -896,7 +896,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
                 }
             }
         } else {
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             // On Symbian^3 (only, not earlier or Symbian^4) if the SNAP was not reachable, it triggers
             // user choice type of activity (EasyWLAN). As a result, a new IAP may be created, and
             // hence if was not found yet. Therefore update configurations and see if there is something new.
@@ -934,7 +934,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
             qDebug() << "QNS this : " << QString::number((uint)this) << " - "
                     << "configuration was not found, returning invalid.";
 #endif
-#endif // OCC_FUNCTIONALITY_AVAILABLE
+#endif
             // Given IAP Id was not found from known IAPs array
             return QNetworkConfiguration();
         }
@@ -1238,7 +1238,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
                     }
                 }
             }
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
+#if defined(OCC_FUNCTIONALITY_AVAILABLE) && defined(SNAP_FUNCTIONALITY_AVAILABLE)
             // If the retVal is not true here, it means that the status update may apply to an IAP outside of
             // SNAP (session is based on SNAP but follows IAP outside of it), which may occur on Symbian^3 EasyWlan.
             if (retVal == false && activeConfig.d.data() && activeConfig.d.data()->numericId == accessPointId) {
