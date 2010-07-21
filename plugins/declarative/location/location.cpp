@@ -57,8 +57,8 @@ class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.location"));
-        qmlRegisterType<QDeclarativePositionSource>(uri, 1, 0, "PositionSource");
-        qmlRegisterType<QDeclarativePosition>(uri, 1, 0, "Position");
+        qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
+        qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
     }
 };
 
