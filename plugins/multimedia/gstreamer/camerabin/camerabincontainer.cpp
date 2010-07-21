@@ -48,33 +48,49 @@ CameraBinContainer::CameraBinContainer(QObject *parent)
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "mp4" << "ogg" << "wav" << "amr";
+    formatCandidates << "mp4" << "ogg" << "wav" << "amr" << "mkv"
+                     << "avi" << "3gp" << "3gp2" << "webm" << "mjpeg" << "asf" << "mov";
 
-    m_elementNames["mp4"] = "hantromp4mux";
-    m_elementNames["ogg"] = "oggmux";
-    m_elementNames["wav"] = "wavenc";
-    m_elementNames["amr"] = "ffmux_amr";
+    QMap<QString,QByteArray> elementNames;
+
+    elementNames.insertMulti("mp4", "ffmux_mp4");
+    elementNames.insertMulti("mp4", "hantromp4mux");
+    elementNames.insert("ogg", "oggmux");
+    elementNames["wav"] = "wavenc";
+    elementNames["amr"] = "ffmux_amr";
+    elementNames["mkv"] = "matroskamux";
+    elementNames["avi"] = "avimux";
+    elementNames["3gp"] = "ffmux_3gp";
+    elementNames["3gp2"] = "ffmux_3g2";
+    elementNames["webm"] = "webmmux";
+    elementNames["mjpeg"] = "ffmux_mjpeg";
+    elementNames["asf"] = "ffmux_asf";
+    elementNames["mov"] = "mp4mux";
 
     QSet<QString> allTypes;
 
-    foreach( const QByteArray& formatName, formatCandidates ) {
-        QByteArray elementName = m_elementNames[formatName];
-        GstElementFactory *factory = gst_element_factory_find(elementName.constData());
-        if (factory) {
-            m_supportedContainers.append(formatName);
-            const gchar *descr = gst_element_factory_get_description(factory);
-            m_containerDescriptions.insert(formatName, QString::fromUtf8(descr));
+    foreach(const QByteArray &formatName, formatCandidates) {
+        foreach(const QByteArray &elementName, elementNames.values(formatName)) {
+            GstElementFactory *factory = gst_element_factory_find(elementName.constData());
+            if (factory) {
+                m_supportedContainers.append(formatName);
+                const gchar *descr = gst_element_factory_get_description(factory);
+                m_containerDescriptions.insert(formatName, QString::fromUtf8(descr));
 
 
-            if (formatName == QByteArray("raw")) {
-                m_streamTypes.insert(formatName, allTypes);
-            } else {
-                QSet<QString> types = supportedStreamTypes(factory, GST_PAD_SINK);
-                m_streamTypes.insert(formatName, types);
-                allTypes.unite(types);
+                if (formatName == QByteArray("raw")) {
+                    m_streamTypes.insert(formatName, allTypes);
+                } else {
+                    QSet<QString> types = supportedStreamTypes(factory, GST_PAD_SINK);
+                    m_streamTypes.insert(formatName, types);
+                    allTypes.unite(types);
+                }
+
+                gst_object_unref(GST_OBJECT(factory));
+
+                m_elementNames.insert(formatName, elementName);
+                break;
             }
-
-            gst_object_unref(GST_OBJECT(factory));
         }
     }
 }
