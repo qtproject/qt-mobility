@@ -499,6 +499,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
     //return true;
 
 
+    // TODO: How should the errormap updated for the child events?
     *error = QOrganizerItemManager::NoError;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
@@ -514,60 +515,44 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
             // Item exists
             QString itemId = QString::number(currItem.localId());
             int calError = CALENDAR_OPERATION_SUCCESSFUL;
-
             if (currItem.type() == QOrganizerItemType::TypeEvent) {
-                // Must check if event is a parent event. If yes, remove also the exception occurrences
-                std::vector<CEvent*> eventsWithGuid = cal->getEvents(currItem.guid().toStdString(), calError);
+                // Delete also child events if this event is a parent
+                CEvent* cevent = cal->getEvent(itemId.toStdString(), calError);
+                if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+                    bool parentItem = isParent(cal, cevent, QOrganizerItemType::TypeEvent, error);
+                    if (parentItem && *error == QOrganizerItemManager::NoError) {
+                        std::vector<CEvent*> eventsWithGuid = cal->getEvents(cevent->getGUid(), calError);
+                        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+                        if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+                            std::vector<CEvent*>::const_iterator childEvent;
+                            for (childEvent = eventsWithGuid.begin(); childEvent != eventsWithGuid.end(); ++childEvent) {
+                                QOrganizerItemLocalId childId = QString::fromStdString((*childEvent)->getId()).toUInt();
+                                if (!idsToDelete.contains(childId))
+                                    idsToDelete << childId;
+                                delete *childEvent;
+                            }
+                        }
+                    }
+                    delete cevent;
+                }
+            }
+            *error = d->m_itemTransformer.calErrorToManagerError(calError);
+
+            if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+                // Delete a component:
+                cal->deleteComponent(itemId.toStdString(), calError);
                 *error = d->m_itemTransformer.calErrorToManagerError(calError);
-                if (*error != QOrganizerItemManager::NoError) {
+
+                if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
+                    // Success, update the changeset
+                    qDebug() << "DELETED " << itemId;
+                    cs.insertRemovedItem(currItem.localId());
+                }
+                else {
                     success = false;
                     if (errorMap)
                         errorMap->insert(i, *error);
                 }
-                int eventsWithGuidSize = eventsWithGuid.size();
-                if (eventsWithGuidSize > 1) {
-                    // Multiple events with GUID found => if this one is not an occurrence
-                    // then it is a parent event.
-                    CEvent* cevent = cal->getEvent(itemId.toStdString(), calError);
-                    *error = d->m_itemTransformer.calErrorToManagerError(calError);
-                    if (*error == QOrganizerItemManager::NoError) {
-                        bool isOcc = isOccurrence(cal, cevent, QOrganizerItemType::TypeEvent, error);
-                        if (*error == QOrganizerItemManager::NoError) {
-                            if (!isOcc) {
-                                // This is a parent event, add its occurrences to the items to be deleted
-                                for (int j = 0; j < eventsWithGuidSize; ++j) {
-                                    QOrganizerItemLocalId currEventId = QString::fromStdString(eventsWithGuid[j]->getId()).toUInt();
-                                    if (!idsToDelete.contains(currEventId))
-                                        idsToDelete << currEventId;
-                                }
-                            }
-                        }
-                        else {
-                            success = false;
-                            if (errorMap)
-                                errorMap->insert(i, *error);
-                        }
-                    }
-                    else {
-                        success = false;
-                        if (errorMap)
-                            errorMap->insert(i, *error);
-                    }
-                }
-
-                // Free the resources
-                for (int i = 0; i < eventsWithGuidSize; ++i)
-                    delete eventsWithGuid[i];
-            }
-
-            // Delete a component:
-            cal->deleteComponent(itemId.toStdString(), calError);
-            *error = d->m_itemTransformer.calErrorToManagerError(calError);
-
-            if (calError == CALENDAR_OPERATION_SUCCESSFUL) {
-                // Success, update the changeset
-                qDebug() << "DELETED " << itemId;
-                cs.insertRemovedItem(currItem.localId());
             }
             else {
                 success = false;
@@ -1577,6 +1562,38 @@ bool QOrganizerItemMaemo5Engine::isOccurrence(CCalendar *cal, CComponent *ccompo
     }
     else {
         return true; // an occurrence type was given
+    }
+}
+
+bool QOrganizerItemMaemo5Engine::isParent(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    QString guid = QString::fromStdString(ccomponent->getGUid());
+    if (guid.isEmpty())
+        return false; // possible items with no GUID are never parents
+
+    if (typeStr == QOrganizerItemType::TypeEvent) {
+        bool retValue = false;
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        std::vector<CEvent*> eventsWithGuid = cal->getEvents(guid.toStdString(), calError);
+        *error = d->m_itemTransformer.calErrorToManagerError(calError);
+        int eventsWithGuidSize = eventsWithGuid.size();
+        if (eventsWithGuidSize > 1) {
+            // Multiple events with GUID found => if this one is not an occurrence
+            // then it has to be a parent
+            bool isOcc = isOccurrence(cal, ccomponent, QOrganizerItemType::TypeEvent, error);
+            if (!isOcc && *error == QOrganizerItemManager::NoError)
+                retValue = true;
+        }
+
+        // Free the resources
+        for (int i = 0; i < eventsWithGuidSize; ++i)
+            delete eventsWithGuid[i];
+
+        return retValue;
+    }
+    else {
+        return false;  // these types never have occurrences saved in the DB
     }
 }
 

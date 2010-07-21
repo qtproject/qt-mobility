@@ -187,6 +187,7 @@ private:
 
     // identifying native item as an occurrence
     bool isOccurrence(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
+    bool isParent(CCalendar *cal, CComponent *ccomponent, QString typeStr, QOrganizerItemManager::Error *error) const;
     bool containsRecurrenceInformation(CComponent *ccomponent) const;
 
     // returns a fetch hint for fetching minimal amount of information
