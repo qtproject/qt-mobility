@@ -132,6 +132,7 @@ protected: // From CActive
 private Q_SLOTS:
     void configurationStateChanged(TUint32 accessPointId, TUint32 connMonId, QNetworkSession::State newState);
     void configurationRemoved(const QNetworkConfiguration& config);
+    void configurationAdded(const QNetworkConfiguration& config);
     
 private:
     TUint iapClientCount(TUint aIAPId) const;

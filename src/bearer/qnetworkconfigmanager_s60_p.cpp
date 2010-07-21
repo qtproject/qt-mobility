@@ -251,6 +251,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                     // which propagate here --> must be converted to leaves (standard
                     // std::exception would cause any TRAP trapping this function to terminate
                     // program).
+                    QT_TRYCATCH_LEAVING(updateActiveAccessPoints());
+                    updateStatesToSnaps();
                     QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                 }
             }
@@ -301,6 +303,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             if (!iFirstUpdate) {
                 QNetworkConfiguration item;
                 item.d = ptr;
+                QT_TRYCATCH_LEAVING(updateActiveAccessPoints());
+                updateStatesToSnaps();
                 QT_TRYCATCH_LEAVING(emit configurationAdded(item));
             }
         }
@@ -321,12 +325,14 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
                     ptr.data()->serviceNetworkPtr = privSNAP;
                     accessPointConfigurations.insert(cpPriv->id, ptr);
+                    privSNAP->serviceNetworkMembers.append(ptr);
                     if (!iFirstUpdate) {
                         QNetworkConfiguration item;
                         item.d = ptr;
+                        QT_TRYCATCH_LEAVING(updateActiveAccessPoints());
+                        updateStatesToSnaps();
                         QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                     }
-                    privSNAP->serviceNetworkMembers.append(ptr);
                 }
             } else {
                 knownConfigs.removeOne(iface);
@@ -373,6 +379,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                 if (!iFirstUpdate) {
                     QNetworkConfiguration item;
                     item.d = ptr;
+                    QT_TRYCATCH_LEAVING(updateActiveAccessPoints());
+                    updateStatesToSnaps();
                     QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                 }
             } else {
@@ -417,6 +425,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             QT_TRYCATCH_LEAVING(emit configurationRemoved(item));
         }
     }
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    updateStatesToSnaps();
+#endif
 }
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -654,7 +665,8 @@ void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
 #endif
             if (priv.data()) {
                 iConnectionMonitor.GetIntAttribute(connectionId, subConnectionCount, KConnectionStatus, connectionStatus, status);
-                User::WaitForRequest(status);          
+                User::WaitForRequest(status);
+
                 if (connectionStatus == KLinkLayerOpen) {
                     online = true;
                     inactiveConfigs.removeOne(ident);
@@ -951,7 +963,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             }
 #endif
             if (priv.data()) {
-                priv.data()->connectionId = connectionId;                
+                priv.data()->connectionId = connectionId;
                 QT_TRYCATCH_LEAVING(emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connecting));
             }
         } else if (connectionStatus == KLinkLayerOpen) {

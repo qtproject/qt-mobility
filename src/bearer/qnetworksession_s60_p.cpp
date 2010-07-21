@@ -142,6 +142,21 @@ void QNetworkSessionPrivate::configurationRemoved(const QNetworkConfiguration& c
     }
 }
 
+void QNetworkSessionPrivate::configurationAdded(const QNetworkConfiguration& config)
+{
+    Q_UNUSED(config);
+    // If session is based on service network, some other app may create new access points
+    // to the SNAP --> synchronize session's state with that of interface's.
+    if (!publicConfig.d.data() || publicConfig.type() != QNetworkConfiguration::ServiceNetwork) {
+        return;
+    }
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                 << "configurationAdded IAP: " << QString::number(config.d.data()->numericId);
+#endif
+        syncStateWithInterface();
+}
+
 // Function sets the state of the session to match the state
 // of the underlying interface (the configuration this session is based on)
 void QNetworkSessionPrivate::syncStateWithInterface()
@@ -157,6 +172,12 @@ void QNetworkSessionPrivate::syncStateWithInterface()
         QObject::connect(((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager),
                          SIGNAL(configurationRemoved(QNetworkConfiguration)),
                          this, SLOT(configurationRemoved(QNetworkConfiguration)));
+        // Connect to configuration additions, so that in case a configuration is added
+        // in a SNAP this session is based on, the session knows to synch its state with its
+        // interface.
+        QObject::connect(((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager),
+                         SIGNAL(configurationAdded(QNetworkConfiguration)),
+                         this, SLOT(configurationAdded(QNetworkConfiguration)));
     }
     // Start listening IAP state changes from QNetworkConfigurationManagerPrivate
     iHandleStateNotificationsFromManager = true;    
