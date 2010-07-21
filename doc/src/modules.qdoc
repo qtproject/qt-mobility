@@ -60,6 +60,12 @@
 
 
 /*!
+    \module QtNetwork
+    \title QtNetwork Module
+    \brief The QtNetwork module controls the system's connectivity state.
+*/
+
+/*!
     \module QtContacts
 
     \title QtContacts Module
@@ -180,3 +186,5 @@ arbitrary services.
     \brief The QtVersit module allows the management of Versit documents
     including as vCards.
 */
+
+
