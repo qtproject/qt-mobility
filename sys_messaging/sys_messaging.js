@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/messaging
+
 // returns true if automated testing can be done, false manual testing is to be done
 function automatedTestEnvironment(){
       //Automated testing not supported for this test case yet
@@ -138,5 +140,3 @@ testcase = {
         }
     }
 }
-
-

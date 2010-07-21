@@ -1,4 +1,4 @@
-
+//TESTED_COMPONENT=src/location
 
 testcase = {
     initTestCase: function()
