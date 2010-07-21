@@ -188,6 +188,7 @@ private:
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;
     OrganizerItemTransform m_itemTransform;
+    mutable QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > m_definition;
 
     friend class QOrganizerItemSymbianFactory;
 };

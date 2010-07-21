@@ -473,8 +473,13 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrgan
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return detailDefinitions(itemType, error);
+    // Get all the detail definitions from the base implementation
+    // TODO: Add or remove definitions based on the Symbian offering
+    if (m_definition.isEmpty()) {
+        m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+    }
+    *error = QOrganizerItemManager::NoError;
+    return m_definition.value(itemType);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemSymbianEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
