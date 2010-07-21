@@ -140,12 +140,9 @@ QGeoMapWidget::~QGeoMapWidget()
 */
 void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    QGraphicsWidget::resizeEvent(event);
     if (d_ptr->mapData && d_ptr->manager) {
         d_ptr->mapData->setViewportSize(event->newSize());
     }
-
-    event->accept();
 }
 
 /*!
@@ -165,11 +162,6 @@ void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     if (d_ptr->mapData)
         d_ptr->mapData->paint(painter, option);
-//    painter->drawPixmap(d_ptr->mapData->mapImage().rect(), d_ptr->mapData->mapImage(), d_ptr->mapData->mapImage().rect());
-//    QPixmap objOverlay = d_ptr->mapData->mapObjectsOverlay();
-
-//    if (!objOverlay.isNull())
-//        painter->drawPixmap(objOverlay.rect(), objOverlay, objOverlay.rect());
 }
 
 /*!
@@ -215,7 +207,11 @@ qreal QGeoMapWidget::maximumZoomLevel() const
 void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
 {
     if (d_ptr->mapData && d_ptr->manager) {
+        qreal oldZoom = d_ptr->mapData->zoomLevel();
         d_ptr->mapData->setZoomLevel(zoomLevel);
+        qreal newZoom = d_ptr->mapData->zoomLevel();
+        if (oldZoom != newZoom)
+            emit zoomLevelChanged(newZoom);
     }
 }
 
@@ -306,7 +302,12 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
             return;
 
+        QGeoMapWidget::MapType oldType = d_ptr->mapData->mapType();
+
         d_ptr->mapData->setMapType(mapType);
+
+        if (oldType != mapType)
+            emit mapTypeChanged(mapType);
     }
 }
 
