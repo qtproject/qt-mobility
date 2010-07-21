@@ -58,7 +58,7 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
 
-        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 0, "ValueSpaceSubscriber");
+        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 1, "ValueSpaceSubscriber");
     }
 };
 
