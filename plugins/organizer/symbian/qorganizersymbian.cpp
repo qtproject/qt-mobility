@@ -471,13 +471,26 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrgan
     return filteredAndSorted;
 }
 
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEvent() const
+{
+    // Remove all the details for an event not supported on Symbian
+    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerTodoProgress::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerTodoTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerJournalTimeRange::DefinitionName);
+}
+
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     // Get all the detail definitions from the base implementation
-    // TODO: Add or remove definitions based on the Symbian offering
     if (m_definition.isEmpty()) {
         m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
     }
+    
+    // Add or remove definitions based on the Symbian offering
+    modifyDetailDefinitionsForEvent();
+    
     *error = QOrganizerItemManager::NoError;
     return m_definition.value(itemType);
 }
