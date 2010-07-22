@@ -161,7 +161,8 @@ GstElement *CameraBinAudioEncoder::createEncoder()
     Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
+    QByteArray encoderElementName = m_elementNames.value(codec);
+    GstElement *encoderElement = gst_element_factory_make(encoderElementName.constData(), NULL);
 
     Q_ASSERT(encoderElement);
 
@@ -197,9 +198,18 @@ GstElement *CameraBinAudioEncoder::createEncoder()
         if (m_audioSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
             QtMultimediaKit::EncodingQuality qualityValue = m_audioSettings.quality();
 
-            if (codec == QLatin1String("audio/mpeg")) {
+            if (encoderElementName == "lamemp3enc") {
                 g_object_set(G_OBJECT(encoderElement), "target", 0, NULL); //constant quality mode
                 qreal quality[] = {
+                    10.0, //VeryLow
+                    6.0, //Low
+                    4.0, //Normal
+                    2.0, //High
+                    0.0 //VeryHigh
+                };
+                g_object_set(G_OBJECT(encoderElement), "quality", quality[qualityValue], NULL);
+            } else if (encoderElementName == "ffenc_mp2") {
+                int quality[] = {
                     8000, //VeryLow
                     64000, //Low
                     128000, //Normal
