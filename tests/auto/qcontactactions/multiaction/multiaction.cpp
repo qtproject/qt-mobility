@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #ifndef ACTIONFACTORYPLUGINTARGET
-#define ACTIONFACTORYPLUGINTARGET contacts_sendemailactionfactory
+#define ACTIONFACTORYPLUGINTARGET contacts_multiactionfactory
 #endif
 #ifndef ACTIONFACTORYPLUGINNAME
-#define ACTIONFACTORYPLUGINNAME SendEmailActionFactory
+#define ACTIONFACTORYPLUGINNAME MultiActionFactory
 #endif
 
 #include "multiaction_p.h"
@@ -54,6 +54,8 @@
 
 #include <QMessageBox>
 #include <QTimer>
+
+//! [Example Contact Action Plugin Implementation]
 
 QObject* QContactMultiActionPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor,
                         QServiceContext* context,
@@ -260,3 +262,5 @@ void QContactActionTwo::performAction()
     QMessageBox::information(0, "ActionTwo", "This is action two!");
     emit stateChanged(QContactAction::FinishedState);
 }
+
+//! [Example Contact Action Plugin Implementation]

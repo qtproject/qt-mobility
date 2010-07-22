@@ -67,6 +67,8 @@
 
 QTM_USE_NAMESPACE
 
+//! [Example Contact Action Plugin Declaration]
+
 /*
    This action plugin is capable of producing two actions which each have the
    same action name, service name, interface name and implementation (minor) version,
@@ -78,16 +80,15 @@ QTM_USE_NAMESPACE
    Company "Example VoIP Solutions" wants to provide a "Call" action with different implementations.
        -> it provides a SINGLE plugin which provides two actions, both of which are:
            - ServiceName = "Example VoIP Solution"
-           - InterfaceName = "com.nokia.qt.mobility.contact.action"
+           - InterfaceName = "com.nokia.qt.mobility.contacts.action" (QContactActionFactory::InterfaceName)
            - Major Version = "1"
            - Minor Version = "1"
-           - ActionName = "Call" (this is a custom property in the service interface xml)
+           - ActionName = "call" (this is a custom property in the service interface xml)
        -> BUT one of the actions has the custom property:
            - Provider = "sip"
        -> where the other action has the custom property:
            - Provider = "example proprietary protocol"
-       -> the custom properties are available to clients via the QContactActionDescriptor::metaData()
-          function.
+       -> the custom properties are available to clients via the QContactActionDescriptor::metaData() function.
  */
 
 class QContactMultiActionPlugin : public QObject, public QServicePluginInterface
@@ -156,5 +157,7 @@ public:
 private slots:
     void performAction();
 };
+
+//! [Example Contact Action Plugin Declaration]
 
 #endif

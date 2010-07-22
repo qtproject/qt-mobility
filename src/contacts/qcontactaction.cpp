@@ -266,7 +266,21 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAction::ActionOpenInViewer, "view");
 
 /*!
   Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName.
-  Some default action names include QContactAction::ActionSms, QContactAction::ActionCall and QContactAction::ActionView.
+  The action name may either be one of the default action names, or any other arbitrary string.
+
+  Example:
+  \code
+      QList<QContactActionDescriptor> availableCallActions = QContactAction::actionDescriptors(QContactAction::ActionCall);
+  \endcode
+
+  Example 2:
+  \code
+      QList<QContactActionDescriptor> customActions = QContactAction::actionDescriptors("customActionName");
+  \endcode
+
+  The actions which are available depend on which action plugins have been installed.  For more information
+  on this topic (for example, if you are interested in providing an action plugin for third-party developers
+  to use) please see the relevant documentation for \l{Qt Contacts Action API}{action providers}.
  */
 QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName)
 {
