@@ -1,2 +1,2 @@
 CONFIG+=systemtest
-SOURCES=sys_location.js
+SOURCES=sys_location.qtt

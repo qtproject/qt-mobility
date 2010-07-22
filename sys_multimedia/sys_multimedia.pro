@@ -1,2 +1,2 @@
-SOURCES=sys_multimedia.js
+SOURCES=sys_multimedia.qtt
 CONFIG+=systemtest

@@ -1,2 +1,2 @@
-SOURCES=sys_sensors.js
+SOURCES=sys_sensors.qtt
 CONFIG+=systemtest

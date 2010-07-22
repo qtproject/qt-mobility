@@ -1,2 +1,2 @@
-SOURCES=sys_contacts.js
+SOURCES=sys_contacts.qtt
 CONFIG+=systemtest

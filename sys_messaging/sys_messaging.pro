@@ -1,2 +1,2 @@
-SOURCES=sys_messaging.js
+SOURCES=sys_messaging.qtt
 CONFIG+=systemtest

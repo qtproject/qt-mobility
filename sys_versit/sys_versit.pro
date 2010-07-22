@@ -1,2 +1,2 @@
-SOURCES=sys_versit.js
+SOURCES=sys_versit.qtt
 CONFIG+=systemtest

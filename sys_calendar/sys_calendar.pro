@@ -1,2 +1,2 @@
-SOURCES=sys_calendar.js
+SOURCES=sys_calendar.qtt
 CONFIG+=systemtest

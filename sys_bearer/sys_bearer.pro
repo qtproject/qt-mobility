@@ -1,2 +1,2 @@
-SOURCES=sys_bearer.js
+SOURCES=sys_bearer.qtt
 CONFIG+=systemtest
