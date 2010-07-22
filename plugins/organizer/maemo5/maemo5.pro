@@ -14,9 +14,11 @@ INCLUDEPATH += ../../../src/organizer \
     ../../../src/organizer/details
 HEADERS += qorganizermaemo5_p.h \
     qorganizerrecurrencetransform.h \
-    qorganizeritemtransform.h
+    qorganizeritemtransform.h \
+    qorganizerasynchprocess.h
 SOURCES += qorganizermaemo5.cpp \
     qorganizerrecurrencetransform.cpp \
-    qorganizeritemtransform.cpp
+    qorganizeritemtransform.cpp \
+    qorganizerasynchprocess.cpp
 target.path = $${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target

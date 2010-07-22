@@ -55,8 +55,6 @@
 
 #include "qtorganizer.h"
 #include "qorganizerrecurrencetransform.h"
-//#include <CMulticalendar.h>
-//#include <CRecurrenceRule.h>
 
 QTM_USE_NAMESPACE
 
