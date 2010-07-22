@@ -106,6 +106,7 @@ Q_DECLARE_METATYPE(QDeclarativePositionSource::PositioningMethod)
 
 // Helper functions to avoid repetitive signal spy usage
 QList<QSignalSpy*> createSpies(QObject* source_obj);
+void deleteSpies(QList<QSignalSpy*> spies);
 QList<QSignalSpy*> createSourceSpies(QObject* source_obj);
 QList<QSignalSpy*> createPositionSpies(QObject* position_obj);
 bool spiesAreEmpty(QList<QSignalSpy*> spies);
@@ -300,6 +301,7 @@ void tst_QDeclarativePosition::basicNmeaSource()
     clearSpies(spies);
     QVERIFY(spiesAreEmpty(spies));
     delete source_obj;
+    deleteSpies(spies);
 }
 
 void tst_QDeclarativePosition::basicNmeaSource_data()
@@ -417,6 +419,7 @@ void tst_QDeclarativePosition::activism()
     QTRY_VERIFY(!activeChangedSpy.isEmpty());
     QVERIFY(activeChangedSpy.first().at(0).toBool() == false);
     QVERIFY(positionChangedSpy.isEmpty());
+    delete source_obj;
 }
 
 QObject* tst_QDeclarativePosition::createPositionSource(const QString& componentString)
@@ -484,6 +487,15 @@ void clearSpies(QList<QSignalSpy*> spies)
         spies.at(i)->clear();
     }
 }
+
+
+void deleteSpies(QList<QSignalSpy*> spies)
+{
+    for (int i = 0; i < spies.size(); i++) {
+        delete spies.at(i);
+    }
+}
+
 
 QTEST_MAIN(tst_QDeclarativePosition)
 #include "tst_qdeclarativeposition.moc"
