@@ -57,7 +57,7 @@ class QAbstractVideoSurfacePrivate;
 class Q_MULTIMEDIA_EXPORT QAbstractVideoSurface : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(QSize nativeResolution READ nativeResolution NOTIFY nativeResolutionChanged)
 public:
     enum Error
     {
@@ -78,6 +78,8 @@ public:
 
     QVideoSurfaceFormat surfaceFormat() const;
 
+    QSize nativeResolution() const;
+
     virtual bool start(const QVideoSurfaceFormat &format);
     virtual void stop();
 
@@ -91,11 +93,13 @@ Q_SIGNALS:
     void activeChanged(bool active);
     void surfaceFormatChanged(const QVideoSurfaceFormat &format);
     void supportedFormatsChanged();
+    void nativeResolutionChanged(const QSize &);
 
 protected:
     QAbstractVideoSurface(QAbstractVideoSurfacePrivate &dd, QObject *parent);
 
     void setError(Error error);
+    void setNativeResolution(const QSize &resolution);
 
 private:
     Q_DECLARE_PRIVATE(QAbstractVideoSurface)

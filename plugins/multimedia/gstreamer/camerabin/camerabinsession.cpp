@@ -543,8 +543,8 @@ bool CameraBinSession::processSyncMessage(const QGstreamerMessage &message)
     GstBuffer *buffer = NULL;
 
     if (gm && GST_MESSAGE_TYPE(gm) == GST_MESSAGE_ELEMENT) {
-        if (gst_structure_has_name(gm->structure, "preview-image"))
-        {
+        if (m_captureMode == QCamera::CaptureStillImage &&
+            gst_structure_has_name(gm->structure, "preview-image")) {
             st = gst_message_get_structure(gm);
             if (gst_structure_has_field_typed(st, "buffer", GST_TYPE_BUFFER)) {
                 image = gst_structure_get_value(st, "buffer");
