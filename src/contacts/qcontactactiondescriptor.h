@@ -89,10 +89,12 @@ public:
         return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
     }
 
-    // Need latin constants for keys.. {label, icon, vendor?, second label?}
+    // default meta-data keys
     Q_DECLARE_LATIN1_CONSTANT(MetaDataIcon, "Icon");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataOptionalParameterKeys, "OptionalParameterKeys");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
 
 protected:
     QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, const QVariantMap& staticMetaData, QContactActionFactory* factory);

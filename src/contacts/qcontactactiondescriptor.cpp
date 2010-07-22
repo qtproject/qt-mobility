@@ -114,13 +114,16 @@ QString QContactActionDescriptor::serviceName() const
 }
 
 /*!
- * Returns the service-specified version of the action implementation which is identified by the action descriptor
+  Returns the service-specified version of the action implementation which is identified by the action descriptor
  */
 int QContactActionDescriptor::implementationVersion() const
 {
     return d->m_implementationVersion;
 }
 
+/*!
+  Returns the set of action targets which are supported by this action for the given contact \a contact
+ */
 QSet<QContactActionTarget> QContactActionDescriptor::supportedTargets(const QContact& contact) const
 {
     if (d->m_factory) {
@@ -129,6 +132,10 @@ QSet<QContactActionTarget> QContactActionDescriptor::supportedTargets(const QCon
 
     return QSet<QContactActionTarget>();
 }
+
+/*!
+  Returns a filter which will match contacts for which this action has at least one supported action target
+ */
 QContactFilter QContactActionDescriptor::contactFilter() const
 {
     if (d->m_factory) {
@@ -137,6 +144,63 @@ QContactFilter QContactActionDescriptor::contactFilter() const
 
     return QContactInvalidFilter();
 }
+
+
+/*!
+   \variable QContactActionDescriptor::MetaDataIcon
+   The meta data key which corresponds to the meta data value
+   which contains the icon which should be displayed for this
+   action.
+   \sa metaData()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataIcon, "Icon");
+
+/*!
+   \variable QContactActionDescriptor::MetaDataLabel
+   The meta data key which corresponds to the meta data value
+   which contains the display label for this action.
+   \sa metaData()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataLabel, "Label");
+
+/*!
+   \variable QContactActionDescriptor::MetaDataSecondLabel
+   The meta data key which corresponds to the meta data value
+   which contains the second or additional display label for this
+   action.
+   \sa metaData()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataSecondLabel, "SecondLabel");
+
+/*!
+   \variable QContactActionDescriptor::MetaDataOptionalParameterKeys
+   The meta data key which corresponds to the meta data value which
+   contains the list of keys of parameters which the client may provide
+   at invocation time which may affect the action.
+
+   An example of an optional parameter might be an "attachment"
+   parameter to a "send email" action.
+
+   \sa metaData()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataOptionalParameterKeys, "OptionalParameterKeys");
+
+/*!
+   \variable QContactActionDescriptor::MetaDataMandatoryParameterKeys
+   The meta data key which corresponds to the meta data value which
+   contains the list of keys of parameters which the client must provide
+   at invocation for the action to succeed.
+
+   An example of a mandatory parameter might be a "recipient"
+   parameter to a "send email" action.
+
+   \sa metaData()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactActionDescriptor::MetaDataMandatoryParameterKeys, "MandatoryParameterKeys");
+
+/*!
+  Returns the meta data for the given meta data key \a key in the context of the given action targets \a targets with the given invocation parameters \a parameters.
+ */
 QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
 {
     if (d->m_factory) {
@@ -145,6 +209,10 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
 
     return QVariant();
 }
+
+/*!
+  Returns true if the action which this descriptor describes supports at least one action target for the given \a contact
+ */
 bool QContactActionDescriptor::supportsContact(const QContact& contact) const
 {
     if (d->m_factory) {

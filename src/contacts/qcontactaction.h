@@ -93,10 +93,12 @@ public:
     // common actions
     Q_DECLARE_LATIN1_CONSTANT(ActionCall, "call");
     Q_DECLARE_LATIN1_CONSTANT(ActionEmail, "email");
-    Q_DECLARE_LATIN1_CONSTANT(ActionMessage, "message"); // XXX text message? IM message? either, depending on detail?
+    Q_DECLARE_LATIN1_CONSTANT(ActionSms, "sms");
+    Q_DECLARE_LATIN1_CONSTANT(ActionMms, "mms");
+    Q_DECLARE_LATIN1_CONSTANT(ActionChat, "chat");
     Q_DECLARE_LATIN1_CONSTANT(ActionVideoCall, "videocall");
-    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInEditor, "editor"); // Open in the native addressbook editor
-    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInViewer, "view"); // Open in the native addressbook viewer
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInEditor, "edit");
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInViewer, "view");
 
 Q_SIGNALS:
     void stateChanged(QContactAction::State);
