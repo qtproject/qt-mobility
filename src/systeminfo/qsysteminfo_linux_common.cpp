@@ -136,9 +136,40 @@ static bool udisksAvailable()
     return false;
 }
 
+static bool connmanAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.moblin.connman");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    return false;
+}
+
+static bool ofonoAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    return false;
+}
 
 bool halIsAvailable;
 bool udisksIsAvailable;
+bool connmanIsAvailable;
+bool ofonoIsAvailable;
 
 QTM_BEGIN_NAMESPACE
 
@@ -420,13 +451,21 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
     return false;
 }
 
-QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
+#if !defined(QT_NO_DBUS)
+    connmanIsAvailable = connmanAvailable();
+    if(connmanIsAvailable) {
+        initConnman();
+    }
+#endif
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
+
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
@@ -883,6 +922,92 @@ QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &fi
         }
     }
     return QString();
+}
+#endif
+
+#if !defined(QT_NO_CONNMAN)
+void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
+{
+    qDebug() << __FUNCTION__;
+    connect(connmanManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(connmanPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    foreach(const QString techPath, connmanManager->getTechnologies()) {
+        QConnmanTechnologyInterface *tech;
+        tech = new QConnmanTechnologyInterface(techPath, this);
+
+        connect(tech,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                this,SLOT(connmanTechnologyPropertyChangedContext(QString,QString,QDBusVariant)));
+
+        foreach(const QString devicePath,tech->getDevices()) {
+            QConnmanDeviceInterface *dev;
+            dev = new QConnmanDeviceInterface(devicePath);
+     //       if(!deviceMap.value(techPath).contains(devicePath)) {
+                connect(dev,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                        this,SLOT(connmanDevicePropertyChangedContext(QString,QString,QDBusVariant)));
+//                deviceMap.insert(techPath,QStringList() << devicePath);
+//                foreach(const QString network,dev->getNetworks()) {
+//                    serviceNetworks.insert(getServiceForNetwork(network),network);
+//                }
+ //           }
+        }
+    }
+
+}
+#endif
+
+void QSystemNetworkInfoLinuxCommonPrivate::connectNotify(const char *signal)
+{
+/*
+   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
+   void currentMobileCountryCodeChanged(const QString &);
+   void currentMobileNetworkCodeChanged(const QString &);
+   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+*/    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+
+    }
+}
+
+#if !defined(QT_NO_CONNMAN)
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "Services") {
+    }
+
+    if(item == "State") {
+        // qDebug() << value.variant();
+    }
+
+    if(item == "DefaultTechnologies") {
+        // qDebug() << value.variant();
+    }
+
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+        qDebug() << __FUNCTION__ << path << item << value.variant();
+
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+        qDebug() << __FUNCTION__ << path << item << value.variant();
+
 }
 #endif
 

@@ -66,10 +66,14 @@
 #include "qsystemstorageinfo.h"
 
 #include <qmobilityglobal.h>
+
 #if !defined(QT_NO_DBUS)
 #include "qhalservice_linux_p.h"
 #include "qdevicekitservice_linux_p.h"
 
+#if !defined(QT_NO_CONNMAN)
+#include "qconnmanservice_linux_p.h"
+#endif
 #endif
 
 QT_BEGIN_HEADER
@@ -146,7 +150,8 @@ public:
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
    // virtual QSystemNetworkInfo::NetworkMode currentMode();
-
+#if !defined(QT_NO_CONNMAN)
+#endif
 //public Q_SLOTS:
 //    void getPrimaryMode();
 
@@ -163,9 +168,26 @@ protected:
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
+
+#if !defined(QT_NO_CONNMAN)
+    QConnmanManagerInterface *connmanManager;
+    void initConnman();
 #endif
+
+#endif
+
+private Q_SLOTS:
+#if !defined(QT_NO_CONNMAN)
+    void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+
+#endif
+
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject

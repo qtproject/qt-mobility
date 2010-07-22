@@ -223,6 +223,9 @@ while [ "$#" -gt 0 ]; do
         -maemo6)
             LINUX_TARGET=maemo6
             ;;
+        -meego)
+            LINUX_TARGET=meego
+            ;;
         -sdk)
             MAC_SDK="$2"
             shift
@@ -325,6 +328,8 @@ if [ -n "$LINUX_TARGET" ]; then
         echo "CONFIG+=maemo5" >> "$CONFIG_IN"
     elif [ "$LINUX_TARGET" = "maemo6" ]; then
         echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "meego" ]; then
+        echo "CONFIG+=meego" >> "$CONFIG_IN"
     fi
 fi
 
@@ -504,6 +509,7 @@ compileTest()
 #compile tests
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
+compileTest connman connman
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest Immersion immersion
 compileTest "Maemo ICD" maemo-icd
