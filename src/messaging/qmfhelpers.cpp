@@ -43,10 +43,6 @@
 #include "qmessagemanager.h"
 
 #include <QRegExp>
-#ifdef QT_SIMULATOR
-#include <private/qsimulatordata_p.h>
-#include <QtCore/QCoreApplication>
-#endif
 
 
 QTM_BEGIN_NAMESPACE
@@ -62,20 +58,6 @@ quint64 messageStatusMask(const QString &field)
 }
 
 namespace QmfHelpers {
-
-QMailStore *mailStoreInstance()
-{
-#ifdef QT_SIMULATOR
-    if (QMailStore::initializationState() == QMailStore::Uninitialized) {
-        QtSimulatorPrivate::qt_setQmfPaths();
-#ifdef QTM_PLUGIN_PATH
-        QCoreApplication::addLibraryPath(QTM_PLUGIN_PATH +
-                                         QLatin1String("/plugins"));
-#endif
-    }
-#endif
-    return QMailStore::instance();
-}
 
 QString stripIdentifierPrefix(const QString &s)
 {
@@ -363,7 +345,7 @@ QMessage::StatusFlags convert(quint64 v)
 quint64 convert(QMessage::Status v)
 {
     // We cannot rely on the QMailMessage status masks until the store has been initialized
-    static QMailStore *store = mailStoreInstance();
+    static QMailStore *store = QMailStore::instance();
     Q_UNUSED(store);
 
     quint64 result(0);

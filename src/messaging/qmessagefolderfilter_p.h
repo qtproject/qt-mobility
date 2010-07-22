@@ -46,7 +46,7 @@
 #include <qvariant.h>
 #include "qmessagefolder.h"
 #endif
-#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
+#ifdef Q_OS_WIN
 #include "winhelpers_p.h"
 #include "qmessagemanager.h"
 #endif
@@ -139,7 +139,7 @@ public:
     QMessageFolderFilter *_folderFilter;
 #endif
 
-#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
+#ifdef Q_OS_WIN
     static QMessageFolderFilter preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFolderFilter &filter);
     static void preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);

@@ -41,7 +41,7 @@
 #ifndef QMESSAGEACCOUNTFILTERPRIVATE_H
 #define QMESSAGEACCOUNTFILTERPRIVATE_H
 #include "qmessageaccountfilter.h"
-#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
+#ifdef Q_OS_WIN
 #include "winhelpers_p.h"
 #endif
 
@@ -98,7 +98,7 @@ public:
     QList<SortedMessageAccountFilterList> _filterList;
 #endif
 
-#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
+#ifdef Q_OS_WIN
     QMessageAccountFilterPrivate &operator=(const QMessageAccountFilterPrivate &other);
     bool operator==(const QMessageAccountFilterPrivate &other);
     static bool isNonMatching(const QMessageAccountFilter &filter);

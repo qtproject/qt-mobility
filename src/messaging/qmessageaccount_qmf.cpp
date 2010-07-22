@@ -135,7 +135,7 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    if (QMailStore *store = mailStoreInstance()) {
+    if (QMailStore *store = QMailStore::instance()) {
         QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type)));
         QMailAccountKey enabledKey(QMailAccountKey::status(QMailAccount::Enabled));
 

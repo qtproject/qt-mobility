@@ -67,7 +67,6 @@ class QMessageFilter;
 
 namespace QmfHelpers {
 
-    QMailStore *mailStoreInstance();
     Q_AUTOTEST_EXPORT QString stripIdentifierPrefix(const QString &s);
     Q_AUTOTEST_EXPORT QString prefixIdentifier(const QString &s);
 
