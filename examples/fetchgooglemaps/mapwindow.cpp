@@ -154,7 +154,7 @@ void MapWindow::delayedInit()
     // Is there default access point, use it
     QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
-        QMessageBox::information(this, tr("Flickr Demo"), tr(
+        QMessageBox::information(this, tr("Fetch Google Maps"), tr(
                                      "Available Access Points not found."));
         return;
     }

@@ -8,10 +8,7 @@ HEADERS += \
     tst_qmediarecorder_xa_macros.h
 
 SOURCES += \
-    tst_qmediarecorder_xa_aac.cpp \
-    tst_qmediarecorder_xa_amr.cpp \
-    tst_qmediarecorder_xa_main.cpp \
-    tst_qmediarecorder_xa_wav.cpp
+    tst_qmediarecorder_xa.cpp
 
 include (../../../../common.pri)
 
