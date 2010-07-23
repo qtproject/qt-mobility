@@ -242,6 +242,7 @@ protected:
     QGLContext *m_context;
     QAbstractVideoBuffer::HandleType m_handleType;
     QVideoSurfaceFormat::Direction m_scanLineDirection;
+    QVideoSurfaceFormat::YCbCrColorSpace m_colorSpace;
     GLenum m_textureFormat;
     GLuint m_textureInternalFormat;
     GLenum m_textureType;
@@ -257,6 +258,7 @@ QVideoSurfaceGLPainter::QVideoSurfaceGLPainter(QGLContext *context)
     : m_context(context)
     , m_handleType(QAbstractVideoBuffer::NoHandle)
     , m_scanLineDirection(QVideoSurfaceFormat::TopToBottom)
+    , m_colorSpace(QVideoSurfaceFormat::YCbCr_BT601)
     , m_textureFormat(0)
     , m_textureInternalFormat(0)
     , m_textureType(0)
@@ -394,11 +396,33 @@ void QVideoSurfaceGLPainter::updateColors(int brightness, int contrast, int hue,
     m_colorMatrix(3, 3) = 1.0;
 
     if (m_yuv) {
-        m_colorMatrix = m_colorMatrix * QMatrix4x4(
-                1.0,  0.000,  1.140, -0.5700,
-                1.0, -0.394, -0.581,  0.4875,
-                1.0,  2.028,  0.000, -1.0140,
-                0.0,  0.000,  0.000,  1.0000);
+        QMatrix4x4 colorSpaceMatrix;
+
+        switch (m_colorSpace) {
+        case QVideoSurfaceFormat::YCbCr_JPEG:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.0,  0.000,  1.402, -0.701,
+                        1.0, -0.344, -0.714,  0.529,
+                        1.0,  1.772,  0.000, -0.886,
+                        0.0,  0.000,  0.000,  1.0000);
+            break;
+        case QVideoSurfaceFormat::YCbCr_BT709:
+        case QVideoSurfaceFormat::YCbCr_xvYCC709:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.164,  0.000,  1.793, -0.5727,
+                        1.164, -0.534, -0.213,  0.3007,
+                        1.164,  2.115,  0.000, -1.1302,
+                        0.0,    0.000,  0.000,  1.0000);
+            break;
+        default: //BT 601:
+            colorSpaceMatrix = QMatrix4x4(
+                        1.164,  0.000,  1.596, -0.8708,
+                        1.164, -0.392, -0.813,  0.5296,
+                        1.164,  2.017,  0.000, -1.081,
+                        0.0,    0.000,  0.000,  1.0000);
+        }
+
+        m_colorMatrix = m_colorMatrix * colorSpaceMatrix;
     }
 }
 
@@ -714,6 +738,7 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::start(const QVideoSurfac
                 m_handleType = format.handleType();
                 m_scanLineDirection = format.scanLineDirection();
                 m_frameSize = format.frameSize();
+                m_colorSpace = format.yCbCrColorSpace();
 
                 if (m_handleType == QAbstractVideoBuffer::NoHandle)
                     glGenTextures(m_textureCount, m_textureIds);
@@ -1054,6 +1079,7 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::start(const QVideoSurface
         m_handleType = format.handleType();
         m_scanLineDirection = format.scanLineDirection();
         m_frameSize = format.frameSize();
+        m_colorSpace = format.yCbCrColorSpace();
 
         if (m_handleType == QAbstractVideoBuffer::NoHandle)
             glGenTextures(m_textureCount, m_textureIds);
