@@ -136,20 +136,22 @@ public:
 
     virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    int cellId() {return 0;}
-    int locationAreaCode() {return 0;}
+    virtual int cellId();
+    virtual int locationAreaCode();
 
-    QString currentMobileCountryCode() {return QString();}
-    QString currentMobileNetworkCode() {return QString();}
+    virtual QString currentMobileCountryCode();
+    virtual QString currentMobileNetworkCode();
 
-    QString homeMobileCountryCode() {return QString();}
-    QString homeMobileNetworkCode() {return QString();}
+    virtual QString homeMobileCountryCode();
+    virtual QString homeMobileNetworkCode();
 
     virtual QString networkName(QSystemNetworkInfo::NetworkMode mode);
     virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-   // virtual QSystemNetworkInfo::NetworkMode currentMode();
+    virtual QSystemNetworkInfo::NetworkMode currentMode();
+
+
 #if !defined(QT_NO_CONNMAN)
 #endif
 //public Q_SLOTS:
@@ -172,6 +174,9 @@ protected:
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
     void initConnman();
+    QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
+    QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
 #endif
 
 #endif
@@ -181,7 +186,7 @@ private Q_SLOTS:
     void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
-
+    void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
 
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();

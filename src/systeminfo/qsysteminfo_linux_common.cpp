@@ -468,6 +468,33 @@ QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+
+//    QSystemNetworkInfo::UndefinedStatus
+//    QSystemNetworkInfo::NoNetworkAvailable
+//    QSystemNetworkInfo::EmergencyOnly
+//    QSystemNetworkInfo::Searching
+//    QSystemNetworkInfo::Busy
+//    QSystemNetworkInfo::Connected
+//    QSystemNetworkInfo::HomeNetwork
+//    QSystemNetworkInfo::Denied
+//    QSystemNetworkInfo::Roaming
+
+    if(connmanIsAvailable) {
+        QDBusObjectPath path = connmanManager->lookupService(modeToTechnology(mode));
+        QConnmanServiceInterface serviceIface(path.path(),this);
+
+        if(mode == QSystemNetworkInfo::GsmMode ||
+           mode == QSystemNetworkInfo::CdmaMode ||
+           mode == QSystemNetworkInfo::WcdmaMode) {
+            //use ofono here
+        }
+        if(serviceIface.isRoaming()) {
+            return QSystemNetworkInfo::Roaming;
+        }
+        return stateToStatus(serviceIface.getState());
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -521,19 +548,24 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
     default:
         break;
     };
+#endif
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
 QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString netname = "";
-
+    if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+        return netname;
+    }
+#if !defined(QT_NO_CONNMAN)
+    QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
+    QConnmanServiceInterface service(path.path(),this);
+    netname = service.getName();
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
-                return netname;
-            }
 
             QString wlanInterface;
             const QString baseSysDir = "/sys/class/net/";
@@ -599,11 +631,21 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     default:
         break;
     };
+#endif
     return netname;
 }
 
 QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QConnmanTechnologyInterface technology(connmanManager->getPathForTechnology(modeToTechnology(mode)),this);
+        foreach(const QString dev,technology.getDevices()) {
+            QConnmanDeviceInterface devIface(dev);
+            return devIface.getAddress();
+        }
+    }
+#else
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
         {
@@ -657,6 +699,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     default:
         break;
     };
+#endif
     return QString();
 }
 
@@ -692,6 +735,18 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
 
 qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        qint32 sig=0;
+        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
+        QConnmanServiceInterface service(path.path(),this);
+        sig = service.getSignalStrength();
+        if(sig == 0 && (service.getState() == "ready" ||
+           service.getState() == "online")) {
+            sig = 100;
+        }
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -748,12 +803,22 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
         break;
     };
 
+#endif
     return -1;
 }
 
 QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QConnmanTechnologyInterface technology(connmanManager->getPathForTechnology(modeToTechnology(mode)),this);
+        foreach(const QString dev,technology.getDevices()) {
+            QConnmanDeviceInterface devIface(dev);
+            return QNetworkInterface::interfaceFromName(devIface.getInterface());
+        }
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -824,6 +889,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
     default:
         break;
     };
+#endif
 #else
     QString result;
     const QString baseSysDir = "/sys/class/net/";
@@ -929,8 +995,17 @@ QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &fi
 void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
 {
     qDebug() << __FUNCTION__;
+    connmanManager = new QConnmanManagerInterface(this);
     connect(connmanManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
             this,SLOT(connmanPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    foreach(const QString servicePath, connmanManager->getServices()) {
+        QConnmanServiceInterface *serviceIface;
+        serviceIface = new QConnmanServiceInterface(servicePath,this);
+
+        connect(serviceIface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                this,SLOT(connmanServicePropertyChangedContext(QString,QString,QDBusVariant)));
+    }
 
     foreach(const QString techPath, connmanManager->getTechnologies()) {
         QConnmanTechnologyInterface *tech;
@@ -952,7 +1027,6 @@ void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
  //           }
         }
     }
-
 }
 #endif
 
@@ -981,10 +1055,81 @@ void QSystemNetworkInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 }
 
 #if !defined(QT_NO_CONNMAN)
+QString QSystemNetworkInfoLinuxCommonPrivate::modeToTechnology(QSystemNetworkInfo::NetworkMode mode)
+{
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            return "wifi";
+        }
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+            return "ethernet";
+        }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
+        {
+            return "bluetooth";
+        }
+        break;
+    case QSystemNetworkInfo::GsmMode:
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
+        {
+            return "cellular";
+        }
+        break;
+    case QSystemNetworkInfo::WimaxMode:
+        {
+            return "wimax";
+        }
+        break;
+    };
+}
+
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::stateToStatus(const QString &state)
+{
+    if(state == "idle") {
+        return QSystemNetworkInfo::NoNetworkAvailable;
+    } else if(state == "failure") {
+        return QSystemNetworkInfo::Denied;
+    } else if(state == "association" || state == "configuration" || state == "login") {
+        return QSystemNetworkInfo::Searching;
+    } else if(state == "ready" || state == "online") {
+        return QSystemNetworkInfo::Connected;
+    }
+    return QSystemNetworkInfo::UndefinedStatus;
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::typeToMode(const QString &type)
+{
+    if(type == "ethernet") {
+        return QSystemNetworkInfo::EthernetMode;
+    } else if(type == "wifi") {
+        return QSystemNetworkInfo::WlanMode;
+
+    } else if(type == "bluetooth") {
+        return QSystemNetworkInfo::BluetoothMode;
+
+    } else if(type == "wimax") {
+        return QSystemNetworkInfo::BluetoothMode;
+
+    } else if(type == "cellular") {
+        // TODO ofono
+//        GsmMode,
+//        CdmaMode,
+//        WcdmaMode,
+//        return QSystemNetworkInfo::EthernetMode;
+
+    }
+    return QSystemNetworkInfo::UnknownMode;
+}
+
 
 void QSystemNetworkInfoLinuxCommonPrivate::connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
-    qDebug() << __FUNCTION__ << path << item << value.variant();
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
     if(item == "Services") {
     }
 
@@ -992,24 +1137,135 @@ void QSystemNetworkInfoLinuxCommonPrivate::connmanPropertyChangedContext(const Q
         // qDebug() << value.variant();
     }
 
-    if(item == "DefaultTechnologies") {
+    if(item == "DefaultTechnology") {
         // qDebug() << value.variant();
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkNameChanged(typeToMode(value.variant().toString()), serviceIface.getName());
+        emit networkModeChanged(typeToMode(value.variant().toString()));
     }
 
 }
 
 void QSystemNetworkInfoLinuxCommonPrivate::connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
-        qDebug() << __FUNCTION__ << path << item << value.variant();
+//        qDebug() << __FUNCTION__ << path << item << value.variant();
 
 }
 
 void QSystemNetworkInfoLinuxCommonPrivate::connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
-        qDebug() << __FUNCTION__ << path << item << value.variant();
+  //      qDebug() << __FUNCTION__ << path << item << value.variant();
 
 }
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "State") {
+        QConnmanServiceInterface serviceIface(path,this);
+      //  QString type = serviceIface.getType();
+        QString state = value.variant().toString();
+        QSystemNetworkInfo::NetworkMode mode = typeToMode(serviceIface.getType());
+        emit networkStatusChanged(mode, stateToStatus(state));
+        if(state == "idle" || state == "failure") {
+            emit networkNameChanged(mode, QString());
+            emit networkSignalStrengthChanged(mode, 0);
+        } else  if(state == "ready" || state == "online")
+        emit networkNameChanged(mode, serviceIface.getName());
+        if(serviceIface.isRoaming()) {
+            emit networkStatusChanged(mode, QSystemNetworkInfo::Roaming);
+        }
+    }
+    if(item == "Strength") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkSignalStrengthChanged(typeToMode(serviceIface.getType()),value.variant().toUInt());
+    }
+    if(item == "Roaming") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkStatusChanged(typeToMode(serviceIface.getType()), QSystemNetworkInfo::Roaming);
+    }
+    if(item == "MCC") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit currentMobileCountryCodeChanged(value.variant().toString());
+    }
+    if(item == "MNC") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit currentMobileNetworkCodeChanged(value.variant().toString());
+    }
+    if(item == "Mode") {
+        //"gprs" "edge" "umts"
+//        QConnmanServiceInterface serviceIface(path,this);
+//        emit currentMobileNetworkCodeChanged(value.variant().toString());
+    }
+}
+
 #endif
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMode()
+{
+#if !defined(QT_NO_CONNMAN)
+    QString curMode = connmanManager->getDefaultTechnology();
+    if(curMode == "wifi") {
+        return QSystemNetworkInfo::WlanMode;
+    } else if(curMode == "ethernet") {
+        return QSystemNetworkInfo::EthernetMode;
+    } else if(curMode == "cellular") {
+        return QSystemNetworkInfo::WlanMode;
+    } else if(curMode == "bluetooth") {
+        return QSystemNetworkInfo::BluetoothMode;
+    } else if(curMode == "wimax") {
+        return QSystemNetworkInfo::WimaxMode;
+    }
+#endif
+}
+
+int QSystemNetworkInfoLinuxCommonPrivate::cellId()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+
+    }
+#endif
+    return 0;
+}
+
+int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
+{
+    return 0;
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(currentMode()).name());
+        QConnmanServiceInterface service(path.path(),this);
+        return service.getMNC();
+    }
+#endif
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(currentMode()).name());
+        QConnmanServiceInterface service(path.path(),this);
+        return service.getMCC();
+    }
+#endif
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode()
+{
+    return QString();
+}
+QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
+{
+    return QString();
+}
+
 
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
