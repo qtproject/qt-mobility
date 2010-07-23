@@ -41,9 +41,9 @@
 
 #include "qorganizeritem.h"
 
-
 #include <QSet>
 #include <QDebug>
+#include <QDataStream>
 
 #include "qorganizeritem.h"
 #include "qorganizeritem_p.h"
@@ -631,6 +631,7 @@ uint qHash(const QOrganizerItem &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 {
     dbg.nospace() << "QOrganizerItem(" << organizeritem.id() << ")";
@@ -639,6 +640,38 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
     }
     return dbg.maybeSpace();
 }
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a item to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QOrganizerItem& item)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QOrganizerItem
+    return out << formatVersion << item.id() << item.details();
+}
+
+/*!
+ * Reads an item from stream \a in into \a item.
+ */
+QDataStream& operator>>(QDataStream& in, QOrganizerItem& item)
+{
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        item = QOrganizerItem();
+        QOrganizerItemId id;
+        QList<QOrganizerItemDetail> details;
+        in >> id >> details;
+        item.setId(id);
+        item.d->m_details = details;
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
+}
+#endif
 
 /*!
  * Returns the type of the organizer item.  Every organizer item has exactly one type which

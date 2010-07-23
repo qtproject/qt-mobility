@@ -47,6 +47,8 @@
 
 #include "qtorganizerglobal.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 typedef quint32 QOrganizerItemLocalId;
@@ -78,6 +80,11 @@ private:
 Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemId& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
+#endif
+
+#ifndef QT_NO_DATASTREAM
+Q_ORGANIZER_EXPORT QDataStream& operator<<(QDataStream& out, const QOrganizerItemId& id);
+Q_ORGANIZER_EXPORT QDataStream& operator>>(QDataStream& in, QOrganizerItemId& id);
 #endif
 
 QTM_END_NAMESPACE
