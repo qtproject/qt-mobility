@@ -74,6 +74,7 @@
 #include "qorganizeritemchangeset.h"
 
 #include "qorganizeritemtransform.h"
+#include "qorganizerasynchprocess.h"
 
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
@@ -130,6 +131,9 @@ public:
 
     // item converter instance
     OrganizerItemTransform m_itemTransformer;
+
+    // asynchronous request handler instance
+    OrganizerAsynchProcess *m_asynchProcess;
 };
 
 

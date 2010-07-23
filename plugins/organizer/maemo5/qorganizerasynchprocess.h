@@ -62,6 +62,8 @@
 
 QTM_USE_NAMESPACE
 
+class QOrganizerItemMaemo5Engine;
+
 class OrganizerRequestTimeoutTimer : public QObject
 {
     Q_OBJECT
@@ -88,31 +90,34 @@ class OrganizerAsynchProcess : public QThread
     Q_OBJECT
 
 public:
-    OrganizerAsynchProcess();
+    OrganizerAsynchProcess(QOrganizerItemMaemo5Engine *engine);
     ~OrganizerAsynchProcess();
 
     void requestDestroyed(QOrganizerItemAbstractRequest *req);
-    bool startRequest(QOrganizerItemAbstractRequest *req);
+    bool addRequest(QOrganizerItemAbstractRequest *req);
     bool cancelRequest(QOrganizerItemAbstractRequest *req);
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req, int msecs);
+
+public Q_SLOTS:
+    void processRequest();
 
 private:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);
 
-    void handleItemInstanceFetchRequest(QOrganizerItemAbstractRequest *req);
-    void handleItemFetchRequest(QOrganizerItemAbstractRequest *req);
-    void handleLocalIdFetchRequest(QOrganizerItemAbstractRequest *req);
-    void handleItemRemoveRequest(QOrganizerItemAbstractRequest *req);
-    void handleSaveRequest(QOrganizerItemAbstractRequest *req);
-    void handleDefinitionFetchRequest(QOrganizerItemAbstractRequest *req);
-    void handleDefinitionRemoveRequest(QOrganizerItemAbstractRequest *req);
-    void handleDefinitionSaveRequest(QOrganizerItemAbstractRequest *req);
+    void handleItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest *req);
+    void handleItemFetchRequest(QOrganizerItemFetchRequest *req);
+    void handleLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest *req);
+    void handleItemRemoveRequest(QOrganizerItemRemoveRequest *req);
+    void handleSaveRequest(QOrganizerItemSaveRequest *req);
+    void handleDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest *req);
+    void handleDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest *req);
+    void handleDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest *req);
 
 private Q_SLOTS:
-    void proceed(OrganizerRequestTimeoutTimer* timer);
-    void processRequest();
+    void timeout(OrganizerRequestTimeoutTimer* timer);
 
 private:
+    QOrganizerItemMaemo5Engine* m_engine;
     QQueue<QOrganizerItemAbstractRequest *> m_requestQueue;
     QList<OrganizerRequestTimeoutTimer *> m_timers;
     QSet<QOrganizerItemAbstractRequest *> m_activeRequests;

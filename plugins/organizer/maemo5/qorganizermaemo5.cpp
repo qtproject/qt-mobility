@@ -96,6 +96,7 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     connect(databaseMonitor, SIGNAL(fileChanged(const QString &)), this, SLOT(dataChanged()));
 
     d->m_itemTransformer.setManagerUri(managerUri());
+    d->m_asynchProcess = new OrganizerAsynchProcess(this);
 }
 
 void QOrganizerItemMaemo5Engine::dataChanged()
@@ -112,6 +113,7 @@ void QOrganizerItemMaemo5Engine::dataChanged()
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
+    delete d->m_asynchProcess;
 }
 
 QString QOrganizerItemMaemo5Engine::managerName() const
@@ -439,6 +441,20 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
     // TODO: Remove the commented out test&debug codes when not needed anymore:
 
     /*
+    QOrganizerItemFetchRequest *r = new QOrganizerItemFetchRequest(0);
+    startRequest(r);
+
+    while(r->state() != QOrganizerItemAbstractRequest::ActiveState) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
+
+    d->m_asynchProcess->requestDestroyed(r);
+
+    QOrganizerItemFetchRequest *r2 = new QOrganizerItemFetchRequest(0);
+    startRequest(r2);
+    */
+
+    /*
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     CTodo *ctodo = new CTodo();
     ctodo->setDue(QDateTime(QDate(2010,7,15),QTime(12,0,0)).toTime_t());
@@ -576,6 +592,13 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId> 
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
 {
+    qDebug() << "startRequest() run in thread " << (int) QThread::currentThreadId();
+    d->m_asynchProcess->addRequest(req);
+    QMetaObject::invokeMethod(d->m_asynchProcess, "processRequest", Qt::QueuedConnection);
+    return true; // TODO: Is this ok?
+
+
+
     /*
         TODO
 
@@ -612,22 +635,27 @@ bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req
 
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
-    */
+
     return QOrganizerItemManagerEngine::startRequest(req);
+    */
 }
 
 bool QOrganizerItemMaemo5Engine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
+    return d->m_asynchProcess->cancelRequest(req);
+
     /*
         TODO
 
         Cancel an in progress async request.  If not possible, return false from here.
-    */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+
+    return QOrganizerItemManagerEngine::cancelRequest(req);*/
 }
 
 bool QOrganizerItemMaemo5Engine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
+    return d->m_asynchProcess->waitForRequestFinished(req, msecs);
+
     /*
         TODO
 
@@ -639,12 +667,14 @@ bool QOrganizerItemMaemo5Engine::waitForRequestFinished(QOrganizerItemAbstractRe
         may call this in a loop.
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
-    */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+
+    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);*/
 }
 
 void QOrganizerItemMaemo5Engine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
+    return d->m_asynchProcess->requestDestroyed(req);
+
     /*
         TODO
 
@@ -663,8 +693,8 @@ void QOrganizerItemMaemo5Engine::requestDestroyed(QOrganizerItemAbstractRequest*
         thread before calling any of the QOIAR::updateXXXXXXRequest functions.  And be careful of lock
         ordering problems :D
 
-    */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+
+    return QOrganizerItemManagerEngine::requestDestroyed(req);*/
 }
 
 bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString &itemType) const
