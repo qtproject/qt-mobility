@@ -417,6 +417,8 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
    Returns a string for a comment associated with an organizer item.
  */
 
+
+
 /* ==================== QOrganizerItemPriority ======================= */
 /*!
    \class QOrganizerItemPriority
@@ -569,6 +571,80 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 /*!
    \fn QOrganizerItemRecurrence::setExceptionDates(const QList<QDate>& exdates)
    Sets a list of exception dates to \a exdates.
+ */
+
+
+
+/* ==================== QOrganizerItemReminder ======================= */
+/*!
+   \class QOrganizerItemReminder
+   \brief The QOrganizerItemReminder class contains information about when and how the user wants to reminded of the item
+   \inmodule QtOrganizer
+   \ingroup organizer-details
+ */
+
+/*!
+   \enum QOrganizerItemReminder::ReminderType
+   \value NoReminder This reminder is entirely unobtrusive
+   \value AudibleReminder This reminder has an audible element
+   \value VisualReminder This reminder has a visual element
+   \value TactileReminder This reminder has a tactile element
+*/
+
+/*!
+   \variable QOrganizerItemReminder::DefinitionName
+   The constant string which identifies the definition of details which contain reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
+
+/*!
+   \variable QOrganizerItemReminder::FieldReminderTypes
+
+   The constant key for which the reminder types value is stored in details of
+   the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderTypes, "ReminderTypes");
+
+/*!
+   \variable QOrganizerItemReminder::FieldTimeDelta
+
+   The constant key for which time delta (in seconds prior to the item activation time)
+   at which the user should be reminded of the item is stored in details of the QOrganizerItemReminder type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
+
+/*!
+   \fn QOrganizerItemReminder::setReminderTypes(ReminderTypes reminderTypes)
+
+   Sets the reminder types associated with this reminder for an organizer item to \a reminderTypes.
+ */
+
+/*!
+   \fn ReminderTypes QOrganizerItemReminder::reminderTypes() const
+
+   Returns the reminder types associated with this reminder for an organizer item.
+ */
+
+/*!
+   \fn QOrganizerItemReminder::setTimeDelta(int secondsBefore)
+
+   Sets the number of seconds prior to the activation of the item
+   at which the user wants to be reminded of the item to \a secondsBefore.
+   The exact datetime of activation of the item depends on the type of
+   item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
+   due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
+   it is the start date time.
+ */
+
+/*!
+   \fn int QOrganizerItemReminder::timeDelta() const
+
+   Returns the number of seconds prior to the activation of the item
+   at which the user wants to be reminded of the item.
+   The exact datetime of activation of the item depends on the type of
+   item: for a QOrganizerTodo or QOrganizerTodoOccurrence it is the
+   due date time; for a QOrganizerEvent or QOrganizerEventOccurrence
+   it is the start date time.
  */
 
 

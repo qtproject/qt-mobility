@@ -39,26 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+#ifndef QORGANIZERITEMREMINDER_H
+#define QORGANIZERITEMREMINDER_H
 
-#include "qorganizereventtimerange.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemreminder.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltimerange.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotimerange.h"
+#include <QtDebug>
+#include <QString>
+
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemReminder : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldReminderTypes;
+    const char* FieldTimeDelta;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemReminder, "Reminder")
+    Q_DECLARE_LATIN1_CONSTANT(FieldReminderTypes, "ReminderTypes");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimeDelta, "TimeDelta");
+#endif
+
+    enum ReminderType {
+        NoReminder = 0,
+        VisualReminder = 0x01,
+        AudibleReminder = 0x02,
+        TactileReminder = 0x04
+    };
+    Q_DECLARE_FLAGS(ReminderTypes, ReminderType)
+
+    void setReminderTypes(ReminderTypes reminderTypes) {setValue(FieldReminderTypes, static_cast<int>(reminderTypes));}
+    ReminderTypes reminderTypes() const {return static_cast<ReminderTypes>(value<int>(FieldReminderTypes));}
+
+    void setTimeDelta(int secondsBefore) {setValue(FieldTimeDelta, secondsBefore);}
+    int timeDelta() const {return value<int>(FieldTimeDelta);}
+
+    // XXX TODO: do we need a reminder priority?
+    // highest priority = will cancel phone calls to remind you, lowest = only if the device is idle?
+};
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QOrganizerItemReminder::ReminderTypes);
+
+QTM_END_NAMESPACE
 
 #endif
+

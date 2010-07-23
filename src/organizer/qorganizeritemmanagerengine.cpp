@@ -638,6 +638,17 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderTypes, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
     // event time range
     d.setName(QOrganizerEventTimeRange::DefinitionName);
     fields.clear();
@@ -804,6 +815,17 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderTypes, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same event
+    retn.insert(d.name(), d);
+
     // comment
     d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
@@ -887,6 +909,17 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);
     d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderTypes, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
     retn.insert(d.name(), d);
 
     // todo progress
@@ -1024,6 +1057,17 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerTodoProgress::FieldStatus, f);
     d.setFields(fields);
     d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // reminder
+    d.setName(QOrganizerItemReminder::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemReminder::FieldReminderTypes, f);
+    fields.insert(QOrganizerItemReminder::FieldTimeDelta, f);
+    d.setFields(fields);
+    d.setUnique(false); // can have multiple alarms at different times for the same todo
     retn.insert(d.name(), d);
 
     // todo time range

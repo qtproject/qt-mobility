@@ -11,6 +11,7 @@ PUBLIC_HEADERS += \
     details/qorganizeritemlocation.h \
     details/qorganizeritempriority.h \
     details/qorganizeritemrecurrence.h \
+    details/qorganizeritemreminder.h \
     details/qorganizeritemtimestamp.h \
     details/qorganizeritemtype.h \
     details/qorganizeritemdetails.h \
