@@ -178,6 +178,7 @@ private:
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
     void modifyDetailDefinitionsForEvent() const;
+    void modifyDetailDefinitionsForEventOccurrence() const;
 
 private:
     QOrganizerItemSymbianEngineData *d;

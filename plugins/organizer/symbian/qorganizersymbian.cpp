@@ -481,6 +481,16 @@ void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEvent() const
     m_definition[QOrganizerItemType::TypeEvent].remove(QOrganizerJournalTimeRange::DefinitionName);
 }
 
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEventOccurrence() const
+{
+    // Remove all the details for an event occurrence not supported on Symbian
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoProgress::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerTodoTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
+}
+
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     // Get all the detail definitions from the base implementation
@@ -490,6 +500,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detai
     
     // Add or remove definitions based on the Symbian offering
     modifyDetailDefinitionsForEvent();
+    modifyDetailDefinitionsForEventOccurrence();
     
     *error = QOrganizerItemManager::NoError;
     return m_definition.value(itemType);
