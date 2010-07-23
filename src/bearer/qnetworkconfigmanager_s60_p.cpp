@@ -1056,6 +1056,8 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
                 QT_TRYCATCH_LEAVING(changeConfigurationStateAtMaxTo(priv, QNetworkConfiguration::Defined));
             }
         }
+        // Something has in IAPs, update states to SNAPs
+        updateStatesToSnaps();
         }
         break;
 
