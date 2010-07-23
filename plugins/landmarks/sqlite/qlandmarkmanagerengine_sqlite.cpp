@@ -3241,13 +3241,23 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
     return ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
-QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const
+QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return QLandmarkManager::Native;
 }
 
-bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     switch(feature) {
         case (QLandmarkManager::GenericAttributes):
             return false;
@@ -3257,18 +3267,32 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     }
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly() const
+bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
     return false;
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId) const
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return false;
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId) const
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return false;
 }
 

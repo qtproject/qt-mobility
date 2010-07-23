@@ -823,7 +823,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
         return false;
     }
 
-    return d->engine->isFeatureSupported(feature);
+    return d->engine->isFeatureSupported(feature, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -839,9 +839,7 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
         return QLandmarkManager::None;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->filterSupportLevel(filter);
+    return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -857,9 +855,7 @@ bool QLandmarkManager::isReadOnly() const
         return true;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->isReadOnly();
+    return d->engine->isReadOnly(&(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -878,7 +874,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
         return true;
     }
 
-    return d->engine->isReadOnly(landmarkId);
+    return d->engine->isReadOnly(landmarkId, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -897,7 +893,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
         return true;
     }
 
-    return d->engine->isReadOnly(categoryId);
+    return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
 }
 
 /*!
