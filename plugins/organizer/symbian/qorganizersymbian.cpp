@@ -51,6 +51,9 @@
 
 //QTM_USE_NAMESPACE
 
+// Constants
+const int KOneMicroSecond = 1000;
+
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
@@ -252,6 +255,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::item(const QOrganizerItemLocalId& it
 
 void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const
 {
+	Q_UNUSED(fetchHint)
     // TODO: use fetch hint to optimize performance and/or memory consumption?
         /* The fetch hint suggests how much of the item to fetch.
         You can ignore the fetch hint and fetch everything (but you must
@@ -260,6 +264,10 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     // Fetch item
     TCalLocalUid uid(itemId);
     CCalEntry *calEntry = m_entryView->FetchL(uid);
+    if (!calEntry) {
+        User::Leave(KErrNotFound); // Leave with KErrNotFound as to indicate that the entry 
+        // is not present in the database
+    }
     CleanupStack::PushL(calEntry);
     
     // Transform CCalEntry -> QOrganizerItem
@@ -570,10 +578,8 @@ bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definiti
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
-    m_requestServiceProvider->StartRequest(req);
+    return m_requestServiceProvider->StartRequest(req);
     /*
-        TODO
-
         This is the entry point to the async API.  The request object describes the
         type of request (switch on req->type()).  Req will not be null when called
         by the framework.
@@ -608,25 +614,22 @@ bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* re
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
-	return true;
-    //return QOrganizerItemManagerEngine::startRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
+    Q_UNUSED(req)
     /*
-        TODO
-
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return QOrganizerItemManagerEngine::cancelRequest(req);
+    return m_requestServiceProvider->CancelRequest();
 }
 
 bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
+	Q_UNUSED(req)
+    return m_requestServiceProvider->waitForRequestFinished(msecs*KOneMicroSecond);
     /*
-        TODO
-
         Wait for a request to complete (up to a max of msecs milliseconds).
 
         Return true if the request is finished (including if it was already).  False otherwise.
@@ -636,11 +639,11 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
-    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
+    Q_UNUSED(req)
     /*
         TODO
 
@@ -660,7 +663,9 @@ void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest
         ordering problems :D
 
     */
-    return QOrganizerItemManagerEngine::requestDestroyed(req);
+    // Cancel the request as of now, latter on a rework is needed to cancel the right process
+	// from a Queue
+    m_requestServiceProvider->CancelRequest();
 }
 
 bool QOrganizerItemSymbianEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
@@ -729,6 +734,7 @@ void QOrganizerItemSymbianEngine::Progress(TInt /*aPercentageCompleted*/)
  */
 void QOrganizerItemSymbianEngine::Completed(TInt aError)
 {
+	Q_UNUSED(aError)
     // TODO: How to handle aError? The client should be informed that the
     // initialization failed
 
