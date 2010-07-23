@@ -61,6 +61,10 @@ private slots:
     void fetchDetailDef();
     void fetchEventDetailDef();
     void fetchEventOccDetailDef();
+    void fetchTodoDetailDef();
+    void fetchTodoOccDetailDef();
+    void fetchNoteDetailDef();
+    void fetchJournalDetailDef();
     
 private:
     QOrganizerItemManager *m_om;
@@ -235,6 +239,230 @@ void TestDetailDef::fetchEventOccDetailDef()
     // Journal time range - Not supported
     def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
     QVERIFY(def.isEmpty());
+}
+
+void TestDetailDef::fetchTodoDetailDef()
+{
+    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeTodo);
+    QVERIFY(!detailDef.isEmpty());
+    
+    // Now check against the details supported on Symbian
+    QOrganizerItemDetailDefinition def;
+    
+    // Item type
+    def = detailDef.value(QOrganizerItemType::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // GUID
+    def = detailDef.value(QOrganizerItemGuid::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Timestamp
+    def = detailDef.value(QOrganizerItemTimestamp::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Display label
+    def = detailDef.value(QOrganizerItemDisplayLabel::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Description
+    def = detailDef.value(QOrganizerItemDescription::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Comment - Not supported
+    def = detailDef.value(QOrganizerItemComment::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Recurrence
+    def = detailDef.value(QOrganizerItemRecurrence::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Event time range - Not supported
+    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Priority
+    def = detailDef.value(QOrganizerItemPriority::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Location - Not supported
+    def = detailDef.value(QOrganizerItemLocation::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Instance origin - Not supported
+    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // To-do progress
+    def = detailDef.value(QOrganizerTodoProgress::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // To-do time range
+    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Journal time range - Not supported
+    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+}
+
+void TestDetailDef::fetchTodoOccDetailDef()
+{
+    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeTodoOccurrence);
+    QVERIFY(!detailDef.isEmpty());
+    
+    // Now check against the details supported on Symbian
+    QOrganizerItemDetailDefinition def;
+    
+    // Item type
+    def = detailDef.value(QOrganizerItemType::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // GUID
+    def = detailDef.value(QOrganizerItemGuid::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Timestamp
+    def = detailDef.value(QOrganizerItemTimestamp::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Display label
+    def = detailDef.value(QOrganizerItemDisplayLabel::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Description
+    def = detailDef.value(QOrganizerItemDescription::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Comment - Not supported
+    def = detailDef.value(QOrganizerItemComment::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Recurrence - Not supported
+    def = detailDef.value(QOrganizerItemRecurrence::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Event time range - Not supported
+    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Priority
+    def = detailDef.value(QOrganizerItemPriority::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Location - Not supported
+    def = detailDef.value(QOrganizerItemLocation::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Instance origin
+    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // To-do progress
+    def = detailDef.value(QOrganizerTodoProgress::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // To-do time range
+    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Journal time range - Not supported
+    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+}
+
+void TestDetailDef::fetchNoteDetailDef()
+{
+    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeNote);
+    QVERIFY(!detailDef.isEmpty());
+    
+    // Now check against the details supported on Symbian
+    QOrganizerItemDetailDefinition def;
+    
+    // Item type
+    def = detailDef.value(QOrganizerItemType::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // GUID
+    def = detailDef.value(QOrganizerItemGuid::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Timestamp
+    def = detailDef.value(QOrganizerItemTimestamp::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Display label - Not supported
+    def = detailDef.value(QOrganizerItemDisplayLabel::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Description
+    def = detailDef.value(QOrganizerItemDescription::DefinitionName);
+    QVERIFY(!def.isEmpty());
+    QVERIFY(def.isUnique());
+    
+    // Comment - Not supported
+    def = detailDef.value(QOrganizerItemComment::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Recurrence - Not supported
+    def = detailDef.value(QOrganizerItemRecurrence::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Event time range - Not supported
+    def = detailDef.value(QOrganizerEventTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Priority - Not supported
+    def = detailDef.value(QOrganizerItemPriority::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Location - Not supported
+    def = detailDef.value(QOrganizerItemLocation::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Instance origin - Not supported
+    def = detailDef.value(QOrganizerItemInstanceOrigin::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // To-do progress - Not supported
+    def = detailDef.value(QOrganizerTodoProgress::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // To-do time range - Not supported
+    def = detailDef.value(QOrganizerTodoTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+    
+    // Journal time range - Not supported
+    def = detailDef.value(QOrganizerJournalTimeRange::DefinitionName);
+    QVERIFY(def.isEmpty());
+}
+
+void TestDetailDef::fetchJournalDetailDef()
+{
+    // Journal is not supported at all
+    QMap<QString, QOrganizerItemDetailDefinition> detailDef = m_om->detailDefinitions(QOrganizerItemType::TypeJournal);
+    QVERIFY(detailDef.isEmpty());
 }
 
 QTEST_MAIN(TestDetailDef);

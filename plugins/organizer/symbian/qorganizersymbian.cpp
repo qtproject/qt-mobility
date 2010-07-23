@@ -491,16 +491,60 @@ void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForEventOccurrence() co
     m_definition[QOrganizerItemType::TypeEventOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
 }
 
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodo() const
+{
+    // Remove all the details for a to-do not supported on Symbian
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerJournalTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodo].remove(QOrganizerItemLocation::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForTodoOccurrence() const
+{
+    // Remove all the details for a to-do occurrence not supported on Symbian
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerJournalTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeTodoOccurrence].remove(QOrganizerItemLocation::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForNote() const
+{
+    // Remove all the details for a not not supported on Symbian
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemDisplayLabel::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemComment::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemRecurrence::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerEventTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemPriority::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemLocation::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerItemInstanceOrigin::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoProgress::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerTodoTimeRange::DefinitionName);
+    m_definition[QOrganizerItemType::TypeNote].remove(QOrganizerJournalTimeRange::DefinitionName);
+}
+
+void QOrganizerItemSymbianEngine::modifyDetailDefinitionsForJournal() const
+{
+    // Journal is not supported on Symbian. Remove the type itself
+    m_definition.remove(QOrganizerItemType::TypeJournal);
+}
+
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     // Get all the detail definitions from the base implementation
     if (m_definition.isEmpty()) {
         m_definition = QOrganizerItemManagerEngine::schemaDefinitions();
+        // Add or remove definitions based on the Symbian offering
+        modifyDetailDefinitionsForEvent();
+        modifyDetailDefinitionsForEventOccurrence();
+        modifyDetailDefinitionsForTodo();
+        modifyDetailDefinitionsForTodoOccurrence();
+        modifyDetailDefinitionsForNote();
+        modifyDetailDefinitionsForJournal();
     }
-    
-    // Add or remove definitions based on the Symbian offering
-    modifyDetailDefinitionsForEvent();
-    modifyDetailDefinitionsForEventOccurrence();
     
     *error = QOrganizerItemManager::NoError;
     return m_definition.value(itemType);
