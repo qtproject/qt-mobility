@@ -406,7 +406,7 @@ QGeoMapObjectInfo* QGeoMapDataPrivate::createObjectInfo(const QGeoMapObjectPriva
     }
 
     if (info)
-        info->update();
+        info->objectUpdate();
 
     return info;
 }

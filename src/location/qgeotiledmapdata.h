@@ -69,8 +69,6 @@ public:
 
     void setMapType(QGeoMapWidget::MapType mapType);
 
-    void addMapObject(QGeoMapObject *mapObject);
-
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
 
@@ -82,8 +80,6 @@ public:
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
-    virtual QPixmap mapObjectsOverlay();
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
@@ -94,7 +90,7 @@ protected:
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintMapOverlay(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
 private slots:
     void processRequests();

@@ -95,9 +95,8 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
-    bool intersects(const QRectF &rect) const;
-    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
-    void update();
+    void objectUpdate();
+    void mapUpdate();
 
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;

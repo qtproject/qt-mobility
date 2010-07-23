@@ -247,12 +247,7 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
     if (!childObject || d->children.contains(childObject))
         return;
 
-    if (childObject->d_ptr->parent && (childObject->d_ptr->parent != this)) {
-        childObject->d_ptr->parent->removeChildObject(childObject);
-    }
-
-    childObject->d_ptr->parent = this;
-    childObject->d_ptr->setMapData(d_ptr->mapData);
+    childObject->d_ptr->addToParent(this);
 
     //binary search
     QList<QGeoMapObject*>::iterator i = qUpperBound(d->children.begin(), d->children.end(), childObject);
@@ -272,8 +267,7 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
     Q_D(QGeoMapObject);
     if (childObject) {
         if (d->children.removeAll(childObject) > 0) {
-            childObject->d_ptr->parent = 0;
-            childObject->d_ptr->mapData = 0;
+            childObject->d_ptr->removeFromParent();
         }
     }
 }
@@ -288,22 +282,16 @@ QList<QGeoMapObject*> QGeoMapObject::childObjects() const
     return d->children;
 }
 
-bool QGeoMapObject::intersects(const QRectF &rect) const
-{
-    Q_D(const QGeoMapObject);
-    return d->intersects(rect);
-}
-
-void QGeoMapObject::paint(QPainter *painter, const QRectF &viewPort, bool hitDetection)
+void QGeoMapObject::objectUpdate()
 {
     Q_D(QGeoMapObject);
-    d->paint(painter, viewPort, hitDetection);
+    d->objectUpdate();
 }
 
-void QGeoMapObject::update()
+void QGeoMapObject::mapUpdate()
 {
     Q_D(QGeoMapObject);
-    d->update();
+    d->mapUpdate();
 }
 
 bool QGeoMapObject::operator<(const QGeoMapObject &other) const
@@ -368,28 +356,48 @@ void QGeoMapObjectPrivate::setMapData(QGeoMapDataPrivate *mapData)
         children[i]->d_ptr->setMapData(mapData);
 }
 
-bool QGeoMapObjectPrivate::intersects(const QRectF &rect) const
+void QGeoMapObjectPrivate::addToParent(QGeoMapObject *parent)
 {
-    if (info)
-        return info->intersects(rect);
-    return false;
+    if (this->parent && (this->parent != parent)) {
+        this->parent->removeChildObject(q_ptr);
+    }
+
+    this->parent = parent;
+    setMapData(parent->d_ptr->mapData);
+
+    info->addToParent();
 }
 
-void QGeoMapObjectPrivate::paint(QPainter *painter, const QRectF &viewPort, bool hitDetection)
+void QGeoMapObjectPrivate::removeFromParent()
 {
-    if (info)
-        info->paint(painter, viewPort, hitDetection);
+    parent = 0;
+    mapData = 0;
+    info->removeFromParent();
 }
 
-void QGeoMapObjectPrivate::update()
+void QGeoMapObjectPrivate::objectUpdate()
 {
     if (!mapData)
         return;
 
     if (!info)
         info = mapData->createObjectInfo(this);
+    else
+        info->objectUpdate();
+}
 
-    info->update();
+void QGeoMapObjectPrivate::mapUpdate()
+{
+    if (!mapData)
+        return;
+
+    if (!info)
+        info = mapData->createObjectInfo(this);
+    else
+        info->mapUpdate();
+
+    for (int i = 0; i < children.size(); ++i)
+        children[i]->mapUpdate();
 }
 
 /*******************************************************************************
@@ -400,10 +408,9 @@ QGeoMapObjectInfo::QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivat
 
 QGeoMapObjectInfo::~QGeoMapObjectInfo() {}
 
-bool QGeoMapObjectInfo::intersects(const QRectF &rect) const
-{
-    return boundingBox.intersects(rect);
-}
+void QGeoMapObjectInfo::objectUpdate() {}
+
+void QGeoMapObjectInfo::mapUpdate() {}
 
 /*******************************************************************************
 *******************************************************************************/

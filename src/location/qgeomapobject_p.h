@@ -49,8 +49,8 @@
 #include "qgeoboundingbox.h"
 
 class QPainter;
-//class QPainterPath;
-//class QStyleOptionGraphicsItem;
+class QPainterPath;
+class QStyleOptionGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,15 +63,13 @@ public:
     QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
     virtual ~QGeoMapObjectInfo();
 
-    //virtual QPainterPath shape() const = 0;
-    //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent) = 0;
+    virtual void addToParent() = 0;
+    virtual void removeFromParent() = 0;
 
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection) = 0;
-    virtual void update() = 0;
+    virtual void objectUpdate() = 0;
+    virtual void mapUpdate() = 0;
 
     const QGeoMapObjectPrivate* mapObjectPrivate;
-    QRectF boundingBox;
 
 private:
     Q_DISABLE_COPY(QGeoMapObjectInfo)
@@ -86,9 +84,11 @@ public:
 
     void setMapData(QGeoMapDataPrivate *mapData);
 
-    bool intersects(const QRectF& rect) const;
-    void paint(QPainter *painter, const QRectF &viewPort, bool hitDetection);
-    void update();
+    void addToParent(QGeoMapObject *parent);
+    void removeFromParent();
+
+    void objectUpdate();
+    void mapUpdate();
 
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
@@ -100,7 +100,7 @@ public:
     QGeoMapDataPrivate *mapData;
     QGeoMapObjectInfo *info;
 
-private:
+//private:
     QGeoMapObject *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
