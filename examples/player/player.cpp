@@ -158,6 +158,18 @@ Player::Player(QWidget *parent)
 
     setLayout(layout);
 
+    if (!player->isAvailable()) {
+        QMessageBox::warning(this, tr("Service not available"),
+                             tr("The QMediaPlayer object does not have a valid service.\n"\
+                                "Please check the media service plugins are installed."));
+
+        controls->setEnabled(false);
+        playlistView->setEnabled(false);
+        openButton->setEnabled(false);
+        colorButton->setEnabled(false);
+        fullScreenButton->setEnabled(false);
+    }
+
     metaDataChanged();
 
     QStringList arguments = qApp->arguments();
