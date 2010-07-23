@@ -55,9 +55,9 @@ class Q_ORGANIZER_EXPORT QOrganizerEventTimeRange : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldStartDateTime;
-    const char* FieldEndDateTime;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStartDateTime;
+    static const QLatin1Constant FieldEndDateTime;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerEventTimeRange, "EventTimeRange")
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");

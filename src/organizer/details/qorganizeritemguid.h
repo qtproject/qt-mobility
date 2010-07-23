@@ -56,8 +56,8 @@ class Q_ORGANIZER_EXPORT QOrganizerItemGuid : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldGuid;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldGuid;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemGuid, "Guid")
     Q_DECLARE_LATIN1_CONSTANT(FieldGuid, "Guid");

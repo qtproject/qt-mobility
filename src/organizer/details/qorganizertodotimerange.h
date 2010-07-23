@@ -55,9 +55,9 @@ class Q_ORGANIZER_EXPORT QOrganizerTodoTimeRange : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldStartDateTime;
-    const char* FieldDueDateTime;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStartDateTime;
+    static const QLatin1Constant FieldDueDateTime;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerTodoTimeRange, "TodoTimeRange")
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");

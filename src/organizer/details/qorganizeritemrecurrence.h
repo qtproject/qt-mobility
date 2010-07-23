@@ -56,11 +56,11 @@ class Q_ORGANIZER_EXPORT QOrganizerItemRecurrence : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldRecurrenceRules;
-    const char* FieldExceptionRules;
-    const char* FieldRecurrenceDates;
-    const char* FieldExceptionDates;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldRecurrenceRules;
+    static const QLatin1Constant FieldExceptionRules;
+    static const QLatin1Constant FieldRecurrenceDates;
+    static const QLatin1Constant FieldExceptionDates;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrence, "Recurrence")
     Q_DECLARE_LATIN1_CONSTANT(FieldRecurrenceRules, "RecurrenceRules");

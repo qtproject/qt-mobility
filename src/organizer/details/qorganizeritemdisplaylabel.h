@@ -55,8 +55,8 @@ class Q_ORGANIZER_EXPORT QOrganizerItemDisplayLabel : public QOrganizerItemDetai
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldLabel;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemDisplayLabel, "DisplayLabel")
     Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
