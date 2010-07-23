@@ -89,13 +89,6 @@ QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGeoMapWidget *widget)
 
 void QGeoTiledMappingManagerEngine::removeMapData(QGeoMapData* mapData) {}
 
-QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const
-{
-    // TODO checking mechanism for viewport type?
-    const QGeoTiledMapData *tiledMapData = static_cast<const QGeoTiledMapData*>(mapData);
-    return tiledMapData->screenPositionToTileIndices(screenPosition);
-}
-
 /*!
     Returns a list of the image formats supported by this QGeoTiledMappingManagerEngine
     instance.

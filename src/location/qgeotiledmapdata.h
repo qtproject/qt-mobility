@@ -62,14 +62,13 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
-
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
     void setMapType(QGeoMapWidget::MapType mapType);
 
     void setZoomLevel(qreal zoomLevel);
+
     void setViewportSize(const QSizeF &size);
 
     void startPanning();
@@ -82,8 +81,8 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+    virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
 protected:
     virtual void updateMapImage();
@@ -100,7 +99,6 @@ private slots:
 private:
     void cleanupCaches();
 
-    //QGeoTiledMapDataPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;

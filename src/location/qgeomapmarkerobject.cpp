@@ -50,7 +50,7 @@ QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const
 {
     Q_D(QGeoMapMarkerObject);
 
-    d->boundingBox = QGeoBoundingBox(coordinate, coordinate);
+    d->coordinate = coordinate;
     d->icon = icon;
     d->anchor = anchor;
 }
@@ -77,7 +77,7 @@ QGeoCoordinate QGeoMapMarkerObject::coordinate() const
 {
     Q_D(const QGeoMapMarkerObject);
 
-    return d->boundingBox.topLeft();
+    return d->coordinate;
 }
 
 /*******************************************************************************

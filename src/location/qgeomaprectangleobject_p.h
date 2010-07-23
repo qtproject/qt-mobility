@@ -55,6 +55,7 @@ public:
     QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     ~QGeoMapRectangleObjectPrivate();
 
+    QGeoBoundingBox bounds;
     QPen pen;
     QBrush brush;
 };

@@ -187,14 +187,12 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
     Q_D(const QGeoMapObject);
 
-    QGeoBoundingBox bounds = d_ptr->boundingBox;
+    QGeoBoundingBox bounds = d_ptr->boundingBox();
 
     if (d->children.size() == 0)
         return bounds;
 
-    bounds = d->children.at(0)->boundingBox();
-
-    for (int i = 1; i < d->children.size(); ++i)
+    for (int i = 0; i < d->children.size(); ++i)
         bounds = bounds.united(d->children.at(i)->boundingBox());
 
     return bounds;
@@ -212,8 +210,8 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoMapObject);
 
-    if (d->children.size() == 0)
-        return d_ptr->boundingBox.contains(coordinate);
+    if (d_ptr->contains(coordinate))
+        return true;
 
     for (int i = 0; i < d->children.size(); ++i)
         if (d->children.at(i)->contains(coordinate))
@@ -398,6 +396,28 @@ void QGeoMapObjectPrivate::mapUpdate()
 
     for (int i = 0; i < children.size(); ++i)
         children[i]->mapUpdate();
+}
+
+QGeoBoundingBox QGeoMapObjectPrivate::boundingBox() const
+{
+    if (!mapData)
+        return QGeoBoundingBox();
+
+    if (!info)
+        info = mapData->createObjectInfo(this);
+
+    return info->boundingBox();
+}
+
+bool QGeoMapObjectPrivate::contains(const QGeoCoordinate &coord) const
+{
+    if (!mapData)
+        return false;
+
+    if (!info)
+        info = mapData->createObjectInfo(this);
+
+    return info->contains(coord);
 }
 
 /*******************************************************************************

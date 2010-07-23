@@ -104,9 +104,12 @@ public:
     void addToParent();
     void removeFromParent();
 
-    QRectF boundingBox;
-    QGraphicsItem *graphicsItem;
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coord) const;
 
+    QRectF bounds;
+
+    QGraphicsItem *graphicsItem;
     QGeoTiledMapDataPrivate *mapData;
 };
 
@@ -216,10 +219,8 @@ public:
     QSize maxZoomSize;
     QRect maxZoomScreenRect;
 
-    QRectF screenRect;
-
-    QSet<QRectF> requestRects;
-    QSet<QRectF> replyRects;
+    QSet<QRect> requestRects;
+    QSet<QRect> replyRects;
 
     QList<QGeoTiledMapRequest> requests;
     QSet<QGeoTiledMapReply*> replies;
@@ -247,24 +248,22 @@ protected:
 class QGeoTileIterator
 {
 public:
-    QGeoTileIterator(const QRect &screenRect, const QSize &tileSize, int zoomLevel);
+    QGeoTileIterator(const QGeoTiledMapDataPrivate *mapData);
+    QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel);
 
     bool hasNext();
-    void next();
-    int row() const;
-    int col() const;
-    int zoomLevel() const;
-    QRect tileRect() const;
+    QGeoTiledMapRequest next();
 
 private:
-    bool aHasNext;
-    int aRow;
-    int aCol;
-    QRect aScreenRect;
-    QSize aTileSize;
-    int aZoomLevel;
+    QGeoTiledMapData *mapData;
+    bool atEnd;
+    int row;
+    int col;
+    QRect screenRect;
+    QSize tileSize;
+    int zoomLevel;
     QPoint currTopLeft;
-    QRect aTileRect;
+    QRect tileRect;
 };
 
 QTM_END_NAMESPACE

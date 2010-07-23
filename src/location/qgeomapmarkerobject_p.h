@@ -44,6 +44,8 @@
 
 #include "qgeomapobject_p.h"
 
+#include "qgeocoordinate.h"
+
 #include <QPixmap>
 #include <QPoint>
 
@@ -55,6 +57,7 @@ public:
     QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     ~QGeoMapMarkerObjectPrivate();
 
+    QGeoCoordinate coordinate;
     QPixmap icon;
     QPoint anchor;
 };

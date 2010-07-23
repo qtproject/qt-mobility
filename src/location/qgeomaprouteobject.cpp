@@ -51,7 +51,7 @@ QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *pa
 {
     Q_D(QGeoMapRouteObject);
     d->route = route;
-    d->boundingBox = route.bounds();
+    d->bounds = route.bounds();
 }
 
 QGeoMapRouteObject::~QGeoMapRouteObject()

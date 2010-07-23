@@ -122,57 +122,62 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
 {
     Q_D(const QGeoTiledMapData);
 
-    qulonglong worldX;
-    qulonglong worldY;
+    qreal offsetX = ((d->viewportSize.width() * d->zoomFactor) - d->maxZoomScreenRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= d->zoomFactor;
+    qreal offsetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= d->zoomFactor;
 
-    coordinateToWorldPixel(coordinate, &worldX, &worldY);
+    QPoint pos(coordinateToWorldPixel(coordinate));
 
-    if (!d->maxZoomScreenRect.contains(QPoint(worldX, worldY)))
+    if (!d->maxZoomScreenRect.contains(pos))
         return QPointF();
 
-    QPointF pos(worldX, worldY);
+    int x = pos.x() - d->maxZoomScreenRect.left();
+    if (x < 0)
+        x += d->maxZoomSize.width();
 
-    pos -= d->maxZoomScreenRect.topLeft();
-    pos /= d->zoomFactor * 1.0;
+    int y = pos.y() - d->maxZoomScreenRect.top();
+    if (y < 0)
+        y = 0;
 
-    return pos;
+    QPointF posF(offsetX + qreal(x) / d->zoomFactor, offsetY + qreal(y)/ d->zoomFactor);
+
+//    posF -= d->maxZoomScreenRect.topLeft();
+//    posF /= d->zoomFactor * 1.0;
+
+    return posF;
 }
 
 QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
 {
     Q_D(const QGeoTiledMapData);
 
+    qreal offsetX = ((d->viewportSize.width() * d->zoomFactor) - d->maxZoomScreenRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= d->zoomFactor;
+    qreal offsetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= d->zoomFactor;
+
+    QPointF pos(screenPosition.x() - offsetX, screenPosition.y() - offsetY);
+
     QRectF bounds = QRectF(QPointF(0.0, 0.0), d->viewportSize);
-    if (!bounds.contains(screenPosition))
+    if (!bounds.contains(pos))
         return QGeoCoordinate();
 
-    qulonglong worldX = qulonglong(d->maxZoomScreenRect.left() + screenPosition.x() * d->zoomFactor) % d->maxZoomSize.width();
-    qulonglong worldY = qulonglong(d->maxZoomScreenRect.top() + screenPosition.y() * d->zoomFactor) % d->maxZoomSize.height();
+    int worldX = int(d->maxZoomScreenRect.left() + pos.x() * d->zoomFactor) % d->maxZoomSize.width();
+    int worldY = int(d->maxZoomScreenRect.top() + pos.y() * d->zoomFactor) % d->maxZoomSize.height();
 
-    return worldPixelToCoordinate(worldX, worldY);
+    return worldPixelToCoordinate(QPoint(worldX, worldY));
 }
 
-// TODO check whether we need it at all
-/*!
-    Returns the (row,col) index of the tile that \a screenPosition lies on.
-    The screen position (0,0) represents the top-left corner of the current map view.
-*/
-QPoint QGeoTiledMapData::screenPositionToTileIndices(const QPointF &screenPosition) const
-{
-    Q_D(const QGeoTiledMapData);
-
-    //TODO: add some type checking
-    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
-    QPointF pos = d->maxZoomScreenRect.topLeft() + screenPosition * d->zoomFactor;
-
-    int numCols = 1 << static_cast<int>(zoomLevel());
-    int tileX = static_cast<int>(pos.x() / tileEngine->tileSize().width()) % numCols;
-    int tileY = static_cast<int>(pos.y() / tileEngine->tileSize().height()) % numCols;
-
-    return QPoint(tileX, tileY);
-}
-
-void QGeoTiledMapData::coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const
+QPoint QGeoTiledMapData::coordinateToWorldPixel(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoTiledMapData);
 
@@ -185,8 +190,8 @@ void QGeoTiledMapData::coordinateToWorldPixel(const QGeoCoordinate &coordinate, 
     lat = qMax(0.0, lat);
     lat = qMin(1.0, lat);
 
-    *x = qulonglong(lng * d->maxZoomSize.width());
-    *y = qulonglong(lat * d->maxZoomSize.height());
+    return QPoint(int(lng * d->maxZoomSize.width()),
+                  int(lat * d->maxZoomSize.height()));
 }
 
 qreal rmod(const qreal a, const qreal b)
@@ -195,12 +200,12 @@ qreal rmod(const qreal a, const qreal b)
     return a - static_cast<qreal>(div) * b;
 }
 
-QGeoCoordinate QGeoTiledMapData::worldPixelToCoordinate(qulonglong x, qulonglong y) const
+QGeoCoordinate QGeoTiledMapData::worldPixelToCoordinate(const QPoint &pixel) const
 {
     Q_D(const QGeoTiledMapData);
 
-    qreal fx = qreal(x) / d->maxZoomSize.width();
-    qreal fy = qreal(y) / d->maxZoomSize.height();
+    qreal fx = qreal(pixel.x()) / d->maxZoomSize.width();
+    qreal fy = qreal(pixel.y()) / d->maxZoomSize.height();
 
     if (fy < 0.0f)
         fy = 0.0f;
@@ -232,15 +237,8 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoTiledMapData);
 
-    qulonglong x;
-    qulonglong y;
-    coordinateToWorldPixel(center, &x, &y);
-
-    d->maxZoomCenter.setX(x);
-    d->maxZoomCenter.setY(y);
+    d->maxZoomCenter = coordinateToWorldPixel(center);
     d->updateScreenRect();
-
-
     updateMapImage();
 }
 
@@ -249,15 +247,13 @@ void QGeoTiledMapData::setMapType(QGeoMapWidget::MapType mapType)
     QGeoMapData::setMapType(mapType);
 
     clearRequests();
-
     updateMapImage();
 }
 
 QGeoCoordinate QGeoTiledMapData::center() const
 {
     Q_D(const QGeoTiledMapData);
-
-    return worldPixelToCoordinate(d->maxZoomCenter.x(), d->maxZoomCenter.y());
+    return worldPixelToCoordinate(d->maxZoomCenter);
 }
 
 void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
@@ -287,8 +283,8 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->zoomFactor = 1 << qRound(d->engine->maximumZoomLevel() - d->zoomLevel);
 
-    //TODO: add some type checking
-    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
+    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(d->engine);
+    QSize tileSize = tileEngine->tileSize();
 
     d->updateScreenRect();
 
@@ -317,26 +313,19 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d->zoomCache.clear();
 
-    QGeoTileIterator it(d->maxZoomScreenRect, tileEngine->tileSize() * d->zoomFactor, qRound(QGeoMapData::zoomLevel()));
+    QGeoTileIterator it(d);
 
     while (it.hasNext()) {
-        it.next();
-        int col = it.col();
-        int row = it.row();
-        QRect tileRect = it.tileRect();
-
-        // populate zoom cache
+        QGeoTiledMapRequest req = it.next();
+        QRect tileRect = req.tileRect();
 
         if (!d->maxZoomScreenRect.intersects(tileRect))
-        //if (!d->maxZoomScreenRect.contains(tileRect))
             continue;
-
-        QGeoTiledMapRequest req = QGeoTiledMapRequest(this, row, col, tileRect);
 
         if (d->cache.contains(req))
             continue;
 
-        QPixmap *tile = new QPixmap(tileEngine->tileSize());
+        QPixmap *tile = new QPixmap(tileSize);
         tile->fill(Qt::lightGray);
 
         QRectF target = QRectF(QPointF(0.0, 0.0), tileEngine->tileSize());
@@ -363,9 +352,7 @@ void QGeoTiledMapData::setViewportSize(const QSizeF &size)
     Q_D(QGeoTiledMapData);
 
     QGeoMapData::setViewportSize(size);
-
     d->updateScreenRect();
-
     updateMapImage();
 }
 
@@ -387,12 +374,16 @@ void QGeoTiledMapData::pan(int dx, int dy)
     int y = d->maxZoomCenter.y();
 
     x = (x + dx * d->zoomFactor) % d->maxZoomSize.width();
-
     if (x < 0)
         x += d->maxZoomSize.width();
 
-    // TODO limit viewport from going past +/- 90 degrees latitude?
     y = (y + dy * d->zoomFactor);
+    int height = int(d->maxZoomScreenRect.height() / 2.0);
+    if ( y < height)
+        y = height;
+    if (y > d->maxZoomSize.height() - height)
+        y = d->maxZoomSize.height() - height;
+
 
     d->maxZoomCenter.setX(x);
     d->maxZoomCenter.setY(y);
@@ -412,16 +403,20 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
 {
     Q_D(const QGeoTiledMapData);
 
-    QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+    qreal offsetX = ((d->viewportSize.width() * d->zoomFactor) - d->maxZoomScreenRect.width()) / 2.0;
+    if (offsetX < 0.0)
+        offsetX = 0.0;
+    offsetX /= d->zoomFactor;
+    qreal offsetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
+    if (offsetY < 0.0)
+        offsetY = 0.0;
+    offsetY /= d->zoomFactor;
 
-    QGeoTileIterator it(d->maxZoomScreenRect, tiledEngine->tileSize() * d->zoomFactor, qRound(zoomLevel()));
+    QGeoTileIterator it(d);
 
     while (it.hasNext()) {
-        it.next();
-        int col = it.col();
-        int row = it.row();
-        QRect tileRect = it.tileRect();
+        QGeoTiledMapRequest req = it.next();
+        QRect tileRect = req.tileRect();
 
         QRect overlap = tileRect.intersected(d->maxZoomScreenRect);
 
@@ -431,12 +426,11 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
                                    int(overlap.width() / d->zoomFactor),
                                    int(overlap.height() / d->zoomFactor));
 
-            QRectF target = QRectF(int((overlap.left() - d->maxZoomScreenRect.left()) / d->zoomFactor),
-                                   int((overlap.top() - d->maxZoomScreenRect.top()) / d->zoomFactor),
+            QRectF target = QRectF(offsetX + int((overlap.left() - d->maxZoomScreenRect.left()) / d->zoomFactor),
+                                   offsetY + int((overlap.top() - d->maxZoomScreenRect.top()) / d->zoomFactor),
                                    int(overlap.width() / d->zoomFactor),
                                    int(overlap.height() / d->zoomFactor));
 
-            QGeoTiledMapRequest req = QGeoTiledMapRequest(this, row, col, tileRect);
             if (d->cache.contains(req)) {
                 painter->drawPixmap(target, *d->cache.object(req), source);
             } else {
@@ -456,21 +450,32 @@ void QGeoTiledMapData::paintMapObjects(QPainter *painter, const QStyleOptionGrap
 
     d->updateScreenRect();
 
+    qreal targetX = ((d->viewportSize.width() * d->zoomFactor) - d->maxZoomScreenRect.width()) / 2.0;
+    if (targetX < 0.0)
+        targetX = 0.0;
+    targetX /= d->zoomFactor;
+    qreal targetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
+    if (targetY < 0.0)
+        targetY = 0.0;
+    targetY /= d->zoomFactor;
+    qreal targetW = d->viewportSize.width() - 2 * targetX;
+    qreal targetH = d->viewportSize.height() - 2 * targetY;
+
     QRect worldRect = QRect(QPoint(0.0,0.0), d->maxZoomSize);
 
     if (worldRect.contains(d->maxZoomScreenRect)) {
         d->scene->render(painter,
-                         QRectF(QPointF(0.0, 0.0), d->viewportSize),
+                         QRectF(targetX, targetY, targetW, targetH),
                          d->maxZoomScreenRect);
         return;
     }
 
     QRect inside = d->maxZoomScreenRect.intersected(worldRect);
 
-    qreal insideWidth = d->viewportSize.width() * inside.width() / d->maxZoomScreenRect.width();
+    qreal insideWidth = targetW * inside.width() / d->maxZoomScreenRect.width();
 
     d->scene->render(painter,
-                     QRectF(0.0, 0.0, insideWidth, d->viewportSize.height()),
+                     QRectF(targetX, targetY, insideWidth, targetH),
                      inside);
 
     QRect outside = QRect(0,
@@ -478,10 +483,10 @@ void QGeoTiledMapData::paintMapObjects(QPainter *painter, const QStyleOptionGrap
                           d->maxZoomScreenRect.width() - inside.width(),
                           d->maxZoomScreenRect.height());
 
-    qreal outsideWidth = d->viewportSize.width() * outside.width() / d->maxZoomScreenRect.width();
+    qreal outsideWidth = targetW * outside.width() / d->maxZoomScreenRect.width();
 
     d->scene->render(painter,
-                     QRectF(d->viewportSize.width() - outsideWidth, 0.0, outsideWidth, d->viewportSize.height()),
+                     QRectF(targetX + targetW - outsideWidth, targetY, outsideWidth, targetH),
                      outside);
 }
 
@@ -504,18 +509,12 @@ void QGeoTiledMapData::updateMapImage()
         }
     }
 
-    QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
-
-    QGeoTileIterator it(d->maxZoomScreenRect, tiledEngine->tileSize() * d->zoomFactor, qRound(zoomLevel()));
+    QGeoTileIterator it(d);
 
     while (it.hasNext()) {
-        it.next();
-        int col = it.col();
-        int row = it.row();
-        QRect tileRect = it.tileRect();
+        QGeoTiledMapRequest req = it.next();
+        QRect tileRect = req.tileRect();
 
-        QGeoTiledMapRequest req = QGeoTiledMapRequest(this, row, col, tileRect);
         if (!d->cache.contains(req)) {
             if (!d->requestRects.contains(tileRect) && !d->replyRects.contains(tileRect)) {
                 d->requests.append(req);
@@ -532,7 +531,7 @@ void QGeoTiledMapData::updateMapImage()
 //            << d->zoomCache.totalCost();
 
     if (wasEmpty && d->requests.size() > 0) {
-        QTimer::singleShot(50, this, SLOT(processRequests()));
+        QTimer::singleShot(0, this, SLOT(processRequests()));
     }
 }
 
@@ -650,39 +649,29 @@ void QGeoTiledMapData::tileFinished()
 
     cleanupCaches();
 
-    QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+    QRect tileRect = reply->request().tileRect();
 
-    QSize tileSize = tiledEngine->tileSize();
+    QRectF overlap = tileRect.intersected(d->maxZoomScreenRect);
+    if (!overlap.isEmpty()) {
 
-    int tileHeight = tileSize.height() * d->zoomFactor;
-    int tileWidth = tileSize.width() * d->zoomFactor;
+        qreal offsetX = ((d->viewportSize.width() * d->zoomFactor) - d->maxZoomScreenRect.width()) / 2.0;
+        if (offsetX < 0.0)
+            offsetX = 0.0;
+        offsetX /= d->zoomFactor;
+        qreal offsetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
+        if (offsetY < 0.0)
+            offsetY = 0.0;
+        offsetY /=d->zoomFactor;
 
-    int numCols = 1 << static_cast<int>(zoomLevel());
-    qreal totalPixelWidth = static_cast<qreal>(numCols) * tileWidth;
-    QRectF tileRect(tileWidth * reply->request().column(),
-                    tileHeight * reply->request().row(),
-                    tileWidth, tileHeight);
-
-    while (tileRect.left() <= d->maxZoomScreenRect.right()) {
-        QRectF overlap = tileRect.intersected(d->maxZoomScreenRect);
-        if (!overlap.isEmpty()) {
-            QRectF dest = QRectF(int((overlap.left() - d->maxZoomScreenRect.left()) / d->zoomFactor),
-                                 int((overlap.top() - d->maxZoomScreenRect.top()) / d->zoomFactor),
-                                 int(overlap.width() / d->zoomFactor),
-                                 int(overlap.height() / d->zoomFactor));
-            widget()->update(dest);
-        }
-
-        tileRect.translate(totalPixelWidth, 0);
+        QRectF dest = QRectF(offsetX + int((overlap.left() - d->maxZoomScreenRect.left()) / d->zoomFactor),
+                             offsetY + int((overlap.top() - d->maxZoomScreenRect.top()) / d->zoomFactor),
+                             int(overlap.width() / d->zoomFactor),
+                             int(overlap.height() / d->zoomFactor));
+        widget()->update(dest);
     }
 
-    if (d->requests.size() > 0) {
-//        if (reply->isCached())
-//            QTimer::singleShot(10, this, SLOT(processRequests()));
-//        else
-            QTimer::singleShot(0, this, SLOT(processRequests()));
-    }
+    if (d->requests.size() > 0)
+        QTimer::singleShot(0, this, SLOT(processRequests()));
 
     QTimer::singleShot(0, reply, SLOT(deleteLater()));
 }
@@ -716,13 +705,11 @@ void QGeoTiledMapData::cleanupCaches()
     int height = maxY - minY;
     int minX = d->maxZoomScreenRect.x() - boundaryTiles * tileWidth;
     int maxX = d->maxZoomScreenRect.x() + d->maxZoomScreenRect.width() + boundaryTiles * tileWidth;
-    int width = 0;
+    int width = maxX - minX;
 
     if ((minX < 0) && (zoomWidth < maxX)) {
         cacheRect1 = QRectF(0, minY, zoomWidth, height);
     } else {
-        minX = minX % zoomWidth;
-        maxX = maxX % zoomWidth;
         if (minX < maxX) {
             cacheRect1 = QRectF(minX, minY, maxX - minX, height);
         } else {
@@ -834,7 +821,6 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &
         maxZoomCenter(other.maxZoomCenter),
         maxZoomSize(other.maxZoomSize),
         maxZoomScreenRect(other.maxZoomScreenRect),
-        screenRect(other.screenRect),
         q_ptr(other.q_ptr)
 {}
 
@@ -855,7 +841,6 @@ QGeoTiledMapDataPrivate& QGeoTiledMapDataPrivate::operator= (const QGeoTiledMapD
     maxZoomCenter = other.maxZoomCenter;
     maxZoomSize = other.maxZoomSize;
     maxZoomScreenRect = other.maxZoomScreenRect;
-    screenRect = other.screenRect;
     q_ptr = other.q_ptr;
 
     return *this;
@@ -863,18 +848,25 @@ QGeoTiledMapDataPrivate& QGeoTiledMapDataPrivate::operator= (const QGeoTiledMapD
 
 void QGeoTiledMapDataPrivate::updateScreenRect()
 {
-    qreal width = q_ptr->viewportSize().width();
-    qreal height = q_ptr->viewportSize().height();
+    qreal viewportWidth = q_ptr->viewportSize().width();
+    qreal viewportHeight = q_ptr->viewportSize().height();
 
-    int x = (maxZoomCenter.x() - (static_cast<int>(width * zoomFactor) / 2)) % maxZoomSize.width();
+    int width = int(viewportWidth * zoomFactor);
+    int height = int(viewportHeight * zoomFactor);
+
+    if (width > maxZoomSize.width())
+        width = maxZoomSize.width();
+
+    if (height > maxZoomSize.height())
+        height = maxZoomSize.height();
+
+    int x = (maxZoomCenter.x() - (width / 2)) % maxZoomSize.width();
     if (x < 0)
         x += maxZoomSize.width();
 
-    //TODO squash screen rectangle if we decide that's what we're doing near the poles
-    int y = maxZoomCenter.y() - (static_cast<int>(height * zoomFactor) / 2);
+    int y = maxZoomCenter.y() - (height / 2);
 
-    maxZoomScreenRect = QRect(x, y, static_cast<int>(width * zoomFactor), static_cast<int>(height * zoomFactor));
-    screenRect = QRectF(qreal(x) / zoomFactor, qreal(y) / zoomFactor, width, height);
+    maxZoomScreenRect = QRect(x, y, width, height);
 
     containerObject->mapUpdate();
 }
@@ -942,6 +934,26 @@ void QGeoTiledMapObjectInfo::removeFromParent()
     }
 }
 
+QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
+{
+    if (!graphicsItem)
+        return QGeoBoundingBox();
+
+    QRectF rect = graphicsItem->boundingRect();
+    QGeoCoordinate topLeft = mapData->q_ptr->worldPixelToCoordinate(rect.topLeft().toPoint());
+    QGeoCoordinate bottomRight = mapData->q_ptr->worldPixelToCoordinate(rect.bottomRight().toPoint());
+
+    return QGeoBoundingBox(topLeft, bottomRight);
+}
+
+bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
+{
+    if (!graphicsItem)
+        return false;
+
+    return graphicsItem->contains(mapData->q_ptr->coordinateToWorldPixel(coord));
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -956,15 +968,10 @@ QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
 void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 {
-    qulonglong topLeftX;
-    qulonglong topLeftY;
-    qulonglong bottomRightX;
-    qulonglong bottomRightY;
+    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.topLeft());
+    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.bottomRight());
 
-    mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->boundingBox.topLeft(), &topLeftX, &topLeftY);
-    mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->boundingBox.bottomRight(), &bottomRightX, &bottomRightY);
-
-    boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
+    bounds = QRectF(topLeft, bottomRight);
 
     //TODO - handle when drawn across the dateline...
     // regular graphics item with item children?
@@ -972,7 +979,7 @@ void QGeoTiledMapRectangleObjectInfo::objectUpdate()
     if (!rectangleItem)
         rectangleItem = new QGraphicsRectItem();
 
-    rectangleItem->setRect(boundingBox);
+    rectangleItem->setRect(bounds);
     rectangleItem->setBrush(rectangle->brush);
     mapUpdate();
 
@@ -1017,16 +1024,6 @@ QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
 
 void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 {
-    qulonglong topLeftX;
-    qulonglong topLeftY;
-    qulonglong bottomRightX;
-    qulonglong bottomRightY;
-
-    mapData->q_ptr->coordinateToWorldPixel(polyline->boundingBox.topLeft(), &topLeftX, &topLeftY);
-    mapData->q_ptr->coordinateToWorldPixel(polyline->boundingBox.bottomRight(), &bottomRightX, &bottomRightY);
-
-    boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
-
     QList<QGeoCoordinate> path = polyline->path;
 
     for (int i = 0; i < path.size(); ++i) {
@@ -1035,11 +1032,7 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
         if (!coord.isValid())
             continue;
 
-        qulonglong x;
-        qulonglong y;
-        mapData->q_ptr->coordinateToWorldPixel(coord, &x, &y);
-
-        points.append(QPointF(x, y));
+        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
     }
 
     if (points.size() < 2)
@@ -1081,16 +1074,6 @@ QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
 
 void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 {
-    qulonglong topLeftX;
-    qulonglong topLeftY;
-    qulonglong bottomRightX;
-    qulonglong bottomRightY;
-
-    mapData->q_ptr->coordinateToWorldPixel(polygon->boundingBox.topLeft(), &topLeftX, &topLeftY);
-    mapData->q_ptr->coordinateToWorldPixel(polygon->boundingBox.bottomRight(), &bottomRightX, &bottomRightY);
-
-    boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
-
     QList<QGeoCoordinate> path = polygon->path;
 
     points.clear();
@@ -1104,11 +1087,7 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
         if (!coord.isValid())
             continue;
 
-        qulonglong x;
-        qulonglong y;
-        mapData->q_ptr->coordinateToWorldPixel(coord, &x, &y);
-
-        points << QPointF(x, y);
+        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
     }
 
     if (!polygonItem)
@@ -1145,21 +1124,14 @@ QGeoTiledMapMarkerObjectInfo::~QGeoTiledMapMarkerObjectInfo() {}
 
 void QGeoTiledMapMarkerObjectInfo::objectUpdate()
 {
-    qulonglong topLeftX;
-    qulonglong topLeftY;
-
-    mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->boundingBox.topLeft(), &topLeftX, &topLeftY);
-
-    QPointF topLeft(topLeftX, topLeftY);
-
-    boundingBox = QRectF(topLeft, marker->icon.size() * mapData->zoomFactor);
+    QPointF position = mapData->q_ptr->coordinateToWorldPixel(marker->coordinate);
 
     if (!pixmapItem)
         pixmapItem = new QGraphicsPixmapItem();
 
     pixmapItem->setPixmap(marker->icon);
-    pixmapItem->setOffset(boundingBox.topLeft());
-    pixmapItem->setTransformOriginPoint(boundingBox.topLeft());
+    pixmapItem->setOffset(position);
+    pixmapItem->setTransformOriginPoint(position);
 
     mapUpdate();
 
@@ -1191,16 +1163,6 @@ QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
 
 void QGeoTiledMapRouteObjectInfo::objectUpdate()
 {
-    qulonglong topLeftX;
-    qulonglong topLeftY;
-    qulonglong bottomRightX;
-    qulonglong bottomRightY;
-
-    mapData->q_ptr->coordinateToWorldPixel(route->boundingBox.topLeft(), &topLeftX, &topLeftY);
-    mapData->q_ptr->coordinateToWorldPixel(route->boundingBox.bottomRight(), &bottomRightX, &bottomRightY);
-
-    boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
-
     QListIterator<QGeoRouteSegment> segIt(route->route.routeSegments());
 
     while (segIt.hasNext()) {
@@ -1211,11 +1173,7 @@ void QGeoTiledMapRouteObjectInfo::objectUpdate()
             if (!coord.isValid())
                 continue;
 
-            qulonglong x;
-            qulonglong y;
-            mapData->q_ptr->coordinateToWorldPixel(coord, &x, &y);
-
-            points.append(QPointF(x, y));
+            points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
         }
     }
 
@@ -1315,9 +1273,29 @@ void QGeoTiledMapRouteObjectInfo::mapUpdate()
 ///*******************************************************************************
 //*******************************************************************************/
 
-QGeoTileIterator::QGeoTileIterator(const QRect &screenRect, const QSize &tileSize, int zoomLevel)
-    : aHasNext(true), aRow(-1), aCol(-1), aScreenRect(screenRect),
-    aTileSize(tileSize), aZoomLevel(zoomLevel), aTileRect(QPoint(0,0), tileSize)
+QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate)
+    : mapData(mapDataPrivate->q_ptr),
+    atEnd(false),
+    row(-1),
+    col(-1),
+    screenRect(mapDataPrivate->maxZoomScreenRect),
+    zoomLevel(mapDataPrivate->zoomLevel)
+{
+    QGeoTiledMappingManagerEngine *tiledEngine
+            = static_cast<QGeoTiledMappingManagerEngine*>(mapDataPrivate->engine);
+    tileSize = tiledEngine->tileSize() * mapDataPrivate->zoomFactor;
+    tileRect = QRect(QPoint(0, 0), tileSize);
+}
+
+QGeoTileIterator::QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel)
+    : mapData(mapData),
+    atEnd(false),
+    row(-1),
+    col(-1),
+    screenRect(screenRect),
+    tileSize(tileSize),
+    zoomLevel(zoomLevel),
+    tileRect(QPoint(0,0), tileSize)
 {
     qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
     qulonglong y = static_cast<qulonglong>(screenRect.topLeft().y() / tileSize.height());
@@ -1328,46 +1306,28 @@ QGeoTileIterator::QGeoTileIterator(const QRect &screenRect, const QSize &tileSiz
 
 bool QGeoTileIterator::hasNext()
 {
-    return aHasNext;
+    return !atEnd;
 }
 
-QRect QGeoTileIterator::tileRect() const
+QGeoTiledMapRequest QGeoTileIterator::next()
 {
-    return aTileRect;
-}
+    int numCols = 1 << zoomLevel;
+    col = static_cast<int>(currTopLeft.x() / tileSize.width()) % numCols;
+    row = static_cast<int>(currTopLeft.y() / tileSize.height()) % numCols;
+    tileRect.moveTopLeft(currTopLeft);
 
-void QGeoTileIterator::next()
-{
-    int numCols = 1 << aZoomLevel;
-    aCol = static_cast<int>(currTopLeft.x() / aTileSize.width()) % numCols;
-    aRow = static_cast<int>(currTopLeft.y() / aTileSize.height()) % numCols;
-    aTileRect.moveTopLeft(currTopLeft);
+    currTopLeft.rx() += tileSize.width();
 
-    currTopLeft.rx() += aTileSize.width();
-
-    if (currTopLeft.x() > aScreenRect.right()) { //next row
-        qulonglong x = static_cast<qulonglong>(aScreenRect.topLeft().x() / aTileSize.width());
-        currTopLeft.setX(x * aTileSize.width());
-        currTopLeft.ry() += aTileSize.height();
+    if (currTopLeft.x() > screenRect.right()) { //next row
+        qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
+        currTopLeft.setX(x * tileSize.width());
+        currTopLeft.ry() += tileSize.height();
     }
 
-    if (currTopLeft.y() > aScreenRect.bottom()) //done
-        aHasNext = false;
-}
+    if (currTopLeft.y() > screenRect.bottom()) //done
+        atEnd = true;
 
-int QGeoTileIterator::row() const
-{
-    return aRow;
-}
-
-int QGeoTileIterator::col() const
-{
-    return aCol;
-}
-
-int QGeoTileIterator::zoomLevel() const
-{
-    return aZoomLevel;
+    return QGeoTiledMapRequest(mapData, row, col, tileRect);
 }
 
 #include "moc_qgeotiledmapdata.cpp"

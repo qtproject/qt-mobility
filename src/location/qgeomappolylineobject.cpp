@@ -91,7 +91,7 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
             maxLong = coord.longitude();
     }
 
-    d->boundingBox = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
+    d->bounds = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
 }
 
 /*!

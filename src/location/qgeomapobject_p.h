@@ -69,6 +69,9 @@ public:
     virtual void objectUpdate() = 0;
     virtual void mapUpdate() = 0;
 
+    virtual QGeoBoundingBox boundingBox() const = 0;
+    virtual bool contains(const QGeoCoordinate &coord) const = 0;
+
     const QGeoMapObjectPrivate* mapObjectPrivate;
 
 private:
@@ -90,15 +93,18 @@ public:
     void objectUpdate();
     void mapUpdate();
 
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coord) const;
+
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
     int zValue;
     bool isVisible;
-    QGeoBoundingBox boundingBox;
+    QGeoBoundingBox bounds;
 
     QGeoMapDataPrivate *mapData;
-    QGeoMapObjectInfo *info;
+    mutable QGeoMapObjectInfo *info;
 
 //private:
     QGeoMapObject *q_ptr;
