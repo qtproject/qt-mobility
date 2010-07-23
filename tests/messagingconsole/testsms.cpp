@@ -77,7 +77,8 @@ QMessage TestSms::createSms(const QString &text)
     }
 
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(QMessageAddress::Phone, "+358403268057"));
+    // change to the real number
+    message.setTo(QMessageAddress(QMessageAddress::Phone, "+000000000000")); 
     message.setFrom(QMessageAddress(QMessageAddress::Phone, "+1111111111111"));
     message.setBody(text);
     message.setDate(QDateTime::fromTime_t(11));
