@@ -162,7 +162,22 @@ Player::Player(QWidget *parent)
 
     QStringList arguments = qApp->arguments();
     arguments.removeAt(0);
-    foreach (QString const &argument, arguments) {
+    addToPlaylist(arguments);
+}
+
+Player::~Player()
+{
+}
+
+void Player::open()
+{
+    QStringList fileNames = QFileDialog::getOpenFileNames();
+    addToPlaylist(fileNames);
+}
+
+void Player::addToPlaylist(const QStringList& fileNames)
+{
+    foreach (QString const &argument, fileNames) {
         QFileInfo fileInfo(argument);
         if (fileInfo.exists()) {
             QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
@@ -177,17 +192,6 @@ Player::Player(QWidget *parent)
             }
         }
     }
-}
-
-Player::~Player()
-{
-}
-
-void Player::open()
-{
-    QStringList fileNames = QFileDialog::getOpenFileNames();
-    foreach (QString const &fileName, fileNames)
-        playlist->addMedia(QUrl::fromLocalFile(fileName));
 }
 
 void Player::durationChanged(qint64 duration)

@@ -90,6 +90,8 @@ private slots:
     void displayErrorMessage();
 
     void showColorDialog();
+    
+    void addToPlaylist(const QStringList& fileNames);
 
 private:
     void setTrackInfo(const QString &info);
