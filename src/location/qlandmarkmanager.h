@@ -166,6 +166,10 @@ Q_SIGNALS:
     void categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds);
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 private:
     QLandmarkManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QLandmarkManager)

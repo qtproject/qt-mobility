@@ -98,6 +98,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QDir>
+#include <QDateTime>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -1254,7 +1255,6 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
 
     QStringList keys = bindValues.keys();
     QString q1 = QString("REPLACE INTO landmark (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(", :")));
-
     QSqlQuery query1(db);
 
     if (!query1.prepare(q1)) {
@@ -1785,16 +1785,13 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
     bool update = category->categoryId().isValid();
 
-    QStringList columns;
-    QStringList values;
-
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
     bool transacting = db.transaction();
 
+    QHash<QString, QVariant> bindValues;
     if (update) {
-        columns << "id";
-        values << category->categoryId().localId();
+        bindValues.insert("id",category->categoryId().localId());
 
         QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().localId());
         QSqlQuery query0(q0, db);
@@ -1811,32 +1808,55 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
         }
     }
 
-    columns << "name";
     if (!category->name().isEmpty())
-        values << quoteString(category->name());
+        bindValues.insert("name", category->name());
     else
-        values << "null";
+        bindValues.insert("name", QVariant());
 
-    columns << "description";
     if (!category->description().isEmpty())
-        values << quoteString(category->description());
+        bindValues.insert("description", category->description());
     else
-        values << "null";
+        bindValues.insert("description", QVariant());
 
-    columns << "icon_url";
     if (!category->iconUrl().isEmpty())
-        values << quoteString(category->iconUrl().toString());
+        bindValues.insert("icon_url", category->iconUrl().toString());
     else
-        values << "null";
+        bindValues.insert("icon_url", QVariant());
 
-    QString q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(columns.join(",")).arg(values.join(","));
+    QString q1;
+    QStringList keys = bindValues.keys();
+
+    if (update) {
+        QStringList placeholderKeys = keys;
+        for (int i=0; i < placeholderKeys.count(); ++i) {
+            placeholderKeys[i] = placeholderKeys[i] + "= :" + placeholderKeys[i];
+        }
+        q1 = QString("UPDATE category SET %1 WHERE id = :catId;").arg(placeholderKeys.join(","));
+        bindValues.insert("catId", category->categoryId().localId());
+    } else {
+        q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(",:")));
+    }
     QSqlQuery query1(db);
-    if (!query1.exec(q1)) {
+
+    if (!query1.prepare(q1)) {
+        if (transacting)
+            db.rollback();
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Unable to prepare statement: ") + q1
+                       + "\nReason: " + query1.lastError().text();
+        return false;
+    }
+
+    foreach(const QString &key, bindValues.keys()) {
+        query1.bindValue(QString(":").append(key), bindValues.value(key));
+    }
+
+    if (!query1.exec()) {
         if (error)
             *error  = QLandmarkManager::UnknownError;
         if (errorString)
-            *errorString = QString("Database Query failed, reaosn: %1").arg(query1.lastError().text());
-        //qWarning() << query1.lastError().databaseText();
+            *errorString = QString("Database Query failed, query: %1 \nreason: %2").arg(q1).arg(query1.lastError().text());
+
         if (transacting)
             db.rollback();
         return false;
@@ -2309,6 +2329,7 @@ void QueryRun::run()
                                   Qt::QueuedConnection,
                                   Q_ARG(QLandmarkAbstractRequest *, request),
                                   Q_ARG(QLandmarkAbstractRequest::State, QLandmarkAbstractRequest::ActiveState));
+
         switch(request->type()){
         case QLandmarkAbstractRequest::LandmarkIdFetchRequest: {
                 QLandmarkIdFetchRequest *idFetchRequest = static_cast<QLandmarkIdFetchRequest *>(request);
@@ -2497,8 +2518,9 @@ void QueryRun::run()
 
 QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
         : m_dbFilename(filename),
-        m_dbConnectionName("landmarks")
-
+        m_dbConnectionName("landmarks"),
+        m_dbWatcher(NULL),
+        m_latestTimestamp(0.0)
 {
     qRegisterMetaType<ERROR_MAP >();
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
@@ -2559,7 +2581,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         QString s = in.readAll();
-        QStringList queries = s.split(';');
+        QStringList queries = s.split("@@@");
 
         bool transacting = db.transaction();
         for (int i = 0; i < queries.size(); ++i) {
@@ -2583,6 +2605,9 @@ QLandmarkManagerEngineSqlite::~QLandmarkManagerEngineSqlite()
 {
     QThreadPool *threadPool = QThreadPool::globalInstance();
     threadPool->waitForDone();
+
+    if (m_dbWatcher !=0)
+        delete m_dbWatcher;
 
     QSqlDatabase::database(m_dbConnectionName).close();
     QSqlDatabase::removeDatabase(m_dbConnectionName);
@@ -3315,6 +3340,164 @@ bool QLandmarkManagerEngineSqlite::waitForRequestFinished(QLandmarkAbstractReque
         int msecs)
 {
     return false;
+}
+
+void QLandmarkManagerEngineSqlite::databaseChanged()
+{
+    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
+
+    qreal latestLandmarkTimestamp = m_latestTimestamp;
+    QSqlQuery query(db);
+    if (!query.prepare("SELECT landmark_id,action, timestamp FROM landmark_notification WHERE timestamp > ?")) {
+#ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
+        qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
+#endif
+        return;
+    }
+    query.addBindValue(latestLandmarkTimestamp);
+    if (!query.exec()) {
+#ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
+        qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
+#endif
+        return;
+    }
+
+    QList<QLandmarkId> addedLandmarkIds;
+    QList<QLandmarkId> changedLandmarkIds;
+    QList<QLandmarkId> removedLandmarkIds;
+
+    QString action;
+    QLandmarkId landmarkId;
+    landmarkId.setManagerUri(managerUri());
+    bool ok;
+    qreal timestamp;
+
+    while(query.next()) {
+        timestamp = query.value(2).toDouble(&ok);
+        if (!ok) //this should never happen
+            continue;
+
+        if (timestamp > latestLandmarkTimestamp)
+            latestLandmarkTimestamp = timestamp;
+
+        action = query.value(1).toString();
+        landmarkId.setLocalId((query.value(0).toString()));
+        if (action == "ADD") {
+            addedLandmarkIds << landmarkId;
+        } else if (action == "CHANGE") {
+            changedLandmarkIds << landmarkId;
+        } else if (action == "REMOVE") {
+            removedLandmarkIds << landmarkId;
+        }
+    }
+
+    if (addedLandmarkIds.count() > 0)
+        emit landmarksAdded(addedLandmarkIds);
+
+    if (changedLandmarkIds.count() > 0)
+        emit landmarksChanged(addedLandmarkIds);
+
+    if (removedLandmarkIds.count() > 0)
+        emit landmarksRemoved(removedLandmarkIds);
+
+    //now check for added/modified/removed categories
+    qreal latestCategoryTimestamp = m_latestTimestamp;
+    if (!query.prepare("SELECT category_id,action, timestamp FROM category_notification WHERE timestamp > ?")) {
+#ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
+        qWarning() << "Could not prepare statement: " << query.lastQuery() << " \nReason:" << query.lastError().text();
+#endif
+        return;
+    }
+    query.addBindValue(latestCategoryTimestamp);
+    if (!query.exec()) {
+#ifdef QT_LANDMARK_SQLITE_ENGINE_DEBUG
+        qWarning() << "Could not execute statement:" << query.lastQuery() << " \nReason:" << query.lastError().text();
+#endif
+        return;
+    }
+    QList<QLandmarkCategoryId> addedCategoryIds;
+    QList<QLandmarkCategoryId> changedCategoryIds;
+    QList<QLandmarkCategoryId> removedCategoryIds;
+
+    QLandmarkCategoryId categoryId;
+    categoryId.setManagerUri(managerUri());
+
+    while(query.next()) {
+        timestamp = query.value(2).toDouble(&ok);
+        if (!ok) //this should never happen
+            continue;
+
+        if (timestamp > latestCategoryTimestamp)
+            latestCategoryTimestamp = timestamp;
+
+        action = query.value(1).toString();
+        categoryId.setLocalId(query.value(0).toString());
+        if (action == "ADD") {
+            addedCategoryIds << categoryId;
+        } else if (action == "CHANGE") {
+            changedCategoryIds << categoryId;
+        } else if (action == "REMOVE") {
+            removedCategoryIds << categoryId;
+        }
+    }
+
+    if (addedCategoryIds.count() > 0) {
+        emit categoriesAdded(addedCategoryIds);
+     }
+
+    if (changedCategoryIds.count() > 0)
+        emit categoriesChanged(changedCategoryIds);
+
+    if (removedCategoryIds.count() > 0) {
+        emit categoriesRemoved(removedCategoryIds);
+       }
+
+    if (latestLandmarkTimestamp > m_latestTimestamp)
+        m_latestTimestamp = latestLandmarkTimestamp;
+    if (latestCategoryTimestamp > m_latestTimestamp)
+        m_latestTimestamp = latestCategoryTimestamp;
+}
+
+void QLandmarkManagerEngineSqlite::setChangeNotificationsEnabled(bool enabled)
+{
+    if (!m_dbWatcher) {
+        m_dbWatcher = new DatabaseFileWatcher(m_dbFilename);
+        connect(m_dbWatcher, SIGNAL(notifyChange()),this,SLOT(databaseChanged()));
+    }
+    m_dbWatcher->setEnabled(enabled);
+    if (enabled)
+        m_latestTimestamp = QDateTime::currentDateTime().toTime_t();
+}
+
+void QLandmarkManagerEngineSqlite::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))
+        || QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))
+        || QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
+        {
+            setChangeNotificationsEnabled(true);
+        }
+}
+void QLandmarkManagerEngineSqlite::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))
+        || QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))
+        || QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))
+        || QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) {
+        if (receivers(SIGNAL(landmarksAdded(QList<QLandmarkId>))) == 0
+            && receivers(SIGNAL(landmarksChanged(QList<QLandmarkId>))) == 0
+            && receivers(SIGNAL(landmarksRemoved(QList<QLandmarkId>))) == 0
+            && receivers(SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))) == 0
+            && receivers(SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))) == 0
+            && receivers(SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) == 0
+            )
+            setChangeNotificationsEnabled(false);
+    }
 }
 
 void QLandmarkManagerEngineSqlite::updateLandmarkIdFetchRequest(QLandmarkIdFetchRequest* req, const QList<QLandmarkId>& result,

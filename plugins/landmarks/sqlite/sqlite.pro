@@ -7,12 +7,14 @@ PLUGIN_TYPE=landmarks
 include(../../../common.pri)
 
 HEADERS += qlandmarkmanagerengine_sqlite_p.h \
-           qlandmarkmanagerenginefactory_sqlite_p.h
+           qlandmarkmanagerenginefactory_sqlite_p.h \
+           databasefilewatcher_p.h
 
 
 
 SOURCES += qlandmarkmanagerengine_sqlite.cpp \
-           qlandmarkmanagerenginefactory_sqlite.cpp
+           qlandmarkmanagerenginefactory_sqlite.cpp \
+           databasefilewatcher.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/location
 
