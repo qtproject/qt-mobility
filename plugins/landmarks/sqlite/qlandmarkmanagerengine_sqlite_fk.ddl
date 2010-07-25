@@ -84,7 +84,7 @@ FOR EACH ROW
         DELETE FROM landmark_notification
         WHERE timestamp < strftime('%s', 'now', '-2 minutes');
         INSERT INTO landmark_notification(timestamp, action, landmark_id)
-        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'CHANGE', new.id);
+        VALUES(strftime("%f", "now") - strftime("%S", "now") + strftime("%s"),'ADD', new.id);
     END;
 @@@
 CREATE TRIGGER IF NOT EXISTS remove_landmark_notification

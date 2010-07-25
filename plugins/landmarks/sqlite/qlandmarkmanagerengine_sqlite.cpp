@@ -3382,6 +3382,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
 
         action = query.value(1).toString();
         landmarkId.setLocalId((query.value(0).toString()));
+
         if (action == "ADD") {
             addedLandmarkIds << landmarkId;
         } else if (action == "CHANGE") {

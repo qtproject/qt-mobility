@@ -952,12 +952,11 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    /*TODO: notifications
-    QTest::qWait(100);
+
+    QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
     spyAdd.clear();
-    */
 
     // add - with attributes
     // add - with categories
@@ -973,13 +972,13 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm2));
     QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
 
-    //TODO: Notifications
-    //QCOMPARE(spyAdd.count(), 1);
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
 }
 
 void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
-    // TODO: notifications QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
     // add - no attributes
     QLandmark lm1;
@@ -996,9 +995,9 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QLandmarkId id1 = saveRequest.landmarks().at(0).landmarkId();
     QCOMPARE(saveRequest.landmarks().at(0), m_manager->landmark(id1));
 
-    //TODO: notification QCOMPARE(spyAdd.count(), 1);
-    //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyAdd.clear();
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), id1);
+    spyAdd.clear();
 
     // add - with attributes
 
@@ -1020,6 +1019,10 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QCOMPARE(saveRequest.landmarks().count(),1);
     QLandmarkId id2 = saveRequest.landmarks().at(0).landmarkId();
     QCOMPARE(saveRequest.landmarks().at(0), m_manager->landmark(id2));
+
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), id2);
+    spyAdd.clear();
 
     QLandmarkNameFilter nameFilter;
     nameFilter.setName("LM2");
@@ -1049,6 +1052,8 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QCOMPARE(landmarks.count(), 0);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
+    QCOMPARE(spyAdd.count(), 0);
+
     //try saving a landmark with a non-existent id
     QLandmarkId lmId4;
     lmId4.setLocalId("10");
@@ -1065,6 +1070,8 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
 
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
 
+    QCOMPARE(spyAdd.count(), 0);
+
     nameFilter.setName("LM4");
     landmarks = m_manager->landmarks(nameFilter);
 
@@ -1074,7 +1081,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     //try saving a list of landmarks where one landmark has a non-existent id
     QLandmark lm5;
     lm5.setName("LM5");
-    m_manager->saveLandmark(&lm5);
 
     QLandmark lm6;
     lm6.setName("LM6");
@@ -1085,7 +1091,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
 
     QLandmark lm7;
     lm7.setName("LM7");
-    m_manager->saveLandmark(&lm7);
 
     lm5.setDescription("landmark 5;");
     lm6.setDescription("landmark 6;");
@@ -1113,6 +1118,10 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QCOMPARE(landmarks.count(), 0);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
+    QCOMPARE(spyAdd.count(), 2);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), saveRequest.landmarks().at(0).landmarkId());
+    QCOMPARE(spyAdd.at(1).at(0).value<QList<QLandmarkId> >().at(0), saveRequest.landmarks().at(2).landmarkId());
+
     //test cancel
     landmarks.clear();
     QLandmark lm;
@@ -1121,6 +1130,11 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
         lm.setName(QString("LM") + QString::number(i));
         landmarks.append(lm);
     }
+
+    //we disable notifications because we will be flooded with notifications
+    //during the save and this will interefere with detecting when the operation
+    //is finshidd TODO: handle multiple saves so that we don't get flooded with notifications
+    this->disconnectNotifications();
 
     saveRequest.setLandmarks(landmarks);
     saveRequest.start();
@@ -1140,9 +1154,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
 
     }
     QVERIFY(foundCancelError);
-
-    //TODO: notifications QCOMPARE(spyAdd.count(), 1);
-    //TODO: notifications QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
