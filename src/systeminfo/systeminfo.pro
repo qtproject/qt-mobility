@@ -82,8 +82,8 @@ unix: {
                 }
                 
                 contains(connman_enabled, yes): {
-                    SOURCES+= qconnmanservice_linux.cpp
-                    HEADERS+= qconnmanservice_linux_p.h
+                    SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
+                    HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
                 } else {
                     DEFINES += QT_NO_CONNMAN
                 }

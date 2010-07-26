@@ -73,6 +73,7 @@
 
 #if !defined(QT_NO_CONNMAN)
 #include "qconnmanservice_linux_p.h"
+#include "qofonoservice_linux_p.h"
 #endif
 #endif
 
@@ -153,6 +154,7 @@ public:
 
 
 #if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus();
 #endif
 //public Q_SLOTS:
 //    void getPrimaryMode();
@@ -173,7 +175,9 @@ protected:
 
 #if !defined(QT_NO_CONNMAN)
     QConnmanManagerInterface *connmanManager;
+    QOfonoManagerInterface *ofonoManager;
     void initConnman();
+    void initOfono();
     QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
     QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
