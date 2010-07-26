@@ -74,7 +74,7 @@ SlideShow::SlideShow(QWidget *parent)
     connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
     QVideoWidget *videoWidget = new QVideoWidget;
-    imageViewer->bind(videoWidget);
+    imageViewer->setVideoOutput(videoWidget);
 
     statusLabel = new QLabel(tr("%1 Images").arg(0));
     statusLabel->setAlignment(Qt::AlignCenter);
