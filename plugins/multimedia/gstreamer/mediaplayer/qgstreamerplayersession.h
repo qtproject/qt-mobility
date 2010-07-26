@@ -136,6 +136,8 @@ private slots:
     void updateVideoRenderer();
 
 private:
+    static void playbinNotifySource(GObject *o, GParamSpec *p, gpointer d);
+
     QNetworkRequest m_request;
     QMediaPlayer::State m_state;
     QGstreamerBusHelper* m_busHelper;
