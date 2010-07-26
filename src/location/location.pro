@@ -122,7 +122,7 @@ symbian {
 }
 
 simulator {
-    QT += gui network
+    QT += gui
     SOURCES += qgeopositioninfosource_simulator.cpp \
                 qlocationdata_simulator.cpp \
                 qgeosatelliteinfosource_simulator.cpp \
