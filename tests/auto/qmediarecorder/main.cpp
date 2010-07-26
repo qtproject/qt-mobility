@@ -38,72 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QtCore/qcoreapplication.h>
+#include <QtTest/QtTest>
 
-#ifndef QT7PLAYERCONTROL_H
-#define QT7PLAYERCONTROL_H
+#include "tst_qmediarecorder.h"
 
-#include <QtCore/qobject.h>
-
-#include <qmediaplayercontrol.h>
-#include <qmediaplayer.h>
-
-#include <QtGui/qmacdefines_mac.h>
-
-
-QT_BEGIN_NAMESPACE
-
-class QT7PlayerSession;
-class QT7PlayerService;
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-
-class QT7PlayerControl : public QMediaPlayerControl
-{
-Q_OBJECT
-public:
-    QT7PlayerControl(QObject *parent = 0);
-    ~QT7PlayerControl();
-
-    void setSession(QT7PlayerSession *session);
-
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent &content, QIODevice *stream);
-
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isAudioAvailable() const;
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
-private:
-    QT7PlayerSession *m_session;
-};
-
-QT_END_NAMESPACE
-
+#ifdef Q_OS_SYMBIAN
+#include "s60common.h"
+#ifdef HAS_OPENMAXAL_MEDIARECORD_BACKEND
+#include "tst_qmediarecorder_xa.h"
+#else
+#include "tst_qmediarecorder_mmf.h"
 #endif
+#endif
+
+int main(int argc, char**argv)
+{
+    QApplication app(argc,argv);
+    int ret;
+    tst_QMediaRecorder test_api;
+    ret = QTest::qExec(&test_api, argc, argv);
+#ifdef Q_OS_SYMBIAN
+#ifdef HAS_OPENMAXAL_MEDIARECORD_BACKEND
+    char *new_argv[3];
+    QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";
+    QByteArray   bytes  = str.toAscii();
+    char arg1[] = "-o";
+    new_argv[0] = argv[0];
+    new_argv[1] = arg1;
+    new_argv[2] = bytes.data();
+    tst_QMediaRecorder_xa test_xa;
+    ret = QTest::qExec(&test_xa, 3, new_argv);
+#else
+    tst_QMediaRecorder_mmf test_mmf;
+    ret = QTest::qExec(&test_mmf, argc, argv);
+#endif
+#endif
+    return ret;
+}

@@ -89,6 +89,7 @@ public:
             const QRectF &target, QPainter *painter, const QRectF &source) = 0;
 
     virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;
+    virtual void viewportDestroyed() {}
 };
 
 
@@ -145,6 +146,9 @@ public:
     ShaderType shaderType() const;
     void setShaderType(ShaderType type);
 #endif
+
+public Q_SLOTS:
+    void viewportDestroyed();
 
 Q_SIGNALS:
     void frameChanged();

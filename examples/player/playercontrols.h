@@ -80,11 +80,6 @@ signals:
     void changeVolume(int volume);
     void changeMuting(bool muting);
     void changeRate(qreal rate);
-#ifdef Q_OS_SYMBIAN     
-    void open();
-    void fullScreen(bool toggle);
-    void openPlayList();
-#endif
 
 private slots:
     void playClicked();
@@ -99,14 +94,8 @@ private:
     QAbstractButton *nextButton;
     QAbstractButton *previousButton;
     QAbstractButton *muteButton;
-#ifdef Q_OS_SYMBIAN    
-    QAbstractButton *openButton;
-    QAbstractButton *fullScreenButton;
-    QAbstractButton *playListButton;
-#else
     QAbstractSlider *volumeSlider;
     QComboBox *rateBox;
-#endif    
 };
 
 #endif

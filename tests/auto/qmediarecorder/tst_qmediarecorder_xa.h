@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,71 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QT7PLAYERCONTROL_H
-#define QT7PLAYERCONTROL_H
+#ifndef TST_QMEDIARECORDER_XA_H
+#define TST_QMEDIARECORDER_XA_H
 
-#include <QtCore/qobject.h>
+#include <QtTest/QtTest>
+#include <qmediarecorder.h>
+#include <qaudiocapturesource.h>
 
-#include <qmediaplayercontrol.h>
-#include <qmediaplayer.h>
+#include "s60common.h"
 
-#include <QtGui/qmacdefines_mac.h>
+QT_USE_NAMESPACE
 
-
-QT_BEGIN_NAMESPACE
-
-class QT7PlayerSession;
-class QT7PlayerService;
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
-
-class QT7PlayerControl : public QMediaPlayerControl
+class tst_QMediaRecorder_xa: public QObject
 {
-Q_OBJECT
-public:
-    QT7PlayerControl(QObject *parent = 0);
-    ~QT7PlayerControl();
+    Q_OBJECT
 
-    void setSession(QT7PlayerSession *session);
+public slots:
+    void initTestCase();
+    void cleanupTestCase();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent &content, QIODevice *stream);
-
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isAudioAvailable() const;
-    bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-    QMediaTimeRange availablePlaybackRanges() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
+private slots:
+    void testMediaRecorderObject(); //1
+    void testDefaultAudioEncodingSettings(); //2
+    void testOutputLocation(); //3
+    void testAudioRecordingLocationOnly(); //4
+    void testAudioRecording_data(); //5
+    void testAudioRecording(); //6
 
 private:
-    QT7PlayerSession *m_session;
+    QUrl nextFileName(QDir outputDir, QString appendName, QString ext);
+
+private:
+    QAudioCaptureSource* audiosource;
+    QMediaRecorder* audiocapture;
+
 };
 
-QT_END_NAMESPACE
-
-#endif
+#endif /* TST_QMEDIARECORDER_XA_H */
