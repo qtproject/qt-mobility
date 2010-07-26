@@ -339,11 +339,7 @@ QDir CameraBinSession::defaultDir(QCamera::CaptureMode mode) const
     QStringList dirCandidates;
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (mode == QCamera::CaptureVideo)
-        dirCandidates << QLatin1String("/home/user/MyDocs/.videos");
-    else
-        dirCandidates << QLatin1String("/home/user/MyDocs/.images");
-
+    dirCandidates << QLatin1String("/home/user/MyDocs/DCIM");
     dirCandidates << QLatin1String("/home/user/MyDocs/");
 #endif
 
