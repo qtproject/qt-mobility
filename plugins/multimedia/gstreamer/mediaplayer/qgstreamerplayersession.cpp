@@ -112,6 +112,8 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_videoOutputBin, NULL);
 
+        g_signal_connect(G_OBJECT(m_playbin), "notify::source", G_CALLBACK(playbinNotifySource), this);
+
         // Initial volume
         double volume = 1.0;
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
@@ -945,3 +947,65 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     emit streamsChanged();
 }
+
+void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(p);
+
+    GstElement *source = 0;
+    g_object_get(o, "source", &source, NULL);
+    if (source == 0)
+        return;
+
+    // Turn off icecast metadata request, will be re-set if in QNetworkRequest
+    // (souphttpsrc docs say is false by default, but header appears in request
+    // @version 0.10.21)
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "iradio-mode") != 0)
+        g_object_set(G_OBJECT(source), "iradio-mode", FALSE, NULL);
+
+
+    // Set Headers
+    const QByteArray userAgentString("User-Agent");
+
+    QGstreamerPlayerSession *self = reinterpret_cast<QGstreamerPlayerSession *>(d);
+
+    // User-Agent - special case, souphhtpsrc will always set something, even if
+    // defined in extra-headers
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "user-agent") != 0) {
+        g_object_set(G_OBJECT(source), "user-agent",
+                     self->m_request.rawHeader(userAgentString).constData(), NULL);
+    }
+
+    // The rest
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "extra-headers") != 0) {
+        GstStructure *extras = gst_structure_empty_new("extras");
+
+        foreach (const QByteArray &rawHeader, self->m_request.rawHeaderList()) {
+            if (rawHeader == userAgentString) // Filter User-Agent
+                continue;
+            else {
+                GValue headerValue;
+
+                memset(&headerValue, 0, sizeof(GValue));
+                g_value_init(&headerValue, G_TYPE_STRING);
+
+                g_value_set_string(&headerValue,
+                                   self->m_request.rawHeader(rawHeader).constData());
+
+                gst_structure_set_value(extras, rawHeader.constData(), &headerValue);
+            }
+        }
+
+        if (gst_structure_n_fields(extras) > 0)
+            g_object_set(G_OBJECT(source), "extra-headers", extras, NULL);
+
+        gst_structure_free(extras);
+    }
+
+    gst_object_unref(source);
+
+    // NOTE: code assumes souphttpsrc, but written so anything with "extra-headers"
+    // should be functional.
+}
+
+
