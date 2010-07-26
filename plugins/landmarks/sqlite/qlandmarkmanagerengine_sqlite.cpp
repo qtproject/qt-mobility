@@ -3259,12 +3259,33 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     *errorString = "";
 
     switch(feature) {
-        case (QLandmarkManager::GenericAttributes):
+        case (QLandmarkManager::GenericLandmarkAttributes):
+        case (QLandmarkManager::GenericCategoryAttributes):
+        case (QLandmarkManager::PlatformLandmarkAttributes):
+        case (QLandmarkManager::PlatformCategoryAttributes):
             return false;
             break;
         default:
             return false;
     }
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
