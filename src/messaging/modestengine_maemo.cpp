@@ -267,7 +267,7 @@ typedef enum {
 Q_GLOBAL_STATIC(ModestEngine,modestEngine);
 
 ModestEngine::ModestEngine()
- : m_queryIds(0)
+ : m_queryIds(0), m_filterId(0)
 {
     qWarning() << "ModestEngine::ModestEngine Starting to initialize";
     g_type_init();

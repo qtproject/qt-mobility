@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=tools/icheck
+
 #include <QtTest/QtTest>
 #include "../../../tools/icheck/ichecklib.h"
 #include <qmobilityglobal.h>

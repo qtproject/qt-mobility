@@ -38,7 +38,7 @@ doc/src/snippets/sensors/sensors
 demos/player/player
 demos/lightmaps/lightmaps_with_location
 demos/qmlcontacts/qmlcontacts
-demos/small_screen_sensors/SmallSensors
+demos/small_screen_sensors/smallsensors
 demos/weatherinfo/weatherinfo_with_location
 examples/audiodevices/audiodevices
 examples/audioinput/audioinput
@@ -47,6 +47,7 @@ examples/audiorecorder/audiorecorder
 examples/battery-charge/battery-publisher/battery-publisher
 examples/bearercloud/bearercloud
 examples/bearermonitor/bearermonitor
+examples/fetchgooglemaps/fetchgooglemaps
 examples/flickrdemo/flickrdemo
 examples/logfilepositionsource/logfilepositionsource
 examples/publish-subscribe/publish-subscribe
@@ -79,6 +80,7 @@ examples/videowidget/videowidget
 config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
+config.tests/bluez/bluez
 .qmake.cache
 translations/qtmobility_*.qm
 

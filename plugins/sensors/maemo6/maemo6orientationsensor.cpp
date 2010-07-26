@@ -61,11 +61,8 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
         qWarning() << "Unable to initialize "<<sensorName;
 
     setReading<QOrientationReading>(&m_reading);
-    // metadata
-    addDataRate(130, 130);
-    addDataRate(1, 130); // TODO: this is for testing only
-    addOutputRange(0, 6, 1);
-    setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined positions"));
+
+
 }
 
 void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)

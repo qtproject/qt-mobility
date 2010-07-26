@@ -4,40 +4,27 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the documentation of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
 **
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 
 /*!
 
@@ -90,7 +77,7 @@ supported by an engine by calling QContactManager::supportedContactTypes().
 The Contacts module of the Qt Mobility project includes several backends already, some of which
 are designed to interface with the default addressbook on their particular platform.
 
-\section3 In-Memory Example Engine
+\section3 \bold{In-Memory Example Engine}
 
 The in-memory engine identifies itself as the "memory" engine.  It is available on all platforms
 which are supported by the Qt Mobility project.
@@ -99,7 +86,7 @@ The in-memory engine supports the default schema, and provides all functionality
 the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any
 way.
 
-\section3 Symbian Engine
+\section3 \bold{Symbian Engine}
 
 The Symbian engine identifies itself as the "symbian" engine, and is only available on the
 Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.
@@ -111,14 +98,14 @@ The symbian engine allows clients to use both the asynchronous and synchronous i
 and supports various different relationships, supports setting the self-contact, and
 persists all saved data to the system addressbook.
 
-\section3 Symbian Sim Engine
+\section3 \bold{Symbian Sim Engine}
 
 The Symbian Sim engine identifies itself as the "symbiansim" engine, and is only available
 on Symbian platforms.  It is an extremely limited engine which supports a very small
 subset of the default schema, and can be constructed with a "store" parameter to set which contact
 store to interact with.  The value of the "store" parameter may be either "ADN", "FDN" or "SDN".
 
-\section3 Maemo 5 (Fremantle) Engine
+\section3 \bold{Maemo 5 (Fremantle) Engine}
 
 The Maemo 5 (Fremantle) engine identifies itself as the "maemo5" engine, but is only available
 on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including
@@ -153,7 +140,7 @@ The Maemo 5 (Fremantle) engine supports asynchronous and synchronous requests, b
 group contacts or relationships of any kind.  It does not allow clients to set a particular contact
 as the "self" contact.  It persists all data in the system addressbook.
 
-\section3 Windows CE Engine
+\section3 \bold{Windows CE Engine}
 
 The Windows CE engine identifies itself as the "wince" engine, and is only available
 on the Windows Mobile 6.0 platform.
@@ -177,7 +164,7 @@ The default implementation for most functions will set the error to
 \c QContactManager::NotSupportedError and return the value which indicates that an error has
 occurred.
 
-\section3 Mandatory Functions
+\section3 \bold{Mandatory Functions}
 
 All engines must implement the following functions:
 
@@ -228,7 +215,7 @@ It is recommended that all engine implementations support asynchronous requests,
 use a "dummy" implementation which services the request synchronously during startRequest, and then
 emit the appropriate signals from the request via a zero-millisecond timeout timer.
 
-\section3 Optional Functionality
+\section3 \bold{Optional Functionality}
 
 The rest of the virtual functions are optional, and should be implemented only if the engine
 supports the operations.
@@ -295,7 +282,7 @@ via QContactManagerEngine::hasFeature(), and must also implement:
 \endlist
 
 
-\section3 Optional Implementation
+\section3 \bold{Optional Implementation}
 
 Apart from areas of functionality which may be optionally implemented by the engine or not,
 the default implementation provides several functions which operate in a naive, in-memory

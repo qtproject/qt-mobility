@@ -108,21 +108,33 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {Qt Service Framework} {Service Framework}
     \o serviceframework
 \row
-    \o \l {Sensor API}
+    \o \l {Sensor}{Sensors}
     \o sensors
 \row
     \o \l {System Information}
     \o systeminfo
 \row
-    \o \l {Versit API}{Versit}
+    \o \l {Versit}{Versit}
     \o versit
+\row
+    \o \l {Document Gallery}
+    \o gallery
+\row
+    \o \l {Telephony Events}{Telephony Events}
+    \o telephony
+\row
+    \o \l {Organizer}
+    \o organizer
+\row
+    \o \l {Feedback}{Tactile Feedback}
+    \o feedback
 \endtable
 
 When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model.
 This can be achieved with a line such as the following:
 
 \code
-    TARGET.CAPABILITIES = CAPABILITY_A CABAPILITY_B
+    TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B
 \endcode
 
 CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
@@ -159,14 +171,26 @@ on which parts of an API is utilized by an application.
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.
 \row
-    \o \l {Sensor API}
+    \o \l {Sensor}
     \o ReadDeviceData
 \row
     \o \l {System Information}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
 \row
-    \o \l {Versit API}
+    \o \l {Versit}
     \o No additional capabilities required.
+\row
+    \o \l {Document Gallery}
+    \o ???
+\row
+    \o \l {Telephony Events}{Telephony Events}
+    \o ???
+\row
+    \o \l {Organizer}
+    \o ReadUserData WriteUserData
+\row
+    \o \l {Feedback}{Tactile Feedback}
+    \o ???
 \endtable
 
 The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 

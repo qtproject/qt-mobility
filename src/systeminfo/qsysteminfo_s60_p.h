@@ -186,7 +186,7 @@ private:
 
 
 Q_SIGNALS:
-    void logicalDrivesChanged(bool);
+    void logicalDriveChanged(bool, const QString &);
 };
 
 //////// QSystemDeviceInfo

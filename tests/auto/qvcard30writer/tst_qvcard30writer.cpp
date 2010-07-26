@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qvcard30writer.h"
 #ifdef QT_BUILD_INTERNAL
 #include "qvcard30writer_p.h"
@@ -150,7 +152,8 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
     expectedResult = "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty embeddedProperty;
     embeddedProperty.setName(QString(QString::fromAscii("FN")));
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));

@@ -35,7 +35,7 @@ symbian {
         DEPLOYMENT += addFiles
     }
 } else {
-    logfile.path = $$QT_MOBILITY_PREFIX/bin
+    logfile.path = $$QT_MOBILITY_DEMOS
     logfile.files = nmealog.txt
     INSTALLS += logfile
 }

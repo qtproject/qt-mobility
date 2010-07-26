@@ -104,6 +104,9 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 private:
     QSystemInfoPrivate *d;
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 QTM_END_NAMESPACE

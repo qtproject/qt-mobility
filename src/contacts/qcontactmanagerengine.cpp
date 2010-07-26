@@ -46,6 +46,8 @@
 #include "qcontactdetails.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
+#include "qcontactaction.h"
+#include "qcontactactiondescriptor.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
@@ -62,10 +64,14 @@
 
 QTM_BEGIN_NAMESPACE
 
+static bool validateActionFilter(const QContactFilter& filter);
+
 /*!
   \class QContactManagerEngine
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
+  \inmodule QtContacts
+  
   \ingroup contacts-backends
 
   Instances of this class are usually provided by a
@@ -230,7 +236,7 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -256,7 +262,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -490,8 +496,6 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
 
 /*!
   Sets the contact display label of \a contact to the supplied \a displayLabel.
-
-  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
  */
 void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QString& displayLabel)
 {
@@ -517,6 +521,8 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 
   Some of the following transformations may be applied:
   \list
+   \o Any QContactActionFilters are transformed into the corresponding
+     QContactFilters returned by matching actions
    \o Any QContactInvalidFilters contained in a union filter will be removed
    \o Any default QContactFilters contained in an intersection filter will be removed
    \o Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
@@ -534,6 +540,40 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
 {
     switch(filter.type()) {
+        case QContactFilter::ActionFilter:
+        {
+            // Find any matching actions, and do a union filter on their filter objects
+            QContactActionFilter af(filter);
+            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+
+            QList<QContactFilter> filters;
+            // There's a small wrinkle if there's a value specified in the action filter
+            // we have to adjust any contained QContactDetailFilters to have that value
+            // or test if a QContactDetailRangeFilter contains this value already
+            for (int j = 0; j < descriptors.count(); j++) {
+                QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                // Action filters are not allowed to return action filters, at all
+                // it's too annoying to check for recursion
+                QContactFilter d = action->contactFilter();
+                delete action; // clean up.
+                if (!validateActionFilter(d))
+                    continue;
+
+                filters.append(d);
+            }
+
+            if (filters.count() == 0)
+                return QContactInvalidFilter();
+            if (filters.count() == 1)
+                return filters.first();
+
+            QContactUnionFilter f;
+            f.setFilters(filters);
+            return canonicalizedFilter(f);
+        }
+        // unreachable
+
         case QContactFilter::IntersectionFilter:
         {
             QContactIntersectionFilter f(filter);
@@ -1685,7 +1725,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 {
     switch(filter.type()) {
         case QContactFilter::InvalidFilter:
-        case QContactFilter::ActionFilter:
             return false;
 
         case QContactFilter::DefaultFilter:
@@ -2005,6 +2044,33 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
+        case QContactFilter::ActionFilter:
+            {
+                // Find any matching actions, and do a union filter on their filter objects
+                QContactActionFilter af(filter);
+                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+
+                // There's a small wrinkle if there's a value specified in the action filter
+                // we have to adjust any contained QContactDetailFilters to have that value
+                // or test if a QContactDetailRangeFilter contains this value already
+                for (int j = 0; j < descriptors.count(); j++) {
+                    QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                    // Action filters are not allowed to return action filters, at all
+                    // it's too annoying to check for recursion
+                    QContactFilter d = action->contactFilter();
+                    delete action; // clean up.
+                    if (!validateActionFilter(d))
+                        return false;
+
+                    // Check for values etc...
+                    if (testFilter(d, contact))
+                        return true;
+                }
+                // Fall through to end
+            }
+            break;
+
         case QContactFilter::IntersectionFilter:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
@@ -2040,6 +2106,34 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             break;
     }
     return false;
+}
+
+/*!
+  Given a QContactFilter \a filter retrieved from a QContactAction,
+  check that it is valid and cannot cause infinite recursion.
+
+  In particular, a filter from a QContactAction cannot contain
+  any instances of a QContactActionFilter.
+
+  Returns true if \a filter seems ok, or false otherwise.
+ */
+
+bool validateActionFilter(const QContactFilter& filter)
+{
+    QList<QContactFilter> toVerify;
+    toVerify << filter;
+
+    while(toVerify.count() > 0) {
+        QContactFilter f = toVerify.takeFirst();
+        if (f.type() == QContactFilter::ActionFilter)
+            return false;
+        if (f.type() == QContactFilter::IntersectionFilter)
+            toVerify.append(QContactIntersectionFilter(f).filters());
+        if (f.type() == QContactFilter::UnionFilter)
+            toVerify.append(QContactUnionFilter(f).filters());
+    }
+
+    return true;
 }
 
 /*!
@@ -2210,6 +2304,7 @@ void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QCo
         }
     }
 }
+
 
 /*!
   Updates the given QContactLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.

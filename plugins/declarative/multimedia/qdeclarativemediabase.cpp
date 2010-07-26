@@ -265,8 +265,8 @@ void QDeclarativeMediaBase::shutdown()
 
 void QDeclarativeMediaBase::setObject(QObject *object)
 {
-    if ((m_mediaProvider = QMediaServiceProvider::defaultServiceProvider())) {
-        if ((m_mediaService = m_mediaProvider->requestService(Q_MEDIASERVICE_MEDIAPLAYER))) {
+    if ((m_mediaProvider = QMediaServiceProvider::defaultServiceProvider()) != 0) {
+        if ((m_mediaService = m_mediaProvider->requestService(Q_MEDIASERVICE_MEDIAPLAYER)) != 0) {
             m_playerControl = qobject_cast<QMediaPlayerControl *>(
                     m_mediaService->requestControl(QMediaPlayerControl_iid));
             m_metaDataControl = qobject_cast<QMetaDataReaderControl *>(

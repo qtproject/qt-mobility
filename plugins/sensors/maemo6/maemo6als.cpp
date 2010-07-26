@@ -60,9 +60,9 @@ maemo6als::maemo6als(QSensor *sensor)
         qWarning() << "Unable to initialize "<<sensorName;
     setReading<QAmbientLightReading>(&m_reading);
     // metadata
-    addDataRate(1, 1); // 1 Hz
+    addDataRate(10, 10); // 10 Hz
     addOutputRange(0, 5, 1);
-    setDescription(QLatin1String("Measures ambient light intensity given as 5 pre-defined levels"));
+    setDescription(QLatin1String("Ambient light intensity given as 5 pre-defined levels"));
 }
 
 void maemo6als::slotDataAvailable(const Unsigned& data)
