@@ -54,7 +54,7 @@ QTM_USE_NAMESPACE
 
   \ingroup versit
 
-  This class is used to convert a \l{QVersitDocument}{QVersitDocuments} (which may be produced by a
+  This class is used to convert a \l QVersitDocument (which may be produced by a
   QVersitReader) to lists of \l{QOrganizerItem}{QOrganizerItems} (which may be saved into a
   QOrganizerItemManager.  Unless there is an error, there is a one-to-one mapping between
   sub-documents of the input Versit document and QOrganizerItems.
