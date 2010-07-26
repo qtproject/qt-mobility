@@ -68,7 +68,8 @@ public:
 private slots:
     void setCamera(const QByteArray &cameraDevice);
 
-    void toggleCamera();
+    void startCamera();
+    void stopCamera();
 
     void record();
     void pause();
@@ -97,13 +98,15 @@ private slots:
     void processCapturedImage(int requestId, const QImage& img);
     void updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason);
 
+    void displayViewfinder();
+    void displayCapturedImage();
+
 private:
     Ui::Camera *ui;
 
     QCamera *camera;
     QCameraImageCapture *imageCapture;
     QMediaRecorder* mediaRecorder;
-    QCameraViewfinder *viewfinder;
 
     QImageEncoderSettings imageSettings;
     QAudioEncoderSettings audioSettings;

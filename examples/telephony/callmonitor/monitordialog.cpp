@@ -48,10 +48,16 @@ Dialog::Dialog(QWidget *parent) :
     m_rxDBusMsg()
 {
     ui->setupUi(this);
-    this->setWindowTitle("Call Monitor");
+    this->setWindowTitle("Monitoring Call Data");
     ui->lstRxMsg->setModel(&m_rxDBusMsg);
     telephonyCallList = new QTelephonyCallList(this);
     connect(telephonyCallList, SIGNAL(activeCallAdded(QTelephonyCallInfo)), SLOT(activeCallAdded(QTelephonyCallInfo)));
+
+    QString newentry = "waiting for notifications";
+    QStringList vl = m_rxDBusMsg.stringList();
+    vl.append(newentry);
+    m_rxDBusMsg.setStringList(vl);
+
 }
 
 Dialog::~Dialog()

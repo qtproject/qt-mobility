@@ -50,9 +50,19 @@
 #include <QStringList>
 #include <QVariant>
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactDetailPrivate;
+
+// MSVC needs the function declared before the friend declaration
+class QContactDetail;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContactDetail& detail);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
+#endif
+
 class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
@@ -204,6 +214,9 @@ protected:
 private:
     friend class QContact;
     friend class QContactDetailPrivate;
+#ifndef QT_NO_DATASTREAM
+    friend QDataStream& operator>>(QDataStream& in, QContactDetail& detail);
+#endif
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 

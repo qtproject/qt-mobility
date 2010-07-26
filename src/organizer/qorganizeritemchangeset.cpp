@@ -114,7 +114,7 @@ bool QOrganizerItemChangeSet::dataChanged()
 }
 
 /*!
-   Returns the set of ids of organizeritems which have been added to
+   Returns the set of ids of organizer items which have been added to
    the database.
  */
 QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
@@ -123,7 +123,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
 }
 
 /*!
-  Inserts the given organizeritem id \a addedOrganizerItemId into the set of ids of organizeritems
+  Inserts the given organizer item id \a addedOrganizerItemId into the set of ids of organizer items
   which have been added to the database.
  */
 void QOrganizerItemChangeSet::insertAddedItem(QOrganizerItemLocalId addedOrganizerItemId)
@@ -132,7 +132,7 @@ void QOrganizerItemChangeSet::insertAddedItem(QOrganizerItemLocalId addedOrganiz
 }
 
 /*!
-  Inserts each of the given organizeritem ids \a addedOrganizerItemIds into the set of ids of organizeritems
+  Inserts each of the given organizer item ids \a addedOrganizerItemIds into the set of ids of organizer items
   which have been added to the database.
  */
 void QOrganizerItemChangeSet::insertAddedItems(const QList<QOrganizerItemLocalId>& addedOrganizerItemIds)
@@ -142,7 +142,7 @@ void QOrganizerItemChangeSet::insertAddedItems(const QList<QOrganizerItemLocalId
 }
 
 /*!
-  Clears the set of ids of organizeritems which have been added to the database
+  Clears the set of ids of organizer items which have been added to the database
  */
 void QOrganizerItemChangeSet::clearAddedItems()
 {
@@ -150,7 +150,7 @@ void QOrganizerItemChangeSet::clearAddedItems()
 }
 
 /*!
-   Returns the set of ids of organizeritems which have been changed in
+   Returns the set of ids of organizer items which have been changed in
    the database.
  */
 QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
@@ -159,7 +159,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
 }
 
 /*!
-  Inserts the given organizeritem id \a changedOrganizerItemId into the set of ids of organizeritems
+  Inserts the given organizer item id \a changedOrganizerItemId into the set of ids of organizer items
   which have been changed to the database.
  */
 void QOrganizerItemChangeSet::insertChangedItem(QOrganizerItemLocalId changedOrganizerItemId)
@@ -168,7 +168,7 @@ void QOrganizerItemChangeSet::insertChangedItem(QOrganizerItemLocalId changedOrg
 }
 
 /*!
-  Inserts each of the given organizeritem ids \a changedOrganizerItemIds into the set of ids of organizeritems
+  Inserts each of the given organizer item ids \a changedOrganizerItemIds into the set of ids of organizer items
   which have been changed to the database.
  */
 void QOrganizerItemChangeSet::insertChangedItems(const QList<QOrganizerItemLocalId>& changedOrganizerItemIds)
@@ -178,7 +178,7 @@ void QOrganizerItemChangeSet::insertChangedItems(const QList<QOrganizerItemLocal
 }
 
 /*!
-  Clears the set of ids of organizeritems which have been changed to the database
+  Clears the set of ids of organizer items which have been changed to the database
  */
 void QOrganizerItemChangeSet::clearChangedItems()
 {
@@ -186,7 +186,7 @@ void QOrganizerItemChangeSet::clearChangedItems()
 }
 
 /*!
-   Returns the set of ids of organizeritems which have been removed from
+   Returns the set of ids of organizer items which have been removed from
    the database.
  */
 QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
@@ -195,7 +195,7 @@ QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
 }
 
 /*!
-  Inserts the given organizeritem id \a removedOrganizerItemId into the set of ids of organizeritems
+  Inserts the given organizer item id \a removedOrganizerItemId into the set of ids of organizer items
   which have been removed to the database.
  */
 void QOrganizerItemChangeSet::insertRemovedItem(QOrganizerItemLocalId removedOrganizerItemId)
@@ -204,7 +204,7 @@ void QOrganizerItemChangeSet::insertRemovedItem(QOrganizerItemLocalId removedOrg
 }
 
 /*!
-  Inserts each of the given organizeritem ids \a removedOrganizerItemIds into the set of ids of organizeritems
+  Inserts each of the given organizer item ids \a removedOrganizerItemIds into the set of ids of organizer items
   which have been removed to the database.
  */
 void QOrganizerItemChangeSet::insertRemovedItems(const QList<QOrganizerItemLocalId>& removedOrganizerItemIds)
@@ -214,7 +214,7 @@ void QOrganizerItemChangeSet::insertRemovedItems(const QList<QOrganizerItemLocal
 }
 
 /*!
-  Clears the set of ids of organizeritems which have been removed to the database
+  Clears the set of ids of organizer items which have been removed to the database
  */
 void QOrganizerItemChangeSet::clearRemovedItems()
 {

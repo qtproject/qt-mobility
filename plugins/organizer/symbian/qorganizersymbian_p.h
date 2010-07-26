@@ -111,6 +111,7 @@ class CCalSession;
 class CCalEntryView;
 class CActiveSchedulerWait;
 class TCalTime;
+class COrganizerItemRequestsServiceProvider;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
@@ -169,7 +170,8 @@ public: // MCalChangeCallBack2
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
-
+    CCalEntryView* entryView();
+    
 private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet);
@@ -181,6 +183,8 @@ private:
     CCalSession *m_calSession;
     CCalEntryView *m_entryView;
     CActiveSchedulerWait *m_activeSchedulerWait;
+    COrganizerItemRequestsServiceProvider *m_requestServiceProvider;
+
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;
     OrganizerItemTransform m_itemTransform;

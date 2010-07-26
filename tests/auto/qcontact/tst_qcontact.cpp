@@ -69,6 +69,7 @@ private slots:
     void idLessThan();
     void idHash();
     void hash();
+    void datastream();
     void traits();
     void idTraits();
     void localIdTraits();
@@ -767,6 +768,28 @@ void tst_QContact::hash()
     QVERIFY(qHash(contact1) != qHash(contact3));
     QVERIFY(qHash(contact1) != qHash(contact4));
     QVERIFY(qHash(contact1) == qHash(contact5));
+}
+
+void tst_QContact::datastream()
+{
+    QByteArray buffer;
+    QDataStream stream1(&buffer, QIODevice::WriteOnly);
+    QContact contactIn;
+    QContactId id;
+    id.setManagerUri("manager");
+    id.setLocalId(1234);
+    contactIn.setId(id);
+    QContactPhoneNumber phone;
+    phone.setNumber("5678");
+    contactIn.saveDetail(&phone);
+    stream1 << contactIn;
+
+    QVERIFY(buffer.size() > 0);
+
+    QDataStream stream2(buffer);
+    QContact contactOut;
+    stream2 >> contactOut;
+    QCOMPARE(contactOut, contactIn);
 }
 
 void tst_QContact::traits()

@@ -79,6 +79,10 @@ Q_SIGNALS:
     void showDayPage(QOrganizerItemManager *manager, QDate date);
     void showEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
 
+    
+private:
+    void updateGridWithEventIndicator();
+    
 protected: // from QWidget
     void showEvent(QShowEvent *event);
 

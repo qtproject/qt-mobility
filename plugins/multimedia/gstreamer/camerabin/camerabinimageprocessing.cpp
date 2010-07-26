@@ -42,10 +42,9 @@
 #include "camerabinimageprocessing.h"
 #include "camerabinsession.h"
 
-CameraBinImageProcessing::CameraBinImageProcessing(GstElement &camerabin, CameraBinSession *session)
+CameraBinImageProcessing::CameraBinImageProcessing(CameraBinSession *session)
     :QCameraImageProcessingControl(session),
-     m_session(session),
-     m_camerabin(camerabin)
+     m_session(session)
 {
     m_mappedWbValues[GST_PHOTOGRAPHY_WB_MODE_AUTO] = QCameraImageProcessing::WhiteBalanceAuto;
     m_mappedWbValues[GST_PHOTOGRAPHY_WB_MODE_DAYLIGHT] = QCameraImageProcessing::WhiteBalanceSunlight;
@@ -63,12 +62,12 @@ CameraBinImageProcessing::~CameraBinImageProcessing()
 
 void CameraBinImageProcessing::updateColorBalanceValues()
 {
-    if (!GST_IS_COLOR_BALANCE(&m_camerabin)) {
+    if (!GST_IS_COLOR_BALANCE(m_session->cameraBin())) {
         // Camerabin doesn't implement gstcolorbalance interface
         return;
     }
 
-    GstColorBalance *balance = GST_COLOR_BALANCE(&m_camerabin);
+    GstColorBalance *balance = GST_COLOR_BALANCE(m_session->cameraBin());
     const GList *controls = gst_color_balance_list_channels(balance);
 
     const GList *item;
@@ -92,12 +91,12 @@ void CameraBinImageProcessing::updateColorBalanceValues()
 bool CameraBinImageProcessing::setColorBalanceValue(const QString& channel, int value)
 {
 
-    if (!GST_IS_COLOR_BALANCE(&m_camerabin)) {
+    if (!GST_IS_COLOR_BALANCE(m_session->cameraBin())) {
         // Camerabin doesn't implement gstcolorbalance interface
         return false;
     }
 
-    GstColorBalance *balance = GST_COLOR_BALANCE(&m_camerabin);
+    GstColorBalance *balance = GST_COLOR_BALANCE(m_session->cameraBin());
     const GList *controls = gst_color_balance_list_channels(balance);
 
     const GList *item;
@@ -118,14 +117,14 @@ bool CameraBinImageProcessing::setColorBalanceValue(const QString& channel, int 
 QCameraImageProcessing::WhiteBalanceMode CameraBinImageProcessing::whiteBalanceMode() const
 {
     GstWhiteBalanceMode wbMode;
-    gst_photography_get_white_balance_mode(GST_PHOTOGRAPHY(&m_camerabin), &wbMode);
+    gst_photography_get_white_balance_mode(m_session->photography(), &wbMode);
     return m_mappedWbValues[wbMode];
 }
 
 void CameraBinImageProcessing::setWhiteBalanceMode(QCameraImageProcessing::WhiteBalanceMode mode)
 {
     if (isWhiteBalanceModeSupported(mode))
-        gst_photography_set_white_balance_mode(GST_PHOTOGRAPHY(&m_camerabin), m_mappedWbValues.key(mode));
+        gst_photography_set_white_balance_mode(m_session->photography(), m_mappedWbValues.key(mode));
 }
 
 bool CameraBinImageProcessing::isWhiteBalanceModeSupported(QCameraImageProcessing::WhiteBalanceMode mode) const

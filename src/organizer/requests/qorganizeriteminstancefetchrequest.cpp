@@ -47,24 +47,24 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemInstanceFetchRequest
   \brief The QOrganizerItemInstanceFetchRequest class allows a client to asynchronously
-    request organizeritems from a organizeritems store manager.
+    request organizer item instances (occurrences) from an organizer item store manager.
   \inmodule QtOrganizer
 
 
   For a QOrganizerItemInstanceFetchRequest, the resultsAvailable() signal will be emitted when the resultant
-  organizeritems (which may be retrieved by calling organizeritems()), are updated, as well as if
+  organizer items (which may be retrieved by calling items()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
   \ingroup organizer-requests
  */
 
-/*! Constructs a new organizeritem fetch request whose parent is the specified \a parent */
+/*! Constructs a new organizer item fetch request whose parent is the specified \a parent */
 QOrganizerItemInstanceFetchRequest::QOrganizerItemInstanceFetchRequest(QObject* parent)
     : QOrganizerItemAbstractRequest(new QOrganizerItemInstanceFetchRequestPrivate, parent)
 {
 }
 
-/*! Sets the organizeritem filter used to determine which organizeritems will be retrieved to \a filter */
+/*! Sets the organizer item filter used to determine which organizer items will be retrieved to \a filter */
 void QOrganizerItemInstanceFetchRequest::setFilter(const QOrganizerItemFilter& filter)
 {
     Q_D(QOrganizerItemInstanceFetchRequest);
@@ -79,11 +79,11 @@ void QOrganizerItemInstanceFetchRequest::setSorting(const QList<QOrganizerItemSo
 }
 
 /*!
-  Sets the fetch hint which may be used by the backend to optimize organizeritem retrieval
-  to \a fetchHint.  A client should not make changes to a organizeritem which has been retrieved
+  Sets the fetch hint which may be used by the backend to optimize organizer item retrieval
+  to \a fetchHint.  A client should not make changes to an organizer item which has been retrieved
   using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
  */
 void QOrganizerItemInstanceFetchRequest::setFetchHint(const QOrganizerItemFetchHint &fetchHint)
@@ -92,7 +92,7 @@ void QOrganizerItemInstanceFetchRequest::setFetchHint(const QOrganizerItemFetchH
     d->m_fetchHint = fetchHint;
 }
 
-/*! Returns the filter that will be used to select organizeritems to be returned */
+/*! Returns the filter that will be used to select organizer items to be returned */
 QOrganizerItemFilter QOrganizerItemInstanceFetchRequest::filter() const
 {
     Q_D(const QOrganizerItemInstanceFetchRequest);
@@ -107,11 +107,11 @@ QList<QOrganizerItemSortOrder> QOrganizerItemInstanceFetchRequest::sorting() con
 }
 
 /*!
-  Returns the fetch hint which may be used by the backend to optimize organizeritem retrieval.
-  A client should not make changes to a organizeritem which has been retrieved
+  Returns the fetch hint which may be used by the backend to optimize organizer item retrieval.
+  A client should not make changes to a organizer item which has been retrieved
   using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
   \sa QOrganizerItemFetchHint
  */
 QOrganizerItemFetchHint QOrganizerItemInstanceFetchRequest::fetchHint() const
@@ -120,9 +120,10 @@ QOrganizerItemFetchHint QOrganizerItemInstanceFetchRequest::fetchHint() const
     return d->m_fetchHint;
 }
 
-/*! Returns the list of organizeritems retrieved by this request */
+/*! Returns the list of organizer items retrieved by this request */
 QList<QOrganizerItem> QOrganizerItemInstanceFetchRequest::items() const
 {
+    // XXX TODO: this should be "itemInstances()" instead
     Q_D(const QOrganizerItemInstanceFetchRequest);
     return d->m_organizeritems;
 }
