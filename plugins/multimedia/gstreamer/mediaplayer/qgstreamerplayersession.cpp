@@ -132,15 +132,15 @@ QGstreamerPlayerSession::~QGstreamerPlayerSession()
     }
 }
 
-void QGstreamerPlayerSession::load(const QUrl &url)
+void QGstreamerPlayerSession::load(const QNetworkRequest &request)
 {
-    m_url = url;
+    m_request = request;
 
     if (m_playbin) {
         m_tags.clear();
         emit tagsChanged();
 
-        g_object_set(G_OBJECT(m_playbin), "uri", m_url.toEncoded().constData(), NULL);
+        g_object_set(G_OBJECT(m_playbin), "uri", m_request.url().toEncoded().constData(), NULL);
 
         if (!m_streamTypes.isEmpty()) {
             m_streamProperties.clear();
@@ -440,11 +440,11 @@ bool QGstreamerPlayerSession::play()
 {
     if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_url.toString();
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
             m_state = QMediaPlayer::StoppedState;            
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_url.path()));
+            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }
@@ -456,11 +456,11 @@ bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_url.toString();
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
             m_state = QMediaPlayer::StoppedState;
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_url.path()));
+            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }

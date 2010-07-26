@@ -43,7 +43,7 @@
 #define QGSTREAMERPLAYERSESSION_H
 
 #include <QObject>
-#include <QUrl>
+#include <QtNetwork/qnetworkrequest.h>
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerbushelper.h"
 #include <qmediaplayer.h>
@@ -66,7 +66,7 @@ public:
     QGstreamerPlayerSession(QObject *parent);
     virtual ~QGstreamerPlayerSession();
 
-    QUrl url() const;
+    QNetworkRequest request() const;
 
     QMediaPlayer::State state() const { return m_state; }
 
@@ -101,7 +101,7 @@ public:
     bool processSyncMessage(const QGstreamerMessage &message);    
 
 public slots:
-    void load(const QUrl &url);
+    void load(const QNetworkRequest &url);
 
     bool play();
     bool pause();
@@ -136,7 +136,7 @@ private slots:
     void updateVideoRenderer();
 
 private:
-    QUrl m_url;
+    QNetworkRequest m_request;
     QMediaPlayer::State m_state;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
