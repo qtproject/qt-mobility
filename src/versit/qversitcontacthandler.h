@@ -47,7 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-// qdoc seems to find QVersitContactHandler if it is declared first.. ugh
+// qdoc seems to not find QVersitContactHandler if it is declared first.. ugh
 class QVersitContactHandler;
 
 class Q_VERSIT_EXPORT QVersitContactHandlerFactory
@@ -57,15 +57,6 @@ public:
     virtual QSet<QString> profiles() const { return QSet<QString>(); }
     virtual QString name() const = 0;
     virtual QVersitContactHandler* createHandler() const = 0;
-
-#ifdef Q_QDOC
-    static const QLatin1Constant ProfileTest;
-    static const QLatin1Constant ProfileSync;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(ProfileTest, "Test");
-    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
-    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
-#endif
 };
 
 class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
@@ -73,6 +64,14 @@ class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPrope
 {
 public:
     virtual ~QVersitContactHandler() {}
+
+#ifdef Q_QDOC
+    static const QLatin1Constant ProfileSync;
+    static const QLatin1Constant ProfileBackup;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
+    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
+#endif
 };
 
 QTM_END_NAMESPACE

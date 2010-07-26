@@ -43,9 +43,8 @@
 
 QTM_USE_NAMESPACE
 
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileTest, "Test");
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileSync, "Sync");
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileBackup, "Backup");
 
 /*!
   \class QVersitContactHandler

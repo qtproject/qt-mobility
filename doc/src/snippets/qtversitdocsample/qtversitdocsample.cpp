@@ -143,10 +143,6 @@ void exportExample()
     //! [Export example]
     QVersitContactExporter contactExporter;
 
-    QVersitContactExporterDetailHandlerV2* backupHandler =
-        QVersitContactExporterDetailHandlerV2::createBackupHandler();
-    contactExporter.setDetailHandler(backupHandler);
-
     QContact contact;
     // Create a name
     QContactName name;
@@ -159,7 +155,6 @@ void exportExample()
 
     // detailHandler.mUnknownDetails now contains the list of unknown details
 
-    delete backupHandler;
     //! [Export example]
 }
 
@@ -167,10 +162,6 @@ void importExample()
 {
     //! [Import example]
     QVersitContactImporter importer;
-
-    QVersitContactImporterPropertyHandlerV2* backupHandler =
-        QVersitContactImporterPropertyHandlerV2::createBackupHandler();
-    importer.setPropertyHandler(backupHandler);
 
     QVersitDocument document;
 
@@ -189,7 +180,6 @@ void importExample()
         // propertyHandler.mUnknownProperties contains the list of unknown properties
     }
 
-    delete backupHandler;
     //! [Import example]
 }
 

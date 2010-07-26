@@ -1,12 +1,12 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtversit_testhandler)
+TARGET = $$qtLibraryTarget(qtversit_backuphandler)
 PLUGIN_TYPE=versit
 
 include(../../../common.pri)
 
-HEADERS += testvcardhandler.h
-SOURCES += testvcardhandler.cpp
+HEADERS += backupvcardhandler.h
+SOURCES += backupvcardhandler.cpp
 
 INCLUDEPATH += \
                $$SOURCE_DIR/src/contacts \

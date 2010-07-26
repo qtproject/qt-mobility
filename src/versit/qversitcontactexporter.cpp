@@ -161,12 +161,17 @@ QTM_USE_NAMESPACE
 
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
-  handle details that QVersitContactExporter doesn't support.  A "backup" handler is provided by
-  QVersitContactExporterDetailHandlerV2::createBackupHandler(), which serializes any details
-  that the standard QVersitContactExporter doesn't support to the vCard.
+  handle details that QVersitContactExporter doesn't support.  Also, handlers can be implicitly
+  associated to an exporter through the handler plugin mechanism.  The exporter can be constructed
+  with a profile, which gives hints about what kind of handlers should be added to it.  For example,
+  the backup profile can be used to instruct the exporter to encode any unknown details in the vCard
+  such that it can be reconstructed later (a QVersitContactImporter constructed under the backup
+  profile can be used to decode it).  To illustrate, a backup exporter can be constructed with:
+  \code
+  QVersitContactExporter exporter(QVersitContactHandler::ProfileBackup);
+  \endcode
 
-
-  An example usage of QVersitContactExporter:
+  Here is a simple example of how to use QVersitContactExporter:
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
 
   \section1 Exporting group relationships
@@ -196,6 +201,12 @@ QTM_USE_NAMESPACE
 
 
 /*!
+  \internal
+
+  This is deprecated; the preferred way of performing backup is now by constructing an exporter with
+  the "backup" profile.
+  eg. QVersitContactExporter exporter(QVersitContactHandler::ProfileBackup);
+
   Constructs and returns a detail handler that encodes all details not handled by the base exporter.
   The caller is responsible for deleting the object.
 

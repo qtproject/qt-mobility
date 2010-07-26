@@ -48,7 +48,7 @@
 
 QTM_USE_NAMESPACE
 
-class TestVCardHandlerFactory : public QObject, public QVersitContactHandlerFactory
+class BackupVCardHandlerFactory : public QObject, public QVersitContactHandlerFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
