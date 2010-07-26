@@ -1489,8 +1489,7 @@ void tst_QLandmarkManagerEngineSqlite::removeCategoryIdAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
-    //TODO: notifications
-    //QSignalSpy spyRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+    QSignalSpy spyRemove(m_manager, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
 
     //remove non-existent landmark
     QLandmarkId id1;
@@ -1500,8 +1499,8 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     QVERIFY(!m_manager->removeLandmark(id1));
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
 
-    //TODO: notifications
-    //QCOMPARE(spyRemove.count(), 0);
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 0);
 
     QLandmark lm2;
     lm2.setName("LM2");
@@ -1510,10 +1509,10 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     QVERIFY(m_manager->removeLandmark(lm2.landmarkId()));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
-    //TODO: notifications
-    //QCOMPARE(spyRemove.count(), 1);
-    //QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
-    //spyRemove.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
+    spyRemove.clear();
 
     // with attributes
 
@@ -1533,10 +1532,10 @@ void tst_QLandmarkManagerEngineSqlite::removeLandmark() {
     QVERIFY(!m_manager->removeLandmark(lm3.landmarkId()));
     QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
 
-    //TODO: notifications
-    //QCOMPARE(spyRemove.count(), 1);
-    //QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
-    ///spyRemove.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 1);
+    QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
+    spyRemove.clear();
 }
 
 void tst_QLandmarkManagerEngineSqlite::removeLandmarkAsync() {
