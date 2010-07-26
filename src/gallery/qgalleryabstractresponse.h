@@ -55,7 +55,7 @@ class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryAbstractResponse)
 public:
-    QGalleryAbstractResponse(QObject *parent = 0);
+    QGalleryAbstractResponse(int result, QObject *parent = 0);
     ~QGalleryAbstractResponse();
 
     int result() const;
@@ -63,13 +63,14 @@ public:
 
     virtual void cancel();
 
-    virtual bool waitForFinished(int msecs) = 0;
+    virtual bool waitForFinished(int msecs);
 
 Q_SIGNALS:
     void finished();
     void progressChanged(int current, int maximum);
 
 protected:
+    QGalleryAbstractResponse(QObject *parent = 0);
     QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
 
     void finish(int result, bool idle = false);

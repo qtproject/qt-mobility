@@ -12,7 +12,6 @@ PRIVATE_HEADERS = \
         qabstractgallery_p.h \
         qgalleryabstractrequest_p.h \
         qgalleryabstractresponse_p.h \
-        qgallerybaseresponse_p.h \
         qgalleryresultset_p.h
 
 PUBLIC_HEADERS = \
@@ -34,7 +33,6 @@ SOURCES = \
         qdocumentgallery.cpp \
         qgalleryabstractrequest.cpp \
         qgalleryabstractresponse.cpp \
-        qgallerybaseresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryproperty.cpp \
         qgalleryquerymodel.cpp \

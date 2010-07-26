@@ -191,7 +191,6 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
-        qgallerybaseresponse \
         qgalleryqueryrequest \
         qgalleryremoverequest \
         qgalleryresource

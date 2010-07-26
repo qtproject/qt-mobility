@@ -68,6 +68,22 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
 }
 
 /*!
+    Constructs a new gallery response, for a request that has finished with the
+    given \a result.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryAbstractResponse::QGalleryAbstractResponse(int result, QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractResponsePrivate)
+{
+    d_ptr->q_ptr = this;
+
+    finish(result, false);
+}
+
+/*!
     \internal
 */
 
@@ -108,13 +124,16 @@ int QGalleryAbstractResponse::result() const
 }
 
 /*!
-    \fn QGalleryAbstractResponse::waitForFinished(int msecs)
-
     Waits for \a msecs for the a response to finish.
 
     Returns true if the response has finished on return, and returns false if
     the wait time expires or the request is inactive or idle.
 */
+
+bool QGalleryAbstractResponse::waitForFinished(int msecs)
+{
+    return true;
+}
 
 /*!
     Cancels an active or idle gallery response.

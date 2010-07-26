@@ -67,8 +67,6 @@ public:
 
     int currentIndex() const { return -1; }
     bool seek(int, bool) { return false; }
-
-    bool waitForFinished(int) { return true; }
 };
 
 class QGalleryQueryRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -81,7 +79,9 @@ public:
         , scope(QGalleryAbstractRequest::AllDescendants)
         , live(false)
         , resultSet(0)
+        , internalResultSet(0)
     {
+        internalResultSet = &nullResultSet;
     }
 
     int offset;

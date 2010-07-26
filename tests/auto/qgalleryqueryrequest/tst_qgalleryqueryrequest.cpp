@@ -65,44 +65,63 @@ private Q_SLOTS:
     void properties();
     void executeSynchronous();
     void executeAsynchronous();
+    void noResponse();
 };
 
 class QtGalleryTestResponse : public QGalleryResultSet
 {
     Q_OBJECT
 public:
-    QtGalleryTestResponse(int result, bool idle)
+    QtGalleryTestResponse(const QStringList &propertyNames, int result, bool idle)
+        : m_currentIndex(-1)
+        , m_propertyNames(propertyNames)
     {
         if (result != QGalleryAbstractRequest::NoResult)
             finish(result, idle);
     }
 
-    int propertyKey(const QString &) const { return -1; }
+    int propertyKey(const QString &propertyName) const {
+        return m_propertyNames.indexOf(propertyName); }
     QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
+        return QGalleryProperty::CanRead | QGalleryProperty::CanWrite; }
+    QVariant::Type propertyType(int) const { return QVariant::String; }
 
-    int itemCount() const { return 0; }
+    int itemCount() const { return 1; }
 
     int currentIndex() const { return m_currentIndex; }
 
     bool seek(int index, bool relative) {
-        m_currentIndex = relative ? m_currentIndex + index : index; return false; }
+        m_currentIndex = relative ? m_currentIndex + index : index; return m_currentIndex == 0; }
 
-    QVariant itemId() const { return QVariant(); }
-    QUrl itemUrl() const { return QUrl(); }
-    QString itemType() const { return QString(); }
-    QList<QGalleryResource> resources() const { return QList<QGalleryResource>(); }
+    QVariant itemId() const { return m_currentIndex == 0 ? QVariant(1) : QVariant(); }
+    QUrl itemUrl() const { return m_currentIndex == 0 ? QUrl("http://example.com") : QUrl(); }
+    QString itemType() const { return m_currentIndex == 0 ? QLatin1String("WebPage") : QString(); }
+    QList<QGalleryResource> resources() const
+    {
+        QList<QGalleryResource> resources;
+        if (m_currentIndex == 0)
+            resources.append(QGalleryResource(itemUrl()));
+        return resources;
+    }
 
-    QVariant metaData(int) const { return QVariant(); }
-    bool setMetaData(int, const QVariant &) { return false; }
-
-    bool waitForFinished(int) { return false; }
+    QVariant metaData(int key) const {
+        return m_currentIndex == 0 ? m_metaData.value(key) : QVariant(); }
+    bool setMetaData(int key, const QVariant &value)
+    {
+        if (m_currentIndex == 0 && key >= 0) {
+            m_metaData.insert(key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
 
 private:
     int m_currentIndex;
+    QStringList m_propertyNames;
+    QHash<int, QVariant> m_metaData;
 };
 
 class QtTestGallery : public QAbstractGallery
@@ -119,8 +138,12 @@ public:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (request->type() == QGalleryAbstractRequest::Query)
-            return new QtGalleryTestResponse(m_result, m_idle);
+        if (request->type() == QGalleryAbstractRequest::Query) {
+            return new QtGalleryTestResponse(
+                    static_cast<QGalleryQueryRequest *>(request)->propertyNames(),
+                    m_result,
+                    m_idle);
+        }
         return 0;
     }
 
@@ -220,6 +243,10 @@ void tst_QGalleryQueryRequest::executeSynchronous()
     QGalleryQueryRequest request(&gallery);
     QVERIFY(request.resultSet() == 0);
 
+    request.setPropertyNames(QStringList()
+            << QLatin1String("album")
+            << QLatin1String("trackNumber"));
+
     QSignalSpy spy(&request, SIGNAL(resultSetChanged(QGalleryResultSet*)));
 
     request.execute();
@@ -233,6 +260,71 @@ void tst_QGalleryQueryRequest::executeSynchronous()
     QCOMPARE(spy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
     QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
+
+    QCOMPARE(request.propertyKey(QLatin1String("title")), -1);
+    QCOMPARE(request.propertyKey(QLatin1String("album")), 0);
+    QCOMPARE(request.propertyKey(QLatin1String("trackNumber")), 1);
+
+    QCOMPARE(request.propertyAttributes(0), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
+    QCOMPARE(request.propertyType(0), QVariant::String);
+
+    QCOMPARE(request.itemCount(), 1);
+    QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemUrl(), QUrl());
+    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.setMetaData(1, 12), false);
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant());
+    QCOMPARE(request.setMetaData(QLatin1String("trackNumber"), 12), false);
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant());
+    QCOMPARE(request.resources(), QList<QGalleryResource>());
+
+    QCOMPARE(request.seek(0, false), true);
+    QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.seek(1, true), false);
+    QCOMPARE(request.currentIndex(), 1);
+    QCOMPARE(request.seek(-1, true), true);
+    QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.seek(-1, false), false);
+    QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.seek(1, true), true);
+    QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.next(), false);
+    QCOMPARE(request.currentIndex(), 1);
+    QCOMPARE(request.previous(), true);
+    QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.previous(), false);
+    QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.next(), true);
+    QCOMPARE(request.currentIndex(), 0);
+
+    QCOMPARE(request.itemId(), QVariant(1));
+    QCOMPARE(request.itemUrl(), QUrl(QLatin1String("http://example.com")));
+    QCOMPARE(request.itemType(), QLatin1String("WebPage"));
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.setMetaData(1, 12), true);
+    QCOMPARE(request.metaData(1), QVariant(12));
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant(12));
+    QCOMPARE(request.setMetaData(QLatin1String("trackNumber"), 5), true);
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant(5));
+    QCOMPARE(request.resources(), QList<QGalleryResource>()
+            << QGalleryResource(QUrl(QLatin1String("http://example.com"))));
+
+    QCOMPARE(request.previous(), false);
+    QCOMPARE(request.currentIndex(), -1);
+
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemUrl(), QUrl());
+    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.setMetaData(1, 12), false);
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant());
+    QCOMPARE(request.setMetaData(QLatin1String("trackNumber"), 12), false);
+    QCOMPARE(request.metaData(QLatin1String("trackNumber")), QVariant());
+    QCOMPARE(request.resources(), QList<QGalleryResource>());
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
@@ -268,6 +360,36 @@ void tst_QGalleryQueryRequest::executeAsynchronous()
     QCOMPARE(spy.count(), 2);
     QVERIFY(request.resultSet() == 0);
     QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
+}
+
+void tst_QGalleryQueryRequest::noResponse()
+{
+    QGalleryQueryRequest request;
+
+    QCOMPARE(request.propertyKey(QLatin1String("title")), -1);
+    QCOMPARE(request.propertyKey(QLatin1String("album")), -1);
+    QCOMPARE(request.propertyKey(QLatin1String("trackNumber")), -1);
+
+    QCOMPARE(request.propertyAttributes(0), QGalleryProperty::Attributes());
+    QCOMPARE(request.propertyType(0), QVariant::Invalid);
+
+    QCOMPARE(request.itemCount(), 0);
+    QCOMPARE(request.currentIndex(), -1);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemUrl(), QUrl());
+    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.setMetaData(1, QLatin1String("hello")), false);
+    QCOMPARE(request.metaData(1), QVariant());
+    QCOMPARE(request.metaData(QLatin1String("title")), QVariant());
+    QCOMPARE(request.setMetaData(QLatin1String("title"), QLatin1String("hello")), false);
+    QCOMPARE(request.metaData(QLatin1String("title")), QVariant());
+    QCOMPARE(request.resources(), QList<QGalleryResource>());
+    QCOMPARE(request.seek(0, false), false);
+    QCOMPARE(request.seek(1, true), false);
+    QCOMPARE(request.seek(-1, true), false);
+    QCOMPARE(request.next(), false);
+    QCOMPARE(request.previous(), false);
 }
 
 QTEST_MAIN(tst_QGalleryQueryRequest)

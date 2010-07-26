@@ -167,11 +167,11 @@ private:
 
 void tst_QGalleryAbstractRequest::type()
 {
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Item).type(),
-             QGalleryAbstractRequest::Item);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Query).type(),
+             QGalleryAbstractRequest::Query);
 
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Url).type(),
-             QGalleryAbstractRequest::Url);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Remove).type(),
+             QGalleryAbstractRequest::Remove);
 }
 
 void tst_QGalleryAbstractRequest::initTestCase()
@@ -183,11 +183,9 @@ void tst_QGalleryAbstractRequest::isSupported()
 {
     QtTestGallery gallery;
     gallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Remove
-            << QGalleryAbstractRequest::Url);
+            << QGalleryAbstractRequest::Remove);
 
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Item).isSupported(), false);
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Url).isSupported(), true);
+    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Query).isSupported(), false);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Remove).isSupported(), true);
 }
 
@@ -992,10 +990,10 @@ void tst_QGalleryAbstractRequest::setGallery()
 
     QtTestGallery moveGallery;
     moveGallery.setSupportedRequests(QList<QGalleryAbstractRequest::Type>()
-            << QGalleryAbstractRequest::Url);
+            << QGalleryAbstractRequest::Query);
 
     QtGalleryTestRequest copyRequest(QGalleryAbstractRequest::Remove);
-    QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::Url);
+    QtGalleryTestRequest moveRequest(QGalleryAbstractRequest::Query);
 
     QSignalSpy copySpy(&copyRequest, SIGNAL(supportedChanged()));
     QSignalSpy moveSpy(&moveRequest, SIGNAL(supportedChanged()));

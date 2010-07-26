@@ -46,9 +46,7 @@
 #include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
 
-#include "qgallerybaseresponse_p.h"
 #include "qgallerytrackerchangenotifier_p.h"
-#include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
@@ -203,7 +201,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             request->sortPropertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryBaseResponse(result);
+        return new QGalleryAbstractResponse(result);
     } else {
         return createItemListResponse(
                 arguments,
@@ -225,7 +223,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
         if (result == QGalleryAbstractRequest::Succeeded)
             result = QGalleryAbstractRequest::InvalidItemError;
 
-        return new QGalleryBaseResponse(result);
+        return new QGalleryAbstractResponse(result);
     } else {
         return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
     }

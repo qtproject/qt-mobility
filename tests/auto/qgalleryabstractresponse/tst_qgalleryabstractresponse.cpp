@@ -55,13 +55,12 @@ private Q_SLOTS:
     void finish();
     void cancel();
     void idle();
+    void immediateResponse();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
 public:
-    bool waitForFinished(int) { return true; }
-
     void doFinish(int result, bool idle) { finish(result, idle); }
 };
 
@@ -190,6 +189,15 @@ void tst_QGalleryAbstractResponse::idle()
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(response.isIdle(), false);
     QCOMPARE(spy.count(), 2);
+}
+
+void tst_QGalleryAbstractResponse::immediateResponse()
+{
+    QGalleryAbstractResponse response(QGalleryAbstractRequest::Succeeded);
+
+    QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(response.isIdle(), false);
+    QCOMPARE(response.waitForFinished(300), true);
 }
 
 #include "tst_qgalleryabstractresponse.moc"
