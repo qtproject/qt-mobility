@@ -43,7 +43,6 @@
 #define QGALLERYABSTRACTRESPONSE_H
 
 #include "qgalleryabstractrequest.h"
-#include "qgalleryitemlist.h"
 
 #include <QtCore/qstringlist.h>
 
@@ -51,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryAbstractResponsePrivate;
 
-class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryItemList
+class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryAbstractResponse)
@@ -74,6 +73,8 @@ protected:
     QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
 
     void finish(int result, bool idle = false);
+
+    QScopedPointer<QGalleryAbstractResponsePrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

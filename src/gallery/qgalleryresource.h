@@ -39,51 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYURLREQUEST_H
-#define QGALLERYURLREQUEST_H
+#ifndef QGALLERYRESOURCE_H
+#define QGALLERTRESOURCE_H
 
-#include "qgalleryabstractrequest.h"
+#include <qmobilityglobal.h>
 
 #include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
-
-class QGalleryUrlRequestPrivate;
-
-class Q_GALLERY_EXPORT QGalleryUrlRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryResource
 {
-    Q_OBJECT
-    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl)
-    Q_PROPERTY(bool create READ create WRITE setCreate)
-    Q_PROPERTY(QVariant itemId READ itemId NOTIFY itemChanged)
-    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
 public:
-    QGalleryUrlRequest(QObject *parent = 0);
-    QGalleryUrlRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryUrlRequest();
+    QGalleryResource();
+    QGalleryResource(const QUrl &url);
+    QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes);
+    QGalleryResource(const QGalleryResource &resource);
+    ~QGalleryResource();
 
-    QUrl itemUrl() const;
-    void setItemUrl(const QUrl &url);
+    QGalleryResource &operator =(const QGalleryResource &resource);
 
-    bool create() const;
-    void setCreate(bool create);
+    bool operator ==(const QGalleryResource &resource) const;
+    bool operator !=(const QGalleryResource &resource) const;
 
-    // Results
+    QUrl url() const;
+    QMap<int, QVariant> attributes() const;
 
-    QVariant itemId() const;
-    QString itemType() const;
-
-Q_SIGNALS:
-    void itemChanged();
-
-protected:
-    void setResponse(QGalleryAbstractResponse *response);
+    QVariant attribute(int key) const;
 
 private:
-    Q_DECLARE_PRIVATE(QGalleryUrlRequest)
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int, int))
+    QUrl m_url;
+    QMap<int, QVariant> m_attributes;
 };
 
 QTM_END_NAMESPACE

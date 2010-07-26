@@ -61,8 +61,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
-    : QGalleryItemList(*new QGalleryAbstractResponsePrivate, parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractResponsePrivate)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -71,8 +73,10 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(
         QGalleryAbstractResponsePrivate &dd, QObject *parent)
-    : QGalleryItemList(dd, parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!

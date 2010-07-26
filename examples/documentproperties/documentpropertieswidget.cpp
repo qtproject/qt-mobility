@@ -41,7 +41,7 @@
 #include "documentpropertieswidget.h"
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlist.h>
+#include <qgalleryresultset.h>
 #include <qgalleryqueryrequest.h>
 
 #include <QtGui>
@@ -50,7 +50,7 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
         const QFileInfo &file, QDocumentGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
     , request(0)
-    , items(0)
+    , resultSet(0)
 {
     setLayout(new QFormLayout);
 
@@ -79,10 +79,12 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
 
 void DocumentPropertiesWidget::itemsInserted(int index, int count)
 {
+    resultSet->seek(0, false);
+
     metaDataChanged(index, count, QList<int>());
 
-    if (index == 0 && request->itemType() == QDocumentGallery::File) {
-        QString itemType = items->type(0);
+    if (index == 0 && request->rootType() == QDocumentGallery::File) {
+        QString itemType = resultSet->itemType();
 
         if (itemType == QDocumentGallery::Audio)
             QTimer::singleShot(0, this, SLOT(requestAudioProperties()));
@@ -100,26 +102,26 @@ void DocumentPropertiesWidget::requestProperties(
 {
     QStringList currentPropertyNames = request->propertyNames();
 
-    request->setItemType(itemType);
+    request->setRootType(itemType);
     request->setPropertyNames(propertyNames + currentPropertyNames);
     request->execute();
 
-    items = request->items();
+    resultSet = request->resultSet();
 
-    if (items) {
-        connect(items, SIGNAL(inserted(int,int)), this, SLOT(itemsInserted(int,int)));
-        connect(items, SIGNAL(removed(int,int)), this, SLOT(itemsRemoved(int,int)));
-        connect(items, SIGNAL(metaDataChanged(int,int,QList<int>)),
+    if (resultSet) {
+        connect(resultSet, SIGNAL(itemsInserted(int,int)), this, SLOT(itemsInserted(int,int)));
+        connect(resultSet, SIGNAL(itemsRemoved(int,int)), this, SLOT(itemsRemoved(int,int)));
+        connect(resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(metaDataChanged(int,int,QList<int>)));
 
         for (int i = 0; i < currentPropertyNames.count(); ++i)
-            propertyKeys[i] = items->propertyKey(currentPropertyNames.at(i));
+            propertyKeys[i] = resultSet->propertyKey(currentPropertyNames.at(i));
 
         for (int i = 0; i < propertyNames.count(); ++i)
             insertRow(i, propertyNames.at(i), labels.at(i));
 
-        if (items->count() > 0)
-            itemsInserted(0, items->count());
+        if (resultSet->itemCount() > 0)
+            itemsInserted(0, resultSet->itemCount());
     }
 }
 
@@ -221,10 +223,10 @@ void DocumentPropertiesWidget::metaDataChanged(int index, int, const QList<int> 
 void DocumentPropertiesWidget::insertRow(
         int index, const QString &propertyName, const QString &label)
 {
-    int propertyKey = items->propertyKey(propertyName);
+    int propertyKey = resultSet->propertyKey(propertyName);
 
-    QVariant::Type propertyType = items->propertyType(propertyKey);
-    QGalleryProperty::Attributes propertyAttributes = items->propertyAttributes(propertyKey);
+    QVariant::Type propertyType = resultSet->propertyType(propertyKey);
+    QGalleryProperty::Attributes propertyAttributes = resultSet->propertyAttributes(propertyKey);
 
     QWidget *widget = 0;
 
@@ -256,11 +258,11 @@ void DocumentPropertiesWidget::insertRow(
 
 void DocumentPropertiesWidget::updateValue(int widgetIndex, int propertyKey)
 {
-    QGalleryProperty::Attributes propertyAttributes = items->propertyAttributes(propertyKey);
+    QGalleryProperty::Attributes propertyAttributes = resultSet->propertyAttributes(propertyKey);
 
     QWidget *widget = widgets.at(widgetIndex);
 
-    QVariant value = items->metaData(0, propertyKey);
+    QVariant value = resultSet->metaData(propertyKey);
 
     if (propertyAttributes & QGalleryProperty::CanWrite) {
         switch (value.type()) {

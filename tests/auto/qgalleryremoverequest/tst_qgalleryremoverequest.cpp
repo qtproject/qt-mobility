@@ -70,24 +70,6 @@ public:
             finish(result, idle);
     }
 
-    QStringList propertyNames() const { return QStringList(); }
-    int propertyKey(const QString &) const { return -1; }
-    QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int count() const { return 0; }
-
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QString parentId(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int) const { return ItemStatus(); }
-
-    QVariant metaData(int, int) const { return QVariant(); }
-    void setMetaData(int, int, const QVariant &) {}
-
     bool waitForFinished(int) { return false; }
 
 public Q_SLOTS:

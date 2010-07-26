@@ -89,40 +89,26 @@ QGalleryTrackerItemResponse::~QGalleryTrackerItemResponse()
 {
 }
 
-void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant &value)
+bool QGalleryTrackerItemResponse::setMetaData(int key, const QVariant &value)
 {
     Q_D(QGalleryTrackerItemResponse);
 
-    QVector<QVariant>::const_iterator row;
+    if (!d->currentRow || key < d->valueOffset || key >= d->columnCount)
+        return false;
+    else if (key >= d->aliasOffset)
+        key = d->aliasColumns.at(key - d->aliasOffset);
 
-    if (key < d->imageOffset) {
-        if (key >= d->aliasOffset) {
-            key = d->aliasColumns.at(key - d->aliasOffset);
-        } else if (key < d->valueOffset || key >= d->compositeOffset) {
-            return;
-        }
+    if (key >= d->compositeOffset)
+        return false;
 
-        if (index < d->iCache.cutoff) {
-            if ((index -= d->iCache.index) >= 0) {
-                row = d->iCache.values.constBegin() + (index * d->tableWidth);
-            } else {
-                return;
-            }
-        } else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0) {
-            row = d->rCache.values.begin() + (index * d->tableWidth);
-        } else {
-            return;
-        }
-    }
-
-    if (*(row + key) == value)
-        return;
+    if (*(d->currentRow + key) == value)
+        return true;
 
     QGalleryTrackerMetaDataEdit *edit = 0;
 
     typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
     for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it) {
-        if ((*it)->index() == index) {
+        if ((*it)->index() == d->currentIndex) {
             edit = *it;
             break;
         }
@@ -130,8 +116,11 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
 
     if (!edit) {
         edit = new QGalleryTrackerMetaDataEdit(
-                d->metaDataInterface, row->toString(), (row + 1)->toString(), this);
-        edit->setIndex(index);
+                d->metaDataInterface,
+                d->currentRow->toString(),
+                (d->currentRow + 1)->toString(),
+                this);
+        edit->setIndex(d->currentIndex);
 
         connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
                 this, SLOT(_q_editFinished(QGalleryTrackerMetaDataEdit*)));
@@ -147,6 +136,8 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
     edit->setValue(
             d->fieldNames.at(key - d->valueOffset),
             d->valueColumns.at(key - d->valueOffset)->toString(value));
+
+    return true;
 }
 
 #include "moc_qgallerytrackeritemresponse_p.cpp"

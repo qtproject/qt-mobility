@@ -45,24 +45,21 @@
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlistmodel.h>
+#include <qgalleryquerymodel.h>
 
-PhotoView::PhotoView(QWidget *parent, Qt::WindowFlags flags)
+PhotoView::PhotoView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
     : GalleryView(parent, flags)
+    , model(new QGalleryQueryModel(gallery))
 {
-    setType(QDocumentGallery::Image);
-    setFields(QStringList()
-            << QDocumentGallery::fileName
-            << QDocumentGallery::thumbnailPixmap);
-    setSortFields(QStringList()
-            << QDocumentGallery::title);
+    model->setRootType(QDocumentGallery::Image);
 
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
     properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailPixmap);
-
-    model = new QGalleryItemListModel;
     model->addColumn(properties);
+
+    model->setSortPropertyNames(QStringList()
+            << QDocumentGallery::title);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));
@@ -70,10 +67,9 @@ PhotoView::PhotoView(QWidget *parent, Qt::WindowFlags flags)
     view->setViewMode(QListView::IconMode);
     view->setUniformItemSizes(true);
     view->setWrapping(true);
-    view->setModel(model);
+    view->setModel(model.data());
     view->setItemDelegate(new PhotoDelegate(this));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -85,12 +81,12 @@ PhotoView::PhotoView(QWidget *parent, Qt::WindowFlags flags)
 
 PhotoView::~PhotoView()
 {
-    delete model;
 }
 
-void PhotoView::mediaChanged(QGalleryItemList *media)
+void PhotoView::showChildren(const QVariant &itemId)
 {
-    model->setItemList(media);
+    model->setRootItem(itemId);
+    model->execute();
 }
 
 void PhotoView::activated(const QModelIndex &)

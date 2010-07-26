@@ -74,7 +74,7 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerItemResponse();
 
-    void setMetaData(int index, int key, const QVariant &value);
+    bool setMetaData(int key, const QVariant &value);
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemResponse)

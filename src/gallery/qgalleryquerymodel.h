@@ -39,39 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYITEMLISTMODEL_H
-#define QGALLERYITEMLISTMODEL_H
-
-#include <qmobilityglobal.h>
+#ifndef QGALLERYQUERYMODEL_H
+#define QGALLERYQUERYMODEL_H
 
 #include <QtCore/qabstractitemmodel.h>
 
+#include <qgalleryabstractrequest.h>
+
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
+class QGalleryFilter;
+class QGalleryResultSet;
 
-class QGalleryItemListModelPrivate;
+class QGalleryQueryModelPrivate;
 
-class Q_GALLERY_EXPORT QGalleryItemListModel : public QAbstractItemModel
+class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_PROPERTY(QGalleryItemList *itemList READ itemList WRITE setItemList)
-    Q_PROPERTY(bool autoUpdateCursorPosition READ autoUpdateCursorPosition WRITE setAutoUpdateCursorPosition)
+    Q_PROPERTY(QAbstractGallery *gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+    Q_PROPERTY(int limit READ limit WRITE setLimit)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
+    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
+    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
 public:
-    QGalleryItemListModel(QObject *parent = 0);
-    ~QGalleryItemListModel();
+    QGalleryQueryModel(QObject *parent = 0);
+    QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryQueryModel();
 
-    QGalleryItemList *itemList() const;
-
-    bool autoUpdateCursorPosition() const;
-    void setAutoUpdateCursorPosition(bool enabled);
+    QAbstractGallery *gallery() const;
+    void setGallery(QAbstractGallery *gallery);
 
     QHash<int, QString> roleProperties(int column) const;
     void setRoleProperties(int column, const QHash<int, QString> &properties);
-
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
-
-    int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     void addColumn(const QHash<int, QString> &properties);
     void addColumn(const QString &property, int role = Qt::DisplayRole);
@@ -79,11 +82,44 @@ public:
     void insertColumn(int index, const QString &property, int role = Qt::DisplayRole);
     void removeColumn(int index);
 
+    QStringList sortPropertyNames() const;
+    void setSortPropertyNames(const QStringList &names);
+
+    bool isLive() const;
+    void setLive(bool live);
+
+    int offset() const;
+    void setOffset(int offset);
+
+    int limit() const;
+    void setLimit(int limit);
+
+    QString rootType() const;
+    void setRootType(const QString &itemType);
+
+    QVariant rootItem() const;
+    void setRootItem(const QVariant &itemId);
+
+    QGalleryAbstractRequest::Scope scope() const;
+    void setScope(QGalleryAbstractRequest::Scope scope);
+
+    QGalleryFilter filter() const;
+    void setFilter(const QGalleryFilter &filter);
+
+    bool execute();
+
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
 
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+
+    QVariant itemId(const QModelIndex &index) const;
+    QUrl itemUrl(const QModelIndex &index) const;
+    QString itemType(const QModelIndex &index) const;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     bool setHeaderData(
@@ -94,16 +130,14 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-public Q_SLOTS:
-    void setItemList(QGalleryItemList *list);
-
 private:
-    QScopedPointer<QGalleryItemListModelPrivate> d_ptr;
+    QScopedPointer<QGalleryQueryModelPrivate> d_ptr;
 
-    Q_DECLARE_PRIVATE(QGalleryItemListModel)
-    Q_PRIVATE_SLOT(d_func(), void _q_inserted(int, int))
-    Q_PRIVATE_SLOT(d_func(), void _q_removed(int, int))
-    Q_PRIVATE_SLOT(d_func(), void _q_moved(int, int, int))
+    Q_DECLARE_PRIVATE(QGalleryQueryModel)
+    Q_PRIVATE_SLOT(d_func(), void _q_resultSetChanged(QGalleryResultSet*))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int, int))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int, int))
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsMoved(int, int, int))
     Q_PRIVATE_SLOT(d_func(), void _q_metaDataChanged(int, int, const QList<int> &))
 };
 

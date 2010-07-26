@@ -13,40 +13,36 @@ PRIVATE_HEADERS = \
         qgalleryabstractrequest_p.h \
         qgalleryabstractresponse_p.h \
         qgallerybaseresponse_p.h \
-        qgalleryitemlist_p.h
+        qgalleryresultset_p.h
 
 PUBLIC_HEADERS = \
         qabstractgallery.h \
         qdocumentgallery.h \
         qgalleryabstractrequest.h \
         qgalleryabstractresponse.h \
-        qgallerycountrequest.h \
         qgalleryfilter.h \
-        qgalleryitemlist.h \
-        qgalleryitemlistmodel.h \
-        qgalleryitemrequest.h \
         qgalleryproperty.h \
+        qgalleryquerymodel.h \
         qgalleryqueryrequest.h \
         qgalleryremoverequest.h \
-        qgallerytype.h \
-        qgalleryurlrequest.h
+        qgalleryresource.h \
+        qgalleryresultset.h \
+        qgallerytype.h
 
 SOURCES = \
         qabstractgallery.cpp \
         qdocumentgallery.cpp \
         qgalleryabstractrequest.cpp \
         qgalleryabstractresponse.cpp \
-        qgallerycountrequest.cpp \
         qgallerybaseresponse.cpp \
         qgalleryfilter.cpp \
-        qgalleryitemlist.cpp \
-        qgalleryitemlistmodel.cpp \
-        qgalleryitemrequest.cpp \
         qgalleryproperty.cpp \
+        qgalleryquerymodel.cpp \
         qgalleryqueryrequest.cpp \
         qgalleryremoverequest.cpp \
-        qgallerytype.cpp \
-        qgalleryurlrequest.cpp
+        qgalleryresource.cpp \
+        qgalleryresultset.cpp \
+        qgallerytype.cpp
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

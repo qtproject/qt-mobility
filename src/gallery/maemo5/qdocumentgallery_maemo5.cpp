@@ -43,11 +43,8 @@
 
 #include "qabstractgallery_p.h"
 
-#include "qgallerycountrequest.h"
-#include "qgalleryitemrequest.h"
 #include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
-#include "qgalleryurlrequest.h"
 
 #include "qgallerybaseresponse_p.h"
 #include "qgallerytrackerchangenotifier_p.h"
@@ -55,7 +52,6 @@
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
-#include "qgallerytrackerurlresponse_p.h"
 
 #include <QtCore/qmetaobject.h>
 #include <QtDBus/qdbusmetatype.h>
@@ -67,10 +63,7 @@ QTM_BEGIN_NAMESPACE
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
 public:
-    QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
-    QGalleryAbstractResponse *createUrlResponse(QGalleryUrlRequest *request);
     QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
-    QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
 private:
@@ -83,8 +76,8 @@ private:
 
     QGalleryAbstractResponse *createItemListResponse(
             const QGalleryTrackerItemListArguments &arguments,
-            int cursorPosition,
-            int minimumPagedItems,
+            int offset,
+            int limit,
             bool isItemType,
             bool isLive);
 
@@ -169,8 +162,8 @@ QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         const QGalleryTrackerItemListArguments &arguments,
-        int cursorPosition,
-        int minimumPagedItems,
+        int offset,
+        int limit,
         bool isItemType,
         bool isLive)
 {
@@ -178,9 +171,9 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
 
     if (isItemType) {
         response = new QGalleryTrackerItemResponse(
-                arguments, metaDataInterface(), isLive, cursorPosition, minimumPagedItems);
+                arguments, metaDataInterface(), isLive, offset, limit);
     } else {
-        response = new QGalleryTrackerItemList(arguments, isLive, cursorPosition, minimumPagedItems);
+        response = new QGalleryTrackerItemList(arguments, isLive, offset, limit);
     }
 
     if (isLive) {
@@ -193,38 +186,10 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
     return response;
 }
 
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
-{
-    QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(request->itemId().toString());
-
-    QGalleryTrackerItemListArguments arguments;
-
-    int result = schema.prepareIdResponse(
-            &arguments, this, request->itemId().toString(), request->propertyNames());
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryBaseResponse(result);
-    } else {
-        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
-    }
-}
-
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
-        QGalleryUrlRequest *request)
-{
-    QGalleryTrackerUrlResponse *response = new QGalleryTrackerUrlResponse(
-            fileInterface(), request->itemUrl(), request->create());
-
-    QObject::connect(
-            changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(indexingFinished()));
-
-    return response;
-}
-
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         QGalleryQueryRequest *request)
 {
-    QGalleryTrackerSchema schema(request->itemType());
+    QGalleryTrackerSchema schema(request->rootType());
 
     QGalleryTrackerItemListArguments arguments;
 
@@ -232,7 +197,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             &arguments,
             this,
             request->scope(),
-            request->scopeItemId().toString(),
+            request->rootItem().toString(),
             request->filter(),
             request->propertyNames(),
             request->sortPropertyNames());
@@ -242,39 +207,10 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     } else {
         return createItemListResponse(
                 arguments,
-                request->initialCursorPosition(),
-                request->minimumPagedItems(),
+                request->offset(),
+                request->limit(),
                 schema.isItemType(),
                 request->isLive());
-    }
-}
-
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
-        QGalleryCountRequest *request)
-{
-    QGalleryTrackerSchema schema(request->itemType());
-
-    QGalleryTrackerCountResponseArguments arguments;
-
-    int result = schema.prepareCountResponse(
-            &arguments,
-            this,
-            request->scope(),
-            request->scopeItemId().toString(),
-            request->filter());
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryBaseResponse(result);
-    } else {
-        QGalleryTrackerCountResponse *response = new QGalleryTrackerCountResponse(arguments);
-
-        if (request->isLive()) {
-            QObject::connect(
-                    changeNotifier(), SIGNAL(itemsChanged(int)),
-                    response, SLOT(refresh(int)));
-        }
-
-        return response;
     }
 }
 
@@ -308,10 +244,7 @@ QDocumentGallery::~QDocumentGallery()
 bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
 {
     switch (type) {
-    case QGalleryAbstractRequest::Item:
-    case QGalleryAbstractRequest::Url:
     case QGalleryAbstractRequest::Query:
-    case QGalleryAbstractRequest::Count:
     case QGalleryAbstractRequest::Remove:
         return true;
     default:
@@ -335,14 +268,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     Q_D(QDocumentGallery);
 
     switch (request->type()) {
-    case QGalleryAbstractRequest::Item:
-        return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
-    case QGalleryAbstractRequest::Url:
-        return d->createUrlResponse(static_cast<QGalleryUrlRequest *>(request));
     case QGalleryAbstractRequest::Query:
         return d->createFilterResponse(static_cast<QGalleryQueryRequest *>(request));
-    case QGalleryAbstractRequest::Count:
-        return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
     case QGalleryAbstractRequest::Remove:
         return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:

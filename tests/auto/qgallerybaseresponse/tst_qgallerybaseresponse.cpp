@@ -63,36 +63,6 @@ void tst_QGalleryBaseResponse::noResult()
 
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(response.propertyNames(), QStringList());
-    QCOMPARE(response.propertyKey(QLatin1String("albumTitle")), -1);
-    QCOMPARE(response.propertyKey(QString()), -1);
-    QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyType(0), QVariant::Invalid);
-    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
-    QCOMPARE(response.count(), 0);
-    QCOMPARE(response.id(0), QVariant());
-    QCOMPARE(response.id(-1), QVariant());
-    QCOMPARE(response.type(0), QString());
-    QCOMPARE(response.type(-1), QString());
-    QCOMPARE(response.url(0), QUrl());
-    QCOMPARE(response.url(-1), QUrl());
-    QCOMPARE(response.resources(0), QList<QGalleryResource>());
-    QCOMPARE(response.resources(-1), QList<QGalleryResource>());
-    QCOMPARE(response.status(0), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.status(-1), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(0, -1, QLatin1String("Self Titled"));
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(-1, -1, QLatin1String("Self Titled"));
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
     QCOMPARE(response.waitForFinished(300), true);
 }
 
@@ -103,36 +73,6 @@ void tst_QGalleryBaseResponse::successfulResult()
 
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(response.propertyNames(), QStringList());
-    QCOMPARE(response.propertyKey(QLatin1String("albumTitle")), -1);
-    QCOMPARE(response.propertyKey(QString()), -1);
-    QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyType(0), QVariant::Invalid);
-    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
-    QCOMPARE(response.count(), 0);
-    QCOMPARE(response.id(0), QVariant());
-    QCOMPARE(response.id(-1), QVariant());
-    QCOMPARE(response.type(0), QString());
-    QCOMPARE(response.type(-1), QString());
-    QCOMPARE(response.url(0), QUrl());
-    QCOMPARE(response.url(-1), QUrl());
-    QCOMPARE(response.resources(0), QList<QGalleryResource>());
-    QCOMPARE(response.resources(-1), QList<QGalleryResource>());
-    QCOMPARE(response.status(0), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.status(-1), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(0, -1, QLatin1String("Self Titled"));
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(-1, -1, QLatin1String("Self Titled"));
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
     QCOMPARE(response.waitForFinished(300), true);
 }
 
@@ -142,36 +82,6 @@ void tst_QGalleryBaseResponse::unsuccessfulResult()
 
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::ItemTypeError));
     QCOMPARE(response.isIdle(), false);
-    QCOMPARE(response.propertyNames(), QStringList());
-    QCOMPARE(response.propertyKey(QLatin1String("albumTitle")), -1);
-    QCOMPARE(response.propertyKey(QString()), -1);
-    QCOMPARE(response.propertyAttributes(0), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyAttributes(-1), QGalleryProperty::Attributes());
-    QCOMPARE(response.propertyType(0), QVariant::Invalid);
-    QCOMPARE(response.propertyType(-1), QVariant::Invalid);
-    QCOMPARE(response.count(), 0);
-    QCOMPARE(response.id(0), QVariant());
-    QCOMPARE(response.id(-1), QVariant());
-    QCOMPARE(response.type(0), QString());
-    QCOMPARE(response.type(-1), QString());
-    QCOMPARE(response.url(0), QUrl());
-    QCOMPARE(response.url(-1), QUrl());
-    QCOMPARE(response.resources(0), QList<QGalleryResource>());
-    QCOMPARE(response.resources(-1), QList<QGalleryResource>());
-    QCOMPARE(response.status(0), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.status(-1), QGalleryItemList::ItemStatus());
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(0, -1, QLatin1String("Self Titled"));
-    response.setMetaData(0, 0, QLatin1String("Self Titled"));
-    response.setMetaData(-1, -1, QLatin1String("Self Titled"));
-    QCOMPARE(response.metaData(0, 0), QVariant());
-    QCOMPARE(response.metaData(0, -1), QVariant());
-    QCOMPARE(response.metaData(-1, 0), QVariant());
-    QCOMPARE(response.metaData(-1, -1), QVariant());
     QCOMPARE(response.waitForFinished(300), true);
 }
 

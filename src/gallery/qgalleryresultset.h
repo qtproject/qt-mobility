@@ -39,59 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYCOUNTREQUEST_H
-#define QGALLERYCOUNTREQUEST_H
+#ifndef QGALLERYRESULTSET_H
+#define QGALLERYRESULTSET_H
 
-#include "qgalleryabstractrequest.h"
+#include <QtCore/qmap.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
-#include "qgalleryfilter.h"
+#include <qgalleryabstractresponse.h>
+#include <qgalleryproperty.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryFilter;
+class QGalleryResource;
 
-class QGalleryCountRequestPrivate;
+class QGalleryResultSetPrivate;
 
-class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryResultSet : public QGalleryAbstractResponse
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryCountRequest)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
-    Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_DECLARE_PRIVATE(QGalleryResultSet)
 public:
-    explicit QGalleryCountRequest(QObject *parent = 0);
-    explicit QGalleryCountRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryCountRequest();
+    QGalleryResultSet(QObject *parent = 0);
+    ~QGalleryResultSet();
 
-    bool isLive() const;
-    void setLive(bool live);
+    virtual int propertyKey(const QString &property) const = 0;
+    virtual QGalleryProperty::Attributes propertyAttributes(int key) const = 0;
+    virtual QVariant::Type propertyType(int key) const = 0;
 
-    QString itemType() const;
-    void setItemType(const QString &type);
+    virtual int itemCount() const = 0;
 
-    QGalleryFilter filter() const;
-    void setFilter(const QGalleryFilter &filter);
+    virtual QVariant itemId() const = 0;
+    virtual QUrl itemUrl() const = 0;
+    virtual QString itemType() const = 0;
+    virtual QList<QGalleryResource> resources() const = 0;
 
-    QGalleryAbstractRequest::Scope scope() const;
-    void setScope(QGalleryAbstractRequest::Scope scope);
+    virtual QVariant metaData(int key) const = 0;
+    virtual bool setMetaData(int key, const QVariant &value) = 0;
 
-    QVariant scopeItemId() const;
-    void setScopeItemId(const QVariant &id);
-
-    int count() const;
+    virtual int currentIndex() const = 0;
+    virtual bool seek(int index, bool relative) = 0;
 
 Q_SIGNALS:
-    void countChanged();
+    void currentIndexChanged(int index);
+    void itemsInserted(int index, int count);
+    void itemsRemoved(int index, int count);
+    void itemsMoved(int from, int to, int count);
+
+    void metaDataChanged(int index, int count, const QList<int> &keys);
 
 protected:
-    void setResponse(QGalleryAbstractResponse *response);
-
-private:
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged())
+    QGalleryResultSet(QGalleryResultSetPrivate &dd, QObject *parent);
 };
 
 QTM_END_NAMESPACE

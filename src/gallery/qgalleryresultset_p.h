@@ -39,46 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYITEMREQUEST_H
-#define QGALLERYITEMREQUEST_H
+#ifndef QGALLERYRESULTSET_P_H
+#define QGALLERYRESULTSET_P_H
 
-#include "qgalleryabstractrequest.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qgalleryresultset.h"
+
+#include "qgalleryabstractresponse_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
-
-class QGalleryItemRequestPrivate;
-
-class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
+class QGalleryResultSetPrivate : public QGalleryAbstractResponsePrivate
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryItemRequest)
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
-    Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
 public:
-    explicit QGalleryItemRequest(QObject *parent = 0);
-    explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryItemRequest();
+    QGalleryResultSetPrivate()
+    {
+    }
 
-    QStringList propertyNames() const;
-    void setPropertyNames(const QStringList &names);
-
-    bool isLive() const;
-    void setLive(bool live);
-
-    QVariant itemId() const;
-    void setItemId(const QVariant &id);
-
-    QGalleryItemList *item() const;
-
-Q_SIGNALS:
-    void itemChanged(QGalleryItemList *item);
-
-protected:
-    void setResponse(QGalleryAbstractResponse *response);
+    virtual ~QGalleryResultSetPrivate() {}
 };
 
 QTM_END_NAMESPACE

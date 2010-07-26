@@ -53,64 +53,6 @@ QGalleryBaseResponse::~QGalleryBaseResponse()
 {
 }
 
-QStringList QGalleryBaseResponse::propertyNames() const
-{
-    return QStringList();
-}
-
-int QGalleryBaseResponse::propertyKey(const QString &) const
-{
-    return -1;
-}
-
-QGalleryProperty::Attributes QGalleryBaseResponse::propertyAttributes(int) const
-{
-    return QGalleryProperty::Attributes();
-}
-
-QVariant::Type QGalleryBaseResponse::propertyType(int) const
-{
-    return QVariant::Invalid;
-}
-
-int QGalleryBaseResponse::count() const
-{
-    return 0;
-}
-
-QVariant QGalleryBaseResponse::id(int) const
-{
-    return QVariant();
-}
-
-QUrl QGalleryBaseResponse::url(int) const
-{
-    return QUrl();
-}
-
-QString QGalleryBaseResponse::type(int) const
-{
-    return QString();
-}
-
-QList<QGalleryResource> QGalleryBaseResponse::resources(int) const
-{
-    return QList<QGalleryResource>();
-}
-
-QGalleryItemList::ItemStatus QGalleryBaseResponse::status(int) const
-{
-    return ItemStatus();
-}
-QVariant QGalleryBaseResponse::metaData(int, int) const
-{
-    return QVariant();
-}
-
-void QGalleryBaseResponse::setMetaData(int, int, const QVariant &)
-{
-}
-
 bool QGalleryBaseResponse::waitForFinished(int)
 {
     return true;

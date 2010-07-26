@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qgalleryabstractresponse.h>
+#include <qgalleryresultset.h>
 
 #include "qgallerydbusinterface_p.h"
 
@@ -115,12 +115,11 @@ struct QGalleryTrackerItemListArguments
     QVector<QGalleryTrackerValueColumn *> valueColumns;
     QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     QVector<int> aliasColumns;
-    QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
     QVector<int> resourceKeys;
 };
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerItemList : public QGalleryAbstractResponse
+class Q_AUTOTEST_EXPORT QGalleryTrackerItemList : public QGalleryResultSet
 {
     Q_OBJECT
 public:
@@ -137,18 +136,18 @@ public:
     QGalleryProperty::Attributes propertyAttributes(int key) const;
     QVariant::Type propertyType(int key) const;
 
-    void setCursorPosition(int position);
+    int itemCount() const;
 
-    int count() const;
+    int currentIndex() const;
+    bool seek(int index, bool relative);
 
-    QVariant id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
+    QVariant itemId() const;
+    QUrl itemUrl() const;
+    QString itemType() const;
+    QList<QGalleryResource> resources() const;
 
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
 
     void cancel();
 

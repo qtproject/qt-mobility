@@ -215,30 +215,6 @@ private:
     const int m_columnB;
 };
 
-class QtTestImageColumn : public QGalleryTrackerImageColumn
-{
-    Q_OBJECT
-public:
-    QtTestImageColumn(int column) : m_column(column) {}
-
-    void insertImages(
-            int index, int count, QVector<QVariant>::const_iterator begin, int tableWidth)
-    {
-        typedef QVector<QVariant>::const_iterator iterator;
-        for (iterator it = begin + m_column; index < count; ++index, it += tableWidth) {
-            m_images.insert(index, *it);
-        }
-    }
-
-    void removeImages(int index, int count)
-    {
-        m_images.remove(index, count);
-    }
-
-private:
-    const int m_column;
-};
-
 void tst_QGalleryTrackerItemList::initTestCase()
 {
     const QString service
@@ -303,8 +279,6 @@ void tst_QGalleryTrackerItemList::populateArguments(
             << new QtTestCompositeColumn(3, 4);
     arguments->aliasColumns = QVector<int>()
             << 4;
-    arguments->imageColumns = QVector<QGalleryTrackerImageColumn *>()
-            << new QtTestImageColumn(0);
     arguments->sortCriteria = QVector<QGalleryTrackerSortCriteria>();
     arguments->resourceKeys = QVector<int>()
             << 2
@@ -341,12 +315,12 @@ void tst_QGalleryTrackerItemList::query()
     QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
-    QCOMPARE(list.count(), 0);
+    QCOMPARE(list.itemCount(), 0);
 
     QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
-    QCOMPARE(list.count(), 16);
+    QCOMPARE(list.itemCount(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
     QCOMPARE(statusSpy.count(), 0);

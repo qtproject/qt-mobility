@@ -47,11 +47,13 @@
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
+#include <qgalleryresultset.h>
+#include <qgalleryresource.h>
 #include <qgallerytype.h>
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGalleryItemList*)
+Q_DECLARE_METATYPE(QGalleryResultSet*)
 
 class tst_QGalleryQueryRequest : public QObject
 {
@@ -65,7 +67,7 @@ private Q_SLOTS:
     void executeAsynchronous();
 };
 
-class QtGalleryTestResponse : public QGalleryAbstractResponse
+class QtGalleryTestResponse : public QGalleryResultSet
 {
     Q_OBJECT
 public:
@@ -75,29 +77,32 @@ public:
             finish(result, idle);
     }
 
-    QStringList propertyNames() const { return QStringList(); }
     int propertyKey(const QString &) const { return -1; }
     QGalleryProperty::Attributes propertyAttributes(int) const {
         return QGalleryProperty::Attributes(); }
     QVariant::Type propertyType(int) const { return QVariant::Invalid; }
 
-    int count() const { return 0; }
+    int itemCount() const { return 0; }
 
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QString parentId(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int) const { return ItemStatus(); }
+    int currentIndex() const { return m_currentIndex; }
 
-    QVariant metaData(int, int) const { return QVariant(); }
-    void setMetaData(int, int, const QVariant &) {}
+    bool seek(int index, bool relative) {
+        m_currentIndex = relative ? m_currentIndex + index : index; return false; }
+
+    QVariant itemId() const { return QVariant(); }
+    QUrl itemUrl() const { return QUrl(); }
+    QString itemType() const { return QString(); }
+    QList<QGalleryResource> resources() const { return QList<QGalleryResource>(); }
+
+    QVariant metaData(int) const { return QVariant(); }
+    bool setMetaData(int, const QVariant &) { return false; }
 
     bool waitForFinished(int) { return false; }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
 
 private:
+    int m_currentIndex;
 };
 
 class QtTestGallery : public QAbstractGallery
@@ -126,7 +131,7 @@ private:
 
 void tst_QGalleryQueryRequest::initTestCase()
 {
-    qRegisterMetaType<QGalleryItemList*>();
+    qRegisterMetaType<QGalleryResultSet*>();
 }
 
 void tst_QGalleryQueryRequest::properties()
@@ -144,11 +149,11 @@ void tst_QGalleryQueryRequest::properties()
     QCOMPARE(request.propertyNames(), QStringList());
     QCOMPARE(request.sortPropertyNames(), QStringList());
     QCOMPARE(request.isLive(), false);
-    QCOMPARE(request.initialCursorPosition(), 0);
-    QCOMPARE(request.minimumPagedItems(), 200);
-    QCOMPARE(request.itemType(), QString());
+    QCOMPARE(request.offset(), 0);
+    QCOMPARE(request.limit(), 0);
+    QCOMPARE(request.rootType(), QString());
     QCOMPARE(request.scope(), QGalleryAbstractRequest::AllDescendants);
-    QCOMPARE(request.scopeItemId(), QVariant());
+    QCOMPARE(request.rootItem(), QVariant());
     QCOMPARE(request.filter(), QGalleryFilter());
 
     request.setPropertyNames(QStringList()
@@ -176,32 +181,32 @@ void tst_QGalleryQueryRequest::properties()
     request.setLive(true);
     QCOMPARE(request.isLive(), true);
 
-    request.setInitialCursorPosition(140);
-    QCOMPARE(request.initialCursorPosition(), 140);
+    request.setOffset(140);
+    QCOMPARE(request.offset(), 140);
 
-    request.setInitialCursorPosition(-93);
-    QCOMPARE(request.initialCursorPosition(), -93);
+    request.setOffset(-93);
+    QCOMPARE(request.offset(), 0);
 
-    request.setMinimumPagedItems(45);
-    QCOMPARE(request.minimumPagedItems(), 45);
+    request.setLimit(45);
+    QCOMPARE(request.limit(), 45);
 
-    request.setMinimumPagedItems(-3);
-    QCOMPARE(request.minimumPagedItems(), -3);
+    request.setLimit(-3);
+    QCOMPARE(request.limit(), 0);
 
-    request.setItemType(audioType);
-    QCOMPARE(request.itemType(), QString::fromLatin1("Audio"));
+    request.setRootType(audioType);
+    QCOMPARE(request.rootType(), QString::fromLatin1("Audio"));
 
-    request.setItemType(videoType.name());
-    QCOMPARE(request.itemType(), QString::fromLatin1("Video"));
+    request.setRootType(videoType.name());
+    QCOMPARE(request.rootType(), QString::fromLatin1("Video"));
 
     request.setScope(QGalleryAbstractRequest::DirectDescendants);
     QCOMPARE(request.scope(), QGalleryAbstractRequest::DirectDescendants);
 
-    request.setScopeItemId(QVariant(76));
-    QCOMPARE(request.scopeItemId(), QVariant(76));
+    request.setRootItem(QVariant(76));
+    QCOMPARE(request.rootItem(), QVariant(76));
 
-    request.setScopeItemId(QVariant(QLatin1String("65")));
-    QCOMPARE(request.scopeItemId(), QVariant(QLatin1String("65")));
+    request.setRootItem(QVariant(QLatin1String("65")));
+    QCOMPARE(request.rootItem(), QVariant(QLatin1String("65")));
 
     request.setFilter(filter);
     QCOMPARE(request.filter(), filter);
@@ -213,27 +218,27 @@ void tst_QGalleryQueryRequest::executeSynchronous()
     gallery.setResult(QGalleryAbstractRequest::ConnectionError);
 
     QGalleryQueryRequest request(&gallery);
-    QVERIFY(request.items() == 0);
+    QVERIFY(request.resultSet() == 0);
 
-    QSignalSpy spy(&request, SIGNAL(itemsChanged(QGalleryItemList*)));
+    QSignalSpy spy(&request, SIGNAL(resultSetChanged(QGalleryResultSet*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
     QCOMPARE(spy.count(), 0);
-    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.items()) == 0);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) == 0);
 
     gallery.setResult(QGalleryAbstractRequest::Succeeded);
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(spy.count(), 1);
-    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.items()) != 0);
-    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 2);
-    QVERIFY(request.items() == 0);
-    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
+    QVERIFY(request.resultSet() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
 }
 
 void tst_QGalleryQueryRequest::executeAsynchronous()
@@ -242,27 +247,27 @@ void tst_QGalleryQueryRequest::executeAsynchronous()
     gallery.setResult(QGalleryAbstractRequest::NoResult);
 
     QGalleryQueryRequest request(&gallery);
-    QVERIFY(request.items() == 0);
+    QVERIFY(request.resultSet() == 0);
 
-    QSignalSpy spy(&request, SIGNAL(itemsChanged(QGalleryItemList*)));
+    QSignalSpy spy(&request, SIGNAL(resultSetChanged(QGalleryResultSet*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 1);
-    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.items()) != 0);
-    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
 
-    qobject_cast<QtGalleryTestResponse *>(request.items())->doFinish(
+    qobject_cast<QtGalleryTestResponse *>(request.resultSet())->doFinish(
             QGalleryAbstractRequest::Succeeded, false);
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(spy.count(), 1);
-    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.items()) != 0);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) != 0);
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 2);
-    QVERIFY(request.items() == 0);
-    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
+    QVERIFY(request.resultSet() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryResultSet*>(), request.resultSet());
 }
 
 QTEST_MAIN(tst_QGalleryQueryRequest)

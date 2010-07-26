@@ -52,8 +52,8 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
-class QGalleryItemList;
 class QGalleryQueryRequest;
+class QGalleryResultSet;
 QTM_END_NAMESPACE
 
 
@@ -85,9 +85,8 @@ private:
     void insertRow(int index, const QString &propertyName, const QString &label);
     void updateValue(int widgetIndex, int propertyKey);
 
-    QDocumentGallery *gallery;
     QGalleryQueryRequest *request;
-    QGalleryItemList *items;
+    QGalleryResultSet *resultSet;
     QList<int> propertyKeys;
     QList<QWidget *> widgets;
 };

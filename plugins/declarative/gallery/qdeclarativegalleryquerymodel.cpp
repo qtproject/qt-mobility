@@ -43,6 +43,8 @@
 
 #include "qdeclarativegalleryfilter.h"
 
+#include <qgalleryresultset.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -105,10 +107,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     : QAbstractListModel(parent)
-    , m_itemList(0)
-    , m_lowerOffset(0)
-    , m_upperOffset(0)
-    , m_updateCursor(true)
+    , m_resultSet(0)
     , m_complete(false)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
@@ -121,8 +120,8 @@ QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
     connect(&m_request, SIGNAL(failed(int)), this, SIGNAL(failed(int)));
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
-    connect(&m_request, SIGNAL(itemsChanged(QGalleryItemList*)),
-            this, SLOT(_q_setItemList(QGalleryItemList*)));
+    connect(&m_request, SIGNAL(resultSetChanged(QGalleryResultSet*)),
+            this, SLOT(_q_setResultSet(QGalleryResultSet*)));
 }
 
 QDeclarativeGalleryQueryModel::~QDeclarativeGalleryQueryModel()
@@ -306,8 +305,6 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 void QDeclarativeGalleryQueryModel::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
-    if (m_itemList)
-        m_request.setInitialCursorPosition(!m_updateCursor ? m_itemList->cursorPosition() : 0);
     m_request.execute();
 }
 
@@ -320,25 +317,22 @@ int QDeclarativeGalleryQueryModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
+        if (m_resultSet->currentIndex() != index.row())
+            m_resultSet->seek(index.row(), false);
+
         switch (role) {
         case ItemId:
-            return m_itemList->id(index.row());
+            return m_resultSet->itemId();
         case ItemType:
-            return m_itemList->type(index.row());
+            return m_resultSet->itemType();
         case ItemUrl:
-            return m_itemList->url(index.row());
-        case Reading:
-            return bool(m_itemList->status(index.row()) & QGalleryItemList::Reading);
-        case Writing:
-            return bool(m_itemList->status(index.row()) & QGalleryItemList::Writing);
-        case Available:
-            return !bool(m_itemList->status(index.row()) & QGalleryItemList::OutOfRange);
+            return m_resultSet->itemUrl();
         default:
             {
-                QVariant value = m_itemList->metaData(index.row(), role - MetaDataOffset);
+                QVariant value = m_resultSet->metaData(role - MetaDataOffset);
 
                 return value.isNull()
-                        ?  QVariant(m_itemList->propertyType(role - MetaDataOffset))
+                        ? QVariant(m_resultSet->propertyType(role - MetaDataOffset))
                         : value;
             }
         }
@@ -349,12 +343,11 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
 
 bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid()
-            && (role -= MetaDataOffset) > 0
-            && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
-        m_itemList->setMetaData(index.row(), role, value);
+    if (index.isValid() && (role -= MetaDataOffset) > 0) {
+        if (m_resultSet->currentIndex() != index.row() && !m_resultSet->seek(index.row(), false))
+            return false;
 
-        return true;
+        return m_resultSet->setMetaData(role, value);
     } else {
         return false;
     }
@@ -363,59 +356,42 @@ bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVar
 
 QModelIndex QDeclarativeGalleryQueryModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (!parent.isValid() && row >= 0 && row < m_rowCount && column == 0) {
-        if (m_updateCursor && m_lowerOffset != m_upperOffset) {
-            const int position = m_itemList->cursorPosition();
-
-            if (row - m_lowerOffset < position && position > 0) {
-                m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
-
-                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
-            } else if (row + m_upperOffset > position) {
-                m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
-
-                emit const_cast<QDeclarativeGalleryQueryModel *>(this)->cursorPositionChanged();
-            }
-        }
-
-        return createIndex(row, column);
-    } else {
-        return QModelIndex();
-    }
+    return !parent.isValid() && row >= 0 && row < m_rowCount && column == 0
+            ? createIndex(row, column)
+            : QModelIndex();
 }
 
-void QDeclarativeGalleryQueryModel::_q_setItemList(QGalleryItemList *list)
+void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet)
 {
-    m_itemList = list;
+    m_resultSet = resultSet;
 
-    if (m_itemList) {
+    if (m_resultSet) {
         QHash<int, QByteArray> roleNames;
 
-        QStringList propertyNames = m_itemList->propertyNames();
+        QStringList propertyNames = m_request.propertyNames();
 
         typedef QStringList::const_iterator iterator;
-        for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd(); it != end; ++it)
-            roleNames.insert(m_itemList->propertyKey(*it) + MetaDataOffset, it->toLatin1());
+        for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd();
+                it != end;
+                ++it)
+            roleNames.insert(m_resultSet->propertyKey(*it) + MetaDataOffset, it->toLatin1());
 
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
         roleNames.insert(ItemUrl, QByteArray("url"));
-        roleNames.insert(Reading, QByteArray("reading"));
-        roleNames.insert(Writing, QByteArray("writing"));
-        roleNames.insert(Available, QByteArray("available"));
 
         setRoleNames(roleNames);
 
-        connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
-        connect(m_itemList, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
-        connect(m_itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_itemsMoved(int,int,int)));
-        connect(m_itemList, SIGNAL(statusChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
-        connect(m_itemList, SIGNAL(metaDataChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
+        connect(m_resultSet, SIGNAL(itemsInserted(int,int)),
+                this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_resultSet, SIGNAL(itemsRemoved(int,int)),
+                this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_resultSet, SIGNAL(itemsMoved(int,int,int)),
+                this, SLOT(_q_itemsMoved(int,int,int)));
+        connect(m_resultSet, SIGNAL(metaDataChanged(int,int)),
+                this, SLOT(_q_itemsChanged(int,int)));
 
-        m_lowerOffset = m_itemList->minimumPagedItems() / 4;
-        m_upperOffset = m_lowerOffset - m_itemList->minimumPagedItems();
-
-        m_rowCount = m_itemList->count();
+        m_rowCount = m_resultSet->itemCount();
     } else {
         m_rowCount = 0;
     }

@@ -44,11 +44,13 @@
 
 #include "qgalleryabstractrequest.h"
 
-#include "qgalleryfilter.h"
+#include <qgalleryproperty.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryItemList;
+class QGalleryFilter;
+class QGalleryResource;
+class QGalleryResultSet;
 
 class QGalleryQueryRequestPrivate;
 
@@ -59,13 +61,17 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
-    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset)
+    Q_PROPERTY(int limit READ limit WRITE setLimit)
+    Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
+    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
-    Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QVariant itemId READ itemId NOTIFY currentItemChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY currentItemChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY currentItemChanged)
+    Q_PROPERTY(QList<QGalleryResource> resources READ resources NOTIFY currentItemChanged)
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE seek NOTIFY currentItemChanged)
 public:
     explicit QGalleryQueryRequest(QObject *parent = 0);
     explicit QGalleryQueryRequest(QAbstractGallery *gallery, QObject *parent = 0);
@@ -80,28 +86,51 @@ public:
     bool isLive() const;
     void setLive(bool live);
 
-    int initialCursorPosition() const;
-    void setInitialCursorPosition(int index);
+    int offset() const;
+    void setOffset(int offset);
 
-    int minimumPagedItems() const;
-    void setMinimumPagedItems(int size);
+    int limit() const;
+    void setLimit(int limit);
 
-    QString itemType() const;
-    void setItemType(const QString &type);
+    QString rootType() const;
+    void setRootType(const QString &itemType);
+
+    QVariant rootItem() const;
+    void setRootItem(const QVariant &itemId);
 
     QGalleryAbstractRequest::Scope scope() const;
     void setScope(QGalleryAbstractRequest::Scope scope);
 
-    QVariant scopeItemId() const;
-    void setScopeItemId(const QVariant &id);
-
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);
 
-    QGalleryItemList *items() const;
+    QGalleryResultSet *resultSet() const;
+
+    int propertyKey(const QString &property) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
+
+    int itemCount() const;
+
+    QVariant itemId() const;
+    QUrl itemUrl() const;
+    QString itemType() const;
+    QList<QGalleryResource> resources() const;
+
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
+
+    QVariant metaData(const QString &property) const;
+    bool setMetaData(const QString &property, const QVariant &value);
+
+    int currentIndex() const;
+    bool seek(int index, bool relative = false);
+    bool next();
+    bool previous();
 
 Q_SIGNALS:
-    void itemsChanged(QGalleryItemList *items);
+    void resultSetChanged(QGalleryResultSet *resultSet);
+    void currentItemChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);

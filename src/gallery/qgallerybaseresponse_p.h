@@ -65,22 +65,6 @@ public:
     explicit QGalleryBaseResponse(int result, QObject *parent = 0);
     ~QGalleryBaseResponse();
 
-    QStringList propertyNames() const;
-    int propertyKey(const QString &name) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
-    QVariant::Type propertyType(int key) const;
-
-    int count() const;
-
-    QVariant id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
-
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
-
     bool waitForFinished(int msecs);
 
 protected:

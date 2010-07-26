@@ -99,17 +99,15 @@ public:
 
     enum Type
     {
-        Item,
-        Url,
         Query,
-        Count,
         Remove
     };
 
     enum Scope
     {
         AllDescendants,
-        DirectDescendants
+        DirectDescendants,
+        RootItem
     };
 
     explicit QGalleryAbstractRequest(Type type, QObject *parent = 0);

@@ -44,6 +44,7 @@
 #include "qgallerytrackerschema_p.h"
 
 #include <QtCore/qdatetime.h>
+#include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
 QTM_BEGIN_NAMESPACE

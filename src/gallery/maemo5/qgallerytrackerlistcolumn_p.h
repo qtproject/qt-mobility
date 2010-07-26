@@ -53,9 +53,12 @@
 // We mean it.
 //
 
-#include <qgalleryabstractresponse.h>
+#include <qmobilityglobal.h>
 
 #include <QtCore/qshareddata.h>
+#include <QtCore/qvariant.h>
+#include <QtCore/qvector.h>
+
 
 QTM_BEGIN_NAMESPACE
 

@@ -55,8 +55,8 @@
 
 
 #include "qgallerytrackeritemlist_p.h"
+#include "qgalleryresultset_p.h"
 
-#include "qgalleryabstractresponse_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
 #include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
@@ -70,7 +70,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerItemListPrivate : public QGalleryAbstractResponsePrivate
+class QGalleryTrackerItemListPrivate : public QGalleryResultSetPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerItemList)
 public:
@@ -227,8 +227,8 @@ public:
     QGalleryTrackerItemListPrivate(
             const QGalleryTrackerItemListArguments &arguments,
             bool live,
-            int cursorPosition,
-            int minimumPagedItems)
+            int offset,
+            int limit)
         : idColumn(arguments.idColumn)
         , urlColumn(arguments.urlColumn)
         , typeColumn(arguments.typeColumn)
@@ -237,12 +237,12 @@ public:
         , valueOffset(arguments.valueOffset)
         , compositeOffset(arguments.valueOffset + arguments.valueColumns.count())
         , aliasOffset(compositeOffset + arguments.compositeColumns.count())
-        , imageOffset(aliasOffset + arguments.aliasColumns.count())
-        , columnCount(imageOffset + arguments.imageColumns.count())
-        , queryLimit(qMax(256, (4 * minimumPagedItems + 63) & ~63))
+        , columnCount(aliasOffset + arguments.aliasColumns.count())
+        , queryOffset(offset)
+        , queryLimit(limit)
+        , currentRow(0)
+        , currentIndex(0)
         , rowCount(0)
-        , imageCacheIndex(0)
-        , imageCacheLimit(0)
         , queryInterface(arguments.queryInterface)
         , queryMethod(arguments.queryMethod)
         , queryArguments(arguments.queryArguments)
@@ -252,22 +252,17 @@ public:
         , valueColumns(arguments.valueColumns)
         , compositeColumns(arguments.compositeColumns)
         , aliasColumns(arguments.aliasColumns)
-        , imageColumns(arguments.imageColumns)
         , sortCriteria(arguments.sortCriteria)
         , resourceKeys(arguments.resourceKeys)
     {
         if (live)
             flags |= Live;
-
-        QGalleryItemListPrivate::cursorPosition = cursorPosition;
-        QGalleryItemListPrivate::minimumPagedItems = (minimumPagedItems + 15) & ~15;
     }
 
     ~QGalleryTrackerItemListPrivate()
     {
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
-        qDeleteAll(imageColumns);
     }
 
     Flags flags;
@@ -284,22 +279,22 @@ public:
         int tableWidth;
     };
     const int aliasOffset;
-    const int imageOffset;
     const int columnCount;
+    const int queryOffset;
     const int queryLimit;
+    QVector<QVariant>::const_iterator currentRow;
+    int currentIndex;
     int rowCount;
-    int imageCacheIndex;
-    int imageCacheLimit;
     const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
     const QStringList propertyNames;
+    const QList<int> propertyKeys;
     const QVector<QGalleryProperty::Attributes> propertyAttributes;
     const QVector<QVariant::Type> propertyTypes;
     const QVector<QGalleryTrackerValueColumn *> valueColumns;
     const QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     const QVector<int> aliasColumns;
-    const QVector<QGalleryTrackerImageColumn *> imageColumns;
     const QVector<QGalleryTrackerSortCriteria> sortCriteria;
     const QVector<int> resourceKeys;
     Cache rCache;   // Remove cache.
@@ -324,11 +319,6 @@ public:
             QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
         }
     }
-    
-    void removeHeadImages(int count);
-    void removeTailImages(int count);
-    void insertHeadImages(int index, int count);
-    void insertTailImages(int index, int count);
 
     void query(int index);
 
@@ -363,7 +353,6 @@ public:
 
     void _q_queryFinished(QDBusPendingCallWatcher *watcher);
     void _q_parseFinished();
-    void _q_imagesLoaded(int index, const QList<uint> &ids);
     void _q_editFinished(QGalleryTrackerMetaDataEdit *edit);
 };
 
