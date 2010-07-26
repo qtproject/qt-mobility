@@ -46,23 +46,26 @@
 
     \tableofcontents
 
-    This is a \bold {Technology Preview} and includes new APIs that are
-    included in order to encourage feedback from the community.
+    This is a Technology Preview including several new APIs primarily intended
+    for Mobile application development.
+    
+    The advantage of sharing this work with you, so early in the development
+    cycle, is that you now have the opportunity to review and provide your
+    feedback to us. With your feedback we will together build high quality
+    robust new APIs for Qt.
+    
+    Although we anticipate that the new APIs will be of most advantage to those
+    developers embarked on mobile application development, in many cases they may
+    be equally relevant for other development usage including, in some cases,
+    desktop application development.
 
-    Qt Mobility Project delivers a set of new APIs to Qt with features
-    that are well known from the mobile device world, in particular phones.
-    However, these APIs allow the developer to use these features with ease
-    from one framework and apply them to phones, netbooks and non-mobile
-    personal computers. The framework not only improves many aspects of a
-    mobile experience, because it improves the use of these technologies,
-    but has applicability beyond the mobile device arena.
-
+    
     \section1 Overview
 
-    \section2 Introducing the Qt Mobility APIs
+    \section2 Introducing the Qt Mobility Project APIs
 
-    Qt Mobility covers a wide range of features and technologies. It is best
-    regarded not as a single API but as a collection of APIs or frameworks.
+    The Qt Mobility project covers a diverse range of features and technologies.
+    It is not a single API but a collection of APIs or frameworks.
 
     This release contains the following APIs:
 
@@ -94,7 +97,7 @@
     
     \section1 Namespace
 
-    The QtMobility APIs are placed into the \i{QtMobility} namespace, with
+    The Qt Mobility project APIs are placed into the \i{QtMobility} namespace, with
     the important exception of Multimedia. This is done to facilitate the
     future migration of Mobility APIs into Qt.
     
