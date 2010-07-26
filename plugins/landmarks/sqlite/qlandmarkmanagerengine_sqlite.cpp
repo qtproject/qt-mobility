@@ -1253,8 +1253,20 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
     else
         bindValues.insert("url", QVariant());
 
+    QString q1;
     QStringList keys = bindValues.keys();
-    QString q1 = QString("REPLACE INTO landmark (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(", :")));
+
+    if (update) {
+        QStringList placeholderKeys = keys;
+        for (int i=0; i < placeholderKeys.count(); ++i) {
+            placeholderKeys[i] = placeholderKeys[i] + "= :" + placeholderKeys[i];
+        }
+        q1 = QString("UPDATE landmark SET %1 WHERE id = :lmId;").arg(placeholderKeys.join(","));
+        bindValues.insert("lmId", landmark->landmarkId().localId());
+    } else {
+        q1 = QString("REPLACE INTO landmark (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(", :")));
+    }
+
     QSqlQuery query1(db);
 
     if (!query1.prepare(q1)) {
@@ -1280,7 +1292,10 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
 
     QLandmarkId id;
     id.setManagerUri(managerUri);
-    id.setLocalId(query1.lastInsertId().toString());
+    if (update)
+        id.setLocalId(landmark->landmarkId().localId());
+    else
+        id.setLocalId(query1.lastInsertId().toString());
 
     QStringList lmCats;
 
@@ -2318,7 +2333,6 @@ void QueryRun::run()
         if (!db.open()) {
             qWarning() << db.lastError().text();
         }
-
 
         error = QLandmarkManager::NoError;
         errorString ="";
@@ -3396,7 +3410,7 @@ void QLandmarkManagerEngineSqlite::databaseChanged()
         emit landmarksAdded(addedLandmarkIds);
 
     if (changedLandmarkIds.count() > 0)
-        emit landmarksChanged(addedLandmarkIds);
+        emit landmarksChanged(changedLandmarkIds);
 
     if (removedLandmarkIds.count() > 0)
         emit landmarksRemoved(removedLandmarkIds);
