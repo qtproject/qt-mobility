@@ -111,18 +111,20 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  \fn void QVersitContactImporterPropertyHandlerV2::propertyProcessed(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, const QContact& contact, QList<QContactDetail>* updatedDetails)
+  \fn void QVersitContactImporterPropertyHandlerV2::propertyProcessed(const QVersitDocument& document, const QVersitProperty& property, const QContact& contact, bool* alreadyProcessed, QList<QContactDetail>* updatedDetails)
   Process \a property and provide a list of updated details by adding them to \a updatedDetails.
 
   This function is called on every QVersitProperty encountered during an import, after the property
   has been processed by the QVersitContactImporter.  An implementation of this function can be made
   to provide support for vCard properties not supported by QVersitContactImporter.
 
-  The supplied \a document is the container for the \a property.  \a alreadyProcessed is true if the
-  QVersitContactImporter was successful in processing the property.  \a contact holds the state of
-  the contact before the property was processed by the importer.  \a updatedDetails is initially
-  filled with a list of details that the importer will update, and can be modified (by removing,
-  modifying or adding details to the list)
+  The supplied \a document is the container for the \a property.  \a alreadyProcessed is true if
+  the QVersitContactImporter or another handler was successful in processing the property.  If it is
+  false and the handler processes the property, it should be set to true to inform later handlers
+  that the property requires no further processing.  \a contact holds the state of the contact
+  before the property was processed by the importer.  \a updatedDetails is initially filled with a
+  list of details that the importer will update, and can be modified (by removing, modifying or
+  adding details to the list)
  */
 
 /*!

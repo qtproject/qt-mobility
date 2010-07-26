@@ -75,8 +75,8 @@ public:
     virtual ~QVersitContactExporterDetailHandlerV2() {}
     virtual void detailProcessed(const QContact& contact,
                                  const QContactDetail& detail,
-                                 const QSet<QString>& processedFields,
                                  const QVersitDocument& document,
+                                 QSet<QString>* processedFields,
                                  QList<QVersitProperty>* toBeRemoved,
                                  QList<QVersitProperty>* toBeAdded) = 0;
     virtual void contactProcessed(const QContact& contact,

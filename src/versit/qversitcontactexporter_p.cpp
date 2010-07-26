@@ -190,13 +190,13 @@ bool QVersitContactExporterPrivate::exportContact(
 
         // run plugin handlers
         foreach (QVersitContactExporterDetailHandlerV2* handler, mPluginDetailHandlers) {
-            handler->detailProcessed(contact, detail, processedFields, document,
-                                     &removedProperties, &generatedProperties);
+            handler->detailProcessed(contact, detail, document,
+                                     &processedFields, &removedProperties, &generatedProperties);
         }
         // run the v2 handler, if set
         if (mDetailHandler2 && mDetailHandlerVersion > 1) {
-            mDetailHandler2->detailProcessed(contact, detail, processedFields, document,
-                                             &removedProperties, &generatedProperties);
+            mDetailHandler2->detailProcessed(contact, detail, document,
+                                             &processedFields, &removedProperties, &generatedProperties);
         }
 
         foreach(const QVersitProperty& property, removedProperties) {

@@ -117,15 +117,17 @@ QTM_USE_NAMESPACE
   provide support for QContactDetails not supported by QVersitContactExporter.
 
   The supplied \a contact is the container for the \a detail.  \a processedFields contains a list of
-  fields in the \a detail that were considered by the QVersitContactExporter in processing the
-  detail.  \a document holds the state of the document before the detail was processed by the
-  exporter.
+  fields in the \a detail that were considered by the QVersitContactExporter or another handler in
+  processing the detail.  \a document holds the state of the document before the detail was
+  processed by the exporter.
   
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the
   document.  If a property is to be modified in the document, the old version will appear in the
-  \a toBeRemoved list and the new version will appear in the \a toBeAdded list.
+  \a toBeRemoved list and the new version will appear in the \a toBeAdded list.  When the handler
+  uses a field from the detail, it should update the processedFields set to reflect this to inform
+  later handlers that the field has already been processed.
 
   After the handler returns control back to the exporter, the properties in the \a toBeRemoved
   list will be removed and the properties in the \a toBeAdded list will be appended to the document.

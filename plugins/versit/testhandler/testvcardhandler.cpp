@@ -49,15 +49,15 @@ class TestVCardHandler : public QVersitContactHandler
 public:
     void propertyProcessed(const QVersitDocument& document,
                            const QVersitProperty& property,
-                           bool alreadyProcessed,
                            const QContact& contact,
+                           bool* alreadyProcessed,
                            QList<QContactDetail>* updatedDetails);
     void documentProcessed(const QVersitDocument& document,
                            QContact* contact);
     void detailProcessed(const QContact& contact,
                          const QContactDetail& detail,
-                         const QSet<QString>& processedFields,
                          const QVersitDocument& document,
+                         QSet<QString>* processedFields,
                          QList<QVersitProperty>* toBeRemoved,
                          QList<QVersitProperty>* toBeAdded);
     void contactProcessed(const QContact& contact,
@@ -86,8 +86,8 @@ Q_EXPORT_PLUGIN2(qtversit_testhandler, TestVCardHandlerFactory);
 
 void TestVCardHandler::propertyProcessed(const QVersitDocument& document,
                                          const QVersitProperty& property,
-                                         bool alreadyProcessed,
                                          const QContact& contact,
+                                         bool* alreadyProcessed,
                                          QList<QContactDetail>* updatedDetails)
 {
     QContactDetail detail(QLatin1String("TestDetail"));
@@ -105,8 +105,8 @@ void TestVCardHandler::documentProcessed(const QVersitDocument& document,
 
 void TestVCardHandler::detailProcessed(const QContact& contact,
                                        const QContactDetail& detail,
-                                       const QSet<QString>& processedFields,
                                        const QVersitDocument& document,
+                                       QSet<QString>* processedFields,
                                        QList<QVersitProperty>* toBeRemoved,
                                        QList<QVersitProperty>* toBeAdded)
 {

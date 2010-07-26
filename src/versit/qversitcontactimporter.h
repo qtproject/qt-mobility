@@ -77,8 +77,8 @@ public:
     virtual ~QVersitContactImporterPropertyHandlerV2() {}
     virtual void propertyProcessed(const QVersitDocument& document,
                                    const QVersitProperty& property,
-                                   bool alreadyProcessed,
                                    const QContact& contact,
+                                   bool *alreadyProcessed,
                                    QList<QContactDetail>* updatedDetails) = 0;
     virtual void documentProcessed(const QVersitDocument& document,
                                    QContact* contact) = 0;
