@@ -46,6 +46,22 @@
 
 QTM_USE_NAMESPACE
 
+/*!
+   A less-than function for factory indices (see QVersitContactHandlerFactory::index()).
+   Positive values come first (ascendingly), then zero, then negative values (ascendingly).
+ */
+bool factoryLessThan(QVersitContactHandlerFactory* a, QVersitContactHandlerFactory* b) {
+    if ((a->index() > 0 && b->index() > 0)
+            || (a->index() < 0 && b->index() < 0))
+        // same sign
+        return a->index() < b->index();
+    else
+        // a is zero
+        // or b is zero
+        // or opposite sign
+        return b->index() < a->index();
+}
+
 QVersitPluginLoader* QVersitPluginLoader::mInstance = NULL;
 
 /*!
@@ -76,10 +92,12 @@ void QVersitPluginLoader::loadPlugins() {
             QPluginLoader qpl(pluginPath);
             QVersitContactHandlerFactory* handler =
                 qobject_cast<QVersitContactHandlerFactory*>(qpl.instance());
-            if (handler && !mFactories.contains(handler->name())) {
-                mFactories.insert(handler->name(), handler);
+            if (handler && !mLoadedFactories.contains(handler->name())) {
+                mLoadedFactories.insert(handler->name());
+                mFactories.append(handler);
             }
         }
+        qSort(mFactories.begin(), mFactories.end(), factoryLessThan);
     }
 }
 

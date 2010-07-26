@@ -56,6 +56,7 @@ class BackupVCardHandlerFactory : public QObject, public QVersitContactHandlerFa
 public:
     QSet<QString> profiles() const;
     QString name() const;
+    int index() const;
     QVersitContactHandler* createHandler() const;
 };
 

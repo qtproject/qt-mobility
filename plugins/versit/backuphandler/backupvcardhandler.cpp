@@ -126,6 +126,12 @@ QString BackupVCardHandlerFactory::name() const
     return QLatin1String("com.nokia.qt.mobility.versit.backuphandler");
 }
 
+int BackupVCardHandlerFactory::index() const
+{
+    // Prefer to run this plugin last.
+    return -1;
+}
+
 QVersitContactHandler* BackupVCardHandlerFactory::createHandler() const
 {
     return new BackupVCardHandler();

@@ -83,6 +83,22 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileBackup, "Backup");
  */
 
 /*!
+  \fn int index() const
+  This function should return an index that helps with determining the order in which to run the
+  plugins.  Plugins are run in the following order:
+  \list
+  \o Positively-indexed, ascending
+  \o Zero-indexed
+  \o Negatively-indexed, ascending
+  \endlist
+  For example, plugins with an index of 1 are run first and plugins of index -1 are run last.
+  If more than one plugin share an index, the order of execution between them is undefined.
+
+  By default, this returns 0, which is recommended for plugins with no special ordering
+  requirements.
+ */
+
+/*!
   \fn QVersitContactHandler* QVersitContactHandlerFactory::createHandler() const
   This function is called by the Versit importer or exporter class to create an instance of the
   handler provided by this factory.

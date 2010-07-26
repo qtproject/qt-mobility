@@ -56,6 +56,7 @@ public:
     virtual ~QVersitContactHandlerFactory() {}
     virtual QSet<QString> profiles() const { return QSet<QString>(); }
     virtual QString name() const = 0;
+    virtual int index() const { return 0; }
     virtual QVersitContactHandler* createHandler() const = 0;
 };
 

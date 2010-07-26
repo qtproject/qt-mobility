@@ -64,7 +64,8 @@ class QVersitPluginLoader
         void loadPlugins();
 
         static QVersitPluginLoader* mInstance;
-        QMap<QString, QVersitContactHandlerFactory*> mFactories;
+        QSet<QString> mLoadedFactories;
+        QList<QVersitContactHandlerFactory*> mFactories;
         QStringList mPluginPaths;
 };
 
