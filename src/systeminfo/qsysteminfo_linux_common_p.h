@@ -59,9 +59,15 @@
 #include <QHash>
 
 #include "qsysteminfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
+
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include "qhalservice_linux_p.h"
+#include <qhalservice_linux_p.h>
 #endif
 
 QT_BEGIN_HEADER
@@ -171,6 +177,14 @@ public:
 
     int displayBrightness(int screen);
     int colorDepth(int screen);
+
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject
@@ -186,10 +200,25 @@ public:
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+Q_SIGNALS:
+    void logicalDriveChanged(bool, const QString &);
 
 private:
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
+     QFileSystemWatcher *mtabWatcherA;
+     QFileSystemWatcher *mtabWatcherB;
+
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+#endif
+private Q_SLOTS:
+    void deviceChanged(const QString &path);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 };
 
@@ -218,6 +247,7 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

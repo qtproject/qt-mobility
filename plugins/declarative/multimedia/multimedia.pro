@@ -34,3 +34,8 @@ qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
+
+symbian {
+    TARGET.UID3 = 0x20021313
+    TARGET.EPOCALLOWDLLDATA=1
+}

@@ -46,6 +46,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorderControl
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -105,6 +106,11 @@ QMediaRecorderControl::~QMediaRecorderControl()
     \fn bool QMediaRecorderControl::setOutputLocation(const QUrl &location)
 
     Sets the output \a location and returns if this operation is successful.
+    If file at the output location already exists, it should be overwritten.
+
+    The \a location can be relative or empty;
+    in this case the service should use the system specific place and file naming scheme.
+    After recording has stated, QMediaRecorderControl::outputLocation() should return the actual output location.
 */
 
 /*!

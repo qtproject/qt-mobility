@@ -48,6 +48,7 @@ Rectangle {
 
     OrientationSensor {
         id: orientation
+        active: true
 
         onReadingChanged: {
             if (reading.orientation == OrientationReading.TopUp)
@@ -66,7 +67,6 @@ Rectangle {
                 content.state = "";
         }
     }
-    Component.onCompleted: orientation.start()
 
     Item {
         id: content

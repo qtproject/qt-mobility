@@ -77,6 +77,9 @@ QTM_BEGIN_NAMESPACE
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-details
  */
 
@@ -408,6 +411,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
    \sa locality(), setLocality()
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
+
 
 /*!
    \variable QContactAddress::FieldRegion
@@ -1786,6 +1790,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantNam
    \fn QContactOrganization::logoUrl() const
    Returns the url of the logo of the organization stored in this detail.
  */
+
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)

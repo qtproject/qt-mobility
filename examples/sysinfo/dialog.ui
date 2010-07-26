@@ -490,76 +490,172 @@
          </property>
         </widget>
        </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Bluetooth power:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QLabel" name="bluetoothPowerLabel">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="sysdisplaytab">
       <attribute name="title">
        <string>Display</string>
       </attribute>
-      <widget class="QLabel" name="label_40">
-       <property name="geometry">
-        <rect>
-         <x>14</x>
-         <y>30</y>
-         <width>67</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>brightness</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="brightnessLineEdit">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>30</y>
-         <width>114</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="mouseTracking">
-        <bool>false</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_41">
-       <property name="geometry">
-        <rect>
-         <x>14</x>
-         <y>60</y>
-         <width>72</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>color depth</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="colorDepthLineEdit">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>60</y>
-         <width>114</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="mouseTracking">
-        <bool>false</bool>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_40">
+           <property name="text">
+            <string>Brightness</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="brightnessLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_41">
+           <property name="text">
+            <string>Color Depth</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="colorDepthLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Orientation</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="orientationLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Contrast</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="contrastLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>DPI Width</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="dpiWidthLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>DPI Height</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="dpiHeightLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Physical Width</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="physicalWidthLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Physical Height</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="physicalHeightLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="sysmemorytab">
       <attribute name="title">

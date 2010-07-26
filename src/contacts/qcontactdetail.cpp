@@ -43,6 +43,7 @@
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,6 +80,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   \class QContactDetail
  
   \brief The QContactDetail class represents a single, complete detail about a contact.
+  \inmodule QtContacts
   \ingroup contacts-main
  
   All of the information for a contact is stored in one or more QContactDetail objects.
@@ -477,6 +479,49 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
     }
     dbg.nospace() << ')';
     return dbg.maybeSpace();
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+ * Writes \a detail to the stream \a out.
+ */
+QDataStream& operator<<(QDataStream& out, const QContactDetail& detail)
+{
+    quint8 formatVersion = 1; // Version of QDataStream format for QContactDetail
+    return out << formatVersion
+               << detail.definitionName()
+               << static_cast<quint32>(detail.accessConstraints())
+               << detail.variantValues();
+}
+
+/*!
+ * Reads a contact detail from stream \a in into \a detail.
+ */
+QDataStream& operator>>(QDataStream& in, QContactDetail& detail)
+{
+    detail = QContactDetail();
+    quint8 formatVersion;
+    in >> formatVersion;
+    if (formatVersion == 1) {
+        QString definitionName;
+        quint32 accessConstraintsInt;
+        QVariantMap values;
+        in >> definitionName >> accessConstraintsInt >> values;
+
+        detail = QContactDetail(definitionName);
+        QContactDetail::AccessConstraints accessConstraints(accessConstraintsInt);
+        detail.d->m_access = accessConstraints;
+
+        QMapIterator<QString, QVariant> it(values);
+        while (it.hasNext()) {
+            it.next();
+            detail.setValue(it.key(), it.value());
+        }
+    } else {
+        in.setStatus(QDataStream::ReadCorruptData);
+    }
+    return in;
 }
 #endif
 

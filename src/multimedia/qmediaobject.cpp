@@ -69,6 +69,7 @@ void QMediaObjectPrivate::_q_notify()
     \preliminary
     \brief The QMediaObject class provides a common base for multimedia objects.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     QMediaObject derived classes provide access to the functionality of a
@@ -99,7 +100,7 @@ QMediaObject::~QMediaObject()
 
 QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 {
-    return QtMultimediaKit::ServiceMissingError;
+    return d_func()->service == 0 ? QtMultimediaKit::ServiceMissingError : QtMultimediaKit::NoError;
 }
 
 /*!
@@ -108,7 +109,7 @@ QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 
 bool QMediaObject::isAvailable() const
 {
-    return false;
+    return d_func()->service != 0;
 }
 
 /*!

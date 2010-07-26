@@ -100,7 +100,7 @@ void QMLBackendMonitorAO::RunL()
         case KErrNone :
             //retrieve the triggerInfo corresponding to iTriggerInfo.iTriggerId
             triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                                   iTriggerInfo.iTriggerId);
+                              iTriggerInfo.iTriggerId);
             if (triggerInfo) {
                 //callback called only if generated for the current AO - Trigger ID
                 (triggerInfo->iParent)->handleTriggerEvent(iTriggerInfo.iFiredPositionInfo ,

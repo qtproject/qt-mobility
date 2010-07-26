@@ -140,12 +140,12 @@ public:
 /*!
     Service with support for camera use.
     Required Controls: QCameraControl
-    Optional Controls: QCameraExposureControl, QCameraFocusControl, QImageProcessingControl
-    Still Capture Controls: QImageCaptureControl
-    Recording Controls (QMediaRecorder):
+    Optional Controls: QCameraExposureControl, QCameraFocusControl, QCameraImageProcessingControl
+    Still Capture Controls: QCameraImageCaptureControl
+    Video Capture Controls (QMediaRecorder):
                         Required: QMediaRecorderControl
                         Recommended: QAudioEncoderControl, QVideoEncoderControl, QMediaContainerControl
-    Viewfinder Video Output Controls (used by QWideoWidget and QGraphicsVideoItem):
+    Viewfinder Video Output Controls (used by QCameraViewfinder and QGraphicsVideoItem):
                         Required: QVideoOutputControl
                         Optional: QVideoWindowControl, QVideoRendererControl, QVideoWidgetControl
 */

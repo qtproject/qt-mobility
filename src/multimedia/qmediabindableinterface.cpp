@@ -45,6 +45,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaBindableInterface
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary

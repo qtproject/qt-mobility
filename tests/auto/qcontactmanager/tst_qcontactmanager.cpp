@@ -95,6 +95,7 @@ QTM_USE_NAMESPACE
 #define QCONTACTMANAGER_REMOVE_VERSIONS_FROM_URI(params)  params.remove(QString::fromAscii(QTCONTACTS_VERSION_NAME)); \
                                                           params.remove(QString::fromAscii(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))
 
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -789,6 +790,8 @@ void tst_QContactManager::add()
             if (def.name() == QContactGuid::DefinitionName)
                 continue;
             if (def.name() == QContactOnlineAccount::DefinitionName)
+                continue;
+	    if (def.name() == QContactPresence::DefinitionName)
                 continue;
         }
 
@@ -2543,8 +2546,16 @@ void tst_QContactManager::actionPreferences()
     c.saveDetail(&p3);
     c.saveDetail(&u);
 
+    // set a preference for dialing a particular saved phonenumber.
+    c.setPreferredDetail("Dial", p2);
+
     QVERIFY(cm->saveContact(&c));          // save the contact
     QContact loaded = cm->contact(c.id().localId()); // reload the contact
+
+    // test that the preference was saved correctly.
+    QContactDetail pref = loaded.preferredDetail("Dial");
+    QVERIFY(pref == p2);
+
     cm->removeContact(c.id().localId());
 }
 

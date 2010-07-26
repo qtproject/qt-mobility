@@ -42,6 +42,17 @@
 #ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
 #define QGEOSATELLITEINFOSOURCE_MAEMO_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
 #include "dbuscomm_maemo_p.h"
@@ -70,11 +81,13 @@ private Q_SLOTS:
     void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
     void onServiceDisconnect();
     void onServiceConnect();
+    void requestTimerExpired();
 
 private:
     DBusComm* dbusComm;
-    bool registered;
     bool running;
+    bool satInViewSeen;
+    QTimer* requestTimer; 
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 

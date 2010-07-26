@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include "../../../src/publishsubscribe/psmapperserver_symbian/qcrmlparser_p.h"
 
 #include <qmobilityglobal.h>
