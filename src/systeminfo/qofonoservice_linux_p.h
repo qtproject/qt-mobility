@@ -138,7 +138,8 @@ public:
     bool isOnline();
     QString getName();
     QStringList getFeatures(); //sms, sim
-    QString getInterfaces();
+    QStringList getInterfaces();
+    QString defaultInterface();
 
 protected:
     void connectNotify(const char *signal);

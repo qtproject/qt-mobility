@@ -356,6 +356,9 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+#endif
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {

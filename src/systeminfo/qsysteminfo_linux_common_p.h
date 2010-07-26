@@ -181,6 +181,9 @@ protected:
     QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
     QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
+    QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
+
+
 #endif
 
 #endif

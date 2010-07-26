@@ -79,8 +79,10 @@ QList <QDBusObjectPath> QOfonoManagerInterface::getModems()
 QDBusObjectPath QOfonoManagerInterface::defaultModem()
 {
     QList<QDBusObjectPath> modems = getModems();
-    if(modems.count() > 0) {
-        return modems.at(0);
+    foreach(const QDBusObjectPath modem, modems) {
+        QOfonoModemInterface device(modem.path());
+        if(device.isPowered() && device.isOnline())
+        return modem;;
     }
     return QDBusObjectPath();
 }
@@ -192,10 +194,18 @@ QStringList QOfonoModemInterface::getFeatures()
     return qdbus_cast<QStringList>(var);
 }
 
-QString QOfonoModemInterface::getInterfaces()
+QStringList QOfonoModemInterface::getInterfaces()
 {
     QVariant var = getProperty("Interfaces");
-    return qdbus_cast<QString>(var);
+    return qdbus_cast<QStringList>(var);
+}
+
+QString QOfonoModemInterface::defaultInterface()
+{
+    foreach(const QString &modem,getInterfaces()) {
+     return modem;
+    }
+    return QString();
 }
 
 

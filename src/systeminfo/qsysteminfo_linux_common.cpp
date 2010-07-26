@@ -496,9 +496,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
            mode == QSystemNetworkInfo::WcdmaMode) {
             return getOfonoStatus();
         }
-        if(serviceIface.isRoaming()) {
-            return QSystemNetworkInfo::Roaming;
-        }
+//        if(serviceIface.isRoaming()) {
+//            return QSystemNetworkInfo::Roaming;
+//        }
         return stateToStatus(serviceIface.getState());
     }
 #else
@@ -597,14 +597,22 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfono
 QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString netname = "";
-    if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
+    if(networkStatus(mode) != QSystemNetworkInfo::Connected
+       && networkStatus(mode) != QSystemNetworkInfo::Roaming
+       && networkStatus(mode) != QSystemNetworkInfo::HomeNetwork) {
         return netname;
     }
 #if !defined(QT_NO_CONNMAN)
-    QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
-    qDebug() << Q_FUNC_INFO << path.path();
-    QConnmanServiceInterface service(path.path(),this);
-    netname = service.getName();
+    QString tech = modeToTechnology(mode);
+    if(tech.contains("cellular")) {
+        QOfonoNetworkInterface ofonoOpNetwork(ofonoManager->defaultModem().path(),this);
+        return ofonoOpNetwork.getOperatorName();
+
+    } else {
+        QDBusObjectPath path = connmanManager->lookupService(tech);
+        QConnmanServiceInterface service(path.path(),this);
+        netname = service.getName();
+    }
 #else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
@@ -781,13 +789,21 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
 #if !defined(QT_NO_CONNMAN)
     if(connmanIsAvailable) {
         qint32 sig=0;
-        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(mode).name());
-        QConnmanServiceInterface service(path.path(),this);
-        sig = service.getSignalStrength();
-        qDebug() << __FUNCTION__ << service.getState() << sig;
-        if(sig == 0 && (service.getState() == "ready" ||
-           service.getState() == "online")) {
-            sig = 100;
+
+        QString tech = modeToTechnology(mode);
+        if(tech.contains("cellular")) {
+            QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
+            qDebug() << ofonoNetwork.getTechnology();
+
+            return ofonoNetwork.getSignalStrength();
+        } else {
+            QDBusObjectPath path = connmanManager->lookupService(tech);
+            QConnmanServiceInterface service(path.path(),this);
+            sig = service.getSignalStrength();
+            if(sig == 0 && (service.getState() == "ready" ||
+                            service.getState() == "online")) {
+                sig = 100;
+            }
         }
     }
 #else
@@ -1172,25 +1188,29 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::typeToMode
         if(ofonoIsAvailable) {
 
             QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
-            QString ofonoTech = ofonoNetwork.getTechnology();
-            if(ofonoTech == "gsm") {
-                return QSystemNetworkInfo::GsmMode;
-            }
-            if(ofonoTech == "edge"){
-                return QSystemNetworkInfo::GsmMode;
-            }
-            if(ofonoTech == "umts"){
-                return QSystemNetworkInfo::WcdmaMode;
-            }
-            if(ofonoTech == "hspa"){
-                // handle this?
-                // return QSystemNetworkInfo::GsmMode;
-            }
-            if(ofonoTech == "lte"){
-                return QSystemNetworkInfo::WimaxMode;
-            }
-            //        return QSystemNetworkInfo::EthernetMode;
+            return ofonoTechToMode(ofonoNetwork.getTechnology());
         }
+    }
+    return QSystemNetworkInfo::UnknownMode;
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechToMode(const QString &ofonoTech)
+{
+    if(ofonoTech == "gsm") {
+        return QSystemNetworkInfo::GsmMode;
+    }
+    if(ofonoTech == "edge"){
+        return QSystemNetworkInfo::GsmMode;
+    }
+    if(ofonoTech == "umts"){
+        return QSystemNetworkInfo::WcdmaMode;
+    }
+    if(ofonoTech == "hspa"){
+        // handle this?
+        // return QSystemNetworkInfo::GsmMode;
+    }
+    if(ofonoTech == "lte"){
+        return QSystemNetworkInfo::WimaxMode;
     }
     return QSystemNetworkInfo::UnknownMode;
 }
@@ -1313,10 +1333,13 @@ int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
 QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
 {
 #if !defined(QT_NO_CONNMAN)
-    if(connmanIsAvailable) {
-        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(currentMode()).name());
-        QConnmanServiceInterface service(path.path(),this);
-        return service.getMNC();
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->defaultModem().path(),this);
+        foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
+            QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+            if(netop.getStatus() == "current")
+                return netop.getMcc();
+        }
     }
 #endif
     return QString();
@@ -1325,10 +1348,13 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
 QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
 {
 #if !defined(QT_NO_CONNMAN)
-    if(connmanIsAvailable) {
-        QDBusObjectPath path = connmanManager->lookupService(interfaceForMode(currentMode()).name());
-        QConnmanServiceInterface service(path.path(),this);
-        return service.getMCC();
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->defaultModem().path(),this);
+        foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
+            QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+            if(netop.getStatus() == "current")
+                return netop.getMnc();
+        }
     }
 #endif
     return QString();
