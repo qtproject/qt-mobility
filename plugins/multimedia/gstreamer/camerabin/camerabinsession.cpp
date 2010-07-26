@@ -168,6 +168,9 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_cameraFocusControl = new CameraBinFocus(this);
     m_imageProcessingControl = new CameraBinImageProcessing(this);
     m_cameraLocksControl = new CameraBinLocks(this);
+
+    connect(m_cameraLocksControl, SIGNAL(lockStatusChanged(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)),
+            m_cameraFocusControl, SLOT(_q_updateLockStatus(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)));
 }
 
 CameraBinSession::~CameraBinSession()
