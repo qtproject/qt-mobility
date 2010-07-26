@@ -84,10 +84,10 @@ void QContactLocalIdFilter::setIds(const QList<QContactLocalId>& ids)
 }
 
 /*!
- * Inserts the id \a id into the list which contains the ids of possible matching contacts
+ * Adds the id \a id into the list which contains the ids of possible matching contacts
  * \sa setIds()
  */
-void QContactLocalIdFilter::insert(const QContactLocalId& id)
+void QContactLocalIdFilter::add(const QContactLocalId& id)
 {
     Q_D(QContactLocalIdFilter);
     if (!d->m_ids.contains(id))

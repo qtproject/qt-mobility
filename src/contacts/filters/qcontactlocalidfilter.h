@@ -56,7 +56,7 @@ public:
 
     /* Mutators */
     void setIds(const QList<QContactLocalId>& ids);
-    void insert(const QContactLocalId& id);
+    void add(const QContactLocalId& id);
     void remove(const QContactLocalId& id);
     void clear();
 
