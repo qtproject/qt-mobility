@@ -48,14 +48,14 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemFetchHint
-  \brief The QOrganizerItemFetchHint class provides hints to the manager about which organizeritem
+  \brief The QOrganizerItemFetchHint class provides hints to the manager about which organizer item
   information needs to be retrieved in an asynchronous fetch request or a synchronous
   function call.
 
   \inmodule QtOrganizer
 
   All of the hints may be ignored at the discretion of the manager, however if a manager
-  is able to optimize retrieval of organizeritems due to hints, it may do so.  If a manager
+  is able to optimize retrieval of organizer items due to hints, it may do so.  If a manager
   ignores a hint, it must retrieve the full set of data that the hint refers to.
 
   The fetch hint contains:
@@ -66,10 +66,10 @@ QTM_BEGIN_NAMESPACE
   not interested in binary blobs (images etc).
   \endlist
 
-  Important note: a client should not make changes to a organizeritem which has been retrieved
+  Important note: a client should not make changes to an organizer item which has been retrieved
   using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the organizeritem back to the manager (as the "new" restricted organizeritem will
-  replace the previously saved organizeritem in the backend).
+  loss when saving the organizer item back to the manager (as the "new" restricted organizer item will
+  replace the previously saved organizer item in the backend).
  */
 
 /*!
@@ -80,12 +80,12 @@ QTM_BEGIN_NAMESPACE
   must return the full set of information relating to the optimization hint.
 
   \value AllRequired Tells the backend that all information is required
-  \omitvalue NoActionPreferences Tells the backend that the client does not require retrieved organizeritems to include a cache of action preferences
-  \value NoBinaryBlobs Tells the backend that the client does not require retrieved organizeritems to include binary blobs such as thumbnail images
+  \omitvalue NoActionPreferences Tells the backend that the client does not require retrieved organizer items to include a cache of action preferences
+  \value NoBinaryBlobs Tells the backend that the client does not require retrieved organizer items to include binary blobs such as thumbnail images
  */
 
 /*!
-  Constructs a new organizeritem fetch hint which requests that the backend fetch all information
+  Constructs a new organizer item fetch hint which requests that the backend fetch all information
  */
 QOrganizerItemFetchHint::QOrganizerItemFetchHint()
     : d(new QOrganizerItemFetchHintPrivate)
@@ -93,7 +93,7 @@ QOrganizerItemFetchHint::QOrganizerItemFetchHint()
 }
 
 /*!
-  Constructs a new organizeritem fetch hint as a copy of \a other
+  Constructs a new organizer item fetch hint as a copy of \a other
  */
 QOrganizerItemFetchHint::QOrganizerItemFetchHint(const QOrganizerItemFetchHint &other)
     : d(other.d)
@@ -118,9 +118,9 @@ QOrganizerItemFetchHint& QOrganizerItemFetchHint::operator=(const QOrganizerItem
 
 /*!
   Returns the list of definition names that identify detail definitions of which details
-  the manager should (at a minimum) retrieve when fetching organizeritems.
+  the manager should (at a minimum) retrieve when fetching organizer items.
   This hint may be ignored by the backend, in which case it will return the full set of details for
-  each organizeritem retrieved.
+  each organizer item retrieved.
 
   \sa setDetailDefinitionsHint()
  */
@@ -131,9 +131,9 @@ QStringList QOrganizerItemFetchHint::detailDefinitionsHint() const
 
 /*!
   Sets the list of definition names that identify detail definitions of which details
-  the manager should (at a minimum) retrieve when fetching organizeritems to \a definitionNames.
+  the manager should (at a minimum) retrieve when fetching organizer items to \a definitionNames.
   This hint may be ignored by the backend, in which case it will return the full set of details for
-  each organizeritem retrieved.
+  each organizer item retrieved.
 
   \sa detailDefinitionsHint()
  */
@@ -145,7 +145,7 @@ void QOrganizerItemFetchHint::setDetailDefinitionsHint(const QStringList& defini
 /*!
   Returns the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
-  the full set of information accessible in a organizeritem, including
+  the full set of information accessible in an organizer item, including
   relationships and binary blobs.
 
   \sa setOptimizationHints()
@@ -158,7 +158,7 @@ QOrganizerItemFetchHint::OptimizationHints QOrganizerItemFetchHint::optimization
 /*!
   Sets the optimization hint flags specified by the client to \a hints.
   These hints may be ignored by the backend, in which case it will return
-  the full set of information accessible in a organizeritem, including
+  the full set of information accessible in an organizer item, including
   relationships and binary blobs.
 
   \sa optimizationHints()
