@@ -64,6 +64,7 @@ public:
 #else
     Q_DECLARE_LATIN1_CONSTANT(ProfileTest, "Test");
     Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
+    Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
 #endif
 };
 

@@ -253,9 +253,11 @@ QVersitContactExporter::QVersitContactExporter()
 /*!
  * Constructs a new exporter for the given \a profile.  The profile strings should be one of those
  * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a Versit plugin.
+ *
+ * The profile determines which plugins will be loaded to supplement the exporter.
  */
-QVersitContactExporter::QVersitContactExporter(QSet<QString> profiles)
-    : d(new QVersitContactExporterPrivate(profiles))
+QVersitContactExporter::QVersitContactExporter(const QString& profile)
+    : d(new QVersitContactExporterPrivate(profile))
 {
 }
 

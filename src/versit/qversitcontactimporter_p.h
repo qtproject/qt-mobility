@@ -74,7 +74,7 @@ class QVersitContactHandler;
 class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
 public:
-    QVersitContactImporterPrivate(const QSet<QString>& profiles = QSet<QString>());
+    QVersitContactImporterPrivate(const QString& profile = QString());
     ~QVersitContactImporterPrivate();
 
     bool importContact(const QVersitDocument& versitDocument, int contactIndex,

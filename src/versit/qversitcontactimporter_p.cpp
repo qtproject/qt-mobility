@@ -80,7 +80,7 @@ QTM_USE_NAMESPACE
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QSet<QString>& profiles) :
+QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QString& profile) :
     mPropertyHandler(NULL),
     mPropertyHandler2(NULL),
     mPropertyHandlerVersion(0),
@@ -117,7 +117,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate(const QSet<QString>
             QLatin1String(versitSubTypeMappings[i].contactString));
     }
 
-    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createHandlers(profiles);
+    mPluginPropertyHandlers = QVersitPluginLoader::instance()->createHandlers(profile);
 }
 
 /*!

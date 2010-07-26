@@ -84,30 +84,23 @@ void QVersitPluginLoader::loadPlugins() {
 }
 
 /*!
- * Creates and returns handlers from the plugin.  If \a profiles is empty, returns only handlers
- * with an empty profile list are returned.  If \a profiles is nonempty, only handlers with either
- * an empty profile list or a profile list that intersects the given \a profiles are returned.
+ * Creates and returns handlers from the plugin.  If \a profile is the empty string, only handlers
+ * with an empty profile list are returned.  If \a profile is nonempty, only handlers with either
+ * an empty profile list or a profile list that contains the given \a profile are returned.
  *
  * The caller is responsible for deleting all returned handlers.
  */
-QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QSet<QString>& profiles)
+QList<QVersitContactHandler*> QVersitPluginLoader::createHandlers(const QString& profile)
 {
     loadPlugins();
 
     QList<QVersitContactHandler*> handlers;
     foreach (const QVersitContactHandlerFactory* factory, mFactories) {
-        if (!factory->profiles().isEmpty()) {
-            bool isAppropriate = false;
-            foreach (const QString& profile, profiles) {
-                if (factory->profiles().contains(profile)) {
-                    isAppropriate = true;
-                }
-            }
-            if (!isAppropriate)
-                continue;
+        if (factory->profiles().isEmpty() ||
+                (!profile.isEmpty() && factory->profiles().contains(profile))) {
+            QVersitContactHandler* handler = factory->createHandler();
+            handlers.append(handler);
         }
-        QVersitContactHandler* handler = factory->createHandler();
-        handlers.append(handler);
     }
     return handlers;
 }
