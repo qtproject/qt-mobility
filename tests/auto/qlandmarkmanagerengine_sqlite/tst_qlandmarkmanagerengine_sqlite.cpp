@@ -1193,22 +1193,22 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 1);
-    //QCOMPARE(spyChange.count(), 0);
-    // QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyAdd.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 1);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyAdd.clear();
 
     // update core
     lm1.setName("LM1New");
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     // update attributes - existing
     // update attributes - added
@@ -1234,31 +1234,31 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     lm1.addCategoryId(cat2.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     lm1.addCategoryId(cat3.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     // removing categories
 
@@ -1266,31 +1266,31 @@ void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     lm1.removeCategoryId(cat2.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 
     lm1.removeCategoryId(cat3.categoryId());
     QVERIFY(m_manager->saveLandmark(&lm1));
     QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-    //TODO: notifications
-    //QCOMPARE(spyAdd.count(), 0);
-    //QCOMPARE(spyChange.count(), 1);
-    //QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
-    //spyChange.clear();
+    QTest::qWait(10);
+    QCOMPARE(spyAdd.count(), 0);
+    QCOMPARE(spyChange.count(), 1);
+    QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+    spyChange.clear();
 }
 
 void tst_QLandmarkManagerEngineSqlite::removeCategoryId() {
