@@ -96,6 +96,7 @@ QTM_BEGIN_NAMESPACE
   \value InvalidType No type specified or a document with an invalid type was parsed
   \value VCard21Type vCard version 2.1
   \value VCard30Type vCard version 3.0
+  \value VCard40Type vCard version 4.0
   \value ICalendar20Type iCalendar version 2.0
  */
 
