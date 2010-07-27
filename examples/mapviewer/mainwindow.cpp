@@ -218,7 +218,8 @@ void MapWidget::kineticTimerEvent()
     int deltaTime = lastMoveTime.msecsTo(currentTime);
     lastMoveTime = currentTime;
 
-    if (panDecellerate) kineticPanSpeed *= pow(0.5, deltaTime/kineticPanningHalflife);
+    if (panDecellerate)
+        kineticPanSpeed *= pow(qreal(0.5), qreal(deltaTime/kineticPanningHalflife));
 
     QPointF scaledSpeed = kineticPanSpeed * deltaTime;
 
