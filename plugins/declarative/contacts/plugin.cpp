@@ -60,10 +60,10 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
-        qmlRegisterType<QMLContactDetailField>(uri, 1, 0, "QmlContactDetailField");
+        qmlRegisterType<QMLContactModel>(uri, 1, 1, "QmlContactModel");
+        qmlRegisterType<QMLContact>(uri, 1, 1, "QmlContact");
+        qmlRegisterType<QMLContactDetail>(uri, 1, 1, "QmlContactDetail");
+        qmlRegisterType<QMLContactDetailField>(uri, 1, 1, "QmlContactDetailField");
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {

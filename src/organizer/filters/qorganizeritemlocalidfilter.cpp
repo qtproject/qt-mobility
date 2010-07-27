@@ -48,22 +48,22 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemLocalIdFilter
-  \brief The QOrganizerItemLocalIdFilter class provides a filter based around a list of organizeritem ids
+  \brief The QOrganizerItemLocalIdFilter class provides a filter based around a list of organizer item ids
   \inmodule QtOrganizer
   \ingroup organizer-filters
   
-  It may be used to select organizeritems whose ids are contained in the given list of ids.
+  It may be used to select organizer items whose ids are contained in the given list of ids.
  */
 
 Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter);
 
 /*!
  * \fn QOrganizerItemLocalIdFilter::QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other)
- * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem local id filter
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizer item local id filter
  */
 
 /*!
- * Constructs a new organizeritem local id filter
+ * Constructs a new organizer item local id filter
  */
 QOrganizerItemLocalIdFilter::QOrganizerItemLocalIdFilter()
     : QOrganizerItemFilter(new QOrganizerItemLocalIdFilterPrivate)
@@ -71,7 +71,7 @@ QOrganizerItemLocalIdFilter::QOrganizerItemLocalIdFilter()
 }
 
 /*!
- * Sets the list which contains the ids of possible matching organizeritems to \a ids
+ * Sets the list which contains the ids of possible matching organizer items to \a ids
  * \sa ids()
  */
 void QOrganizerItemLocalIdFilter::setIds(const QList<QOrganizerItemLocalId>& ids)
@@ -81,7 +81,7 @@ void QOrganizerItemLocalIdFilter::setIds(const QList<QOrganizerItemLocalId>& ids
 }
 
 /*!
- * Returns the list of ids of organizeritems which match this filter
+ * Returns the list of ids of organizer items which match this filter
  * \sa setIds()
  */
 QList<QOrganizerItemLocalId> QOrganizerItemLocalIdFilter::ids() const

@@ -72,6 +72,9 @@ public Q_SLOTS:
     void activateDayPage();
     void activateNewDayPage(QOrganizerItemManager *manager, QDate date);
     void activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item);
+    
+Q_SIGNALS:
+	void multipleEntriesToBeCreated(int);
 
 private:
     QOrganizerItemManager *m_manager;

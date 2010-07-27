@@ -7,7 +7,7 @@ CONFIG += mobility
 MOBILITY = organizer
 
 CONFIG += link_pkgconfig
-PKGCONFIG += calendar-backend calendar-backend-dev
+PKGCONFIG += calendar-backend
 
 include(../../../common.pri)
 

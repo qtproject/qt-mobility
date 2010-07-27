@@ -59,9 +59,9 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("Qt.multimedia"));
 
-        qmlRegisterType<QSoundEffect>(uri, 1, 0, "SoundEffect");
-        qmlRegisterType<QDeclarativeAudio>(uri, 1, 0, "Audio");
-        qmlRegisterType<QDeclarativeVideo>(uri, 1, 0, "Video");
+        qmlRegisterType<QSoundEffect>(uri, 1, 1, "SoundEffect");
+        qmlRegisterType<QDeclarativeAudio>(uri, 1, 1, "Audio");
+        qmlRegisterType<QDeclarativeVideo>(uri, 1, 1, "Video");
     }
 };
 
