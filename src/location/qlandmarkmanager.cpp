@@ -1120,10 +1120,17 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 }
 
 /*!
+    \fn QLandmarkManager::dataChanged()
+    This signal is emitted by the manager if its internal state changes and it is unable to precisely determine
+    the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload
+    all data.  If the signal is emitted, no other signals will be emitted for the associated changes.
+*/
+
+/*!
     \fn void QLandmarkManager::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been added to the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksChanged(), landmarksRemoved()
 */
 
@@ -1131,7 +1138,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksAdded(), landmarksRemoved()
 */
 
@@ -1139,7 +1146,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been removed from the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksAdded(), landmarksChanged()
 */
 
@@ -1147,7 +1154,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been added to the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesChanged(), categoriesRemoved()
 */
 
@@ -1155,7 +1162,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been modified in the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesAdded(), categoriesRemoved()
 */
 
@@ -1163,7 +1170,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been removed from the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesAdded(), categoriesChanged()
 */
 

@@ -145,6 +145,7 @@ public:
     virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs) = 0;
 
 Q_SIGNALS:
+    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);
