@@ -850,7 +850,8 @@ QStringList QLandmarkManager::platformLandmarkAttributeKeys() const
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
     }
-    d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+
+    return d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 QStringList QLandmarkManager::platformCategoryAttributeKeys() const
@@ -861,7 +862,7 @@ QStringList QLandmarkManager::platformCategoryAttributeKeys() const
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
     }
-    d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
+    return  d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 /*!
