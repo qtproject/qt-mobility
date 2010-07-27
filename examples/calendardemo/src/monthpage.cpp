@@ -109,6 +109,7 @@ MonthPage::MonthPage(QWidget *parent)
     connect(addTodoAction, SIGNAL(triggered(bool)), this, SLOT(addNewTodo()));
     
     backendChanged(comboBox->currentText());
+    updateGridWithEventIndicator();
 }
 
 MonthPage::~MonthPage()
@@ -208,6 +209,7 @@ void MonthPage::refresh()
     }
 
     refreshDayItems();
+    updateGridWithEventIndicator();
 }
 
 void MonthPage::refreshDayItems()
@@ -284,3 +286,33 @@ void MonthPage::showEvent(QShowEvent *event)
     QWidget::showEvent(event);
 }
 
+void MonthPage::updateGridWithEventIndicator()
+{
+	// Paint the cell with green color if there are any events present for that day.
+	int numberOfDaysInAWeek = 7;
+	QDate firstDateDisplayed;
+	firstDateDisplayed.setDate(m_calendarWidget->yearShown(),
+									m_calendarWidget->monthShown(), 1);
+	int numOfDaysInMonth = firstDateDisplayed.daysInMonth();
+	QDate lastDateDisplayed = firstDateDisplayed.addDays(numOfDaysInMonth - 1);
+	int dayOfWeek = firstDateDisplayed.dayOfWeek();
+	firstDateDisplayed = firstDateDisplayed.addDays(dayOfWeek - 1);
+	lastDateDisplayed = lastDateDisplayed.addDays(numberOfDaysInAWeek - dayOfWeek);
+	
+	// Get all the items and filter out the items there for that day.
+	QList<QOrganizerItem> items = m_manager->items();
+	QBrush brush;
+	brush.setColor( Qt::green );
+	while (firstDateDisplayed <= lastDateDisplayed && items.count() != 0) {
+		foreach (const QOrganizerItem &item, items)
+		{
+			QOrganizerEventTimeRange eventTimeRange = item.detail<QOrganizerEventTimeRange>();
+			if (!eventTimeRange.isEmpty() && eventTimeRange.startDateTime().date() == firstDateDisplayed) {
+				QTextCharFormat cf = m_calendarWidget->dateTextFormat( firstDateDisplayed );
+				cf.setBackground( brush );
+				m_calendarWidget->setDateTextFormat(firstDateDisplayed, cf );
+			}
+		}
+		firstDateDisplayed = firstDateDisplayed.addDays(1);
+	}
+}

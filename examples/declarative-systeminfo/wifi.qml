@@ -39,7 +39,7 @@
 ***********************************/
 
 import Qt 4.7
-import QtMobility.systeminfo 1.0
+import QtMobility.systeminfo 1.1
 
 Rectangle {
     width: 640

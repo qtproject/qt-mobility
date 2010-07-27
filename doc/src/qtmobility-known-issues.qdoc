@@ -46,7 +46,7 @@ The new Qt APIs are typically supported by backends for each platform. For overa
 
 \section2 Detailed Feature support - Symbian/S60
 
-\section3 Bearer Management API
+\section3 \bold{Bearer Management API}
 Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensive feature set.
 \list
     \o Capabilities: BearerManagement, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming , ForcedRoaming.
@@ -62,7 +62,7 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
 \endlist
 
 
-\section3 Contacts API
+\section3 \bold{Contacts API}
 \list
     \o Contact sorting.
     \o Contact filtering.
@@ -75,7 +75,7 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
 \endlist
 
 
-\section3 Messaging API
+\section3 \bold{Messaging API}
 \list
     \o Account queries (POP3, IMAP, SMTP, SMS & MMS MTM).
     \o Account sorting.
@@ -93,7 +93,7 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
 \endlist
 
 
-\section3 Multimedia API
+\section3 \bold{Multimedia API}
 \list
     \o Play music from local file.
     \o Play video from local file.
@@ -102,7 +102,7 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
 \endlist
 
 
-\section3 Service Framework API
+\section3 \bold{Service Framework API}
 \list
     \o (Un)Register service
     \o Security improvements: authenticity of provider is done during (un)registering phase based on the verification of VID/SID 
@@ -111,7 +111,7 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
 \endlist
 
 
-\section3 System Info API
+\section3 \bold{System Info API}
 Support is present for the following System Info API classes
 \list
     \o QSystemInfo

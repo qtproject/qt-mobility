@@ -261,8 +261,8 @@ done
 
 checkostype()
 {
-    match="darwin"
-    if [ "$OSTYPE" = "${match}"* ]; then
+    match="Darwin"
+    if [ `uname -s` = "${match}" ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
         echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
@@ -509,6 +509,7 @@ compileTest Immersion immersion
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 compileTest "Maemo5 contacts dependencies" maemo5-contacts
+compileTest "Maemo5 organizer dependencies" maemo5-calendar
 compileTest "Bluez" bluez
 compileTest "Gstreamer Photography" gstreamer-photography
 if [ "$LINUX_TARGET" = maemo6 ]; then

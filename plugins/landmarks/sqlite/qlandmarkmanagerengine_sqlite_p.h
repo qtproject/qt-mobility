@@ -137,12 +137,15 @@ public:
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
 
-    QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
-    bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const;
+    QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
+    bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
 
-    bool isReadOnly() const;
-    bool isReadOnly(const QLandmarkId &landmarkId) const;
-    bool isReadOnly(const QLandmarkCategoryId &categoryId) const;
+    QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+
+    virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const;
+    virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const;
+    virtual bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);
