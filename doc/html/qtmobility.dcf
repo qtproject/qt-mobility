@@ -6507,6 +6507,12 @@
     <section ref="mobility.html" title="Qt Mobility Project APIs">
         <keyword ref="mobility.html">Qt Mobility Project APIs</keyword>
     </section>
+    <section ref="mobility.html" title="Qt Mobility Project APIs">
+        <keyword ref="mobility.html">Qt Mobility Project APIs</keyword>
+    </section>
+    <section ref="index.html" title="Qt Mobility Project APIs Overview">
+        <keyword ref="index.html">Qt Mobility Project APIs Overview</keyword>
+    </section>
     <section ref="index.html" title="Qt Mobility Project APIs Overview (Technology Preview)">
         <keyword ref="index.html">Qt Mobility Project APIs Overview (Technology Preview)</keyword>
     </section>
@@ -6567,8 +6573,8 @@
     <section ref="qtversit.html" title="QtVersit Module">
         <keyword ref="qtversit.html">QtVersit Module</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
-        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
+    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project 1.0&#x2e;2 patch release">
+        <keyword ref="qtmobility-release-notes.html">Release Notes of the QtMobility Project 1.0&#x2e;2 patch release</keyword>
     </section>
     <section ref="sensors-api.html" title="Sensors">
         <keyword ref="sensors-api.html">Sensors</keyword>

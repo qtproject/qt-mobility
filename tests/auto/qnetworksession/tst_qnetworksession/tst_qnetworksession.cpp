@@ -880,7 +880,7 @@ void tst_QNetworkSession::sessionOpenCloseStop()
     // The remaining tests require the session to be not NotAvailable.
     if (session.state() == QNetworkSession::NotAvailable)
         QSKIP("Network is not available.", SkipSingle);
-
+        
     QSignalSpy sessionOpenedSpy(&session, SIGNAL(opened()));
     QSignalSpy sessionClosedSpy(&session, SIGNAL(closed()));
     QSignalSpy stateChangedSpy(&session, SIGNAL(stateChanged(QNetworkSession::State)));
@@ -908,9 +908,14 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         session.waitForOpened();
 #endif        
 
+         // Wait until the configuration is uptodate as well, it may be signaled 'connected' 
+         // bit later than the session
+         QTRY_VERIFY(configuration.state() == QNetworkConfiguration::Active);
+
         if (session.isOpen())
             QVERIFY(!sessionOpenedSpy.isEmpty() || !errorSpy.isEmpty());
         if (!errorSpy.isEmpty()) {
+        
             QNetworkSession::SessionError error =
                 qvariant_cast<QNetworkSession::SessionError>(errorSpy.first().at(0));
 
@@ -1117,8 +1122,9 @@ void tst_QNetworkSession::sessionOpenCloseStop()
                         roamedSuccessfully = true;
                     } else if (state == QNetworkSession::Closing) {
                         QTRY_VERIFY(session2.state() == QNetworkSession::Disconnected);
-                        QTRY_VERIFY(session.state() == QNetworkSession::Connected);
-                        roamedSuccessfully = true;
+                        QTRY_VERIFY(session.state() == QNetworkSession::Connected || 
+                        	session.state() == QNetworkSession::Disconnected);
+                        roamedSuccessfully = false;
                     } else if (state == QNetworkSession::Disconnected) {
                         QTRY_VERIFY(!errorSpy.isEmpty());
                         QTRY_VERIFY(session2.state() == QNetworkSession::Disconnected);

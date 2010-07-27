@@ -2407,159 +2407,159 @@
         <pageType>Example</pageType>
     </page>
     <page id="401">
-        <pageWords>Release Notes of the QtMobility Project</pageWords>
-        <pageTitle>Release Notes of the QtMobility Project</pageTitle>
-        <pageUrl>qtmobility-known-issues.html</pageUrl>
-        <pageType>Article</pageType>
-    </page>
-    <page id="402">
         <pageWords>Messaging Installation On Windows Mobile</pageWords>
         <pageTitle>Messaging Installation On Windows Mobile</pageTitle>
         <pageUrl>messaging-installation-on-windows-mobile.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="403">
+    <page id="402">
         <pageWords>Qt Bearer Management API</pageWords>
         <pageTitle>Qt Bearer Management API</pageTitle>
         <pageUrl>bearer.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="404">
+    <page id="403">
         <pageWords>Bearer Management</pageWords>
         <pageTitle>Bearer Management</pageTitle>
         <pageUrl>bearer-management.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="405">
+    <page id="404">
         <pageWords>CalendarDemo</pageWords>
         <pageTitle>CalendarDemo</pageTitle>
         <pageUrl>calendardemo.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="406">
+    <page id="405">
         <pageWords>Camera</pageWords>
         <pageTitle>Camera</pageTitle>
         <pageUrl>camera.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="407">
+    <page id="406">
         <pageWords>Third-Party Licenses Used in Qt</pageWords>
         <pageTitle>Third-Party Licenses Used in Qt</pageTitle>
         <pageUrl>3rdparty.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="408">
+    <page id="407">
         <pageWords>Open Source Versions of Qt</pageWords>
         <pageTitle>Open Source Versions of Qt</pageTitle>
         <pageUrl>opensourceedition.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="409">
+    <page id="408">
         <pageWords>QML GalleryItem Element</pageWords>
         <pageTitle>QML GalleryItem Element</pageTitle>
         <pageUrl>qml-galleryitem.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="410">
+    <page id="409">
         <pageWords>'Keep in Touch' Example</pageWords>
         <pageTitle>'Keep in Touch' Example</pageTitle>
         <pageUrl>keepintouch.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="411">
+    <page id="410">
         <pageWords>All Modules</pageWords>
         <pageTitle>All Modules</pageTitle>
         <pageUrl>modules.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="412">
+    <page id="411">
         <pageWords>QtNetwork Module</pageWords>
         <pageTitle>QtNetwork Module</pageTitle>
         <pageUrl>qtnetwork.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="413">
+    <page id="412">
         <pageWords>QtContacts Module</pageWords>
         <pageTitle>QtContacts Module</pageTitle>
         <pageUrl>qtcontacts.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="414">
+    <page id="413">
         <pageWords>QtOrganizer Module</pageWords>
         <pageTitle>QtOrganizer Module</pageTitle>
         <pageUrl>qtorganizer.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="415">
+    <page id="414">
         <pageWords>QtFeedback Module</pageWords>
         <pageTitle>QtFeedback Module</pageTitle>
         <pageUrl>qtfeedback.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="416">
+    <page id="415">
         <pageWords>QtSensors Module</pageWords>
         <pageTitle>QtSensors Module</pageTitle>
         <pageUrl>qtsensors.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="417">
+    <page id="416">
         <pageWords>QtGallery Module</pageWords>
         <pageTitle>QtGallery Module</pageTitle>
         <pageUrl>qtgallery.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="418">
+    <page id="417">
         <pageWords>QtLocation Module</pageWords>
         <pageTitle>QtLocation Module</pageTitle>
         <pageUrl>qtlocation.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="419">
+    <page id="418">
         <pageWords>QtMessaging Module</pageWords>
         <pageTitle>QtMessaging Module</pageTitle>
         <pageUrl>qtmessaging.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="420">
+    <page id="419">
         <pageWords>QtMultimediaKit Module</pageWords>
         <pageTitle>QtMultimediaKit Module</pageTitle>
         <pageUrl>qtmultimediakit.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="421">
+    <page id="420">
         <pageWords>QtPublishSubscribe Module</pageWords>
         <pageTitle>QtPublishSubscribe Module</pageTitle>
         <pageUrl>qtpublishsubscribe.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="422">
+    <page id="421">
         <pageWords>QtServiceFramework Module</pageWords>
         <pageTitle>QtServiceFramework Module</pageTitle>
         <pageUrl>qtserviceframework.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="423">
+    <page id="422">
         <pageWords>System Information Classes</pageWords>
         <pageTitle>System Information Classes</pageTitle>
         <pageUrl>qtsysteminfo.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="424">
+    <page id="423">
         <pageWords>Telephony Events Module</pageWords>
         <pageTitle>Telephony Events Module</pageTitle>
         <pageUrl>qttelephony.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="425">
+    <page id="424">
         <pageWords>QtGallery Module</pageWords>
         <pageTitle>QtGallery Module</pageTitle>
         <pageUrl>qtgallery.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="426">
+    <page id="425">
         <pageWords>QtVersit Module</pageWords>
         <pageTitle>QtVersit Module</pageTitle>
         <pageUrl>qtversit.html</pageUrl>
+        <pageType>Article</pageType>
+    </page>
+    <page id="426">
+        <pageWords>Release Notes of the QtMobility Project 1.0.2 patch release</pageWords>
+        <pageTitle>Release Notes of the QtMobility Project 1.0.2 patch release</pageTitle>
+        <pageUrl>qtmobility-release-notes.html</pageUrl>
         <pageType>Article</pageType>
     </page>
     <page id="427">
@@ -2593,342 +2593,354 @@
         <pageType>Article</pageType>
     </page>
     <page id="432">
+        <pageWords>Qt Mobility Project APIs</pageWords>
+        <pageTitle>Qt Mobility Project APIs</pageTitle>
+        <pageUrl>mobility.html</pageUrl>
+        <pageType>Article</pageType>
+    </page>
+    <page id="433">
+        <pageWords>Qt Mobility Project APIs Overview</pageWords>
+        <pageTitle>Qt Mobility Project APIs Overview</pageTitle>
+        <pageUrl>index.html</pageUrl>
+        <pageType>Article</pageType>
+    </page>
+    <page id="434">
         <pageWords>Service Frameworks Classes</pageWords>
         <pageTitle>Service Frameworks Classes</pageTitle>
         <pageUrl>servicefw.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="433">
+    <page id="435">
         <pageWords>Qt Service Framework</pageWords>
         <pageTitle>Qt Service Framework</pageTitle>
         <pageUrl>service-frameworks.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="434">
+    <page id="436">
         <pageWords>Sensors</pageWords>
         <pageTitle>Sensors</pageTitle>
         <pageUrl>sensors-api.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="435">
+    <page id="437">
         <pageWords>Sensors Backend</pageWords>
         <pageTitle>Sensors Backend</pageTitle>
         <pageUrl>sensors-backend.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="436">
+    <page id="438">
         <pageWords>Creating a sensor plugin</pageWords>
         <pageTitle>Creating a sensor plugin</pageTitle>
         <pageUrl>creating-a-sensor-plugin.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="437">
+    <page id="439">
         <pageWords>Qt Organizer Manager Engines</pageWords>
         <pageTitle>Qt Organizer Manager Engines</pageTitle>
         <pageUrl>organizerengines.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="438">
+    <page id="440">
         <pageWords>Organizer Synchronous API</pageWords>
         <pageTitle>Organizer Synchronous API</pageTitle>
         <pageUrl>itemssync.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="439">
+    <page id="441">
         <pageWords>Landmark Examples</pageWords>
         <pageTitle>Landmark Examples</pageTitle>
         <pageUrl>landmarks.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="440">
+    <page id="442">
         <pageWords>Service Framework Notes Manager</pageWords>
         <pageTitle>Service Framework Notes Manager</pageTitle>
         <pageUrl>sfw-notes.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="441">
+    <page id="443">
         <pageWords>QML GalleryQueryModel Element</pageWords>
         <pageTitle>QML GalleryQueryModel Element</pageTitle>
         <pageUrl>qml-galleryquerymodel.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="442">
+    <page id="444">
         <pageWords>Bluetooth Transfer Plugin Example</pageWords>
         <pageTitle>Bluetooth Transfer Plugin Example</pageTitle>
         <pageUrl>bluetoothtransferplugin.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="443">
+    <page id="445">
         <pageWords>QtMessaging Module</pageWords>
         <pageTitle>QtMessaging Module</pageTitle>
         <pageUrl>qtmessaging.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="444">
+    <page id="446">
         <pageWords>Messaging</pageWords>
         <pageTitle>Messaging</pageTitle>
         <pageUrl>messaging.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="445">
+    <page id="447">
         <pageWords>Declarative Service Framework Notes Manager</pageWords>
         <pageTitle>Declarative Service Framework Notes Manager</pageTitle>
         <pageUrl>declarative-sfw-notes.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="446">
+    <page id="448">
         <pageWords>File Manager Plugin Example</pageWords>
         <pageTitle>File Manager Plugin Example</pageTitle>
         <pageUrl>filemanagerplugin.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="447">
+    <page id="449">
         <pageWords>Qt Service Framework on Symbian</pageWords>
         <pageTitle>Qt Service Framework on Symbian</pageTitle>
         <pageUrl>service-framework-on-symbian.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="448">
+    <page id="450">
         <pageWords>Service Actions Example</pageWords>
         <pageTitle>Service Actions Example</pageTitle>
         <pageUrl>serviceactions.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="449">
+    <page id="451">
         <pageWords>Flickr Demo Example</pageWords>
         <pageTitle>Flickr Demo Example</pageTitle>
         <pageUrl>flickrdemo.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="450">
+    <page id="452">
         <pageWords>Location API</pageWords>
         <pageTitle>Location API</pageTitle>
         <pageUrl>location.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="451">
+    <page id="453">
         <pageWords>Location</pageWords>
         <pageTitle>Location</pageTitle>
         <pageUrl>location-overview.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="452">
+    <page id="454">
         <pageWords>Publish and Subscribe</pageWords>
         <pageTitle>Publish and Subscribe</pageTitle>
         <pageUrl>publ-subs.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="453">
+    <page id="455">
         <pageWords>Log File Position Source Example</pageWords>
         <pageTitle>Log File Position Source Example</pageTitle>
         <pageUrl>logfilepositionsource.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="454">
+    <page id="456">
         <pageWords>QML PositionSource Element</pageWords>
         <pageTitle>QML PositionSource Element</pageTitle>
         <pageUrl>qml-positionsource.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="455">
+    <page id="457">
         <pageWords>System Information Classes</pageWords>
         <pageTitle>System Information Classes</pageTitle>
         <pageUrl>systeminfo.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="456">
+    <page id="458">
         <pageWords>System Information</pageWords>
         <pageTitle>System Information</pageTitle>
         <pageUrl>systeminfo.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="457">
+    <page id="459">
         <pageWords>Quickstart Example</pageWords>
         <pageTitle>Quickstart Example</pageTitle>
         <pageUrl>quickstart.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="458">
+    <page id="460">
         <pageWords>Audio Recorder Example</pageWords>
         <pageTitle>Audio Recorder Example</pageTitle>
         <pageUrl>audiorecorder.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="459">
+    <page id="461">
         <pageWords>Query Messages Example</pageWords>
         <pageTitle>Query Messages Example</pageTitle>
         <pageUrl>querymessages.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="460">
+    <page id="462">
         <pageWords>Map Viewer Example</pageWords>
         <pageTitle>Map Viewer Example</pageTitle>
         <pageUrl>mapviewer.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="461">
+    <page id="463">
         <pageWords>Qt Contacts Schema</pageWords>
         <pageTitle>Qt Contacts Schema</pageTitle>
         <pageUrl>contactsschema.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="462">
+    <page id="464">
         <pageWords>Telephony Events</pageWords>
         <pageTitle>Telephony Events</pageTitle>
         <pageUrl>telephony.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="463">
+    <page id="465">
         <pageWords>Bearer Cloud Example</pageWords>
         <pageTitle>Bearer Cloud Example</pageTitle>
         <pageUrl>bearercloud.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="464">
+    <page id="466">
         <pageWords>Qt Organizer Schema</pageWords>
         <pageTitle>Qt Organizer Schema</pageTitle>
         <pageUrl>organizerschema.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="465">
+    <page id="467">
         <pageWords>Organizer Asynchronous API</pageWords>
         <pageTitle>Organizer Asynchronous API</pageTitle>
         <pageUrl>organizerasync.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="466">
+    <page id="468">
         <pageWords>Installation Guide</pageWords>
         <pageTitle>Installation Guide</pageTitle>
         <pageUrl>installation.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="467">
+    <page id="469">
         <pageWords>Mobility Multimedia</pageWords>
         <pageTitle>Mobility Multimedia</pageTitle>
         <pageUrl>multimedia.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="468">
+    <page id="470">
         <pageWords>Multimedia</pageWords>
         <pageTitle>Multimedia</pageTitle>
         <pageUrl>multimedia.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="469">
+    <page id="471">
         <pageWords>Contacts</pageWords>
         <pageTitle>Contacts</pageTitle>
         <pageUrl>contacts.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="470">
+    <page id="472">
         <pageWords>QML SoundEffect Element</pageWords>
         <pageTitle>QML SoundEffect Element</pageTitle>
         <pageUrl>qml-soundeffect.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="471">
+    <page id="473">
         <pageWords>Document Sharing</pageWords>
         <pageTitle>Document Sharing</pageTitle>
         <pageUrl>documentshare.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="472">
+    <page id="474">
         <pageWords>Qt Editions</pageWords>
         <pageTitle>Qt Editions</pageTitle>
         <pageUrl>editions.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="473">
+    <page id="475">
         <pageWords>Fetch Google Maps Example</pageWords>
         <pageTitle>Fetch Google Maps Example</pageTitle>
         <pageUrl>fetchgooglemaps.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="474">
+    <page id="476">
         <pageWords>Class and Function Documentation</pageWords>
         <pageTitle>Class and Function Documentation</pageTitle>
         <pageUrl>classlists.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="475">
+    <page id="477">
         <pageWords>All Qt Mobility Classes</pageWords>
         <pageTitle>All Qt Mobility Classes</pageTitle>
         <pageUrl>classes.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="476">
+    <page id="478">
         <pageWords>Annotated Class List</pageWords>
         <pageTitle>Annotated Class List</pageTitle>
         <pageUrl>annotated.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="477">
+    <page id="479">
         <pageWords>Inheritance Hierarchy</pageWords>
         <pageTitle>Inheritance Hierarchy</pageTitle>
         <pageUrl>hierarchy.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="478">
+    <page id="480">
         <pageWords>All Functions</pageWords>
         <pageTitle>All Functions</pageTitle>
         <pageUrl>functions.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="479">
+    <page id="481">
         <pageWords>QML Video Element</pageWords>
         <pageTitle>QML Video Element</pageTitle>
         <pageUrl>qml-video.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="480">
+    <page id="482">
         <pageWords>Sample Phonebook Example</pageWords>
         <pageTitle>Sample Phonebook Example</pageTitle>
         <pageUrl>samplephonebook.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="481">
+    <page id="483">
         <pageWords>Future Additional APIs</pageWords>
         <pageTitle>Future Additional APIs</pageTitle>
         <pageUrl>future.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="482">
+    <page id="484">
         <pageWords>Organizer API Usage</pageWords>
         <pageTitle>Organizer API Usage</pageTitle>
         <pageUrl>organizerusage.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="483">
+    <page id="485">
         <pageWords>Qt Contacts Manager Engines</pageWords>
         <pageTitle>Qt Contacts Manager Engines</pageTitle>
         <pageUrl>contactsengines.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="484">
+    <page id="486">
         <pageWords>QML GalleryFilter Element</pageWords>
         <pageTitle>QML GalleryFilter Element</pageTitle>
         <pageUrl>qml-galleryfilter.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="485">
+    <page id="487">
         <pageWords>QML GalleryFilterUnion Element</pageWords>
         <pageTitle>QML GalleryFilterUnion Element</pageTitle>
         <pageUrl>qml-galleryfilterunion.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="486">
+    <page id="488">
         <pageWords>QML GalleryFilterIntersection Element</pageWords>
         <pageTitle>QML GalleryFilterIntersection Element</pageTitle>
         <pageUrl>qml-galleryfilterintersection.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="487">
+    <page id="489">
         <pageWords>Media Player Example</pageWords>
         <pageTitle>Media Player Example</pageTitle>
         <pageUrl>player.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="488">
+    <page id="490">
         <pageWords>QGeoApiUi Example</pageWords>
         <pageTitle>QGeoApiUi Example</pageTitle>
         <pageUrl>qgeoapiui.html</pageUrl>

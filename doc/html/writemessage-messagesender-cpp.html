@@ -302,6 +302,25 @@
      connect(&amp;service, SIGNAL(stateChanged(QMessageService::State)), this, SLOT(stateChanged(QMessageService::State)));
 
      QTimer::singleShot(0, this, SLOT(populateAccounts()));
+
+     QWidgetList focusableWidgets;
+     focusableWidgets &lt;&lt; accountCombo
+                      &lt;&lt; toEdit
+                      &lt;&lt; subjectEdit
+ #ifdef USE_TABBED_LAYOUT
+                      &lt;&lt; tabWidget
+ #else
+                      &lt;&lt; textEdit
+                      &lt;&lt; attachmentsList
+ #endif
+                      &lt;&lt; addButton
+                      &lt;&lt; removeButton
+                      &lt;&lt; sendButton;
+
+     foreach(QWidget* w, focusableWidgets)
+         w-&gt;setContextMenuPolicy(Qt::NoContextMenu);
+
+     accountCombo-&gt;setFocus();
  }
 
  MessageSender::~MessageSender()

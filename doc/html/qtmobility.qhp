@@ -1156,12 +1156,13 @@
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="all-examples.html" title="Qt Mobility Examples"/>
                     <section ref="mobility.html" title="Qt Mobility Project APIs"/>
+                    <section ref="index.html" title="Qt Mobility Project APIs Overview"/>
                     <section ref="index.html" title="Qt Mobility Project APIs Overview (Technology Preview)"/>
                     <section ref="organizerengines.html" title="Qt Organizer Manager Engines"/>
                     <section ref="organizerschema.html" title="Qt Organizer Schema"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
-                    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project"/>
+                    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project 1.0.2 patch release"/>
                     <section ref="sensors-api.html" title="Sensors"/>
                     <section ref="sensors-backend.html" title="Sensors Backend"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
@@ -6676,6 +6677,7 @@
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="all-examples.html"/>
             <keyword name="Qt Mobility Project APIs" id="Qt Mobility Project APIs" ref="mobility.html"/>
+            <keyword name="Qt Mobility Project APIs Overview" id="Qt Mobility Project APIs Overview" ref="index.html"/>
             <keyword name="Qt Mobility Project APIs Overview (Technology Preview)" id="Qt Mobility Project APIs Overview (Technology Preview)" ref="index.html"/>
             <keyword name="Qt Organizer Manager Engines" id="Qt Organizer Manager Engines" ref="organizerengines.html"/>
             <keyword name="Qt Organizer Schema" id="Qt Organizer Schema" ref="organizerschema.html"/>
@@ -6796,7 +6798,7 @@
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
-            <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
+            <keyword name="Release Notes of the QtMobility Project 1.0.2 patch release" id="Release Notes of the QtMobility Project 1.0.2 patch release" ref="qtmobility-release-notes.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Sensors" id="Sensors" ref="sensors-api.html"/>
             <keyword name="Sensors Backend" id="Sensors Backend" ref="sensors-backend.html"/>
@@ -6999,6 +7001,7 @@
             <file>calendardemo-src-monthpage-cpp.html</file>
             <file>annotated.html</file>
             <file>qmagnetometerreading-members.html</file>
+            <file>qtmobility-release-notes.html</file>
             <file>qcamerafocus.html</file>
             <file>images/keepintouch-example.png</file>
             <file>qcontactnote.html</file>
@@ -7287,7 +7290,6 @@
             <file>qremoteservicecontrol-members.html</file>
             <file>qml-soundeffect.html</file>
             <file>qml-position.html</file>
-            <file>qtmobility-known-issues.html</file>
             <file>qorganizeritemmemoryengine-members.html</file>
             <file>sfw-notes-sfwnotes-small-ui.html</file>
             <file>bearermonitor-sessionwidget-ui.html</file>
