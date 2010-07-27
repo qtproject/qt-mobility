@@ -411,15 +411,19 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray
 }
 
 /*!
-    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter) const
+    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
 
-    Returns the support level the manager engine provides for the given \a filter.
+    Returns the support level the manager engine provides for the given \a filter.  Errors are stored in \a error
+    and \a errorString.
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::LandmarkFeature feature,
+                                                        QLandmarkManager::Error *error, QString *errorString) const
 
-    Returns true if the manager engine supports the given \a feature, otherwise returns false;
+    Returns true if the manager engine supports the given \a feature, otherwise returns false;   Errors are stored in
+    \a error and \a errorString.
 */
 
 /*!
