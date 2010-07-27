@@ -274,10 +274,17 @@ void tst_QDeclarativePosition::basicNmeaSource()
     QVERIFY(position_obj != 0);
 
     qDebug() << "2. ----- Create spies and set NMEA source";
+    bool methodShouldChange = false;
     QList<QSignalSpy*> spies = createSpies(source_obj);
     QSignalSpy positionMethodChangedSpy(source_obj, SIGNAL(positioningMethodChanged(QDeclarativePositionSource::PositioningMethod)));
+    if (source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::NoPositioningMethod) {
+	// If there was no positioning method to begin with, make sure its changed now
+	methodShouldChange = true;
+    }
     source_obj->setProperty("nmeaSource", ":/data/nmealog.txt");
-    QVERIFY(!positionMethodChangedSpy.isEmpty());
+    if (methodShouldChange) {
+        QVERIFY(!positionMethodChangedSpy.isEmpty());
+    }
     QVERIFY(source_obj->property("positioningMethod").value<QDeclarativePositionSource::PositioningMethod>() == QDeclarativePositionSource::SatellitePositioningMethod);
     source_obj->setProperty("updateInterval", 500);
     QVERIFY(source_obj->property("nmeaSource").toUrl().isValid());
