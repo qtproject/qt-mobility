@@ -1,6 +1,6 @@
 QT += network
 
-TARGET = QGeoApiUI
+TARGET = geoapiui
 TEMPLATE = app thread
 
 INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation
