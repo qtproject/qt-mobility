@@ -45,31 +45,71 @@
 #include "qgeomapobject.h"
 
 #include <QList>
-#include <QMultiMap>
+#include <QRectF>
 #include "qgeoboundingbox.h"
+
+class QPainter;
+class QPainterPath;
+class QStyleOptionGraphicsItem;
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObject;
+class QGeoMapDataPrivate;
+
+class QGeoMapObjectInfo
+{
+public:
+    QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    virtual ~QGeoMapObjectInfo();
+
+    virtual void addToParent() = 0;
+    virtual void removeFromParent() = 0;
+
+    virtual void objectUpdate() = 0;
+    virtual void mapUpdate() = 0;
+
+    virtual QGeoBoundingBox boundingBox() const = 0;
+    virtual bool contains(const QGeoCoordinate &coord) const = 0;
+
+    const QGeoMapObjectPrivate* mapObjectPrivate;
+
+private:
+    Q_DISABLE_COPY(QGeoMapObjectInfo)
+};
 
 class QGeoMapObjectPrivate
 {
 public:
-    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type = QGeoMapObject::ContainerType);
     virtual ~QGeoMapObjectPrivate();
-    QGeoMapObjectPrivate& operator= (const QGeoMapObjectPrivate &other);
+
+    void setMapData(QGeoMapDataPrivate *mapData);
+
+    void addToParent(QGeoMapObject *parent);
+    void removeFromParent();
+
+    void objectUpdate();
+    void mapUpdate();
+
+    QGeoBoundingBox boundingBox() const;
+    bool contains(const QGeoCoordinate &coord) const;
 
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
     int zValue;
     bool isVisible;
-    QGeoBoundingBox boundingBox;
+    QGeoBoundingBox bounds;
 
-private:
+    QGeoMapDataPrivate *mapData;
+    mutable QGeoMapObjectInfo *info;
+
+//private:
     QGeoMapObject *q_ptr;
     Q_DECLARE_PUBLIC(QGeoMapObject)
+    Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };
 
 QTM_END_NAMESPACE
