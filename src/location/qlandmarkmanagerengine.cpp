@@ -503,74 +503,96 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 }
 
 /*!
-   \fn QLandmarkManagerEngine::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
+    \fn QLandmarkManagerEngine::dataChanged()
 
-   This signal is emitted some time after a set of landmarks has been added.
-   As it is possible that other processes(or other devices) may
-   have added the landmarks, the exact timing cannot be determined.
+    This signal is emitted some time after changes occur to the datastore managed by this
+    engine, and the engine is unable to precisely determine which changes occurred, or if the
+    engine considers the changes to be radical enough to require clients to reload all data.
 
-   There may be one or more landmark identifiers in the \a landmarkIds list.
+    If this signal is emitted, no other signals may be emitted for the associated changes.
 
-   \sa landmarksChanged(), landmarksRemoved()
+    As it is possible that other processes (or other devices) may have caused the
+    changes, the timing can not be determined.
+
+    \sa landmarksAdded(), landmarksChanged(), landmarksRemoved(), categoriesAdded(),
+    categoriesChanged(), categoriesRemoved()
+*/
+
+/*!
+    \fn QLandmarkManagerEngine::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
+
+    This signal is emitted some time after a set of landmarks has been added to
+    the datastore managed by the engine and where the \l dataChanged() signal was not emitted for those changes.
+    As it is possible that other processes(or other devices) may
+    have added the landmarks, the exact timing cannot be determined.
+
+    There may be one or more landmark identifiers in the \a landmarkIds list.
+
+    \sa dataChanged(), landmarksChanged(), landmarksRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been modified.
+    This signal is emitted some time after a set of landmarks have been modified in
+    the datastore managed by this engine and where the \l dataChanged() signal was not emitted for those changes.
     As it is possible that other processes(or other devices) may have modified the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-    \sa landmarksAdded(), landmarksRemoved()
+    \sa dataChanged(), landmarksAdded(), landmarksRemoved()
 */
 
 
 /*!
     \fn QLandmarkManagerEngine::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been removed.  As it is
-    possible that other processes(or other devices) may have removed the landmarks,
+    This signal is emitted some time after a set of landmarks have been removed from the
+    datastore managed by this engine and where the \l dataChanged() signal was not emitted for those changes.
+    As it is possible that other processes(or other devices) may have removed the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-    \sa landmarksAdded(), landmarksChanged()
+    \sa dataChanged(), landmarksAdded(), landmarksChanged()
 */
 
 /*!
    \fn QLandmarkManagerEngine::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
-   This signal is emitted some time after a set of categories has been added
+   This signal is emitted some time after a set of categories has been added to the datastore
+   managed by this engine and where the \l dataChanged() signal was not emitted for those changes.
    As it is possible that other processes(or other devices) may
    have added the landmarks, the exact timing cannot be determined.
 
    There may be one or more category identifiers in the \a categoryIds list.
 
-   \sa categoriesChanged(), categoriesRemoved()
+   \sa dataChanged(), categoriesChanged(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
-    This signal is emitted some time after a set of categories have been modified
+    This signal is emitted some time after a set of categories have been modified in the datastore
+    managed by the engine and where the \l dataChanged() signal was not emitted for those changes.
     As it is possible that other processes(or other devices) may have modified the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa categoriesAdded(), categoriesRemoved()
+    \sa dataChanged(), categoriesAdded(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
-    This signal is emitted some time after a set of categories have been removed
+    This signal is emitted some time after a set of categories have been removed from the datastore
+    managed by this engine and where the \l dataChanged() signal was not emitted for those changes.
     As it is possible that other processes(or other devices) may have removed the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa categoriesAdded(), categoriesChanged()
+    \sa dataChanged(), categoriesAdded(), categoriesChanged()
 */
 
 /*!
