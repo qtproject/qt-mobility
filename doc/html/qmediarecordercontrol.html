@@ -132,7 +132,8 @@
 <p>See also <a href="qmediarecordercontrol.html#isMuted">isMuted</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaRecorderControl/setOutputLocation"></a>
 <h3 class="fn"><a name="setOutputLocation"></a>bool QMediaRecorderControl::setOutputLocation ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Sets the output <i>location</i> and returns if this operation is successful.</p>
+<p>Sets the output <i>location</i> and returns if this operation is successful. If file at the output location already exists, it should be overwritten.</p>
+<p>The <i>location</i> can be relative or empty; in this case the service should use the system specific place and file naming scheme. After recording has stated, <a href="qmediarecordercontrol.html#outputLocation">QMediaRecorderControl::outputLocation</a>() should return the actual output location.</p>
 <p>See also <a href="qmediarecordercontrol.html#outputLocation">outputLocation</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaRecorderControl/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qmediarecorder.html#State-enum">QMediaRecorder::State</a> QMediaRecorderControl::state () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
