@@ -789,6 +789,32 @@ void tst_QGalleryAbstractRequest::clear()
     QCOMPARE(stateSpy.count(), 4);
     QCOMPARE(stateSpy.last().value(0).value<QGalleryAbstractRequest::State>(),
              QGalleryAbstractRequest::Inactive);
+
+
+    // Clear error response.
+    gallery.setResult(QGalleryAbstractRequest::ConnectionError);
+    gallery.setIdle(false);
+    request.execute();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 5);
+    QCOMPARE(stateSpy.count(), 4);
+
+    request.clear();
+    QVERIFY(request.response() == 0);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(request.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 2);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(resultSpy.count(), 6);
+    QCOMPARE(stateSpy.count(), 4);
 }
 
 void tst_QGalleryAbstractRequest::waitForFinished()

@@ -504,6 +504,10 @@ void QGalleryAbstractRequest::clear()
 
         if (wasActive && d_ptr->state == Inactive)
             emit stateChanged(d_ptr->state);
+    } else if (d_ptr->result != NoResult) {
+        d_ptr->result = NoResult;
+
+        emit resultChanged();
     }
 }
 

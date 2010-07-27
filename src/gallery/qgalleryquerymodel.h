@@ -107,6 +107,11 @@ public:
     void setFilter(const QGalleryFilter &filter);
 
     bool execute();
+    void cancel();
+    void clear();
+
+    int result() const;
+    QGalleryAbstractRequest::State state() const;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
@@ -129,6 +134,14 @@ public:
             int role = Qt::EditRole);
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
+
+Q_SIGNALS:
+    void succeeded();
+    void cancelled();
+    void failed(int result);
+    void finished(int result);
+    void stateChanged(QGalleryAbstractRequest::State state);
+    void resultChanged();
 
 private:
     QScopedPointer<QGalleryQueryModelPrivate> d_ptr;

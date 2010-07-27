@@ -96,13 +96,6 @@ public:
     QVariant itemId() const { return m_currentIndex == 0 ? QVariant(1) : QVariant(); }
     QUrl itemUrl() const { return m_currentIndex == 0 ? QUrl("http://example.com") : QUrl(); }
     QString itemType() const { return m_currentIndex == 0 ? QLatin1String("WebPage") : QString(); }
-    QList<QGalleryResource> resources() const
-    {
-        QList<QGalleryResource> resources;
-        if (m_currentIndex == 0)
-            resources.append(QGalleryResource(itemUrl()));
-        return resources;
-    }
 
     QVariant metaData(int key) const {
         return m_currentIndex == 0 ? m_metaData.value(key) : QVariant(); }

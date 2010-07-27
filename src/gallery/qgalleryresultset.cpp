@@ -41,6 +41,8 @@
 
 #include "qgalleryresultset_p.h"
 
+#include "qgalleryresource.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -111,10 +113,20 @@ QGalleryResultSet::~QGalleryResultSet()
 */
 
 /*!
-    \fn QGalleryResultSet::resources() const
-
 
 */
+
+QList<QGalleryResource> QGalleryResultSet::resources() const
+{
+    QList<QGalleryResource> resources;
+
+    const QUrl url = itemUrl();
+
+    if (!url.isEmpty())
+        resources.append(QGalleryResource(url));
+
+    return resources;
+}
 
 /*!
     \fn QGalleryResultSet::metaData(int key) const

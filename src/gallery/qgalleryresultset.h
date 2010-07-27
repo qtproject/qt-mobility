@@ -73,7 +73,7 @@ public:
     virtual QVariant itemId() const = 0;
     virtual QUrl itemUrl() const = 0;
     virtual QString itemType() const = 0;
-    virtual QList<QGalleryResource> resources() const = 0;
+    virtual QList<QGalleryResource> resources() const;
 
     virtual QVariant metaData(int key) const = 0;
     virtual bool setMetaData(int key, const QVariant &value) = 0;

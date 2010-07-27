@@ -43,15 +43,20 @@
 
 #include <QtTest/QtTest>
 
-#include <qgalleryitemlistmodel.h>
+#include <qgalleryquerymodel.h>
 
-#include <qgalleryitemlist.h>
+#include <qabstractgallery.h>
+#include <qgalleryqueryrequest.h>
+#include <qgalleryresultset.h>
 
-Q_DECLARE_METATYPE(QModelIndex)
+#include <QtCore/qpointer.h>
 
 QTM_USE_NAMESPACE
 
-class QtTestGalleryItemList;
+Q_DECLARE_METATYPE(QModelIndex)
+Q_DECLARE_METATYPE(QGalleryAbstractRequest::State)
+
+class QtTestGallery;
 
 class tst_QGalleryItemListModel : public QObject
 {
@@ -60,7 +65,9 @@ public Q_SLOTS:
     void initTestCase();
 
 private Q_SLOTS:
-    void itemList();
+    void execute();
+    void properties();
+    void indexes();
     void data();
     void flags();
     void headerData();
@@ -68,7 +75,6 @@ private Q_SLOTS:
     void insertColumn();
     void removeColumn();
     void setRoleProperties();
-    void cursorPosition();
     void itemsInserted();
     void itemsRemoved();
     void itemsMoved();
@@ -77,7 +83,7 @@ private Q_SLOTS:
     void hierarchy();
 
 private:
-    void populateItemList(QtTestGalleryItemList *itemList) const;
+    void populateGallery(QtTestGallery *gallery) const;
 
     QHash<int, QString> albumProperties;
     QHash<int, QString> titleProperties;
@@ -86,87 +92,170 @@ private:
     QHash<int, QString> turtleProperties;
 };
 
-class QtTestGalleryItemList : public QGalleryItemList
+class QtTestResultSet : public QGalleryResultSet
 {
+    Q_OBJECT
 public:
-    QtTestGalleryItemList()
-        : m_outOfRangeCount(0), m_minimumPagedItems(0), m_insertIndex(0), m_insertCount(0) {}
-
-    QStringList propertyNames() const { return m_propertyNames; }
-    void setPropertyNames(const QStringList &propertyNames) {
-        m_propertyNames = propertyNames; }
-
-    int propertyKey(const QString &propertyName) const {
-        return m_propertyNames.indexOf(propertyName); }
-
-    QGalleryProperty::Attributes propertyAttributes(int key) const {
-        return m_propertyAttributes.value(key); }
-    void setPropertyAttributes(const QVector<QGalleryProperty::Attributes> &attributes) {
-        m_propertyAttributes = attributes; }
-
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int minimumPagedItems() const { return m_minimumPagedItems; }
-    void setMinimumPagedItems(int items) { m_minimumPagedItems = items; }
-
-    int count() const { return m_rows.count() + m_outOfRangeCount; }
-
-    QVariant id(int) const { return QVariant(); }
-    QUrl url(int) const { return QUrl(); }
-    QString type(int) const { return QString(); }
-    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int index) const
-    {
-        ItemStatus status;
-        if (index > m_rows.count())
-            status |= OutOfRange;
-        return status;
-    }
-
-    QVariant metaData(int index, int key) const {
-        return index < m_rows.count() ? m_rows.at(index).metaData.at(key) : QVariant(); }
-    void setMetaData(int index, int key, const QVariant &value)
-    {
-        if (index < m_rows.count()) {
-            m_rows[index].metaData[key] = value;
-            emit metaDataChanged(index, 1, QList<int>() << key);
-        }
-    }
-
-    void beginInsertRows(int index) { m_insertIndex = index; m_insertCount = 0; }
-    void addRow(const QVector<QVariant> &metaData) {
-        m_rows.insert(m_insertIndex + m_insertCount++, Row(metaData)); }
-    void endInsertRows() { emit inserted(m_insertIndex, m_insertCount); }
-
-    void appendOutOfRangeItems(int count) {
-        m_outOfRangeCount = count; emit inserted(m_rows.count(), count); }
-
-    void removeRows(int index, int count) {
-        m_rows.remove(index, count); emit removed(index, count); }
-
-    using QGalleryItemList::metaDataChanged;
-    using QGalleryItemList::moved;
-
-private:
     struct Row
     {
         Row() {}
-        Row(const QVector<QVariant> &metaData) : metaData(metaData) {}
-        QVector<QVariant> metaData;
+        Row(const QVariant &itemId,
+                const QUrl &itemUrl,
+                const QString &itemType,
+                const QHash<QString, QVariant> &metaData)
+            : itemId(itemId)
+            , itemUrl(itemUrl)
+            , itemType(itemType)
+            , metaData(metaData) {}
+        QVariant itemId;
+        QUrl itemUrl;
+        QString itemType;
+        QHash<QString, QVariant> metaData;
     };
 
+    QtTestResultSet(
+            int result,
+            const QHash<QString, QGalleryProperty::Attributes> &propertyAttributes,
+            const QVector<Row> &rows)
+        : m_propertyNames(propertyAttributes.keys())
+        , m_propertyAttributes(propertyAttributes)
+        , m_rows(rows)
+        , m_currentIndex(-1)
+        , m_insertIndex(0)
+        , m_insertCount(0)
+    {
+        if (result != QGalleryAbstractRequest::NoResult)
+            finish(result);
+    }
+
+    QStringList propertyNames() const { return m_propertyNames; }
+
+    int propertyKey(const QString &propertyName) const {
+        return  m_propertyNames.indexOf(propertyName); }
+
+    QGalleryProperty::Attributes propertyAttributes(int key) const {
+        return m_propertyAttributes.value(m_propertyNames.value(key)); }
+
+    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
+
+    int itemCount() const { return m_rows.count(); }
+
+    int currentIndex() const { return m_currentIndex; }
+    bool seek(int index, bool relative)
+    {
+        m_currentIndex = relative ? m_currentIndex + index : index;
+
+        emit currentIndexChanged(m_currentIndex);
+
+        return m_currentIndex >= 0 && m_currentIndex < m_rows.count();
+    }
+
+    QVariant itemId() const { return m_rows.value(m_currentIndex).itemId; }
+    QUrl itemUrl() const { return m_rows.value(m_currentIndex).itemUrl; }
+    QString itemType() const { return m_rows.value(m_currentIndex).itemType; }
+
+    QVariant metaData(int key) const {
+        return m_rows.value(m_currentIndex).metaData.value(m_propertyNames.at(key)); }
+
+    bool setMetaData(int key, const QVariant &value)
+    {
+        if (m_currentIndex >=  0 && m_currentIndex < m_rows.count() && key >= 0) {
+            const QString propertyName = m_propertyNames.at(key);
+
+            if (m_propertyAttributes.value(propertyName) & QGalleryProperty::CanWrite) {
+                m_rows[m_currentIndex].metaData[propertyName] = value;
+
+                emit metaDataChanged(m_currentIndex, 1, QList<int>() << key);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void beginInsertRows(int index) { m_insertIndex = index; m_insertCount = 0; }
+    void addRow()
+    {
+        m_rows.insert(m_insertIndex + m_insertCount++, Row());
+    }
+    void addRow(
+            const QString &itemId,
+            const QUrl &itemUrl,
+            const QString &itemType,
+            const QHash<QString, QVariant> &metaData)
+    {
+        m_rows.insert(m_insertIndex + m_insertCount++, Row(itemId, itemUrl, itemType, metaData));
+    }
+    void endInsertRows() { emit itemsInserted(m_insertIndex, m_insertCount); }
+
+    void removeRows(int index, int count) {
+        m_rows.remove(index, count); emit itemsRemoved(index, count); }
+
+    using QGalleryResultSet::metaDataChanged;
+    using QGalleryResultSet::itemsMoved;
+
+private:
     QStringList m_propertyNames;
-    QVector<QGalleryProperty::Attributes> m_propertyAttributes;
+    const QHash<QString, QGalleryProperty::Attributes> m_propertyAttributes;
     QVector<Row> m_rows;
-    int m_outOfRangeCount;
-    int m_minimumPagedItems;
+    int m_currentIndex;
     int m_insertIndex;
     int m_insertCount;
+};
+
+class QtTestGallery : public QAbstractGallery
+{
+public:
+    QtTestGallery()
+        : m_result(QGalleryAbstractRequest::Succeeded)
+    {
+    }
+
+    bool isRequestSupported(QGalleryAbstractRequest::Type) const { return true; }
+
+    void setPropertyAttributes(const QHash<QString, QGalleryProperty::Attributes> &attributes)
+    {
+        m_propertyAttributes = attributes;
+    }
+
+    void setResult(int result) { m_result = result; }
+
+    void addRow()
+    {
+        m_rows.append(QtTestResultSet::Row());
+    }
+
+    void addRow(
+            const QVariant &itemId,
+            const QUrl &itemUrl,
+            const QString &itemType,
+            const QHash<QString, QVariant> &metaData)
+    {
+        m_rows.append(QtTestResultSet::Row(itemId, itemUrl, itemType, metaData));
+    }
+
+    QGalleryQueryRequest *request() const { return m_request; }
+
+protected:
+    QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
+    {
+        m_request = qobject_cast<QGalleryQueryRequest *>(request);
+
+        return new QtTestResultSet(m_result, m_propertyAttributes, m_rows);
+    }
+
+
+private:
+    QHash<QString, QGalleryProperty::Attributes> m_propertyAttributes;
+    QVector<QtTestResultSet::Row> m_rows;
+    QPointer<QGalleryQueryRequest> m_request;
+    int m_result;
 };
 
 void tst_QGalleryItemListModel::initTestCase()
 {
     qRegisterMetaType<QModelIndex>();
+    qRegisterMetaType<QGalleryAbstractRequest::State>();
 
     albumProperties.insert(Qt::DisplayRole, QLatin1String("albumTitle"));
     albumProperties.insert(Qt::UserRole, QLatin1String("albumArtist"));
@@ -182,52 +271,200 @@ void tst_QGalleryItemListModel::initTestCase()
     turtleProperties.insert(Qt::DisplayRole, QLatin1String("turtle"));
 }
 
-void tst_QGalleryItemListModel::populateItemList(QtTestGalleryItemList *itemList) const
+void tst_QGalleryItemListModel::populateGallery(QtTestGallery *gallery) const
 {
-    itemList->setPropertyNames(QStringList()
-            << QLatin1String("displayName")
-            << QLatin1String("title")
-            << QLatin1String("albumTitle")
-            << QLatin1String("albumArtist")
-            << QLatin1String("albumId")
-            << QLatin1String("duration")
-            << QLatin1String("rating"));
-    itemList->setPropertyAttributes(QVector<QGalleryProperty::Attributes>()
-            << (QGalleryProperty::CanRead)
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite)
-            << (QGalleryProperty::CanRead)
-            << (QGalleryProperty::CanRead)
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite)
-            << (QGalleryProperty::CanRead)
-            << (QGalleryProperty::CanRead | QGalleryProperty::CanWrite));
+    QHash<QString, QGalleryProperty::Attributes> attributes;
+    attributes.insert(QLatin1String("displayName"), QGalleryProperty::CanRead);
+    attributes.insert(QLatin1String("title"), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
+    attributes.insert(QLatin1String("albumTitle"), QGalleryProperty::CanRead);
+    attributes.insert(QLatin1String("albumArtist"), QGalleryProperty::CanRead);
+    attributes.insert(QLatin1String("albumId"), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
+    attributes.insert(QLatin1String("duration"), QGalleryProperty::CanRead);
+    attributes.insert(QLatin1String("rating"), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
+    gallery->setPropertyAttributes(attributes);
 
-    itemList->beginInsertRows(0);
-    itemList->addRow(QVector<QVariant>()
-            << QLatin1String("Interlude")
-            << QLatin1String("Interlude")
-            << QLatin1String("Greatest Hits")
-            << QLatin1String("Self Titled")
-            << QLatin1String("album:SelfTitled:GreatestHits")
-            << 120100
-            << 4);
-    itemList->addRow(QVector<QVariant>()
-            << QLatin1String("beep.wav")
-            << QVariant()
-            << QVariant()
-            << QVariant()
-            << QVariant()
-            << 600
-            << QVariant());
-    itemList->endInsertRows();
+    {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("displayName"), QLatin1String("Interlude"));
+        metaData.insert(QLatin1String("title"), QLatin1String("Interlude"));
+        metaData.insert(QLatin1String("albumTitle"), QLatin1String("Greatest Hits"));
+        metaData.insert(QLatin1String("albumArtist"), QLatin1String("Self Titled"));
+        metaData.insert(QLatin1String("albumId"), QLatin1String("album:SelfTitled:GreatestHits"));
+        metaData.insert(QLatin1String("duration"), 120100);
+        metaData.insert(QLatin1String("rating"), 4);
+
+        gallery->addRow(
+                3,
+                QUrl(QLatin1String("file:///music/interlude.mp3")),
+                QLatin1String("Audio"),
+                metaData);
+    } {
+        QHash<QString, QVariant> metaData;
+        metaData.insert(QLatin1String("displayName"), QLatin1String("beep.wav"));
+        metaData.insert(QLatin1String("duration"), 600);
+
+        gallery->addRow(
+                45,
+                QUrl(QLatin1String("file:///sounds/beep.wav")),
+                QLatin1String("Audio"),
+                metaData);
+    }
 }
 
-void tst_QGalleryItemListModel::itemList()
+void tst_QGalleryItemListModel::execute()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
+
+    QSignalSpy succeededSpy(&model, SIGNAL(succeeded()));
+    QSignalSpy cancelledSpy(&model, SIGNAL(cancelled()));
+    QSignalSpy failedSpy(&model, SIGNAL(failed(int)));
+    QSignalSpy finishedSpy(&model, SIGNAL(finished(int)));
+    QSignalSpy stateSpy(&model, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+    QSignalSpy resultSpy(&model, SIGNAL(resultChanged()));
+
+    QCOMPARE(model.execute(), true);
+    QCOMPARE(model.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(stateSpy.count(), 0);
+    QCOMPARE(resultSpy.count(), 1);
+
+    gallery.setResult(QGalleryAbstractRequest::NoResult);
+    QCOMPARE(model.execute(), true);
+    QCOMPARE(model.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Active);
+    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 0);
+    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(finishedSpy.count(), 1);
+    QCOMPARE(stateSpy.count(), 1);
+    QCOMPARE(resultSpy.count(), 2);
+
+    model.cancel();
+    QCOMPARE(model.result(), int(QGalleryAbstractRequest::Cancelled));
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(failedSpy.count(), 0);
+    QCOMPARE(finishedSpy.count(), 2);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 3);
+
+    gallery.setResult(QGalleryAbstractRequest::ConnectionError);
+    QCOMPARE(model.execute(), false);
+    QCOMPARE(model.result(), int(QGalleryAbstractRequest::ConnectionError));
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 4);
+
+    model.clear();
+    QCOMPARE(model.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
+    QCOMPARE(succeededSpy.count(), 1);
+    QCOMPARE(cancelledSpy.count(), 1);
+    QCOMPARE(failedSpy.count(), 1);
+    QCOMPARE(finishedSpy.count(), 3);
+    QCOMPARE(stateSpy.count(), 2);
+    QCOMPARE(resultSpy.count(), 5);
+}
+
+void tst_QGalleryItemListModel::properties()
+{
+    const QStringList sortPropertyNames = QStringList()
+            << QLatin1String("rating") << QLatin1String("duration");
+    const bool isLive = true;
+    const int offset = 90;
+    const int limit = 12;
+    const QString rootType = QLatin1String("Document");
+    const QVariant rootItem = 35;
+    const QGalleryAbstractRequest::Scope scope = QGalleryAbstractRequest::DirectDescendants;
+    const QGalleryFilter filter = QGalleryMetaDataFilter(
+            QLatin1String("rating"), 3, QGalleryFilter::GreaterThan);
+
+    QtTestGallery gallery;
+
+    QGalleryQueryModel model;
+    QVERIFY(model.gallery() == 0);
+
+    model.setGallery(&gallery);
+    QVERIFY(model.gallery() == &gallery);
+
+    QCOMPARE(model.sortPropertyNames(), QStringList());
+    QCOMPARE(model.isLive(), false);
+    QCOMPARE(model.offset(), 0);
+    QCOMPARE(model.limit(), 0);
+    QCOMPARE(model.rootType(), QString());
+    QCOMPARE(model.rootItem(), QVariant());
+    QCOMPARE(model.scope(), QGalleryAbstractRequest::AllDescendants);
+    QCOMPARE(model.filter(), QGalleryFilter());
+
+    model.setSortPropertyNames(sortPropertyNames);
+    QCOMPARE(model.sortPropertyNames(), sortPropertyNames);
+
+    model.setLive(isLive);
+    QCOMPARE(model.isLive(), isLive);
+
+    model.setOffset(offset);
+    QCOMPARE(model.offset(), offset);
+
+    model.setLimit(limit);
+    QCOMPARE(model.limit(), limit);
+
+    model.setRootType(rootType);
+    QCOMPARE(model.rootType(), rootType);
+
+    model.setRootItem(rootItem);
+    QCOMPARE(model.rootItem(), rootItem);
+
+    model.setScope(scope);
+    QCOMPARE(model.scope(), scope);
+
+    model.setFilter(filter);
+    QCOMPARE(model.filter(), filter);
+
+    model.addColumn(albumProperties);
+    model.addColumn(titleProperties);
+    model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
+    model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
+    model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
+    QCOMPARE(model.execute(), true);
+    QVERIFY(gallery.request() != 0);
+
+    const QStringList propertyNames = gallery.request()->propertyNames();
+    QVERIFY(propertyNames.contains("albumTitle"));
+    QVERIFY(propertyNames.contains("albumArtist"));
+    QVERIFY(propertyNames.contains("albumId"));
+    QVERIFY(propertyNames.contains("displayName"));
+    QVERIFY(propertyNames.contains("title"));
+    QVERIFY(propertyNames.contains("duration"));
+    QVERIFY(propertyNames.contains("rating"));
+    QVERIFY(propertyNames.contains("turtle"));
+
+    QCOMPARE(gallery.request()->sortPropertyNames(), sortPropertyNames);
+    QCOMPARE(gallery.request()->isLive(), isLive);
+    QCOMPARE(gallery.request()->offset(), offset);
+    QCOMPARE(gallery.request()->limit(), limit);
+    QCOMPARE(gallery.request()->rootType(), rootType);
+    QCOMPARE(gallery.request()->rootItem(), rootItem);
+    QCOMPARE(gallery.request()->scope(), scope);
+    QCOMPARE(gallery.request()->filter(), filter);
+}
+
+void tst_QGalleryItemListModel::indexes()
+{
+    QtTestGallery gallery;
+    populateGallery(&gallery);
+
+    QGalleryQueryModel model(&gallery);
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
@@ -237,7 +474,6 @@ void tst_QGalleryItemListModel::itemList()
     QSignalSpy insertSpy(&model, SIGNAL(rowsInserted(QModelIndex,int,int)));
     QSignalSpy removeSpy(&model, SIGNAL(rowsRemoved(QModelIndex,int,int)));
 
-    QVERIFY(model.itemList() == 0);
     QCOMPARE(model.rowCount(), 0);
     QCOMPARE(model.columnCount(), 5);
 
@@ -259,29 +495,22 @@ void tst_QGalleryItemListModel::itemList()
     QCOMPARE(model.index( 1,  3).isValid(), false);
     QCOMPARE(model.index( 1,  4).isValid(), false);
     QCOMPARE(model.index( 1,  5).isValid(), false);
-    QCOMPARE(model.index( 4, -1).isValid(), false);
-    QCOMPARE(model.index( 4,  0).isValid(), false);
-    QCOMPARE(model.index( 4,  2).isValid(), false);
-    QCOMPARE(model.index( 4,  3).isValid(), false);
-    QCOMPARE(model.index( 4,  4).isValid(), false);
-    QCOMPARE(model.index( 4,  5).isValid(), false);
-    QCOMPARE(model.index( 5, -1).isValid(), false);
-    QCOMPARE(model.index( 5,  0).isValid(), false);
-    QCOMPARE(model.index( 5,  2).isValid(), false);
-    QCOMPARE(model.index( 5,  3).isValid(), false);
-    QCOMPARE(model.index( 5,  4).isValid(), false);
-    QCOMPARE(model.index( 5,  5).isValid(), false);
+    QCOMPARE(model.index( 2, -1).isValid(), false);
+    QCOMPARE(model.index( 2,  0).isValid(), false);
+    QCOMPARE(model.index( 2,  2).isValid(), false);
+    QCOMPARE(model.index( 2,  3).isValid(), false);
+    QCOMPARE(model.index( 2,  4).isValid(), false);
+    QCOMPARE(model.index( 2,  5).isValid(), false);
 
-    model.setItemList(&itemList);
-    QVERIFY(model.itemList() == &itemList);
+    QVERIFY(model.execute());
 
-    QCOMPARE(model.rowCount(), 5);
+    QCOMPARE(model.rowCount(), 2);
     QCOMPARE(model.columnCount(), 5);
 
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(insertSpy.last().at(0).value<QModelIndex>(), QModelIndex());
     QCOMPARE(insertSpy.last().at(1).toInt(), 0);
-    QCOMPARE(insertSpy.last().at(2).toInt(), 4);
+    QCOMPARE(insertSpy.last().at(2).toInt(), 1);
 
     QCOMPARE(model.index(-1, -1).isValid(), false);
     QCOMPARE(model.index(-1,  0).isValid(), false);
@@ -301,21 +530,14 @@ void tst_QGalleryItemListModel::itemList()
     QCOMPARE(model.index( 1,  3).isValid(), true);
     QCOMPARE(model.index( 1,  4).isValid(), true);
     QCOMPARE(model.index( 1,  5).isValid(), false);
-    QCOMPARE(model.index( 4, -1).isValid(), false);
-    QCOMPARE(model.index( 4,  0).isValid(), true);
-    QCOMPARE(model.index( 4,  2).isValid(), true);
-    QCOMPARE(model.index( 4,  3).isValid(), true);
-    QCOMPARE(model.index( 4,  4).isValid(), true);
-    QCOMPARE(model.index( 4,  5).isValid(), false);
-    QCOMPARE(model.index( 5, -1).isValid(), false);
-    QCOMPARE(model.index( 5,  0).isValid(), false);
-    QCOMPARE(model.index( 5,  2).isValid(), false);
-    QCOMPARE(model.index( 5,  3).isValid(), false);
-    QCOMPARE(model.index( 5,  4).isValid(), false);
-    QCOMPARE(model.index( 5,  5).isValid(), false);
+    QCOMPARE(model.index( 2, -1).isValid(), false);
+    QCOMPARE(model.index( 2,  0).isValid(), false);
+    QCOMPARE(model.index( 2,  2).isValid(), false);
+    QCOMPARE(model.index( 2,  3).isValid(), false);
+    QCOMPARE(model.index( 2,  4).isValid(), false);
+    QCOMPARE(model.index( 2,  5).isValid(), false);
 
-    model.setItemList(0);
-    QVERIFY(model.itemList() == 0);
+    model.clear();
 
     QCOMPARE(model.rowCount(), 0);
     QCOMPARE(model.columnCount(), 5);
@@ -323,7 +545,7 @@ void tst_QGalleryItemListModel::itemList()
     QCOMPARE(removeSpy.count(), 1);
     QCOMPARE(removeSpy.last().at(0).value<QModelIndex>(), QModelIndex());
     QCOMPARE(removeSpy.last().at(1).toInt(), 0);
-    QCOMPARE(removeSpy.last().at(2).toInt(), 4);
+    QCOMPARE(removeSpy.last().at(2).toInt(), 1);
 
     QCOMPARE(model.index(-1, -1).isValid(), false);
     QCOMPARE(model.index(-1,  0).isValid(), false);
@@ -343,67 +565,78 @@ void tst_QGalleryItemListModel::itemList()
     QCOMPARE(model.index( 1,  3).isValid(), false);
     QCOMPARE(model.index( 1,  4).isValid(), false);
     QCOMPARE(model.index( 1,  5).isValid(), false);
-    QCOMPARE(model.index( 4, -1).isValid(), false);
-    QCOMPARE(model.index( 4,  0).isValid(), false);
-    QCOMPARE(model.index( 4,  2).isValid(), false);
-    QCOMPARE(model.index( 4,  3).isValid(), false);
-    QCOMPARE(model.index( 4,  4).isValid(), false);
-    QCOMPARE(model.index( 4,  5).isValid(), false);
-    QCOMPARE(model.index( 5, -1).isValid(), false);
-    QCOMPARE(model.index( 5,  0).isValid(), false);
-    QCOMPARE(model.index( 5,  2).isValid(), false);
-    QCOMPARE(model.index( 5,  3).isValid(), false);
-    QCOMPARE(model.index( 5,  4).isValid(), false);
-    QCOMPARE(model.index( 5,  5).isValid(), false);
+    QCOMPARE(model.index( 2, -1).isValid(), false);
+    QCOMPARE(model.index( 2,  0).isValid(), false);
+    QCOMPARE(model.index( 2,  2).isValid(), false);
+    QCOMPARE(model.index( 2,  3).isValid(), false);
+    QCOMPARE(model.index( 2,  4).isValid(), false);
+    QCOMPARE(model.index( 2,  5).isValid(), false);
 }
 
 void tst_QGalleryItemListModel::data()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    model.setItemList(&itemList);
+    QVERIFY(model.execute());
 
     QModelIndex index;
 
     index = model.index(0, 0);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(QLatin1String("Greatest Hits")));
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant(QLatin1String("Self Titled")));
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant(QLatin1String("album:SelfTitled:GreatestHits")));
 
     index = model.index(0, 1);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(QLatin1String("Interlude")));
     QCOMPARE(index.data(Qt::EditRole), QVariant(QLatin1String("Interlude")));
     QCOMPARE(index.data(Qt::UserRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
 
     index = model.index(0, 2);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(120100));
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
 
     index = model.index(0, 3);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(4));
     QCOMPARE(index.data(Qt::EditRole), QVariant(4));
     QCOMPARE(index.data(Qt::UserRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
 
     index = model.index(0, 4);
+    QCOMPARE(model.itemId(index), QVariant(3));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant());
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
 
     index = model.index(1, 0);
+    QCOMPARE(model.itemId(index), QVariant(45));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///sounds/beep.wav")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant());
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
@@ -422,6 +655,9 @@ void tst_QGalleryItemListModel::data()
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant(QLatin1String("album:EffectsPeople:Noise")));
 
     index = model.index(1, 1);
+    QCOMPARE(model.itemId(index), QVariant(45));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///sounds/beep.wav")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(QLatin1String("beep.wav")));
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
@@ -434,6 +670,9 @@ void tst_QGalleryItemListModel::data()
     QCOMPARE(index.data(Qt::EditRole), QVariant(QLatin1String("Beep Sound")));
 
     index = model.index(1, 2);
+    QCOMPARE(model.itemId(index), QVariant(45));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///sounds/beep.wav")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.isValid(), true);
     QCOMPARE(index.flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(index.data(Qt::DisplayRole), QVariant(600));
@@ -448,6 +687,9 @@ void tst_QGalleryItemListModel::data()
     QCOMPARE(index.data(Qt::EditRole), QVariant());
 
     index = model.index(1, 3);
+    QCOMPARE(model.itemId(index), QVariant(45));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///sounds/beep.wav")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant());
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
@@ -462,79 +704,62 @@ void tst_QGalleryItemListModel::data()
     QCOMPARE(index.data(Qt::EditRole), QVariant(5));
 
     index = model.index(1, 4);
+    QCOMPARE(model.itemId(index), QVariant(45));
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///sounds/beep.wav")));
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
     QCOMPARE(index.data(Qt::DisplayRole), QVariant());
     QCOMPARE(index.data(Qt::EditRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole), QVariant());
     QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
 
-    // Out Of Range.
-    index = model.index(4, 0);
-    QCOMPARE(index.data(Qt::DisplayRole), QVariant());
-    QCOMPARE(index.data(Qt::EditRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
+    // Random access.
+    index = model.index(0, 3);
+    QCOMPARE(model.setData(index, 4, Qt::DisplayRole), true);
+    QCOMPARE(index.data(Qt::DisplayRole), QVariant(4));
+    QCOMPARE(index.data(Qt::EditRole), QVariant(4));
 
-    index = model.index(4, 1);
-    QCOMPARE(index.data(Qt::DisplayRole), QVariant());
-    QCOMPARE(index.data(Qt::EditRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
+    index = model.index(1, 0);
+    QCOMPARE(model.itemId(index), QVariant(45));
 
-    index = model.index(4, 2);
-    QCOMPARE(index.data(Qt::DisplayRole), QVariant());
-    QCOMPARE(index.data(Qt::EditRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
+    index = model.index(0, 0);
+    QCOMPARE(model.itemUrl(index), QUrl(QLatin1String("file:///music/interlude.mp3")));
 
-    index = model.index(4, 3);
-    QCOMPARE(index.data(Qt::DisplayRole), QVariant());
-    QCOMPARE(index.data(Qt::EditRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
-
-    index = model.index(4, 4);
-    QCOMPARE(index.data(Qt::DisplayRole), QVariant());
-    QCOMPARE(index.data(Qt::EditRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole), QVariant());
-    QCOMPARE(index.data(Qt::UserRole + 1), QVariant());
+    index = model.index(1, 0);
+    QCOMPARE(model.itemType(index), QString::fromLatin1("Audio"));
 }
 
 void tst_QGalleryItemListModel::flags()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    model.setItemList(&itemList);
+    QVERIFY(model.execute());
 
     QCOMPARE(model.index(0, 0).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(0, 1).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     QCOMPARE(model.index(0, 2).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(0, 3).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-    QCOMPARE(model.index(0, 4).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QCOMPARE(model.index(0, 4).flags(), Qt::ItemFlags());
 
     QCOMPARE(model.index(1, 0).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);;
     QCOMPARE(model.index(1, 1).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     QCOMPARE(model.index(1, 2).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(1, 3).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-    QCOMPARE(model.index(1, 4).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-    QCOMPARE(model.index(4, 0).flags(), Qt::ItemFlags());
-    QCOMPARE(model.index(4, 1).flags(), Qt::ItemFlags());
-    QCOMPARE(model.index(4, 2).flags(), Qt::ItemFlags());
-    QCOMPARE(model.index(4, 3).flags(), Qt::ItemFlags());
-    QCOMPARE(model.index(4, 4).flags(), Qt::ItemFlags());
+    QCOMPARE(model.index(1, 4).flags(), Qt::ItemFlags());
 }
 
 void tst_QGalleryItemListModel::headerData()
 {
-    QGalleryItemListModel model;
+    QtTestGallery gallery;
+    populateGallery(&gallery);
+
+    QGalleryQueryModel model(&gallery);
 
     model.addColumn(QLatin1String("title"));
     model.addColumn(QLatin1String("artist"));
@@ -574,12 +799,11 @@ void tst_QGalleryItemListModel::headerData()
 
 void tst_QGalleryItemListModel::addColumn()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    QVERIFY(model.execute());
 
     QSignalSpy columnSpy(&model, SIGNAL(columnsInserted(QModelIndex,int,int)));
 
@@ -652,7 +876,7 @@ void tst_QGalleryItemListModel::addColumn()
     QCOMPARE(model.index(0, 1).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     QCOMPARE(model.index(0, 2).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(0, 3).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-    QCOMPARE(model.index(0, 4).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QCOMPARE(model.index(0, 4).flags(), Qt::ItemFlags());
 
     QCOMPARE(model.headerData(0, Qt::Horizontal), QVariant(QLatin1String("Album")));
     QCOMPARE(model.headerData(1, Qt::Horizontal), QVariant(QLatin1String("Title")));
@@ -739,12 +963,11 @@ void tst_QGalleryItemListModel::addColumn()
 
 void tst_QGalleryItemListModel::insertColumn()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    model.execute();
 
     QSignalSpy columnSpy(&model, SIGNAL(columnsInserted(QModelIndex,int,int)));
 
@@ -817,7 +1040,7 @@ void tst_QGalleryItemListModel::insertColumn()
     QCOMPARE(model.index(0, 1).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(0, 2).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     QCOMPARE(model.index(0, 3).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    QCOMPARE(model.index(0, 4).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QCOMPARE(model.index(0, 4).flags(), Qt::ItemFlags());
 
     QCOMPARE(model.headerData(0, Qt::Horizontal), QVariant(QLatin1String("Title")));
     QCOMPARE(model.headerData(1, Qt::Horizontal), QVariant(QLatin1String("Duration")));
@@ -904,11 +1127,10 @@ void tst_QGalleryItemListModel::insertColumn()
 
 void tst_QGalleryItemListModel::removeColumn()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
 
     QCOMPARE(model.index(0, 0).isValid(), false);
     QCOMPARE(model.index(0, 1).isValid(), false);
@@ -928,7 +1150,7 @@ void tst_QGalleryItemListModel::removeColumn()
     QCOMPARE(model.setHeaderData(3, Qt::Horizontal, QLatin1String("Rating")), true);
     QCOMPARE(model.setHeaderData(4, Qt::Horizontal, QLatin1String("Turtle")), true);
 
-    model.setItemList(&itemList);
+    QVERIFY(model.execute());
 
     QSignalSpy columnSpy(&model, SIGNAL(columnsRemoved(QModelIndex,int,int)));
 
@@ -999,11 +1221,15 @@ void tst_QGalleryItemListModel::removeColumn()
 
 void tst_QGalleryItemListModel::setRoleProperties()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    QVERIFY(model.execute());
+    QVERIFY(gallery.request() != 0);
+
+    QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
+    QVERIFY(resultSet != 0);
 
     QSignalSpy dataSpy(&model, SIGNAL(dataChanged(QModelIndex,QModelIndex)));
 
@@ -1050,104 +1276,34 @@ void tst_QGalleryItemListModel::setRoleProperties()
     QCOMPARE(model.roleProperties(-1), emptyProperties);
     QCOMPARE(dataSpy.count(), 3);
 
-    itemList.removeRows(0, 2);
+    resultSet->removeRows(0, 2);
 
     model.setRoleProperties(0, albumProperties);
     QCOMPARE(model.roleProperties(0), albumProperties);
     QCOMPARE(dataSpy.count(), 3);
 }
 
-void tst_QGalleryItemListModel::cursorPosition()
-{
-    QtTestGalleryItemList itemList;
-    itemList.appendOutOfRangeItems(48);
-
-    QCOMPARE(itemList.minimumPagedItems(), 0);
-    QCOMPARE(itemList.cursorPosition(), 0);
-
-    QGalleryItemListModel model;
-    model.addColumn(QLatin1String("turtle"));
-    model.setItemList(&itemList);
-
-    // Minimum paged items is 0, so auto update is effectively disabled.
-    QCOMPARE(model.autoUpdateCursorPosition(), true);
-    QCOMPARE(itemList.cursorPosition(), 0);
-
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(12, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(13, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(24, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(18, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(17, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(16, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(32, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(47, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(39, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(38, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-
-    itemList.setMinimumPagedItems(16);
-    model.setItemList(&itemList);
-
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(),  0);
-    model.index(12, 0).flags(); QCOMPARE(itemList.cursorPosition(),  0);
-    model.index(13, 0).flags(); QCOMPARE(itemList.cursorPosition(),  1);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(),  2);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(),  3);
-    model.index(24, 0).flags(); QCOMPARE(itemList.cursorPosition(), 12);
-    model.index(18, 0).flags(); QCOMPARE(itemList.cursorPosition(), 12);
-    model.index(17, 0).flags(); QCOMPARE(itemList.cursorPosition(), 12);
-    model.index(16, 0).flags(); QCOMPARE(itemList.cursorPosition(), 12);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(), 11);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(), 10);
-    model.index(32, 0).flags(); QCOMPARE(itemList.cursorPosition(), 20);
-    model.index(47, 0).flags(); QCOMPARE(itemList.cursorPosition(), 35);
-    model.index(39, 0).flags(); QCOMPARE(itemList.cursorPosition(), 35);
-    model.index(38, 0).flags(); QCOMPARE(itemList.cursorPosition(), 34);
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(),  0);
-
-    model.setAutoUpdateCursorPosition(false);
-    QCOMPARE(model.autoUpdateCursorPosition(), false);
-
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(12, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(13, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(24, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(18, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(17, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(16, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(15, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(14, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(32, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(47, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(39, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index(38, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-    model.index( 0, 0).flags(); QCOMPARE(itemList.cursorPosition(), 0);
-}
-
 void tst_QGalleryItemListModel::itemsInserted()
 {
-    QtTestGalleryItemList itemList;
+    QtTestGallery gallery;
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    QVERIFY(model.execute());
+    QVERIFY(gallery.request() != 0);
+
+    QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
+    QVERIFY(resultSet != 0);
 
     QSignalSpy insertSpy(&model, SIGNAL(rowsInserted(QModelIndex,int,int)));
 
     QCOMPARE(model.rowCount(), 0);
 
-    itemList.beginInsertRows(0);
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.endInsertRows();
+    resultSet->beginInsertRows(0);
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->endInsertRows();
 
     QCOMPARE(model.rowCount(), 4);
 
@@ -1156,9 +1312,9 @@ void tst_QGalleryItemListModel::itemsInserted()
     QCOMPARE(insertSpy.last().at(1).toInt(), 0);
     QCOMPARE(insertSpy.last().at(2).toInt(), 3);
 
-    itemList.beginInsertRows(2);
-    itemList.addRow(QVector<QVariant>());
-    itemList.endInsertRows();
+    resultSet->beginInsertRows(2);
+    resultSet->addRow();
+    resultSet->endInsertRows();
 
     QCOMPARE(model.rowCount(), 5);
 
@@ -1167,11 +1323,11 @@ void tst_QGalleryItemListModel::itemsInserted()
     QCOMPARE(insertSpy.last().at(1).toInt(), 2);
     QCOMPARE(insertSpy.last().at(2).toInt(), 2);
 
-    itemList.beginInsertRows(5);
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.endInsertRows();
+    resultSet->beginInsertRows(5);
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->endInsertRows();
 
     QCOMPARE(model.rowCount(), 8);
 
@@ -1183,27 +1339,31 @@ void tst_QGalleryItemListModel::itemsInserted()
 
 void tst_QGalleryItemListModel::itemsRemoved()
 {
-    QtTestGalleryItemList itemList;
+    QtTestGallery gallery;
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    QVERIFY(model.execute());
+    QVERIFY(gallery.request() != 0);
 
-    itemList.beginInsertRows(0);
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.endInsertRows();
+    QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
+    QVERIFY(resultSet != 0);
+
+    resultSet->beginInsertRows(0);
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->endInsertRows();
 
     QCOMPARE(model.rowCount(), 8);
 
     QSignalSpy removeSpy(&model, SIGNAL(rowsRemoved(QModelIndex,int,int)));
 
-    itemList.removeRows(5, 3);
+    resultSet->removeRows(5, 3);
     QCOMPARE(model.rowCount(), 5);
 
     QCOMPARE(removeSpy.count(), 1);
@@ -1211,7 +1371,7 @@ void tst_QGalleryItemListModel::itemsRemoved()
     QCOMPARE(removeSpy.last().at(1).toInt(), 5);
     QCOMPARE(removeSpy.last().at(2).toInt(), 7);
 
-    itemList.removeRows(2, 1);
+    resultSet->removeRows(2, 1);
     QCOMPARE(model.rowCount(), 4);
 
     QCOMPARE(removeSpy.count(), 2);
@@ -1219,7 +1379,7 @@ void tst_QGalleryItemListModel::itemsRemoved()
     QCOMPARE(removeSpy.last().at(1).toInt(), 2);
     QCOMPARE(removeSpy.last().at(2).toInt(), 2);
 
-    itemList.removeRows(0, 4);
+    resultSet->removeRows(0, 4);
     QCOMPARE(model.rowCount(), 0);
 
     QCOMPARE(removeSpy.count(), 3);
@@ -1230,27 +1390,31 @@ void tst_QGalleryItemListModel::itemsRemoved()
 
 void tst_QGalleryItemListModel::itemsMoved()
 {
-    QtTestGalleryItemList itemList;
+    QtTestGallery gallery;
 
-    QGalleryItemListModel model;
-    model.setItemList(&itemList);
+    QGalleryQueryModel model(&gallery);
+    QVERIFY(model.execute());
+    QVERIFY(gallery.request() != 0);
 
-    itemList.beginInsertRows(0);
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.addRow(QVector<QVariant>());
-    itemList.endInsertRows();
+    QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
+    QVERIFY(resultSet != 0);
+
+    resultSet->beginInsertRows(0);
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->addRow();
+    resultSet->endInsertRows();
 
     QCOMPARE(model.rowCount(), 8);
 
     QSignalSpy moveSpy(&model, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)));
 
-    itemList.moved(5, 2, 3);
+    resultSet->itemsMoved(5, 2, 3);
     QCOMPARE(model.rowCount(), 8);
 
     QCOMPARE(moveSpy.count(), 1);
@@ -1260,7 +1424,7 @@ void tst_QGalleryItemListModel::itemsMoved()
     QCOMPARE(moveSpy.last().at(3).value<QModelIndex>(), QModelIndex());
     QCOMPARE(moveSpy.last().at(4).toInt(), 2);
 
-    itemList.moved(2, 7, 1);
+    resultSet->itemsMoved(2, 7, 1);
     QCOMPARE(model.rowCount(), 8);
 
     QCOMPARE(moveSpy.count(), 2);
@@ -1270,7 +1434,7 @@ void tst_QGalleryItemListModel::itemsMoved()
     QCOMPARE(moveSpy.last().at(3).value<QModelIndex>(), QModelIndex());
     QCOMPARE(moveSpy.last().at(4).toInt(), 7);
 
-    itemList.moved(0, 4, 3);
+    resultSet->itemsMoved(0, 4, 3);
     QCOMPARE(model.rowCount(), 8);
 
     QCOMPARE(moveSpy.count(), 3);
@@ -1283,44 +1447,69 @@ void tst_QGalleryItemListModel::itemsMoved()
 
 void tst_QGalleryItemListModel::metaDataChanged()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
+    gallery.addRow();
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
 
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
 
-    model.setItemList(&itemList);
+    QVERIFY(model.execute());
+    QVERIFY(gallery.request() != 0);
+
+    QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
+    QVERIFY(resultSet != 0);
+
+    const int key0_0 = resultSet->propertyKey(QLatin1String("albumTitle"));
+    const int key0_1 = resultSet->propertyKey(QLatin1String("albumArtist"));
+    const int key0_2 = resultSet->propertyKey(QLatin1String("albumId"));
+    const int key1_0 = resultSet->propertyKey(QLatin1String("displayName"));
+    const int key1_1 = resultSet->propertyKey(QLatin1String("title"));
+    const int key2_0 = resultSet->propertyKey(QLatin1String("duration"));
+    const int key3_0 = resultSet->propertyKey(QLatin1String("rating"));
 
     QSignalSpy dataSpy(&model, SIGNAL(dataChanged(QModelIndex,QModelIndex)));
+    resultSet->metaDataChanged(0, 1, QList<int>());
+    QCOMPARE(dataSpy.count(), 0);
 
-    itemList.metaDataChanged(0, 1);
+    resultSet->metaDataChanged(0, 1, QList<int>()
+            << key0_0 << key0_1 << key0_2
+            << key1_0 << key1_1
+            << key2_0
+            << key3_0);
     QCOMPARE(dataSpy.count(), 1);
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(0).value<QModelIndex>(), model.index(0, 0));
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(1).value<QModelIndex>(), model.index(0, 3));
 
-    itemList.metaDataChanged(1, 1, QList<int>() << 2 << 6);
+    resultSet->metaDataChanged(1, 1, QList<int>() << key0_2 << key3_0);
     QCOMPARE(dataSpy.count(), 3);
     QCOMPARE(dataSpy.at(dataSpy.count() - 2).at(0).value<QModelIndex>(), model.index(1, 0));
     QCOMPARE(dataSpy.at(dataSpy.count() - 2).at(1).value<QModelIndex>(), model.index(1, 0));
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(0).value<QModelIndex>(), model.index(1, 3));
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(1).value<QModelIndex>(), model.index(1, 3));
 
-    itemList.metaDataChanged(0, 2, QList<int>() << 0 << 1 << 2 << 3 << 4 << 5 << 6);
+    resultSet->metaDataChanged(0, 2, QList<int>()
+            << key0_0 << key0_1 << key0_2
+            << key1_0 << key1_1
+            << key2_0
+            << key3_0);
     QCOMPARE(dataSpy.count(), 4);
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(0).value<QModelIndex>(), model.index(0, 0));
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(1).value<QModelIndex>(), model.index(1, 3));
 
-    itemList.metaDataChanged(1, 3, QList<int>() << 1 << 5);
+    resultSet->metaDataChanged(1, 3, QList<int>() << key1_1 << key2_0);
     QCOMPARE(dataSpy.count(), 5);
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(0).value<QModelIndex>(), model.index(1, 1));
     QCOMPARE(dataSpy.at(dataSpy.count() - 1).at(1).value<QModelIndex>(), model.index(3, 2));
 
-    itemList.metaDataChanged(0, 1, QList<int>() << 1 << 4 << 6);
+    resultSet->metaDataChanged(0, 1, QList<int>() << key0_1 << key1_1 << key3_0);
     QCOMPARE(dataSpy.count(), 7);
     QCOMPARE(dataSpy.at(dataSpy.count() - 2).at(0).value<QModelIndex>(), model.index(0, 0));
     QCOMPARE(dataSpy.at(dataSpy.count() - 2).at(1).value<QModelIndex>(), model.index(0, 1));
@@ -1332,35 +1521,41 @@ void tst_QGalleryItemListModel::metaDataChanged()
     model.removeColumn(0);
     model.removeColumn(0);
 
-    itemList.metaDataChanged(0, 1);
+    resultSet->metaDataChanged(0, 1, QList<int>());
     QCOMPARE(dataSpy.count(), 7);
 
-    itemList.metaDataChanged(1, 1, QList<int>() << 2 << 6);
+    resultSet->metaDataChanged(1, 1, QList<int>() << key0_2 << key3_0);
     QCOMPARE(dataSpy.count(), 7);
 
-    itemList.metaDataChanged(0, 2, QList<int>() << 0 << 1 << 2 << 3 << 4 << 5 << 6);
+    resultSet->metaDataChanged(0, 2, QList<int>()
+            << key0_0 << key0_1 << key0_2
+            << key1_0 << key1_1
+            << key2_0
+            << key3_0);
     QCOMPARE(dataSpy.count(), 7);
 
-    itemList.metaDataChanged(1, 3, QList<int>() << 1 << 5);
+    resultSet->metaDataChanged(1, 3, QList<int>() << key0_1 << key2_0);
     QCOMPARE(dataSpy.count(), 7);
 
-    itemList.metaDataChanged(0, 1, QList<int>() << 1 << 4 << 6);
+    resultSet->metaDataChanged(0, 1, QList<int>() << key0_1 << key1_1 << key3_0);
     QCOMPARE(dataSpy.count(), 7);
 }
 
 void tst_QGalleryItemListModel::invalidIndex()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
 
+    QCOMPARE(model.itemId(QModelIndex()), QVariant());
+    QCOMPARE(model.itemUrl(QModelIndex()), QUrl());
+    QCOMPARE(model.itemType(QModelIndex()), QString());
     QCOMPARE(model.flags(QModelIndex()), Qt::ItemFlags());
     QCOMPARE(model.data(QModelIndex(), Qt::DisplayRole), QVariant());
     QCOMPARE(model.data(QModelIndex(), Qt::EditRole), QVariant());
@@ -1377,16 +1572,15 @@ void tst_QGalleryItemListModel::invalidIndex()
 }
 void tst_QGalleryItemListModel::hierarchy()
 {
-    QtTestGalleryItemList itemList;
-    populateItemList(&itemList);
-    itemList.appendOutOfRangeItems(3);
+    QtTestGallery gallery;
+    populateGallery(&gallery);
 
-    QGalleryItemListModel model;
+    QGalleryQueryModel model(&gallery);
     model.addColumn(albumProperties);
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
-    model.setItemList(&itemList);
+    QVERIFY(model.execute());
 
     QModelIndex index = model.index(0, 0);
     QCOMPARE(index.isValid(), true);
@@ -1418,5 +1612,5 @@ void tst_QGalleryItemListModel::hierarchy()
 
 QTEST_MAIN(tst_QGalleryItemListModel)
 
-#include "tst_qgalleryitemlistmodel.moc"
+#include "tst_qgalleryquerymodel.moc"
 

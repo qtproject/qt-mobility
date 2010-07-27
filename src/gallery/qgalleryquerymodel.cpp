@@ -63,6 +63,21 @@ public:
     {
     }
 
+    void setObject(QGalleryQueryModel *object)
+    {
+        q_ptr = object;
+
+        QObject::connect(&query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
+                q_ptr, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
+        QObject::connect(&query, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
+                q_ptr, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
+        QObject::connect(&query, SIGNAL(resultChanged()), q_ptr, SIGNAL(resultChanged()));
+        QObject::connect(&query, SIGNAL(finished(int)), q_ptr, SIGNAL(finished(int)));
+        QObject::connect(&query, SIGNAL(succeeded()), q_ptr, SIGNAL(succeeded()));
+        QObject::connect(&query, SIGNAL(cancelled()), q_ptr, SIGNAL(cancelled()));
+        QObject::connect(&query, SIGNAL(failed(int)), q_ptr, SIGNAL(failed(int)));
+    }
+
     void updateRoles(int column);
     void updateRoles();
     void _q_resultSetChanged(QGalleryResultSet *resultSet);
@@ -167,27 +182,38 @@ void QGalleryQueryModelPrivate::updateRoles()
             }
             columnOffsets[column] = offset;
         }
-    } else {
-        for (int column = 0; column < columnCount; ++column) {
-            columnOffsets[column] = 0;
-            itemFlags[column] = Qt::ItemFlags();
-        }
     }
 }
 
 void QGalleryQueryModelPrivate::_q_resultSetChanged(QGalleryResultSet *set)
 {
+    if (rowCount > 0) {
+        q_ptr->beginRemoveRows(QModelIndex(), 0, rowCount - 1);
+        rowCount = 0;
+        q_ptr->endRemoveRows();
+    }
+
     resultSet = set;
 
-    QObject::connect(
-            resultSet, SIGNAL(itemsInserted(int,int)), q_ptr, SLOT(_q_itemsInserted(int,int)));
-    QObject::connect(
-            resultSet, SIGNAL(itemsRemoved(int,int)), q_ptr, SLOT(_q_itemsRemoved(int,int)));
-    QObject::connect(
-            resultSet, SIGNAL(itemsMoved(int,int,int)), q_ptr, SLOT(_q_itemsMoved(int,int,int)));
-    QObject::connect(
-            resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
-            q_ptr, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+    if (resultSet) {
+        QObject::connect(
+                resultSet, SIGNAL(itemsInserted(int,int)), q_ptr, SLOT(_q_itemsInserted(int,int)));
+        QObject::connect(
+                resultSet, SIGNAL(itemsRemoved(int,int)), q_ptr, SLOT(_q_itemsRemoved(int,int)));
+        QObject::connect(
+                resultSet, SIGNAL(itemsMoved(int,int,int)),
+                q_ptr, SLOT(_q_itemsMoved(int,int,int)));
+        QObject::connect(
+                resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
+                q_ptr, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+
+        const int count = resultSet->itemCount();
+        if (count > 0) {
+            q_ptr->beginInsertRows(QModelIndex(), 0, count - 1);
+            rowCount = count;
+            q_ptr->endInsertRows();
+        }
+    }
 }
 
 void QGalleryQueryModelPrivate::_q_itemsInserted(int index, int count)
@@ -252,10 +278,7 @@ QGalleryQueryModel::QGalleryQueryModel(QObject *parent)
     : QAbstractItemModel(parent)
     , d_ptr(new QGalleryQueryModelPrivate(0))
 {
-    d_ptr->q_ptr = this;
-
-    connect(&d_ptr->query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
-            this, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
+    d_ptr->setObject(this);
 }
 
 /*!
@@ -265,10 +288,7 @@ QGalleryQueryModel::QGalleryQueryModel(QAbstractGallery *gallery, QObject *paren
     : QAbstractItemModel(parent)
     , d_ptr(new QGalleryQueryModelPrivate(gallery))
 {
-    d_ptr->q_ptr = this;
-
-    connect(&d_ptr->query, SIGNAL(resultSetChanged(QGalleryResultSet*)),
-            this, SLOT(_q_resultSetChanged(QGalleryResultSet*)));
+    d_ptr->setObject(this);
 }
 
 /*!
@@ -552,8 +572,71 @@ bool QGalleryQueryModel::execute()
 
     d_ptr->updateRoles();
 
-    return true;
+    return d_ptr->query.result() == QGalleryAbstractRequest::Succeeded
+            || d_ptr->query.result() == QGalleryAbstractRequest::NoResult;
 }
+
+/*!
+
+*/
+
+void QGalleryQueryModel::cancel()
+{
+    d_ptr->query.cancel();
+}
+
+/*!
+
+*/
+
+void QGalleryQueryModel::clear()
+{
+    d_ptr->query.clear();
+}
+
+/*!
+    \property QGalleryQueryModel::result
+*/
+
+int QGalleryQueryModel::result() const
+{
+    return d_ptr->query.result();
+}
+
+
+/*!
+    \fn QGalleryQueryModel::resultChanged()
+*/
+
+/*!
+    \fn QGalleryQueryModel::succeeded()
+*/
+
+/*!
+    \fn QGalleryQueryModel::cancelled()
+*/
+
+/*!
+    \fn QGalleryQueryModel::failed(int result)
+*/
+
+/*!
+    \fn QGalleryQueryModel::finished(int result)
+*/
+
+/*!
+    \property QGalleryQueryModel::state
+*/
+
+QGalleryAbstractRequest::State QGalleryQueryModel::state() const
+{
+    return d_ptr->query.state();
+}
+
+/*!
+    \fn QGalleryQueryModel::stateChanged()
+*/
+
 
 /*!
     \reimp
