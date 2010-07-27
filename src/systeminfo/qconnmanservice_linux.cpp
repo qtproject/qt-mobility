@@ -977,13 +977,7 @@ QVariantMap QConnmanDeviceInterface::getProperties()
 bool QConnmanDeviceInterface::setProperty(const QString &name, const QDBusVariant &value)
 {
 
-//    QList<QVariant> args;
-    qWarning() << __FUNCTION__ << name << value.variant();
-//    args << qVariantFromValue(name);
-//    args << qVariantFromValue(value);
-
     QDBusMessage reply = this->call(QLatin1String("SetProperty"),name, qVariantFromValue(value));
-qWarning() << reply.errorMessage();
 
     return true;
 }
@@ -1089,8 +1083,6 @@ QConnmanDBusHelper::~QConnmanDBusHelper()
 void QConnmanDBusHelper::propertyChanged(const QString &item, const QDBusVariant &var)
 {
     QDBusMessage msg = this->message();
-//    qWarning() << sender();
- //   qWarning()  << msg.interface() << msg.path() << item << var.variant() <<"\n";
     Q_EMIT propertyChangedContext(msg.path() ,item, var);
 }
 

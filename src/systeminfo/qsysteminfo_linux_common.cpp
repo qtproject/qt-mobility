@@ -565,30 +565,10 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfono
     QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
     if(ofonoIsAvailable) {
 
-        QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
         QString status = ofonoNetwork.getStatus();
-        if(status == "unregistered") {
-            networkStatus = QSystemNetworkInfo::EmergencyOnly;
-        }
-        if(status == "registered") {
-            networkStatus = QSystemNetworkInfo::Connected;
-            if( currentMobileNetworkCode() ==  homeMobileNetworkCode()) {
-                networkStatus = QSystemNetworkInfo::HomeNetwork;
-            }
-        }
-        if(status == "searching") {
-            networkStatus = QSystemNetworkInfo::Searching;
-        }
-        if(status == "denied") {
-            networkStatus = QSystemNetworkInfo::Denied;
-        }
-        if(status == "unknown") {
-            networkStatus = QSystemNetworkInfo::UndefinedStatus;
-        }
-        if(status == "roaming") {
-            networkStatus = QSystemNetworkInfo::Roaming;
-        }
-    }
+        networkStatus = ofonoStatusToStatus(status);
+}
     // Busy
     return networkStatus;
 }
@@ -605,7 +585,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
 #if !defined(QT_NO_CONNMAN)
     QString tech = modeToTechnology(mode);
     if(tech.contains("cellular")) {
-        QOfonoNetworkInterface ofonoOpNetwork(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoOpNetwork(ofonoManager->currentModem().path(),this);
         return ofonoOpNetwork.getOperatorName();
 
     } else {
@@ -792,19 +772,19 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
 
         QString tech = modeToTechnology(mode);
         if(tech.contains("cellular")) {
-            QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
-            qDebug() << ofonoNetwork.getTechnology();
-
+            QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
             return ofonoNetwork.getSignalStrength();
         } else {
             QDBusObjectPath path = connmanManager->lookupService(tech);
             QConnmanServiceInterface service(path.path(),this);
             sig = service.getSignalStrength();
+
             if(sig == 0 && (service.getState() == "ready" ||
                             service.getState() == "online")) {
                 sig = 100;
             }
         }
+        return sig;
     }
 #else
     switch(mode) {
@@ -1054,7 +1034,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &fi
 #if !defined(QT_NO_CONNMAN)
 void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
 {
-    qDebug() << __FUNCTION__;
     connmanManager = new QConnmanManagerInterface(this);
     connect(connmanManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
             this,SLOT(connmanPropertyChangedContext(QString,QString,QDBusVariant)));
@@ -1077,14 +1056,8 @@ void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
         foreach(const QString devicePath,tech->getDevices()) {
             QConnmanDeviceInterface *dev;
             dev = new QConnmanDeviceInterface(devicePath);
-     //       if(!deviceMap.value(techPath).contains(devicePath)) {
                 connect(dev,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
                         this,SLOT(connmanDevicePropertyChangedContext(QString,QString,QDBusVariant)));
-//                deviceMap.insert(techPath,QStringList() << devicePath);
-//                foreach(const QString network,dev->getNetworks()) {
-//                    serviceNetworks.insert(getServiceForNetwork(network),network);
-//                }
- //           }
         }
     }
 }
@@ -1092,8 +1065,29 @@ void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
 void QSystemNetworkInfoLinuxCommonPrivate::initOfono()
 {
     ofonoManager = new QOfonoManagerInterface(this);
+    connect(ofonoManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoPropertyChangedContext(QString,QString,QDBusVariant)));
 
+    Q_FOREACH(QDBusObjectPath path, ofonoManager->getModems()) {
+        initModem(path.path());
+    }
 }
+
+void QSystemNetworkInfoLinuxCommonPrivate::initModem(const QString &path)
+{
+    QOfonoModemInterface *modemIface;
+    modemIface = new QOfonoModemInterface(path,this);
+    knownModems << path;
+
+    connect(modemIface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoModemPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    QOfonoNetworkInterface *ofonoNetworkInterface;
+    ofonoNetworkInterface = new QOfonoNetworkInterface(path,this);
+    connect(ofonoNetworkInterface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoNetworkPropertyChangedContext(QString,QString,QDBusVariant)));
+}
+
 #endif
 
 void QSystemNetworkInfoLinuxCommonPrivate::connectNotify(const char *signal)
@@ -1187,7 +1181,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::typeToMode
     } else if(type == "cellular") {
         if(ofonoIsAvailable) {
 
-            QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
+            QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
             return ofonoTechToMode(ofonoNetwork.getTechnology());
         }
     }
@@ -1207,14 +1201,40 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechT
     }
     if(ofonoTech == "hspa"){
         // handle this?
-        // return QSystemNetworkInfo::GsmMode;
+         return QSystemNetworkInfo::WcdmaMode;
     }
     if(ofonoTech == "lte"){
         return QSystemNetworkInfo::WimaxMode;
     }
-    return QSystemNetworkInfo::UnknownMode;
+    return QSystemNetworkInfo::GsmMode; //its ofono, default to gsm
 }
 
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::ofonoStatusToStatus(const QString &status)
+{
+    QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    if(status == "unregistered") {
+        networkStatus = QSystemNetworkInfo::EmergencyOnly;
+    }
+    if(status == "registered") {
+        networkStatus = QSystemNetworkInfo::Connected;
+        if( currentMobileNetworkCode() ==  homeMobileNetworkCode()) {
+            networkStatus = QSystemNetworkInfo::HomeNetwork;
+        }
+    }
+    if(status == "searching") {
+        networkStatus = QSystemNetworkInfo::Searching;
+    }
+    if(status == "denied") {
+        networkStatus = QSystemNetworkInfo::Denied;
+    }
+    if(status == "unknown") {
+        networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    }
+    if(status == "roaming") {
+        networkStatus = QSystemNetworkInfo::Roaming;
+    }
+    return networkStatus;
+}
 
 void QSystemNetworkInfoLinuxCommonPrivate::connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
 {
@@ -1288,7 +1308,72 @@ void QSystemNetworkInfoLinuxCommonPrivate::connmanServicePropertyChangedContext(
     }
 }
 
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "Modems") {
+        QList <QDBusObjectPath> modems =  qdbus_cast<QList <QDBusObjectPath> > (value.variant());
+
+        if(modems.count() >  knownModems.count()) {
+            //add a modem
+            Q_FOREACH(QDBusObjectPath path, modems) {
+                if(!knownModems.contains(path.path())) {
+                    initModem(path.path());
+                }
+            }
+        }  else {
+            //remove one
+            QStringList newModemList;
+            Q_FOREACH(QDBusObjectPath path, modems) {
+                newModemList << path.path();
+            }
+
+            Q_FOREACH(const QString &path, knownModems) {
+                if(!newModemList.contains(path)) {
+                    knownModems.removeAll(path);
+                }
+            }
+        }
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    QOfonoNetworkInterface netiface(path);
+//    QOfonoNetworkOperatorInterface netop(path);
+//    qDebug() << netop.getTechnologies();
+
+    if(item == "Strength") {
+        Q_EMIT networkSignalStrengthChanged(ofonoTechToMode(netiface.getTechnology()),value.variant().toInt());
+    }
+    if(item == "Status") {
+
+       Q_EMIT networkStatusChanged(ofonoTechToMode(netiface.getTechnology()), ofonoStatusToStatus(value.variant().toString()));
+    }
+    if(item == "LocationAreaCode") {
+
+    }
+    if(item == "CellId") {
+
+    }
+    if(item == "Technology") {
+
+    }
+    if(item == "Name") {
+        Q_EMIT networkNameChanged(ofonoTechToMode(netiface.getTechnology()), value.variant().toString());
+
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+
+}
+
 #endif
+
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMode()
 {
 #if !defined(QT_NO_CONNMAN)
@@ -1311,10 +1396,10 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMod
 }
 
 int QSystemNetworkInfoLinuxCommonPrivate::cellId()
-{//TODO ofono
+{
 #if !defined(QT_NO_CONNMAN)
     if(ofonoIsAvailable) {
-        QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
         return ofonoNetwork.getCellId();
     }
 #endif
@@ -1324,7 +1409,7 @@ int QSystemNetworkInfoLinuxCommonPrivate::cellId()
 int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
 {
     if(ofonoIsAvailable) {
-        QOfonoNetworkInterface ofonoNetwork(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
         return ofonoNetwork.getLac();
     }
     return 0;
@@ -1334,7 +1419,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
 {
 #if !defined(QT_NO_CONNMAN)
     if(ofonoIsAvailable) {
-        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
         foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
             QOfonoNetworkOperatorInterface netop(opPath.path(),this);
             if(netop.getStatus() == "current")
@@ -1349,7 +1434,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
 {
 #if !defined(QT_NO_CONNMAN)
     if(ofonoIsAvailable) {
-        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->defaultModem().path(),this);
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
         foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
             QOfonoNetworkOperatorInterface netop(opPath.path(),this);
             if(netop.getStatus() == "current")
@@ -1362,19 +1447,27 @@ QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
 
 QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode()
 {
-    QOfonoSimInterface simInterface(ofonoManager->defaultModem().path(),this);
-    if(simInterface.isPresent()) {
-        return simInterface.getHomeMcc();
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoSimInterface simInterface(ofonoManager->currentModem().path(),this);
+        if(simInterface.isPresent()) {
+            return simInterface.getHomeMcc();
+        }
     }
+#endif
     return QString();
 }
 
 QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
 {
-    QOfonoSimInterface simInterface(ofonoManager->defaultModem().path(),this);
-    if(simInterface.isPresent()) {
-        return simInterface.getHomeMnc();
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoSimInterface simInterface(ofonoManager->currentModem().path(),this);
+        if(simInterface.isPresent()) {
+            return simInterface.getHomeMnc();
+        }
     }
+#endif
     return QString();
 }
 

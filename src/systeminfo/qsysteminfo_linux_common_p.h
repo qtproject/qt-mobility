@@ -178,12 +178,14 @@ protected:
     QOfonoManagerInterface *ofonoManager;
     void initConnman();
     void initOfono();
+    void initModem(const QString &path);
     QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
     QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
     QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
+    QSystemNetworkInfo::NetworkStatus ofonoStatusToStatus(const QString &state);
 
-
+    QStringList knownModems;
 #endif
 
 #endif
@@ -194,6 +196,10 @@ private Q_SLOTS:
     void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
     void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+
+    void ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
 #endif
 
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();

@@ -76,7 +76,7 @@ QList <QDBusObjectPath> QOfonoManagerInterface::getModems()
     return qdbus_cast<QList<QDBusObjectPath> >(var);
 }
 
-QDBusObjectPath QOfonoManagerInterface::defaultModem()
+QDBusObjectPath QOfonoManagerInterface::currentModem()
 {
     QList<QDBusObjectPath> modems = getModems();
     foreach(const QDBusObjectPath modem, modems) {

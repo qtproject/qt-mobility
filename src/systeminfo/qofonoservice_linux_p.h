@@ -97,10 +97,11 @@ public:
     QVariantMap getProperties();
     bool setProperty(const QString &name, const QDBusVariant &value);
     QList <QDBusObjectPath> getModems();
-    QDBusObjectPath defaultModem();
+    QDBusObjectPath currentModem();
 
 Q_SIGNALS:
     void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -118,8 +119,7 @@ class QOfonoDBusHelper: public QObject, protected QDBusContext
 
  public slots:
     void propertyChanged(const QString &, const QDBusVariant &);
-
-Q_SIGNALS:
+ Q_SIGNALS:
     void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 };
 
@@ -145,6 +145,9 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     QVariant getProperty(const QString &);
+Q_SIGNALS:
+    void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 };
 
 
@@ -173,6 +176,9 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     QVariant getProperty(const QString &);
+Q_SIGNALS:
+    void propertyChanged(const QString &, const QDBusVariant &value);
+    void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
 
 };
 
