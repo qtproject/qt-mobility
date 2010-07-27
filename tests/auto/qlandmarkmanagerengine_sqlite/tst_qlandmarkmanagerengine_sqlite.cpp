@@ -406,7 +406,7 @@ private slots:
 
 
     void importGpx();
-    //void importGpxAsync();
+    void importGpxAsync();
 
     void exportGpx();
     void exportGpxAsync();
@@ -1118,9 +1118,9 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QCOMPARE(landmarks.count(), 0);
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
-    QCOMPARE(spyAdd.count(), 2);
+    QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), saveRequest.landmarks().at(0).landmarkId());
-    QCOMPARE(spyAdd.at(1).at(0).value<QList<QLandmarkId> >().at(0), saveRequest.landmarks().at(2).landmarkId());
+    QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), saveRequest.landmarks().at(2).landmarkId());
 
     //test cancel
     landmarks.clear();
@@ -4683,6 +4683,10 @@ void tst_QLandmarkManagerEngineSqlite::sortLandmarksDistanceAsync() {
 }
 
 void tst_QLandmarkManagerEngineSqlite::importGpx() {
+    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    QSignalSpy spyRemove(m_manager,SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+
     QVERIFY(m_manager->importLandmarks(":data/McDonalds-AUS-Queensland.gpx", "GpxV1.1"));
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
 
@@ -4700,16 +4704,46 @@ void tst_QLandmarkManagerEngineSqlite::importGpx() {
     lmLast.setLandmarkId(landmarks.last().landmarkId());
 
     QCOMPARE(lmLast, landmarks.last());
+
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 1);
+    QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QCOMPARE(ids.count(), 149);
+    spyAdd.clear();
+
+    QVERIFY(m_manager->importLandmarks(":data/test.gpx", "GpxV1.1"));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QTest::qWait(10);
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 1);
+
+    ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QCOMPARE(ids.count(), 3);
+
+    QList<QLandmark> lms = m_manager->landmarks(ids);
+    QCOMPARE(lms.count(), 3);
+
+    QStringList lmNames;
+    foreach(const QLandmark &lm, lms) {
+        lmNames  << lm.name();
+    }
+
+    QVERIFY(lmNames.contains("test1"));
+    QVERIFY(lmNames.contains("test2"));
+    QVERIFY(lmNames.contains("test3"));
 }
 
-/* Disable importing of landmarks test because there
-is a flood of notifications being caused by the
-saving of landmarks.  These notifications are interefering
-with the waiting for a request to finish.
-
 void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
+    QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+    QSignalSpy spyChange(m_manager,SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+    QSignalSpy spyRemove(m_manager,SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+
     QLandmarkImportRequest importRequest(m_manager);
     QSignalSpy spy(&importRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
     importRequest.setFileName(":data/McDonalds-AUS-Queensland.gpx");
     importRequest.setFormat("GpxV1.1");
     importRequest.start();
@@ -4731,12 +4765,48 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
 
     QCOMPARE(lmLast, landmarks.last());
 
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 1);
+    QList<QLandmarkId> ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+    QCOMPARE(ids.count(), 149);
+    spyAdd.clear();
+
+     //check that the notifications more indepth
+     importRequest.setFileName(":data/test.gpx");
+     importRequest.setFormat("GpxV1.1");
+     importRequest.start();
+
+     QVERIFY(waitForAsync(spy, &importRequest));
+     QCOMPARE(spyRemove.count(), 0);
+     QCOMPARE(spyChange.count(), 0);
+     QCOMPARE(spyAdd.count(), 1);
+     ids = spyAdd.at(0).at(0).value<QList<QLandmarkId> >();
+     QCOMPARE(ids.count(), 3);
+     spyAdd.clear();
+
+    QList<QLandmark> lms = m_manager->landmarks(ids);
+    QCOMPARE(lms.count(), 3);
+
+    QStringList lmNames;
+    foreach(const QLandmark &lm, lms) {
+        lmNames  << lm.name();
+    }
+
+    QVERIFY(lmNames.contains("test1"));
+    QVERIFY(lmNames.contains("test2"));
+    QVERIFY(lmNames.contains("test3"));
+
+
     //try a non-existent file
     importRequest.setFileName("doesnnotexist.gpx");
     importRequest.setFormat("GpxV1.1");
     importRequest.start();
 
     QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::DoesNotExistError));
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 0);
 
     //try cancelling and impot halfway
     importRequest.setFileName(":data/long.gpx");
@@ -4746,7 +4816,10 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
     importRequest.cancel();
     QVERIFY(waitForAsync(spy, &importRequest, QLandmarkManager::CancelError,
                          3000, QLandmarkAbstractRequest::FinishedState));
-}*/
+    QCOMPARE(spyRemove.count(), 0);
+    QCOMPARE(spyChange.count(), 0);
+    QCOMPARE(spyAdd.count(), 0);
+}
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx() {
     QLandmark lm1;
