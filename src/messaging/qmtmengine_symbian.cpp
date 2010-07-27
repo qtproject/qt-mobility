@@ -102,7 +102,7 @@ const TInt KWaitAfterReceivedMessage = 100000; // = 0.1 seconds
 Q_GLOBAL_STATIC(CMTMEngine,mtmEngine);
 
 CMTMEngine::CMTMEngine()
- : CActive(EPriorityStandard)
+ : CActive(EPriorityStandard), _filterId(0)
 {
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupMTMBackend()));
     
