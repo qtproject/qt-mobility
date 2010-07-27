@@ -130,7 +130,8 @@ private:
     QLabel *label;
     QPushButton *buttonro;
 
-    int startIPC(){
+    int startIPC()
+    {
         QServiceManager manager;
 
         // should work.
@@ -147,8 +148,6 @@ private:
         }
         return 0;
     }
-
-
 };
 
 int main(int argc, char **argv)
