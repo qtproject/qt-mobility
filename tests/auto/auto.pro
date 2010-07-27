@@ -37,6 +37,9 @@ contains(mobility_modules,location) {
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine
 
+     contains(QT_CONFIG, declarative) {
+         SUBDIRS += qdeclarativeposition
+     }
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
@@ -129,7 +132,8 @@ contains(mobility_modules,telephony) {
 }
 
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \

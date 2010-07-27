@@ -54,8 +54,8 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.serviceframework"));
         
-        qmlRegisterType<QDeclarativeService>(uri, 1, 0, "Service");
-        qmlRegisterType<QDeclarativeServiceList>(uri, 1, 0, "ServiceList");
+        qmlRegisterType<QDeclarativeService>(uri, 1, 1, "Service");
+        qmlRegisterType<QDeclarativeServiceList>(uri, 1, 1, "ServiceList");
     }
 };
 

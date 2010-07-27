@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QTelephonyCallInfo
     \ingroup telephony
+    \inmodule QtTelephony
     \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
 */
 
@@ -77,14 +78,6 @@ QTM_BEGIN_NAMESPACE
     \value Video       The call is a video based call.
     \value Voice       The call is a voice based call.
     \value Other       The call is a an unknown base call.
-*/
-
-/*!
-    \class QTelephonyCallInfo
-
-    \ingroup telephony
-
-    \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
 */
 
 /*!
@@ -146,16 +139,16 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 }
 
 /*!
-    \fn  QString QTelephonyCallInfo::subTyp() const
+    \fn  QString QTelephonyCallInfo::subType() const
 
     Gives back the sub type of the call type (see \l QTelephonyCallInfo::type()).
     A subtype of a Voip call can be Skype.
     You can use this property to get the sub type of the call .
 */
-QString QTelephonyCallInfo::subTyp() const
+QString QTelephonyCallInfo::subType() const
 {
     if(d)
-        return d->subTyp;
+        return d->subType;
     return QString();
 }
 

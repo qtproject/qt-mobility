@@ -47,7 +47,8 @@
 #include "qmlcontact.h"
 #include "qmlcontactdetail.h"
 #include "qmlcontactdetailfield.h"
-#include "imageprovider.h"
+// Qt 4.7.0b2 and rc1 have a source break - turn off for now
+// #include "imageprovider.h"
 
 QT_USE_NAMESPACE
 
@@ -59,15 +60,15 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
-        qmlRegisterType<QMLContactDetailField>(uri, 1, 0, "QmlContactDetailField");
+        qmlRegisterType<QMLContactModel>(uri, 1, 1, "QmlContactModel");
+        qmlRegisterType<QMLContact>(uri, 1, 1, "QmlContact");
+        qmlRegisterType<QMLContactDetail>(uri, 1, 1, "QmlContactDetail");
+        qmlRegisterType<QMLContactDetailField>(uri, 1, 1, "QmlContactDetailField");
     }
 
     void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
         Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
+//        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
     }
 };
 

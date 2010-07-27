@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup gallery
     \ingroup gallery-galleries
 
+    \inmodule QtGallery
+
     \brief The QDocumentGallery class provides a gallery of documents.
 */
 

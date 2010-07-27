@@ -55,7 +55,7 @@ class AlbumView : public GalleryView
 {
     Q_OBJECT
 public:
-    AlbumView(QWidget *parent = 0);
+    AlbumView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~AlbumView();
 
 signals:

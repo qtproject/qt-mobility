@@ -72,8 +72,8 @@
   \value ChangeLogFilter A filter which matches items whose timestamps have been updated since some particular date and time
   \omitvalue ActionFilter A filter which matches items for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
   \value IntersectionFilter A filter which matches all items that are matched by all filters it includes
-  \value UnionFilter A filter which matches any organizeritem that is matched by any of the filters it includes
-  \value LocalIdFilter A filter which matches any organizeritem whose local id is contained in a particular list of organizeritem local ids
+  \value UnionFilter A filter which matches any organizer item that is matched by any of the filters it includes
+  \value LocalIdFilter A filter which matches any organizer item whose local id is contained in a particular list of organizer item local ids
   \value DefaultFilter A filter which matches everything
  */
 

@@ -266,7 +266,15 @@ Player::~Player()
 
 void Player::open()
 {
-    QStringList fileNames = QFileDialog::getOpenFileNames();
+#ifdef Q_WS_MAEMO_5
+    QStringList fileNames;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Files"), "/");
+    if (!fileName.isEmpty())
+        fileNames << fileName;
+#else
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open Files"));
+#endif
+
     foreach (QString const &fileName, fileNames)
         playlist->addMedia(QUrl::fromLocalFile(fileName));
 }

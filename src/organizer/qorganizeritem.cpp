@@ -65,27 +65,23 @@ QTM_BEGIN_NAMESPACE
 
   If you are creating a convenience class for a type of QOrganizerItem,
   you should use this macro when declaring your class to ensure that
-  it interoperates with other organizeritem functionality.
+  it interoperates with other organizer item functionality.
  */
 
 /*!
   \class QOrganizerItem
 
-  \brief The QOrganizerItem class represents an addressbook organizeritem.
+  \brief The QOrganizerItem class represents an event, todo, note, or journal entry
 
   \inmodule QtOrganizer
 
   \ingroup organizer-main
 
-  Individual organizeritems, groups, and other types of organizeritems are represented with
-  a QOrganizerItem object.  In addition to the type, a QOrganizerItem consists of information
-  that belongs to the organizeritem.
-
-  A QOrganizerItem object has a collection of details (like a start date and location).  Each detail
+  A QOrganizerItem object has an id and a collection of details (like a start date and location).  Each detail
   (which can have multiple fields) is stored in an appropriate subclass of QOrganizerItemDetail, and
   the QOrganizerItem allows retrieving these details in various ways.
 
-  A QOrganizerItem instance represents the in-memory version of a calendar organizeritem,
+  A QOrganizerItem instance represents the in-memory version of a calendar organizer item,
   and has no tie to a specific QOrganizerItemManager.  It is possible for the contents
   of a QOrganizerItem to change independently of the contents that are stored persistently
   in a QOrganizerItemManager.  A QOrganizerItem has an ID associated with it when it is first
@@ -94,9 +90,13 @@ QTM_BEGIN_NAMESPACE
 
   A QOrganizerItem has a number of mandatory details:
   \list
-   \o A QOrganizerItemType, with the type of the organizeritem (individual event, todo, journal etc)
-   \o etc etc
+   \o A QOrganizerItemType, with the type of the organizer item (individual event, todo, journal etc)
+   \o A QOrganizerItemDescription, which describes the item
+   \o A QOrganizerItemDisplayLabel, which is the default label of the item
   \endlist
+
+  Different subclasses of QOrganizerItem (i.e., QOrganizerEvent, QOrganizerTodo, QOrganizerJournal
+  and QOrganizerNote) may have more mandatory details.
 
   \sa QOrganizerItemManager, QOrganizerItemDetail
  */
@@ -121,7 +121,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * \fn QOrganizerItem::operator!=(const QOrganizerItem &other) const
- * Returns true if this organizeritems id or details are different to those of the \a other organizeritem.
+ * Returns true if this organizer item's id or details are different to those of the \a other organizer item.
  */
 
 /*!
@@ -199,22 +199,25 @@ QOrganizerItem& QOrganizerItem::assign(const QOrganizerItem& other, const char* 
  * Returns true if this QOrganizerItem is empty, false if not.
  *
  * An empty QOrganizerItem has an empty label and no extra details.
- * The type of the organizeritem is irrelevant.
+ * The type of the organizer item is irrelevant.
  */
 bool QOrganizerItem::isEmpty() const
 {
-    /* Every organizeritem has a display label field.. */
+    /* Every organizer item has a display label field.. */
     if (d->m_details.count() > 2)
         return false;
 
     /* We know we have two details (a display label and a type) */
     const QOrganizerItemDisplayLabel& label = detail<QOrganizerItemDisplayLabel>();
     return label.label().isEmpty();
+
+    // XXX TODO:
+    // depending on the type, different details may be mandatory!
 }
 
 /*!
- * Removes all details of the organizeritem.
- * This function does not modify the id or type of the organizeritem.
+ * Removes all details of the organizer item.
+ * This function does not modify the id or type of the organizer item.
  * Calling isEmpty() after calling this function will return true.
  * The empty item becomes a \l QOrganizerNote.
  */
@@ -222,7 +225,7 @@ void QOrganizerItem::clearDetails()
 {
     d->m_details.clear();
 
-    // and the organizeritem type detail.
+    // and the organizer item type detail.
     QOrganizerItemType organizeritemType;
     organizeritemType.setType(QOrganizerItemType::TypeNote);
     organizeritemType.d->m_access = QOrganizerItemDetail::Irremovable;
@@ -242,10 +245,10 @@ QOrganizerItem::~QOrganizerItem()
 }
 
 /*!
-    Returns the QOrganizerItemId that identifies this organizeritem.
+    Returns the QOrganizerItemId that identifies this organizer item.
 
-    This may have been set when the organizeritem was retrieved from
-    a particular manager, or when the organizeritem was first saved
+    This may have been set when the organizer item was retrieved from
+    a particular manager, or when the organizer item was first saved
     in a manager.  The QOrganizerItemId is only valid with a specific
     manager.  See \l QOrganizerItemManager::saveItem() for more
     information.
@@ -258,12 +261,12 @@ QOrganizerItemId QOrganizerItem::id() const
 }
 
 /*!
-    Returns the QOrganizerItemLocalId that identifies this organizeritem within its manager
+    Returns the QOrganizerItemLocalId that identifies this organizer item within its manager
 
-    This may have been set when the organizeritem was retrieved from
-    a particular manager, or when the organizeritem was first saved
+    This may have been set when the organizer item was retrieved from
+    a particular manager, or when the organizer item was first saved
     in a manager.  The QOrganizerItemLocalId is associated with a specific
-    manager, but other organizeritems with the same local id might exist in
+    manager, but other organizer items with the same local id might exist in
     different managers.
 
     See \l QOrganizerItemManager::saveItem() for more
@@ -278,15 +281,15 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
 
 
 /*!
- * Sets the id of this organizeritem to \a id.
+ * Sets the id of this organizer item to \a id.
  *
  * Note that this only affects this object, not any corresponding structures stored
  * by a QOrganizerItemManager.
  *
- * If you change the id of a organizeritem and save the organizeritem
- * in a manager, the previously existing organizeritem will still
+ * If you change the id of a organizer item and save the organizer item
+ * in a manager, the previously existing organizer item will still
  * exist.  You can do this to create copies (possibly modified)
- * of an existing organizeritem, or to save a organizeritem in a different manager.
+ * of an existing organizer item, or to save a organizer item in a different manager.
  *
  * \sa QOrganizerItemManager::saveItem()
  */
@@ -297,7 +300,7 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
 
 /*!
     \fn QOrganizerItemDetail QOrganizerItem::detail(const QLatin1Constant& definitionName) const
-    Returns the first detail stored in the organizeritem which with the given \a definitionName.
+    Returns the first detail stored in the organizer item which with the given \a definitionName.
     The \a definitionName argument is typically the detail name constant provided by a
     specific subclass of QOrganizerItemDetail.
 
@@ -328,7 +331,7 @@ void QOrganizerItem::setId(const QOrganizerItemId& id)
 */
 
 /*!
-    Returns the first detail stored in the organizeritem with the given \a definitionName
+    Returns the first detail stored in the organizer item with the given \a definitionName
 */
 QOrganizerItemDetail QOrganizerItem::detail(const QString& definitionName) const
 {
@@ -404,7 +407,7 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionNam
 
 /*!
     \internal
-    Returns the first detail stored in the organizeritem which with the given \a definitionName
+    Returns the first detail stored in the organizer item which with the given \a definitionName
 */
 QOrganizerItemDetail QOrganizerItem::detail(const char* definitionName) const
 {
@@ -474,21 +477,21 @@ QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionName, 
 /*!
  * Saves the given \a detail in the list of stored details, and sets the detail's id.
  * If another detail of the same type and id has been previously saved in
- * this organizeritem, that detail is overwritten.  Otherwise, a new id is generated
- * and set in the detail, and the detail is added to the organizeritem.
+ * this organizer item, that detail is overwritten.  Otherwise, a new id is generated
+ * and set in the detail, and the detail is added to the organizer item.
  *
  * If the detail's access constraint includes \c QOrganizerItemDetail::ReadOnly,
- * this function will return true and save the detail in the organizeritem,
- * however attempting to save the organizeritem in a manager may fail (if that manager
+ * this function will return true and save the detail in the organizer item,
+ * however attempting to save the organizer item in a manager may fail (if that manager
  * decides that the read only detail should not be updated).
  * Details with the \c QOrganizerItemDetail::ReadOnly constraint set are typically provided
- * in a organizeritem by the manager, and are usually information that is either
+ * in a organizer item by the manager, and are usually information that is either
  * synthesized, or not intended to be changed by the user (e.g. presence information
- * for other organizeritems).
+ * for other organizer items).
  *
- * If \a detail is a QOrganizerItemType, the existing organizeritem type will
- * be overwritten with \a detail.  There is never more than one organizeritem type
- * in a organizeritem.
+ * If \a detail is a QOrganizerItemType, the existing organizer item type will
+ * be overwritten with \a detail.  There is never more than one organizer item type
+ * in a organizer item.
  *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
@@ -499,7 +502,7 @@ bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
     if (!detail)
         return false;
 
-    /* Also handle organizeritem type specially - only one of them. */
+    /* Also handle organizer item type specially - only one of them. */
     if (QOrganizerItemDetailPrivate::detailPrivate(*detail)->m_definitionName == QOrganizerItemType::DefinitionName.latin1()) {
         for (int i = 0; i < d->m_details.size(); i++) {
             QOrganizerItemDetail curr = d->m_details.at(i);
@@ -560,15 +563,15 @@ bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
         }
     }
 
-    // this is a new detail!  add it to the organizeritem.
+    // this is a new detail!  add it to the organizer item.
     d->m_details.append(*detail);
     return true;
 }
 
 /*!
- * Removes the \a detail from the organizeritem.
+ * Removes the \a detail from the organizer item.
  *
- * The detail in the organizeritem which has the same key as that of the given \a detail
+ * The detail in the organizer item which has the same key as that of the given \a detail
  * will be removed if it exists.  Only the key is used for comparison - that is, the
  * information in the detail may be different.
  *
@@ -584,7 +587,7 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
     if (!detail)
         return false;
 
-    // find the detail stored in the organizeritem which has the same key as the detail argument
+    // find the detail stored in the organizer item which has the same key as the detail argument
     int removeIndex = -1;
     for (int i = 0; i < d->m_details.size(); i++) {
         if (d->m_details.at(i).key() == detail->key()) {
@@ -593,7 +596,7 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
         }
     }
 
-    // make sure the detail exists (in some form) in the organizeritem.
+    // make sure the detail exists (in some form) in the organizer item.
     if (removeIndex < 0)
         return false;
 
@@ -608,7 +611,7 @@ bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
     return true;
 }
 
-/*! Returns true if this organizeritem is equal to the \a other organizeritem, false if either the id or stored details are not the same */
+/*! Returns true if this organizer item is equal to the \a other organizer item, false if either the id or stored details are not the same */
 bool QOrganizerItem::operator==(const QOrganizerItem& other) const
 {
     return other.d->m_id == d->m_id &&
@@ -638,9 +641,9 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
 }
 
 /*!
- * Returns the type of the organizeritem.  Every organizeritem has exactly one type which
+ * Returns the type of the organizer item.  Every organizer item has exactly one type which
  * is either set manually (by saving a modified copy of the QOrganizerItemType
- * in the organizeritem, or by calling \l setType()) or synthesized automatically.
+ * in the organizer item, or by calling \l setType()) or synthesized automatically.
  *
  * \sa setType()
  */
@@ -651,7 +654,7 @@ QString QOrganizerItem::type() const
 }
 
 /*!
- * Sets the type of the organizeritem to the given \a type.
+ * Sets the type of the organizer item to the given \a type.
  */
 void QOrganizerItem::setType(const QString& type)
 {
@@ -662,7 +665,7 @@ void QOrganizerItem::setType(const QString& type)
 }
 
 /*!
- * Sets the type of the organizeritem to the given \a type detail.
+ * Sets the type of the organizer item to the given \a type detail.
  */
 void QOrganizerItem::setType(const QOrganizerItemType& type)
 {
