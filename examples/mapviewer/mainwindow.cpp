@@ -425,7 +425,10 @@ void MainWindow::setupUi()
 
     m_mapWidget = new MapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
-    m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+    //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+    //temporary change for dateline testing
+    m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
+    m_mapWidget->setZoomLevel(5);
 
     // setup slider control
 
