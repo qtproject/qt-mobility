@@ -51,6 +51,17 @@
 #include <QPainter>
 #include <QDesktopWidget>
 
+#include <QGridLayout>
+#include <QFormLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QToolButton>
+#include <QRadioButton>
+#include <QSlider>
+
 #include <qgeocoordinate.h>
 #include <qgeomaprectangleobject.h>
 #include <qgeomapmarkerobject.h>
@@ -101,6 +112,7 @@ static inline qreal qPointLength(const QPointF &p) {
 
 MapWidget::MapWidget(QGeoMappingManager *manager) :
     QGeoMapWidget(manager),
+    coordQueryState(false),
     panActive(false),
     kineticTimer(new QTimer)
 {
@@ -112,10 +124,21 @@ MapWidget::MapWidget(QGeoMappingManager *manager) :
 
 MapWidget::~MapWidget() {}
 
+void MapWidget::setMouseClickCoordQuery(bool state)
+{
+    coordQueryState = state;
+}
+
 void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
     if (event->button() == Qt::LeftButton) {
+
+        if (coordQueryState) {
+            emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
+            return;
+        }
+
         panActive = true;
 
         // When pressing, stop the timer and stop all current kinetic panning
@@ -370,54 +393,199 @@ void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
-        ui(new Ui::MainWindow),
         m_serviceProvider(0),
         m_popupMenu(0)
 {
-    ui->setupUi(this);
-
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     setProvider("nokia");
 
-    qgv = new QGraphicsView(this);
-    qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    qgv->setVisible(true);
-    qgv->setGeometry(QRect(0, 0, width(), height()));
-    qgv->setInteractive(true);
-
-    QGraphicsScene* scene = new QGraphicsScene(0, 0, width(), height());
-    qgv->setScene(scene);
-
-    createMarkerIcon();
-
-    m_mapWidget = new MapWidget(m_mapManager);
-    qgv->scene()->addItem(m_mapWidget);
-    m_mapWidget->setGeometry(0, 0, width(), height());
-    //m_mapWidget->setZoomLevel(8);
-    m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
-
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-                     this, SLOT(customContextMenuRequest(const QPoint&)));
+    setupUi();
 
     setWindowTitle(tr("Map Viewer Demo"));
-
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 MainWindow::~MainWindow()
 {
     delete m_serviceProvider;
-    delete ui;
 }
 
-void MainWindow::delayedInit()
+void MainWindow::setupUi()
 {
-    // TODO: remove this dirty, dirty hack
-    m_mapWidget->setZoomLevel(m_mapWidget->zoomLevel());
-    m_mapWidget->update();
+    // setup graphics view containing map widget
+
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    qgv = new QGraphicsView(scene, this);
+    qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    qgv->setVisible(true);
+    qgv->setInteractive(true);
+
+    createMarkerIcon();
+
+    m_mapWidget = new MapWidget(m_mapManager);
+    qgv->scene()->addItem(m_mapWidget);
+    //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+    //temporary change for dateline testing
+    m_mapWidget->setCenter(QGeoCoordinate(-27.0, 152.0));
+    m_mapWidget->setZoomLevel(5);
+
+    // setup slider control
+
+    slider = new QSlider(Qt::Vertical, this);
+    slider->setTickInterval(1);
+    slider->setTickPosition(QSlider::TicksBothSides);
+    slider->setMaximum(m_mapManager->maximumZoomLevel());
+    slider->setMinimum(m_mapManager->minimumZoomLevel());
+    slider->setSliderPosition(m_mapWidget->zoomLevel());
+
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
+    connect(m_mapWidget, SIGNAL(zoomLevelChanged(qreal)), this, SLOT(mapZoomLevelChanged(qreal)));
+
+    // setup map type control
+
+    QVBoxLayout *mapControlLayout = new QVBoxLayout();
+
+    connect(m_mapWidget, SIGNAL(mapTypeChanged(QGeoMapWidget::MapType)), this, SLOT(mapTypeChanged(QGeoMapWidget::MapType)));
+
+    QList<QGeoMapWidget::MapType> types = m_mapWidget->supportedMapTypes();
+    for (int i = 0; i < types.size(); ++i) {
+        QRadioButton *radio = new QRadioButton(this);
+
+        switch (types.at(i)) {
+            case QGeoMapWidget::StreetMap:
+                radio->setText("Street");
+                break;
+            case QGeoMapWidget::SatelliteMapDay:
+                radio->setText("Satellite");
+                break;
+            case QGeoMapWidget::SatelliteMapNight:
+                radio->setText("Satellite - Night");
+                break;
+            case QGeoMapWidget::TerrainMap:
+                radio->setText("Terrain");
+                break;
+        }
+
+        if (types.at(i) == m_mapWidget->mapType())
+            radio->setChecked(true);
+
+        connect(radio, SIGNAL(toggled(bool)), this, SLOT(mapTypeToggled(bool)));
+
+        mapControlButtons.append(radio);
+        mapControlTypes.append(types.at(i));
+
+        mapControlLayout->addWidget(radio);
+    }
+
+    // setup lat/lon control
+
+    latitudeEdit = new QLineEdit();
+    longitudeEdit = new QLineEdit();
+
+    QFormLayout *formLayout = new QFormLayout();
+    formLayout->addRow("Latitude", latitudeEdit);
+    formLayout->addRow("Longitude", longitudeEdit);
+
+    captureCoordsButton = new QToolButton();
+    captureCoordsButton->setText("Capture coordinates");
+    captureCoordsButton->setCheckable(true);
+
+    connect(captureCoordsButton, SIGNAL(toggled(bool)), m_mapWidget, SLOT(setMouseClickCoordQuery(bool)));
+    connect(m_mapWidget, SIGNAL(coordQueryResult(QGeoCoordinate)), this, SLOT(updateCoords(QGeoCoordinate)));
+
+    setCoordsButton = new QPushButton();
+    setCoordsButton->setText("Set coordinates");
+
+    connect(setCoordsButton, SIGNAL(clicked()), this, SLOT(setCoordsClicked()));
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+
+    buttonLayout->addWidget(captureCoordsButton);
+    buttonLayout->addWidget(setCoordsButton);
+
+    QVBoxLayout *coordControlLayout = new QVBoxLayout();
+    coordControlLayout->addLayout(formLayout);
+    coordControlLayout->addLayout(buttonLayout);
+
+    QWidget *widget = new QWidget(this);
+
+    QGridLayout *layout = new QGridLayout();
+
+    layout->setRowStretch(0, 1);
+    layout->setRowStretch(1, 0);
+    layout->setColumnStretch(0, 0);
+    layout->setColumnStretch(1, 1);
+
+    layout->addWidget(slider, 0, 0);
+    layout->addWidget(qgv, 0, 1);
+    layout->addLayout(mapControlLayout, 1, 0);
+    layout->addLayout(coordControlLayout, 1, 1);
+
+    widget->setLayout(layout);
+    setCentralWidget(widget);
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(customContextMenuRequest(const QPoint&)));
+
+    resize(652, 519);
+}
+
+void MainWindow::sliderValueChanged(int zoomLevel)
+{
+    m_mapWidget->setZoomLevel(zoomLevel);
+}
+
+void MainWindow::mapZoomLevelChanged(qreal zoomLevel)
+{
+    slider->setSliderPosition(qRound(zoomLevel));
+}
+
+void MainWindow::mapTypeToggled(bool checked)
+{
+    if (checked) {
+        QRadioButton *button = qobject_cast<QRadioButton*>(sender());
+        int index = mapControlButtons.indexOf(button);
+        if (index != -1)
+            m_mapWidget->setMapType(mapControlTypes.at(index));
+    }
+
+}
+
+void MainWindow::mapTypeChanged(QGeoMapWidget::MapType type)
+{
+    int index = mapControlTypes.indexOf(type);
+    if (index != -1)
+        mapControlButtons.at(index)->setChecked(true);
+}
+
+void MainWindow::setCoordsClicked()
+{
+    bool ok = false;
+
+    double lat = latitudeEdit->text().toDouble(&ok);
+
+    if (!ok)
+        return;
+
+    double lon = longitudeEdit->text().toDouble(&ok);
+
+    if (!ok)
+        return;
+
+    m_mapWidget->setCenter(QGeoCoordinate(lat, lon));
+}
+
+void MainWindow::updateCoords(const QGeoCoordinate &coords)
+{
+    if (!coords.isValid())
+        return;
+
+    latitudeEdit->setText(QString::number(coords.latitude()));
+    longitudeEdit->setText(QString::number(coords.longitude()));
+
+    captureCoordsButton->setChecked(false);
 }
 
 void MainWindow::setProvider(QString providerId)
@@ -438,21 +606,14 @@ void MainWindow::setProvider(QString providerId)
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    qgv->resize(event->size());
-    qgv->setSceneRect(0, 0, event->size().width(), event->size().height());
-    m_mapWidget->resize(event->size());
+    qgv->setSceneRect(QRectF(QPointF(0.0,0.0), qgv->size()));
+    m_mapWidget->resize(qgv->size());
 }
 
-void MainWindow::changeEvent(QEvent *e)
+void MainWindow::showEvent(QShowEvent* event)
 {
-    QMainWindow::changeEvent(e);
-    switch (e->type()) {
-        case QEvent::LanguageChange:
-            ui->retranslateUi(this);
-            break;
-        default:
-            break;
-    }
+    qgv->setSceneRect(QRectF(QPointF(0.0,0.0), qgv->size()));
+    m_mapWidget->resize(qgv->size());
 }
 
 void MainWindow::createMenus()
@@ -580,7 +741,7 @@ void MainWindow::removeMarkers()
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    lastClicked = point;
+    lastClicked = point - qgv->geometry().topLeft();
 
     if (focusWidget() == qgv) {
 

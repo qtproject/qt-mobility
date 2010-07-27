@@ -48,6 +48,14 @@
 #include "qgeomapobject.h"
 #include "qgeomappingmanagerengine.h"
 
+#include "qgeomapobject_p.h"
+#include "qgeomaprectangleobject_p.h"
+#include "qgeomapcircleobject_p.h"
+#include "qgeomappolylineobject_p.h"
+#include "qgeomappolygonobject_p.h"
+#include "qgeomapmarkerobject_p.h"
+#include "qgeomaprouteobject_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -80,21 +88,24 @@ QTM_BEGIN_NAMESPACE
     \a widget and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-        : d_ptr(new QGeoMapDataPrivate())
-{
-    d_ptr->widget = widget;
-    d_ptr->engine = engine;
-}
+        : d_ptr(new QGeoMapDataPrivate(engine, widget)) {}
+
+/*!
+  \internal
+*/
+QGeoMapData::QGeoMapData(QGeoMapDataPrivate *dd) : d_ptr(dd) {}
 
 /*!
     Destroys this map data object.
 */
 QGeoMapData::~QGeoMapData()
 {
-    if (d_ptr->engine)
-        d_ptr->engine->removeMapData(this);
+    Q_D(QGeoMapData);
 
-    delete d_ptr;
+    if (d->engine)
+        d->engine->removeMapData(this);
+
+    delete d;
 }
 
 /*!
@@ -332,21 +343,22 @@ void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate()
-    : zoomLevel(-1.0),
-    containerObject(new QGeoMapObject()),
-    imageChangesTriggerUpdates(true) {}
+QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
+    : engine(engine),
+    widget(widget),
+    zoomLevel(-1.0)
+{
+    containerObject = new QGeoMapObject(this);
+}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
-        : widget(other.widget),
-        engine(other.engine),
+        : engine(other.engine),
+        widget(other.widget),
+        containerObject(other.containerObject),
         zoomLevel(other.zoomLevel),
         center(other.center),
         viewportSize(other.viewportSize),
-        mapType(other.mapType),
-        containerObject(other.containerObject),
-        imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
-        mapImage(other.mapImage) {}
+        mapType(other.mapType) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
@@ -355,17 +367,78 @@ QGeoMapDataPrivate::~QGeoMapDataPrivate()
 
 QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & other)
 {
-    widget = other.widget;
     engine = other.engine;
+    widget = other.widget;
+    containerObject = other.containerObject;
     zoomLevel = other.zoomLevel;
     center = other.center;
     viewportSize = other.viewportSize;
     mapType = other.mapType;
-    containerObject = other.containerObject;
-    imageChangesTriggerUpdates = other.imageChangesTriggerUpdates;
-    mapImage = other.mapImage;
 
     return *this;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    QGeoMapObjectInfo* info = 0;
+
+    switch(mapObjectPrivate->type) {
+        case QGeoMapObject::RectangleType:
+            info = createRectangleObjectInfo(mapObjectPrivate);
+            break;
+        case QGeoMapObject::CircleType:
+            info = createCircleObjectInfo(mapObjectPrivate);
+            break;
+        case QGeoMapObject::PolylineType:
+            info = createPolylineObjectInfo(mapObjectPrivate);
+            break;
+        case QGeoMapObject::PolygonType:
+            info = createPolygonObjectInfo(mapObjectPrivate);
+            break;
+        case QGeoMapObject::MarkerType:
+            info = createMarkerObjectInfo(mapObjectPrivate);
+            break;
+        case QGeoMapObject::GeoRouteType:
+            info = createRouteObjectInfo(mapObjectPrivate);
+            break;
+        default:
+            info = 0;
+    }
+
+    if (info)
+        info->objectUpdate();
+
+    return info;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
+}
+
+QGeoMapObjectInfo* QGeoMapDataPrivate::createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const
+{
+    return 0;
 }
 
 #include "moc_qgeomapdata.cpp"

@@ -62,54 +62,44 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
-
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
     void setMapType(QGeoMapWidget::MapType mapType);
 
-    void addMapObject(QGeoMapObject *mapObject);
-    void removeMapObject(QGeoMapObject *mapObject);
-
     void setZoomLevel(qreal zoomLevel);
+
     void setViewportSize(const QSizeF &size);
 
     void startPanning();
     void stopPanning();
     void pan(int dx, int dy);
 
-    QRectF screenRect() const;
-
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
-    virtual QPixmap mapObjectsOverlay();
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+    virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
+protected:
     virtual void updateMapImage();
     void clearRequests();
 
     void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintMapOverlay(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
 private slots:
     void processRequests();
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error error, QString errorString);
 
-    void mapObjectRemoved(QGeoMapObject *mapObject);
-
 private:
     void cleanupCaches();
 
-    QGeoTiledMapDataPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
 };

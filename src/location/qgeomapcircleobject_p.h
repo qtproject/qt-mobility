@@ -52,9 +52,7 @@ class QGeoMapCircleObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapCircleObjectPrivate(const QGeoMapCircleObjectPrivate &other);
     ~QGeoMapCircleObjectPrivate();
-    QGeoMapCircleObjectPrivate& operator= (const QGeoMapCircleObjectPrivate &other);
 
     QGeoCoordinate center;
     qreal radius;

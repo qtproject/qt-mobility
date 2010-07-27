@@ -47,12 +47,17 @@
 #include <QList>
 #include <QObject>
 
+class QPainter;
+class QRectF;
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
+
+class QGeoMapDataPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
@@ -90,25 +95,24 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
+    void objectUpdate();
+    void mapUpdate();
+
     bool operator<(const QGeoMapObject &other) const;
     bool operator>(const QGeoMapObject &other) const;
-
-signals:
-    void childObjectAdded(QGeoMapObject *childObject);
-    void childObjectRemoved(QGeoMapObject *childObject);
-    void zValueChanged(int newZValue, int oldZValue);
 
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
 
     QGeoMapObjectPrivate *d_ptr;
 
-private slots:
-    void childObjectDestroyed(QObject *obj);
-
 private:
+    QGeoMapObject(QGeoMapDataPrivate *mapData);
+
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
+
+    friend class QGeoMapDataPrivate;
 };
 
 QTM_END_NAMESPACE

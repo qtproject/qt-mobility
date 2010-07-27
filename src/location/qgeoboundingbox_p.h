@@ -62,13 +62,13 @@ QTM_BEGIN_NAMESPACE
 class QGeoBoundingBoxPrivate : public QSharedData
 {
 public:
-    static double longitudeShift(double longitudeFrom, double delta);
-    static double latitudeShift(double latitudeFrom, double delta);
+//    static double longitudeShift(double longitudeFrom, double delta);
+//    static double latitudeShift(double latitudeFrom, double delta);
 
-    static double degreesLeft(double longitudeFrom, double longitudeTo);
-    static double degreesRight(double longitudeFrom, double longitudeTo);
-    static double degreesUp(double latitudeFrom, double latitudeTo);
-    static double degreesDown(double latitudeFrom, double latitudeTo);
+//    static double degreesLeft(double longitudeFrom, double longitudeTo);
+//    static double degreesRight(double longitudeFrom, double longitudeTo);
+//    static double degreesUp(double latitudeFrom, double latitudeTo);
+//    static double degreesDown(double latitudeFrom, double latitudeTo);
 
     QGeoBoundingBoxPrivate();
     QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
@@ -80,9 +80,8 @@ public:
 
     bool operator== (const QGeoBoundingBoxPrivate &other) const;
 
-    QGeoCoordinate center;
-    double width;
-    double height;
+    QGeoCoordinate topLeft;
+    QGeoCoordinate bottomRight;
 };
 
 QTM_END_NAMESPACE

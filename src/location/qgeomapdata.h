@@ -81,34 +81,30 @@ public:
     virtual void setMapType(QGeoMapWidget::MapType mapType);
     virtual QGeoMapWidget::MapType mapType() const;
 
-    virtual void addMapObject(QGeoMapObject *mapObject);
-    virtual void removeMapObject(QGeoMapObject *mapObject);
-    virtual QList<QGeoMapObject*> mapObjects();
+    void addMapObject(QGeoMapObject *mapObject);
+    void removeMapObject(QGeoMapObject *mapObject);
+    QList<QGeoMapObject*> mapObjects();
+
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-    //virtual QPixmap mapObjectsOverlay() = 0;
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
 
-//    void setImageChangesTriggerUpdates(bool trigger);
-//    bool imageChangesTriggerUpdates() const;
-
-//    void setMapImage(const QPixmap &mapImage);
-//    QPixmap& mapImage();
-//    void imageChanged(const QRectF &updateRect = QRectF());
-
 protected:
+    QGeoMapData(QGeoMapDataPrivate *dd);
+
     QGeoMapWidget* widget() const;
     QGeoMappingManagerEngine* engine() const;
-
     QGeoMapObject* containerObject();
 
-private:
     QGeoMapDataPrivate* d_ptr;
+
+private:
+    Q_DECLARE_PRIVATE(QGeoMapData)
     Q_DISABLE_COPY(QGeoMapData)
 };
 
