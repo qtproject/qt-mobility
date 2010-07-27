@@ -370,7 +370,6 @@ serialization of a QContact into a vCard document, and vice versa.
 The following sample applications show examples of API usage:
 \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{qmlcontacts}{QML-based Sample Phonebook}
 \endlist
 See also: \l{Contacts API Usage}
 
