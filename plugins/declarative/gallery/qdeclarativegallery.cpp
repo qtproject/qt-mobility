@@ -63,14 +63,14 @@ public:
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
         qmlRegisterType<QDeclarativeGalleryFilterBase>();
-        qmlRegisterType<QDeclarativeGalleryFilter>(uri, 1, 0, "GalleryFilter");
-        qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 0, "GalleryFilterUnion");
-        qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 0, "GalleryFilterIntersection");
-        qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 0, "GalleryItem");
-        qmlRegisterType<QDeclarativeGalleryQueryCount>(uri, 1, 0, "GalleryQueryCount");
-        qmlRegisterType<QDeclarativeGalleryQueryModel>(uri, 1, 0, "GalleryQueryModel");
+        qmlRegisterType<QDeclarativeGalleryFilter>(uri, 1, 1, "GalleryFilter");
+        qmlRegisterType<QDeclarativeGalleryFilterUnion>(uri, 1, 1, "GalleryFilterUnion");
+        qmlRegisterType<QDeclarativeGalleryFilterIntersection>(uri, 1, 1, "GalleryFilterIntersection");
+        qmlRegisterType<QDeclarativeGalleryItem>(uri, 1, 1, "GalleryItem");
+        qmlRegisterType<QDeclarativeGalleryQueryCount>(uri, 1, 1, "GalleryQueryCount");
+        qmlRegisterType<QDeclarativeGalleryQueryModel>(uri, 1, 1, "GalleryQueryModel");
         qmlRegisterType<QAbstractGallery>();
-        qmlRegisterType<QDocumentGallery>(uri, 1, 0, "DocumentGallery");
+        qmlRegisterType<QDocumentGallery>(uri, 1, 1, "DocumentGallery");
     }
 };
 

@@ -1,0 +1,88 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+    \example calendardemo
+    \title CalendarDemo
+
+    \tableofcontents
+
+    \section1 Overview
+
+    This example shows how to write a simple calendar application using
+    the \l{Organizer}{Qt Mobility Organizer API}.
+
+    \section2 Use Case
+
+    Mobile devices allow people to lead an "always connected" lifestyle, which
+    makes the ability to organize and schedule events and activities vitally
+    important.  A calendar application on a device can allow three different
+    levels of organization:
+
+    \list
+    \o Allow the user to explicitly organize their life by manually entering and scheduling events
+    \o Allow the user to explicitly organize their life by manually scheduling events which can be populated automatically from other sources (online calendars, "communal" calendars, published agendas, gig-guides, etc)
+    \o Automatically suggest schedules based on the current context of the user (including their interests and previous or current scheduling requirements), and the available events which are populated from online calendars, "communal" calendars, published agendas, gig-guides, etc.
+    \endlist
+
+    This application is an example of the first type of application: it allows
+    the user to specify some simple events with simple recurrence options,
+    and to view those manually-specified events.
+
+    \section2 Interface
+    The application is designed to work on desktop and mobile platforms with
+    minimal differences in code between the platforms.  The interface consists
+    of an Organizer backend selection widget, a "month view" table (which also
+    includes the week number of every given week in the month), and some
+    buttons which allow the user to add an event for the currently selected
+    day.
+
+    The user may cycle to the next month by clicking on the "greyed-out days"
+    in the last row of the table (which actually occur in the next month), and
+    may cycle to the previous month by clicking on the "greyed-out days" in
+    the first row of the table (which actually occur in the previous month).
+
+    \section2 Known Issues
+    The example is not intended to exercise the entire API.  Instead, it is a
+    simple example which illustrates some simple uses of the API.
+    Only simple events may be added with this example, and no event-centric
+    view is provided.
+*/
