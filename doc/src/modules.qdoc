@@ -46,6 +46,12 @@
     \row \o \l{QtSystemInfo} \o Provides system information.
     \row \o \l{QtPublishSubscribe} \o Classes that enables applications to read item values, navigate through and subscribe
 to change notifications.
+    \row \o \l{QtSensors} \o Classes to provide access to sensors.
+    \row \o \l{QtOrganizer} \o Classes for managing calendar and to-do entries.
+    \row \o \l{QtFeedback} \o Classes to allow tactile feedback and vibration.
+    \row \o \l{QtTelephony} \o Classes for observing telephony events.
+    \row \o \l{QtGallery} \o Classes for managing document galleries.
+
     \endtable
 
 
@@ -81,6 +87,20 @@ to change notifications.
 */
 
 /*!
+    \module QtSensors
+    \title QtSensors Module
+    \brief The QtSensors module offers classes that allow
+    you to access sensor information like accelerometer and orientation.
+*/
+
+/*!
+    \module QtGallery
+    \title QtGallery Module
+    \brief The QtGallery module offers classes that allow
+    you to access and manage documents within galleries.
+*/
+
+/*!
     \module QtLocation
     \title  QtLocation Module
     \brief  The QtLocation module provides geographical support for position
@@ -104,8 +124,15 @@ to change notifications.
 /*!
     \module QtMultimediaKit
     \title  QtMultimediaKit Module
-    \brief  The QtMultimediaKit Module provides APIs to play and record media, and manage a collection of media content.
+    \brief  The QtMultimediaKit module provides APIs to play and record media, and manage a collection of media content.
     
+    This module delivers an easy to use interface to multimedia functions. The
+    developer is able to render images, video and sound and record sound in a
+    variety of formats.
+
+    QtMultimediaKit contains both the low level APIs previously found in Qt 4.6
+    and also the High level Multimedia APIs that were introduced earlier in Qt
+    Mobility.
 */
 
 
@@ -134,8 +161,17 @@ arbitrary services.
     A set of APIs that supplies that supplies system information.
  */
 
+/*!
+    \module QtTelephony
+    \title Telephony Events Module
 
+    Enables access to the telephony event services.
+ */
 
-
+/*!
+    \module QtGallery
+    \title QtGallery Module
+    \brief The QtGallery module provides access to a gallery of documents.
+*/
 
 

@@ -80,6 +80,8 @@ void QGalleryCountRequestPrivate::_q_itemsChanged()
     \ingroup gallery
     \ingroup gallery-requests
 
+    \inmodule QtGallery
+
     \brief The QGalleryCountRequest class provides a request for the number of
     items in a gallery matching some criteria.
 */

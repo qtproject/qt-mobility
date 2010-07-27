@@ -39,7 +39,7 @@
 ***********************************/
 
 import Qt 4.7
-import QtMobility.systeminfo 1.0
+import QtMobility.systeminfo 1.1
 import "content"
 
 
@@ -49,7 +49,7 @@ Rectangle {
     id: screen
     color: "#343434"
 
-    SystemStorageInfo {
+    StorageInfo {
         id: storageinfo
         onLogicalDrivesChanged: updateList;
     }

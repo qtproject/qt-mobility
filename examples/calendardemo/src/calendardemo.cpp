@@ -73,7 +73,8 @@ CalendarDemo::CalendarDemo(QWidget *parent)
     connect(m_dayPage, SIGNAL(showEditPage(QOrganizerItemManager *, const QOrganizerItem &)), this, SLOT(activateEditPage(QOrganizerItemManager *, const QOrganizerItem &)), Qt::QueuedConnection);
     connect(m_eventEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
     connect(m_todoEditPage, SIGNAL(showDayPage()), this, SLOT(activateDayPage()), Qt::QueuedConnection);
-
+    connect(this, SIGNAL(multipleEntriesToBeCreated(int)), m_eventEditPage, SLOT(handlemultipleEntriesToBeCreated(int)));
+    
     m_stackedWidget->addWidget(m_monthPage);
     m_stackedWidget->addWidget(m_dayPage);
     m_stackedWidget->addWidget(m_eventEditPage);
@@ -110,6 +111,14 @@ void CalendarDemo::activateNewDayPage(QOrganizerItemManager *manager, QDate date
 void CalendarDemo::activateEditPage(QOrganizerItemManager *manager, const QOrganizerItem &item)
 {
     if (item.type() == QOrganizerItemType::TypeEvent) {
+		if(item.isEmpty()){
+        	// Query user regarding how many entires to be created.
+        	int numOfEntriesToBeCreated = QInputDialog::getInt(this, "QInputDialog::getInteger()",
+										"Number of entries:", 1, 1, 10, 1);
+        	if(numOfEntriesToBeCreated > 1) {
+        		emit multipleEntriesToBeCreated(numOfEntriesToBeCreated);
+        	}
+        }
         QOrganizerEvent event = static_cast<QOrganizerEvent>(item);
         m_dayPage->dayChanged(manager, event.startDateTime().date()); // edit always comes back to day page
         m_eventEditPage->eventChanged(manager, event);

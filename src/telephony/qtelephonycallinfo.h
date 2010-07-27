@@ -80,7 +80,7 @@ public:
 
     QString remotePartyIdentifier() const;
     CallType type() const;
-    QString subTyp() const;
+    QString subType() const;
     CallStatus status() const;
     QVariant value(const QString& key) const;
 private:

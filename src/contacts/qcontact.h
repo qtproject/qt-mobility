@@ -59,12 +59,21 @@
 #include "qcontactrelationshipfilter.h"
 #include "qcontacttype.h"
 
+class QDataStream;
+
 QTM_BEGIN_NAMESPACE
 
 class QContactManager;
 class QContactData;
 class QContactName;
 class QContactAction;
+
+// MSVC needs the function declared before the friend declaration
+class QContact;
+#ifndef QT_NO_DATASTREAM
+Q_CONTACTS_EXPORT QDataStream& operator<<(QDataStream& out, const QContact& contact);
+Q_CONTACTS_EXPORT QDataStream& operator>>(QDataStream& in, QContact& contact);
+#endif
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -183,6 +192,8 @@ private:
     friend class QContactManager;
     friend class QContactManagerData;
     friend class QContactManagerEngine;
+    friend QDataStream& operator<<(QDataStream& out, const QContact& contact);
+    friend QDataStream& operator>>(QDataStream& in, QContact& contact);
 
     QSharedDataPointer<QContactData> d;
 };

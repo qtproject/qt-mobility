@@ -80,7 +80,7 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Is this an empty organizeritem? */
+    /* Is this an empty organizer item? */
     bool isEmpty() const;
     void clearDetails();
 
@@ -159,12 +159,12 @@ public:
     void setType(const QString& type);
     void setType(const QOrganizerItemType& type);
 
-    /* The display label of the organizeritem */
+    /* The display label of the organizer item */
     QString displayLabel() const;
     void setDisplayLabel(const QString& label);
     void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
 
-    /* The description of the organizeritem */
+    /* The description of the organizer item */
     QString description() const;
     void setDescription(const QString& description);
     void setDescription(const QOrganizerItemDescription& description);

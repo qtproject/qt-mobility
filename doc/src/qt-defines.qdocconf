@@ -45,8 +45,8 @@ extraimages.HTML        = qt-logo \
 #styledirs               = $QT_MOBILITY_SOURCE_TREE/doc/src/template/style
 
 
-scriptdirs              = ../../doc/src/template/scripts
-styledirs               = ../../doc/src/template/style
+scriptdirs              = template/scripts
+styledirs               = template/style
 
 
 scripts.HTML		= functions.js \

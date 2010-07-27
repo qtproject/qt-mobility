@@ -55,7 +55,7 @@ class PhotoView : public GalleryView
 {
     Q_OBJECT
 public:
-    PhotoView(QWidget *parent = 0);
+    PhotoView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~PhotoView();
 
 protected slots:

@@ -50,10 +50,13 @@
 #ifdef QMEDIA_GSTREAMER_PLAYER
 #include "qgstreamerplayerservice.h"
 #endif
-#if defined(QMEDIA_GSTREAMER_CAPTURE) && (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
-#include "qgstreamercaptureservice_maemo.h"
-#elif defined(QMEDIA_GSTREAMER_CAPTURE)
+
+#if defined(QMEDIA_GSTREAMER_CAPTURE)
 #include "qgstreamercaptureservice.h"
+#endif
+
+#ifdef QMEDIA_GSTREAMER_CAMERABIN
+#include "camerabinservice.h"
 #endif
 
 #include <qmediaserviceprovider.h>
@@ -77,19 +80,35 @@ QStringList QGstreamerServicePlugin::keys() const
 #ifdef QMEDIA_GSTREAMER_PLAYER
             << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
 #endif
+
 #ifdef QMEDIA_GSTREAMER_CAPTURE
             << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
             << QLatin1String(Q_MEDIASERVICE_CAMERA)
+#elif defined(QMEDIA_GSTREAMER_CAMERABIN)
+            << QLatin1String(Q_MEDIASERVICE_CAMERA)
 #endif
-            ;
+    ;
+
 }
 
 QMediaService* QGstreamerServicePlugin::create(const QString &key)
 {
+    static bool initialized = false;
+    if (!initialized) {
+        initialized = true;
+        gst_init(NULL, NULL);
+    }
+
 #ifdef QMEDIA_GSTREAMER_PLAYER
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QGstreamerPlayerService;
 #endif
+
+#ifdef QMEDIA_GSTREAMER_CAMERABIN
+    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA) && CameraBinService::isCameraBinAvailable())
+        return new CameraBinService(key);
+#endif
+
 #ifdef QMEDIA_GSTREAMER_CAPTURE
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new QGstreamerCaptureService(key);
@@ -98,7 +117,7 @@ QMediaService* QGstreamerServicePlugin::create(const QString &key)
         return new QGstreamerCaptureService(key);
 #endif
 
-    //qDebug() << "unsupported key:" << key;
+    qWarning() << "Gstreamer service plugin: unsupported key:" << key;
     return 0;
 }
 
