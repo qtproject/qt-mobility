@@ -150,9 +150,9 @@
 <p>This API does not provide support for management of network configurations themselves. It is up to the platform to provide infrastructure which enables to user to create, edit or delete network configurations.</p>
 <a name="migration-to-qt-4-7-or-higher"></a>
 <h3>Migration to Qt 4.7 or higher</h3>
-<p>The Bearer API has been migrated to the Qt 4.7 QtNetwork library. This enables connection manager and roaming support for QNetworkAccessManager. Starting with Qt 4.7 the Mobility version has been deprecated in favor of Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with Mobility's Bearer API.</p>
+<p>The Bearer API has been migrated to the Qt 4.7 <a href="qtnetwork.html">QtNetwork</a> library. This enables connection manager and roaming support for QNetworkAccessManager. Starting with Qt 4.7 the Mobility version has been deprecated in favor of Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used in connection with Mobility's Bearer API.</p>
 <p>The porting effort from Mobility Bearer to Qt Bearer is minimal as the relevant classes are source compatible. The only exception is the removal of the QtMobility namespace. Already deployed applications will continue to work but cannot make use of the new features in Qt 4.7 and QNetworkAccessManager.</p>
-<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against QtNetwork at the same time).</p>
+<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against <a href="qtnetwork.html">QtNetwork</a> at the same time).</p>
 <pre class="highlightedCode brush: cpp"> MOBILITY+=bearer   #choose Mobility bearer</pre>
 <a name="the-api-in-detail"></a>
 <h2>The API in Detail</h2>
