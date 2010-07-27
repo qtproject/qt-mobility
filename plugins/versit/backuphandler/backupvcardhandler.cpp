@@ -51,8 +51,6 @@
 
 QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
 /*
  * This is a map from Versit group names to the details that were generated from properties with the
  * said groups.  Multiple details can be associated with a single group.
@@ -112,12 +110,10 @@ Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUInt, "UINT");
 Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUrl, "URL");
 Q_DEFINE_LATIN1_CONSTANT(GroupPrefix, "G");
 
-QTM_END_NAMESPACE
-
 QSet<QString> BackupVCardHandlerFactory::profiles() const
 {
     QSet<QString> retval;
-    retval.insert(QVersitContactHandler::ProfileBackup);
+    retval.insert(QVersitContactHandlerFactory::ProfileBackup);
     return retval;
 }
 

@@ -43,8 +43,8 @@
 
 QTM_USE_NAMESPACE
 
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileSync, "Sync");
-Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileBackup, "Backup");
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileSync, "Sync");
+Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandlerFactory::ProfileBackup, "Backup");
 
 /*!
   \class QVersitContactHandler
@@ -60,6 +60,24 @@ Q_DEFINE_LATIN1_CONSTANT(QVersitContactHandler::ProfileBackup, "Backup");
 
   This class provides a simple interface for the creation of QVersitContactHandler instances.
   Implement this interface to write a Versit plugin.  For more details, see \l{Versit Plugins}.
+ */
+
+/*!
+   \variable QVersitContactHandlerFactory::ProfileSync
+
+   The constant string signifying a plugin that is relevant to import and export in a
+   synchronization context.
+   \sa QVersitContactHandlerFactory::profiles(), QVersitContactImporter(), QVersitContactExporter()
+ */
+
+/*!
+   \variable QVersitContactHandlerFactory::ProfileBackup
+
+   The constant string signifying a plugin that is relevant to import and export in a backup/restore
+   context.
+   \sa profiles(),
+   QVersitContactImporter::QVersitContactImporter(),
+   QVersitContactExporter::QVersitContactExporter()
  */
 
 /*!

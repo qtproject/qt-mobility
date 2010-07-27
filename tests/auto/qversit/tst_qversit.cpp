@@ -252,7 +252,7 @@ void tst_QVersit::testExportImport()
     // Test that using the backup profile, a contact, when exported and imported again, is unaltered.
     QFETCH(QContact, contact);
 
-    QVersitContactExporter exporter(QVersitContactHandler::ProfileBackup);
+    QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
     QVERIFY(exporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = exporter.documents();
     QCOMPARE(documents.size(), 1);
@@ -268,7 +268,7 @@ void tst_QVersit::testExportImport()
     QList<QVersitDocument> parsedDocuments = reader.results();
     QCOMPARE(parsedDocuments.size(), 1);
 
-    QVersitContactImporter importer(QVersitContactHandler::ProfileBackup);;
+    QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);
     QVERIFY(importer.importDocuments(parsedDocuments));
     QList<QContact> contacts = importer.contacts();
     QCOMPARE(contacts.size(), 1);

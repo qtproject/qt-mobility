@@ -154,6 +154,11 @@ QTM_USE_NAMESPACE
   between contacts and Versit documents.  The exporter can be extended by clients by associating
   resource and detail handlers.
 
+  Here is a simple example of how to use QVersitContactExporter:
+  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
+
+  \section1 Extension via handlers
+
   A \l QVersitResourceHandler is associated with the exporter to supply the behaviour for loading
   files from persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
   which supports basic resource loading from the file system.  An alternative resource handler
@@ -162,17 +167,16 @@ QTM_USE_NAMESPACE
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
   handle details that QVersitContactExporter doesn't support.  Also, handlers can be implicitly
-  associated to an exporter through the handler plugin mechanism.  The exporter can be constructed
-  with a profile, which gives hints about what kind of handlers should be added to it.  For example,
-  the backup profile can be used to instruct the exporter to encode any unknown details in the vCard
-  such that it can be reconstructed later (a QVersitContactImporter constructed under the backup
-  profile can be used to decode it).  To illustrate, a backup exporter can be constructed with:
+  associated to an exporter through the \l{Versit Plugins}{handler plugin mechanism}.  The exporter
+  can be constructed with a profile, which gives hints about what kind of handlers should be added
+  to it.  For example, the backup profile can be used to instruct the exporter to encode any unknown
+  details in the vCard such that it can be reconstructed later (a QVersitContactImporter constructed
+  under the backup profile can be used to decode it).  To illustrate, a backup exporter can be
+  constructed with:
   \code
-  QVersitContactExporter exporter(QVersitContactHandler::ProfileBackup);
+  QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
   \endcode
-
-  Here is a simple example of how to use QVersitContactExporter:
-  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
+  For more details on how the backup plugin works, see \l{Versit Plugins}
 
   \section1 Exporting group relationships
   The exporter does not handle QContactRelationships at all.
@@ -205,7 +209,7 @@ QTM_USE_NAMESPACE
 
   This is deprecated; the preferred way of performing backup is now by constructing an exporter with
   the "backup" profile.
-  eg. QVersitContactExporter exporter(QVersitContactHandler::ProfileBackup);
+  eg. QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
 
   Constructs and returns a detail handler that encodes all details not handled by the base exporter.
   The caller is responsible for deleting the object.
@@ -265,7 +269,8 @@ QVersitContactExporter::QVersitContactExporter()
 
 /*!
  * Constructs a new exporter for the given \a profile.  The profile strings should be one of those
- * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a Versit plugin.
+ * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugin}{Versit plugin}.
  *
  * The profile determines which plugins will be loaded to supplement the exporter.
  */

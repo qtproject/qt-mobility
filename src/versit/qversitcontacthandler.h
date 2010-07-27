@@ -58,13 +58,6 @@ public:
     virtual QString name() const = 0;
     virtual int index() const { return 0; }
     virtual QVersitContactHandler* createHandler() const = 0;
-};
-
-class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
-                                              public QVersitContactExporterDetailHandlerV2
-{
-public:
-    virtual ~QVersitContactHandler() {}
 
 #ifdef Q_QDOC
     static const QLatin1Constant ProfileSync;
@@ -73,6 +66,13 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ProfileSync, "Sync");
     Q_DECLARE_LATIN1_CONSTANT(ProfileBackup, "Backup");
 #endif
+};
+
+class Q_VERSIT_EXPORT QVersitContactHandler : public QVersitContactImporterPropertyHandlerV2,
+                                              public QVersitContactExporterDetailHandlerV2
+{
+public:
+    virtual ~QVersitContactHandler() {}
 };
 
 QTM_END_NAMESPACE
