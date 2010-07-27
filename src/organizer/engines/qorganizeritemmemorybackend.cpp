@@ -65,6 +65,7 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemMemoryEngine
   \brief The QOrganizerItemMemoryEngine class provides an in-memory implementation
   of a organizeritems backend.
+  \inmodule QtOrganizer
  
   It may be used as a reference implementation, or when persistent storage is not required.
  

@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>258</width>
+    <width>346</width>
     <height>208</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Call Monitor</string>
   </property>
   <widget class="QListView" name="lstRxMsg">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>241</width>
+     <width>331</width>
      <height>191</height>
     </rect>
    </property>

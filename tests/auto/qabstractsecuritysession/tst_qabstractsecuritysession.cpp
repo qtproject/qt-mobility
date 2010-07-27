@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/serviceframework
+
 #include "../qsfwtestutil.h"
 
 #include <QtTest/QtTest>

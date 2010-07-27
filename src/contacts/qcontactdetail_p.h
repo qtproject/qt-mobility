@@ -170,8 +170,7 @@ public:
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values),
-        m_access(other.m_access),
-        m_preferredActions(other.m_preferredActions)
+        m_access(other.m_access)
     {
     }
 
@@ -183,7 +182,6 @@ public:
     QContactStringHolder m_definitionName;
     QHash<QContactStringHolder, QVariant> m_values;
     QContactDetail::AccessConstraints m_access;
-    QList<QContactActionDescriptor> m_preferredActions;
 
     static QAtomicInt lastDetailKey;
 

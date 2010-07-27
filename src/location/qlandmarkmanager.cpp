@@ -100,7 +100,7 @@ QTM_USE_NAMESPACE
     Categories may be retrieved in a similar manner:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously simple
 
-    \section2 Saving and deleting
+    \section1 Saving and deleting
     Saving and deleting landmarks and categories are fairly straightforward.  To add a new landmark or category
     simply instantiate a QLandmark or QLandmarkCategory, set its data fields(e.g name, coordiante etc) and pass
     a pointer to the appropriate save operation.  For example:
@@ -113,7 +113,7 @@ QTM_USE_NAMESPACE
     Removal of landmark may be done as follows:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously simple
 
-    \section2 Importing and exporting
+    \section1 Importing and exporting
     Import and exporting are potentially long operations, to perform these operations asynchronously
     see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
     operations is to specify a filename:
@@ -142,6 +142,8 @@ QTM_USE_NAMESPACE
     \value InvalidManagerError The most recent operation failed because the manager failed to initialize correctly and is invalid.
            This could be due using a manager name that is not recognised/available. A landmark request object will return this error if
            if is assigned a null manager pointer.
+    \value ParsingError The most recent operation failed because the imported file could not be parsed.
+    \value CancelError The most recent operation failed to complete due to user cancelation.
     \value UnknownError The most recent operation failed for an unknown reason.
 */
 
@@ -741,7 +743,6 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
-
     return importLandmarks(&file, format);
 }
 
@@ -786,12 +787,7 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray
 {
     QFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly)) {
-        // TODO set error
-        return false;
-    }
-
-    return exportLandmarks(&file, format, landmarkIds);
+    return exportLandmarks(&file, format,landmarkIds);
 }
 
 /*!
@@ -827,7 +823,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
         return false;
     }
 
-    return d->engine->isFeatureSupported(feature);
+    return d->engine->isFeatureSupported(feature, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -843,9 +839,7 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
         return QLandmarkManager::None;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->filterSupportLevel(filter);
+    return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -861,9 +855,7 @@ bool QLandmarkManager::isReadOnly() const
         return true;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->isReadOnly();
+    return d->engine->isReadOnly(&(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -882,7 +874,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
         return true;
     }
 
-    return d->engine->isReadOnly(landmarkId);
+    return d->engine->isReadOnly(landmarkId, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -901,7 +893,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
         return true;
     }
 
-    return d->engine->isReadOnly(categoryId);
+    return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
 }
 
 /*!

@@ -82,7 +82,6 @@ public:
                                    QList<QContactDetail>* updatedDetails) = 0;
     virtual void documentProcessed(const QVersitDocument& document,
                                    QContact* contact) = 0;
-    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter
@@ -106,11 +105,8 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    // Deprecated:
-
-    QList<QContact> Q_DECL_DEPRECATED importContacts(const QList<QVersitDocument>& documents);
-    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     /* deprecated and internal */
+    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     Q_DECL_DEPRECATED QVersitContactImporterPropertyHandler* propertyHandler() const;
 
 private:

@@ -49,6 +49,9 @@ contains(mobility_modules,location) {
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
+	contains(QT_CONFIG, declarative) {
+	        sources.files += declarative_loc_flickr
+	}
     }
 }
 
@@ -124,12 +127,12 @@ contains(mobility_modules, organizer) {
 
 # Telephony API examples
 contains(mobility_modules,telephony) {
-    !mac:SUBDIRS += telephony
+    unix:!mac:!maemo* {SUBDIRS += telephony}
 }
 
 # Feedback API examples
 contains(mobility_modules, feedback) {
-    SUBDIRS += hapticsplayer
+    SUBDIRS += hapticsplayer hapticsquare
 }
 
 sources.path = $$QT_MOBILITY_EXAMPLES

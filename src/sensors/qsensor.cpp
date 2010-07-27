@@ -45,6 +45,7 @@
 #include "qsensormanager.h"
 #include <QDebug>
 #include <QMetaProperty>
+#include <QTimer>
 
 QTM_BEGIN_NAMESPACE
 
@@ -72,6 +73,7 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
 /*!
     \class QSensor
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensor class represents a single hardware sensor.
 
@@ -216,6 +218,16 @@ bool QSensor::isBusy() const
 
     This is true if the sensor is active (returning values). This is false otherwise.
 */
+void QSensor::setActive(bool active)
+{
+    if (active == d->active)
+        return;
+
+    if (active)
+        QTimer::singleShot(0, this, SLOT(start())); // delay ensures all properties have been set if using QML
+    else
+        stop();
+}
 
 bool QSensor::isActive() const
 {
@@ -313,6 +325,7 @@ bool QSensor::start()
     d->busy = false;
     // Backend will update the flags appropriately
     d->backend->start();
+    Q_EMIT activeChanged();
     return d->active;
 }
 
@@ -329,6 +342,7 @@ void QSensor::stop()
         return;
     d->active = false;
     d->backend->stop();
+    Q_EMIT activeChanged();
 }
 
 /*!
@@ -472,6 +486,7 @@ int QSensor::error() const
 /*!
     \class QSensorFilter
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensorFilter class provides an efficient
            callback facility for asynchronous notifications of
@@ -536,6 +551,7 @@ void QSensorFilter::setSensor(QSensor *sensor)
 /*!
     \class QSensorReading
     \ingroup sensors_main
+    \inmodule QtSensors
 
     \brief The QSensorReading class holds the readings from the sensor.
 

@@ -47,6 +47,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemSortOrder
   \brief The QOrganizerItemSortOrder class defines how a list of organizeritems should be ordered according to some criteria
+
+  \inmodule QtOrganizer
  */
 
 /*!

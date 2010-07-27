@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
   \brief The QOrganizerItemDetailDefinitionRemoveRequest class allows a client to
   asynchronously request that certain detail definitions be removed from
   a organizeritems store.
+  \inmodule QtOrganizer
 
   For a QOrganizerItemDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
