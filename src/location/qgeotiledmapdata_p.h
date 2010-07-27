@@ -119,11 +119,14 @@ public:
     QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
     ~QGeoTiledMapRectangleObjectInfo();
 
+    bool contains(const QGeoCoordinate &coord) const;
+
     void objectUpdate();
     void mapUpdate();
 
     const QGeoMapRectangleObjectPrivate* rectangle;
-    QGraphicsRectItem *rectangleItem;
+    QGraphicsRectItem *rectangleItem1;
+    QGraphicsRectItem *rectangleItem2;
 };
 
 class QGeoTiledMapCircleObjectInfo : public QGeoTiledMapObjectInfo
@@ -213,11 +216,18 @@ public:
 
     void updateScreenRect();
 
+    bool containedInScreen(const QPoint &point) const;
+    bool intersectsScreen(const QRect &rect) const;
+    QList<QPair<QRect, QRect> > intersectedScreen(const QRect &rect, bool translateToScreen = true) const;
+
     int zoomFactor;
 
     QPoint maxZoomCenter;
     QSize maxZoomSize;
     QRect maxZoomScreenRect;
+
+    QRect maxZoomScreenRectClippedLeft;
+    QRect maxZoomScreenRectClippedRight;
 
     QSet<QRect> requestRects;
     QSet<QRect> replyRects;
@@ -259,6 +269,7 @@ private:
     bool atEnd;
     int row;
     int col;
+    int width;
     QRect screenRect;
     QSize tileSize;
     int zoomLevel;
