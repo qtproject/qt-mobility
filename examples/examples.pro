@@ -7,7 +7,8 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             notesmanagerplugin \
-            servicebrowser
+            servicebrowser \
+	    sfwecho
 
     #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes

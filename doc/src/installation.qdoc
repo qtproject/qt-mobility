@@ -61,8 +61,6 @@ these domains have dependencies and these are outlined below:
 \row
     \o Contacts
     \o The Maemo 5 backend depends on \l {http://maemo.org/packages/view/libosso-abook/}{libosso-abook}.
-       The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
-       Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.
 \row
     \o Document Gallery
     \o The Maemo 5 backend depends on QtDBus and \l {http://project.gnome.org/Tracker}{Tracker}.
@@ -123,7 +121,6 @@ these domains have dependencies and these are outlined below:
     \o Publish & Subscribe
     \o On Linux, QtPublishSubscribe depends on QtNetwork.
 
-       On Maemo 6, it depends on contextsubscriber-1.0 from \l {http://maemo.gitorious.org/maemo-af/contextkit}{Context Kit}
 \row
     \o  Sensors
     \o  The QtSensors s60_sensor_api plugin for S60 3.1 depends on the \l {http://www.forum.nokia.com/info/sw.nokia.com/id/4284ae69-d37a-4319-bdf0-d4acdab39700/Sensor_plugin_S60_3rd_ed.html}{Sensor API Plug-in}
