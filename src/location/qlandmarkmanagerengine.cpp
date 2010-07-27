@@ -427,31 +427,34 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isReadOnly() const
+    \fn bool QLandmarkManagerEngine::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
 
     Returns true if the manager engine is exclusively read only.  Meaning
-    landmarks and categories cannot be added, modified or removed
+    landmarks and categories cannot be added, modified or removed.  Errors are stored in \a error and \a errorString.
 */
 
 /*!
-    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkId &landmarkId) const
+    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkId &landmarkId,
+                                                QLandmarkManager::Error *error, QString *errorString) const
 
     Returns true if the landmark identified by \a landmarkId
     considered read-only by the manager engine.
 
     If the \a landmarkId does not refer to an existing landmark,
-    it is considered writable unless the manager engine. is exclusively read-only.
-
+    it is considered writable unless the manager engine is exclusively read-only.
+    Errors are stored in \a error and \a errorString.
  */
 
  /*!
-    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkCategoryId &categoryId) const
+    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkCategoryId &categoryId,
+                                                QLandmarkManager::Error *error, QString *errorString) const
 
     Returns true if the category identified by \a categoryId is
     considered read-only by the manager engine.
 
     If \a categoryId does not refer to an existing category,
     it is considered writable unless the manager engine is exclusively read-only.
+    Errors are stored in \a error and \a errorString.
 */
 
 /*!
