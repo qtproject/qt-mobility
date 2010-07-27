@@ -1089,10 +1089,17 @@ QString quoteString(const QString &s)
     return q;
 }
 
-bool saveLandmark(const QString &connectionName, QLandmark *landmark,
+//Performs the save sql queries but does not handle
+//starting or rolling back/comitting transactions.
+bool saveLandmarkHelper(const QString &connectionName, QLandmark *landmark,
                   QLandmarkManager::Error *error, QString *errorString,
-                  bool *added, bool *changed, const QString &managerUri)
+                  const QString &managerUri)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString="";
+
     if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri() != managerUri) {
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
@@ -1103,14 +1110,8 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
 
     bool update = landmark->landmarkId().isValid();
 
-    if (added)
-        *added = false;
-    if (changed)
-        *changed = false;
-
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
-    bool transacting = db.transaction();
     QHash<QString, QVariant> bindValues;
 
     if (update) {
@@ -1119,9 +1120,6 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
         QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->landmarkId().localId());
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
-            if (transacting)
-                db.rollback();
-
             if (error)
                 *error = QLandmarkManager::DoesNotExistError;
             if (errorString)
@@ -1270,8 +1268,6 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
     QSqlQuery query1(db);
 
     if (!query1.prepare(q1)) {
-        if (transacting)
-            db.rollback();
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Unable to prepare statment: ") + q1 + "\nReason:" + query1.lastError().text();
         return false;
@@ -1282,9 +1278,6 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
     }
 
     if (!query1.exec()) {
-        if (transacting)
-            db.rollback();
-
         *error = QLandmarkManager::UnknownError;
         *errorString = "Unable to execute statment: " + q1 + "\nReason:" + query1.lastError().text();
         return false;
@@ -1313,17 +1306,12 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
 
     QSqlQuery catQuery(db);
     for (int i=0;i < lmCats.size(); ++i) {
-
         queryString = QString("SELECT id FROM category WHERE id = %1").arg(lmCats.at(i));
         if (!catQuery.exec(queryString)) {
-            if (transacting)
-                db.rollback();
             return false;
         }
 
         if (!catQuery.next()) {
-            if (transacting)
-                db.rollback();
             if (error)
                 *error = QLandmarkManager::BadArgumentError;
             if (errorString)
@@ -1347,22 +1335,14 @@ bool saveLandmark(const QString &connectionName, QLandmark *landmark,
         QSqlQuery query(db);
         if (!query.exec(queries.at(i))) {
             qWarning() << query.lastError().databaseText();
-            if (transacting)
-                db.rollback();
+            *error = QLandmarkManager::UnknownError;
+            *errorString = "Unable to execute statment: " + query.lastQuery() + "\nReason:" + query.lastError().text();
             return false;
         }
     }
 
-    if (transacting)
-        db.commit();
-
     if (!update) {
         landmark->setLandmarkId(id);
-        if (added)
-            *added = true;
-    } else {
-        if (changed)
-            *changed = true;
     }
     /*
     // grab keys from attributes tables for current id
@@ -1379,32 +1359,19 @@ bool saveLandmark(const QString &connectionName, QLandmark* landmark,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri)
 {
-    bool added = false;
-    bool changed = false;
-    bool result = saveLandmark(connectionName, landmark, error, errorString, &added, &changed, managerUri);
-
-
-    if (added) {
-        QList<QLandmarkId> ids;
-        ids << landmark->landmarkId();
-        //TODO: this won't work to notify other processes
-        //emit landmarksAdded(ids);
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Unable to begin transaction, reason: %1").arg(db.lastError().text());
+        return false;
     }
 
-    if (changed) {
-        QList<QLandmarkId> ids;
-        ids << landmark->landmarkId();
-        //TODO: This won't work to notify other processes
-        //emit landmarksChanged(ids);
-    }
+    bool result = saveLandmarkHelper(connectionName, landmark, error, errorString, managerUri);
 
-    if (result) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    }
-
+    if (result)
+        db.commit();
+    else
+        db.rollback();
     return result;
 }
 
@@ -1415,18 +1382,26 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
-    QList<QLandmarkId> addedIds;
-    QList<QLandmarkId> changedIds;
+
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Unable to begin transaction, reason: %1").arg(db.lastError().text());
+
+        for (int i=0; i < landmark->size(); ++i)
+            errorMap->insert(i, *error);
+        return false;
+    }
+
     bool noErrors = true;
     QLandmarkManager::Error lastError = QLandmarkManager::NoError;
     QString lastErrorString;
     QLandmarkManager::Error loopError;
     QString loopErrorString;
+    bool result;
     for (int i = 0; i < landmark->size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString = "";
-        bool added = false;
-        bool changed = false;
 
         if (queryRun && queryRun->isCanceled) {
             lastError = QLandmarkManager::CancelError;
@@ -1439,7 +1414,15 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
             break;
         }
 
-        bool result = saveLandmark(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, &added, &changed, managerUri);
+        QSqlQuery query(db);
+        if (!query.exec("SAVEPOINT save")) {
+            loopError = QLandmarkManager::UnknownError;
+            loopErrorString = QString("Could not execute statement: %1\nReason:%2").arg(query.lastQuery()).arg(query.lastError().text());
+            result = false;
+        } else {
+            result = saveLandmarkHelper(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, managerUri);
+        }
+
         if (errorMap)
             errorMap->insert(i, loopError);
 
@@ -1447,33 +1430,23 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
             noErrors = false;
             lastError = loopError;
             lastErrorString = loopErrorString;
+            query.exec("ROLLBACK TO SAVEPOINT save");
+        } else {
+            query.exec("RELEASE SAVEPOINT save");
         }
-
-        if (added)
-            addedIds << landmark->at(i).landmarkId();
-        if (changed)
-            changedIds << landmark->at(i).landmarkId();
     }
 
+    db.commit();
+
     if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     } else {
         if (error)
             *error = lastError;
         if (errorString)
             *errorString = lastErrorString;
     }
-
-    //TODO: Notifications
-    //if (addedIds.size() != 0)
-    //    emit landmarksAdded(addedIds);
-
-    //TODO: Notifications
-    //if (changedIds.size() != 0)
-    //    emit landmarksChanged(changedIds);
 
     return noErrors;
 }
@@ -3227,7 +3200,6 @@ bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmarks,
         QString *errorString)
 {
     return ::saveLandmarks(m_dbConnectionName, landmarks, errorMap, error, errorString, managerUri());
-
 }
 
 bool QLandmarkManagerEngineSqlite::removeLandmark(const QLandmarkId &landmarkId,
