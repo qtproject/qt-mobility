@@ -597,28 +597,6 @@ public:
         }
     }
 
-    QList<QByteArray> supportedPresets() const
-    {
-        return m_presets;
-    }
-
-    QString presetDescription(const QByteArray &preset) const
-    {
-        return QString::fromLatin1(preset);
-    }
-
-    QByteArray preset() const
-    {
-        return m_preset;
-    }
-    void setPreset(const QByteArray &preset)
-    {
-        if (m_presets.contains(preset))
-            m_preset = preset;
-        else
-            m_preset.clear();
-    }
-
 
 private:
     QCameraImageProcessing::WhiteBalanceMode m_whiteBalanceMode;
@@ -626,9 +604,6 @@ private:
     int m_manualWhiteBalance;
     QVariant m_contrast;
     QVariant m_sharpeningLevel;
-
-    QList<QByteArray> m_presets;
-    QByteArray m_preset;
 };
 
 class MockImageEncoderControl : public QImageEncoderControl
