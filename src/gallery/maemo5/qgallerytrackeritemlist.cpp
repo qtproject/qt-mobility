@@ -65,31 +65,29 @@ void QGalleryTrackerItemListPrivate::update()
     edits.clear();
 
     if (!(flags & (Active | Cancelled))) {
-        query(queryOffset);
+        query();
 
         flags &= ~(Refresh | PositionUpdated);
     }
 }
 
-void QGalleryTrackerItemListPrivate::query(int index)
+void QGalleryTrackerItemListPrivate::query()
 {
     flags &= ~(Refresh | SyncFinished);
     flags |= Active;
 
     updateTimer.stop();
 
-    rCache.index = iCache.index;
-    rCache.limit = iCache.limit;
-    rCache.offset = iCache.index;
+    rCache.count = iCache.count;
+    rCache.offset = 0;
 
-    iCache.index = index;
-    iCache.limit = index + queryLimit;
-    iCache.cutoff = index;
+    iCache.count = 0;
+    iCache.cutoff = 0;
 
     qSwap(rCache.values, iCache.values);
 
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, QVariantList(queryArguments) << index << queryLimit);
+            queryMethod, QVariantList(queryArguments) << queryOffset << queryLimit);
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -124,7 +122,7 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     } else if (flags & Cancelled) {
-        iCache.limit = 0;
+        iCache.count = 0;
 
         flags &= ~Active;
 
@@ -145,7 +143,7 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
 
     const QVector<QStringList> resultSet = reply.value();
 
-    iCache.limit = iCache.index + resultSet.count();
+    iCache.count = resultSet.count();
 
     QVector<QVariant> &values = iCache.values;
     values.clear();
@@ -235,100 +233,6 @@ void QGalleryTrackerItemListPrivate::synchronize()
     row_iterator rBegin(rCache.values.begin(), tableWidth);
     row_iterator iBegin(iCache.values.begin(), tableWidth);
 
-    row_iterator rIt = rBegin;
-    row_iterator iIt = iBegin;
-
-    bool equal = false;
-
-    if (iCache.index > rCache.index && iCache.index < rCache.limit) {
-        const int offset = iCache.index - rCache.index;
-
-        if ((equal = iBegin.isEqual(rBegin + offset, identityWidth))) {
-            rIt = rBegin + offset;
-
-            postSyncEvent(SyncEvent::startEvent(rCacheIndex(rIt), 0, iCache.index, 0));
-        } else {
-            rIt = rBegin + qMax(0, offset - 8);
-        }
-    } else if (rCache.index > iCache.index && rCache.index < iCache.limit) {
-        const int offset = rCache.index - iCache.index;
-
-        if ((equal = rBegin.isEqual(iBegin + offset, identityWidth))) {
-            iIt = iBegin + offset;
-
-            postSyncEvent(SyncEvent::startEvent(rCache.index, 0, iCacheIndex(iIt), 0));
-        } else {
-            iIt = iBegin + qMax(0, offset - 8);
-        }
-    }
-
-    if (!equal) {
-        const int rStep = qMax(64, rEnd - rBegin) / 16;
-        const int iStep = qMax(64, iEnd - iBegin) / 16;
-
-        row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + iStep - 1) / rStep) * rStep);
-        row_iterator iOuterEnd = iBegin + ((((iEnd - iBegin) + iStep - 1) / iStep) * iStep);
-
-        row_iterator rInnerEnd = qMin(rBegin + rStep, rEnd);
-        row_iterator iInnerEnd = qMin(iBegin + iStep, iEnd);
-
-        for (row_iterator rOuter = rBegin, iOuter = iBegin;
-                !equal && rOuter != rOuterEnd && iOuter != iOuterEnd;
-                rOuter += rStep / 2, iOuter += iStep / 2) {
-            for (row_iterator rInner = rIt, iInner = iIt;
-                    rInner != rInnerEnd && iInner != iInnerEnd;
-                    ++rInner, ++iInner) {
-                if ((equal = rInner.isEqual(iOuter, identityWidth))) {
-                    do {
-                        rIt = rInner;
-                        iIt = iOuter;
-                    } while (rInner-- != rBegin && iOuter-- != iBegin
-                             && rInner.isEqual(iOuter, identityWidth));
-
-                    const int rIndex = rCacheIndex(rOuter);
-                    const int iIndex = iCacheIndex(iBegin);
-                    const int rCount = rIt - rBegin;
-                    const int iCount = iIt - iBegin;
-
-                    postSyncEvent(SyncEvent::startEvent(rIndex, rCount, iIndex, iCount));
-
-                    break;
-                } else if ((equal = iInner.isEqual(rOuter, identityWidth))) {
-                    do {
-                        rIt = rOuter;
-                        iIt = iInner;
-                    } while (iInner-- != iBegin && rOuter-- != rBegin
-                           && iInner.isEqual(rOuter, identityWidth));
-
-                    const int rIndex = rCacheIndex(rBegin);
-                    const int iIndex = iCacheIndex(iOuter);
-                    const int rCount = rIt - rBegin;
-                    const int iCount = iIt - iBegin;
-
-                    postSyncEvent(SyncEvent::startEvent(rIndex, rCount, iIndex, iCount));
-
-                    break;
-                }
-            }
-        }
-    }
-
-    if (equal) {
-        synchronizeRows(rIt, iIt, rEnd, iEnd);
-
-        postSyncEvent(SyncEvent::finishEvent(rCacheIndex(rIt), iCacheIndex(iIt)));
-    } else {
-        postSyncEvent(SyncEvent::startEvent(0, 0, 0, 0));
-        postSyncEvent(SyncEvent::finishEvent(rCache.index, iCache.index));
-    }
-}
-
-void QGalleryTrackerItemListPrivate::synchronizeRows(
-        row_iterator &rBegin,
-        row_iterator &iBegin,
-        const row_iterator &rEnd,
-        const row_iterator &iEnd)
-{
     const int rStep = qMax(64, rEnd - rBegin) / 16;
     const int iStep = qMax(64, iEnd - iBegin) / 16;
 
@@ -373,6 +277,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
 
             continue;
         } else if (equal) {
+            postSyncEvent(SyncEvent::finishEvent(rCacheIndex(rBegin), iCacheIndex(iBegin)));
+
             return;
         }
 
@@ -434,6 +340,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             }
         }
     }
+
+    postSyncEvent(SyncEvent::finishEvent(rCacheIndex(rBegin), iCacheIndex(iBegin)));
 }
 
 void QGalleryTrackerItemListPrivate::processSyncEvents()
@@ -484,7 +392,7 @@ void QGalleryTrackerItemListPrivate::syncStart(
 
         iCache.cutoff = iIndex;
 
-        emit q_func()->metaDataChanged(iCache.index, statusCount, propertyKeys);
+        emit q_func()->metaDataChanged(0, statusCount, propertyKeys);
     }
 }
 
@@ -522,38 +430,24 @@ void QGalleryTrackerItemListPrivate::syncReplace(
 void QGalleryTrackerItemListPrivate::syncFinish(
         const int rIndex, const int iIndex)
 {
-    const int rCount = rCache.limit - rIndex;
-    const int iCount = iCache.limit - iIndex;
+    const int rCount = rCache.count - rIndex;
+    const int iCount = iCache.count - iIndex;
 
     if (rCount > 0) {
-        if (iCache.limit - iCache.index < queryLimit) {
-            rCache.offset = rCache.limit;
+        rCache.offset = rCache.count;
 
-            rowCount -= rCount;
+        rowCount -= rCount;
 
-            emit q_func()->itemsRemoved(iIndex, rCount);
-        }
-    } else {
-        rCache.offset = rCache.limit;
+        emit q_func()->itemsRemoved(iIndex, rCount);
     }
 
     if (iCount > 0) {
-        if (iIndex < rowCount) {
-            iCache.cutoff = qMin(rowCount, iCache.limit);
+        const int index = rowCount;
 
-            emit q_func()->metaDataChanged(iIndex, iCache.cutoff - iIndex, propertyKeys);
-        } else {
-            iCache.cutoff = iIndex;
-        }
+        iCache.cutoff = iCache.count;
+        rowCount = iCache.count;
 
-        if (iCache.cutoff < iCache.limit) {
-            const int index = rowCount;
-
-            iCache.cutoff = iCache.limit;
-            rowCount = iCache.limit;
-
-            q_func()->itemsInserted(index, rowCount - index);
-        }
+        q_func()->itemsInserted(index, rowCount - index);
     }
 
     flags |= SyncFinished;
@@ -582,15 +476,13 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
-    if (currentIndex >= iCache.offset && currentIndex < iCache.limit)
+    if (currentIndex >= iCache.offset && currentIndex < iCache.count)
         currentRow = iCache.values.constBegin() + (currentIndex * tableWidth);
 
-
-    iCache.offset = iCache.limit;
-
+    iCache.offset = iCache.count;
 
     rCache.values.clear();
-    rCache.limit = 0;
+    rCache.count = 0;
 
     flags &= ~Active;
 
@@ -623,7 +515,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
-    d_func()->query(d->queryOffset);
+    d_func()->query();
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
@@ -635,7 +527,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
 
-    d_func()->query(d->queryOffset);
+    d_func()->query();
 }
 
 QGalleryTrackerItemList::~QGalleryTrackerItemList()

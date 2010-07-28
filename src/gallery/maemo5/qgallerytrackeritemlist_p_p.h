@@ -197,10 +197,9 @@ public:
 
     struct Cache
     {
-        Cache() : index(0), limit(0), cutoff(0) {}
+        Cache() : count(0), cutoff(0) {}
 
-        int index;
-        int limit;
+        int count;
         union
         {
             int offset;
@@ -307,9 +306,9 @@ public:
     SyncEventQueue syncEvents;
 
     inline int rCacheIndex(const row_iterator &iterator) const {
-        return iterator - rCache.values.begin() + rCache.index; }
+        return iterator - rCache.values.begin(); }
     inline int iCacheIndex(const row_iterator &iterator) const {
-        return iterator - iCache.values.begin() + iCache.index; }
+        return iterator - iCache.values.begin(); }
     
     void update();
     void requestUpdate()
@@ -320,7 +319,7 @@ public:
         }
     }
 
-    void query(int index);
+    void query();
 
     void queryFinished(const QDBusPendingCall &call);
     void parseRows(const QDBusPendingCall &call);
@@ -332,11 +331,6 @@ public:
             bool reversed = false) const;
 
     void synchronize();
-    void synchronizeRows(
-            row_iterator &aBegin,
-            row_iterator &rBegin,
-            const row_iterator &aEnd,
-            const row_iterator &rEnd);
 
     void postSyncEvent(SyncEvent *event)
     {
