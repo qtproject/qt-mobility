@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -129,7 +129,7 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 
     By default no format is set.
 */
-QByteArray QLandmarkImportRequest::format() const
+QString QLandmarkImportRequest::format() const
 {
     Q_D(const QLandmarkImportRequest);
     return d->format;
@@ -140,7 +140,7 @@ QByteArray QLandmarkImportRequest::format() const
     If an empty byte array is set, then during the import,
     an attempt is made to auto detect the format.
 */
-void QLandmarkImportRequest::setFormat(const QByteArray &format)
+void QLandmarkImportRequest::setFormat(const QString &format)
 {
     Q_D(QLandmarkImportRequest);
     d->format = format;

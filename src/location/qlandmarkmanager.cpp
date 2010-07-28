@@ -710,7 +710,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &format)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
 {
     Q_D(QLandmarkManager);
 
@@ -739,7 +739,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format)
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
@@ -756,7 +756,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds)
 {
     Q_D(QLandmarkManager);
 
@@ -773,6 +773,19 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &form
                                       &(d->errorString));
 }
 
+QStringList QLandmarkManager::supportedFormats() const
+{
+    Q_D(const QLandmarkManager);
+
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return QStringList();
+    }
+
+    return d->engine->supportedFormats(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Convenience function that will write landmarks to \a fileName in the expected
     \a format. Internally a QFile is opened with QIODevice::WriteOnly permissions.
@@ -783,7 +796,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &form
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds)
 {
     QFile file(fileName);
 

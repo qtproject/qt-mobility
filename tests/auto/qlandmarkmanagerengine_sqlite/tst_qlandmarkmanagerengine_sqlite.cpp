@@ -4657,6 +4657,13 @@ private slots:
         QCOMPARE(m_manager->landmarks(nameFilter).count(),1);
         QVERIFY(file.remove());
     }
+
+    void supportedFormats() {
+        QStringList formats = m_manager->supportedFormats();
+        QCOMPARE(formats.count(), 1);
+        QVERIFY(formats.at(0) == "GpxV1.1");
+    }
+
     /*
     void sortLandmarksNameDistance()
     {
