@@ -60,7 +60,7 @@
 // We mean it.
 //
 
-class Q_AUTOTEST_EXPORT DatabaseFileWatcher : public QObject
+class DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
 public:
