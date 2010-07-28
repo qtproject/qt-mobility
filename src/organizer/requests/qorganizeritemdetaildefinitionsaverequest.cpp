@@ -107,6 +107,24 @@ QString QOrganizerItemDetailDefinitionSaveRequest::itemType() const
     return d->m_organizeritemType;
 }
 
+/*!
+  XXX TODO
+ */
+void QOrganizerItemDetailDefinitionSaveRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
+{
+    Q_D(QOrganizerItemDetailDefinitionSaveRequest);
+    d->m_collectionId = collectionId;
+}
+
+/*!
+  XXX TODO
+ */
+QOrganizerCollectionLocalId QOrganizerItemDetailDefinitionSaveRequest::collectionId() const
+{
+    Q_D(const QOrganizerItemDetailDefinitionSaveRequest);
+    return d->m_collectionId;
+}
+
 /*! Returns the map of input definition list indices to errors which occurred */
 QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionSaveRequest::errorMap() const
 {

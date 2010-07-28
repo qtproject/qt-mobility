@@ -116,6 +116,24 @@ QString QOrganizerItemDetailDefinitionRemoveRequest::itemType() const
     return d->m_organizeritemType;
 }
 
+/*!
+  XXX TODO
+ */
+void QOrganizerItemDetailDefinitionRemoveRequest::setCollectionId(const QOrganizerCollectionLocalId& collectionId)
+{
+    Q_D(QOrganizerItemDetailDefinitionRemoveRequest);
+    d->m_collectionId = collectionId;
+}
+
+/*!
+  XXX TODO
+ */
+QOrganizerCollectionLocalId QOrganizerItemDetailDefinitionRemoveRequest::collectionId() const
+{
+    Q_D(const QOrganizerItemDetailDefinitionRemoveRequest);
+    return d->m_collectionId;
+}
+
 /*! Returns the map of input name list indices to errors which occurred */
 QMap<int, QOrganizerItemManager::Error> QOrganizerItemDetailDefinitionRemoveRequest::errorMap() const
 {

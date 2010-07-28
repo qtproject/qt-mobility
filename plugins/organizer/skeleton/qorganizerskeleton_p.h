@@ -120,14 +120,14 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Capabilities reporting */
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;

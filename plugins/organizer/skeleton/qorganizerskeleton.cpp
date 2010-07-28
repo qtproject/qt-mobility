@@ -188,12 +188,14 @@ QOrganizerItem QOrganizerItemSkeletonEngine::item(const QOrganizerItemLocalId& i
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
 
-        Save a list of items.
+        Save a list of items into the collection specified (or their current collection
+        if no collection is specified and they already exist, or the default collection
+        if no collection is specified and they do not exist).
 
         For each item, convert it to your local type, assign an item id, and update the
         QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
@@ -204,7 +206,7 @@ bool QOrganizerItemSkeletonEngine::saveItems(QList<QOrganizerItem>* items, QMap<
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+    return QOrganizerItemManagerEngine::saveItems(items, collectionId, errorMap, error);
 
 }
 
@@ -223,28 +225,28 @@ bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId
     return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
 }
 
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return detailDefinitions(itemType, error);
+    return detailDefinitions(itemType, collectionId, error);
 }
 
-QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
+    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, collectionId, error);
 }
 
-bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
+    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, collectionId, error);
 }
 
-bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
+    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, collectionId, error);
 }
 
 bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
