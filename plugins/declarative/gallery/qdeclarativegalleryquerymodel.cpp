@@ -388,7 +388,7 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
                 this, SLOT(_q_itemsRemoved(int,int)));
         connect(m_resultSet, SIGNAL(itemsMoved(int,int,int)),
                 this, SLOT(_q_itemsMoved(int,int,int)));
-        connect(m_resultSet, SIGNAL(metaDataChanged(int,int)),
+        connect(m_resultSet, SIGNAL(metaDataChanged(int,int,QList<int>)),
                 this, SLOT(_q_itemsChanged(int,int)));
 
         m_rowCount = m_resultSet->itemCount();
