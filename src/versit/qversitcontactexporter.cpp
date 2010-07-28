@@ -57,8 +57,6 @@ QTM_USE_NAMESPACE
   implement custom export behaviour for certain contact details.
 
   This interface is replaced by QVersitContactExporterDetailHandlerV2.
-  \ingroup versit
-  \inmodule QtVersit
 
   \sa QVersitContactExporter
  */
@@ -96,10 +94,10 @@ QTM_USE_NAMESPACE
   \class QVersitContactExporterDetailHandlerV2
   \brief The QVersitContactExporterDetailHandlerV2 class is an interface for clients wishing to
   implement custom export behaviour for certain contact details.
+  \ingroup versit-extension
+  \inmodule QtVersit
 
   This interface supercedes QVersitContactImporterPropertyHandler.
-
-  \ingroup versit
 
   \sa QVersitContactExporter
  */
@@ -120,15 +118,17 @@ QTM_USE_NAMESPACE
   provide support for QContactDetails not supported by QVersitContactExporter.
 
   The supplied \a contact is the container for the \a detail.  \a processedFields contains a list of
-  fields in the \a detail that were considered by the QVersitContactExporter in processing the
-  detail.  \a document holds the state of the document before the detail was processed by the
-  exporter.
+  fields in the \a detail that were considered by the QVersitContactExporter or another handler in
+  processing the detail.  \a document holds the state of the document before the detail was
+  processed by the exporter.
   
   \a toBeRemoved and \a toBeAdded are initially filled with a list of properties that the exporter
   will remove from and add to the document.  These lists can be modified (by removing, modifying or
   adding properties) by the handler to control the changes that will actually be made to the
   document.  If a property is to be modified in the document, the old version will appear in the
-  \a toBeRemoved list and the new version will appear in the \a toBeAdded list.
+  \a toBeRemoved list and the new version will appear in the \a toBeAdded list.  When the handler
+  uses a field from the detail, it should update the processedFields set to reflect this to inform
+  later handlers that the field has already been processed.
 
   After the handler returns control back to the exporter, the properties in the \a toBeRemoved
   list will be removed and the properties in the \a toBeAdded list will be appended to the document.
@@ -148,12 +148,18 @@ QTM_USE_NAMESPACE
   \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
   \l {QVersitDocument}{QVersitDocuments}.
   \ingroup versit
+  \inmodule QtVersit
 
   This class is used to convert lists of \l {QContact}{QContacts} (which may be stored in a
   QContactManager) into lists of \l {QVersitDocument}{QVersitDocuments} (which may be written to
   an I/O device using QVersitReader.  Unless there is an error, there is a one-to-one mapping
   between contacts and Versit documents.  The exporter can be extended by clients by associating
   resource and detail handlers.
+
+  Here is a simple example of how to use QVersitContactExporter:
+  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
+
+  \section1 Extension via handlers
 
   A \l QVersitResourceHandler is associated with the exporter to supply the behaviour for loading
   files from persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
@@ -162,13 +168,17 @@ QTM_USE_NAMESPACE
 
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
-  handle details that QVersitContactExporter doesn't support.  A "backup" handler is provided by
-  QVersitContactExporterDetailHandlerV2::createBackupHandler(), which serializes any details
-  that the standard QVersitContactExporter doesn't support to the vCard.
-
-
-  An example usage of QVersitContactExporter:
-  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
+  handle details that QVersitContactExporter doesn't support.  Also, handlers can be implicitly
+  associated to an exporter through the \l{Versit Plugins}{handler plugin mechanism}.  The exporter
+  can be constructed with a profile, which gives hints about what kind of handlers should be added
+  to it.  For example, the backup profile can be used to instruct the exporter to encode any unknown
+  details in the vCard such that it can be reconstructed later (a QVersitContactImporter constructed
+  under the backup profile can be used to decode it).  To illustrate, a backup exporter can be
+  constructed with:
+  \code
+  QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
+  \endcode
+  For more details on how the backup plugin works, see \l{Versit Plugins}
 
   \section1 Exporting group relationships
   The exporter does not handle QContactRelationships at all.
@@ -197,6 +207,12 @@ QTM_USE_NAMESPACE
 
 
 /*!
+  \internal
+
+  This is deprecated; the preferred way of performing backup is now by constructing an exporter with
+  the "backup" profile.
+  eg. QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
+
   Constructs and returns a detail handler that encodes all details not handled by the base exporter.
   The caller is responsible for deleting the object.
 
@@ -250,6 +266,18 @@ QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::cr
  */
 QVersitContactExporter::QVersitContactExporter()
     : d(new QVersitContactExporterPrivate())
+{
+}
+
+/*!
+ * Constructs a new exporter for the given \a profile.  The profile strings should be one of those
+ * defined by QVersitContactHandlerFactory, or a value otherwise agreed to by a \l{Versit
+ * Plugin}{Versit plugin}.
+ *
+ * The profile determines which plugins will be loaded to supplement the exporter.
+ */
+QVersitContactExporter::QVersitContactExporter(const QString& profile)
+    : d(new QVersitContactExporterPrivate(profile))
 {
 }
 

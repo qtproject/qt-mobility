@@ -43,7 +43,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QUrl>
-#include "qvcardbackuphandlers_p.h"
+#include "backupvcardhandler.h"
 #include "qcontact.h"
 #include "qcontactdetail.h"
 #include "qversitdocument.h"
@@ -51,7 +51,50 @@
 
 QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+/*
+ * This is a map from Versit group names to the details that were generated from properties with the
+ * said groups.  Multiple details can be associated with a single group.
+ */
+class DetailGroupMap
+{
+public:
+    QList<QContactDetail> detailsInGroup(const QString& groupName) const;
+    void insert(const QString& groupName, const QContactDetail& detail);
+    void update(const QContactDetail& detail);
+    void clear();
+
+private:
+    QHash<int, QString> mDetailGroupName; // detailid -> group name
+    QHash<int, QContactDetail> mDetailById; // detailid -> detail
+};
+
+/* See QVersitContactImporter::createBackupHandler() */
+class BackupVCardHandler : public QVersitContactHandler
+{
+public:
+    BackupVCardHandler();
+    void propertyProcessed(const QVersitDocument& document,
+                           const QVersitProperty& property,
+                           const QContact& contact,
+                           bool* alreadyProcessed,
+                           QList<QContactDetail>* updatedDetails);
+    void documentProcessed(const QVersitDocument& document,
+                           QContact* contact);
+    void detailProcessed(const QContact& contact,
+                         const QContactDetail& detail,
+                         const QVersitDocument& document,
+                         QSet<QString>* processedFields,
+                         QList<QVersitProperty>* toBeRemoved,
+                         QList<QVersitProperty>* toBeAdded);
+    void contactProcessed(const QContact& contact,
+                          QVersitDocument* document);
+
+private:
+    static QVariant deserializeValue(const QVersitProperty& property);
+    static void serializeValue(QVersitProperty* property, const QVariant& value);
+    DetailGroupMap mDetailGroupMap; // remembers which details came from which groups
+    int mDetailNumber;
+};
 
 Q_DEFINE_LATIN1_CONSTANT(PropertyName, "X-NOKIA-QCONTACTFIELD");
 Q_DEFINE_LATIN1_CONSTANT(DetailDefinitionParameter, "DETAIL");
@@ -67,7 +110,30 @@ Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUInt, "UINT");
 Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUrl, "URL");
 Q_DEFINE_LATIN1_CONSTANT(GroupPrefix, "G");
 
-QTM_END_NAMESPACE
+QSet<QString> BackupVCardHandlerFactory::profiles() const
+{
+    QSet<QString> retval;
+    retval.insert(QVersitContactHandlerFactory::ProfileBackup);
+    return retval;
+}
+
+QString BackupVCardHandlerFactory::name() const
+{
+    return QLatin1String("com.nokia.qt.mobility.versit.backuphandler");
+}
+
+int BackupVCardHandlerFactory::index() const
+{
+    // Prefer to run this plugin last.
+    return -1;
+}
+
+QVersitContactHandler* BackupVCardHandlerFactory::createHandler() const
+{
+    return new BackupVCardHandler();
+}
+
+Q_EXPORT_PLUGIN2(qtversit_backuphandler, BackupVCardHandlerFactory);
 
 /*
  * Returns a list of details generated from a Versit group.
@@ -114,11 +180,12 @@ void DetailGroupMap::clear()
 }
 
 
-QVCardImporterBackupHandler::QVCardImporterBackupHandler()
+BackupVCardHandler::BackupVCardHandler()
+    : mDetailNumber(0)
 {
 }
 
-void QVCardImporterBackupHandler::propertyProcessed(
+void BackupVCardHandler::propertyProcessed(
         const QVersitDocument& document,
         const QVersitProperty& property,
         const QContact& contact,
@@ -170,7 +237,7 @@ void QVCardImporterBackupHandler::propertyProcessed(
     }
 }
 
-QVariant QVCardImporterBackupHandler::deserializeValue(const QVersitProperty& property)
+QVariant BackupVCardHandler::deserializeValue(const QVersitProperty& property)
 {
     // Import the field
     if (property.parameters().contains(DatatypeParameter, DatatypeParameterVariant)) {
@@ -206,7 +273,7 @@ QVariant QVCardImporterBackupHandler::deserializeValue(const QVersitProperty& pr
     }
 }
 
-void QVCardImporterBackupHandler::documentProcessed(
+void BackupVCardHandler::documentProcessed(
         const QVersitDocument& document,
         QContact* contact)
 {
@@ -215,12 +282,7 @@ void QVCardImporterBackupHandler::documentProcessed(
     mDetailGroupMap.clear();
 }
 
-QVCardExporterBackupHandler::QVCardExporterBackupHandler()
-    : mDetailNumber(0)
-{
-}
-
-void QVCardExporterBackupHandler::detailProcessed(
+void BackupVCardHandler::detailProcessed(
         const QContact& contact,
         const QContactDetail& detail,
         const QVersitDocument& document,
@@ -263,7 +325,7 @@ void QVCardExporterBackupHandler::detailProcessed(
     }
 }
 
-void QVCardExporterBackupHandler::serializeValue(QVersitProperty* property, const QVariant& value)
+void BackupVCardHandler::serializeValue(QVersitProperty* property, const QVariant& value)
 {
     // serialize the value
     if (value.type() == QVariant::String
@@ -315,7 +377,7 @@ void QVCardExporterBackupHandler::serializeValue(QVersitProperty* property, cons
     }
 }
 
-void QVCardExporterBackupHandler::contactProcessed(
+void BackupVCardHandler::contactProcessed(
         const QContact& contact,
         QVersitDocument* document)
 {

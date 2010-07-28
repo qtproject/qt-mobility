@@ -30,6 +30,7 @@ PUBLIC_HEADERS +=  \
     qversitwriter.h \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
+    qversitcontacthandler.h \
     qversitorganizerexporter.h \
     qversitorganizerimporter.h \
     qversitresourcehandler.h
@@ -50,6 +51,7 @@ PRIVATE_HEADERS += \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
     qversitorganizerdefs_p.h \
+    qversitpluginloader_p.h \
     versitutils_p.h
 
 # Implementation
@@ -73,6 +75,8 @@ SOURCES += qversitdocument.cpp \
     qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
+    qversitcontacthandler.cpp \
+    qversitpluginloader_p.cpp \
     versitutils.cpp
 
 HEADERS += \
