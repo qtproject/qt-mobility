@@ -73,8 +73,8 @@
 #include <qlandmarkimportrequest.h>
 #include <qlandmarkexportrequest.h>
 
-#include <qlandmarkfilehandler_gpx_p.h>
-#include <qlandmarkfilehandler_lmx_p.h>
+#include "qlandmarkfilehandler_gpx_p.h"
+#include "qlandmarkfilehandler_lmx_p.h"
 
 #include <math.h>
 #include <qnumeric.h>

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILEHANDLER_GPX_P_H
-#define QLANDMARKFILEHANDLER_GPX_P_H
+#ifndef QLANDMARKFILEHANDLER_LMX_P_H
+#define QLANDMARKFILEHANDLER_LMX_P_H
 
 //
 //  W A R N I N G
@@ -53,79 +53,64 @@
 // We mean it.
 //
 
-#include "qlandmark.h"
-#include "qlandmarkmanagerengine.h"
+#include <qlandmark.h>
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
 
 class QIODevice;
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 class QLandmarkManagerEngine;
 
-class Q_AUTOTEST_EXPORT QLandmarkFileHandlerGpx : public QObject
+class QLandmarkFileHandlerLmx : public QObject
 {
     Q_OBJECT
 
 public:
-    enum State{DoneState, ErrorState, CanceledState};
+    QLandmarkFileHandlerLmx();
+    ~QLandmarkFileHandlerLmx();
 
-    QLandmarkFileHandlerGpx();
-    ~QLandmarkFileHandlerGpx();
+    QList<QLandmark> landmarks() const;
+    void setLandmarks(const QList<QLandmark> &landmarks);
 
-    QList<QLandmark> waypoints() const;
-    void setWaypoints(const QList<QLandmark> &waypoints);
-
-    QList<QList<QLandmark> > tracks() const;
-    void setTracks(const QList<QList<QLandmark> > &tracks);
-
-    QList<QList<QLandmark> > routes() const;
-    void setRoutes(const QList<QList<QLandmark> > &routes);
-
-    State importData(QIODevice *device);
+    bool importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
-    void setAsync(bool async);
 
 signals:
     void error(const QString &error);
-    void canceled();
     void finishedImport();
     void finishedExport();
-public slots:
-    void cancel();
 
 private:
-    bool readGpx();
-    bool readWaypoint(QLandmark &landmark, const QString &elementName);
-    bool readRoute(QList<QLandmark> &route);
-    bool readTrack(QList<QLandmark> &track);
-    bool readTrackSegment(QList<QLandmark> &track);
+    bool readLmx();
+    bool readLandmarkCollection(QList<QLandmark> &landmarkCollection);
+    bool readLandmark(QLandmark &landmark);
+    bool readCoordinates(QLandmark &landmark);
+    bool readAddressInfo(QLandmark &landmark);
+    bool readMediaLink(QLandmark &landmark);
+    bool readCategory(QLandmarkCategoryId &categoryId);
 
-    bool writeGpx();
-    bool writeWaypoint(const QLandmark &landmark, const QString &elementName);
-    bool writeRoute(const QList<QLandmark> &route);
-    bool writeTrack(const QList<QLandmark> &track);
+    bool writeLmx();
+    bool writeLandmarkCollection(const QList<QLandmark> &landmarkCollection);
+    bool writeLandmark(const QLandmark &landmark);
+    bool writeCoordinates(const QLandmark &landmark);
+    bool writeAddressInfo(const QLandmark &landmark);
+    bool writeMediaLink(const QLandmark &landmark);
+    bool writeCategory(const QLandmarkCategoryId &categoryId);
 
-    QString m_nsPrefix;
     QString m_ns;
+    QString m_nsPrefix;
 
-    QList<QLandmark> m_waypoints;
-    QList<QList<QLandmark> > m_tracks;
-    QList<QList<QLandmark> > m_routes;
+    QList<QLandmark> m_landmarks;
 
     QXmlStreamReader *m_reader;
     QXmlStreamWriter *m_writer;
 
     QString m_error;
-    bool m_isAsync;
-public:
-    volatile bool m_isCanceled;
 };
 
-QTM_END_NAMESPACE
-
-#endif // #ifndef QLANDMARKGPXHANDLER_H
+#endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H

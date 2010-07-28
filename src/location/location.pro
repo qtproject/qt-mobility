@@ -118,8 +118,6 @@ PRIVATE_HEADERS += \
                     qlandmarkcategoryid_p.h \
                     qlandmarkdistancesort_p.h \
                     qlandmarkfetchhint_p.h \
-                    qlandmarkfilehandler_gpx_p.h \
-                    qlandmarkfilehandler_lmx_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
                     qlandmarkidfilter_p.h \
@@ -259,8 +257,6 @@ SOURCES += \
             qlandmarkexportrequest.cpp \
             qlandmarkfetchhint.cpp \
             qlandmarkfetchrequest.cpp \
-            qlandmarkfilehandler_gpx.cpp \
-            qlandmarkfilehandler_lmx.cpp \
             qlandmarkfilter.cpp \
             qlandmarkid.cpp \
             qlandmarkidfetchrequest.cpp \
