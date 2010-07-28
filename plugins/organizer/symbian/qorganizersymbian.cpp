@@ -456,10 +456,12 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupStack::PopAndDestroy(entry);
     
     // Update change set
-    if (isNewEntry)
-        changeSet->insertAddedItem(item->localId());
-    else
-        changeSet->insertChangedItem(item->localId());
+    if (changeSet) {
+        if (isNewEntry)
+            changeSet->insertAddedItem(item->localId());
+        else
+            changeSet->insertChangedItem(item->localId());
+    }
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -504,17 +506,22 @@ void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organ
 {
     // TODO: DoesNotExistError should be used if the id refers to a non existent item.
     // TODO: How to remove item instances?
+    int sucessCount(0);
+    deleteItemL(organizeritemId, sucessCount);
+    // Update change set
+    changeSet->insertRemovedItem(organizeritemId);
+}
 
+void QOrganizerItemSymbianEngine::deleteItemL( 
+        const QOrganizerItemLocalId& organizeritemId, 
+        int& sucessCount)
+{
     // Remove
     RArray<TCalLocalUid> ids;
     CleanupClosePushL(ids);
     ids.AppendL(TCalLocalUid(organizeritemId));
-    TInt count(0);
-    m_entryView->DeleteL(ids, count);
+    m_entryView->DeleteL(ids, sucessCount);
     CleanupStack::PopAndDestroy(&ids);
-    
-    // Update change set
-    changeSet->insertRemovedItem(organizeritemId);
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const

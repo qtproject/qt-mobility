@@ -172,10 +172,12 @@ public:
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
     CCalEntryView* entryView();
+    void deleteItemL(const QOrganizerItemLocalId& organizeritemId,
+            int& sucessCount);
+    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet = 0);
     
 private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
-    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
     void modifyDetailDefinitionsForEvent() const;

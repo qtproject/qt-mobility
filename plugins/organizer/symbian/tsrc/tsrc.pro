@@ -5,5 +5,6 @@ SUBDIRS += tst_symbianom \
 		   tst_itempriority \
 		   tst_asynchapis\tst_saveitems \
 		   tst_asynchapis\tst_fetchitems \
+		   tst_asynchapis\tst_removeitems \
 		   tst_detaildef \
 		   tst_itemoccurrence

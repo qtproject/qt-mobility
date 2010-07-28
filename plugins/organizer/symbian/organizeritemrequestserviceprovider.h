@@ -46,7 +46,6 @@
 #include <qtorganizer.h>
 
 // Forward declarations
-class OrganizerItemTransform; // Organizeritemtransform to transform entries/items to and from
 class QOrganizerItemSymbianEngine; // Symbian Plugin
 
 QTM_USE_NAMESPACE 
@@ -55,7 +54,8 @@ class COrganizerItemRequestsServiceProvider : public CActive
     {
 public: 
     // Static two phase constructor
-    static COrganizerItemRequestsServiceProvider* NewL(QOrganizerItemSymbianEngine& aEntryView);
+    static COrganizerItemRequestsServiceProvider* NewL(
+            QOrganizerItemSymbianEngine& aEntryView);
     // Destruction, cleanup
     ~COrganizerItemRequestsServiceProvider();
     // To start an asynchronous request aReq
@@ -76,10 +76,12 @@ private:
     void DoCancel();
     // From CActive
     TInt RunError(TInt aError);
+    // Complete asynchronous request on self
+    void SelfComplete();
     
 private: // Worker functions
-    // Save items/entries in agenda server
-    void SaveItemsL();
+    // Save item/entry in agenda server
+    void SaveItemL();
     // Fetch items/entries from agenda server
     void FetchItemsL();
     // Fetch items/entries by local Ids
@@ -89,13 +91,18 @@ private: // Worker functions
     void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
             QList<QOrganizerItemSortOrder>& sortOrder, 
             QOrganizerItemFetchHint& fetchHint);
+    // Remove items/entries
+    void RemoveItemL();
     
 private:
-    QOrganizerItemSymbianEngine&        iOrganizerItemManagerEngine;
-    QOrganizerItemAbstractRequest*      iReq; // Request to be processed
-    RPointerArray<CCalEntry>            iCalEntryList; // CalEntryView
-    OrganizerItemTransform*             iOrganizerItemTransform; // Transform utility to transform item/entry to & from
-    QList<QOrganizerItem>               iItemList;
+    QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
+    QOrganizerItemAbstractRequest*          iReq; // Request to be processed
+    QList<QOrganizerItem>                   iItemList;
+    QList<QOrganizerItemLocalId>            iItemIds;
+    QMap<int, QOrganizerItemManager::Error> iErrorMap; // Error map
+    QOrganizerItemManager::Error            iError; // Error
+    TInt                                    iNoOfItems;
+    TInt                                    iIndex;
     };
 
 #endif /* CORGANIZERITEMREQUESTSSERVICEPROVIDER_H_ */
