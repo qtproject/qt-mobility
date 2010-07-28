@@ -314,6 +314,91 @@ QContactManager::~QContactManager()
     delete d;
 }
 
+
+/*!
+   \variable QContactManager::ParameterKeySignalCausality
+   The string constant for the parameter key which holds the value for signal causality.
+   If a manager supports suppressing change signals depending on the value given for
+   this construction parameter, clients can request that signals be suppressed if the
+   changes which might cause a signal to be emitted do not match particular criteria.
+
+   If the parameter (or value given for the parameter) is not supported by the manager,
+   the manager will still be constructed, however the parameter will not be reported
+   to the client if the client calls managerParameters() subsequent to manager construction.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterKeySignalCausality, "SignalCausality");
+
+/*!
+   \variable QContactManager::ParameterKeySignalDefinitions
+   The string constant for the parameter key which holds the names of detail definitions.
+   If a manager supports suppressing change signals depending on the value given for
+   this construction parameter, clients can request that signals be suppressed if the
+   changes which might otherwise cause a signal to be emitted, involve details whose
+   definition name is not contained in the given list.
+
+   That is, if a detail in a contact is changed, but that detail's definition name is
+   not listed in the value for this parameter, the manager will not emit a change signal
+   for that change.
+
+   If this parameter is not specified at construction time, changes to any detail of a contact
+   will cause a change signal to be emitted.
+
+   The value of this parameter should be a comma (,) separated list of definition names.  Any
+   commas which might be part of a definition name should be escaped with a single backslash
+   (\) character prior to concatenation.
+
+   If the parameter (or value given for the parameter) is not supported by the manager,
+   the manager will still be constructed, however the parameter will not be reported
+   to the client if the client calls managerParameters() subsequent to manager construction.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterKeySignalDefinitions, "SignalDefinitions");
+
+/*!
+   \variable QContactManager::ParameterValueSignalCausalitySelf
+   This value tells the manager to only emit signals for changes which are
+   caused by this client, in this manager.  That is, the client considers
+   itself to be the canonical source of contact information, and will not
+   update its internal datastructures if another client modifies the
+   persistent data in the manager.
+
+   It does, however, want to be notified of all changes which it causes,
+   either to keep some UI elements up to date, or to remain aware of
+   any side effects of operations which it might have performed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalitySelf, "Self");
+
+/*!
+   \variable QContactManager::ParameterValueSignalCausalityOther
+   This value tells the manager to only emit signals for changes which
+   are caused by other clients.  That is, the client wishes to receive
+   change signals when another client (or background service) changes
+   the data as it is stored in the manager, but does not wish to be
+   notified of changes (or side effects) which it has caused itself.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityOther, "Other");
+
+/*!
+   \variable QContactManager::ParameterValueSignalCausalityAll
+   This is the default value for signal causality, and if no causality
+   is given, the manager should emit signals for all changes.
+   This value tells the manager that the client is interested in all
+   changes, caused either by that client or by other clients.  This
+   allows a client to always maintain its internal data structures
+   in a state which is consistent with the data stored in the manager.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityAll, "All");
+
+/*!
+   \variable QContactManager::ParameterValueSignalCausalityNone
+   This value tells the manager that the client does not wish to
+   receive any signals from any source.  This value exists only for the
+   sake of completeness; if a client is not interested in the signals
+   emitted by a manager, it should simply not connect those signals
+   to any of its slots.
+ */
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityNone, "None");
+
+
 /*!
   \enum QContactManager::Error
 

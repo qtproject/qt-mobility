@@ -78,6 +78,22 @@ public:
 #endif
     explicit QContactManager(QObject* parent);
 
+#if Q_QDOC
+    static const QLatin1Constant ParameterKeySignalCausality;
+    static const QLatin1Constant ParameterKeySignalDefinitions;
+    static const QLatin1Constant ParameterValueSignalCausalitySelf;
+    static const QLatin1Constant ParameterValueSignalCausalityOther;
+    static const QLatin1Constant ParameterValueSignalCausalityAll;
+    static const QLatin1Constant ParameterValueSignalCausalityNone;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(ParameterKeySignalCausality, "SignalCausality");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterKeySignalDefinitions, "SignalDefinitions");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalitySelf, "Self");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityOther, "Other");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityAll, "All");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityNone, "None");
+#endif
+
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QContactManager();                     // dtor
 
