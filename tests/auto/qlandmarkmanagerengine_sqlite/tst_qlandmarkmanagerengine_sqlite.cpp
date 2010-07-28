@@ -411,11 +411,7 @@ private slots:
     void exportGpx();
     void exportGpxAsync();
 
-    void supportedFormats() {
-        QStringList formats = m_manager->supportedFormats();
-        QCOMPARE(formats.count(), 1);
-        QVERIFY(formats.at(0) == "GpxV1.1");
-    }
+    void supportedFormats();
 
     /*
     void sortLandmarksNameDistance();

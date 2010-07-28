@@ -2156,7 +2156,7 @@ bool importLandmarksGpx(const QString &connectionName,
 
 bool importLandmarks(const QString &connectionName,
                      QIODevice *device,
-                     const QByteArray &format,
+                     const QString &format,
                      QLandmarkManager::Error *error,
                      QString *errorString, const QString &managerUri,
                      QueryRun *queryRun = 0)
@@ -2268,7 +2268,7 @@ bool exportLandmarksLmx(const QString &connectionName,
 
 bool exportLandmarks(const QString &connectionName,
                      QIODevice *device,
-                     const QByteArray &format,
+                     const QString &format,
                      QList<QLandmarkId> landmarkIds,
                      QLandmarkManager::Error *error,
                      QString *errorString,
@@ -3260,7 +3260,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 }
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
-                                                   const QByteArray &format,
+                                                   const QString &format,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
@@ -3268,12 +3268,24 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 }
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
-                                                   const QByteArray &format,
+                                                   const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
     return ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
+}
+
+QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+
+    QStringList formats;
+    formats << "GpxV1.1";
+    return formats;
 }
 
 QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const

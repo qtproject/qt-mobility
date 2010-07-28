@@ -129,14 +129,15 @@ public:
                         QString *errorString);
 
     bool importLandmarks(QIODevice *device,
-                         const QByteArray &format,
+                         const QString &format,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
-                         const QByteArray &format,
+                         const QString &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
+    QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
     QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
