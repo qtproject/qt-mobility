@@ -196,6 +196,56 @@ Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
    Sets the names of the children of the contact which is stored in this detail to \a childrenNames.
  */
 
+/* ==================== QContactFavorite ======================= */
+/*!
+   \class QContactFavorite
+   \brief The QContactFavorite class indicates if a contact is a favorite contact as well as the
+   position it should appear in an ordered list of favorites.
+   \ingroup contacts-details
+ */
+
+/*!
+   \variable QContactFavorite::DefinitionName
+   The string constant for the definition name of QContactFavorite details.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::DefinitionName, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldIndex
+
+   The field key constant for the value that indicates whether a contact is a favorite.
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldFavorite, "Favorite");
+
+/*!
+   \variable QContactFavorite::FieldIndex
+
+   The field key constant for the value containing the index of the favorite contact (which determines the order they appear)
+   \sa index(), setIndex()
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactFavorite::FieldIndex, "Index");
+
+/*!
+   \fn bool QContactFavorite::isFavorite() const
+   Returns true if the contact is a favorite, false otherwise.
+ */
+
+/*!
+   \fn QContactFavorite::setFavorite(bool isFavorite) const
+   If \a isFavorite is true, marks the contact as a favorite.  Otherwise, marks the contact as not a favorite.
+ */
+
+/*!
+   \fn int QContactFavorite::index() const
+   Returns the index of the favorite contact.
+ */
+
+/*!
+   \fn QContactFavorite::setIndex(int index) const
+   Sets the index of the favorite contact to \a index.
+ */
+
 /* ==================== QContactAnniversary ======================= */
 
 /*!
