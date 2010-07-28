@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/serviceframework
+
 #include <QtTest/QtTest>
 #include <QtCore>
 #define private public
@@ -188,6 +191,11 @@ void ServiceDatabaseUnitTest::testRegistration()
              << "ServiceDharma_Flame.xml";
 
     foreach(const QString &file, xmlFiles) {
+        //Check that when we register a service we reseed
+        //the random number generator so we don't have
+        //any service id clashes.  To verify this is
+        //happening we set the seed here to 1.
+        qsrand(1);
         parser.setDevice(new QFile(testdir.absoluteFilePath(file)));
         QVERIFY(parser.extractMetadata());
         QVERIFY(registerService(parser.parseResults()));

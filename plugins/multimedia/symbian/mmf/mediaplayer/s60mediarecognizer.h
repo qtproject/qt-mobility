@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,15 +44,8 @@
 
 #include <QtCore/qobject.h>
 
-#ifdef USE_SYMBIAN_MEDIARECOGNIZER
-#include <mediarecognizer.h>
-typedef CMediaRecognizer MobilityMediaRecognizer;
-typedef CMediaRecognizer::TMediaType MobilityMediaType;
-#else
-#include <mpmediarecognizer.h>
-typedef CMPMediaRecognizer MobilityMediaRecognizer;
-typedef CMPMediaRecognizer::TMPMediaType MobilityMediaType;
-#endif
+#include <apgcli.h>
+#include <f32file.h>
 
 class QUrl;
 
@@ -71,10 +64,16 @@ public:
     S60MediaRecognizer(QObject *parent = 0);
     ~S60MediaRecognizer();
     
-    MediaType IdentifyMediaType(const QUrl &url);
+    S60MediaRecognizer::MediaType mediaType(const QUrl &url);
+    S60MediaRecognizer::MediaType identifyMediaType(const QString& fileName);
+
+protected:
+    TPtrC QString2TPtrC( const QString& string );
 
 private:
-    MobilityMediaRecognizer *m_recognizer;
+    RApaLsSession m_recognizer;
+    RFile m_file;
+    RFs m_fileServer;
 };
 
 #endif /* S60MEDIARECOGNIZER_H_ */

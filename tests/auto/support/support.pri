@@ -29,7 +29,7 @@ symbian|wince*|maemo*|win32|mac {
         SOURCES += $$PWD/support_maemo5.cpp
     }
     mac|maemo6 {
-         SOURCES += $$PWD/support_stub.cpp       
+         SOURCES += $$PWD/support_stub.cpp
     }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR

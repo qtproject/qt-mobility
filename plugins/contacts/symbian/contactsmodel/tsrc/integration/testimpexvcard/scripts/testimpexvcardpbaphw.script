@@ -1,0 +1,592 @@
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+PRINT Run all TestImpExvCard Suite Tests
+
+//
+LOAD_SUITE TestImpExvCardSuite
+
+//! @file
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0001
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0001
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 vCard21.002 vCard21.003 FILTER21.001 FILTER21.002 <App-Engines>/<CntVcard>/TEL21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 PBAP Compliant Export with Filtering on Non-Null Properties
+//! @SYMTestActions Imports vCard with Non-Null properties and export with a specified Filter 
+//! @SYMTestExpectedResults The Exported vCard should contain the properties according to the Filter
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithFilterOnNonMandatory
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare1
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNoFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMinFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareMinFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNonAndExistingFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNonAndExistingFilter
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0001
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0002
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0002
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 vCard21.002 vCard21.003 FILTER21.001 FILTER21.002 <App-Engines>/<CntVcard>/TEL21.002
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 PBAP Compliant Export with Filtering on Null Properties
+//! @SYMTestActions Imports vCard with Null properties and export with a specified Filter 
+//! @SYMTestExpectedResults The ExportedvCard should contain the properties according to the Filter
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare2AndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithFilterOnNonMandatory
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare2
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNoFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare2AndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMinFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareMinFilter2
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNonAndExistingFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNonAndExistingFilter2
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0002
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0003
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0003
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/INTRA21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 PBAP Compliant Export with intra-Contact Properties
+//! @SYMTestActions Imports vCard with a mix of properties and export with specified intra-Contact property list 
+//! @SYMTestExpectedResults The ExportedvCard should contain the intra-Contact properties 
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardIntraProp
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithIntraProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareIntraProps
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0003
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0004
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0004
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/INTRA21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: vCard2.1 PBAP Compliant Export with intra-Contact Properties
+//! @SYMTestActions Imports vCard with a mix of properties and export, making the call-back method to leave and also providing wrong contact item id 
+//! @SYMTestExpectedResults vCard should not be exported in case of a leave and when provided a wrong contact item id, the ExportedvCard should not contain the intra-Contact properties 
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardIntraProp
+RUN_TEST_STEP !Error=-2 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardAndLeave
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExportContents
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0004
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0005
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0005
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/INTRA21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: vCard2.1 import with intra-Contact Properties
+//! @SYMTestActions Imports vCard having the intra-contact properties
+//! @SYMTestExpectedResults contact item imported with no intra-contact properties
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardIntraPropNegative
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNoFilter
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareImportIntraProps
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0005
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0006
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0006
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FILTER21.002
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Stress/Volume test: vCard2.1 PBAP Compliant Export
+//! @SYMTestActions Imports and Exports vCard having 100 contacts with filter set to select all properties
+//! @SYMTestExpectedResults Items should have been exported according to vCard2.1 format
+
+RUN_TEST_STEP 500 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter
+RUN_TEST_STEP 500 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareStress
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0006
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0007
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0007
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FILTER21.002
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Robustness Testing: vCard2.1 PBAP Compliant Export
+//! @SYMTestActions Imports and Exports vCard having 100 contacts with filter set to select all properties and start a conflicting operation to delete contact items
+//! @SYMTestExpectedResults Database should be accessible
+
+RUN_TEST_STEP 500 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+CONCURRENT
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactOperations c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+CONSECUTIVE
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0007
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0008
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0008
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 vCard30.004 vCard30.005 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL30.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 PBAP Compliant Export with Filtering on Non-Null Properties
+//! @SYMTestActions Imports vCard with Non-Null properties and export with a specified Filter 
+//! @SYMTestExpectedResults The ExportedvCard should contain the properties according to the Filter
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareAndTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithFilterOnNonMandatory30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNoFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMinFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareMinFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNonAndExistingFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNonAndExistingFilter30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0008
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0009
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0009
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.003 vCard30.005 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL30.002
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 PBAP Compliant Export with Filtering on Null Properties
+//! @SYMTestActions Imports vCard with Null properties and export with a specified Filter 
+//! @SYMTestExpectedResults The ExportedvCard should contain the properties according to the Filter
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNullProps30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNullTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithFilterOnNonMandatory30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNull30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNoFilterAndTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNullTel30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMinFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareMinFilterNull30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithNonAndExistingFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareNonAndExistingFilterOnNull30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0009
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0010
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0010
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>ENCODING.001,002 FOLDING.001 ESCAPE.001 Replacement.001 CHARSET.001 TYPE.001 vCardCharsetEncoding.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 PBAP Compliant Export: Property Formatting
+//! @SYMTestActions Imports vCard with Non-Null properties with line lenght greater than 75 characters, text containing CRLF sequences,comma and unnamed parametre values
+//! @SYMTestExpectedResults Item exported according to vCard3.0, CRLF replaced with '\n', CHARSET not present, unnamed parametre prefixed with TYPE= etc
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardPropFormat30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini comparePropFormat30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0010
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0011
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0011
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FOLDING.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 PBAP Compliant Export with varying exported line lenghts
+//! @SYMTestActions Imports vCard with Non-Null properties with line lengths = 74,75,76 and 150
+//! @SYMTestExpectedResults Item exported according to vCard3.0,properties with line lenghts greater than 75 are folded to next line
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardLineLength30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareLineLength30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0011
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0012
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0012
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/INTRA30.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 PBAP Compliant Export with intra-Contact Properties
+//! @SYMTestActions Imports vCard with a mix of properties and export with specified intra-Contact property list 
+//! @SYMTestExpectedResults The ExportedvCard should contain the intra-Contact properties 
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardIntraProp
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithIntraProps30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareIntraProps30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0012
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0013
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0013
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/INTRA21.001 
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: vCard3.0 PBAP Compliant Export with intra-Contact Properties
+//! @SYMTestActions Imports vCard with a mix of properties and export, making the call-back method to leave and also providing wrong contact item id 
+//! @SYMTestExpectedResults vCard should not be exported in case of a leave and when provided a wrong contact item id, the ExportedvCard should not contain the intra-Contact properties 
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardIntraProp
+RUN_TEST_STEP !Error=-2 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardAndLeave30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExportContents
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0013
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0014
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0014
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID PREQ1375
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: vCard3.0 import
+//! @SYMTestActions Imports vCard with a mix of properties and export. Import this exported vcard
+//! @SYMTestExpectedResults Import should fail with KErrNotSupported
+
+RUN_TEST_STEP 300 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps30
+RUN_TEST_STEP 300 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardToImport30
+RUN_TEST_STEP 300 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportExportedvCard
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0014
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0015
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0015
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FILTER30.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Stress/Volume test: vCard3.0 PBAP Compliant Export
+//! @SYMTestActions Imports and Exports vCard having 100 contacts with filter set to select all properties
+//! @SYMTestExpectedResults Items should have been exported according to vCard2.1 format
+
+RUN_TEST_STEP 500 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter30
+RUN_TEST_STEP 500 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareStress
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0015
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0016
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0016
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FILTER30.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Robustness Testing: vCard3.0 PBAP Compliant Export
+//! @SYMTestActions Imports and Exports vCard having 100 contacts with filter set to select all properties and start a conflicting operation to delete contact items
+//! @SYMTestExpectedResults Database should be accessible
+
+RUN_TEST_STEP 500 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+CONCURRENT
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilter30
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactOperations c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+CONSECUTIVE
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0016
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0017
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0017
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/FILTER30.001<App-Services>/<Versit>/FILTER21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc OOM testing for v2.1 and v3.0 PBAP Compliant Export
+//! @SYMTestActions Imports and Exports vCard under low memory condition
+//! @SYMTestExpectedResults Contact item exported according to the standard used
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCard21OOM
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCard30OOM
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0017
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0020
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0020
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID [R2] REQ6386
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Performance of export
+//! @SYMTestActions Imports a vCard, notes the time taken by the export with old api, 2.1 and 3.0 version
+//! @SYMTestExpectedResults The time taken by the new api with 2.1 and 3.0 version should not exceed the tolerance: 0.4%
+
+RUN_TEST_STEP 500 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardstress
+RUN_UTILS MakeReadWrite c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExportPerformance c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardPerformanceOld
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExportPerformance c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardPerformance21
+RUN_TEST_STEP 500 TestImpExvCardSuite TestContactsPBAPExportPerformance c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardPerformance30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0020
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0021
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0021
+//! @SYMTestType CIT
+//! @SYMTestPriority High
+//! @SYMPREQ 1375
+//! @SYMFssID REQ6385
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: EVcard21 with intra contact and filter
+//! @SYMTestActions Import a vCard with a mix of properties and export using EVcard21 with intra contact properties and filter set to select few properties.
+//! @SYMTestExpectedResults No intra contact properties exported and all propeties are exported irrespective of the filter.
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithIntraPropsAndStd21
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareStd21
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0021
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0022
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0022
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID REQ6385
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Negative test: Invalid version
+//! @SYMTestActions Import a vCard with a mix of properties and export with no version specified
+//! @SYMTestExpectedResults Should leave with KErrArgument
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP !Error=-6 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithNoVersion
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0022
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0023
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0023
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 <App-Engines>/<CntVcard>/vCard21.002 <App-Engines>/<CntVcard>/FILTER21.001 
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Calling the new api several times
+//! @SYMTestActions Import a vCard with a mix of properties and export the same 15 times
+//! @SYMTestExpectedResults The exported file should be valid according to the standard
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportvCardWithMaxFilterAndTel
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareTel
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0023
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0024
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0024
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 vCard21.002 vCard21.003 FILTER21.001 FILTER21.002 <App-Engines>/<CntVcard>/TEL21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 Importing and exporting an empty vCard with and without intra contact properties
+//! @SYMTestActions Import an empty vCard and export the same with and without intra contact properties
+//! @SYMTestExpectedResults The exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportEmptyvCard
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportEmptyvCardWithNoIntra21
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportEmptyvCardWithIntra21
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExportContents
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0024
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0025
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0025
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL301.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 Importing and exporting an empty vCard with and without intra contact properties
+//! @SYMTestActions Import an empty vCard and export the same with and without intra contact properties
+//! @SYMTestExpectedResults The exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportEmptyvCard
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportEmptyvCardWithNoIntra30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExportEmptyvCardWithIntra30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExportContents
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0025
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0026
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0026
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 vCard21.002 vCard21.003 FILTER21.001 FILTER21.002 <App-Engines>/<CntVcard>/TEL21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 Export with damaged database
+//! @SYMTestActions Importing a vcard, damaging the database and exporting the vcard
+//! @SYMTestExpectedResults The exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithDamageDb21
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0026
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0027
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0027
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL301.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 Export with damaged database
+//! @SYMTestActions Importing a vcard, damaging the database and exporting the vcard
+//! @SYMTestExpectedResults Should leave with KErrNotReady and the exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithDamageDb30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0027
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0028
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0028
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL301.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 Export with damaged database and intra conatct properties
+//! @SYMTestActions Importing a vcard, damaging the database and exporting the vcard
+//! @SYMTestExpectedResults Should leave with KErrNotReady and the exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithDamageDbIntra30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0028
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0029
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0029
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL301.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 Export with file system in invalid state
+//! @SYMTestActions Importing a vcard, invalidating the fle system by setting it to KErrNotReady state and exporting the vcard
+//! @SYMTestExpectedResults Should leave with KErrNotReady and the exported file should not have any content
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithInvalidFileSystem30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0029
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0030
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0030
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard21.001 vCard21.002 vCard21.003 FILTER21.001 FILTER21.002 <App-Engines>/<CntVcard>/TEL21.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard2.1 Export with filter - bits reserved for future use are set
+//! @SYMTestActions Importing a vcard, and exporting the same with filter, setting only bits reserved for future use
+//! @SYMTestExpectedResults The Exported vCard should contain only the mandatory fields
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithFilterOnlyBitsFutureUse
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compareMandatory
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0030
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0031
+
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-1375-HW-0031
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 1375
+//! @SYMFssID <App-Services>/<Versit>/vCard30.001 vCard30.002 vCard30.004 vCard30.005 FILTER30.001 FILTER30.002 <App-Engines>/<CntVcard>/TEL30.001
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc vCard3.0 Export with filter - bits reserved for future use are set
+//! @SYMTestActions Importing a vcard, and exporting the same with filter, setting bits reserved for future use
+//! @SYMTestExpectedResults The Exported vCard should contain the properties according to the standard of export.
+
+RUN_TEST_STEP 100 TestImpExvCardSuite TestGenericImportStep c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ImportvCardNonNullProps30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestContactsPBAPExport c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini ExvCardWithFilterBitsFutureUse30
+RUN_TEST_STEP 100 TestImpExvCardSuite TestCompareCntFiles c:\CITExImvCard\testdata\PBAPExport\TestvCardImportExport.ini compare30
+
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-1375-HW-0031
+
+

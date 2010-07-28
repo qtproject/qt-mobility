@@ -1,0 +1,79 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//! @file
+//! @SYMTestSuiteName	TestContactViewSuite
+//! @SYMScriptTestEnvironment
+
+PRINT Run all TestContactView tests
+
+LOAD_SUITE CntPerfTestServer
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0051-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0051-HP
+//! @SYMTestCaseDesc 		Pass the valid contact item Id and find the index of the contact item id in the view
+//!				under backup restore conditions.
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a sub View or find view or group view or filtered view or concatenated view. 
+//!				2.After the view is constructed, initate system wide backup restore
+//!				3.Find the index of the contact item in the view by passing the valid contact item id in the API FindL(). 
+//!				4.Verify if the index is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The index of the contact item Id is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 1000 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewUnderBackupRestoreStep.ini gettheindexofcontactid
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0051-HP
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0055-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0055-HP
+//! @SYMTestCaseDesc 		Get the underlying views sort order under backup restore conditions
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view or local view or group view or filtered view or concatenated view or sub view.
+//!				2.After the view is constructed, 
+//!				3.Initiate system wide backup restore
+//!				4.Get the underlying view’s sort order.
+//!				5.Verify whether the sort order is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The sort order of the view is retrieved correctly.
+//! @SYMTestType 		CIT
+
+RUN_TEST_STEP 1000 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewUnderBackupRestoreStep.ini getsortorder
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0055-HP
+
+
+START_TESTCASE	PIM-APPENG-CONTACTS-VIEWS-I-0056-HP
+//! @SYMTestCaseID		PIM-APPENG-CONTACTS-VIEWS-I-0056-HP
+//! @SYMTestCaseDesc 		Get the contact view preferences under backup restore conditions
+//! @SYMPREQ			1187
+//! @SYMTestStatus 		Implemented
+//! @SYMTestPriority 		High
+//! @SYMTestActions 		1.Construct a find view or local view or group view or filtered view or concatenated view or sub view.
+//!				2.After the view is constructed,
+//!				3.Initiate system wide backup restore
+//!				4.Get the contact view preferences.
+//!				5.Verify whether the contact view preference is retrieved correctly by comparing it with the expected result that is passed from the ini file.
+//! @SYMTestExpectedResults 	The contact view’s preference is retrieved correctly.
+//! @SYMTestType 		CIT
+
+
+RUN_TEST_STEP 1000 CntPerfTestServer TestContactViewAccessStep c:\cntviewtest\configs\TestContactViewUnderBackupRestoreStep.ini getviewpreference
+END_TESTCASE PIM-APPENG-CONTACTS-VIEWS-I-0056-HP
+
+PRINT Completed TestCalInterimApi_Tests
+
+

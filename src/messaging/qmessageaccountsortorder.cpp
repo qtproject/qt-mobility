@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,9 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of 
     queried accounts from the messaging store.
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     A QMessageAccountSortOrder is composed of a account property to sort and a sort order. 

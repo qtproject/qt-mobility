@@ -1,0 +1,8 @@
+CONFIG += qt
+CONFIG += hb
+TEMPLATE = app
+
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
+
+SOURCES += main.cpp
+LIBS += -lhbcore 

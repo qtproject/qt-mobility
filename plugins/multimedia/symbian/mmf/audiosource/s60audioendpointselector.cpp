@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudiodeviceinfo.h>
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)

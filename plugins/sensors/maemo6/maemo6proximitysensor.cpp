@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,40 +41,29 @@
 
 #include "maemo6proximitysensor.h"
 
-const char *maemo6proximitysensor::id("maemo6.proximity");
+char const * const maemo6proximitysensor::id("maemo6.proximity");
 bool maemo6proximitysensor::m_initDone = false;
 
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
+    const QString sensorName = "proximitysensor";
+    initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
+
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
     setReading<QProximityReading>(&m_reading);
 
-    if (!m_initDone) {
-        initSensor<ProximitySensorChannelInterface>("proximitysensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<ProximitySensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const int&)), this, SLOT(slotDataAvailable(const int&)));
-        else
-            qWarning() << "Unable to initialize proximity sensor.";
-
-        // close definition in meters - may be used as metadata even the sensor gives true/false values 
-        addOutputRange(0, 1, 1);
-        setDescription(QLatin1String("Measures if a living object is in proximity or not"));
-
-        m_initDone = true;
-    }
 }
 
-void maemo6proximitysensor::slotDataAvailable(const int& data)
+void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
 {
-    bool close;
-    if (data)
-        close = true;
-    else
-        close = false;
-
-    m_reading.setClose(close);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setClose(data.x()? true: false);
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }

@@ -65,12 +65,7 @@ CntSimStore::~CntSimStore()
     delete d_ptr;
 }
 
-QString CntSimStore::storeName()
-{
-    return d_ptr->storeName();
-}
-
-TSimStoreInfo CntSimStore::storeInfo()
+SimStoreInfo CntSimStore::storeInfo()
 {
     return d_ptr->storeInfo();
 }

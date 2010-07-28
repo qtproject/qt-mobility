@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,8 +48,11 @@
 #include <Oleauto.h>
 #include <QStringList>
 #include <QUuid>
+#include <comutil.h>
 
 QTM_BEGIN_NAMESPACE
+
+Q_GLOBAL_STATIC(WMIHelper, wmihelper)
 
 WMIHelper::WMIHelper(QObject * parent)
         : QObject(parent)
@@ -60,6 +63,11 @@ WMIHelper::WMIHelper(QObject * parent)
 WMIHelper::~WMIHelper()
 {
     CoUninitialize();
+}
+
+WMIHelper *WMIHelper::instance()
+{
+    return wmihelper();
 }
 
 QVariant WMIHelper::getWMIData()
@@ -186,18 +194,24 @@ QVariant WMIHelper::msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType)
             returnVariant = vb;
         }
         break;
-            case CIM_UINT8:
+    case CIM_UINT8:
         {
             QVariant vb(msVariant.uintVal);
             returnVariant = vb;
         }
         break;
-            case CIM_UINT16:
+    case CIM_UINT16:
         {
             QVariant vb(msVariant.uintVal);
             returnVariant = vb;
         }
-            case CIM_UINT32:
+    case CIM_UINT32:
+        {
+            QVariant vb(msVariant.uintVal);
+            returnVariant = vb;
+        }
+        break;
+    case CIM_UINT64:
         {
             QVariant vb(msVariant.uintVal);
             returnVariant = vb;
@@ -227,6 +241,179 @@ void WMIHelper::setConditional(const QString &conditional)
 {
    m_conditional = conditional;
 }
+
+void WMIHelper::setupNotfication(const QString &wmiNamespace,const QString &/*className*/, const QStringList &/*classProperties*/)
+{
+    initializeWMI(wmiNamespace);
+    HRESULT hres;
+
+    IUnsecuredApartment* pUnsecApp = NULL;
+
+    QUuid clsidUnsecuredApartment = "49bd2028-1523-11d1-ad79-00c04fd8fdff";
+    QUuid iidUnsecuredApartment = "1cfaba8c-1523-11d1-ad79-00c04fd8fdff";
+
+     hres = CoCreateInstance(clsidUnsecuredApartment, NULL,
+         CLSCTX_LOCAL_SERVER,iidUnsecuredApartment,
+         (void**)&pUnsecApp);
+
+     if (hres == CO_E_NOTINITIALIZED) { // COM was not initialized
+         qDebug() << "not initialized";
+         CoInitializeEx(0, COINIT_MULTITHREADED);
+         hres = CoCreateInstance(clsidUnsecuredApartment,0,CLSCTX_INPROC_SERVER,
+                                 iidUnsecuredApartment, (LPVOID *) &pUnsecApp);
+     }
+
+     if (hres != S_OK) {
+        qDebug() << "Failed to create IWbemLocator object." << hres;
+         return ;
+     }
+
+     EventSink* pSink = new EventSink;
+
+     pSink->AddRef();
+
+     IUnknown* pStubUnk = NULL;
+     pUnsecApp->CreateObjectStub(pSink, &pStubUnk);
+
+     IWbemObjectSink* pStubSink = NULL;
+     QUuid iidWbemObjectSink = "7c857801-7381-11cf-884d-00aa004b2e24";
+
+     pStubUnk->QueryInterface(iidWbemObjectSink,(void **) &pStubSink);
+
+     QString aString = "SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE (TargetInstance ISA 'Win32_LogicalDisk') AND (TargetInstance.DriveType = 5 OR TargetInstance.DriveType = 2)";
+
+     BSTR bstrQuery;
+     bstrQuery = ::SysAllocString(aString.utf16());
+
+     hres = wbemServices->ExecNotificationQueryAsync(
+         L"WQL",
+         bstrQuery,
+         WBEM_FLAG_SEND_STATUS,
+         NULL,
+         pStubSink);
+
+     if (FAILED(hres)) {
+         printf("ExecNotificationQueryAsync failed "
+             "with = 0x%X\n", hres);
+         wbemLocator->Release();
+         wbemEnumerator->Release();
+         pUnsecApp->Release();
+         pStubUnk->Release();
+         pSink->Release();
+         pStubSink->Release();
+         CoUninitialize();
+         return;
+     }
+}
+
+void WMIHelper::emitNotificationArrived()
+{
+    emit wminotificationArrived();
+}
+
+ULONG EventSink::AddRef()
+{
+    return InterlockedIncrement(&m_lRef);
+}
+
+ULONG EventSink::Release()
+{
+    LONG lRef = InterlockedDecrement(&m_lRef);
+    if(lRef == 0)
+        delete this;
+    return lRef;
+}
+
+HRESULT EventSink::QueryInterface(REFIID riid, void** ppv)
+{
+    QUuid iidWbemObjectSink = "7c857801-7381-11cf-884d-00aa004b2e24";
+
+    if (riid == IID_IUnknown || riid == iidWbemObjectSink){
+        *ppv = (IWbemObjectSink *) this;
+        AddRef();
+        return WBEM_S_NO_ERROR;
+    }
+    else return E_NOINTERFACE;
+}
+
+
+HRESULT EventSink::Indicate(long lObjectCount,
+    IWbemClassObject ** /*apObjArray*/)
+{
+    for (int i = 0; i < lObjectCount; i++){
+        WMIHelper::instance()->emitNotificationArrived();
+
+//        _variant_t msVariant;
+//        CIMTYPE variantType;
+//        QVariant returnVariant;
+//        IWbemClassObject *obj = apObjArray[0];
+
+//        HRESULT hr = obj->Get(L"TargetInstance", 0, &msVariant, 0, 0);
+//        if (hr == S_OK) {
+//            IUnknown *str = msVariant;
+//            VariantClear(&msVariant);
+
+//            IWbemClassObject *obj;
+//            hr = str->QueryInterface(IID_IWbemClassObject, reinterpret_cast<void **>(&obj));
+//            if (hr == S_OK) {
+//                _variant_t var2;
+//                hr = obj->Get(L"__Class", 0, &var2, 0, 0);
+//                _bstr_t classname = var2;
+//                VariantClear(&var2);
+//                if(classname == _bstr_t(L"Win32_LogicalDisk")) {
+//                    _variant_t var3;
+//       //             qDebug() << obj->Availability;
+//                    hr = obj->Get(L"Availability", 0, &var3, &variantType, 0);
+//                    if (hr == S_OK) {
+//                        //uint av = var3;
+//                        //returnVariant = WMIHelper::msVariantToQVariant(msVariant, variantType);
+
+//                        printf("variant type: 0x%X\n", variantType);
+
+// //                       int value = var3.intVal;
+
+//                       qDebug() <<"Availability" << var3.uintVal << var3.vt << var3.uiVal << var3.iVal;
+//                        //var3.uintVal;//<<returnVariant << returnVariant.toUInt();
+//                        VariantClear(&var3);
+//                    } else {
+//                        qDebug() << hr << GetLastError();
+//                        printf("Error foo. hr = 0x%X\n", hr);
+
+//                    }
+//                } else {
+//                    qDebug() << hr << GetLastError();
+//                    printf("Error 2. hr = 0x%X\n", hr);
+
+//                }
+//            }
+//        } else {
+//            qDebug() << hr << GetLastError();
+//            printf("Error. hResult = 0x%X\n", hr);
+//        }
+    }
+
+    return WBEM_S_NO_ERROR;
+}
+
+HRESULT EventSink::SetStatus(
+           LONG lFlags,
+           HRESULT hResult,
+           BSTR /*strParam*/,
+           IWbemClassObject __RPC_FAR * /*pObjParam*/)
+{
+    if(lFlags == WBEM_STATUS_COMPLETE)
+    {
+        printf("Call complete. hResult = 0x%X\n", hResult);
+    }
+    else if(lFlags == WBEM_STATUS_PROGRESS)
+    {
+        printf("Call in progress.\n");
+    }
+
+    return WBEM_S_NO_ERROR;
+}    // end of EventSink.cpp
+
+#include "moc_qwmihelper_win_p.cpp"
 
 QTM_END_NAMESPACE
 #endif

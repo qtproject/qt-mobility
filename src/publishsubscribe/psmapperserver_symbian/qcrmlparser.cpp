@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -100,23 +100,24 @@ QList<KeyData> QCrmlParser::parseRepository()
 {
     QList<KeyData> rv;
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "uidValue";
-    setError(NoError, "");
+    mandatoryAttributes << QLatin1String("uidValue");
+    setError(NoError, QString());
     if (!checkMandatoryAttributes(mandatoryAttributes))
         return rv;
 
     bool ok;
-    quint32 uidValue = uidStringToUInt32(attributes().value("uidValue").toString(), &ok);
+    quint32 uidValue =
+        uidStringToUInt32(attributes().value(QLatin1String("uidValue")).toString(), &ok);
     if (!ok) {
         setError(ParseError, QObject::tr("repository element has invalid uidValue on line %1")
                                .arg(QString::number(lineNumber())));
         return rv;
     }
 
-    QString targetStr = attributes().value("target").toString();
-    if (targetStr.isEmpty() || targetStr == "CRepository") {
+    QString targetStr = attributes().value(QLatin1String("target")).toString();
+    if (targetStr.isEmpty() || targetStr == QLatin1String("CRepository")) {
         m_target = KeyData::CRepository;
-    } else if (targetStr == "RProperty") {
+    } else if (targetStr == QLatin1String("RProperty")) {
         m_target = KeyData::RProperty;
     } else {
         setError(ParseError, QObject::tr("repository element has unrecognised target attribute "
@@ -166,12 +167,12 @@ QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
 {
     QList<KeyData> rv;
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "int";
+    mandatoryAttributes << QLatin1String("int");
     if (!checkMandatoryAttributes(mandatoryAttributes))
         return rv;
 
     QXmlStreamAttributes attribs = attributes();
-    QString keyIntStr = attribs.value("int").toString();
+    QString keyIntStr = attribs.value(QLatin1String("int")).toString();
     bool ok =false;
     quint32 keyInt = uidStringToUInt32(keyIntStr, &ok);
     if (!ok) {
@@ -180,7 +181,7 @@ QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
         return rv;
     }
 
-    if (attribs.value("ref").isNull()) {
+    if (attribs.value(QLatin1String("ref")).isNull()) {
         //no ref attribute so this must be
         //a bitmask key
         while (!atEnd()) {
@@ -202,7 +203,7 @@ QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
             }
         }
     } else {
-        QString keyRef = attribs.value("ref").toString();
+        QString keyRef = attribs.value(QLatin1String("ref")).toString();
         if (keyRef.isEmpty()) {
             setError(ParseError, QObject::tr("ref attribute of key element is empty on line %1")
                     .arg(QString::number(lineNumber())));
@@ -234,8 +235,8 @@ QList<KeyData> QCrmlParser::parseKey(quint32 repoUid)
         }
 
         QString keyPath(keyRef);
-        if (!keyPath.startsWith("/"))
-            keyPath.prepend("/");
+        if (!keyPath.startsWith(QLatin1Char('/')))
+            keyPath.prepend(QLatin1Char('/'));
         quint64 uid = repoUid;
         uid = uid << 32;
         uid += keyInt;
@@ -251,22 +252,23 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
     //if keyRange has no ref attribute it must
     //only be used for creating access control
     //policies which we do not need to worry about
-    if (attributes().value("ref").isNull())
+    if (attributes().value(QLatin1String("ref")).isNull())
         return rv;
 
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "firstInt" << "lastInt";
+    mandatoryAttributes << QLatin1String("firstInt") << QLatin1String("lastInt");
     if (!checkMandatoryAttributes(mandatoryAttributes))
         return rv;
 
     bool ok = false;
     QString pathPrefix;
-    pathPrefix = attributes().value("ref").toString();
-    if (!pathPrefix.startsWith("/"))
-        pathPrefix.prepend("/");
+    pathPrefix = attributes().value(QLatin1String("ref")).toString();
+    if (!pathPrefix.startsWith(QLatin1Char('/')))
+        pathPrefix.prepend(QLatin1Char('/'));
 
-    if (!attributes().value("countInt").isNull()) {
-        quint32 countInt = uidStringToUInt32(attributes().value("countInt").toString(), &ok);
+    if (!attributes().value(QLatin1String("countInt")).isNull()) {
+        quint32 countInt =
+            uidStringToUInt32(attributes().value(QLatin1String("countInt")).toString(), &ok);
         if (!ok) {
             setError(ParseError, QObject::tr("keyRange element has invalid countInt attribute on line %1")
                     .arg(QString::number(lineNumber())));
@@ -277,10 +279,11 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
         rv.append(KeyData(pathPrefix,(quint64)countInt + (((quint64)repoUid) << 32), m_target));
     }
 
-     if (!pathPrefix.endsWith("/"))
-        pathPrefix.append("/");
+    if (!pathPrefix.endsWith(QLatin1Char('/')))
+        pathPrefix.append(QLatin1Char('/'));
 
-    quint32 firstInt = uidStringToUInt32(attributes().value("firstInt").toString(), &ok);
+    quint32 firstInt =
+        uidStringToUInt32(attributes().value(QLatin1String("firstInt")).toString(), &ok);
     if (!ok) {
         setError(ParseError, QObject::tr("keyRange element has invalid firstInt attribute on line %1")
                 .arg(QString::number(lineNumber())));
@@ -288,7 +291,8 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
         return rv;
     }
 
-    quint32 lastInt = uidStringToUInt32(attributes().value("lastInt").toString(),&ok);
+    quint32 lastInt =
+        uidStringToUInt32(attributes().value(QLatin1String("lastInt")).toString(),&ok);
     if (!ok) {
         setError(ParseError, QObject::tr("keyRange element has invalid lastInt attribute on line %1")
                 .arg(QString::number(lineNumber())));
@@ -299,7 +303,7 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
     quint32 maxNum =0;
     quint32 indexBits = 0;
     quint32 firstIndex = 0;
-    if (attributes().value("indexBits").isNull()) {
+    if (attributes().value(QLatin1String("indexBits")).isNull()) {
         //keyRange doesn't map to sequence setting
 
         maxNum = lastInt - firstInt + 1;
@@ -325,7 +329,8 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
         }
     } else {
         //keyRanges does  map to sequence setting
-        indexBits = uidStringToUInt32(attributes().value("indexBits").toString(), &ok);
+        indexBits =
+            uidStringToUInt32(attributes().value(QLatin1String("indexBits")).toString(), &ok);
         if (!ok) {
             setError(ParseError, QObject::tr("keyRange elment has invalid indexBits attribute on line %1")
                     .arg(QString::number(lineNumber())));
@@ -333,8 +338,8 @@ QList<KeyData> QCrmlParser::parseKeyRange(quint32 repoUid)
             return rv;
         }
 
-        if (!attributes().value("firstIndex").isNull()) {
-            QString firstIndexStr = attributes().value("firstIndex").toString();
+        if (!attributes().value(QLatin1String("firstIndex")).isNull()) {
+            QString firstIndexStr = attributes().value(QLatin1String("firstIndex")).toString();
             firstIndex = firstIndexStr.toUInt(&ok, 10);
             if (!ok) {
                 setError(ParseError, QObject::tr("keyRange element has invalid firstIndex attribute on line %1")
@@ -408,15 +413,15 @@ QList<KeyData> QCrmlParser::parseBit(quint32 repoUid, quint32 keyInt)
 {
     QList <KeyData> rv;
     QStringList mandatoryAttributes;
-    mandatoryAttributes << "ref";
+    mandatoryAttributes << QLatin1String("ref");
     if (!checkMandatoryAttributes(mandatoryAttributes)) {
         rv.clear();
         return rv;
     }
 
-    QString keyPath = attributes().value("ref").toString();
-    if (!keyPath.startsWith("/"))
-        keyPath.prepend("/");
+    QString keyPath = attributes().value(QLatin1String("ref")).toString();
+    if (!keyPath.startsWith(QLatin1Char('/')))
+        keyPath.prepend(QLatin1Char('/'));
 
     int bitIndex = 0;
     while(!atEnd()) {
@@ -517,7 +522,7 @@ void QCrmlParser::setError(Error error, const QString &errorString)
 quint32 QCrmlParser::uidStringToUInt32(const QString &uidString, bool *ok)
 {
     quint32 uid = 0;
-    if (!uidString.startsWith("0x")) {
+    if (!uidString.startsWith(QLatin1String("0x"))) {
         if (ok != NULL)
             *ok = false;
          return 0;

@@ -1,9 +1,7 @@
 TEMPLATE = app
 CONFIG += example
 
-contains(QT_CONFIG, multimedia): QT += multimedia
-
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 include(../examples.pri)
 
 CONFIG += mobility
@@ -18,6 +16,12 @@ SOURCES = \
     main.cpp \
     audiorecorder.cpp
 
+maemo*: {
+    FORMS += audiorecorder_small.ui
+} else {
+    FORMS += audiorecorder.ui
+}
+
 symbian: {
-    TARGET.CAPABILITY = UserEnvironment ReadDeviceData
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData WriteDeviceData 
 }

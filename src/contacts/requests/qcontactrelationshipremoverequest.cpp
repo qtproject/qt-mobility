@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,12 @@ QTM_BEGIN_NAMESPACE
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -62,6 +68,13 @@ QTM_BEGIN_NAMESPACE
 QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate, parent)
 {
+}
+
+
+/*! Frees any memory used by this request */
+QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!
@@ -74,6 +87,7 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships.clear();
     d->m_relationships.append(relationship);
 }
@@ -82,6 +96,7 @@ void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationsh
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships = relationships;
 }
 
@@ -89,6 +104,7 @@ void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRel
 QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 
@@ -96,6 +112,7 @@ QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() c
 QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

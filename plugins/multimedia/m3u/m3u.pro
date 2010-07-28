@@ -1,8 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmedia_m3u)
+TARGET = $$qtLibraryTarget(qtmultimediakit_m3u)
 
-PLUGIN_TYPE = playlistformats
+PLUGIN_TYPE=playlistformats
 
 include (../../../common.pri)
 
@@ -26,6 +26,3 @@ symbian {
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS+=target

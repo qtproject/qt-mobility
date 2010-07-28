@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -91,7 +91,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
     : d_ptr(new QMessageAccountIdPrivate(this))
 {
-	QDataStream idStream(QByteArray::fromBase64(MessagingUtil::stripIdPrefix(id).toLatin1()));
+    QDataStream idStream(QByteArray::fromBase64(MessagingUtil::stripIdPrefix(id).toLatin1()));
     idStream >> d_ptr->_storeRecordKey;
 }
 
@@ -135,7 +135,7 @@ QString QMessageAccountId::toString() const
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_storeRecordKey;
 
-	return MessagingUtil::addIdPrefix(encodedId.toBase64());
+    return MessagingUtil::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageAccountId::isValid() const

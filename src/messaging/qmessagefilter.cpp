@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QMessageFilter class defines the parameters used for querying a subset of
     all available messages from the messaging store.
+    
+    \inmodule QtMessaging
+    
     \ingroup messaging
 
     A QMessageFilter is composed of a message property, an optional comparison operator

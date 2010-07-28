@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,42 +55,20 @@
 //
 
 #include "qmobilityglobal.h"
-
-#include <qcontactdetail.h>
-#include <qcontactname.h>
-#include <qcontactemailaddress.h>
-#include <qcontactphonenumber.h>
-#include "qcontactaddress.h"
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontactorganization.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
-#include <qcontacttag.h>
-#include <qcontactringtone.h>
-#include <qcontactthumbnail.h>
+#include "qtcontacts.h"
 
 QTM_BEGIN_NAMESPACE
 
 // Mapping between a string in versit specifications and Qt contact details
-struct VersitContactDetailMapping {
+struct VersitDetailMapping {
     const char* versitPropertyName;
-    const char* contactDetailDefinitionName;
-    const char* contactDetailValueKey;
+    const char* detailDefinitionName;
+    const char* detailFieldName;
 };
 
 //! [Property name mappings]
 // Mappings from versit property names to Qt contact details
-const VersitContactDetailMapping versitContactDetailMappings[] = {
+const VersitDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.latin1(),
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.latin1(),
@@ -135,6 +113,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       ""},
     {"X-ASSISTANT",   QContactOrganization::DefinitionName.latin1(),
                       QContactOrganization::FieldAssistantName.latin1()},
+    {"X-ASSISTANT-TEL", QContactPhoneNumber::DefinitionName.latin1(),
+                      QContactPhoneNumber::SubTypeAssistant.latin1()},
     {"X-CHILDREN",    QContactFamily::DefinitionName.latin1(),
                       QContactFamily::FieldChildren.latin1()},
     {"X-EPOCSECONDNAME",QContactNickname::DefinitionName.latin1(),

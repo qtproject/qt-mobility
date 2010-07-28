@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource>
+    <file>data/nmealog.txt</file>
+    <file>data/nmealog2.txt</file>
+</qresource>
+</RCC>

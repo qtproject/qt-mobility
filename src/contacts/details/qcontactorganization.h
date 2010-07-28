@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -73,6 +73,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldRole, "Role");
     Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
     Q_DECLARE_LATIN1_CONSTANT(FieldAssistantName, "AssistantName");
+
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}

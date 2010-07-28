@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,7 +60,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     : d_ptr(new QMessageContentContainerIdPrivate)
 {
     if (!id.isEmpty()) {
-		d_ptr->_number = MessagingUtil::stripIdPrefix(id).toUInt();
+        d_ptr->_number = MessagingUtil::stripIdPrefix(id).toUInt();
     }
 }
 
@@ -85,7 +85,7 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 
 QString QMessageContentContainerId::toString() const
 {
-	return MessagingUtil::addIdPrefix(QString::number(d_ptr->_number));
+    return MessagingUtil::addIdPrefix(QString::number(d_ptr->_number));
 }
 
 bool QMessageContentContainerId::isValid() const

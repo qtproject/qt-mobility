@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+//TESTED_COMPONENT=src/versit
 
 #include "qversitdefs_p.h"
 #include "tst_qversitcontactimporter.h"
@@ -183,7 +185,7 @@ void tst_QVersitContactImporter::init()
 void tst_QVersitContactImporter::cleanup()
 {
     QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
-    mImporter->setPropertyHandler(0);
+    mImporter->setPropertyHandler(static_cast<QVersitContactImporterPropertyHandlerV2*>(0));
     delete mPropertyHandler;
     QVERIFY(mImporter->resourceHandler() == mResourceHandler);
     mImporter->setResourceHandler(0);

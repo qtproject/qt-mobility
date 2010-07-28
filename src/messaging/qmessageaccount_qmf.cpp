@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -136,7 +136,7 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
     if (QMailStore *store = QMailStore::instance()) {
-        QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type)));
+        QMailAccountKey typeKey(QMailAccountKey::messageType(convert(type), QMailDataComparator::Includes));
         QMailAccountKey enabledKey(QMailAccountKey::status(QMailAccount::Enabled));
 
         // See if there is a preferred sender

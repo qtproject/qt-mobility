@@ -24,12 +24,14 @@ INCLUDEPATH += . \
 
 # Example headers and sources
 HEADERS += bearerex.h \
-           xqlistwidget.h
+           xqlistwidget.h \
+    datatransferer.h
     
 SOURCES += bearerex.cpp \
            main.cpp \
-           xqlistwidget.cpp
+           xqlistwidget.cpp \
+    datatransferer.cpp
 
 CONFIG += mobility
 MOBILITY = bearer
-symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData WriteDeviceData ReadDeviceData

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -452,6 +452,18 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         while (path.startsWith(QLatin1Char('/')))
             path = path.mid(1);
 
+    Handle fullHandle = item(handle, subPath);
+    if (fullHandle != InvalidHandle) {
+        RegistryHandle *rh = registryHandle(fullHandle);
+        if (rh) {
+            openRegistryKey(rh);
+            if (!rh->valueHandle) {
+                handle = fullHandle;
+                path.clear();
+            }
+        }
+    }
+
     int index = path.lastIndexOf(QLatin1Char('/'), -1);
 
     bool createdHandle = false;
@@ -463,6 +475,8 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         // want a value that is in a sub path under handle
         value = path.mid(index + 1);
         path.truncate(index);
+        if (path.isEmpty())
+            path = QLatin1String("/");
 
         handle = item(handle, path);
         createdHandle = true;
@@ -490,6 +504,7 @@ bool RegistryLayer::value(Handle handle, const QString &subPath, QVariant *data)
         return false;
     } else if (result != ERROR_SUCCESS) {
         qDebug() << "RegQueryValueEx failed with error" << result;
+        *data = QVariant();
         if (createdHandle)
             removeHandle(handle);
         return false;
@@ -578,7 +593,12 @@ QSet<QString> RegistryLayer::children(Handle handle)
         DWORD subKeySize = MAX_KEY_LENGTH;
 
         result = RegEnumKeyEx(key, i, subKey, &subKeySize, 0, 0, 0, 0);
-        if (result == ERROR_NO_MORE_ITEMS)
+        if (result == ERROR_KEY_DELETED) {
+            QMetaObject::invokeMethod(this, "emitHandleChanged", Qt::QueuedConnection,
+                                      Q_ARG(void *, key));
+            break;
+        }
+        if (result != ERROR_SUCCESS)
             break;
 
         foundChildren << QString::fromWCharArray(subKey, subKeySize);
@@ -591,10 +611,18 @@ QSet<QString> RegistryLayer::children(Handle handle)
         DWORD valueNameSize = MAX_NAME_LENGTH;
 
         result = RegEnumValue(key, i, valueName, &valueNameSize, 0, 0, 0, 0);
-        if (result == ERROR_NO_MORE_ITEMS)
+        if (result == ERROR_KEY_DELETED) {
+            QMetaObject::invokeMethod(this, "emitHandleChanged", Qt::QueuedConnection,
+                                      Q_ARG(void *, key));
+            break;
+        }
+        if (result != ERROR_SUCCESS)
             break;
 
-        foundChildren << QString::fromWCharArray(valueName, valueNameSize);
+        QString value = QString::fromWCharArray(valueName, valueNameSize);
+        if (!value.isEmpty())
+            foundChildren << value;
+
         ++i;
     } while (result == ERROR_SUCCESS);
 
@@ -944,6 +972,19 @@ bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const
 
         rh = registryHandle(item(Handle(rh), path));
         createdHandle = true;
+    }
+
+    if (!value.isEmpty()) {
+        QString fullPath = rh->path;
+        if (!fullPath.endsWith(QLatin1Char('/')))
+            fullPath.append(QLatin1Char('/'));
+        fullPath.append(value);
+
+        RegistryHandle *fullHandle = registryHandle(item(InvalidHandle, fullPath));
+        if (fullHandle) {
+            fullHandle->valueHandle = true;
+            removeHandle(Handle(fullHandle));
+        }
     }
 
     if (createRegistryKey(rh)) {

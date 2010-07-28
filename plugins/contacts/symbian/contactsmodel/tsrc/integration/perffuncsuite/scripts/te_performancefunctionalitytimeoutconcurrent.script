@@ -1,0 +1,108 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//
+PRINT Run all te_PerformanceFunctionality Suite Tests
+
+//
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+CONSECUTIVE
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentInitilizerStep
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81105
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81105
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Variable contact Locking Test
+//! @SYMTestActions Open contact A
+//! Wait for messages
+//! Timeout and panic if no messages received after D seconds
+//! Panic if invalid message received
+
+//! Start new Thread
+//! Set time out to X
+//! Send message to old thread, stating that it should close contact after x-2 seconds.
+//! register time
+//! Open contact A in a trap (repeat for update, delete, close and commit)
+//! Register time difference in Y.
+//! Stop thread
+//! Store leave error in Z
+//! @SYMTestExpectedResults Y should equal X-2
+//! Z should equal 0 (no error)
+CONCURRENT
+SHARED_DATA c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini shared
+//
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini NonTrans
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Open
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini NonTrans
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Update
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini NonTrans
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Read
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini NonTrans
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Delete
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81105
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81106
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81106
+//! @SYMTestType CIT
+//! @SYMTestPriority Medium
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Variable transaction Locking Test
+//! @SYMTestActions Start transaction
+//! Perform CUD operation on contacts B, C and D
+//! Wait for messages
+//! 
+//! Start new Thread
+//! Set time out to X
+//! Send message to old thread, stating that it should end/revert transaction after x-2 seconds.
+//! register time
+//! Open contact A in a trap (repeat for update, delete, close and commit)
+//! Register time difference in Y.
+//! Stop thread
+//! Store leave error in Z
+//! @SYMTestExpectedResults Y should equal (X-2) + length of time for a revert transaction (as measured by initial thread)
+//! Z should equal 0 (no error)
+
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Open
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Update
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Read
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Delete
+CONSECUTIVE
+CONCURRENT
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeoutNotifierStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Transaction
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite ConcurrentTimeOutListenerStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Add
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81106
+
+PRINT Complete_te_PerformanceFunctionality_Tests

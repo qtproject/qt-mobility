@@ -88,6 +88,7 @@ void CntSimStoreEventListener::RunL()
 {
     if (iStatus.Int()) {
         qWarning() << "Failed to listen store events!" << iStatus.Int();
+        start(); // We cannot do anything about the error. Just try again.
         return;
     }
     

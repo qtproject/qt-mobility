@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,9 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qorientationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/orientationsensor_i.h>
+#include <orientationsensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -55,8 +55,7 @@ class maemo6orientationsensor : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
-
+    static char const * const id;
     maemo6orientationsensor(QSensor *sensor);
 
 private:
@@ -64,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotOrientationChanged(const int& orientation); 
+    void slotDataAvailable(const Unsigned& orientation);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,7 @@ IMPLEMENT_READING(QOrientationReading)
 /*!
     \class QOrientationReading
     \ingroup sensors_reading
+    \inmodule QtSensors
 
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
@@ -66,31 +67,15 @@ IMPLEMENT_READING(QOrientationReading)
 
     To explain the meaning of each value it is helpful to refer to the following diagram.
 
-\code
-                      Top
+    \image sensors-sides.jpg
 
+    The orientations are shown here in order: TopUp, TopDown, LeftUp, RightUp, FaceUp, FaceDown.
 
-              ----------
-             /  NOKIA  /|
-            /-------- / |
-           //       //  /
-          //       //  /
-  Left   //  Face //  /    Right
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-
-
-      Bottom
-\endcode
+    \image sensors-orientation.jpg
 
     \value Undefined        The orientation is unknown.
     \value TopUp            The Top edge of the device is pointing up.
-    \value TopDown          The Bottom edge of the device is pointing up.
+    \value TopDown          The Top edge of the device is pointing down.
     \value LeftUp           The Left edge of the device is pointing up.
     \value RightUp          The Right edge of the device is pointing up.
     \value FaceUp           The Face of the device is pointing up.
@@ -123,6 +108,7 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 /*!
     \class QOrientationFilter
     \ingroup sensors_filter
+    \inmodule QtSensors
 
     \brief The QOrientationFilter class is a convenience wrapper around QSensorFilter.
 
@@ -138,11 +124,12 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
     \sa QSensorFilter::filter()
 */
 
-const char *QOrientationSensor::type("QOrientationSensor");
+char const * const QOrientationSensor::type("QOrientationSensor");
 
 /*!
     \class QOrientationSensor
     \ingroup sensors_type
+    \inmodule QtSensors
 
     \brief The QOrientationSensor class is a convenience wrapper around QSensor.
 

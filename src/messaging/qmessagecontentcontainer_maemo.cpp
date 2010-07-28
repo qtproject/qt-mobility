@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -312,22 +312,32 @@ int QMessageContentContainer::size() const
 
 QString QMessageContentContainer::textContent() const
 {
-    if (d_ptr->_textContent.isEmpty() && d_ptr->_attachmentId != 0) {
-        ModestEngine *engine = ModestEngine::instance();
-        d_ptr->_textContent = engine->getMimePart(QMessageId(d_ptr->_containingMessageId),
-                                                  d_ptr->_attachmentId);
-        d_ptr->_size = d_ptr->_textContent.size();
-    }
+    QString retString;
+
     if (!d_ptr->_textContent.isEmpty()) {
-        return d_ptr->_textContent;
+        retString = d_ptr->_textContent;
+    } else {
+        if (d_ptr->_content.isEmpty() && d_ptr->_attachmentId != 0) {
+            ModestEngine *engine = ModestEngine::instance();
+            d_ptr->_content = engine->getMimePart(QMessageId(d_ptr->_containingMessageId),
+                                                  d_ptr->_attachmentId);
+            d_ptr->_size = d_ptr->_content.size();
+        }
+
+        if (!d_ptr->_content.isEmpty()) {
+            if (d_ptr->_subType.toLower() == "html") {
+                QTextCodec *codec = QTextCodec::codecForName(d_ptr->_charset.data());
+                if (codec) {
+                    retString = codec->toUnicode(d_ptr->_content);
+                }
+            } else {
+                // Modest plugin automatically decodes plain text content to UTF-8 format
+                retString = QString::fromUtf8(d_ptr->_content);
+            }
+        }
     }
 
-    QTextCodec *codec = QTextCodec::codecForName(d_ptr->_charset.data());
-    if (codec) {
-        return codec->toUnicode(d_ptr->_content);
-    } else {
-        return QString::fromLatin1(d_ptr->_content);
-    }
+    return retString;
 }
 
 QByteArray QMessageContentContainer::content() const
