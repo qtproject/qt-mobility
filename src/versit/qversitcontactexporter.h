@@ -72,13 +72,25 @@ class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
 {
 public:
     Q_DECL_DEPRECATED static QVersitContactExporterDetailHandlerV2* createBackupHandler();
+
+    // deprecated: use the other propertyProcessed() instead
+    Q_DECL_DEPRECATED virtual void detailProcessed(const QContact& contact,
+                                 const QContactDetail& detail,
+                                 QSet<QString> processedFields,
+                                 const QVersitDocument& document,
+                                 QList<QVersitProperty>* toBeRemoved,
+                                 QList<QVersitProperty>* toBeAdded) {}
+
     virtual ~QVersitContactExporterDetailHandlerV2() {}
+
+    // made non-pure for the transition period - this will soon be made pure, so it must be
+    // overridden!  Both the below functions must be implemented to conform to this interface
     virtual void detailProcessed(const QContact& contact,
                                  const QContactDetail& detail,
                                  const QVersitDocument& document,
                                  QSet<QString>* processedFields,
                                  QList<QVersitProperty>* toBeRemoved,
-                                 QList<QVersitProperty>* toBeAdded) = 0;
+                                 QList<QVersitProperty>* toBeAdded) {}
     virtual void contactProcessed(const QContact& contact,
                                   QVersitDocument* document) = 0;
 };
