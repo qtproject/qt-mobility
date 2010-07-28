@@ -328,6 +328,21 @@ void tst_QGalleryTrackerItemList::query()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
+    QCOMPARE(list.currentIndex(), -1);
+    QCOMPARE(list.itemId(), QVariant());
+    QCOMPARE(list.itemUrl(), QUrl());
+    QCOMPARE(list.itemType(), QString());
+    QCOMPARE(list.metaData(0), QVariant());
+    QCOMPARE(list.metaData(1), QVariant());
+    QCOMPARE(list.metaData(2), QVariant());
+    QCOMPARE(list.metaData(3), QVariant());
+    QCOMPARE(list.metaData(4), QVariant());
+    QCOMPARE(list.metaData(5), QVariant());
+    QCOMPARE(list.metaData(6), QVariant());
+    QCOMPARE(list.metaData(7), QVariant());
+    QCOMPARE(list.metaData(8), QVariant());
+    QCOMPARE(list.resources(), QList<QGalleryResource>());
+
     QCOMPARE(list.seek(0, false), true);
     QCOMPARE(list.currentIndex(), 0);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));

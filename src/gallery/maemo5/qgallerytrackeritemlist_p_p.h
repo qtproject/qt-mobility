@@ -240,7 +240,7 @@ public:
         , queryOffset(offset)
         , queryLimit(limit)
         , currentRow(0)
-        , currentIndex(0)
+        , currentIndex(-1)
         , rowCount(0)
         , queryInterface(arguments.queryInterface)
         , queryMethod(arguments.queryMethod)
