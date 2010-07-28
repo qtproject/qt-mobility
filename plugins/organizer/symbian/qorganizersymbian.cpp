@@ -38,12 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "qorganizersymbian_p.h"
-#include "qtorganizer.h"
+//system includes
+#include <calcommon.h>
+#include <calinstance.h>
 #include <calsession.h>
 #include <calchangecallback.h>
 #include <calentryview.h>
+#include <calinstanceview.h>
+
+// user includes
+#include "qorganizersymbian_p.h"
+#include "qtorganizer.h"
 #include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
 #include "organizeritemguidtransform.h"
@@ -84,14 +89,20 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     // Open calendar session and open default file
     m_calSession = CCalSession::NewL();
     m_calSession->OpenL(KNullDesC);
+        
+    m_activeSchedulerWait = new CActiveSchedulerWait();    
+
+    m_instanceView = CCalInstanceView::NewL(*m_calSession, *this);
     
-    // Create entry view (creation is synchronized with CActiveSchedulerWait)
-    m_entryView = CCalEntryView::NewL(*m_calSession, *this);
-    m_activeSchedulerWait = new CActiveSchedulerWait();
     // TODO: The calendar session may take some time to initialize which would
     // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait->Start();
     
+    // Create entry view (creation is synchronized with CActiveSchedulerWait)
+    m_entryView = CCalEntryView::NewL(*m_calSession, *this);   
+
+    m_activeSchedulerWait->Start();
+
     m_requestServiceProvider = COrganizerItemRequestsServiceProvider::NewL(*this);
     // Create change notification filter
     TCalTime minTime;
@@ -116,6 +127,7 @@ QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 	delete m_requestServiceProvider;
     delete m_activeSchedulerWait;
     delete m_entryView;
+    delete m_instanceView;
     delete m_calSession;
 }
 
@@ -145,7 +157,7 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
         This function should create a list of instances that occur in the time period from the supplied item.
         The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
         valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
-
+          
         Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
         Todo/TodoOccurrence.
 
@@ -158,8 +170,53 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
+    QList<QOrganizerItem> occurrenceList;    
+    //check for valid periodStart
+    if (periodStart.isValid()&&(periodEnd.isValid() || (maxCount > 0))) {
+        if (periodEnd < periodStart) {
+            *error = QOrganizerItemManager::BadArgumentError;
+            return;
+        }
+        RPointerArray<CCalInstance> instanceList;
+        QDateTime endDateTime(periodEnd);
+        
+        //calculate the end date if count is present
+        if ((!periodEnd.isValid()) && (maxCount > 0)) {
+              TCalTime endTime; 
+              endTime.SetTimeUtcL(TCalTime::MaxTime());
+              endDateTime = OrganizerItemDetailTransform::toQDateTimeL(endTime);  
+        }
+        TRAPD(err, m_instanceView->FindInstanceL(instanceList,CalCommon::EIncludeAll,
+                                   CalCommon::TCalTimeRange(OrganizerItemDetailTransform::toTCalTimeL(periodStart),
+                                   OrganizerItemDetailTransform::toTCalTimeL(endDateTime))
+                                   ));
+            
+        transformError(err, error);
+        if (*error == QOrganizerItemManager::NoError) {  
+            int count(instanceList.Count()); 
+            if (count) {
+                // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
+                for( int index=0; index < count;index++ ){
+                     QOrganizerItem *item;
+                     if (QOrganizerItemType::TypeEvent == generator.type()){
+                         item = new QOrganizerEventOccurrence();
+                     }    
+                     TRAPD(err, m_itemTransform.toItemL(*(instanceList)[index], item));
+                     transformError(err, error);
+                     if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == item->guid())) {
+                         if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) 
+                             occurrenceList.append(*item);
+                     }    
+                }
+            }
+        }
+        instanceList.ResetAndDestroy();
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    } else {
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+    
+    return occurrenceList;
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemSymbianEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const

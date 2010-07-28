@@ -109,6 +109,7 @@ public:
 
 class CCalSession;
 class CCalEntryView;
+class CCalInstanceView;
 class CActiveSchedulerWait;
 class TCalTime;
 class COrganizerItemRequestsServiceProvider;
@@ -188,6 +189,7 @@ private:
     QOrganizerItemSymbianEngineData *d;
     CCalSession *m_calSession;
     CCalEntryView *m_entryView;
+    CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
     COrganizerItemRequestsServiceProvider *m_requestServiceProvider;
 
