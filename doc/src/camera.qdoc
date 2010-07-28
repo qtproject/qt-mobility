@@ -80,26 +80,25 @@ the next photo.
             viewFinder->show();
 
             camera->setViewfinder(viewFinder);
-            
-            imageCapture = new QStillImageCapture(camera);
 
+            imageCapture = new QCameraImageCapture(camera);
+
+            camera->setCaptureMode(QCamera::CaptureStillImage);
             camera->start();
 
             //on half pressed shutter button
-            camera->lock();
+            camera->searchAndLock();
 
             ...
 
             //on shutter button pressed
-            imageCapture->capture("imagefile.jpg");
+            imageCapture->capture();
 
             //on shutter button released
             camera->unlock();
     \endcode
 
-Alternatively, we could have used a QVideoWidget initialized with the camera
-object to create a view finder.
-
+Alternatively, we could have used a QGraphicsVideoItem as a viewfinder.
 
 
 \section1 Video Clips
@@ -109,13 +108,17 @@ video requires the use of a \l QMediaRecorder object and a \l
 QAudioCaptureSource for sound.
 
 To record video we need to create a camera object as before but this time as
-well as creating a viewfinder, we will also initialize a media recorder object
-and an audio source object for sound configuration details.
+well as creating a viewfinder, we will also initialize a media recorder object.
 
     \code
+    camera = new QCamera;
     mediaRecorder = new QMediaRecorder(camera);
-    ...
-    audioSource = new QAudioCaptureSource(camera);
+
+    camera->setCaptureMode(QCamera::CaptureVideo);
+    camera->start();
+
+    //on shutter button pressed
+    mediaRecorder->record();
     \endcode
 
 Signals from the \i mediaRecorder can be connected to slots to react to
