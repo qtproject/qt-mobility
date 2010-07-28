@@ -220,7 +220,6 @@ private:
             if (!(cats.at(i).categoryId() == catIds.at(i)))
                 return false;
          }
-
         return true;
     }
 
@@ -345,6 +344,43 @@ private slots:
         // get present
     }
 
+    void categoryFetchCancelAsync() {
+        QLandmarkCategory cat;
+        for(int i=0; i < 350; ++i) {
+            cat.clear();
+            cat.setName(QString("CAT") + QString::number(i));
+            QVERIFY(m_manager->saveCategory(&cat));
+        }
+
+        QLandmarkCategoryFetchRequest catFetchRequest(m_manager);
+        QSignalSpy spy(&catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catFetchRequest.start();
+        QTest::qWait(50);
+        catFetchRequest.cancel();
+        QVERIFY(waitForAsync(spy, &catFetchRequest, QLandmarkManager::CancelError));
+        QCOMPARE(catFetchRequest.categories().count(), 0);
+
+        /*
+        Testing cancel for category id fetch is difficult because on
+        desktop, the operation is too quick to cancel.  We could
+        try populating the database with enough categories but
+        that would take a very long time.
+
+        for(int i=0; i < 3550; ++i) {
+            cat.clear();
+            cat.setName(QString("CAT") + QString::number(i));
+            QVERIFY(m_manager->saveCategory(&cat));
+        }
+
+        QLandmarkCategoryIdFetchRequest catIdFetchRequest(m_manager);
+        QSignalSpy spy2(&catIdFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        catIdFetchRequest.start();
+        QTest::qWait(10);
+        catIdFetchRequest.cancel();
+        QVERIFY(waitForAsync(spy2, &catIdFetchRequest, QLandmarkManager::CancelError));
+        */
+    }
+
     void retrieveLandmark() {
         QLandmarkId id1;
         id1.setManagerUri(m_manager->managerUri());
@@ -449,6 +485,72 @@ private slots:
         QCOMPARE(spy.count(),2);
         QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
         QCOMPARE(fetchRequest.landmarks().count(), 0);
+    }
+
+    void asyncLandmarkFetchCancel()
+    {
+        //test that we can cancel a fetch for landmarks
+        QLandmark lm;
+        for(int i =0; i < 75; ++i) {
+            lm.clear();
+            lm.setName(QString("LM") + QString::number(i));
+            lm.setCoordinate(QGeoCoordinate(5.0, 5.0));
+            QVERIFY(m_manager->saveLandmark(&lm));
+        }
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+
+        //we use a lot of intersection and union filters to try slow down the fetching
+        //enough so that we can cancel the fetching operation.
+        QLandmarkProximityFilter proximityFilter(QGeoCoordinate(5.0,5.0), 1000);
+        proximityFilter.setSelection(QLandmarkProximityFilter::SelectAll);
+
+        QLandmarkIntersectionFilter intersectionFilter;
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+        intersectionFilter.append(proximityFilter);
+
+        QLandmarkUnionFilter unionFilter;
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+        unionFilter.append(intersectionFilter);
+
+        //test canceling of a landmark fetch
+        fetchRequest.setFilter(unionFilter);
+        fetchRequest.start();
+        QTest::qWait(50);
+        fetchRequest.cancel();
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::CancelError));
+        QCOMPARE(fetchRequest.landmarks().count(), 0);
+
+        //test canceling of a landmark id fetch
+        QLandmarkIdFetchRequest idFetchRequest(m_manager);
+        idFetchRequest.setFilter(unionFilter);
+        QSignalSpy spy2(&idFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        idFetchRequest.start();
+        QTest::qWait(50);
+        idFetchRequest.cancel();
+        QVERIFY(waitForAsync(spy2, &idFetchRequest, QLandmarkManager::CancelError));
+        QCOMPARE(idFetchRequest.landmarkIds().count(), 0);
     }
 
     void addCategory() {

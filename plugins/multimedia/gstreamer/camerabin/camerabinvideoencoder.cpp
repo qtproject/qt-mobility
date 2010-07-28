@@ -50,11 +50,24 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
 {
     QList<QByteArray> codecCandidates;
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    codecCandidates << "video/mpeg4";
+    codecCandidates << "video/h264" << "video/mpeg4" << "video/h263" << "video/theora"
+                    << "video/mpeg2" << "video/mpeg1" << "video/mjpeg" << "video/VP8" << "video/h261";
+
+    m_elementNames["video/h264"] = "dsph264enc";
     m_elementNames["video/mpeg4"] = "dspmp4venc";
+    m_elementNames["video/h263"] = "dsph263enc";
+    m_elementNames["video/theora"] = "theoraenc";
+    m_elementNames["video/mpeg2"] = "ffenc_mpeg2video";
+    m_elementNames["video/mpeg1"] = "ffenc_mpeg1video";
+    m_elementNames["video/mjpeg"] = "ffenc_mjpeg";
+    m_elementNames["video/VP8"] = "vp8enc";
+    m_elementNames["video/h261"] = "ffenc_h261";
+
     m_codecOptions["video/mpeg4"] = QStringList() << "mode" << "keyframe-interval";
 #else
-    codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4" << "video/mpeg1" << "video/mpeg2" << "video/theora";
+    codecCandidates << "video/h264" << "video/xvid" << "video/mpeg4"
+                    << "video/mpeg1" << "video/mpeg2" << "video/theora"
+                    << "video/VP8" << "video/h261" << "video/mjpeg";
 
     m_elementNames["video/h264"] = "x264enc";
     m_elementNames["video/xvid"] = "xvidenc";
@@ -62,6 +75,9 @@ CameraBinVideoEncoder::CameraBinVideoEncoder(CameraBinSession *session)
     m_elementNames["video/mpeg1"] = "ffenc_mpeg1video";
     m_elementNames["video/mpeg2"] = "ffenc_mpeg2video";
     m_elementNames["video/theora"] = "theoraenc";
+    m_elementNames["video/mjpeg"] = "ffenc_mjpeg";
+    m_elementNames["video/VP8"] = "vp8enc";
+    m_elementNames["video/h261"] = "ffenc_h261";
 
     m_codecOptions["video/h264"] = QStringList() << "quantizer";
     m_codecOptions["video/xvid"] = QStringList() << "quantizer" << "profile";
