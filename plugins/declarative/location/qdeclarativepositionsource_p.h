@@ -49,6 +49,8 @@
 #include <QtDeclarative/qdeclarative.h>
 #include "qdeclarativeposition_p.h"
 
+class QFile;
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativePositionSource : public QObject
@@ -92,7 +94,7 @@ Q_SIGNALS:
     void activeChanged(bool active);
     void nmeaSourceChanged(QUrl nmeaSource);
     void updateIntervalChanged(int updateInterval);
-    void positioningMethodChanged(PositioningMethod positioningMethod);
+    void positioningMethodChanged(QDeclarativePositionSource::PositioningMethod positioningMethod);
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);
@@ -101,6 +103,7 @@ private:
     QGeoPositionInfoSource* m_positionSource;
     PositioningMethod m_positioningMethod;
     QDeclarativePosition m_position;
+    QFile* m_nmeaFile;
     QUrl m_nmeaSource;
     bool m_active;
     bool m_singleUpdate;

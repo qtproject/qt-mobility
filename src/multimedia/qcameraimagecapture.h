@@ -106,7 +106,7 @@ public Q_SLOTS:
     void cancelCapture();
 
 Q_SIGNALS:
-    void error(QCameraImageCapture::Error error);
+    void error(int id, QCameraImageCapture::Error error, const QString &errorString);
 
     void readyForCaptureChanged(bool);
 
@@ -121,7 +121,7 @@ protected:
 private:
     Q_DISABLE_COPY(QCameraImageCapture)
     Q_DECLARE_PRIVATE(QCameraImageCapture)
-    Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_error(int, int, const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_readyChanged(bool))
 };
 

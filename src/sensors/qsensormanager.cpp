@@ -96,6 +96,7 @@ static void loadPlugins()
 /*!
     \class QSensorManager
     \ingroup sensors_backend
+    \inmodule QtSensors
 
     \brief The QSensorManager class handles registration and creation of sensor backends.
 
@@ -255,6 +256,7 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 /*!
     \class QSensorBackendFactory
     \ingroup sensors_backend
+    \inmodule QtSensors
 
     \brief The QSensorBackendFactory class instantiates instances of
            QSensorBackend.

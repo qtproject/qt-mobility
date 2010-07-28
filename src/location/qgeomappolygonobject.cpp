@@ -73,25 +73,9 @@ QBrush QGeoMapPolygonObject::brush() const
 *******************************************************************************/
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapPolylineObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::PolygonType;
-}
-
-QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(const QGeoMapPolygonObjectPrivate &other)
-    : QGeoMapPolylineObjectPrivate(other),
-    brush(other.brush) {}
+    : QGeoMapPolylineObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
-
-QGeoMapPolygonObjectPrivate& QGeoMapPolygonObjectPrivate::operator= (const QGeoMapPolygonObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    brush = other.brush;
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

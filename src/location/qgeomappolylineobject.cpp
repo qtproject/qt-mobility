@@ -61,6 +61,7 @@ QGeoMapPolylineObject::~QGeoMapPolylineObject()
 }
 
 /*!
+  TODO - deal with paths that cross the dateline
 */
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
@@ -90,7 +91,7 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
             maxLong = coord.longitude();
     }
 
-    d->boundingBox = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
+    d->bounds = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
 }
 
 /*!
@@ -116,26 +117,10 @@ QPen QGeoMapPolylineObject::pen() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::PolylineType;
-}
-
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other)
-    : QGeoMapObjectPrivate(other),
-    path(other.path) {}
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
+    : QGeoMapObjectPrivate(impl, parent, type) {}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
-
-QGeoMapPolylineObjectPrivate& QGeoMapPolylineObjectPrivate::operator= (const QGeoMapPolylineObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    path = other.path;
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

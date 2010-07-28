@@ -1376,7 +1376,7 @@ EXPORTS
 	_ZN19QCameraImageCapture19getStaticMetaObjectEv @ 1375 NONAME
 	_ZN19QCameraImageCapture19setEncodingSettingsERK21QImageEncoderSettings @ 1376 NONAME
 	_ZN19QCameraImageCapture22readyForCaptureChangedEb @ 1377 NONAME
-	_ZN19QCameraImageCapture5errorENS_5ErrorE @ 1378 NONAME
+	_ZN19QCameraImageCapture5errorEiNS_5ErrorERK7QString @ 1378 NONAME
 	_ZN19QCameraImageCapture7captureERK7QString @ 1379 NONAME
 	_ZN19QCameraImageCaptureC1EP12QMediaObjectP7QObject @ 1380 NONAME
 	_ZN19QCameraImageCaptureC2EP12QMediaObjectP7QObject @ 1381 NONAME
@@ -1426,7 +1426,7 @@ EXPORTS
 	_ZN26QCameraImageCaptureControl16staticMetaObjectE @ 1425 NONAME DATA 16
 	_ZN26QCameraImageCaptureControl19getStaticMetaObjectEv @ 1426 NONAME
 	_ZN26QCameraImageCaptureControl22readyForCaptureChangedEb @ 1427 NONAME
-	_ZN26QCameraImageCaptureControl5errorEiRK7QString @ 1428 NONAME
+	_ZN26QCameraImageCaptureControl5errorEiiRK7QString @ 1428 NONAME
 	_ZN26QCameraImageCaptureControlC2EP7QObject @ 1429 NONAME
 	_ZN26QCameraImageCaptureControlD0Ev @ 1430 NONAME
 	_ZN26QCameraImageCaptureControlD1Ev @ 1431 NONAME
@@ -1581,4 +1581,9 @@ EXPORTS
 	_ZThn8_N19QCameraImageCaptureD0Ev @ 1580 NONAME
 	_ZThn8_N19QCameraImageCaptureD1Ev @ 1581 NONAME
 	_ZThn8_NK19QCameraImageCapture11mediaObjectEv @ 1582 NONAME
+	_ZN17QMediaImageViewer14setVideoOutputEP12QVideoWidget @ 1583 NONAME
+	_ZN17QMediaImageViewer14setVideoOutputEP18QGraphicsVideoItem @ 1584 NONAME
+	_ZN21QAbstractVideoSurface19setNativeResolutionERK5QSize @ 1585 NONAME
+	_ZN21QAbstractVideoSurface23nativeResolutionChangedERK5QSize @ 1586 NONAME
+	_ZNK21QAbstractVideoSurface16nativeResolutionEv @ 1587 NONAME
 

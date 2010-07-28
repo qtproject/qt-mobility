@@ -53,6 +53,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QFeedbackEffect
     \brief The QFeedbackEffect class is the abstract base class for the feedback framework.
+    \ingroup feedback
     \inmodule QtFeedback
 
     It has the concepts of duration and state. 
@@ -222,6 +223,8 @@ bool QFeedbackEffect::supportsThemeEffect()
 
 /*!
     \class QFeedbackHapticsEffect
+    \ingroup feedback
+    \inmodule QtFeedback
     \brief The QFeedbackHapticsEffect class allows to play a haptics feedback on an actuator.
 
     It is possible to set the duration, intensity, envelope and period of the effect.
@@ -424,6 +427,8 @@ QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 
 /*!
     \class QFeedbackFileEffect
+    \ingroup feedback
+    \inmodule QtFeedback
     \brief The QFeedbackFileEffect class allows to play a haptics feedback from a file.
 
     You can load and unload the file at will to free resources or be as fast as possible.

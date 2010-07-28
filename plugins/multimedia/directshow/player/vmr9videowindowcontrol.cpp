@@ -58,7 +58,6 @@ Vmr9VideoWindowControl::Vmr9VideoWindowControl(QObject *parent)
     if (IVMRFilterConfig9 *config = com_cast<IVMRFilterConfig9>(m_filter, IID_IVMRFilterConfig9)) {
         config->SetRenderingMode(VMR9Mode_Windowless);
         config->SetNumberOfStreams(1);
-        config->SetRenderingPrefs(RenderPrefs9_DoNotRenderBorder);
         config->Release();
     }
 }
@@ -80,9 +79,16 @@ void Vmr9VideoWindowControl::setWinId(WId id)
 {
     m_windowId = id;
 
+    if (QWidget *widget = QWidget::find(m_windowId)) {
+        const QColor color = widget->palette().color(QPalette::Window);
+
+        m_windowColor = RGB(color.red(), color.green(), color.blue());
+    }
+
     if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
             m_filter, IID_IVMRWindowlessControl9)) {
         control->SetVideoClippingWindow(m_windowId);
+        control->SetBorderColor(m_windowColor);
         control->Release();
     }
 }
@@ -99,7 +105,7 @@ void Vmr9VideoWindowControl::setDisplayRect(const QRect &rect)
     if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
             m_filter, IID_IVMRWindowlessControl9)) {
         RECT sourceRect = { 0, 0, 0, 0 };
-        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+        RECT displayRect = { rect.left(), rect.top(), rect.right() + 1, rect.bottom() + 1 };
 
         control->GetNativeVideoSize(&sourceRect.right, &sourceRect.bottom, 0, 0);
 
@@ -130,14 +136,34 @@ void Vmr9VideoWindowControl::setFullScreen(bool fullScreen)
 
 void Vmr9VideoWindowControl::repaint()
 {
-    if (QWidget *widget = QWidget::find(m_windowId)) {
-        HDC dc = widget->getDC();
+    PAINTSTRUCT paint;
+
+    if (HDC dc = ::BeginPaint(m_windowId, &paint)) {
+        HRESULT hr = E_FAIL;
+
         if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
                 m_filter, IID_IVMRWindowlessControl9)) {
-            control->RepaintVideo(m_windowId, dc);
+            hr = control->RepaintVideo(m_windowId, dc);
             control->Release();
         }
-        widget->releaseDC(dc);
+
+        if (!SUCCEEDED(hr)) {
+            HPEN pen = ::CreatePen(PS_SOLID, 1, m_windowColor);
+            HBRUSH brush = ::CreateSolidBrush(m_windowColor);
+            ::SelectObject(dc, pen);
+            ::SelectObject(dc, brush);
+
+            ::Rectangle(
+                    dc,
+                    m_displayRect.left(),
+                    m_displayRect.top(),
+                    m_displayRect.right() + 1,
+                    m_displayRect.bottom() + 1);
+
+            ::DeleteObject(pen);
+            ::DeleteObject(brush);
+        }
+        ::EndPaint(m_windowId, &paint);
     }
 }
 

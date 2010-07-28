@@ -619,6 +619,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
     }
 
     if (queryRun && queryRun->isCanceled) {
+        *error = QLandmarkManager::CancelError;
+        *errorString = "Fetch operation canceled";
         return QList<QLandmarkId>();
     }
 
@@ -749,6 +751,13 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 }
 
                 for (int i = 1; i < filters.size(); ++i) {
+                    if (queryRun && queryRun->isCanceled) {
+                        *error = QLandmarkManager::CancelError;
+                        *errorString = "Fetch operation canceled";
+                        result.clear();
+                        return result;
+                    }
+
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
                                                 QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
                                                 managerUri, queryRun);
@@ -793,6 +802,12 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 }
             } else {
                 for (int i = 0; i < filters.size(); ++i) {
+                    if (queryRun && queryRun->isCanceled) {
+                        *error = QLandmarkManager::CancelError;
+                        *errorString = "Fetch operation canceled";
+                        result.clear();
+                        return result;
+                    }
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
                                                                QList<QLandmarkSortOrder>(),
                                                                fetchHint,
@@ -860,7 +875,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         QLandmarkId id;
         while (query.next()) {
             if (queryRun && queryRun->isCanceled) {
-                db.rollback();
+                *error = QLandmarkManager::CancelError;
+                *errorString = "Fetch operation canceled";
                 return QList<QLandmarkId>();
             }
 
@@ -885,6 +901,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
                 do {
                     if (queryRun && queryRun->isCanceled) {
+                        *error = QLandmarkManager::CancelError;
+                        *errorString = "Fetch operation failed";
                         return QList<QLandmarkId>();
                     }
 
@@ -900,7 +918,6 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 QLandmarkProximityFilter proximityFilter;
                 proximityFilter = filter;
 
-
                 qreal radius = proximityFilter.radius();
                 QGeoCoordinate center = proximityFilter.coordinate();
                 if (radius > -1) {
@@ -908,6 +925,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
                     do {
                         if (queryRun && queryRun->isCanceled) {
+                            *error = QLandmarkManager::CancelError;
+                            *errorString = "Fetch operation failed";
                             return QList<QLandmarkId>();
                         }
 
@@ -932,6 +951,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
                         do {
                             if (queryRun && queryRun->isCanceled) {
+                                *error = QLandmarkManager::CancelError;
+                                *errorString = "Fetch operation failed";
                                 return QList<QLandmarkId>();
                             }
                             lat = query.value(1).toDouble(&ok);
@@ -973,6 +994,11 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         QList<QLandmark> landmarks;
         QLandmark landmark;
         for (int i=0; i < result.count(); ++i) {
+            if (queryRun && queryRun->isCanceled) {
+                *error = QLandmarkManager::CancelError;
+                *errorString = "Fetch operation failed";
+                return QList<QLandmarkId>();
+            }
             landmark = ::retrieveLandmark(connectionName,result.at(i),error,errorString, managerUri, queryRun);
             if (*error != QLandmarkManager::NoError) {
                 result.clear();
@@ -1007,7 +1033,7 @@ QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter&
         return result;
     }
 
-    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, fetchHint, error, errorString, managerUri);
+    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, fetchHint, error, errorString, managerUri, queryRun);
     if (error && *error != QLandmarkManager::NoError) {
         return result;
     }
@@ -1025,7 +1051,8 @@ QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter&
     QLandmark lm;
     foreach(const QLandmarkId &id, ids) {
          if (queryRun && queryRun->isCanceled) {
-            db.rollback();
+            *error = QLandmarkManager::CancelError;
+            *errorString  = "Fetch operation failed";
             return QList<QLandmark>();
         }
 
@@ -1047,6 +1074,7 @@ QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter&
             }
          }
      }
+
      *error = QLandmarkManager::NoError;
      *errorString = "";
     return result;
@@ -1368,8 +1396,10 @@ bool saveLandmark(const QString &connectionName, QLandmark* landmark,
 bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
-        QString *errorString, const QString &managerUri)
+        QString *errorString, const QString &managerUri, QueryRun *queryRun =0)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
     QList<QLandmarkId> addedIds;
     QList<QLandmarkId> changedIds;
     bool noErrors = true;
@@ -1382,6 +1412,17 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
         loopErrorString = "";
         bool added = false;
         bool changed = false;
+
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Landmark save was canceled";
+            if (errorMap) {
+                for (i; i < landmark->size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
         bool result = saveLandmark(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, &added, &changed, managerUri);
         if (errorMap)
@@ -1486,7 +1527,8 @@ bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId
 bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
                     QMap<int, QLandmarkManager::Error> *errorMap,
                     QLandmarkManager::Error *error,
-                    QString *errorString, const QString &managerUri)
+                    QString *errorString, const QString &managerUri,
+                    QueryRun *queryRun = 0)
 {
     QList<QLandmarkId> removedIds;
 
@@ -1498,6 +1540,17 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
     for (int i = 0; i < landmarkIds.size(); ++i) {
         loopError = QLandmarkManager::NoError;
         loopErrorString.clear();
+
+        if (queryRun && queryRun->isCanceled) {
+            lastError = QLandmarkManager::CancelError;
+            lastErrorString = "Landmark remove was canceled";
+            if (errorMap) {
+                for (i; i < landmarkIds.size(); ++i)
+                    errorMap->insert(i, lastError);
+            }
+            noErrors = false;
+            break;
+        }
 
         bool result = removeLandmark(connectionName, landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
 
@@ -1536,7 +1589,8 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
 QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
                                        const QLandmarkNameSort &nameSort,
                                        QLandmarkManager::Error *error, QString *errorString,
-                                       const QString &managerUri)
+                                       const QString &managerUri,
+                                       QueryRun *queryRun = 0)
 {
     QList<QLandmarkCategoryId> result;
 
@@ -1562,6 +1616,13 @@ QList<QLandmarkCategoryId> categoryIds(const QString &connectionName,
     }
 
     while (query.next()) {
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Fetch operation was canceled";
+            result.clear();
+            return result;
+        }
+
         QLandmarkCategoryId id;
         id.setManagerUri(managerUri);
         id.setLocalId(QString::number(query.value(0).toInt()));
@@ -1656,7 +1717,8 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
                 const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                 const QLandmarkNameSort &nameSort,
                 QLandmarkManager::Error *error, QString *errorString,
-                const QString &managerUri, bool needAll)
+                const QString &managerUri, bool needAll,
+                QueryRun *queryRun = 0)
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -1667,8 +1729,7 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
     QList<QLandmarkCategory> result;
     QList<QLandmarkCategoryId> ids = landmarkCategoryIds;
     if (ids.size() == 0) {
-
-        ids = ::categoryIds(connectionName, nameSort, error, errorString, managerUri);
+        ids = ::categoryIds(connectionName, nameSort, error, errorString, managerUri, queryRun);
         if (*error != QLandmarkManager::NoError) {
             return result;
         }
@@ -1677,6 +1738,13 @@ QList<QLandmarkCategory> categories(const QString &connectionName,
     for (int i = 0; i < ids.size(); ++i) {
         *error = QLandmarkManager::NoError;
         (*errorString).clear();
+
+        if (queryRun && queryRun->isCanceled) {
+            *error = QLandmarkManager::CancelError;
+            *errorString = "Fetch operation was canceled";
+            result.clear();
+            return result;
+        }
 
         QLandmarkCategory cat = ::category(connectionName,ids.at(i), error,errorString, managerUri);
         if (*error == QLandmarkManager::NoError)
@@ -2245,13 +2313,7 @@ void QueryRun::run()
         case QLandmarkAbstractRequest::LandmarkIdFetchRequest: {
                 QLandmarkIdFetchRequest *idFetchRequest = static_cast<QLandmarkIdFetchRequest *>(request);
                 QList<QLandmarkId> lmIds = ::landmarkIds(connectionName, idFetchRequest->filter(), idFetchRequest->sorting(), idFetchRequest->fetchHint(),
-                                                   &error, &errorString, managerUri);
-
-                if (this->isCanceled) {
-                    lmIds.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark Id fetch request canceled";
-                }
+                                                   &error, &errorString, managerUri, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkIdFetchRequest",
                                           Q_ARG(QLandmarkIdFetchRequest *, idFetchRequest),
@@ -2265,13 +2327,8 @@ void QueryRun::run()
         case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                 QLandmarkFetchRequest *fetchRequest = static_cast<QLandmarkFetchRequest *>(request);
                 QList<QLandmark> lms = ::landmarks(connectionName, fetchRequest->filter(), fetchRequest->sorting(), fetchRequest->fetchHint(),
-                                                &error, &errorString, managerUri);
+                                                &error, &errorString, managerUri, this);
 
-                if (this->isCanceled) {
-                    lms.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Landmark fetch request canceled";
-                }
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkFetchRequest",
                                           Q_ARG(QLandmarkFetchRequest *,fetchRequest),
@@ -2285,13 +2342,7 @@ void QueryRun::run()
         {
             QLandmarkSaveRequest *saveRequest = static_cast<QLandmarkSaveRequest *> (request);
             QList<QLandmark> lms = saveRequest->landmarks();
-            saveLandmarks(connectionName, &lms, &errorMap, &error, &errorString, managerUri);
-
-            if (this->isCanceled) {
-                lms.clear();
-                error = QLandmarkManager::CancelError;
-                errorString = "Landmark save request canceled";
-            }
+            saveLandmarks(connectionName, &lms, &errorMap, &error, &errorString, managerUri, this);
 
             QMetaObject::invokeMethod(engine, "updateLandmarkSaveRequest",
                                       Q_ARG(QLandmarkSaveRequest *,saveRequest),
@@ -2307,11 +2358,7 @@ void QueryRun::run()
         {
             QLandmarkRemoveRequest *removeRequest = static_cast<QLandmarkRemoveRequest *> (request);
             QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
-            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri);
-            if (this->isCanceled) {
-                error = QLandmarkManager::CancelError;
-                errorString = "Landmark remove request was canceled";
-            }
+            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri, this);
 
             QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
                                       Q_ARG(QLandmarkRemoveRequest *,removeRequest),
@@ -2325,13 +2372,7 @@ void QueryRun::run()
             {
                 QLandmarkCategoryIdFetchRequest *catIdFetchRequest = static_cast<QLandmarkCategoryIdFetchRequest *> (request);
                 QLandmarkNameSort nameSort = catIdFetchRequest->sorting();
-                QList<QLandmarkCategoryId> catIds = ::categoryIds(connectionName, nameSort, &error, &errorString, managerUri);
-
-                if (this->isCanceled) {
-                    catIds.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Category id fetch request was canceled";
-                }
+                QList<QLandmarkCategoryId> catIds = ::categoryIds(connectionName, nameSort, &error, &errorString, managerUri,this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryIdFetchRequest",
                                           Q_ARG(QLandmarkCategoryIdFetchRequest *,catIdFetchRequest),
@@ -2350,13 +2391,7 @@ void QueryRun::run()
                 if (categoryIds.count() > 0 && fetchRequest->matchingScheme() == QLandmarkCategoryFetchRequest::MatchAll)
                     needAll = true;
                 QLandmarkNameSort nameSort = fetchRequest->sorting();
-                QList <QLandmarkCategory> cats = ::categories(connectionName, categoryIds, nameSort, &error, &errorString, managerUri, needAll);
-
-                if (this->isCanceled) {
-                    cats.clear();
-                    error = QLandmarkManager::CancelError;
-                    errorString = "Category fetch request canceled";
-                }
+                QList <QLandmarkCategory> cats = ::categories(connectionName, categoryIds, nameSort, &error, &errorString, managerUri, needAll, this);
 
                 QMetaObject::invokeMethod(engine, "updateLandmarkCategoryFetchRequest",
                                           Q_ARG(QLandmarkCategoryFetchRequest *,fetchRequest),
@@ -3206,15 +3241,28 @@ bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
     return ::exportLandmarks(m_dbConnectionName, device, format, landmarkIds, error, errorString, managerUri());
 }
 
-QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const
+QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return QLandmarkManager::Native;
 }
 
-bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     switch(feature) {
-        case (QLandmarkManager::GenericAttributes):
+        case (QLandmarkManager::GenericLandmarkAttributes):
+        case (QLandmarkManager::GenericCategoryAttributes):
+        case (QLandmarkManager::PlatformLandmarkAttributes):
+        case (QLandmarkManager::PlatformCategoryAttributes):
             return false;
             break;
         default:
@@ -3222,18 +3270,50 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     }
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly() const
+QStringList QLandmarkManagerEngineSqlite::platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
+}
+
+bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
     return false;
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId) const
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return false;
 }
 
-bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId) const
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
     return false;
 }
 
@@ -3265,6 +3345,7 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
 bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* request)
 {
     m_requestRunHash.value(request)->isCanceled = true;
+
     if (request->type() == QLandmarkAbstractRequest::ImportRequest) {
         if (m_requestRunHash.value(request)->gpxHandler) {
             m_requestRunHash.value(request)->gpxHandler->cancel();
