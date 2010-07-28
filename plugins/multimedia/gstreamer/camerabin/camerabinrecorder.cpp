@@ -190,6 +190,7 @@ bool CameraBinRecorder::findCodecs()
     }
 
     if (container.isEmpty()) {
+        qWarning() << "Camera error: Not compatible codecs and container format.";
         emit error(QMediaRecorder::FormatError, tr("Not compatible codecs and container format."));
         return false;
     } else {
