@@ -514,11 +514,13 @@ void tst_QLandmarkManagerEngineSqlite::retrieveCategoryAsync() {
 void tst_QLandmarkManagerEngineSqlite::categoryFetchCancelAsync() {
     disconnectNotifications();
     QLandmarkCategory cat;
-    for(int i=0; i < 1550; ++i) {
+    for(int i=0; i < 550; ++i) {
         cat.clear();
         cat.setName(QString("CAT") + QString::number(i));
         QVERIFY(m_manager->saveCategory(&cat));
     }
+
+    connectNotifications();
 
     QLandmarkCategoryFetchRequest catFetchRequest(m_manager);
     QSignalSpy spy(&catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -1130,11 +1132,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
         lm.setName(QString("LM") + QString::number(i));
         landmarks.append(lm);
     }
-
-    //we disable notifications because we will be flooded with notifications
-    //during the save and this will interefere with detecting when the operation
-    //is finshidd TODO: handle multiple saves so that we don't get flooded with notifications
-    this->disconnectNotifications();
 
     saveRequest.setLandmarks(landmarks);
     saveRequest.start();
