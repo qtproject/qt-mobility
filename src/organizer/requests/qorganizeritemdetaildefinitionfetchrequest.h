@@ -45,6 +45,7 @@
 #include "qtorganizerglobal.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemdetaildefinition.h"
+#include "qorganizercollectionid.h"
 
 #include <QList>
 #include <QStringList>
@@ -65,6 +66,8 @@ public:
     QStringList definitionNames() const;
     void setItemType(const QString& organizeritemType);
     QString itemType() const;
+    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
+    QOrganizerCollectionLocalId collectionId() const;
 
     /* Results */
     QMap<QString, QOrganizerItemDetailDefinition> definitions() const;

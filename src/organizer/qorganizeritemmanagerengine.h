@@ -51,6 +51,8 @@
 #include <QVariant>
 #include <QObject>
 
+#include "qorganizercollection.h"
+#include "qorganizercollectionid.h"
 #include "qorganizeritem.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemmanager.h"
@@ -94,30 +96,31 @@ public:
     virtual QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     virtual QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    virtual bool saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
+    virtual bool saveItem(QOrganizerItem* item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
     virtual bool removeItem(const QOrganizerItemLocalId& itemId, QOrganizerItemManager::Error* error);
 
-    virtual bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    virtual bool saveItems(QList<QOrganizerItem>* items, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /* Collections - every item belongs to one or more collections */
-    virtual QOrganizerItemCollection defaultCollection(QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerItemCollection> collections(QOrganizerItemManager::Error* error) const;
-    virtual bool saveCollection(QOrganizerItemCollection* collection, QOrganizerItemManager::Error* error);
-    virtual bool removeCollection(const QOrganizerItemCollection& collection, QOrganizerItemManager::Error* error);
+    virtual QOrganizerCollection defaultCollection(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerCollection> collections(const QString& datastore, QOrganizerItemManager::Error* error) const;
+    virtual bool saveCollection(QOrganizerCollection* collection, const QString& datastore, QOrganizerItemManager::Error* error);
+    virtual bool removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    virtual QStringList availableDatastores(QOrganizerItemManager::Error* error) const;
 
     /* Return a pruned or modified item which is valid and can be saved in the backend */
-    virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
 
     /* Validation for saving */
-    virtual bool validateItem(const QOrganizerItem& item, QOrganizerItemManager::Error* error) const;
-    virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const;
+    virtual bool validateItem(const QOrganizerItem& item, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
-    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
-    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
-    virtual bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
+    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
+    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& itemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QOrganizerItemAbstractRequest* req);
@@ -126,10 +129,10 @@ public:
     virtual bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
-    virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<QVariant::Type> supportedDataTypes() const;
-    virtual QStringList supportedItemTypes() const;
+    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType, const QOrganizerCollectionLocalId& collectionId) const;
+    virtual bool isFilterSupported(const QOrganizerItemFilter& filter, const QOrganizerCollectionLocalId& collectionId) const;
+    virtual QList<QVariant::Type> supportedDataTypes(const QOrganizerCollectionLocalId& collectionId) const;
+    virtual QStringList supportedItemTypes(const QOrganizerCollectionLocalId& collectionId) const;
 
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions();

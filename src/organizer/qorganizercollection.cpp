@@ -40,26 +40,26 @@
 ****************************************************************************/
 
 
-#include "qorganizeritemcollection.h"
-#include "qorganizeritemcollection_p.h"
+#include "qorganizercollection.h"
+#include "qorganizercollection_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QOrganizerItemCollection::QOrganizerItemCollection()
-    : d(new QOrganizerItemCollectionData)
+QOrganizerCollection::QOrganizerCollection()
+    : d(new QOrganizerCollectionData)
 {
 }
 
-QOrganizerItemCollection::~QOrganizerItemCollection()
+QOrganizerCollection::~QOrganizerCollection()
 {
 }
 
-QOrganizerItemCollection::QOrganizerItemCollection(const QOrganizerItemCollection& other)
+QOrganizerCollection::QOrganizerCollection(const QOrganizerCollection& other)
     : d(other.d)
 {
 }
 
-QOrganizerItemCollection& QOrganizerItemCollection::operator=(const QOrganizerItemCollection& other)
+QOrganizerCollection& QOrganizerCollection::operator=(const QOrganizerCollection& other)
 {
     this->d = other.d;
     return *this;
@@ -69,42 +69,57 @@ QOrganizerItemCollection& QOrganizerItemCollection::operator=(const QOrganizerIt
   Returns true if the id of the collection is the same as that of the \a other collection.
   Does not check that the metadata of the collections is equal.
  */
-bool QOrganizerItemCollection::operator==(const QOrganizerItemCollection &other) const
+bool QOrganizerCollection::operator==(const QOrganizerCollection &other) const
 {
     return d->m_id == other.d->m_id;
 }
 
-QOrganizerItemId QOrganizerItemCollection::id() const
+QOrganizerCollectionId QOrganizerCollection::id() const
 {
     return d->m_id;
 }
 
-void QOrganizerItemCollection::setId(const QOrganizerItemId& id)
+void QOrganizerCollection::setId(const QOrganizerCollectionId& id)
 {
     d->m_id = id;
 }
 
-QList<QOrganizerItemId> QOrganizerItemCollection::itemIds() const
+/*!
+  Returns the name of the datastore in which the collection is stored.
+  Every collection is stored in exactly one datastore.  If the collection
+  has not yet been saved in a manager, the datastore will be empty.
+ */
+QString QOrganizerCollection::datastore() const
+{
+    return d->m_datastore;
+}
+
+QList<QOrganizerItemId> QOrganizerCollection::itemIds() const
 {
     return d->m_itemIds;
 }
 
-void QOrganizerItemCollection::setMetaData(const QVariantMap& metaData)
+bool QOrganizerCollection::contains(const QOrganizerItemId& itemId) const
+{
+    return d->m_itemIds.contains(itemId);
+}
+
+void QOrganizerCollection::setMetaData(const QVariantMap& metaData)
 {
     d->m_metaData = metaData;
 }
 
-QVariantMap QOrganizerItemCollection::metaData() const
+QVariantMap QOrganizerCollection::metaData() const
 {
     return d->m_metaData;
 }
 
-void QOrganizerItemCollection::setMetaData(const QString& key, const QVariant& value)
+void QOrganizerCollection::setMetaData(const QString& key, const QVariant& value)
 {
     d->m_metaData.insert(key, value);
 }
 
-QVariant QOrganizerItemCollection::metaData(const QString& key)
+QVariant QOrganizerCollection::metaData(const QString& key)
 {
     return d->m_metaData.value(key);
 }

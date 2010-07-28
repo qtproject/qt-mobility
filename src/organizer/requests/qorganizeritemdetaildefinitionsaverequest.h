@@ -64,6 +64,8 @@ public:
     void setDefinitions(const QList<QOrganizerItemDetailDefinition>& definitions);
     void setItemType(const QString& organizeritemType);
     QString itemType() const;
+    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
+    QOrganizerCollectionLocalId collectionId() const;
 
     /* Results */
     QList<QOrganizerItemDetailDefinition> definitions() const;

@@ -46,7 +46,7 @@
 // provided by the Qt Organizer API.
 
 #include "qorganizeritemattendee.h"
-#include "qorganizeritemcollections.h"
+#include "qorganizeritemcollection.h"
 #include "qorganizeritemdescription.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemeventtimerange.h"

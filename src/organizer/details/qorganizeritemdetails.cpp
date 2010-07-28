@@ -88,25 +88,24 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "Atten
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 
 
-/* ==================== QOrganizerItemCollections ======================= */
+/* ==================== QOrganizerItemCollection ======================= */
 /*!
-   \class QOrganizerItemCollections
-   \brief The QOrganizerItemCollections class contains the id of every collection to which the item belongs.
+   \class QOrganizerItemCollection
+   \brief The QOrganizerItemCollection class contains the id of the collection to which the item belongs.
  */
 
 /*!
-   \variable QOrganizerItemCollections::DefinitionName
-   The constant string which identifies the definition of details which contain the information about which collections an item belongs to.
+   \variable QOrganizerItemCollection::DefinitionName
+   The constant string which identifies the definition of details which contain the information about which collection an item belongs to.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollections::DefinitionName, "Collections");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollection::DefinitionName, "Collection");
 
 /*!
-   \variable QOrganizerItemCollections::FieldAttendeeDisplayLabel
+   \variable QOrganizerItemCollection::FieldCollectionId
 
-   The constant key for which the display label value of the attendee is stored in
-   details of the QOrganizerItemAttendee type.
+   The constant key for which the id of the collection to which the item belongs, is stored.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollections::FieldCollectionIds, "CollectionIds");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollection::FieldCollectionId, "CollectionId");
 
 
 

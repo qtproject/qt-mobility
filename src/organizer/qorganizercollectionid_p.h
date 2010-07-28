@@ -39,39 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMSAVEREQUEST_H
-#define QORGANIZERITEMSAVEREQUEST_H
+#ifndef QORGANIZERCOLLECTIONID_P_H
+#define QORGANIZERCOLLECTIONID_P_H
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemabstractrequest.h"
-#include "qorganizeritem.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QList>
+#include <QString>
+#include <QSharedData>
+
+#include "qorganizercollectionid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemSaveRequestPrivate;
-class Q_ORGANIZER_EXPORT QOrganizerItemSaveRequest : public QOrganizerItemAbstractRequest
+class QOrganizerCollectionIdPrivate : public QSharedData
 {
-    Q_OBJECT
-
 public:
-    QOrganizerItemSaveRequest(QObject* parent = 0);
+    QOrganizerCollectionIdPrivate()
+            : QSharedData(),
+            m_localId(0)
+    {
+    }
 
-    /* Selection */
-    void setItem(const QOrganizerItem& organizeritem);
-    void setItems(const QList<QOrganizerItem>& organizeritems);
-    void setCollectionId(const QOrganizerCollectionLocalId& collectionId);
-    QOrganizerCollectionLocalId collectionId() const;
+    QOrganizerCollectionIdPrivate(const QOrganizerCollectionIdPrivate& other)
+            : QSharedData(other),
+            m_managerUri(other.m_managerUri),
+            m_localId(other.m_localId)
+    {
+    }
 
-    /* Results */
-    QList<QOrganizerItem> items() const;
-    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+    ~QOrganizerCollectionIdPrivate()
+    {
+    }
 
-private:
-    Q_DISABLE_COPY(QOrganizerItemSaveRequest)
-    friend class QOrganizerItemManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemSaveRequest)
+    QString m_managerUri;
+    QOrganizerCollectionLocalId m_localId;
 };
 
 QTM_END_NAMESPACE

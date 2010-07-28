@@ -39,61 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMCOLLECTION_H
-#define QORGANIZERITEMCOLLECTION_H
+#ifndef QORGANIZERCOLLECTION_P_H
+#define QORGANIZERCOLLECTION_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include <QVariant>
-#include <QString>
+#include <QMap>
+#include <QSharedData>
 #include <QList>
-#include <QSharedDataPointer>
+#include <QString>
 
+#include "qorganizercollectionid.h"
 #include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemCollectionData;
-class Q_ORGANIZER_EXPORT QOrganizerItemCollection
+class QOrganizerCollectionData : public QSharedData
 {
 public:
-    QOrganizerItemCollection();
+    QOrganizerCollectionData()
+            : QSharedData()
+    {
+    }
 
-    ~QOrganizerItemCollection();
+    QOrganizerCollectionData(const QOrganizerCollectionData& other)
+            : QSharedData(other),
+            m_metaData(other.m_metaData),
+            m_id(other.m_id),
+            m_datastore(other.m_datastore),
+            m_itemIds(other.m_itemIds)
+    {
+    }
 
-    QOrganizerItemCollection(const QOrganizerItemCollection& other);
-    QOrganizerItemCollection& operator=(const QOrganizerItemCollection& other);
+    ~QOrganizerCollectionData()
+    {
+    }
 
-    bool operator==(const QOrganizerItemCollection &other) const;
-    bool operator!=(const QOrganizerItemCollection &other) const {return !(other == *this);}
-
-    /* Every collection has an id */
-    QOrganizerItemId id() const;
-    void setId(const QOrganizerItemId& id);
-
-    /* Items belong to one or more collections */
-    QList<QOrganizerItemId> itemIds() const; // ignored on save, read only.
-
-    /* Metadata?  Colour?  Icon?  Haptic Feel?  etc */
-    // DEFINE_LATIN1_CONSTANT(FieldColor, "Color");
-    // DEFINE_LATIN1_CONSTANT(FieldImage, "Image"); etc.
-    void setMetaData(const QVariantMap& metaData);
-    QVariantMap metaData() const;
-
-    void setMetaData(const QString& key, const QVariant& value);
-    QVariant metaData(const QString& key);
-
-private:
-    QSharedDataPointer<QOrganizerItemCollectionData> d;
+    QVariantMap m_metaData;
+    QOrganizerCollectionId m_id;
+    QString m_datastore;
+    QList<QOrganizerItemId> m_itemIds;
 };
-
-Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItemCollection& key);
-#ifndef QT_NO_DEBUG_STREAM
-Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemCollection& collection);
-#endif
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemCollection), Q_MOVABLE_TYPE);
-
-
 #endif
-

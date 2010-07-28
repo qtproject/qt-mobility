@@ -144,35 +144,35 @@ public:
     virtual QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     virtual QOrganizerItem item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    virtual bool saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    virtual bool saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& organizeritemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /*! \reimp */
-    virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
+    virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
     {
-        return QOrganizerItemManagerEngine::compatibleItem(original, error);
+        return QOrganizerItemManagerEngine::compatibleItem(original, collectionId, error);
     }
 
     /*! \reimp */
-    virtual bool validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
+    virtual bool validateItem(const QOrganizerItem& organizeritem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
     {
-        return QOrganizerItemManagerEngine::validateItem(organizeritem, error);
+        return QOrganizerItemManagerEngine::validateItem(organizeritem, collectionId, error);
     }
     /*! \reimp */
-    virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const
+    virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
     {
-        return QOrganizerItemManagerEngine::validateDefinition(def, error);
+        return QOrganizerItemManagerEngine::validateDefinition(def, collectionId, error);
     }
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& organizeritemType, QOrganizerItemManager::Error* error) const;
+    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const;
     /*! \reimp */
-    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemManager::Error* error) const
+    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& organizeritemType,  const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
     {
-        return QOrganizerItemManagerEngine::detailDefinition(definitionId, organizeritemType, error);
+        return QOrganizerItemManagerEngine::detailDefinition(definitionId, organizeritemType, collectionId, error);
     }
-    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemManager::Error* error);
-    virtual bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemManager::Error* error);
+    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QOrganizerItemAbstractRequest* req);
@@ -181,13 +181,13 @@ public:
     virtual bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const;
-    virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
-    virtual QList<QVariant::Type> supportedDataTypes() const;
+    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId) const;
+    virtual bool isFilterSupported(const QOrganizerItemFilter& filter, const QOrganizerCollectionLocalId& collectionId) const;
+    virtual QList<QVariant::Type> supportedDataTypes(const QOrganizerCollectionLocalId& collectionId) const;
     /*! \reimp */
-    virtual QStringList supportedItemTypes() const
+    virtual QStringList supportedItemTypes(const QOrganizerCollectionLocalId& collectionId) const
     {
-        return QOrganizerItemManagerEngine::supportedItemTypes();
+        return QOrganizerItemManagerEngine::supportedItemTypes(collectionId);
     }
 
 protected:
@@ -195,10 +195,10 @@ protected:
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem* theOrganizerItem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
 
     void performAsynchronousOperation(QOrganizerItemAbstractRequest* request);
 

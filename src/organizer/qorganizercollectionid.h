@@ -39,45 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMCOLLECTIONS_H
-#define QORGANIZERITEMCOLLECTIONS_H
+#ifndef QORGANIZERCOLLECTIONID_H
+#define QORGANIZERCOLLECTIONID_H
 
 #include <QString>
+#include <QSharedDataPointer>
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
-#include "qorganizeritem.h"
 
 QTM_BEGIN_NAMESPACE
 
-/* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemCollections : public QOrganizerItemDetail
+typedef quint32 QOrganizerCollectionLocalId;
+
+class QOrganizerCollectionIdPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerCollectionId
 {
 public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldCollectionIds;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemCollections, "Collections")
-    Q_DECLARE_LATIN1_CONSTANT(FieldCollectionIds, "CollectionIds");
-#endif
+    QOrganizerCollectionId();
+    ~QOrganizerCollectionId();
 
-    // XXX TODO: add this to the schema, register mapping from id to variant.
+    QOrganizerCollectionId(const QOrganizerCollectionId& other);
+    QOrganizerCollectionId& operator=(const QOrganizerCollectionId& other);
 
-    void setCollectionIds(const QList<QOrganizerItemId>& collectionIds)
-    {
-        Q_UNUSED(collectionIds);
-        // XXX TODO
-    }
+    bool operator==(const QOrganizerCollectionId& other) const;
+    bool operator!=(const QOrganizerCollectionId& other) const;
+    bool operator<(const QOrganizerCollectionId& other) const;
 
-    QList<QOrganizerItemId> collectionIds() const
-    {
-        return QList<QOrganizerItemId>();
-        // XXX TODO
-    }
+    QString managerUri() const;
+    QOrganizerCollectionLocalId localId() const;
+
+    void setManagerUri(const QString& uri);
+    void setLocalId(const QOrganizerCollectionLocalId& id);
+
+private:
+    QSharedDataPointer<QOrganizerCollectionIdPrivate> d;
 };
 
+Q_ORGANIZER_EXPORT uint qHash(const QOrganizerCollectionId& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerCollectionId& id);
+#endif
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerCollectionId), Q_MOVABLE_TYPE);
+
 
 #endif
 

@@ -266,10 +266,11 @@ QOrganizerItem QOrganizerItemManagerEngine::item(const QOrganizerItemLocalId& or
 /*!
   Returns true if the given \a feature is supported by this engine for organizeritems of the given \a organizeritemType
  */
-bool QOrganizerItemManagerEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
+bool QOrganizerItemManagerEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId) const
 {
     Q_UNUSED(feature);
     Q_UNUSED(organizeritemType);
+    Q_UNUSED(collectionId);
 
     return false;
 }
@@ -400,9 +401,10 @@ QOrganizerItemFilter QOrganizerItemManagerEngine::canonicalizedFilter(const QOrg
   natively by this engine.  If not, the base class implementation
   will emulate the functionality.
  */
-bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
+bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& filter, const QOrganizerCollectionLocalId& collectionId) const
 {
     Q_UNUSED(filter);
+    Q_UNUSED(collectionId);
 
     return false;
 }
@@ -410,8 +412,9 @@ bool QOrganizerItemManagerEngine::isFilterSupported(const QOrganizerItemFilter& 
 /*!
   Returns the list of data types supported by this engine.
  */
-QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
+QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes(const QOrganizerCollectionLocalId& collectionId) const
 {
+    Q_UNUSED(collectionId);
     return QList<QVariant::Type>();
 }
 
@@ -421,11 +424,12 @@ QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this engine.
  */
-QStringList QOrganizerItemManagerEngine::supportedItemTypes() const
+QStringList QOrganizerItemManagerEngine::supportedItemTypes(const QOrganizerCollectionLocalId& collectionId) const
 {
     QOrganizerItemManager::Error error;
     // XXX TODO: ensure that the TYPE field value for EVERY SINGLE TYPE contains all possible types...
-    QList<QVariant> allowableVals = detailDefinition(QOrganizerItemType::DefinitionName, QOrganizerItemType::TypeNote, &error).fields().value(QOrganizerItemType::FieldType).allowableValues();
+    // XXX TODO: don't use TypeNote because some collections won't support Notes, only Journals / Events...
+    QList<QVariant> allowableVals = detailDefinition(QOrganizerItemType::DefinitionName, QOrganizerItemType::TypeNote, collectionId, &error).fields().value(QOrganizerItemType::FieldType).allowableValues();
     QStringList retn;
     for (int i = 0; i < allowableVals.size(); i++)
         retn += allowableVals.at(i).toString();
@@ -1025,14 +1029,14 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizeritem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     QList<QString> uniqueDefinitionIds;
 
     // check that each detail conforms to its definition as supported by this manager.
     foreach (const QOrganizerItemDetail& detail, organizeritem.details()) {
         QVariantMap values = detail.variantValues();
-        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), organizeritem.type(), error);
+        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), organizeritem.type(), collectionId, error);
         // check that the definition is supported
         if (*error != QOrganizerItemManager::NoError) {
             *error = QOrganizerItemManager::InvalidDetailError;
@@ -1094,7 +1098,8 @@ bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizerit
 /*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
-  are supported by this engine.  This function is called before
+  are supported by the collection identified by \a collectionId which
+  is managed by this engine.  This function is called before
   trying to save a definition.
 
   Returns true if the \a definition seems valid, otherwise returns
@@ -1103,7 +1108,7 @@ bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizerit
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailDefinition& definition, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailDefinition& definition, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     if (definition.name().isEmpty()) {
         *error = QOrganizerItemManager::BadArgumentError;
@@ -1116,7 +1121,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
     }
 
     // Check each field now
-    QList<QVariant::Type> types = supportedDataTypes();
+    QList<QVariant::Type> types = supportedDataTypes(collectionId);
     QMapIterator<QString, QOrganizerItemDetailFieldDefinition> it(definition.fields());
     while(it.hasNext()) {
         it.next();
@@ -1148,9 +1153,10 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
   Any errors encountered during this operation should be stored to
   \a error.
  */
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManagerEngine::detailDefinitions(const QString& organizeritemType, QOrganizerItemManager::Error* error) const
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManagerEngine::detailDefinitions(const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(organizeritemType);
+    Q_UNUSED(collectionId);
     *error = QOrganizerItemManager::NotSupportedError;
     return QMap<QString, QOrganizerItemDetailDefinition>();
 }
@@ -1163,9 +1169,9 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManagerEngine::detai
   Any errors encountered during this operation should be stored to
   \a error.
  */
-QOrganizerItemDetailDefinition QOrganizerItemManagerEngine::detailDefinition(const QString& definitionName, const QString& organizeritemType, QOrganizerItemManager::Error* error) const
+QOrganizerItemDetailDefinition QOrganizerItemManagerEngine::detailDefinition(const QString& definitionName, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
-    QMap<QString, QOrganizerItemDetailDefinition> definitions = detailDefinitions(organizeritemType, error);
+    QMap<QString, QOrganizerItemDetailDefinition> definitions = detailDefinitions(organizeritemType, collectionId, error);
     if (definitions.contains(definitionName))  {
         *error = QOrganizerItemManager::NoError;
         return definitions.value(definitionName);
@@ -1186,10 +1192,11 @@ QOrganizerItemDetailDefinition QOrganizerItemManagerEngine::detailDefinition(con
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerItemManagerEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(def);
     Q_UNUSED(organizeritemType);
+    Q_UNUSED(collectionId);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
@@ -1206,10 +1213,11 @@ bool QOrganizerItemManagerEngine::saveDetailDefinition(const QOrganizerItemDetai
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerItemManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(definitionName);
     Q_UNUSED(organizeritemType);
+    Q_UNUSED(collectionId);
 
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
@@ -1242,6 +1250,19 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
   manager, the function will return false and \a error will be set to
   \c QOrganizerItemManager::DoesNotExistError.
 
+  The \a organizeritem will be added to the collection identified by the given
+  \a collectionId if it exists, and the item conforms to the schema supported
+  for that collection.  If the collection exists but the item does not conform
+  to the schema supported for that collection, the function will return false,
+  and the \a error will be set to QOrganizerItemManager::InvalidDetailError.
+
+  If the given \a collectionId is not the default (zero) id, but does not identify
+  a valid collection, the function will return false, and \a error will be set
+  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
+  is the default (zero) id, the item should be saved in the collection in which
+  it is already saved (if it is already saved in this manager), or in the default
+  collection (if it is a new item in this manager).
+
   Returns true if the save operation completed successfully, otherwise
   returns false.  Any error which occurs will be saved in \a error.
 
@@ -1249,7 +1270,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 
   \sa managerUri()
  */
-bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
     // Convert to a list op
     if (organizeritem) {
@@ -1257,7 +1278,7 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrgan
         list.append(*organizeritem);
 
         QMap<int, QOrganizerItemManager::Error> errors;
-        bool ret = saveItems(&list, &errors, error);
+        bool ret = saveItems(&list, collectionId, &errors, error);
 
         if (errors.count() > 0)
             *error = errors.begin().value();
@@ -1309,15 +1330,31 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
   when saving a new organizeritem, the id will be cleared.
 
+  The \a organizeritems will be added to the collection identified by the given
+  \a collectionId if it exists, and the items conform to the schema supported
+  for that collection.  If the collection exists but an item does not conform
+  to the schema supported for that collection, the function will return false,
+  and the error in the \a errorMap for the item at that index will be set to
+  QOrganizerItemManager::InvalidDetailError.
+
+  If the given \a collectionId is not the default (zero) id, but does not identify
+  a valid collection, the function will return false, and \a error will be set
+  to QOrganizerItemManager::InvalidCollectionError.  If the given \a collectionId
+  is the default (zero) id, the items should be saved in the collection in which
+  they is already saved (if they are already saved in this manager), or in the default
+  collection (if they are new items in this manager).
+
   Any errors encountered during this operation should be stored to
   \a error.
 
   \sa QOrganizerItemManager::saveOrganizerItem()
  */
-bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritems, const QOrganizerCollectionLocalId& collectionId, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(organizeritems);
+    Q_UNUSED(collectionId);
     Q_UNUSED(errorMap);
+
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
@@ -1359,27 +1396,31 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 /*!
   XXX TODO
  */
-QOrganizerItemCollection QOrganizerItemManagerEngine::defaultCollection(QOrganizerItemManager::Error* error) const
+QOrganizerCollection QOrganizerItemManagerEngine::defaultCollection(QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NotSupportedError;
-    return QOrganizerItemCollection();
+    return QOrganizerCollection();
 }
 
 /*!
   XXX TODO
  */
-QList<QOrganizerItemCollection> QOrganizerItemManagerEngine::collections(QOrganizerItemManager::Error* error) const
+QList<QOrganizerCollection> QOrganizerItemManagerEngine::collections(const QString& datastore, QOrganizerItemManager::Error* error) const
 {
+    Q_UNUSED(datastore);
+
     *error = QOrganizerItemManager::NotSupportedError;
-    return QList<QOrganizerItemCollection>();
+    return QList<QOrganizerCollection>();
 }
 
 /*!
   XXX TODO
  */
-bool QOrganizerItemManagerEngine::saveCollection(QOrganizerItemCollection* collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::saveCollection(QOrganizerCollection* collection, const QString& datastore, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(collection);
+    Q_UNUSED(datastore);
+
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
 }
@@ -1387,11 +1428,33 @@ bool QOrganizerItemManagerEngine::saveCollection(QOrganizerItemCollection* colle
 /*!
   XXX TODO
  */
-bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerItemCollection& collection, QOrganizerItemManager::Error* error)
+bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error)
 {
-    Q_UNUSED(collection);
+    Q_UNUSED(collectionId);
+
     *error = QOrganizerItemManager::NotSupportedError;
     return false;
+}
+
+/*!
+  Returns a list of names of datastores accessed by this manager.
+  Every item belongs to exactly one collection, and
+  every collection is in exactly one datastore.
+
+  Some datastores are read-only; attempting to create a new
+  collection in such a datastore (by creating a collection, setting
+  the datastore to that datastore name, and saving the collection
+  in the manager) will fail.  Similarly, attempting to update
+  an item from a collection which is in a read-only datastore
+  will also fail.
+
+  A manager will report that every detail definition in the schema
+  is read-only, for a collection which is in a read-only datastore.
+ */
+QStringList QOrganizerItemManagerEngine::availableDatastores(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NoError;
+    return QStringList(); // the default implementation: no datastores :. no collections :. no items.
 }
 
 /*!
@@ -1400,7 +1463,7 @@ bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerItemCollectio
   in the organizeritem are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
  */
-QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
+QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem& original, const QOrganizerCollectionLocalId& collectionId, QOrganizerItemManager::Error* error) const
 {
     QOrganizerItem conforming;
     conforming.setType(original.type());
@@ -1412,7 +1475,7 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
         // if so, then add it to the conforming organizeritem to be returned.  if not, prune it.
 
         QVariantMap values = detail.variantValues();
-        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
+        QOrganizerItemDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), collectionId, &tempError);
         // check that the definition is supported
         if (tempError != QOrganizerItemManager::NoError) {
             continue; // this definition is not supported.
