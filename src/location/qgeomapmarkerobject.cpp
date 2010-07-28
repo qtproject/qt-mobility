@@ -50,7 +50,7 @@ QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const
 {
     Q_D(QGeoMapMarkerObject);
 
-    d->boundingBox = QGeoBoundingBox(coordinate, coordinate);
+    d->coordinate = coordinate;
     d->icon = icon;
     d->anchor = anchor;
 }
@@ -77,29 +77,16 @@ QGeoCoordinate QGeoMapMarkerObject::coordinate() const
 {
     Q_D(const QGeoMapMarkerObject);
 
-    return d->boundingBox.topLeft();
+    return d->coordinate;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::MarkerType;
-}
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(const QGeoMapMarkerObjectPrivate &other)
-    : QGeoMapObjectPrivate(other) {}
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
 
 QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
-
-QGeoMapMarkerObjectPrivate& QGeoMapMarkerObjectPrivate::operator= (const QGeoMapMarkerObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

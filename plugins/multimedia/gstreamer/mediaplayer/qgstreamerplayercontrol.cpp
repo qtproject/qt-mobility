@@ -285,17 +285,17 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     m_stream = stream;
     m_seekToStartPending = false;
 
-    QUrl url;
+    QNetworkRequest request;
 
     if (m_stream) {
         if (m_stream->isReadable() && openFifo()) {
-            url = QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0]));
+            request = QNetworkRequest(QUrl(QString(QLatin1String("fd://%1")).arg(m_fifoFd[0])));
         }
     } else if (!content.isNull()) {
-        url = content.canonicalUrl();
+        request = content.canonicalRequest();
     }
 
-    m_session->load(url);    
+    m_session->load(request);    
 
     if (m_fifoFd[1] >= 0) {
         m_fifoCanWrite = true;
@@ -303,7 +303,7 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
         writeFifo();
     }
 
-    if (!url.isEmpty()) {
+    if (!request.url().isEmpty()) {
         if (m_mediaStatus != QMediaPlayer::LoadingMedia)
             emit mediaStatusChanged(m_mediaStatus = QMediaPlayer::LoadingMedia);
         m_session->pause();

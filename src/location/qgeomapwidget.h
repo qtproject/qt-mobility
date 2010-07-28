@@ -105,7 +105,7 @@ protected:
 signals:
     void zoomLevelChanged(qreal zoomLevel);
     void centered(const QGeoCoordinate &coordinate);
-    void mapTypeChanged(MapType mapType);
+    void mapTypeChanged(QGeoMapWidget::MapType mapType);
 
 private:
     QGeoMapWidgetPrivate *d_ptr;

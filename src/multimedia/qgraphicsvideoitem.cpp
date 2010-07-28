@@ -379,6 +379,9 @@ void QGraphicsVideoItem::paint(
             || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
         d->updatePaintDevice = false;
 
+        if (widget)
+            connect(widget, SIGNAL(destroyed()), d->surface, SLOT(viewportDestroyed()));
+
         d->surface->setGLContext(const_cast<QGLContext *>(QGLContext::currentContext()));
         if (d->surface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
             d->surface->setShaderType(QPainterVideoSurface::GlslShader);
