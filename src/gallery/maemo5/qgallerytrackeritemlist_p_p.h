@@ -78,7 +78,6 @@ public:
     {
         enum Type
         {
-            Start,
             Update,
             Replace,
             Finish
@@ -89,9 +88,6 @@ public:
         const int rCount;
         const int iIndex;
         const int iCount;
-
-        static SyncEvent *startEvent(int aIndex, int aCount, int iIndex, int iCount) {
-            return new SyncEvent(Start, aIndex, aCount, iIndex, iCount); }
 
         static SyncEvent *updateEvent(int aIndex, int iIndex, int count) {
             return new SyncEvent(Update, aIndex, count, iIndex, count); }
@@ -339,7 +335,8 @@ public:
     }
 
     void processSyncEvents();
-    void syncStart(const int aIndex, const int aCount, const int iIndex, const int iCount);
+    void removeItems(const int rIndex, const int iIndex, const int count);
+    void insertItems(const int rIndex, const int iIndex, const int count);
     void syncUpdate(const int aIndex, const int aCount, const int iIndex, const int iCount);
     void syncReplace(const int aIndex, const int aCount, const int iIndex, const int iCount);
     void syncFinish(const int aIndex, const int iIndex);
