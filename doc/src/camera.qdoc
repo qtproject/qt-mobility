@@ -168,12 +168,6 @@ autoexposure or white balance cancellation can be done by calling
             \o camera
             \o the interface for system camera devices
         \row
-            \o burst control
-            \o capturing multiple images as fast as possible
-        \row
-            \o bracketing
-            \o Capture a number of images with different camera settings
-        \row
             \o exposure
             \o Includes: flash mode; flash power; metering mode; aperture; shutter speed, iso setting
         \row
@@ -185,9 +179,6 @@ autoexposure or white balance cancellation can be done by calling
         \row
             \o locks
             \o handles the locking and unlocking of camera devices
-        \row
-            \o viewfinder
-            \o used to set displayed items and resolution
     \endtable
 
 
