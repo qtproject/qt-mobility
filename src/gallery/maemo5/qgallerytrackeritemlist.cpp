@@ -582,6 +582,13 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
+    if (currentIndex >= iCache.offset && currentIndex < iCache.limit)
+        currentRow = iCache.values.constBegin() + (currentIndex * tableWidth);
+
+
+    iCache.offset = iCache.limit;
+
+
     rCache.values.clear();
     rCache.limit = 0;
 
@@ -684,14 +691,15 @@ bool QGalleryTrackerItemList::seek(int index, bool relative)
 
     d->currentIndex = relative ? d->currentIndex + index : index;
 
-    if (index < 0)
+    if (d->currentIndex < 0 || d->currentIndex >= d->rowCount) {
         d->currentRow = 0;
-    else if (index < d->iCache.cutoff)
-        d->currentRow = d->iCache.values.constBegin() + (index * d->tableWidth);
-    else if (index < d->rCache.limit && (index -= d->rCache.offset) >= 0)
-        d->currentRow = d->rCache.values.constBegin() + (index * d->tableWidth);
-    else
-        d->currentRow = 0;
+    } else if (d->currentIndex < d->iCache.cutoff) {
+        d->currentRow = d->iCache.values.constBegin() + (d->currentIndex * d->tableWidth);
+    } else {
+        d->currentRow
+                = d->rCache.values.constBegin()
+                + ((d->currentIndex + d->rCache.offset - d->rCache.cutoff) * d->tableWidth);
+    }
 
     emit currentIndexChanged(d->currentIndex);
 
