@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     Player player;
-#ifdef Q_OS_SYMBIAN 
+#ifdef Q_OS_SYMBIAN
     player.showMaximized();
-#else    
+#else
     player.show();
 #endif
     return app.exec();
