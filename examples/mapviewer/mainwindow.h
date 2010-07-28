@@ -48,22 +48,27 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomapmarkerobject.h>
 #include <QMainWindow>
-#include <QResizeEvent>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
 #include <QPixmap>
 #include <QList>
+#include <QTime>
 
-namespace Ui
-{
-class MainWindow;
-}
 #ifdef Q_OS_SYMBIAN
 QTM_BEGIN_NAMESPACE
 class QNetworkSession;
 QTM_END_NAMESPACE
 #endif
+
+class QResizeEvent;
+class QShowEvent;
+
+class QSlider;
+class QRadioButton;
+class QLineEdit;
+class QPushButton;
+class QToolButton;
 
 QTM_USE_NAMESPACE
 
@@ -74,16 +79,45 @@ public:
     MapWidget(QGeoMappingManager *manager);
     ~MapWidget();
 
+public slots:
+    void setMouseClickCoordQuery(bool state);
+
+signals:
+    void coordQueryResult(const QGeoCoordinate &coord);
+
+private slots:
+    void kineticTimerEvent();
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent* event);
     void wheelEvent(QGraphicsSceneWheelEvent* event);
 
 private:
+    bool coordQueryState;
     bool panActive;
+    bool panDecellerate;
+
+    // Fractional pan, used by panFloatWrapper
+    QPointF remainingPan;
+
+    // current kinetic panning speed, in pixel/msec
+    QPointF kineticPanSpeed;
+    QPoint panDir;
+    QTimer *kineticTimer;
+    QTime lastMoveTime;
+    
+    // An entry in the mouse history. first=speed, second=time
+    typedef QPair<QPointF,QTime> MouseHistoryEntry;
+    // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
+    QList<MouseHistoryEntry> mouseHistory;
+
+    void panFloatWrapper(const QPointF& delta);
+    void applyPan(const Qt::KeyboardModifiers& modifiers);
 };
 
 class MainWindow : public QMainWindow
@@ -94,18 +128,16 @@ public:
     ~MainWindow();
 
 protected:
-    void changeEvent(QEvent *e);
-    virtual void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event);
+    void showEvent(QShowEvent *);
 
 private:
-    Ui::MainWindow *ui;
-
+    void setupUi();
     void setProvider(QString providerId);
     void createMenus();
     void createMarkerIcon();
 
 private slots:
-    void delayedInit();
     void drawRect(bool checked);
     void drawMarker(bool checked);
     void drawPolyline(bool checked);
@@ -114,19 +146,34 @@ private slots:
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
     void removeMarkers();
+    void selectObjects();
+
+    void sliderValueChanged(int zoomLevel);
+    void mapZoomLevelChanged(qreal zoomLevel);
+    void mapTypeToggled(bool checked);
+    void mapTypeChanged(QGeoMapWidget::MapType type);
+    void setCoordsClicked();
+    void updateCoords(const QGeoCoordinate &coords);
 
 private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
     QGeoRoutingManager *m_routingManager;
+
     MapWidget *m_mapWidget;
     QMenu* m_popupMenu;
     QPixmap m_markerIcon;
     QPoint lastClicked;
-    QList<QPoint> markers;
     QList<QGeoMapMarkerObject*> markerObjects;
 
     QGraphicsView* qgv;
+    QSlider *slider;
+    QList<QRadioButton*> mapControlButtons;
+    QList<QGeoMapWidget::MapType> mapControlTypes;
+    QLineEdit *latitudeEdit;
+    QLineEdit *longitudeEdit;
+    QToolButton *captureCoordsButton;
+    QPushButton *setCoordsButton;
 
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;

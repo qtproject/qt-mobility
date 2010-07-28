@@ -72,11 +72,18 @@ void QEvrVideoOverlay::setWinId(WId id)
 {
     m_winId = id;
 
+    if (QWidget *widget = QWidget::find(m_winId)) {
+        const QColor color = widget->palette().color(QPalette::Window);
+
+        m_windowColor = RGB(color.red(), color.green(), color.blue());
+    }
+
     if (m_displayControl) {
         m_displayControl->SetVideoWindow(id);
         m_displayControl->SetAspectRatioMode(m_aspectRatioMode == Qt::KeepAspectRatio
                 ? MFVideoARMode_PreservePicture
                 : MFVideoARMode_None);
+        m_displayControl->SetBorderColor(m_windowColor);
 
         setDisplayRect(m_displayRect);
     }
@@ -90,7 +97,7 @@ QRect QEvrVideoOverlay::displayRect() const
 void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
 {
     if (m_displayControl) {
-        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+        RECT displayRect = { rect.left(), rect.top(), rect.right() + 1, rect.bottom() + 1 };
 
         if (m_aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
             SIZE size;
@@ -103,12 +110,12 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
             long y = (size.cy - clippedSize.height()) / 2;
 
             MFVideoNormalizedRect sourceRect =
-            { 
+            {
                 float(x) / size.cx,
-                float(y) / size.cy, 
+                float(y) / size.cy,
                 float(x + clippedSize.width()) / size.cx,
                 float(y + clippedSize.height()) / size.cy
-            }; 
+            };
             m_displayControl->SetVideoPosition(&sourceRect, &displayRect);
         } else {
             m_displayControl->SetVideoPosition(0, &displayRect);
@@ -158,8 +165,30 @@ void QEvrVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 
 void QEvrVideoOverlay::repaint()
 {
-    if (m_displayControl)
-        m_displayControl->RepaintVideo();
+    PAINTSTRUCT paint;
+
+    if (HDC dc = ::BeginPaint(m_winId, &paint)) {
+        if (m_displayControl) {
+            m_displayControl->RepaintVideo();
+        } else {
+            HPEN pen = ::CreatePen(PS_SOLID, 1, m_windowColor);
+            HBRUSH brush = ::CreateSolidBrush(m_windowColor);
+            ::SelectObject(dc, pen);
+            ::SelectObject(dc, brush);
+
+            ::Rectangle(
+                    dc,
+                    paint.rcPaint.left,
+                    paint.rcPaint.top,
+                    paint.rcPaint.right,
+                    paint.rcPaint.bottom);
+
+            ::DeleteObject(pen);
+            ::DeleteObject(brush);
+        }
+
+        ::EndPaint(m_winId, &paint);
+    }
 }
 
 int QEvrVideoOverlay::brightness() const
@@ -211,6 +240,7 @@ void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)
         m_displayControl->SetAspectRatioMode(m_aspectRatioMode == Qt::KeepAspectRatio
                 ? MFVideoARMode_PreservePicture
                 : MFVideoARMode_None);
+        m_displayControl->SetBorderColor(m_windowColor);
 
         setDisplayRect(m_displayRect);
     }

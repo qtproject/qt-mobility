@@ -48,67 +48,62 @@ QTM_BEGIN_NAMESPACE
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent)
     : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->boundingBox = boundingBox;
+    d_ptr->bounds = boundingBox;
 }
 
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent)
     : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->boundingBox = QGeoBoundingBox(topLeft, bottomRight);
+    d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
 }
 
 QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
 }
 
+QGeoBoundingBox QGeoMapRectangleObject::bounds() const
+{
+    Q_D(const QGeoMapRectangleObject);
+    return d->bounds;
+}
+
+void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
+{
+    Q_D(QGeoMapRectangleObject);
+    d->bounds = bounds;
+}
+
 QPen QGeoMapRectangleObject::pen() const
 {
     Q_D(const QGeoMapRectangleObject);
-
     return d->pen;
 }
 
-void QGeoMapRectangleObject::setPen(const QPen &aPen)
+void QGeoMapRectangleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapRectangleObject);
-
-    d->pen = aPen;
+    d->pen = pen;
 }
 
 QBrush QGeoMapRectangleObject::brush() const
 {
     Q_D(const QGeoMapRectangleObject);
-
     return d->brush;
 }
 
-void QGeoMapRectangleObject::setBrush(const QBrush &aBrush)
+void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapRectangleObject);
-
-    d->brush = aBrush;
+    d->brush = brush;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent)
-{
-    type = QGeoMapObject::RectangleType;
-}
-
-QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other)
-    : QGeoMapObjectPrivate(other) {}
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
-
-QGeoMapRectangleObjectPrivate& QGeoMapRectangleObjectPrivate::operator= (const QGeoMapRectangleObjectPrivate &other)
-{
-    QGeoMapObjectPrivate::operator=(other);
-
-    return *this;
-}
 
 QTM_END_NAMESPACE
 

@@ -48,15 +48,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
 class QGeoMapPolygonObjectPrivate : public QGeoMapPolylineObjectPrivate
 {
 public:
     QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapPolygonObjectPrivate(const QGeoMapPolygonObjectPrivate &other);
     ~QGeoMapPolygonObjectPrivate();
-    QGeoMapPolygonObjectPrivate& operator= (const QGeoMapPolygonObjectPrivate &other);
 
     QBrush brush;
 };

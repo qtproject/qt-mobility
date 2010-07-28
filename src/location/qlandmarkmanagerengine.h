@@ -128,12 +128,15 @@ public:
     virtual bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
                                  QLandmarkManager::Error *error, QString *errorString) const;
 
-    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const = 0;
-    virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const = 0;
+    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
 
-    virtual bool isReadOnly() const = 0;
-    virtual bool isReadOnly(const QLandmarkId &landmarkId) const = 0;
-    virtual bool isReadOnly(const QLandmarkCategoryId &categoryId) const = 0;
+    virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const = 0;
+
+    virtual QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QStringList platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;
@@ -142,6 +145,7 @@ public:
     virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs) = 0;
 
 Q_SIGNALS:
+    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);
