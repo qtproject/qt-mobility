@@ -2426,9 +2426,6 @@ void tst_QLandmarkManagerEngineSqlite::removeMultipleLandmarksAsync() {
     QCOMPARE(removedIds.at(2), lm6.landmarkId());
     spyRemove.clear();
 
-    this->disconnectNotifications();  //disabling notification because they
-                                      //interfere with timing when saving
-                                      //and removing a lot of landmarks.
     //test canceling the remove request
     QList<QLandmark> landmarks;
     landmarks.clear();
