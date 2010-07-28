@@ -71,7 +71,7 @@ public:
 class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
 {
 public:
-    static QVersitContactExporterDetailHandlerV2* createBackupHandler();
+    Q_DECL_DEPRECATED static QVersitContactExporterDetailHandlerV2* createBackupHandler();
     virtual ~QVersitContactExporterDetailHandlerV2() {}
     virtual void detailProcessed(const QContact& contact,
                                  const QContactDetail& detail,
