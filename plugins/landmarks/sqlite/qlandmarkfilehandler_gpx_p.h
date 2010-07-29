@@ -53,19 +53,19 @@
 // We mean it.
 //
 
-#include "qlandmark.h"
-#include "qlandmarkmanagerengine.h"
+#include <qlandmark.h>
+#include <qlandmarkmanagerengine.h>
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
 
 class QIODevice;
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 class QLandmarkManagerEngine;
 
-class Q_AUTOTEST_EXPORT QLandmarkFileHandlerGpx : public QObject
+class QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT
 
@@ -125,7 +125,5 @@ private:
 public:
     volatile bool m_isCanceled;
 };
-
-QTM_END_NAMESPACE
 
 #endif // #ifndef QLANDMARKGPXHANDLER_H

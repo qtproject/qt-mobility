@@ -96,29 +96,9 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
 
     if (engine) {
         QObject::connect(engine,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                SIGNAL(dataChanged()),
                 q,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-        QObject::connect(engine,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-                q,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-        QObject::connect(engine,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-                q,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-        QObject::connect(engine,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-                q,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-        QObject::connect(engine,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-                q,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
-        QObject::connect(engine,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-                q,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+                SIGNAL(dataChanged()));
     }
 }
 

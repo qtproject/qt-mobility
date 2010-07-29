@@ -60,11 +60,14 @@ public:
     QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent = 0);
     ~QGeoMapRectangleObject();
 
+    QGeoBoundingBox bounds() const;
+    void setBounds(const QGeoBoundingBox &bounds);
+
     QPen pen() const;
-    void setPen(const QPen &aPen);
+    void setPen(const QPen &pen);
 
     QBrush brush() const;
-    void setBrush(const QBrush &aBrush);
+    void setBrush(const QBrush &brush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapRectangleObject)

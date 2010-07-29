@@ -135,10 +135,12 @@ public:
                                    const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
                                    const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 
-    bool importLandmarks(QIODevice *device, const QByteArray &format= QByteArray());
-    bool importLandmarks(const QString &fileName, const QByteArray &format = QByteArray());
-    bool exportLandmarks(QIODevice *device, const QByteArray &format = QByteArray(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
-    bool exportLandmarks(const QString &, const QByteArray &format = QByteArray(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool importLandmarks(QIODevice *device, const QString &format= QString());
+    bool importLandmarks(const QString &fileName, const QString &format = QString());
+    bool exportLandmarks(QIODevice *device, const QString &format = QString(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool exportLandmarks(const QString &, const QString &format = QString(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+
+    QStringList supportedFormats() const;
 
     Error error() const;
     QString errorString() const;
@@ -164,6 +166,7 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
 
 Q_SIGNALS:
+    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);
@@ -171,6 +174,10 @@ Q_SIGNALS:
     void categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds);
     void categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds);
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 private:
     QLandmarkManagerPrivate *d_ptr;

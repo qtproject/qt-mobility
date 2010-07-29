@@ -44,7 +44,7 @@
 
 #include "qgeomapwidget.h"
 
-#include <QRectF>
+#include <QRect>
 #include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
@@ -60,7 +60,7 @@ public:
     QGeoTiledMapRequest(QGeoTiledMapData *mapData,
                         int row,
                         int column,
-                        const QRectF &tileRect);
+                        const QRect &tileRect);
     QGeoTiledMapRequest(const QGeoTiledMapRequest &other);
     ~QGeoTiledMapRequest();
 
@@ -74,7 +74,7 @@ public:
 
     int row() const;
     int column() const;
-    QRectF tileRect() const;
+    QRect tileRect() const;
 
 private:
     QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;

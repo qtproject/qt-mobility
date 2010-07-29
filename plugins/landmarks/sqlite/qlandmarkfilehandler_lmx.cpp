@@ -41,11 +41,11 @@
 
 #include "qlandmarkfilehandler_lmx_p.h"
 
-#include "qlandmarkmanagerengine.h"
-#include "qlandmarkcategory.h"
-#include "qlandmarkcategoryid.h"
-#include "qgeocoordinate.h"
-#include "qgeoaddress.h"
+#include <qlandmarkmanagerengine.h>
+#include <qlandmarkcategory.h>
+#include <qlandmarkcategoryid.h>
+#include <qgeocoordinate.h>
+#include <qgeoaddress.h>
 
 #include <QFile>
 #include <QStringList>
@@ -55,7 +55,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx()
     : QObject(),
@@ -917,6 +917,3 @@ QString QLandmarkFileHandlerLmx::errorString() const
 }
 
 #include "moc_qlandmarkfilehandler_lmx_p.cpp"
-
-QTM_END_NAMESPACE
-
