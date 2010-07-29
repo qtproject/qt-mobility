@@ -1527,8 +1527,8 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
     QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
-    QSqlQuery query0(q0, db);
-    if (!query0.next()) {
+    QSqlQuery query(q0, db);
+    if (!query.next()) {
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
          if (errorString)
@@ -1536,26 +1536,31 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
         return false;
     }
 
-    QString q1 = QString("DELETE FROM landmark WHERE id = %1;").arg(landmarkId.localId());
-    QSqlQuery query1(q1, db);
-    if (!query1.exec()) {
-        if (error)
-            *error = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString = query1.lastError().text();
-        return false;
-    }
+    QStringList queryStrings;
+    queryStrings << "DELETE FROM landmark WHERE id = :lmId;";
+    queryStrings << "DELETE FROM landmark_category WHERE landmark_id = :lmId;";
+    queryStrings << "DELETE FROM landmark_attribute WHERE landmark_id=:lmId";
 
-    QString q2 = QString("DELETE FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.localId());
-    QSqlQuery query2(q2, db);
-    if (!query2.exec()) {
-        if (error)
+    foreach(const QString &queryString, queryStrings) {
+        if(!query.prepare(queryString)) {
             *error = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString = query1.lastError().text();
-        return false;
-    }
+            *errorString = QString("Unable to prepare statement: %1\nReason:%2")
+                           .arg(query.lastQuery())
+                           .arg(query.lastError().text());
+            return false;
+        }
 
+        query.bindValue(":lmId", landmarkId.localId());
+
+        if (!query.exec()) {
+                *error = QLandmarkManager::UnknownError;
+                *errorString = QString("Unable to execute statement: %1\nReason: %2")
+                               .arg(query.lastQuery())
+                               .arg(query.lastError().text());
+            return false;
+        }
+
+    }
     return true;
 }
 
