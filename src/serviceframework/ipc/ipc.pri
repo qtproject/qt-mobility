@@ -14,9 +14,11 @@ symbian {
         QT += dbus network
         
         PRIVATE_HEADERS += ipc/qremoteservicecontrol_dbus_p.h \
-                           ipc/objectendpoint_dbus_p.h
+                           ipc/objectendpoint_dbus_p.h \
+                           ipc/qservicemetaobject_dbus_p.h
         SOURCES += ipc/qremoteservicecontrol_dbus_p.cpp \
-                   ipc/objectendpoint_dbus.cpp
+                   ipc/objectendpoint_dbus.cpp \
+                   ipc/qservicemetaobject_dbus.cpp
 
     } else {
         QT += network

@@ -134,7 +134,7 @@ private:
 */
 bool tst_QServiceManager_IPC::requiresLackey()
 {
-   // return false;
+    //return false;
 // Temporarily commented out for initial development on Symbian
 #ifdef Q_OS_SYMBIAN
     return false; //service is started when requested

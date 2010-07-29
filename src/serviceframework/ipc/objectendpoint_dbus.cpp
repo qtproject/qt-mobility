@@ -43,6 +43,7 @@
 #include "instancemanager_p.h"
 #include "qmetaobjectbuilder_p.h"
 #include "proxyobject_p.h"
+#include "qservicemetaobject_dbus_p.h"
 #include "qsignalintercepter_p.h"
 #include <QTimer>
 #include <QEventLoop>
@@ -527,7 +528,13 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
             return;
         }
         d->setupSignalIntercepters(service);
-  
+ 
+        ////////// DBUS META OBJECT ////////////
+        QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
+        const QMetaObject *d_meta = serviceDBus->metaObject();
+        qDebug() << "SERVICE DBUS META OBJECT" << d_meta->methodCount();
+        ///////////////////////////////////////
+
         // DBUSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 	connection = new QDBusConnection(QDBusConnection::sessionBus());
         if (!connection->isConnected()) {
@@ -542,7 +549,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
         qDebug() << "SERVICE PATH: " << objPath;
 
-        connection->registerObject(objPath, service, QDBusConnection::ExportAllContents);
+        connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
        
         iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
         ////////////////////////////////////////
