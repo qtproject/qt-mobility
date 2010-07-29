@@ -109,8 +109,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
 #ifdef QT_SIMULATOR
     } else if (builtManagerName == QLatin1String("simulator")) {
-        QContactSimulatorEngine *simEngine = QContactSimulatorEngine::createSimulatorEngine(parameters);
-        m_engine = simEngine;
+        m_engine = QContactSimulatorEngine::createSimulatorEngine(parameters);
 #endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
