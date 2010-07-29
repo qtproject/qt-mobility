@@ -504,6 +504,26 @@ QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &lan
             id.setLocalId(query2.value(0).toString());
             lm.addCategoryId(id);
         }
+
+        QSqlQuery query(db);
+        if (!query.prepare("SELECT key, value from landmark_attribute WHERE landmark_id=:lmId")) {
+                *error = QLandmarkManager::UnknownError;
+                *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
+                return QLandmark();
+        }
+
+        query.bindValue(":lmId", lm.landmarkId().localId());
+
+        if (!query.exec()) {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = QString("Query Failed: \n Query: %1 \n Reason: %2").arg(query.lastQuery()).arg(query.lastError().text());
+            return QLandmark();
+        }
+
+        while(query.next()) {
+            lm.setAttribute(query.value(0).toString(),query.value(1));
+        }
+
         if (transacting)
             db.commit();
 
@@ -1344,6 +1364,46 @@ bool saveLandmarkHelper(const QString &connectionName, QLandmark *landmark,
     if (!update) {
         landmark->setLandmarkId(id);
     }
+
+    QStringList attributekeys = landmark->attributeKeys();
+    QSqlQuery query(db);
+    if( !query.prepare("DELETE FROM landmark_attribute WHERE landmark_id= :lmId"))
+    {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
+                       .arg(query.lastQuery()).arg(query.lastError().text());
+        return false;
+    }
+
+    query.bindValue(":lmId", landmark->landmarkId().localId());
+
+    if (!query.exec()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Unable to execute statement: %1\nReason:%2")
+                       .arg(query.lastQuery()).arg(query.lastError().text());
+        return false;
+    }
+
+    for (int i =0; i < attributekeys.count(); ++i) {
+        if (!query.prepare("INSERT INTO landmark_attribute (landmark_id,key,value) VALUES(:lmId,:key,:value)")) {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = QString("Unable to prepare statement: %1 \nReason: %2")
+                           .arg(query.lastQuery()).arg(query.lastError().text());
+            return false;
+        }
+
+        query.bindValue(":lmId", landmark->landmarkId().localId());
+        query.bindValue(":key", attributekeys[i]);
+        query.bindValue(":value", landmark->attribute(attributekeys.at(i)));
+
+        if (!query.exec()) {
+            *error = QLandmarkManager::UnknownError;
+            *errorString = QString("Unable to execute statement: %1\nReason:%2")
+                           .arg(query.lastQuery()).arg(query.lastError().text());
+            return false;
+        }
+    }
+
     /*
     // grab keys from attributes tables for current id
     // delete those we no longer have
