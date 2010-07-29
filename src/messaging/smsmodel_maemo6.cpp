@@ -45,7 +45,7 @@
 #include <QtTracker/ontologies/nmo.h>
 #include "smsmodel_maemo6_p.h"
 
-using namespace RTComCommHistory;
+using namespace CommHistory;
 
 class SMSModelPrivate : public EventModelPrivate {
 public:
@@ -102,7 +102,7 @@ bool SMSModel::getEvents()
     query.addColumn("date", date);
     query.orderBy(date, false);
 
-    CommHistoryTrackerIO::instance()->prepareMessageQuery(query, message);
+    TrackerIO::instance()->prepareMessageQuery(query, message, d->propertyMask);
 
     return d->executeQuery(query);
 }

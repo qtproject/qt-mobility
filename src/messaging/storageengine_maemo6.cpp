@@ -185,7 +185,7 @@ StorageEngine::StorageEngine(QObject *parent)
 {
     QDEBUG_FUNCTION_BEGIN
 
-    m_SMSModel.setQueryMode(CommHistoryModel::AsyncQuery);
+    m_SMSModel.setQueryMode(EventModel::AsyncQuery);
     connect(&m_SMSModel, SIGNAL(modelReady()), SLOT(onModelReady()));
 
     connect(&m_SMSModel, SIGNAL(eventsAdded(const QList<CommHistory::Event> &)),

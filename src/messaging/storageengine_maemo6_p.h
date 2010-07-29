@@ -58,7 +58,7 @@
 #define STANDARD_FOLDERS_COUNT  5 //  InboxFolder, OutboxFolder, DraftsFolder,SentFolder, TrashFolder
 
 QTM_USE_NAMESPACE
-using namespace RTComCommHistory;
+using namespace CommHistory;
 
 class StorageEngine : public QObject
 {
