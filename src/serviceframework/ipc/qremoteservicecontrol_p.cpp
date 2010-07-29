@@ -49,6 +49,8 @@
 #include <QTimer>
 #include <QProcess>
 
+#include <time.h>
+
 QTM_BEGIN_NAMESPACE
 
 //IPC based on QLocalSocket
