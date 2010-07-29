@@ -49,7 +49,8 @@
 CameraBinFocus::CameraBinFocus(CameraBinSession *session)
     :QCameraFocusControl(session),
      m_session(session),
-     m_focusMode(QCameraFocus::AutoFocus)
+     m_focusMode(QCameraFocus::AutoFocus),
+     m_focusZoneStatus(QCameraFocusZone::Selected)
 {
 }
 
@@ -129,7 +130,23 @@ void CameraBinFocus::setCustomFocusPoint(const QPointF &point)
     Q_UNUSED(point);
 }
 
+void CameraBinFocus::_q_updateLockStatus(QCamera::LockType lockType,
+                                         QCamera::LockStatus lockStatus,
+                                         QCamera::LockChangeReason reason)
+{
+    if (lockType == QCamera::LockFocus) {
+        QCameraFocusZone::FocusZoneStatus status =
+                lockStatus == QCamera::Locked ?
+                    QCameraFocusZone::Focused : QCameraFocusZone::Selected;
+
+        if (m_focusZoneStatus != status) {
+            m_focusZoneStatus = status;
+            emit focusZonesChanged();
+        }
+    }
+}
+
 QCameraFocusZoneList CameraBinFocus::focusZones() const
 {
-    return QCameraFocusZoneList() << QCameraFocusZone(QRectF(0.3, 0.3, 0.4, 0.4));
+    return QCameraFocusZoneList() << QCameraFocusZone(QRectF(0.35, 0.35, 0.3, 0.3), m_focusZoneStatus);
 }
