@@ -2,12 +2,10 @@ INCLUDEPATH += ipc
 
 symbian {
     PRIVATE_HEADERS += ipc/qremoteservicecontrol_s60_p.h \
-                       ipc/objectendpoint_p.h \
-                       ipc/proxyobject_p.h
+                       ipc/objectendpoint_p.h
     
     SOURCES += ipc/qremoteservicecontrol_s60.cpp \    
-               ipc/objectendpoint.cpp \
-               ipc/proxyobject.cpp
+               ipc/objectendpoint.cpp
 
 } else {
     contains(QT_CONFIG,dbus) {
