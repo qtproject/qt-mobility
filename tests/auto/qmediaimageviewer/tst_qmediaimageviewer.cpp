@@ -46,11 +46,13 @@
 
 #include <QtCore/qdir.h>
 
+#include <qgraphicsvideoitem.h>
 #include <qmediaimageviewer.h>
 #include <qmediaimageviewerservice_p.h>
 #include <qmediaplaylist.h>
 #include <qmediaservice.h>
 #include <qvideorenderercontrol.h>
+#include <qvideowidget.h>
 #include <qvideowidgetcontrol.h>
 
 #include <QtCore/qfile.h>
@@ -84,6 +86,7 @@ private slots:
     void invalidPlaylist();
     void elapsedTime();
     void rendererControl();
+    void setVideoOutput();
 
 public:
     tst_QMediaImageViewer() : m_network(0), m_imageDir(QLatin1String(TESTDATA_DIR)) {}
@@ -975,6 +978,30 @@ void tst_QMediaImageViewer::rendererControl()
     // Test the renderer control accepts a null surface.
     rendererControl->setSurface(0);
     QCOMPARE(rendererControl->surface(), nullSurface);
+}
+
+void tst_QMediaImageViewer::setVideoOutput()
+{
+    QMediaImageViewer imageViewer;
+
+    QVideoWidget widget;
+    QGraphicsVideoItem item;
+
+    imageViewer.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == &imageViewer);
+
+    imageViewer.setVideoOutput(&item);
+    QVERIFY(widget.mediaObject() == 0);
+    QVERIFY(item.mediaObject() == &imageViewer);
+
+    imageViewer.setVideoOutput(reinterpret_cast<QVideoWidget *>(0));
+    QVERIFY(item.mediaObject() == 0);
+
+    imageViewer.setVideoOutput(&widget);
+    QVERIFY(widget.mediaObject() == &imageViewer);
+
+    imageViewer.setVideoOutput(reinterpret_cast<QGraphicsVideoItem *>(0));
+    QVERIFY(widget.mediaObject() == 0);
 }
 
 QTEST_MAIN(tst_QMediaImageViewer)

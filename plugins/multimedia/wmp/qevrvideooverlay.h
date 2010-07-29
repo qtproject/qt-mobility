@@ -112,6 +112,7 @@ private:
     QSize m_sizeHint;
     QRect m_displayRect;
     WId m_winId;
+    COLORREF m_windowColor;
     bool m_fullScreen;
 };
 

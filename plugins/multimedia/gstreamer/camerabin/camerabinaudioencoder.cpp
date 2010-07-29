@@ -50,13 +50,19 @@ CameraBinAudioEncoder::CameraBinAudioEncoder(QObject *parent)
     QList<QByteArray> codecCandidates;
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    codecCandidates << "audio/mpeg" << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/speex";
+    codecCandidates << "audio/AAC" << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/speex"
+                    << "audio/ADPCM" << "audio/iLBC" << "audio/vorbis" << "audio/mpeg" << "audio/FLAC";
 
-    m_elementNames["audio/mpeg"] = "nokiaaacenc";
+    m_elementNames["audio/AAC"] = "nokiaaacenc";
     m_elementNames["audio/speex"] = "speexenc";
     m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "nokiaamrnbenc";
     m_elementNames["audio/AMR-WB"] = "nokiaamrwbenc";
+    m_elementNames["audio/ADPCM"] = "nokiaadpcmenc";
+    m_elementNames["audio/iLBC"] = "nokiailbcenc";
+    m_elementNames["audio/vorbis"] = "vorbisenc";
+    m_elementNames["audio/FLAC"] = "flacenc";
+    m_elementNames["audio/mpeg"] = "ffenc_mp2";
 #else
     codecCandidates << "audio/mpeg" << "audio/vorbis" << "audio/speex" << "audio/GSM"
                     << "audio/PCM" << "audio/AMR" << "audio/AMR-WB";
@@ -97,9 +103,6 @@ CameraBinAudioEncoder::CameraBinAudioEncoder(QObject *parent)
             gst_object_unref(GST_OBJECT(factory));
         }
     }
-
-    if (!m_codecs.isEmpty())
-        m_audioSettings.setCodec(m_codecs[0]);
 }
 
 CameraBinAudioEncoder::~CameraBinAudioEncoder()
@@ -158,7 +161,8 @@ GstElement *CameraBinAudioEncoder::createEncoder()
     Q_ASSERT(encoderBin);
 
     GstElement *capsFilter = gst_element_factory_make("capsfilter", NULL);
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
+    QByteArray encoderElementName = m_elementNames.value(codec);
+    GstElement *encoderElement = gst_element_factory_make(encoderElementName.constData(), NULL);
 
     Q_ASSERT(encoderElement);
 
@@ -194,9 +198,18 @@ GstElement *CameraBinAudioEncoder::createEncoder()
         if (m_audioSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
             QtMultimediaKit::EncodingQuality qualityValue = m_audioSettings.quality();
 
-            if (codec == QLatin1String("audio/mpeg")) {
+            if (encoderElementName == "lamemp3enc") {
                 g_object_set(G_OBJECT(encoderElement), "target", 0, NULL); //constant quality mode
                 qreal quality[] = {
+                    10.0, //VeryLow
+                    6.0, //Low
+                    4.0, //Normal
+                    2.0, //High
+                    0.0 //VeryHigh
+                };
+                g_object_set(G_OBJECT(encoderElement), "quality", quality[qualityValue], NULL);
+            } else if (encoderElementName == "ffenc_mp2") {
+                int quality[] = {
                     8000, //VeryLow
                     64000, //Low
                     128000, //Normal

@@ -44,14 +44,17 @@
 #include "qmediaobject_p.h"
 #include "qmediaimageviewerservice_p.h"
 
+#include <qgraphicsvideoitem.h>
 #include <qmediaplaylist.h>
 #include <qmediaplaylistsourcecontrol.h>
 #include <qmediacontent.h>
 #include <qmediaresource.h>
+#include <qvideowidget.h>
 
 #include <QtCore/qcoreevent.h>
-#include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
+#include <QtCore/qpointer.h>
+#include <QtCore/qtextstream.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -71,6 +74,7 @@ public:
 
     QMediaImageViewerControl *viewerControl;
     QMediaPlaylist *playlist;
+    QPointer<QObject> videoOutput;
     QMediaImageViewer::State state;
     int timeout;
     int pauseTime;
@@ -160,12 +164,12 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 
     \code
     playlist = new QMediaPlaylist(this);
-    playlist->setMediaObject(viewer);
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
     playlist->addMedia(image1);
     playlist->addMedia(image2);
     playlist->addMedia(image3);
 
+    viewer->setPlaylist(playlist);
     viewer->setTimeout(5000);
     viewer->play();
     \endcode
@@ -307,7 +311,7 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
 
-        QMediaObject::unbind(playlist);
+        QMediaObject::unbind(d->playlist);
     }
 
     d->playlist = playlist;
@@ -394,6 +398,38 @@ int QMediaImageViewer::elapsedTime() const
 
     \sa timeout, QMediaObject::notifyInterval
 */
+
+/*!
+    Sets a video \a widget as the current video output.
+
+    This will unbind any previous video output bound with setVideoOutput().
+*/
+
+void QMediaImageViewer::setVideoOutput(QVideoWidget *widget)
+{
+    Q_D(QMediaImageViewer);
+
+    if (d->videoOutput)
+        unbind(d->videoOutput);
+
+    d->videoOutput = bind(widget) ? widget : 0;
+}
+
+/*!
+    Sets a video \a item as the current video output.
+
+    This will unbind any previous video output bound with setVideoOutput().
+*/
+
+void QMediaImageViewer::setVideoOutput(QGraphicsVideoItem *item)
+{
+    Q_D(QMediaImageViewer);
+
+    if (d->videoOutput)
+        unbind(d->videoOutput);
+
+    d->videoOutput = bind(item) ? item : 0;
+}
 
 /*!
     \internal

@@ -49,15 +49,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
 class QGeoMapPolylineObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other);
+    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::PolylineType);
     ~QGeoMapPolylineObjectPrivate();
-    QGeoMapPolylineObjectPrivate& operator= (const QGeoMapPolylineObjectPrivate &other);
 
     QList<QGeoCoordinate> path;
     QPen pen;

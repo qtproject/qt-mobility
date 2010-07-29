@@ -53,9 +53,7 @@ class QGeoMapRouteObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
     QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
-    QGeoMapRouteObjectPrivate(const QGeoMapRouteObjectPrivate &other);
     ~QGeoMapRouteObjectPrivate();
-    QGeoMapRouteObjectPrivate& operator= (const QGeoMapRouteObjectPrivate &other);
 
     QPen pen;
     QGeoRoute route;
