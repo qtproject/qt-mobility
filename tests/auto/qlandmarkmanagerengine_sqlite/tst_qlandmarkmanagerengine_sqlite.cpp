@@ -962,7 +962,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
     spyAdd.clear();
 
-    // add - with attributes
     // add - with categories
 
     QLandmarkCategory cat1;
@@ -979,6 +978,35 @@ void tst_QLandmarkManagerEngineSqlite::addLandmark() {
     QTest::qWait(10);
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
+
+    // add - with attributes
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setAttribute("one","1");
+    QVERIFY(m_manager->saveLandmark(&lm3));
+    QCOMPARE(m_manager->landmark(lm3.landmarkId()).attributeKeys().count(), 1);
+    QCOMPARE(m_manager->landmark(lm3.landmarkId()).attribute("one").toString(), QString("1"));
+
+   //try multiple attributes
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setAttribute("ichi",1);
+    lm4.setAttribute("ni",2);
+    lm4.setAttribute("san", 3);
+
+    QVERIFY(m_manager->saveLandmark(&lm4));
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attributeKeys().count(), 3);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("ni").toInt(), 2);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("san").toInt(), 3);
+
+    //remove an attribute
+    lm4.setAttribute("ni", QVariant());
+    QCOMPARE(lm4.attributeKeys().count(),2);
+    QVERIFY(m_manager->saveLandmark(&lm4));
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("ni"), QVariant());
+    QCOMPARE(m_manager->landmark(lm4.landmarkId()).attribute("san").toInt(), 3);
 }
 
 void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
@@ -1002,8 +1030,6 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
     QCOMPARE(spyAdd.count(), 1);
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), id1);
     spyAdd.clear();
-
-    // add - with attributes
 
     // add - with categories
     QLandmarkCategory cat1;
@@ -1153,6 +1179,53 @@ void tst_QLandmarkManagerEngineSqlite::addLandmarkAsync() {
 
     }
     QVERIFY(foundCancelError);
+
+    // add - with attributes
+    QLandmark lm9;
+    lm9.setName("LM7");
+    lm9.setAttribute("one","1");
+
+    saveRequest.setLandmark(lm9);
+    saveRequest.start();
+    QVERIFY(waitForAsync(spy, &saveRequest));
+
+    QLandmark lm9new;
+    lm9new = saveRequest.landmarks().at(0);
+
+    QCOMPARE(m_manager->landmark(lm9new.landmarkId()).attributeKeys().count(), 1);
+    QCOMPARE(m_manager->landmark(lm9new.landmarkId()).attribute("one").toString(), QString("1"));
+
+   //try multiple attributes
+    QLandmark lm10;
+    lm10.setName("LM4");
+    lm10.setAttribute("ichi",1);
+    lm10.setAttribute("ni",2);
+    lm10.setAttribute("san", 3);
+
+    saveRequest.setLandmark(lm10);
+    saveRequest.start();
+    QVERIFY(waitForAsync(spy, &saveRequest));
+    QCOMPARE(saveRequest.landmarks().count(),1);
+
+    QLandmark lm10saved = saveRequest.landmarks().at(0);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attributeKeys().count(), 3);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("ni").toInt(), 2);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("san").toInt(), 3);
+
+    //remove an attribute
+    lm10.setAttribute("ni", QVariant());
+    QCOMPARE(lm10.attributeKeys().count(),2);
+
+    saveRequest.setLandmark(lm10);
+    saveRequest.start();
+    QVERIFY(waitForAsync(spy, &saveRequest));
+    QCOMPARE(saveRequest.landmarks().count(),1);
+
+    lm10saved = saveRequest.landmarks().at(0);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("ni"), QVariant());
+    QCOMPARE(m_manager->landmark(lm10saved.landmarkId()).attribute("san").toInt(), 3);
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateLandmark() {
