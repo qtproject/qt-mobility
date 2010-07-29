@@ -44,7 +44,6 @@
 #include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
 #include <QDebug>
-#include <QtDBus/QtDBus>
 
 #include "qservicefilter.h" //only used to test custom metatype
 
