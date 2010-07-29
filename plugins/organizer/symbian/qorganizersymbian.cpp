@@ -170,48 +170,61 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::itemInstances(const QOrganize
 
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
-    QList<QOrganizerItem> occurrenceList;    
-    //check for valid periodStart
+    QList<QOrganizerItem> occurrenceList;
+    
+    // Parent item should be an Event or a Todo.
+    if (!((generator.type()== QOrganizerItemType::TypeEvent) ||(generator.type()== QOrganizerItemType::TypeTodo))) {
+        *error = QOrganizerItemManager::InvalidItemTypeError;
+        return occurrenceList;
+    }
+
+    //check for valid periodStart    
     if (periodStart.isValid()&&(periodEnd.isValid() || (maxCount > 0))) {
-        if (periodEnd < periodStart) {
+        
+        // End period should be greater than start period.   
+        if (periodEnd.isValid() && (periodEnd < periodStart)) {
             *error = QOrganizerItemManager::BadArgumentError;
-            return;
+            return occurrenceList;
         }
         RPointerArray<CCalInstance> instanceList;
         QDateTime endDateTime(periodEnd);
-        
-        //calculate the end date if count is present
+        CalCommon::TCalViewFilter filter;
+        //use maximum end date if only count is present.
         if ((!periodEnd.isValid()) && (maxCount > 0)) {
               TCalTime endTime; 
               endTime.SetTimeUtcL(TCalTime::MaxTime());
               endDateTime = OrganizerItemDetailTransform::toQDateTimeL(endTime);  
         }
-        TRAPD(err, m_instanceView->FindInstanceL(instanceList,CalCommon::EIncludeAll,
+        
+        if (generator.type()== QOrganizerItemType::TypeEvent) {
+            filter = CalCommon::EIncludeAppts; 
+        }
+        
+        TRAPD(err, m_instanceView->FindInstanceL(instanceList,filter,
                                    CalCommon::TCalTimeRange(OrganizerItemDetailTransform::toTCalTimeL(periodStart),
                                    OrganizerItemDetailTransform::toTCalTimeL(endDateTime))
                                    ));
             
         transformError(err, error);
+   
         if (*error == QOrganizerItemManager::NoError) {  
             int count(instanceList.Count()); 
-            if (count) {
-                // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
-                for( int index=0; index < count;index++ ){
-                     QOrganizerItem *item;
-                     if (QOrganizerItemType::TypeEvent == generator.type()){
-                         item = new QOrganizerEventOccurrence();
-                     }    
-                     TRAPD(err, m_itemTransform.toItemL(*(instanceList)[index], item));
-                     transformError(err, error);
-                     if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == item->guid())) {
-                         if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) 
-                             occurrenceList.append(*item);
-                     }    
-                }
-            }
+            // Convert calninstance list to  QOrganizerEventOccurrence and add to QOrganizerItem list                 
+            for( int index=0; index < count;index++ ) {
+                 QOrganizerItem *item;
+                 if (QOrganizerItemType::TypeEvent == generator.type()){
+                     item = new QOrganizerEventOccurrence();
+                 }    
+                 TRAPD(err, m_itemTransform.toItemL(*(instanceList)[index], item));
+                 transformError(err, error);
+                 if ((*error == QOrganizerItemManager::NoError)&&(generator.guid() == item->guid())) {
+                     if ((periodEnd.isValid()&& (maxCount < 0))||(maxCount > 0) && (index < maxCount)) 
+                         occurrenceList.append(*item);
+                 }    
+            }           
         }
         instanceList.ResetAndDestroy();
-
+        
     } else {
         *error = QOrganizerItemManager::BadArgumentError;
     }

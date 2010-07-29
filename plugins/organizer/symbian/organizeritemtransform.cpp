@@ -159,6 +159,7 @@ void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerIte
         QOrganizerItemLocation location(parentItem.detail(QOrganizerItemLocation::DefinitionName));
         if (!location.isEmpty()) {
             occurrence->setLocationName(location.locationName());
+            occurrence->setLocationGeoCoordinates(location.geoLocation());
         }       
     }
 }       

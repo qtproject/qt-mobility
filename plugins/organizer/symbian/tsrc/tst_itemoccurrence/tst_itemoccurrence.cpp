@@ -50,6 +50,8 @@ QTM_USE_NAMESPACE
 const QString m_managerNameSymbian("symbian");
 
 Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
+Q_DECLARE_METATYPE(QOrganizerItemPriority)
+Q_DECLARE_METATYPE(QOrganizerItemLocation)
 
 class TestItemOccurrence : public QObject
 {
@@ -62,9 +64,12 @@ private slots:
 private slots:
     void addOccurrenceDetail_data();
     void addOccurrenceDetail();
+    void addOccurrenceWithException_data();
+    void addOccurrenceWithException();
     void fetchNegative_data();
     void fetchNegative();
 private:
+    QStringList getAvailableManagers();
     void addOccurrenceData(QString managerName, QString itemType);
     
 private:
@@ -91,7 +96,7 @@ void TestItemOccurrence::cleanup()
     }
 }
 
-void TestItemOccurrence::addOccurrenceDetail_data()
+QStringList TestItemOccurrence::getAvailableManagers()
 {
     // Get the list of all available item managers
     QStringList availableManagers = QOrganizerItemManager::availableManagers();
@@ -101,6 +106,12 @@ void TestItemOccurrence::addOccurrenceDetail_data()
     availableManagers.removeAll("skeleton");
     availableManagers.removeAll("memory");
     
+    return availableManagers;
+}
+
+void TestItemOccurrence::addOccurrenceDetail_data()
+{
+    QStringList availableManagers = getAvailableManagers();    
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
@@ -159,23 +170,121 @@ void TestItemOccurrence::addOccurrenceDetail()
     QList<QOrganizerItem> instanceList = m_om->itemInstances(item,startTime,endTime);
     
     QCOMPARE(instanceList.size(), 3);
+    QOrganizerItem lastItem = instanceList.at(2);
+    QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence thirdEvent = static_cast<QOrganizerEventOccurrence>(lastItem);
+    QCOMPARE(thirdEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 15)));
+    QCOMPARE(thirdEvent.localId(), (unsigned int)0);
+    QCOMPARE(thirdEvent.parentLocalId(), item.localId());
+    
+    //Fetch instances using maxcount only.
+    instanceList.clear();
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),2);
+    QCOMPARE(instanceList.size(), 2);
     QOrganizerItem secondItem = instanceList.at(1);
     QCOMPARE(secondItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 8)));
     QCOMPARE(secondEvent.localId(), (unsigned int)0);
     QCOMPARE(secondEvent.parentLocalId(), item.localId());
+
+}
+
+void TestItemOccurrence::addOccurrenceWithException_data()
+{
+    // Get the list of all available item managers
+    QStringList availableManagers = getAvailableManagers();
+   
+    QTest::addColumn<QString>("managerName");
+    QTest::addColumn<QString>("itemType");
+    QTest::addColumn<QDateTime>("startTime");
+    QTest::addColumn<QDate>("exceptionDate");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
+    QTest::addColumn<QOrganizerItemPriority>("priority");
+    QTest::addColumn<QOrganizerItemLocation>("location");
+    
+    QString itemType  = QOrganizerItemType::TypeEvent;
+    QOrganizerItemPriority priority;
+    priority.setPriority(QOrganizerItemPriority::HighestPriority);
+    QOrganizerItemLocation location;
+    location.setLocationName("checkLocationName");
+    location.setGeoLocation("20.176876;15.988765");
+    foreach(QString manager, availableManagers) {
+        QOrganizerItemRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        rrule.setCount(10);
+        QTest::newRow(QString("[%1] Daily event for 10 occurrences").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
+            << QDate(QDate::currentDate().year() , 9, 3)
+            << rrule
+            << priority
+            << location;        
+    }
+}
+
+void TestItemOccurrence::addOccurrenceWithException()
+{
+    QFETCH(QString, managerName);
+    QFETCH(QString, itemType);
+    QFETCH(QDateTime, startTime);
+    QFETCH(QDate,exceptionDate );
+    QFETCH(QOrganizerItemRecurrenceRule, rrule);
+    QFETCH(QOrganizerItemPriority, priority);
+    QFETCH(QOrganizerItemLocation, location);
+    
+    // Set the item type
+    QOrganizerItem item;
+    item.setType(itemType);
+    QOrganizerEventTimeRange timeRange;
+    timeRange.setStartDateTime(startTime);
+    QVERIFY(item.saveDetail(&timeRange));
+
+    // Add recurrence rules to the item
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    QList<QDate> exceptionList;
+    rrules.append(rrule);
+    exceptionList.append(exceptionDate);
+    QOrganizerItemRecurrence recurrence;
+    recurrence.setRecurrenceRules(rrules);
+    recurrence.setExceptionDates(exceptionList);
+    QVERIFY(item.saveDetail(&recurrence));
+    
+    //Add other attributes to the item.
+    item.setDescription("checkoccurrence");
+    item.saveDetail(&priority);
+    item.saveDetail(&location);
+    
+    // Save item with recurrence rule.
+    QVERIFY(m_om->saveItem(&item));    
+    item = m_om->item(item.localId());
+            
+    //Fetch instance on the exception date.An empty list should be returned
+    QList<QOrganizerItem> instanceList = m_om->itemInstances(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
+    QCOMPARE(instanceList.size(),0);
+    
+    // Fetch the item again
+    instanceList.clear();
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),rrule.count());
+    QCOMPARE(instanceList.size(),rrule.count() -1);
+
+    QOrganizerItem lastItem = instanceList.at(rrule.count()-2);
+    QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence lastEvent = static_cast<QOrganizerEventOccurrence>(lastItem);
+
+    QCOMPARE(lastEvent.description(),item.description());
+    QOrganizerItemPriority itemPriority = item.detail(QOrganizerItemPriority::DefinitionName);
+    QCOMPARE(lastEvent.priority(),priority.priority());
+    QOrganizerItemLocation itemLocation = item.detail(QOrganizerItemLocation::DefinitionName);
+    QCOMPARE(lastEvent.locationName(),itemLocation.locationName());
+    QCOMPARE(lastEvent.locationGeoCoordinates(),itemLocation.geoLocation());
 }
 
 void TestItemOccurrence::fetchNegative_data()
 {
     // Get the list of all available item managers
-    QStringList availableManagers = QOrganizerItemManager::availableManagers();
-    
-    // Remove these since test would fail
-    availableManagers.removeAll("invalid");
-    availableManagers.removeAll("skeleton");
-    availableManagers.removeAll("memory");
+    QStringList availableManagers = getAvailableManagers();
     
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
@@ -217,13 +326,16 @@ void TestItemOccurrence::fetchNegative()
     //Only a single instance should be returned for non-repeating entry
     QCOMPARE(instanceList.size(), 1);
     
-    //Fetch instance for an item with invalid local uid,should return zero occurrence
-    //QOrganizerItem invalidItem(item);
-    //QOrganizerItemId id;
-    //id.setLocalId(1000);
-    //invalidItem.set;
-    //instanceList = m_om->itemInstances(invalidItem,startTime,endTime);
-    //QCOMPARE(instanceList.size(), 0);
+    //Fetch instance when end period is less than start period
+    QDateTime previousEndTime(startTime);
+    previousEndTime.setDate(QDate(startTime.date().year() - 2, startTime.date().month(),startTime.date().day()));
+    instanceList = m_om->itemInstances(item,startTime,previousEndTime);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+    
+    //Fetch iteminstance for invalid itemtype eventoccurrence
+    QOrganizerEventOccurrence invalidItem;
+    instanceList = m_om->itemInstances(invalidItem,startTime,endTime);
+    QCOMPARE(m_om->error(), QOrganizerItemManager::InvalidItemTypeError);
     
     // Fetch the item instance with invalid count
     instanceList = m_om->itemInstances(item,startTime,QDateTime(),-2);
@@ -235,9 +347,7 @@ void TestItemOccurrence::fetchNegative()
    
    // Fetch the item instance with invalid endtime
    instanceList = m_om->itemInstances(item,startTime,QDateTime());
-   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
-   
-
+   QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);   
 }
 QTEST_MAIN(TestItemOccurrence);
 
