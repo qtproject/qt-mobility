@@ -46,6 +46,9 @@
 
 #include "qgeocoordinate.h"
 
+#include <QPen>
+#include <QBrush>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapCircleObjectPrivate : public QGeoMapObjectPrivate
@@ -53,6 +56,9 @@ class QGeoMapCircleObjectPrivate : public QGeoMapObjectPrivate
 public:
     QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     ~QGeoMapCircleObjectPrivate();
+
+    QPen pen;
+    QBrush brush;
 
     QGeoCoordinate center;
     qreal radius;

@@ -139,6 +139,9 @@ public:
     void mapUpdate();
 
     const QGeoMapCircleObjectPrivate* circle;
+    QGraphicsPolygonItem *polygonItem;
+
+    QPolygonF points;
 };
 
 class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo

@@ -114,7 +114,8 @@ MapWidget::MapWidget(QGeoMappingManager *manager) :
     QGeoMapWidget(manager),
     coordQueryState(false),
     panActive(false),
-    kineticTimer(new QTimer)
+    kineticTimer(new QTimer),
+    lastCircle(0)
 {
     for (int i = 0; i < 5; ++i) mouseHistory.append(MouseHistoryEntry());
 
@@ -133,21 +134,24 @@ void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
     if (event->button() == Qt::LeftButton) {
-
-        if (coordQueryState) {
-            emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
-            return;
+        if (event->modifiers() & Qt::ControlModifier) {
         }
-
-        panActive = true;
-
-        // When pressing, stop the timer and stop all current kinetic panning
-        kineticTimer->stop();
-        kineticPanSpeed = QPointF();
-
-        lastMoveTime = QTime::currentTime();
-        // TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.
-        startPanning();
+        else {
+            if (coordQueryState) {
+                emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
+                return;
+            }
+            
+            panActive = true;
+    
+            // When pressing, stop the timer and stop all current kinetic panning
+            kineticTimer->stop();
+            kineticPanSpeed = QPointF();
+    
+            lastMoveTime = QTime::currentTime();
+            // TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.
+            startPanning();
+        }
     }
 
     event->accept();
@@ -156,31 +160,33 @@ void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
-        panActive = false;
-
-        if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
-            stopPanning();
-            return;
-        }
-
-        kineticPanSpeed = QPointF();
-        int entries_considered = 0;
-
-        QTime currentTime = QTime::currentTime();
-        foreach (MouseHistoryEntry entry, mouseHistory) {
-            // first=speed, second=time
-            int deltaTime = entry.second.msecsTo(currentTime);
-            if (deltaTime < holdTimeThreshold) {
-                kineticPanSpeed += entry.first;
-                entries_considered++;
+        if (panActive) {
+            panActive = false;
+    
+            if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
+                stopPanning();
+                return;
             }
+    
+            kineticPanSpeed = QPointF();
+            int entries_considered = 0;
+    
+            QTime currentTime = QTime::currentTime();
+            foreach (MouseHistoryEntry entry, mouseHistory) {
+                // first=speed, second=time
+                int deltaTime = entry.second.msecsTo(currentTime);
+                if (deltaTime < holdTimeThreshold) {
+                    kineticPanSpeed += entry.first;
+                    entries_considered++;
+                }
+            }
+            if (entries_considered > 0) kineticPanSpeed /= entries_considered;
+            lastMoveTime = currentTime;
+    
+            // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
+            kineticTimer->start();
+            panDecellerate = true;
         }
-        if (entries_considered > 0) kineticPanSpeed /= entries_considered;
-        lastMoveTime = currentTime;
-
-        // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
-        kineticTimer->start();
-        panDecellerate = true;
     }
 
     event->accept();
@@ -188,7 +194,14 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (panActive) {
+    if (event->modifiers() & Qt::ControlModifier) {
+        if (lastCircle) {
+            removeMapObject(lastCircle);
+            lastCircle->setCenter(this->screenPositionToCoordinate(event->pos()));
+            addMapObject(lastCircle);
+        }
+    }
+    else if (panActive) {
         // Calculate time delta
         QTime currentTime = QTime::currentTime();
         int deltaTime = lastMoveTime.msecsTo(currentTime);
@@ -274,6 +287,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
                 setZoomLevel(zoomLevel() + 1);
             }
             break;
+
         case Qt::Key_T:
             if (mapType() == QGeoMapWidget::StreetMap)
                 setMapType(QGeoMapWidget::SatelliteMapDay);
@@ -291,22 +305,23 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
             if (!event->isAutoRepeat()) {
                 switch (event->key()) {
                     case Qt::Key_Left:
-                        panDir += QPoint(-1, 0);
+                        panDir.setX(-1);
                         break;
 
                     case Qt::Key_Right:
-                        panDir += QPoint(1, 0);
+                        panDir.setX(1);
                         break;
 
                     case Qt::Key_Up:
-                        panDir += QPoint(0, -1);
+                        panDir.setY(-1);
                         break;
 
                     case Qt::Key_Down:
-                        panDir += QPoint(0, 1);
+                        panDir.setY(1);
                         break;
                 }
 
+                lastMoveTime = QTime::currentTime();
                 kineticTimer->start();
                 panDecellerate = false;
 
@@ -327,19 +342,13 @@ void MapWidget::keyReleaseEvent(QKeyEvent* event)
 
     switch (event->key()) {
         case Qt::Key_Left:
-            panDir -= QPoint(-1, 0);
-            break;
-
         case Qt::Key_Right:
-            panDir -= QPoint(1, 0);
+            panDir.setX(0);
             break;
 
         case Qt::Key_Up:
-            panDir -= QPoint(0, -1);
-            break;
-
         case Qt::Key_Down:
-            panDir -= QPoint(0, 1);
+            panDir.setY(0);
             break;
 
         case Qt::Key_Shift:
@@ -659,6 +668,11 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
+    
+    menuItem = new QAction(tr("Circle"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawCircle(bool)));
 
     //**************************************************************
     subMenuItem = new QMenu(tr("Route"), this);
@@ -721,6 +735,32 @@ void MainWindow::drawPolygon(bool /*checked*/)
     polygon->setBrush(QBrush(fill));
     polygon->setPath(path);
     m_mapWidget->addMapObject(polygon);
+}
+
+void MainWindow::drawCircle(bool /*checked*/)
+{
+    if (markerObjects.count() < 2) return;
+
+    QGeoMapMarkerObject* p1 = markerObjects.at(0);
+    QGeoMapMarkerObject* p2 = markerObjects.at(markerObjects.count()-1);//1);
+    
+    // center of the circle
+    QGeoCoordinate center = p1->coordinate();
+    // its radius, in meters
+    qreal radius = center.distanceTo(p2->coordinate());
+
+    QPen pen(Qt::white);
+    pen.setWidth(2);
+    QGeoMapCircleObject *circle = new QGeoMapCircleObject();
+    circle->setPen(pen);
+    QColor fill(Qt::black);
+    fill.setAlpha(65);
+    circle->setBrush(QBrush(fill));
+    circle->setCenter(center);
+    circle->setRadius(radius);
+    m_mapWidget->addMapObject(circle);
+
+    m_mapWidget->lastCircle = circle;
 }
 
 void MainWindow::drawMarker(bool /*checked*/)
