@@ -93,6 +93,8 @@ public:
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
     ObjectEndPointPrivate* d;
+    
+    QDBusConnection *connection;
     QDBusInterface *iface;
 };
 

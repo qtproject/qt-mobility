@@ -71,11 +71,6 @@ public:
     {
     }
 
-    void testThis()
-    {
-        qDebug() << "HELLO";
-    }
-
 protected:
     void flushPackage(const QServicePackage& package)
     {
@@ -95,12 +90,6 @@ protected:
 
 protected slots:
     void readPackage(const QByteArray &package, int type, const QString &id) {
-        
-        // Check the message id
-        QDataStream data(package);
-        QServicePackage pack;
-        data >> pack;
-    
         // Check that its of a client-server nature
         if (endType != type) {
             // Client to Server
@@ -108,8 +97,9 @@ protected slots:
                 readIncoming(package);
             } else {
             // Server to Client
-                if (id == packageId)
+                if (id == packageId) {
                     readIncoming(package);
+                }
             }
         }
     }
@@ -119,7 +109,7 @@ protected slots:
         QDataStream data(package);
         QServicePackage pack;
         data >> pack;
-    
+   
         incoming.enqueue(pack);
         emit readyRead();
     }
@@ -206,7 +196,7 @@ bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 {
     InstanceManager *iManager = InstanceManager::instance();
     QList<QRemoteServiceIdentifier> list = iManager->allIdents();
-    
+   
     if (list.size() > 0) {
         QDBusConnection *connection = new QDBusConnection(QDBusConnection::sessionBus());
         if (!connection->isConnected()) {
@@ -271,9 +261,8 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
     DBusEndPoint* ipcEndPoint = new DBusEndPoint(inface, 1);
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
    
-    //QObject* proxy 
     QObject *proxy = endPoint->constructProxy(typeIdent);
-      
+     
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
     return proxy;
 }

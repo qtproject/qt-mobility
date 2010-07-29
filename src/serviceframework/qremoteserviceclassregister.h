@@ -47,6 +47,7 @@
 #include <QPair>
 #include <QDebug>
 #include <QHash>
+#include <QtDBus/QtDBus>
 
 QT_BEGIN_NAMESPACE
 class QDataStream;
@@ -136,6 +137,51 @@ public:\
         return QRemoteServiceIdentifier(service, interface, version); \
     } \
 private:
+
+//#define Q_DECLARE_SERVICE_METATYPE(T) 
+/*
+template <typename T>
+void qServiceMarshallHelper(QDBusArgument &arg, const T *t)
+{
+    QByteArray data;
+    QDataStream out(&data, QIODevice::WriteOnly);
+    out << *t;
+
+    arg.beginStructure();
+    arg << data; 
+    arg.endStructure();
+}
+
+template <typename T>
+void qServiceDemarshallHelper(const QDBusArgument &arg, T *t)
+{
+    QByteArray data;
+    QDataStream out(&data, QIODevice::WriteOnly);
+    out << *t;
+    
+    arg.beginStructure();
+    arg >> data;
+    arg.endStructure();
+}
+
+template <typename T>
+int qRegisterServiceMetaType(
+#ifndef qdoc
+    T *  dummy  = 0
+#endif
+) 
+{
+    void (*mf)(QDBusArgument &, const T *) = qServiceMarshallHelper<T>;
+    void (*df)(const QDBusArgument &, T *) = qServiceDemarshallHelper<T>;
+   
+    int id = qRegisterMetaType<T>(); // make sure it's registered
+    QDBusMetaType::registerMarshallOperators(id,
+            reinterpret_cast<QDBusMetaType::MarshallFunction>(mf),
+            reinterpret_cast<QDBusMetaType::DemarshallFunction>(df));
+    
+    return id;
+}
+*/
 
 QTM_END_NAMESPACE
 #endif // QSERVICE_TYPE_REGISTER

@@ -44,16 +44,19 @@
 #include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
 #include <QDebug>
+#include <QtDBus/QtDBus>
 
 #include "qservicefilter.h" //only used to test custom metatype
 
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceFilter);
+
 Q_DECLARE_METATYPE(QVariant)
 
 class SharedTestService : public QObject 
 {
+    
     Q_OBJECT
     Q_SERVICE(SharedTestService, "IPCExampleService", "com.nokia.qt.ipcunittest", "3.4")
     Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
@@ -75,14 +78,14 @@ public:
     {
         qDebug() << "SharedTestService: Writing property";
         m_value = value;
-        emit valueChanged();
+        //emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "SharedTestService: Resetting property";
         m_value = "FFF";
-        emit valueChanged();
+        //emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -96,6 +99,7 @@ public:
     Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "SharedTestService::testFunctionWithVariantReturnValue()";
+        m_hash = qHash(input.toString());
         return input;
     }
 
@@ -238,14 +242,14 @@ public:
     {
         qDebug() << "UniqueTestService: Writing property";
         m_value = value;
-        emit valueChanged();
+        //emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "UniqueTestService: Resetting value";
         m_value = "FFF";
-        emit valueChanged();
+        //emit valueChanged();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -264,7 +268,7 @@ public:
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
     {
-        qDebug() << "TestService::testFunctionWithCustomReturnValue()";
+        qDebug() << "UniqueTestService::testFunctionWithCustomReturnValue()";
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyUniqueService");
         return f;
@@ -366,21 +370,27 @@ void registerExampleService()
         qWarning() << "Cannot register IPCExampleService" << path;
 }
 
-Q_DECLARE_METATYPE(QMetaType::Type);
+//Q_DECLARE_SERVICE_METATYPE(QServiceFilter);
 
+Q_DECLARE_METATYPE(QMetaType::Type);
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
+    //qRegisterServiceMetaType<QServiceFilter>();
+
+    //qDBusRegisterMetaType<QServiceFilter>();
+
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
+    
     // QVariant is built in with 4.7
     // QTBUG-11316 causes a crash so this is a work around
-#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+//#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
     qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
-#endif
+//#endif
 
     registerExampleService();
 
