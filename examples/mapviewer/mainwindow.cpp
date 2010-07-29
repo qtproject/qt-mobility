@@ -199,6 +199,7 @@ void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             removeMapObject(lastCircle);
             lastCircle->setCenter(this->screenPositionToCoordinate(event->pos()));
             addMapObject(lastCircle);
+            lastCircle->objectUpdate();
         }
     }
     else if (panActive) {
