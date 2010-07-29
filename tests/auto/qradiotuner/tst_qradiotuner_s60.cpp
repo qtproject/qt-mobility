@@ -39,42 +39,9 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
-#include <QDebug>
-#include <QTimer>
+#include "tst_qradiotuner_s60.h"
 
-#include <qmediaobject.h>
-#include <qmediacontrol.h>
-#include <qmediaservice.h>
-#include <qradiotunercontrol.h>
-#include <qradiotuner.h>
-
-#include <QMessageBox>
-
-QT_USE_NAMESPACE
-
-class tst_QRadioTuner: public QObject
-{
-    Q_OBJECT
-
-public slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-private slots:
-    void testBand();
-    void testFrequency();
-    void testMute();
-    void testSearch();
-    void testVolume();
-    void testSignal();
-    void testStereo();
-
-private:
-    QRadioTuner    *radio;
-};
-
-void tst_QRadioTuner::initTestCase()
+void tst_QRadioTuner_s60::initTestCase()
 {
     qRegisterMetaType<QRadioTuner::State>("QRadioTuner::State");
     qRegisterMetaType<QRadioTuner::Band>("QRadioTuner::Band");
@@ -84,7 +51,7 @@ void tst_QRadioTuner::initTestCase()
 
     QSignalSpy stateSpy(radio, SIGNAL(stateChanged(QRadioTuner::State)));
 
-    QCOMPARE(radio->state(), QRadioTuner::StoppedState); 
+    QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     radio->start();
     QCOMPARE(radio->state(), QRadioTuner::ActiveState);
 
@@ -92,7 +59,7 @@ void tst_QRadioTuner::initTestCase()
     QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::ActiveState);
 }
 
-void tst_QRadioTuner::cleanupTestCase()
+void tst_QRadioTuner_s60::cleanupTestCase()
 {
     QVERIFY(radio->error() == QRadioTuner::NoError);
     QVERIFY(radio->errorString().isEmpty());
@@ -108,7 +75,7 @@ void tst_QRadioTuner::cleanupTestCase()
     delete radio;
 }
 
-void tst_QRadioTuner::testBand()
+void tst_QRadioTuner_s60::testBand()
 {
     QVERIFY(radio->isBandSupported(QRadioTuner::FM));
     QVERIFY(!radio->isBandSupported(QRadioTuner::SW));
@@ -122,7 +89,7 @@ void tst_QRadioTuner::testBand()
     }
 }
 
-void tst_QRadioTuner::testFrequency()
+void tst_QRadioTuner_s60::testFrequency()
 {
     QSignalSpy readSignal(radio, SIGNAL(frequencyChanged(int)));
     radio->setFrequency(104500000);
@@ -138,7 +105,7 @@ void tst_QRadioTuner::testFrequency()
     QVERIFY(test.second == 108000000);
 }
 
-void tst_QRadioTuner::testMute()
+void tst_QRadioTuner_s60::testMute()
 {
     QSignalSpy readSignal(radio, SIGNAL(mutedChanged(bool)));
     radio->setMuted(true);
@@ -147,7 +114,7 @@ void tst_QRadioTuner::testMute()
     QVERIFY(readSignal.count() == 1);
 }
 
-void tst_QRadioTuner::testSearch()
+void tst_QRadioTuner_s60::testSearch()
 {
     QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
     QVERIFY(!radio->isSearching());
@@ -169,7 +136,7 @@ void tst_QRadioTuner::testSearch()
     QVERIFY(!radio->isSearching());
 }
 
-void tst_QRadioTuner::testVolume()
+void tst_QRadioTuner_s60::testVolume()
 {
     QVERIFY(radio->volume() == 100);
     QSignalSpy readSignal(radio, SIGNAL(volumeChanged(int)));
@@ -179,19 +146,15 @@ void tst_QRadioTuner::testVolume()
     QVERIFY(readSignal.count() == 1);
 }
 
-void tst_QRadioTuner::testSignal()
+void tst_QRadioTuner_s60::testSignal()
 {
     QVERIFY(radio->signalStrength() == 0);
     // There is no set of this only a get, do nothing else.
 }
 
-void tst_QRadioTuner::testStereo()
+void tst_QRadioTuner_s60::testStereo()
 {
     QVERIFY(radio->isStereo());
     radio->setStereoMode(QRadioTuner::ForceMono);
     QVERIFY(radio->stereoMode() == QRadioTuner::ForceMono);
 }
-
-QTEST_MAIN(tst_QRadioTuner)
-
-#include "tst_qradiotuner_s60.moc"
