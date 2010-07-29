@@ -6786,10 +6786,12 @@
             <keyword name="QtMultimediaKit::ProbablySupported" id="QtMultimediaKit::ProbablySupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="QtMultimediaKit::PreferredService" id="QtMultimediaKit::PreferredService" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="QtMultimediaKit Module" id="QtMultimediaKit Module" ref="qtmultimediakit.html"/>
+            <keyword name="QtNetwork Module" id="QtNetwork Module" ref="qtnetwork.html"/>
             <keyword name="QtOrganizer Module" id="QtOrganizer Module" ref="qtorganizer.html"/>
             <keyword name="QtPublishSubscribe Module" id="QtPublishSubscribe Module" ref="qtpublishsubscribe.html"/>
             <keyword name="QtSensors Module" id="QtSensors Module" ref="qtsensors.html"/>
             <keyword name="QtServiceFramework Module" id="QtServiceFramework Module" ref="qtserviceframework.html"/>
+            <keyword name="QtVersit Module" id="QtVersit Module" ref="qtversit.html"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
@@ -6854,6 +6856,7 @@
             <file>calendardemo-src-main-cpp.html</file>
             <file>qml-galleryfilter.html</file>
             <file>qcontactavatar.html</file>
+            <file>qtversit.html</file>
             <file>contactsusage.html</file>
             <file>bearermonitor.html</file>
             <file>qgraphicsvideoitem.html</file>
@@ -6972,6 +6975,7 @@
             <file>player-playlistmodel-cpp.html</file>
             <file>qorientationsensor-members.html</file>
             <file>qabstractvideosurface.html</file>
+            <file>qtnetwork.html</file>
             <file>qcameraviewfinder.html</file>
             <file>servicebrowser-servicebrowser-pro.html</file>
             <file>qmessageservice.html</file>

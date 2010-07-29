@@ -69,8 +69,6 @@ public:
     virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
     virtual void removeMapData(QGeoMapData* mapData);
 
-    virtual QPoint screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const;
-
     QList<QString> supportedImageFormats() const;
     QSize tileSize() const;
 

@@ -94,7 +94,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
                 m_captureSession, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));        
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoWindow = new QGstreamerVideoOverlay(this);

@@ -13686,6 +13686,7 @@
             <page access="public" status="commendable" name="keepintouch/keepintouch.pro" href="keepintouch-keepintouch-pro.html" subtype="file" title="" fulltitle="keepintouch.pro Example File" subtitle="keepintouch/keepintouch.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="modules" href="modules.html" subtype="group" title="All Modules" fulltitle="All Modules" subtitle="" location="modules.qdoc"/>
+        <page access="public" status="commendable" name="QtNetwork" href="qtnetwork.html" subtype="module" title="QtNetwork Module" fulltitle="QtNetwork Module" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="QtContacts" href="qtcontacts.html" subtype="module" title="QtContacts Module" fulltitle="QtContacts Module" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="QtOrganizer" href="qtorganizer.html" subtype="module" title="QtOrganizer Module" fulltitle="QtOrganizer Module" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="QtFeedback" href="qtfeedback.html" subtype="module" title="QtFeedback Module" fulltitle="QtFeedback Module" subtitle="" location="modules.qdoc"/>
@@ -13699,6 +13700,7 @@
         <page access="public" status="commendable" name="QtSystemInfo" href="qtsysteminfo.html" subtype="module" title="System Information Classes" fulltitle="System Information Classes" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="QtTelephony" href="qttelephony.html" subtype="module" title="Telephony Events Module" fulltitle="Telephony Events Module" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="QtGallery" href="qtgallery.html" subtype="module" title="QtGallery Module" fulltitle="QtGallery Module" subtitle="" location="modules.qdoc"/>
+        <page access="public" status="commendable" name="QtVersit" href="qtversit.html" subtype="module" title="QtVersit Module" fulltitle="QtVersit Module" subtitle="" location="modules.qdoc"/>
         <page access="public" status="commendable" name="vcardsupport.html" href="vcardsupport.html" subtype="page" title="Supported vCard Features" fulltitle="Supported vCard Features" subtitle="" location="vcardsupport.qdoc">
             <target name="vcardsupport"/>
             <contents name="properties" title="Properties" level="1"/>
@@ -13734,7 +13736,7 @@
         <page access="public" status="commendable" name="mobility" href="mobility.html" subtype="group" title="Qt Mobility Project APIs" fulltitle="Qt Mobility Project APIs" subtitle="" location="index.qdoc"/>
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview (Technology Preview)" fulltitle="Qt Mobility Project APIs Overview (Technology Preview)" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
-            <contents name="introducing-the-qt-mobility-apis" title="Introducing the Qt Mobility APIs" level="2"/>
+            <contents name="introducing-the-qt-mobility-project-apis" title="Introducing the Qt Mobility Project APIs" level="2"/>
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="getting-started" title="Getting Started" level="1"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
@@ -13781,6 +13783,7 @@
             <contents name="installing-the-service-at-runtime" title="Installing the Service at Runtime" level="1"/>
             <contents name="identifying-services" title="Identifying Services" level="1"/>
             <contents name="upgrading-services" title="Upgrading Services" level="2"/>
+            <contents name="out-of-process-services" title="Out of process Services" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
         </page>

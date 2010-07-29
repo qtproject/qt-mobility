@@ -6549,6 +6549,9 @@
     <section ref="qtmultimediakit.html" title="QtMultimediaKit Module">
         <keyword ref="qtmultimediakit.html">QtMultimediaKit Module</keyword>
     </section>
+    <section ref="qtnetwork.html" title="QtNetwork Module">
+        <keyword ref="qtnetwork.html">QtNetwork Module</keyword>
+    </section>
     <section ref="qtorganizer.html" title="QtOrganizer Module">
         <keyword ref="qtorganizer.html">QtOrganizer Module</keyword>
     </section>
@@ -6560,6 +6563,9 @@
     </section>
     <section ref="qtserviceframework.html" title="QtServiceFramework Module">
         <keyword ref="qtserviceframework.html">QtServiceFramework Module</keyword>
+    </section>
+    <section ref="qtversit.html" title="QtVersit Module">
+        <keyword ref="qtversit.html">QtVersit Module</keyword>
     </section>
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>

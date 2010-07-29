@@ -141,6 +141,7 @@
 <li class="level1"><a href="#installing-the-service-at-runtime">Installing the Service at Runtime</a></li>
 <li class="level1"><a href="#identifying-services">Identifying Services</a></li>
 <li class="level2"><a href="#upgrading-services">Upgrading Services</a></li>
+<li class="level2"><a href="#out-of-process-services">Out of process Services</a></li>
 <li class="level1"><a href="#examples">Examples</a></li>
 <li class="level1"><a href="#main-classes">Main Classes</a></li>
 </ul>
@@ -159,9 +160,9 @@
 <a name="overview"></a>
 <h2>Overview</h2>
 <p>A service is an independent component that allows a client to perform a well-defined operation. Clients can find services based on their name and version as well as the interface that is implemented by the service object. Once the service has been identified the framework starts the service and returns a pointer to it. <a href="qservicemanager.html">QServiceManager</a> is the main interface through which clients can access the mentioned framework functionality. In addition services themselves may also act as clients to the service framework by requesting other services installed on the system.</p>
-<p>Service provider are implemented via plug-ins. <a href="qserviceplugininterface.html">QServicePluginInterface</a> defines the main interface for each plug-in. In order to avoid that clients have to link against service specific libraries each service object must be derived from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities. To achieve the best level of access via the Qt meta object system services should be implemented in such a way that their entire functionality is accessable via the signals, slots, properties or invokable functions (see Q_INVOKABLE macro for more details).</p>
+<p>Service provider are implemented via plug-ins. <a href="qserviceplugininterface.html">QServicePluginInterface</a> defines the main interface for each plug-in. In order to avoid that clients have to link against service specific libraries each service object must be derived from QObject. Therefore the QMetaObject system can be used to dynamically discover and invoke the service's capabilities. To achieve the best level of access via the Qt meta object system services should be implemented in such a way that their entire functionality is accessible via the signals, slots, properties or invokable functions (see Q_INVOKABLE macro for more details).</p>
 <p>Each service plug-in implements one service only but can provide multiple implementations for multiple interfaces. Therefore a service (plug-in) can retain a certain level of backwards compatibility even if the main service interface breaks in such a way that a new interface name has to be used. Existing clients can still use the previous version of service interface whereas new clients can utilize the new interface.</p>
-<p>Future versions of this framework may also enable access to out-of-process service provider.</p>
+<p>Services can also include remote processes. By registering with the service manager processes can communicate via signals, slots, invokable functions and properties as if they were local objects. Services can choose to be either be shared between all clients, or unique to that client.</p>
 <a name="using-the-framework"></a>
 <h2>Using the Framework</h2>
 <p>This section assumes that the user wants to access the <i>FileStorage</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
@@ -306,12 +307,16 @@
 <p>There are two ways in which to upgrade a service. The first is an incremental approach whereby <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is used to register an XML descriptor whose service name already exists but defines new interface implementations. For example an already existing service, &quot;ovi&quot; may define version 1.0 of interface,&quot;IDownload&quot;. <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is then called with an XML descriptor that declares itself as belonging the &quot;ovi&quot; service, but implements version 1.1 of the interface &quot;IDownload&quot;. Both implementation versions will be available for use.</p>
 <p>The second method is a replacement approach whereby an existing service is completely removed and replaced by a new service.</p>
 <p>As an example the already existing &quot;ovi&quot; service may implement interface &quot;IDownload&quot; version 1.0, the new &quot;ovi&quot; service may implement &quot;IDownload&quot; version 1.0 and version 1.1&#x2e; In this case the old service implementation must be first be removed using <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>() to make way for the new service implementation.</p>
+<a name="out-of-process-services"></a>
+<h3>Out of process Services</h3>
+<p>Out of process services behave similarly to local services, with one exception. There can be IPC errors, or the remote service can be terminate unexpectedly. QObjects returned by the service manager for out of process services have an additional signal created, errorUnrecoverableIPCFault(<a href="qservice.html#UnrecoverableIPCError-enum">QService::UnrecoverableIPCError</a>) which the client must connect to. If an error occurs the object must be destroyed, no further calls can be made. Error recovery is left up to the client application.</p>
 <a name="examples"></a>
 <h2>Examples</h2>
 <ul>
 <li><a href="filemanagerplugin.html">File Manager Plugin Example</a></li>
 <li><a href="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</a></li>
 <li><a href="servicebrowser.html">Service Browser Example</a></li>
+<li>Service Framework Echo Example</li>
 </ul>
 <a name="main-classes"></a>
 <h2>Main Classes</h2>

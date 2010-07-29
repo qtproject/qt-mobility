@@ -39,54 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeoboundingbox.h"
+#ifndef QGEOCODEPARSER_H
+#define QGEOCODEPARSER_H
 
-QTM_BEGIN_NAMESPACE
+#include <QString>
+#include <QList>
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+class QXmlStreamReader;
+class QIODevice;
+
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
+#include <qgeoplace.h>
+#include <qgeoaddress.h>
+
+QTM_USE_NAMESPACE
+
+class QGeoCodeParser
 {
-    Q_D(QGeoMapMarkerObject);
+public:
+    QGeoCodeParser();
+    ~QGeoCodeParser();
 
-    d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
-}
+    bool parse(QIODevice* source);
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
-{
-}
+    QList<QGeoPlace> results() const;
+    QString errorString() const;
 
-QPixmap QGeoMapMarkerObject::icon() const
-{
-    Q_D(const QGeoMapMarkerObject);
+private:
+    bool parseRootElement();
+    bool parsePlace(QGeoPlace *place);
 
-    return d->icon;
-}
+    QXmlStreamReader *m_reader;
 
-QPoint QGeoMapMarkerObject::anchor() const
-{
-    Q_D(const QGeoMapMarkerObject);
+    QList<QGeoPlace> m_results;
+    QString m_errorString;
+};
 
-    return d->anchor;
-}
-
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
-
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
-
-QTM_END_NAMESPACE
-
+#endif
