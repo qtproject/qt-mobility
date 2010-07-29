@@ -47,7 +47,6 @@
 #include <QPair>
 #include <QDebug>
 #include <QHash>
-#include <QtDBus/QtDBus>
 
 QT_BEGIN_NAMESPACE
 class QDataStream;
