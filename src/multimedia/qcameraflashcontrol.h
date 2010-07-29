@@ -39,45 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERABINEXPOSURECONTROL_MAEMO_H
-#define CAMERABINEXPOSURECONTROL_MAEMO_H
+#ifndef QCAMERAFLASHCONTROL_H
+#define QCAMERAFLASHCONTROL_H
 
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
+
+#include <qcameraexposure.h>
 #include <qcamera.h>
-#include <qcameraexposurecontrol.h>
 
-#include <gst/gst.h>
-#include <glib.h>
+QT_BEGIN_NAMESPACE
 
-class CameraBinSession;
-
-QT_USE_NAMESPACE
-
-class Q_MULTIMEDIA_EXPORT CameraBinExposure : public QCameraExposureControl
+class Q_MULTIMEDIA_EXPORT QCameraFlashControl : public QMediaControl
 {
     Q_OBJECT
 
 public:
-    CameraBinExposure(CameraBinSession *session);
-    virtual ~CameraBinExposure();
+    ~QCameraFlashControl();
+    
+    virtual QCameraExposure::FlashModes flashMode() const = 0;
+    virtual void setFlashMode(QCameraExposure::FlashModes mode) = 0;
+    virtual bool isFlashModeSupported(QCameraExposure::FlashModes mode) const = 0;
 
-    QCameraExposure::ExposureMode exposureMode() const;
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
+    virtual bool isFlashReady() const = 0;
 
-    QCameraExposure::MeteringMode meteringMode() const;
-    void setMeteringMode(QCameraExposure::MeteringMode mode);
-    bool isMeteringModeSupported(QCameraExposure::MeteringMode mode) const;
+Q_SIGNALS:
+    void flashReady(bool);
 
-    bool isParameterSupported(ExposureParameter parameter) const;
-    QVariant exposureParameter(ExposureParameter parameter) const;
-    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const;
-    QVariantList supportedParameterRange(ExposureParameter parameter) const;
-    bool setExposureParameter(ExposureParameter parameter, const QVariant& value);
-
-    QString extendedParameterName(ExposureParameter parameter);
-
-private:
-    CameraBinSession *m_session;    
+protected:
+    QCameraFlashControl(QObject* parent = 0);
 };
 
-#endif // CAMERABINEXPOSURECONTROL_MAEMO_H
+#define QCameraFlashControl_iid "com.nokia.Qt.QCameraFlashControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QCameraFlashControl, QCameraFlashControl_iid)
+
+QT_END_NAMESPACE
+
+#endif  // QCAMERAFLASHCONTROL_H
+

@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef CAMERABINEXPOSURECONTROL_MAEMO_H
-#define CAMERABINEXPOSURECONTROL_MAEMO_H
+#ifndef CAMERABINFLASHCONTROL_H
+#define CAMERABINFLASHCONTROL_H
 
 #include <qcamera.h>
-#include <qcameraexposurecontrol.h>
+#include <qcameraflashcontrol.h>
 
 #include <gst/gst.h>
 #include <glib.h>
@@ -52,32 +52,22 @@ class CameraBinSession;
 
 QT_USE_NAMESPACE
 
-class Q_MULTIMEDIA_EXPORT CameraBinExposure : public QCameraExposureControl
+class Q_MULTIMEDIA_EXPORT CameraBinFlash : public QCameraFlashControl
 {
     Q_OBJECT
-
 public:
-    CameraBinExposure(CameraBinSession *session);
-    virtual ~CameraBinExposure();
+    CameraBinFlash(CameraBinSession *session);
+    virtual ~CameraBinFlash();
 
-    QCameraExposure::ExposureMode exposureMode() const;
-    void setExposureMode(QCameraExposure::ExposureMode mode);
-    bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const;
+    QCameraExposure::FlashModes flashMode() const;
+    void setFlashMode(QCameraExposure::FlashModes mode);
+    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const;
 
-    QCameraExposure::MeteringMode meteringMode() const;
-    void setMeteringMode(QCameraExposure::MeteringMode mode);
-    bool isMeteringModeSupported(QCameraExposure::MeteringMode mode) const;
-
-    bool isParameterSupported(ExposureParameter parameter) const;
-    QVariant exposureParameter(ExposureParameter parameter) const;
-    ParameterFlags exposureParameterFlags(ExposureParameter parameter) const;
-    QVariantList supportedParameterRange(ExposureParameter parameter) const;
-    bool setExposureParameter(ExposureParameter parameter, const QVariant& value);
-
-    QString extendedParameterName(ExposureParameter parameter);
+    bool isFlashReady() const;
 
 private:
     CameraBinSession *m_session;    
 };
 
-#endif // CAMERABINEXPOSURECONTROL_MAEMO_H
+#endif // CAMERABINFLASHCONTROL_H
+

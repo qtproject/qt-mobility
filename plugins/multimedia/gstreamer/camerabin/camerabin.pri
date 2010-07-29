@@ -20,6 +20,7 @@ HEADERS += \
     $$PWD/camerabinrecorder.h \
     $$PWD/camerabincontainer.h \
     $$PWD/camerabinexposure.h \
+    $$PWD/camerabinflash.h \
     $$PWD/camerabinimagecapture.h \
     $$PWD/camerabinimageprocessing.h \
     $$PWD/camerabinmetadata.h \
@@ -32,6 +33,7 @@ SOURCES += \
     $$PWD/camerabinaudioencoder.cpp \
     $$PWD/camerabincontainer.cpp \
     $$PWD/camerabinexposure.cpp \
+    $$PWD/camerabinflash.cpp \
     $$PWD/camerabinfocus.cpp \
     $$PWD/camerabinimagecapture.cpp \
     $$PWD/camerabinimageencoder.cpp \
