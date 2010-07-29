@@ -208,7 +208,7 @@ void tst_recurringItems::addRecurrenceRule()
 
 void tst_recurringItems::removeRecurrenceRule_data()
 {
-    //addRecurrenceRule_data();
+    addRecurrenceRule_data();
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
@@ -272,10 +272,10 @@ void tst_recurringItems::removeRecurrenceRule()
     QOrganizerItem resultItem;
     resultItem = m_om->item(item.localId());
     
-    if (item.detail(QOrganizerItemRecurrence::DefinitionName) != resultItem.detail(QOrganizerItemRecurrence::DefinitionName)) {
-            qDebug() << "Expected: " << recurrence;
-            qDebug() << "Actual:   " << item.detail(QOrganizerItemRecurrence::DefinitionName);
-            QFAIL("Recurrence items do not match!");
+    if (item.detail(QOrganizerItemRecurrence::DefinitionName)!= resultItem.detail(QOrganizerItemRecurrence::DefinitionName)) {
+        qDebug() << "Expected: " << item.detail(QOrganizerItemRecurrence::DefinitionName);
+        qDebug() << "Actual:   " << resultItem.detail(QOrganizerItemRecurrence::DefinitionName);
+        QFAIL("Recurrence items do not match!");
     }
 }
 

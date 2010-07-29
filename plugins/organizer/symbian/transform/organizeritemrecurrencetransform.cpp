@@ -47,14 +47,12 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
 {
     // *** Repeat rules / RDate / ExDate Methods ***
     QOrganizerItemRecurrence recurrence;
-
-    // TODO: do not set QOrganizerItemRecurrence if there are none
-
+    
     TCalRRule calRRule;
     entry.GetRRuleL(calRRule);
-    if (calRRule.Type() != TCalRRule::EInvalid) {
-        recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
-    }
+    //TODO: to put invalid rule check once remove recurrence apis are available.
+    recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
+    
 
     RArray<TCalTime> calRDateList;
     entry.GetRDatesL(calRDateList);
@@ -249,9 +247,13 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
             // TODO: Symbian calendar server does not allow storing weekly
             // recurrence without "by day" data! This means that a client
             // must set "days of week" for a QOrganizerItemRecurrenceRule
-            if (byDay.Count()) {
-                calRule.SetByDay(byDay);
+            if (!byDay.Count()) {
+                QList<Qt::DayOfWeek> daysOfWeek;
+                int dayOfWeek = startDateTime.date().dayOfWeek();
+                Qt::DayOfWeek day = Qt::DayOfWeek(dayOfWeek);
+                byDay.AppendL(toTDayL(day));
             }
+            calRule.SetByDay(byDay);
             byDay.Close();
             // Set start of the week 
             if (rrule.weekStart()!= (Qt::Monday)) {
@@ -260,16 +262,20 @@ TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecu
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Monthly) {
             calRule.SetType(TCalRRule::EMonthly);
             // TODO: how about daysOfWeek, daysOfYear and so on?
-            if (!rrule.daysOfMonth().isEmpty()) {
-                RArray<TInt> byMonthDay;
-                CleanupClosePushL(byMonthDay);
+            RArray<TInt> byMonthDay;
+            CleanupClosePushL(byMonthDay);
+            if (!rrule.daysOfMonth().isEmpty()) {                              
                 foreach (int dayOfMonth, rrule.daysOfMonth()) {
                     // symbian calendar server uses 0-based month days
                     byMonthDay.AppendL(dayOfMonth - 1);
-                }
+                }    
+            } else {                   
+                int day = startDateTime.date().day();
+                byMonthDay.AppendL(day - 1);
+            }
                 calRule.SetByMonthDay(byMonthDay);
                 CleanupStack::PopAndDestroy(&byMonthDay);
-            } 
+                
         } else if (rrule.frequency() == QOrganizerItemRecurrenceRule::Yearly) {
             // TODO: does not work, the test case that tests this has been disabled also
             calRule.SetType(TCalRRule::EYearly);
