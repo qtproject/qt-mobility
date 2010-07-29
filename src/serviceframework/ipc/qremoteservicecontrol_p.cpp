@@ -51,6 +51,13 @@
 
 #include <time.h>
 
+
+// Needed for ::Sleep, while we wait for a better solution
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#include <Winbase.h>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 //IPC based on QLocalSocket
@@ -173,10 +180,15 @@ QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdent
                 qWarning() << "Service died on startup" << service->errorString();
                 return false;
             }
+			// Temporary hack till we can improve startup signaling
+#ifdef Q_OS_WIN
+			::Sleep(10);
+#else
             struct timespec tm;
             tm.tv_sec = 0;
             tm.tv_nsec = 1000000;
             nanosleep(&tm, 0x0);
+#endif
             socket->connectToServer(address);
             // keep trying for a while
         }
