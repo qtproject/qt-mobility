@@ -1156,7 +1156,6 @@
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="all-examples.html" title="Qt Mobility Examples"/>
                     <section ref="mobility.html" title="Qt Mobility Project APIs"/>
-                    <section ref="index.html" title="Qt Mobility Project APIs Overview"/>
                     <section ref="index.html" title="Qt Mobility Project APIs Overview (Technology Preview)"/>
                     <section ref="organizerengines.html" title="Qt Organizer Manager Engines"/>
                     <section ref="organizerschema.html" title="Qt Organizer Schema"/>
@@ -3105,20 +3104,15 @@
             <keyword name="containerObject" id="QGeoMapData::containerObject" ref="qgeomapdata.html#containerObject"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapData::coordinateToScreenPosition" ref="qgeomapdata.html#coordinateToScreenPosition"/>
             <keyword name="engine" id="QGeoMapData::engine" ref="qgeomapdata.html#engine"/>
-            <keyword name="imageChanged" id="QGeoMapData::imageChanged" ref="qgeomapdata.html#imageChanged"/>
-            <keyword name="imageChangesTriggerUpdates" id="QGeoMapData::imageChangesTriggerUpdates" ref="qgeomapdata.html#imageChangesTriggerUpdates"/>
-            <keyword name="mapImage" id="QGeoMapData::mapImage" ref="qgeomapdata.html#mapImage"/>
             <keyword name="mapObjects" id="QGeoMapData::mapObjects" ref="qgeomapdata.html#mapObjects"/>
             <keyword name="mapObjectsAtScreenPosition" id="QGeoMapData::mapObjectsAtScreenPosition" ref="qgeomapdata.html#mapObjectsAtScreenPosition"/>
             <keyword name="mapObjectsInScreenRect" id="QGeoMapData::mapObjectsInScreenRect" ref="qgeomapdata.html#mapObjectsInScreenRect"/>
-            <keyword name="mapObjectsOverlay" id="QGeoMapData::mapObjectsOverlay" ref="qgeomapdata.html#mapObjectsOverlay"/>
             <keyword name="mapType" id="QGeoMapData::mapType" ref="qgeomapdata.html#mapType"/>
+            <keyword name="paint" id="QGeoMapData::paint" ref="qgeomapdata.html#paint"/>
             <keyword name="pan" id="QGeoMapData::pan" ref="qgeomapdata.html#pan"/>
             <keyword name="removeMapObject" id="QGeoMapData::removeMapObject" ref="qgeomapdata.html#removeMapObject"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapData::screenPositionToCoordinate" ref="qgeomapdata.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapData::setCenter" ref="qgeomapdata.html#setCenter"/>
-            <keyword name="setImageChangesTriggerUpdates" id="QGeoMapData::setImageChangesTriggerUpdates" ref="qgeomapdata.html#setImageChangesTriggerUpdates"/>
-            <keyword name="setMapImage" id="QGeoMapData::setMapImage" ref="qgeomapdata.html#setMapImage"/>
             <keyword name="setMapType" id="QGeoMapData::setMapType" ref="qgeomapdata.html#setMapType"/>
             <keyword name="setViewportSize" id="QGeoMapData::setViewportSize" ref="qgeomapdata.html#setViewportSize"/>
             <keyword name="setZoomLevel" id="QGeoMapData::setZoomLevel" ref="qgeomapdata.html#setZoomLevel"/>
@@ -3140,18 +3134,19 @@
             <keyword name="QGeoMapObject::GeoRouteType" id="QGeoMapObject::GeoRouteType" ref="qgeomapobject.html#Type-enum"/>
             <keyword name="addChildObject" id="QGeoMapObject::addChildObject" ref="qgeomapobject.html#addChildObject"/>
             <keyword name="boundingBox" id="QGeoMapObject::boundingBox" ref="qgeomapobject.html#boundingBox"/>
-            <keyword name="childObjectAdded" id="QGeoMapObject::childObjectAdded" ref="qgeomapobject.html#childObjectAdded"/>
-            <keyword name="childObjectRemoved" id="QGeoMapObject::childObjectRemoved" ref="qgeomapobject.html#childObjectRemoved"/>
             <keyword name="childObjects" id="QGeoMapObject::childObjects" ref="qgeomapobject.html#childObjects"/>
             <keyword name="contains" id="QGeoMapObject::contains" ref="qgeomapobject.html#contains"/>
             <keyword name="isVisible" id="QGeoMapObject::isVisible" ref="qgeomapobject.html#isVisible"/>
+            <keyword name="mapUpdate" id="QGeoMapObject::mapUpdate" ref="qgeomapobject.html#mapUpdate"/>
+            <keyword name="objectUpdate" id="QGeoMapObject::objectUpdate" ref="qgeomapobject.html#objectUpdate"/>
+            <keyword name="operator&lt;" id="QGeoMapObject::operator&lt;" ref="qgeomapobject.html#operator-lt"/>
+            <keyword name="operator&gt;" id="QGeoMapObject::operator&gt;" ref="qgeomapobject.html#operator-gt"/>
             <keyword name="parentObject" id="QGeoMapObject::parentObject" ref="qgeomapobject.html#parentObject"/>
             <keyword name="removeChildObject" id="QGeoMapObject::removeChildObject" ref="qgeomapobject.html#removeChildObject"/>
             <keyword name="setVisible" id="QGeoMapObject::setVisible" ref="qgeomapobject.html#setVisible"/>
             <keyword name="setZValue" id="QGeoMapObject::setZValue" ref="qgeomapobject.html#setZValue"/>
             <keyword name="type" id="QGeoMapObject::type" ref="qgeomapobject.html#type"/>
             <keyword name="zValue" id="QGeoMapObject::zValue" ref="qgeomapobject.html#zValue"/>
-            <keyword name="zValueChanged" id="QGeoMapObject::zValueChanged" ref="qgeomapobject.html#zValueChanged"/>
             <keyword name="~QGeoMapObject" id="QGeoMapObject::~QGeoMapObject" ref="qgeomapobject.html#dtor.QGeoMapObject"/>
             <keyword name="QGeoMapWidget" id="QGeoMapWidget" ref="qgeomapwidget.html"/>
             <keyword name="QGeoMapWidget::MapType" id="QGeoMapWidget::MapType" ref="qgeomapwidget.html#MapType-enum"/>
@@ -3836,7 +3831,10 @@
             <keyword name="QLandmarkManager::Emulated" id="QLandmarkManager::Emulated" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
             <keyword name="QLandmarkManager::None" id="QLandmarkManager::None" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
             <keyword name="QLandmarkManager::LandmarkFeature" id="QLandmarkManager::LandmarkFeature" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
-            <keyword name="QLandmarkManager::GenericAttributes" id="QLandmarkManager::GenericAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::GenericLandmarkAttributes" id="QLandmarkManager::GenericLandmarkAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::GenericCategoryAttributes" id="QLandmarkManager::GenericCategoryAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::PlatformLandmarkAttributes" id="QLandmarkManager::PlatformLandmarkAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::PlatformCategoryAttributes" id="QLandmarkManager::PlatformCategoryAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
             <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
             <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
             <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
@@ -3845,6 +3843,7 @@
             <keyword name="categoriesRemoved" id="QLandmarkManager::categoriesRemoved" ref="qlandmarkmanager.html#categoriesRemoved"/>
             <keyword name="category" id="QLandmarkManager::category" ref="qlandmarkmanager.html#category"/>
             <keyword name="categoryIds" id="QLandmarkManager::categoryIds" ref="qlandmarkmanager.html#categoryIds"/>
+            <keyword name="dataChanged" id="QLandmarkManager::dataChanged" ref="qlandmarkmanager.html#dataChanged"/>
             <keyword name="error" id="QLandmarkManager::error" ref="qlandmarkmanager.html#error"/>
             <keyword name="errorString" id="QLandmarkManager::errorString" ref="qlandmarkmanager.html#errorString"/>
             <keyword name="exportLandmarks" id="QLandmarkManager::exportLandmarks" ref="qlandmarkmanager.html#exportLandmarks"/>
@@ -3864,6 +3863,8 @@
             <keyword name="managerUri" id="QLandmarkManager::managerUri" ref="qlandmarkmanager.html#managerUri"/>
             <keyword name="managerVersion" id="QLandmarkManager::managerVersion" ref="qlandmarkmanager.html#managerVersion"/>
             <keyword name="parseUri" id="QLandmarkManager::parseUri" ref="qlandmarkmanager.html#parseUri"/>
+            <keyword name="platformCategoryAttributeKeys" id="QLandmarkManager::platformCategoryAttributeKeys" ref="qlandmarkmanager.html#platformCategoryAttributeKeys"/>
+            <keyword name="platformLandmarkAttributeKeys" id="QLandmarkManager::platformLandmarkAttributeKeys" ref="qlandmarkmanager.html#platformLandmarkAttributeKeys"/>
             <keyword name="removeCategory" id="QLandmarkManager::removeCategory" ref="qlandmarkmanager.html#removeCategory"/>
             <keyword name="removeLandmark" id="QLandmarkManager::removeLandmark" ref="qlandmarkmanager.html#removeLandmark"/>
             <keyword name="removeLandmarks" id="QLandmarkManager::removeLandmarks" ref="qlandmarkmanager.html#removeLandmarks"/>
@@ -3883,6 +3884,7 @@
             <keyword name="compareDistance" id="QLandmarkManagerEngine::compareDistance" ref="qlandmarkmanagerengine.html#compareDistance"/>
             <keyword name="compareLandmark" id="QLandmarkManagerEngine::compareLandmark" ref="qlandmarkmanagerengine.html#compareLandmark"/>
             <keyword name="compareName" id="QLandmarkManagerEngine::compareName" ref="qlandmarkmanagerengine.html#compareName"/>
+            <keyword name="dataChanged" id="QLandmarkManagerEngine::dataChanged" ref="qlandmarkmanagerengine.html#dataChanged"/>
             <keyword name="exportLandmarks" id="QLandmarkManagerEngine::exportLandmarks" ref="qlandmarkmanagerengine.html#exportLandmarks"/>
             <keyword name="filterSupportLevel" id="QLandmarkManagerEngine::filterSupportLevel" ref="qlandmarkmanagerengine.html#filterSupportLevel"/>
             <keyword name="importLandmarks" id="QLandmarkManagerEngine::importLandmarks" ref="qlandmarkmanagerengine.html#importLandmarks"/>
@@ -3898,6 +3900,8 @@
             <keyword name="managerParameters" id="QLandmarkManagerEngine::managerParameters" ref="qlandmarkmanagerengine.html#managerParameters"/>
             <keyword name="managerUri" id="QLandmarkManagerEngine::managerUri" ref="qlandmarkmanagerengine.html#managerUri"/>
             <keyword name="managerVersion" id="QLandmarkManagerEngine::managerVersion" ref="qlandmarkmanagerengine.html#managerVersion"/>
+            <keyword name="platformCategoryAttributeKeys" id="QLandmarkManagerEngine::platformCategoryAttributeKeys" ref="qlandmarkmanagerengine.html#platformCategoryAttributeKeys"/>
+            <keyword name="platformLandmarkAttributeKeys" id="QLandmarkManagerEngine::platformLandmarkAttributeKeys" ref="qlandmarkmanagerengine.html#platformLandmarkAttributeKeys"/>
             <keyword name="removeCategory" id="QLandmarkManagerEngine::removeCategory" ref="qlandmarkmanagerengine.html#removeCategory"/>
             <keyword name="removeLandmark" id="QLandmarkManagerEngine::removeLandmark" ref="qlandmarkmanagerengine.html#removeLandmark"/>
             <keyword name="removeLandmarks" id="QLandmarkManagerEngine::removeLandmarks" ref="qlandmarkmanagerengine.html#removeLandmarks"/>
@@ -4251,6 +4255,7 @@
             <keyword name="setMedia" id="QMediaImageViewer::setMedia" ref="qmediaimageviewer.html#media-prop"/>
             <keyword name="setPlaylist" id="QMediaImageViewer::setPlaylist" ref="qmediaimageviewer.html#setPlaylist"/>
             <keyword name="setTimeout" id="QMediaImageViewer::setTimeout" ref="qmediaimageviewer.html#timeout-prop"/>
+            <keyword name="setVideoOutput" id="QMediaImageViewer::setVideoOutput" ref="qmediaimageviewer.html#setVideoOutput"/>
             <keyword name="state" id="QMediaImageViewer::state" ref="qmediaimageviewer.html#state-prop"/>
             <keyword name="stateChanged" id="QMediaImageViewer::stateChanged" ref="qmediaimageviewer.html#stateChanged"/>
             <keyword name="stop" id="QMediaImageViewer::stop" ref="qmediaimageviewer.html#stop"/>
@@ -6677,7 +6682,6 @@
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="all-examples.html"/>
             <keyword name="Qt Mobility Project APIs" id="Qt Mobility Project APIs" ref="mobility.html"/>
-            <keyword name="Qt Mobility Project APIs Overview" id="Qt Mobility Project APIs Overview" ref="index.html"/>
             <keyword name="Qt Mobility Project APIs Overview (Technology Preview)" id="Qt Mobility Project APIs Overview (Technology Preview)" ref="index.html"/>
             <keyword name="Qt Organizer Manager Engines" id="Qt Organizer Manager Engines" ref="organizerengines.html"/>
             <keyword name="Qt Organizer Schema" id="Qt Organizer Schema" ref="organizerschema.html"/>
