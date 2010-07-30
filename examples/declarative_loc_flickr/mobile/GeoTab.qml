@@ -46,15 +46,12 @@ import QtMobility.location 1.0
 Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
-    //property alias latitude: positionSource.position.latitude
-    //property alias longtitude: positionSource.position.longtitude
     property double latitude
     property double longtitude
-
     latitude: positionSource.position.latitude
     longtitude: positionSource.position.longtitude
 
-    width: 200; height: 110
+    width: 300; height: 130
     color: "blue"
     opacity: 0.7
     border.color: "black"
