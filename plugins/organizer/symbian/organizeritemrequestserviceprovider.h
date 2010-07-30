@@ -91,6 +91,8 @@ private: // Worker functions
     void FetchItemsandFilterL(QOrganizerItemFilter& filter, 
             QList<QOrganizerItemSortOrder>& sortOrder, 
             QOrganizerItemFetchHint& fetchHint);
+    // Fetch items ids
+    void FetchItemIdsL();
     // Remove items/entries
     void RemoveItemL();
     

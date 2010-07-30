@@ -161,7 +161,7 @@ void COrganizerItemRequestsServiceProvider::RunL()
             break;
         case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest: 
             {
-            
+            FetchItemIdsL();
             }
             break;
         case QOrganizerItemAbstractRequest::ItemRemoveRequest: 
@@ -277,6 +277,21 @@ void COrganizerItemRequestsServiceProvider::FetchItemsL()
             }
             break;
         }
+    }
+
+// Fetch item local ids
+void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
+    {
+    QOrganizerItemFilter filter(((QOrganizerItemFetchRequest*)iReq)->filter());
+    QList<QOrganizerItemSortOrder> sortOrder(((QOrganizerItemFetchRequest*)iReq)->sorting());
+    
+    QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
+ 
+    QList<QOrganizerItemLocalId> ids(iOrganizerItemManagerEngine.itemIds(filter, sortOrder, &error));
+    
+    QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
+            (QOrganizerItemLocalIdFetchRequest*)iReq, 
+            ids, error, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch Entries by local Ids
