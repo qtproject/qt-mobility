@@ -72,7 +72,10 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (pen != d->pen);
     d->pen = pen;
+    if (update)
+        objectUpdate();
 }
 
 QPen QGeoMapCircleObject::pen() const
@@ -84,7 +87,10 @@ QPen QGeoMapCircleObject::pen() const
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (brush != d->brush);
     d->brush = brush;
+    if (update)
+        objectUpdate();
 }
 
 QBrush QGeoMapCircleObject::brush() const
@@ -99,7 +105,10 @@ QBrush QGeoMapCircleObject::brush() const
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (center != d->center);
     d->center = center;
+    if (update)
+        objectUpdate();
 }
 
 /*!
@@ -117,7 +126,10 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (radius != d->radius);
     d->radius = radius;
+    if (update)
+        objectUpdate();
 }
 
 /*!

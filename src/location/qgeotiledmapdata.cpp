@@ -81,6 +81,10 @@
 #define PI 3.14159265
 #define HIT_DETECTION_COLOR qRgba(0, 0, 255, 127) //semi-transparent blue
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include <math.h>
 
 uint qHash(const QRectF& key)
