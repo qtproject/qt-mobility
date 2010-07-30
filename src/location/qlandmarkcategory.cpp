@@ -269,7 +269,10 @@ QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaul
 */
 void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 {
-    d->attributes[key] = value;
+    if (!value.isValid())
+        d->attributes.remove(key);
+    else
+        d->attributes[key] = value;
 }
 
 /*!
