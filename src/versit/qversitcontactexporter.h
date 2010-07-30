@@ -79,7 +79,15 @@ public:
                                  QSet<QString> processedFields,
                                  const QVersitDocument& document,
                                  QList<QVersitProperty>* toBeRemoved,
-                                 QList<QVersitProperty>* toBeAdded) {}
+                                 QList<QVersitProperty>* toBeAdded)
+    {
+        Q_UNUSED(contact)
+        Q_UNUSED(detail)
+        Q_UNUSED(processedFields)
+        Q_UNUSED(document)
+        Q_UNUSED(toBeRemoved)
+        Q_UNUSED(toBeAdded)
+    }
 
     virtual ~QVersitContactExporterDetailHandlerV2() {}
 
@@ -90,7 +98,15 @@ public:
                                  const QVersitDocument& document,
                                  QSet<QString>* processedFields,
                                  QList<QVersitProperty>* toBeRemoved,
-                                 QList<QVersitProperty>* toBeAdded) {}
+                                 QList<QVersitProperty>* toBeAdded)
+    {
+        Q_UNUSED(contact)
+        Q_UNUSED(detail)
+        Q_UNUSED(document)
+        Q_UNUSED(processedFields)
+        Q_UNUSED(toBeRemoved)
+        Q_UNUSED(toBeAdded)
+    }
     virtual void contactProcessed(const QContact& contact,
                                   QVersitDocument* document) = 0;
 };
