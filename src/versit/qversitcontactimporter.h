@@ -80,14 +80,7 @@ public:
                                    const QVersitProperty& property,
                                    bool alreadyProcessed,
                                    const QContact& contact,
-                                   QList<QContactDetail>* updatedDetails)
-    {
-        Q_UNUSED(document)
-        Q_UNUSED(property)
-        Q_UNUSED(alreadyProcessed)
-        Q_UNUSED(contact)
-        Q_UNUSED(updatedDetails)
-    }
+                                   QList<QContactDetail>* updatedDetails);
     virtual ~QVersitContactImporterPropertyHandlerV2() {}
 
     // made non-pure for the transition period - this will soon be made pure, so it must be
@@ -96,14 +89,7 @@ public:
                                    const QVersitProperty& property,
                                    const QContact& contact,
                                    bool *alreadyProcessed,
-                                   QList<QContactDetail>* updatedDetails)
-    {
-        Q_UNUSED(document)
-        Q_UNUSED(property)
-        Q_UNUSED(contact)
-        Q_UNUSED(alreadyProcessed)
-        Q_UNUSED(updatedDetails)
-    }
+                                   QList<QContactDetail>* updatedDetails);
     virtual void documentProcessed(const QVersitDocument& document,
                                    QContact* contact) = 0;
 };

@@ -108,7 +108,7 @@ QTM_USE_NAMESPACE
  */
 
 /*!
-  \fn void QVersitContactExporterDetailHandlerV2::detailProcessed(const QContact& contact, const QContactDetail& detail, const QSet<QString>& processedFields, const QVersitDocument& document, QList<QVersitProperty>* toBeRemoved, QList<QVersitProperty>* toBeAdded)
+  \fn void QVersitContactExporterDetailHandlerV2::detailProcessed(const QContact& contact, const QContactDetail& detail, const QVersitDocument& document, QSet<QString>* processedFields, QList<QVersitProperty>* toBeRemoved, QList<QVersitProperty>* toBeAdded)
 
   Process \a detail and provide a list of updated \l{QVersitProperty}{QVersitProperties} by
   modifying the \a toBeRemoved and \a toBeAdded lists.  
@@ -133,6 +133,37 @@ QTM_USE_NAMESPACE
   After the handler returns control back to the exporter, the properties in the \a toBeRemoved
   list will be removed and the properties in the \a toBeAdded list will be appended to the document.
  */
+void QVersitContactExporterDetailHandlerV2::detailProcessed(
+        const QContact& contact,
+        const QContactDetail& detail,
+        QSet<QString> processedFields,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* toBeRemoved,
+        QList<QVersitProperty>* toBeAdded)
+{
+    Q_UNUSED(contact)
+    Q_UNUSED(detail)
+    Q_UNUSED(processedFields)
+    Q_UNUSED(document)
+    Q_UNUSED(toBeRemoved)
+    Q_UNUSED(toBeAdded)
+}
+
+void QVersitContactExporterDetailHandlerV2::detailProcessed(
+        const QContact& contact,
+        const QContactDetail& detail,
+        const QVersitDocument& document,
+        QSet<QString>* processedFields,
+        QList<QVersitProperty>* toBeRemoved,
+        QList<QVersitProperty>* toBeAdded)
+{
+    Q_UNUSED(contact)
+    Q_UNUSED(detail)
+    Q_UNUSED(document)
+    Q_UNUSED(processedFields)
+    Q_UNUSED(toBeRemoved)
+    Q_UNUSED(toBeAdded)
+}
 
 /*!
   \fn void QVersitContactExporterDetailHandlerV2::contactProcessed(const QContact& contact, QVersitDocument* document)
