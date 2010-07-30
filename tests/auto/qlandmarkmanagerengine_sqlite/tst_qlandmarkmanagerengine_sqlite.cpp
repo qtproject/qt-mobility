@@ -739,6 +739,33 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
      QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
      // add - with attributes
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    cat2.setAttribute("one","1");
+    QVERIFY(m_manager->saveCategory(&cat2));
+    QCOMPARE(m_manager->category(cat2.categoryId()).attributeKeys().count(), 1);
+    QCOMPARE(m_manager->category(cat2.categoryId()).attribute("one").toString(), QString("1"));
+
+    //try multiple attributes
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    cat3.setAttribute("ichi",1);
+    cat3.setAttribute("ni",2);
+    cat3.setAttribute("san", 3);
+
+    QVERIFY(m_manager->saveCategory(&cat3));
+    QCOMPARE(m_manager->category(cat3.categoryId()).attributeKeys().count(), 3);
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ni").toInt(), 2);
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("san").toInt(), 3);
+
+    //remove an attribute
+    cat3.setAttribute("ni", QVariant());
+    QCOMPARE(cat3.attributeKeys().count(),2);
+    QVERIFY(m_manager->saveCategory(&cat3));
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ni"), QVariant());
+    QCOMPARE(m_manager->category(cat3.categoryId()).attribute("san").toInt(), 3);
 }
 
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
@@ -765,6 +792,51 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
     // add - with attributes
+    QLandmarkCategory cat2;
+    cat2.setName("CAT2");
+    cat2.setAttribute("one","1");
+
+    saveCategoryRequest.setCategory(cat2);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+
+    QLandmarkCategory cat2new;
+    cat2new = saveCategoryRequest.categories().at(0);
+
+    QCOMPARE(m_manager->category(cat2new.categoryId()).attributeKeys().count(), 1);
+    QCOMPARE(m_manager->category(cat2new.categoryId()).attribute("one").toString(), QString("1"));
+
+   //try multiple attributes
+    QLandmarkCategory cat3;
+    cat3.setName("CAT3");
+    cat3.setAttribute("ichi",1);
+    cat3.setAttribute("ni",2);
+    cat3.setAttribute("san", 3);
+
+    saveCategoryRequest.setCategory(cat3);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+    QCOMPARE(saveCategoryRequest.categories().count(),1);
+
+    QLandmarkCategory cat3saved = saveCategoryRequest.categories().at(0);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attributeKeys().count(), 3);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ni").toInt(), 2);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("san").toInt(), 3);
+
+    //remove an attribute
+    cat3.setAttribute("ni", QVariant());
+    QCOMPARE(cat3.attributeKeys().count(),2);
+
+    saveCategoryRequest.setCategory(cat3);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+    QCOMPARE(saveCategoryRequest.categories().count(),1);
+
+    cat3saved = saveCategoryRequest.categories().at(0);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ichi").toInt(), 1);
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ni"), QVariant());
+    QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("san").toInt(), 3);
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateCategory() {
