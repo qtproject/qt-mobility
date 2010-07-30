@@ -430,6 +430,7 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
                     result = property.read(service);
                     break;
                 case QMetaObject::ResetProperty:
+                    qDebug() << "RESET ME PLEASEEEEEEEEEEEEEEEEEEE";
                     property.reset(service);
                     break;
                 default:
@@ -532,8 +533,34 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         ////////// DBUS META OBJECT ////////////
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
         const QMetaObject *d_meta = serviceDBus->metaObject();
-        qDebug() << "SERVICE DBUS META OBJECT" << d_meta->methodCount();
-        ///////////////////////////////////////
+
+        const QMetaObject *s_meta = serviceDBus->serviceMetaObject();
+        qDebug() << "++++++++++++++++++++SERVICE++++++++++++++++++++++++";
+        qDebug() << s_meta->className();
+        qDebug() << "METHOD COUNT: " << s_meta->methodCount();
+        for (int i=0; i<s_meta->methodCount(); i++) {
+            QMetaMethod mm = s_meta->method(i);
+
+            QString type;
+            switch(mm.methodType()) {
+                case QMetaMethod::Method:
+                    type = "Q_INVOKABLE";
+                    break;
+                case QMetaMethod::Signal:
+                    type = "SIGNAL";
+                    break;
+                case QMetaMethod::Slot:
+                    type = "SLOT";
+                    break;
+            }
+
+            QString returnType = mm.typeName();
+            if (returnType == "") returnType = "void";
+
+            qDebug() << "METHOD" << type << ":" << returnType << mm.signature();
+        }
+        qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++";
+        ////////////////////////////////////////
 
         // DBUSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 	connection = new QDBusConnection(QDBusConnection::sessionBus());
@@ -552,6 +579,35 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         connection->registerObject(objPath, serviceDBus, QDBusConnection::ExportAllContents);
        
         iface = new QDBusInterface(serviceName, objPath, "", QDBusConnection::sessionBus(), this);
+        const QMetaObject *i_meta = iface->metaObject();
+        qDebug() << "++++++++++++++++++++++++IFACE+++++++++++++++++++++++";
+        qDebug() << i_meta->className();
+        qDebug() << "METHOD COUNT: " << i_meta->methodCount();
+        for (int i=0; i<i_meta->methodCount(); i++) {
+            QMetaMethod mm = i_meta->method(i);
+
+            QString type;
+            switch(mm.methodType()) {
+                case QMetaMethod::Method:
+                    type = "Q_INVOKABLE";
+                    break;
+                case QMetaMethod::Signal:
+                    type = "SIGNAL";
+                    break;
+                case QMetaMethod::Slot:
+                    type = "SLOT";
+                    break;
+            }
+
+            QString returnType = mm.typeName();
+            if (returnType == "") returnType = "void";
+
+            qDebug() << "METHOD" << type << ":" << returnType << mm.signature();
+        }
+        qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++";
+        
+        //QDBusReply<QString> reply = iface->call("Introspect");
+        //qDebug() << reply.value();
         ////////////////////////////////////////
 
         //get meta object from type register
@@ -585,13 +641,37 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg, int /*returnType*/, QMetaObject::Call c )
 {
     // Writing to property, direct DBus call
+    
     if (c == QMetaObject::WriteProperty) {
-        const QMetaObject *imeta = iface->metaObject();
+        const QMetaObject *imeta = service->metaObject();
         QMetaProperty property = imeta->property(metaIndex);
         if (!iface->setProperty(property.name(), arg)) {
             qWarning() << "Service property call failed";
         }
         return QVariant();
+    } 
+    
+    else if (c == QMetaObject::ResetProperty) {
+        const QMetaObject *imeta = service->metaObject();
+        QMetaProperty property = imeta->property(metaIndex);
+        
+        QVariantList args;
+        args << QVariant(property.name());
+        iface->callWithArgumentList(QDBus::Block, "propertyReset", args);
+
+        return QVariant();
+    } 
+
+    else if (c == QMetaObject::ReadProperty) {
+        const QMetaObject *imeta = service->metaObject();
+        QMetaProperty property = imeta->property(metaIndex);
+        
+        QVariantList args;
+        args << QVariant(property.name());
+        QDBusMessage msg = iface->callWithArgumentList(QDBus::Block, "propertyRead", args);
+        QVariantList retList = msg.arguments();
+
+        return retList[0];
     }
   
     /*
@@ -600,7 +680,8 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         QMetaProperty property = imeta->property(metaIndex);
         QVariantList args;
         args << QVariant("") << QVariant(property.name()) << QVariant::fromValue(QDBusVariant(arg));
-        iface->callWithArgumentList(QDBus::Block, "Set", args);
+        //iface->callWithArgumentList(QDBus::Block, "Set", args);
+        iface->setProperty(property.name(), arg);
         return QVariant();
     }  else if (c == QMetaObject::ResetProperty) {
         const QMetaObject *imeta = iface->metaObject();
@@ -618,9 +699,9 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         args << QVariant("") << QVariant(property.name());
         QDBusMessage msg = iface->callWithArgumentList(QDBus::Block, "Get", args);
         qDebug() << "RESULTTTTTTTTTTTTTTTT" << msg.type() << msg.arguments();
-        //return result;
-    }
-    */
+        return result;
+    } */
+    
 
     
     // Request property access from service side
@@ -682,32 +763,29 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
     QString methodName(method.signature());
     int index = methodName.indexOf("(");
     methodName.chop(methodName.size()-index);
-    
-    bool validDBus = false;
-    QDBusMessage msg;
   
-   // QDBusReply<QString> reply = iface->call("Introspect");
-   // qDebug() << "INTROSPECT" << reply.value();
+    QVariantList convertedList = args;
 
-    /* 
-    const QMetaObject *mo = iface->metaObject();
-    qDebug() << "+++++++++++++++++++++++++++++++++++++";
-    for (int i=0; i<mo->methodCount(); i++) {
-        qDebug() << "METHOD" << mo->className() << "::" << mo->method(i).signature();
-    }
-    qDebug() << "+++++++++++++++++++++++++++++++++++++";
-    */
-
-    // Try direct DBus call
-    if (method.methodType() == QMetaMethod::Slot || method.methodType() == QMetaMethod::Method) {
-        msg = iface->callWithArgumentList(QDBus::Block, methodName, args);
-        if (msg.type() == QDBusMessage::ReplyMessage) { 
-            validDBus = true; 
+    //qDebug() << "I WANT TO INVOKE" << metaIndex << method.signature();
+    QList<QByteArray> plist = method.parameterTypes();
+    for (int i=0; i<plist.size(); i++) {
+        if (plist[i] == "QVariant") {
+            QDBusVariant replacement(args[i]);
+            convertedList.replace(i, QVariant::fromValue(replacement));
         }
     }
 
-    //validDBus = false;
-    
+    bool validDBus = false;
+    QDBusMessage msg;
+  
+    // Try direct DBus call
+    if (method.methodType() == QMetaMethod::Slot || method.methodType() == QMetaMethod::Method) {
+        msg = iface->callWithArgumentList(QDBus::Block, methodName, convertedList);
+        if (msg.type() == QDBusMessage::ReplyMessage) { 
+            validDBus = true;
+        }
+    }
+
     // DBus call should only fail for methods with invalid type definitions 
     if (validDBus) {
 	if (returnType == QMetaType::Void) {
@@ -716,10 +794,19 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 	}
 	else {
             // Use DBus return value
-	    QVariantList retList = msg.arguments();
-            return retList[0];
+            QVariantList retList = msg.arguments();
+           
+            const QByteArray& retType = QByteArray(method.typeName());
+            if (retType == "QVariant") {
+                QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(retList[0]);
+                return dbusVariant.variant();
+            } else {
+                return retList[0];
+            }
         }
-    } else {   
+    } else {  
+        qDebug() << "I SHOULD NEVER BE HEREEEEEEEEEEEEE";
+
         // Request method access from service side
 	QServicePackage p;
 	p.d = new QServicePackagePrivate();
