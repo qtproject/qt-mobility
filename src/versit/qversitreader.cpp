@@ -215,7 +215,8 @@ QVersitReader::Error QVersitReader::error() const
  * when the reading has finished.
  */
 bool QVersitReader::startReading()
-{    if (d->state() == ActiveState || d->isRunning()) {
+{
+    if (d->state() == ActiveState || d->isRunning()) {
         d->setError(QVersitReader::NotReadyError);
         return false;
     } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {
