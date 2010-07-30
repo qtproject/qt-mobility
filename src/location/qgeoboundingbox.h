@@ -71,9 +71,16 @@ public:
     bool isValid() const;
     bool isEmpty() const;
 
+    void setTopLeft(const QGeoCoordinate &topLeft);
     QGeoCoordinate topLeft() const;
+
+    void setTopRight(const QGeoCoordinate &topRight);
     QGeoCoordinate topRight() const;
+
+    void setBottomLeft(const QGeoCoordinate &bottomLeft);
     QGeoCoordinate bottomLeft() const;
+
+    void setBottomRight(const QGeoCoordinate &bottomRight);
     QGeoCoordinate bottomRight() const;
 
     void setCenter(const QGeoCoordinate &center);
@@ -95,11 +102,6 @@ public:
     QGeoBoundingBox united(const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
-
-    QGeoBoundingBox intersected(const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox operator & (const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox& operator &= (const QGeoBoundingBox &boundingBox);
-
 
 private:
     QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
