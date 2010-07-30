@@ -46,7 +46,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerTodo
-  \brief A task which should be completed
+  \brief The QOrganizerTodo class provides a task which should be completed
   \inmodule QtOrganizer
   \ingroup organizer-items
 

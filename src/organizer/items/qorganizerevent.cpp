@@ -46,7 +46,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QOrganizerEvent
-  \brief An event in time which may reoccur
+  \brief The QOrganizerEvent class provides an event in time which may reoccur
   \inmodule QtOrganizer
   \ingroup organizer-items
 
