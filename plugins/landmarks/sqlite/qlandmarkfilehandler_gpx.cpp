@@ -41,10 +41,10 @@
 
 #include "qlandmarkfilehandler_gpx_p.h"
 
-#include "qlandmarkmanagerengine.h"
-#include "qlandmarkcategory.h"
-#include "qlandmarkcategoryid.h"
-#include "qgeocoordinate.h"
+#include <qlandmarkmanagerengine.h>
+#include <qlandmarkcategory.h>
+#include <qlandmarkcategoryid.h>
+#include <qgeocoordinate.h>
 
 #include <math.h>
 
@@ -56,7 +56,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx()
     : QObject(),
@@ -828,6 +828,4 @@ void QLandmarkFileHandlerGpx::cancel()
 }
 
 #include "moc_qlandmarkfilehandler_gpx_p.cpp"
-
-QTM_END_NAMESPACE
 

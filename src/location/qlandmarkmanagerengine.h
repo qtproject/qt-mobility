@@ -123,10 +123,11 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, const QByteArray &format, QLandmarkManager::Error *error,
-                                 QString *errorString);
-    virtual bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
+    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::Error *error,
+                                 QString *errorString) ;
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds,
                                  QLandmarkManager::Error *error, QString *errorString) const;
+    virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
     virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
@@ -145,6 +146,7 @@ public:
     virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs) = 0;
 
 Q_SIGNALS:
+    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);

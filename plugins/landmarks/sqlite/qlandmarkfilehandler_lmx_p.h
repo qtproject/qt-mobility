@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGBOX_P_H
-#define QGEOBOUNDINGBOX_P_H
+#ifndef QLANDMARKFILEHANDLER_LMX_P_H
+#define QLANDMARKFILEHANDLER_LMX_P_H
 
 //
 //  W A R N I N G
@@ -53,36 +53,64 @@
 // We mean it.
 //
 
-#include "qgeocoordinate.h"
+#include <qlandmark.h>
 
-#include <QSharedData>
+class QXmlStreamReader;
+class QXmlStreamWriter;
 
-QTM_BEGIN_NAMESPACE
+class QIODevice;
 
-class QGeoBoundingBoxPrivate : public QSharedData
+QTM_USE_NAMESPACE
+
+class QLandmarkManagerEngine;
+
+class QLandmarkFileHandlerLmx : public QObject
 {
+    Q_OBJECT
+
 public:
-//    static double longitudeShift(double longitudeFrom, double delta);
-//    static double latitudeShift(double latitudeFrom, double delta);
+    QLandmarkFileHandlerLmx();
+    ~QLandmarkFileHandlerLmx();
 
-//    static double degreesLeft(double longitudeFrom, double longitudeTo);
-//    static double degreesRight(double longitudeFrom, double longitudeTo);
-//    static double degreesUp(double latitudeFrom, double latitudeTo);
-//    static double degreesDown(double latitudeFrom, double latitudeTo);
+    QList<QLandmark> landmarks() const;
+    void setLandmarks(const QList<QLandmark> &landmarks);
 
-    QGeoBoundingBoxPrivate();
-    QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
-    ~QGeoBoundingBoxPrivate();
+    bool importData(QIODevice *device);
+    bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
-    QGeoBoundingBoxPrivate& operator= (const QGeoBoundingBoxPrivate &other);
+    QString errorString() const;
 
-    bool operator== (const QGeoBoundingBoxPrivate &other) const;
+signals:
+    void error(const QString &error);
+    void finishedImport();
+    void finishedExport();
 
-    QGeoCoordinate topLeft;
-    QGeoCoordinate bottomRight;
+private:
+    bool readLmx();
+    bool readLandmarkCollection(QList<QLandmark> &landmarkCollection);
+    bool readLandmark(QLandmark &landmark);
+    bool readCoordinates(QLandmark &landmark);
+    bool readAddressInfo(QLandmark &landmark);
+    bool readMediaLink(QLandmark &landmark);
+    bool readCategory(QLandmarkCategoryId &categoryId);
+
+    bool writeLmx();
+    bool writeLandmarkCollection(const QList<QLandmark> &landmarkCollection);
+    bool writeLandmark(const QLandmark &landmark);
+    bool writeCoordinates(const QLandmark &landmark);
+    bool writeAddressInfo(const QLandmark &landmark);
+    bool writeMediaLink(const QLandmark &landmark);
+    bool writeCategory(const QLandmarkCategoryId &categoryId);
+
+    QString m_ns;
+    QString m_nsPrefix;
+
+    QList<QLandmark> m_landmarks;
+
+    QXmlStreamReader *m_reader;
+    QXmlStreamWriter *m_writer;
+
+    QString m_error;
 };
 
-QTM_END_NAMESPACE
-
-#endif
+#endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H
