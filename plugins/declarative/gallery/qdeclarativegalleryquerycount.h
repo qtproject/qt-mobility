@@ -43,6 +43,7 @@
 #define QDECLARATIVEGALLERYQUERYCOUNT_H
 
 #include <qgallerycountrequest.h>
+#include "qdeclarativegalleryfilter.h"
 
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
