@@ -1839,6 +1839,18 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
         if (errorString)
             *errorString = "None of the existing categories match the given category id.";
     } else {
+        QMap<QString,QVariant> bindValues;
+        bindValues.insert("catId", cat.categoryId().localId());
+        if (!executeQuery(&query, "SELECT key, value from category_attribute WHERE category_id=:catId",bindValues, error, errorString )) {
+            if (transacting)
+                db.rollback();
+            return QLandmarkCategory();
+         }
+
+        while(query.next()) {
+            cat.setAttribute(query.value(0).toString(),query.value(1));
+        }
+
         if (transacting)
             db.commit();
 
@@ -1998,6 +2010,30 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
         id.setManagerUri(managerUri);
         id.setLocalId(query.lastInsertId().toString());
         category->setCategoryId(id);
+    }
+
+    bindValues.clear();
+    bindValues.insert("catId",category->categoryId().localId());
+    QStringList attributekeys = category->attributeKeys();
+    if (!executeQuery(&query,"DELETE FROM category_attribute WHERE category_id= :catId", bindValues, error, errorString)) {
+        if (transacting)
+            db.rollback();
+        return false;
+    }
+
+    for (int i =0; i < attributekeys.count(); ++i) {
+        bindValues.clear();
+        bindValues.insert("catId",category->categoryId().localId());
+        bindValues.insert("key",attributekeys[i]);
+        bindValues.insert("value",category->attribute(attributekeys.at(i)));
+
+        if (!executeQuery(&query,"INSERT INTO category_attribute (category_id,key,value) VALUES(:catId,:key,:value)", bindValues,
+                         error, errorString)) {
+            if (transacting) {
+                db.rollback();
+            }
+            return false;
+        }
     }
 
     if (transacting)
