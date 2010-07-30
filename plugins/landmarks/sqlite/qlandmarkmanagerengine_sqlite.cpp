@@ -209,6 +209,70 @@ void shiftCoordinate(QGeoCoordinate *coord,double bearing, double distance)
     coord->setLongitude(normalizeLongitude(long2));
 }
 
+bool executeQuery(QSqlQuery *query, const QString &statement, const QMap<QString,QVariant> &bindValues,
+                QLandmarkManager::Error *error, QString *errorString)
+{
+    Q_ASSERT(query != NULL);
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    bool success = false;
+    enum {Prepare =0 , Execute=1};
+    for(int stage=Prepare; stage <= Execute; ++stage) {
+        if ( stage == Prepare)
+            success = query->prepare(statement);
+        else // stage == Execute
+            success = query->exec();
+
+        if (!success) {
+            QString errorText;
+            errorText = "Problem: Could not %1 statement: %2"
+                "Reason: %3"
+                "Parameters: %4\n";
+            QString parameters;
+
+            QStringList keys = bindValues.keys();
+            if (keys.count() > 0) {
+                for(int i = 0; i < keys.count(); ++i) {
+                    parameters.append(QString("\n\t[:") + keys.at(i) + "]: " + bindValues.value(keys.at(i)).toString());
+                }
+            } else {
+                parameters = "None";
+            }
+
+            int result = query->lastError().number();
+            if (result == 26 || result == 11) {//SQLILTE_NOTADB || SQLITE_CORRUPT
+                *error = QLandmarkManager::UnknownError;
+            }
+            else if ( result == 8) {//SQLITE_READONLY
+                *error = QLandmarkManager::PermissionsError;
+
+            }
+            else {
+                *error = QLandmarkManager::UnknownError;
+            }
+
+            *errorString =  errorText.arg(stage == Prepare ?"prepare":"execute")
+                                     .arg(statement)
+                                     .arg(query->lastError().text())
+                                     .arg(parameters);
+
+            query->finish();
+            query->clear();
+            return false;
+        }
+
+        QStringList keys = bindValues.keys();
+        if (stage == Prepare) {
+            foreach(const QString &key, keys)
+                query->bindValue(QString(":") + key,bindValues.value(key));
+        }
+    }
+
+    *error = QLandmarkManager::NoError;
+    *errorString ="";
+    return true;
+}
+
 QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &landmarkId,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri, QueryRun *queryRun=0)
@@ -1866,13 +1930,19 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
     bool transacting = db.transaction();
 
-    QHash<QString, QVariant> bindValues;
+    QMap<QString, QVariant> bindValues;
+    QSqlQuery query(db);
     if (update) {
         bindValues.insert("id",category->categoryId().localId());
 
-        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().localId());
-        QSqlQuery query0(q0, db);
-        if (!query0.next()) {
+        QString q0 = QString("SELECT 1 FROM category WHERE id = :id;");
+        if (!executeQuery(&query,q0, bindValues,error,errorString)) {
+            if (transacting)
+                db.rollback();
+             return false;
+        }
+
+        if (!query.next()) {
             if (transacting)
                 db.rollback();
 
@@ -1883,6 +1953,7 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
             return false;
         }
+        bindValues.clear();
     }
 
     if (!category->name().isEmpty())
@@ -1908,32 +1979,15 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
         for (int i=0; i < placeholderKeys.count(); ++i) {
             placeholderKeys[i] = placeholderKeys[i] + "= :" + placeholderKeys[i];
         }
-        q1 = QString("UPDATE category SET %1 WHERE id = :catId;").arg(placeholderKeys.join(","));
-        bindValues.insert("catId", category->categoryId().localId());
+        q1 = QString("UPDATE category SET %1 WHERE id = :id;").arg(placeholderKeys.join(","));
+        bindValues.insert("id",category->categoryId().localId());
+
     } else {
         q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(",:")));
     }
-    QSqlQuery query1(db);
 
-    if (!query1.prepare(q1)) {
-        if (transacting)
-            db.rollback();
-        *error = QLandmarkManager::UnknownError;
-        *errorString = QString("Unable to prepare statement: ") + q1
-                       + "\nReason: " + query1.lastError().text();
-        return false;
-    }
 
-    foreach(const QString &key, bindValues.keys()) {
-        query1.bindValue(QString(":").append(key), bindValues.value(key));
-    }
-
-    if (!query1.exec()) {
-        if (error)
-            *error  = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString = QString("Database Query failed, query: %1 \nreason: %2").arg(q1).arg(query1.lastError().text());
-
+    if (!executeQuery(&query,q1,bindValues,error,errorString)) {
         if (transacting)
             db.rollback();
         return false;
@@ -1942,7 +1996,7 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
     if (!update) {
         QLandmarkCategoryId id;
         id.setManagerUri(managerUri);
-        id.setLocalId(query1.lastInsertId().toString());
+        id.setLocalId(query.lastInsertId().toString());
         category->setCategoryId(id);
     }
 
