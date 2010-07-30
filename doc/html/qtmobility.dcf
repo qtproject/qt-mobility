@@ -2373,20 +2373,15 @@
         <keyword ref="qgeomapdata.html#containerObject">containerObject</keyword>
         <keyword ref="qgeomapdata.html#coordinateToScreenPosition">coordinateToScreenPosition</keyword>
         <keyword ref="qgeomapdata.html#engine">engine</keyword>
-        <keyword ref="qgeomapdata.html#imageChanged">imageChanged</keyword>
-        <keyword ref="qgeomapdata.html#imageChangesTriggerUpdates">imageChangesTriggerUpdates</keyword>
-        <keyword ref="qgeomapdata.html#mapImage">mapImage</keyword>
         <keyword ref="qgeomapdata.html#mapObjects">mapObjects</keyword>
         <keyword ref="qgeomapdata.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</keyword>
         <keyword ref="qgeomapdata.html#mapObjectsInScreenRect">mapObjectsInScreenRect</keyword>
-        <keyword ref="qgeomapdata.html#mapObjectsOverlay">mapObjectsOverlay</keyword>
         <keyword ref="qgeomapdata.html#mapType">mapType</keyword>
+        <keyword ref="qgeomapdata.html#paint">paint</keyword>
         <keyword ref="qgeomapdata.html#pan">pan</keyword>
         <keyword ref="qgeomapdata.html#removeMapObject">removeMapObject</keyword>
         <keyword ref="qgeomapdata.html#screenPositionToCoordinate">screenPositionToCoordinate</keyword>
         <keyword ref="qgeomapdata.html#setCenter">setCenter</keyword>
-        <keyword ref="qgeomapdata.html#setImageChangesTriggerUpdates">setImageChangesTriggerUpdates</keyword>
-        <keyword ref="qgeomapdata.html#setMapImage">setMapImage</keyword>
         <keyword ref="qgeomapdata.html#setMapType">setMapType</keyword>
         <keyword ref="qgeomapdata.html#setViewportSize">setViewportSize</keyword>
         <keyword ref="qgeomapdata.html#setZoomLevel">setZoomLevel</keyword>
@@ -2409,18 +2404,19 @@
         <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::CircleType</keyword>
         <keyword ref="qgeomapobject.html#addChildObject">addChildObject</keyword>
         <keyword ref="qgeomapobject.html#boundingBox">boundingBox</keyword>
-        <keyword ref="qgeomapobject.html#childObjectAdded">childObjectAdded</keyword>
-        <keyword ref="qgeomapobject.html#childObjectRemoved">childObjectRemoved</keyword>
         <keyword ref="qgeomapobject.html#childObjects">childObjects</keyword>
         <keyword ref="qgeomapobject.html#contains">contains</keyword>
         <keyword ref="qgeomapobject.html#isVisible">isVisible</keyword>
+        <keyword ref="qgeomapobject.html#mapUpdate">mapUpdate</keyword>
+        <keyword ref="qgeomapobject.html#objectUpdate">objectUpdate</keyword>
         <keyword ref="qgeomapobject.html#parentObject">parentObject</keyword>
         <keyword ref="qgeomapobject.html#removeChildObject">removeChildObject</keyword>
         <keyword ref="qgeomapobject.html#setVisible">setVisible</keyword>
         <keyword ref="qgeomapobject.html#setZValue">setZValue</keyword>
         <keyword ref="qgeomapobject.html#type">type</keyword>
         <keyword ref="qgeomapobject.html#zValue">zValue</keyword>
-        <keyword ref="qgeomapobject.html#zValueChanged">zValueChanged</keyword>
+        <keyword ref="qgeomapobject.html#operator-lt">operator&lt;</keyword>
+        <keyword ref="qgeomapobject.html#operator-gt">operator&gt;</keyword>
         <section ref="qgeomapobject-members.html" title="List of all members"/>
     </section>
     <section ref="qgeomappingmanager.html" title="QGeoMappingManager Class Reference">
@@ -3205,6 +3201,7 @@
         <keyword ref="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</keyword>
         <keyword ref="qlandmarkmanager.html#category">category</keyword>
         <keyword ref="qlandmarkmanager.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkmanager.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanager.html#error">error</keyword>
         <keyword ref="qlandmarkmanager.html#errorString">errorString</keyword>
         <keyword ref="qlandmarkmanager.html#exportLandmarks">exportLandmarks</keyword>
@@ -3224,6 +3221,8 @@
         <keyword ref="qlandmarkmanager.html#managerUri">managerUri</keyword>
         <keyword ref="qlandmarkmanager.html#managerVersion">managerVersion</keyword>
         <keyword ref="qlandmarkmanager.html#parseUri">parseUri</keyword>
+        <keyword ref="qlandmarkmanager.html#platformCategoryAttributeKeys">platformCategoryAttributeKeys</keyword>
+        <keyword ref="qlandmarkmanager.html#platformLandmarkAttributeKeys">platformLandmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanager.html#removeCategory">removeCategory</keyword>
         <keyword ref="qlandmarkmanager.html#removeLandmark">removeLandmark</keyword>
         <keyword ref="qlandmarkmanager.html#removeLandmarks">removeLandmarks</keyword>
@@ -3245,6 +3244,7 @@
         <keyword ref="qlandmarkmanagerengine.html#compareDistance">compareDistance</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareLandmark">compareLandmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareName">compareName</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanagerengine.html#exportLandmarks">exportLandmarks</keyword>
         <keyword ref="qlandmarkmanagerengine.html#filterSupportLevel">filterSupportLevel</keyword>
         <keyword ref="qlandmarkmanagerengine.html#importLandmarks">importLandmarks</keyword>
@@ -3260,6 +3260,8 @@
         <keyword ref="qlandmarkmanagerengine.html#managerParameters">managerParameters</keyword>
         <keyword ref="qlandmarkmanagerengine.html#managerUri">managerUri</keyword>
         <keyword ref="qlandmarkmanagerengine.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#platformCategoryAttributeKeys">platformCategoryAttributeKeys</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#platformLandmarkAttributeKeys">platformLandmarkAttributeKeys</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeCategory">removeCategory</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeLandmark">removeLandmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#removeLandmarks">removeLandmarks</keyword>
@@ -3448,6 +3450,7 @@
         <keyword ref="qmediaimageviewer.html#play">play</keyword>
         <keyword ref="qmediaimageviewer.html#playlist">playlist</keyword>
         <keyword ref="qmediaimageviewer.html#setPlaylist">setPlaylist</keyword>
+        <keyword ref="qmediaimageviewer.html#setVideoOutput">setVideoOutput</keyword>
         <keyword ref="qmediaimageviewer.html#stateChanged">stateChanged</keyword>
         <keyword ref="qmediaimageviewer.html#stop">stop</keyword>
         <section ref="qmediaimageviewer-members.html" title="List of all members"/>
@@ -6567,8 +6570,8 @@
     <section ref="qtversit.html" title="QtVersit Module">
         <keyword ref="qtversit.html">QtVersit Module</keyword>
     </section>
-    <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
-        <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
+    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project 1.0&#x2e;2 patch release">
+        <keyword ref="qtmobility-release-notes.html">Release Notes of the QtMobility Project 1.0&#x2e;2 patch release</keyword>
     </section>
     <section ref="sensors-api.html" title="Sensors">
         <keyword ref="sensors-api.html">Sensors</keyword>

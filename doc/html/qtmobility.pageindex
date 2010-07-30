@@ -2407,159 +2407,159 @@
         <pageType>Example</pageType>
     </page>
     <page id="401">
-        <pageWords>Release Notes of the QtMobility Project</pageWords>
-        <pageTitle>Release Notes of the QtMobility Project</pageTitle>
-        <pageUrl>qtmobility-known-issues.html</pageUrl>
-        <pageType>Article</pageType>
-    </page>
-    <page id="402">
         <pageWords>Messaging Installation On Windows Mobile</pageWords>
         <pageTitle>Messaging Installation On Windows Mobile</pageTitle>
         <pageUrl>messaging-installation-on-windows-mobile.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="403">
+    <page id="402">
         <pageWords>Qt Bearer Management API</pageWords>
         <pageTitle>Qt Bearer Management API</pageTitle>
         <pageUrl>bearer.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="404">
+    <page id="403">
         <pageWords>Bearer Management</pageWords>
         <pageTitle>Bearer Management</pageTitle>
         <pageUrl>bearer-management.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="405">
+    <page id="404">
         <pageWords>CalendarDemo</pageWords>
         <pageTitle>CalendarDemo</pageTitle>
         <pageUrl>calendardemo.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="406">
+    <page id="405">
         <pageWords>Camera</pageWords>
         <pageTitle>Camera</pageTitle>
         <pageUrl>camera.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="407">
+    <page id="406">
         <pageWords>Third-Party Licenses Used in Qt</pageWords>
         <pageTitle>Third-Party Licenses Used in Qt</pageTitle>
         <pageUrl>3rdparty.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="408">
+    <page id="407">
         <pageWords>Open Source Versions of Qt</pageWords>
         <pageTitle>Open Source Versions of Qt</pageTitle>
         <pageUrl>opensourceedition.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="409">
+    <page id="408">
         <pageWords>QML GalleryItem Element</pageWords>
         <pageTitle>QML GalleryItem Element</pageTitle>
         <pageUrl>qml-galleryitem.html</pageUrl>
         <pageType>APIPage</pageType>
     </page>
-    <page id="410">
+    <page id="409">
         <pageWords>'Keep in Touch' Example</pageWords>
         <pageTitle>'Keep in Touch' Example</pageTitle>
         <pageUrl>keepintouch.html</pageUrl>
         <pageType>Example</pageType>
     </page>
-    <page id="411">
+    <page id="410">
         <pageWords>All Modules</pageWords>
         <pageTitle>All Modules</pageTitle>
         <pageUrl>modules.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="412">
+    <page id="411">
         <pageWords>QtNetwork Module</pageWords>
         <pageTitle>QtNetwork Module</pageTitle>
         <pageUrl>qtnetwork.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="413">
+    <page id="412">
         <pageWords>QtContacts Module</pageWords>
         <pageTitle>QtContacts Module</pageTitle>
         <pageUrl>qtcontacts.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="414">
+    <page id="413">
         <pageWords>QtOrganizer Module</pageWords>
         <pageTitle>QtOrganizer Module</pageTitle>
         <pageUrl>qtorganizer.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="415">
+    <page id="414">
         <pageWords>QtFeedback Module</pageWords>
         <pageTitle>QtFeedback Module</pageTitle>
         <pageUrl>qtfeedback.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="416">
+    <page id="415">
         <pageWords>QtSensors Module</pageWords>
         <pageTitle>QtSensors Module</pageTitle>
         <pageUrl>qtsensors.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="417">
+    <page id="416">
         <pageWords>QtGallery Module</pageWords>
         <pageTitle>QtGallery Module</pageTitle>
         <pageUrl>qtgallery.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="418">
+    <page id="417">
         <pageWords>QtLocation Module</pageWords>
         <pageTitle>QtLocation Module</pageTitle>
         <pageUrl>qtlocation.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="419">
+    <page id="418">
         <pageWords>QtMessaging Module</pageWords>
         <pageTitle>QtMessaging Module</pageTitle>
         <pageUrl>qtmessaging.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="420">
+    <page id="419">
         <pageWords>QtMultimediaKit Module</pageWords>
         <pageTitle>QtMultimediaKit Module</pageTitle>
         <pageUrl>qtmultimediakit.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="421">
+    <page id="420">
         <pageWords>QtPublishSubscribe Module</pageWords>
         <pageTitle>QtPublishSubscribe Module</pageTitle>
         <pageUrl>qtpublishsubscribe.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="422">
+    <page id="421">
         <pageWords>QtServiceFramework Module</pageWords>
         <pageTitle>QtServiceFramework Module</pageTitle>
         <pageUrl>qtserviceframework.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="423">
+    <page id="422">
         <pageWords>System Information Classes</pageWords>
         <pageTitle>System Information Classes</pageTitle>
         <pageUrl>qtsysteminfo.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="424">
+    <page id="423">
         <pageWords>Telephony Events Module</pageWords>
         <pageTitle>Telephony Events Module</pageTitle>
         <pageUrl>qttelephony.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="425">
+    <page id="424">
         <pageWords>QtGallery Module</pageWords>
         <pageTitle>QtGallery Module</pageTitle>
         <pageUrl>qtgallery.html</pageUrl>
         <pageType>Article</pageType>
     </page>
-    <page id="426">
+    <page id="425">
         <pageWords>QtVersit Module</pageWords>
         <pageTitle>QtVersit Module</pageTitle>
         <pageUrl>qtversit.html</pageUrl>
+        <pageType>Article</pageType>
+    </page>
+    <page id="426">
+        <pageWords>Release Notes of the QtMobility Project 1.0.2 patch release</pageWords>
+        <pageTitle>Release Notes of the QtMobility Project 1.0.2 patch release</pageTitle>
+        <pageUrl>qtmobility-release-notes.html</pageUrl>
         <pageType>Article</pageType>
     </page>
     <page id="427">
