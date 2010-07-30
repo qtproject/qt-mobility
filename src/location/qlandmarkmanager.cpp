@@ -710,7 +710,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &format)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
 {
     Q_D(QLandmarkManager);
 
@@ -739,7 +739,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format)
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
@@ -756,7 +756,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds)
 {
     Q_D(QLandmarkManager);
 
@@ -773,6 +773,19 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &form
                                       &(d->errorString));
 }
 
+QStringList QLandmarkManager::supportedFormats() const
+{
+    Q_D(const QLandmarkManager);
+
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return QStringList();
+    }
+
+    return d->engine->supportedFormats(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Convenience function that will write landmarks to \a fileName in the expected
     \a format. Internally a QFile is opened with QIODevice::WriteOnly permissions.
@@ -783,7 +796,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &form
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds)
 {
     QFile file(fileName);
 
@@ -1112,6 +1125,58 @@ bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QS
     if (pManagerId)
         *pManagerId = managerName;
     return true;
+}
+
+void QLandmarkManager::connectNotify(const char *signal)
+{
+    if (d_ptr->engine) {
+        if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))) {
+            connect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))) {
+            connect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))) {
+            connect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))) {
+            connect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))) {
+            connect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) {
+            connect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        }
+    }
+    QObject::connectNotify(signal);
+}
+
+void QLandmarkManager::disconnectNotify(const char *signal)
+{
+    if (d_ptr->engine) {
+        if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))) {
+            disconnect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>))) {
+            disconnect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>))) {
+            disconnect(d_ptr->engine,SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                    this, SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))) {
+            disconnect(d_ptr->engine,SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))) {
+            disconnect(d_ptr->engine,SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        } else if (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))) {
+            disconnect(d_ptr->engine,SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                    this, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+        }
+    }
+    QObject::disconnectNotify(signal);
 }
 
 QLandmarkManagerEngine *QLandmarkManager::engine()

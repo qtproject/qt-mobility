@@ -48,7 +48,6 @@ isEmpty(QT_LIBINFIX):symbian {
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
 
-
     contains(mobility_modules, location) {
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
         qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtgeoservices_nokia.dll
@@ -63,9 +62,18 @@ isEmpty(QT_LIBINFIX):symbian {
         }
     }
 
-
-    contains(mobility_modules, systeminfo): qtmobilitydeployment.sources += \
+    contains(mobility_modules, systeminfo) { 
+        qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
+	contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_systeminfo.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmakepluginstubs\\declarative_systeminfo.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\systeminfo\\declarative_systeminfo.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\systeminfo\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\systeminfo\\qmldir\""
+        }
+    }
 
     contains(mobility_modules, publishsubscribe): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
@@ -76,6 +84,45 @@ isEmpty(QT_LIBINFIX):symbian {
 
     contains(mobility_modules, feedback): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtFeedback.dll
+	
+    contains(mobility_modules, organizer) { 
+        qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtOrganizer.dll
+	contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_organizer.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmakepluginstubs\\declarative_organizer.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\declarative_organizer.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\organizer\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\organizer\\qmldir\""
+        }	
+    }
+
+    contains(mobility_modules, telephony) { 
+        qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtTelephony.dll
+	contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_telephony.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmakepluginstubs\\declarative_telephony.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\declarative_telephony.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\telephony\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\telephony\\qmldir\""
+        }	
+    }
+
+    contains(mobility_modules, gallery) { 
+        qtmobilitydeployment.sources += \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtGallery.dll
+	contains(QT_CONFIG, declarative): {
+            qtmobilitydeployment.sources += \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/declarative_gallery.dll
+            pluginstubs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmakepluginstubs\\declarative_gallery.qtplugin\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\declarative_gallery.qtplugin\""
+            qmldirs += \
+            "\"$$QT_MOBILITY_BUILD_TREE\\plugins\\declarative\\gallery\\qmldir\"  - \"!:\\resource\\qt\\imports\\QtMobility\\gallery\\qmldir\""
+        }	
+    }
 
     contains(mobility_modules, bearer) {
         bearer = \

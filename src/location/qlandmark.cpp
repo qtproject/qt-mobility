@@ -401,7 +401,10 @@ QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) 
 void QLandmark::setAttribute(const QString &key, const QVariant &value)
 {
     Q_D(QLandmark);
-    d->attributes[key] = value;
+    if (!value.isValid())
+        d->attributes.remove(key);
+    else
+        d->attributes[key] = value;
 }
 
 /*!

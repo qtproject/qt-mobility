@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
@@ -129,7 +129,7 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 /*!
     Returns the data format for the export operation.
 */
-QByteArray QLandmarkExportRequest::format() const
+QString QLandmarkExportRequest::format() const
 {
     Q_D(const QLandmarkExportRequest);
     return d->format;
@@ -138,7 +138,7 @@ QByteArray QLandmarkExportRequest::format() const
 /*!
     Sets the data \a format for the export operation.
 */
-void QLandmarkExportRequest::setFormat(const QByteArray &format)
+void QLandmarkExportRequest::setFormat(const QString &format)
 {
     Q_D(QLandmarkExportRequest);
     d->format = format;

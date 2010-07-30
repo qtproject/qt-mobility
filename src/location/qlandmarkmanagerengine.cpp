@@ -385,9 +385,13 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QByteArray &format,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format,
         QLandmarkManager::Error *error, QString *errorString)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString ="Not supported";
     return false;
 }
 
@@ -404,10 +408,23 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QByteArray
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds,
         QLandmarkManager::Error *error, QString *errorString) const
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NotSupportedError;
+    *errorString = "Not supported";
     return false;
+}
+
+QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
 }
 
 /*!

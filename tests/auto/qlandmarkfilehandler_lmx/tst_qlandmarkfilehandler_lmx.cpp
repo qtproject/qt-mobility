@@ -54,8 +54,8 @@
 
 #define private public
 #include <qlandmarkmanager.h>
-#include "../../../src/location/qlandmarkmanager_p.h"
-#include "../../../src/location/qlandmarkfilehandler_lmx_p.h"
+#include "qlandmarkmanager_p.h"
+#include "qlandmarkfilehandler_lmx_p.h"
 
 QTM_USE_NAMESPACE
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,15 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILEHANDLER_LMX_P_H
-#define QLANDMARKFILEHANDLER_LMX_P_H
+
+#ifndef DATABASEWATCHER_P_H
+#define DATABASEwATCHER_P_H
+
+#include <QObject>
+
+#include <QStringList>
+#include <QString>
+#include <QFileSystemWatcher>
 
 //
 //  W A R N I N G
@@ -53,66 +60,26 @@
 // We mean it.
 //
 
-#include "qlandmark.h"
-
-class QXmlStreamReader;
-class QXmlStreamWriter;
-
-class QIODevice;
-
-QTM_BEGIN_NAMESPACE
-
-class QLandmarkManagerEngine;
-
-class Q_AUTOTEST_EXPORT QLandmarkFileHandlerLmx : public QObject
+class DatabaseFileWatcher : public QObject
 {
     Q_OBJECT
-
 public:
-    QLandmarkFileHandlerLmx();
-    ~QLandmarkFileHandlerLmx();
-
-    QList<QLandmark> landmarks() const;
-    void setLandmarks(const QList<QLandmark> &landmarks);
-
-    bool importData(QIODevice *device);
-    bool exportData(QIODevice *device, const QString &nsPrefix = QString());
-
-    QString errorString() const;
+    DatabaseFileWatcher(const QString &databasePath, QObject *parent = 0);
+    void setEnabled(bool enabled);
 
 signals:
-    void error(const QString &error);
-    void finishedImport();
-    void finishedExport();
+    void notifyChange();
+
+private slots:
+    void databaseChanged(const QString &path);
+    void databaseDirectoryChanged(const QString &path);
 
 private:
-    bool readLmx();
-    bool readLandmarkCollection(QList<QLandmark> &landmarkCollection);
-    bool readLandmark(QLandmark &landmark);
-    bool readCoordinates(QLandmark &landmark);
-    bool readAddressInfo(QLandmark &landmark);
-    bool readMediaLink(QLandmark &landmark);
-    bool readCategory(QLandmarkCategoryId &categoryId);
+    QString closestExistingParent(const QString &path);
+    void restartDirMonitoring(const QString &previousDirPath);
 
-    bool writeLmx();
-    bool writeLandmarkCollection(const QList<QLandmark> &landmarkCollection);
-    bool writeLandmark(const QLandmark &landmark);
-    bool writeCoordinates(const QLandmark &landmark);
-    bool writeAddressInfo(const QLandmark &landmark);
-    bool writeMediaLink(const QLandmark &landmark);
-    bool writeCategory(const QLandmarkCategoryId &categoryId);
-
-    QString m_ns;
-    QString m_nsPrefix;
-
-    QList<QLandmark> m_landmarks;
-
-    QXmlStreamReader *m_reader;
-    QXmlStreamWriter *m_writer;
-
-    QString m_error;
+    QFileSystemWatcher *m_watcher;
+    QString m_databasePath;
 };
 
-QTM_END_NAMESPACE
-
-#endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H
+#endif
