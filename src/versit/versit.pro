@@ -88,6 +88,8 @@ symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
+
+    LIBS += -lefsrv
 }
 
 maemo5|maemo6 {
