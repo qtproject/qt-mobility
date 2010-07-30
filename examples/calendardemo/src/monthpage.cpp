@@ -275,6 +275,9 @@ void MonthPage::openDay()
 
 void MonthPage::itemDoubleClicked(QListWidgetItem *listItem)
 {
+    if (!listItem)
+        return;
+
     QOrganizerItem organizerItem = listItem->data(ORGANIZER_ITEM_ROLE).value<QOrganizerItem>();
     if (!organizerItem.isEmpty())
         emit showEditPage(m_manager, organizerItem);
