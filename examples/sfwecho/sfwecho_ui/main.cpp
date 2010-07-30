@@ -55,22 +55,11 @@
 
 QTM_USE_NAMESPACE
 
-bool verbose = true;
-
-bool requiresLackey()
-{
-#ifdef Q_OS_SYMBIAN
-    return false; //service is started when requested
-#else
-    return true;
-#endif
-}
-
 class TopExample : public QWidget
 {
     Q_OBJECT
 public:
-    TopExample(QWidget *parent = 0x0) : QWidget(parent), lackey(0)
+    TopExample(QWidget *parent = 0x0) : QWidget(parent), lackey(0), echo(0)
     {
         QLineEdit *editrw = new QLineEdit();
         QLineEdit *editro = new QLineEdit();
@@ -79,6 +68,7 @@ public:
         editro->setFocusPolicy(Qt::NoFocus);
 
         QPushButton *buttonrw = new QPushButton();
+        buttonrw->setText("&Click me");
         buttonro = new QPushButton();
         buttonro->setFocusPolicy(Qt::NoFocus);
 
@@ -96,12 +86,13 @@ public:
 
         this->setLayout(l);
 
-        if(startIPC() < 0){            
-            startService();            
-            for(int i = 0; i<100; i++){                
-                if(startIPC() == 0)
-                    break;
-            }
+        if(startIPC() < 0){
+            return;
+        }
+
+        if(!echo){
+            qWarning() << "Unable to connect to remote service";
+            return;
         }
 
         connect(editrw, SIGNAL(textChanged(QString)), echo, SLOT(inputSignal(QString)));
@@ -120,8 +111,6 @@ public:
 
     virtual ~TopExample()
     {
-        lackey->terminate();
-        lackey->waitForFinished();
     }
 
 public slots:
@@ -141,8 +130,8 @@ private:
     QLabel *label;
     QPushButton *buttonro;
 
-    int startIPC(){
-
+    int startIPC()
+    {
         QServiceManager manager;
 
         // should work.
@@ -159,23 +148,6 @@ private:
         }
         return 0;
     }
-
-    int startService() {        
-        if (requiresLackey()) {
-            lackey = new QProcess(this);
-            if (verbose)
-                lackey->setProcessChannelMode(QProcess::ForwardedChannels);
-            lackey->start("./sfwecho_service");
-            lackey->waitForStarted();
-            if(lackey->error() != QProcess::UnknownError || lackey->state() != QProcess::Running) {
-                qDebug() << lackey->error() << lackey->errorString();            
-                return -1;
-            }
-        }
-        return 0;
-    }
-
-
 };
 
 int main(int argc, char **argv)
