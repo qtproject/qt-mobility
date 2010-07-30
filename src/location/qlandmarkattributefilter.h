@@ -59,7 +59,7 @@ public:
     virtual ~QLandmarkAttributeFilter();
 
     QVariant attribute(const QString &key) const;
-    void setAttribute(const QString &key, const QVariant &value);
+    void setAttribute(const QString &key, const QVariant &value = QVariant());
     void removeAttribute(const QString &key);
     void clearAttributes();
     QStringList attributeKeys() const;

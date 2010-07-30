@@ -717,6 +717,61 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
     case QLandmarkFilter::DefaultFilter:
         queryString = landmarkIdsDefaultQueryString();
         break;
+    case QLandmarkFilter::AttributeFilter: {
+        QLandmarkAttributeFilter attributeFilter = filter;
+        QStringList attributeKeys = attributeFilter.attributeKeys();
+        if (attributeKeys.count() > 0) {
+            QSqlQuery query(db);
+            QMap<QString, QVariant> bindValues;
+            bindValues.insert("key", attributeKeys.at(0));
+            if (!executeQuery(&query,"SELECT landmark_id FROM landmark_attribute WHERE landmark_attribute.key = :key",
+                            bindValues,error,errorString)) {
+                return QList<QLandmarkId>();
+            }
+
+            QStringList lmLocalIds;
+            while(query.next()) {
+                lmLocalIds << query.value(0).toString();
+            }
+
+            QLandmarkId id;
+            id.setManagerUri(managerUri);
+            for (int i=0; i < lmLocalIds.count(); ++i) {
+                bindValues.clear();
+                bindValues.insert("lmId", lmLocalIds.at(i));
+                if (!executeQuery(&query, "SELECT key, value FROM landmark_attribute WHERE landmark_id=:lmId",
+                        bindValues, error, errorString)) {
+                    return QList<QLandmarkId>();
+                }
+
+                QMap<QString,QVariant> lmAttributes;
+                while(query.next()) {
+                    lmAttributes.insert(query.value(0).toString(), query.value(1));
+                }
+
+                bool isMatch = true;
+                foreach(const QString &filterAttributeKey, attributeKeys) {
+                    if (!lmAttributes.contains(filterAttributeKey)) {
+                        isMatch = false;
+                        break;
+                    }
+
+                    if (!attributeFilter.attribute(filterAttributeKey).isValid()) {
+                        continue;
+                    } else if (attributeFilter.attribute(filterAttributeKey) != lmAttributes.value(filterAttributeKey)) {
+                        isMatch = false;
+                        break;
+                    }
+                }
+
+                if (isMatch) {
+                    id.setLocalId(lmLocalIds.at(i));
+                    result << id;
+                }
+            }
+        }
+        idsFound = true;
+    }
     case QLandmarkFilter::NameFilter: {
             QLandmarkNameFilter nameFilter;
             nameFilter = filter;
@@ -920,8 +975,6 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             }
             idsFound = true;
         }
-        break;
-    case QLandmarkFilter::AttributeFilter:
         break;
     default:
         if(error)
