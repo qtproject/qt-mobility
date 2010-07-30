@@ -22,3 +22,7 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
 
+symbian {
+    TARGET.EPOCALLOWDLLDATA=1
+}
+
