@@ -56,6 +56,7 @@
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qurl.h>
+#include <QtCore/qresource.h>
 
 #include <QtCore/qdebug.h>
 
@@ -443,12 +444,35 @@ void QT7PlayerSession::openMovie(bool tryAsync)
     NSString *urlString = [NSString stringWithUTF8String:requestUrl.toEncoded().constData()];
 
     NSMutableDictionary *attr = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                [NSURL URLWithString:urlString], QTMovieURLAttribute,
                 [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
                 [NSNumber numberWithBool:YES], QTMovieIsActiveAttribute,
                 [NSNumber numberWithBool:YES], QTMovieResolveDataRefsAttribute,
                 [NSNumber numberWithBool:YES], QTMovieDontInteractWithUserAttribute,
                 nil];
+
+    if (requestUrl.scheme() == QLatin1String("qrc")) {
+        // Load from Qt resource
+        QResource resource(QLatin1Char(':') + requestUrl.path());
+        CFDataRef resourceData;
+
+        if (resource.isCompressed()) {
+            QByteArray a = qUncompress(resource.data(), resource.size()); // XXX: Memory consumption
+            resourceData = CFDataCreate(0, (const UInt8 *)a.constData(), a.size());
+        } else {
+            resourceData = CFDataCreateWithBytesNoCopy(0, resource.data(), resource.size(), kCFAllocatorNull);
+        }
+
+        QTDataReference *dataReference =
+                [QTDataReference dataReferenceWithReferenceToData:(NSData*)resourceData
+                                                             name:qString2CFStringRef(requestUrl.path())
+                                                         MIMEType:nil];
+
+        [attr setObject:dataReference forKey:QTMovieDataReferenceAttribute];
+
+        CFRelease(resourceData);
+    } else {
+        [attr setObject:[NSURL URLWithString:urlString] forKey:QTMovieURLAttribute];
+    }
 
     if (tryAsync && QSysInfo::MacintoshVersion >= QSysInfo::MV_10_6) {
         [attr setObject:[NSNumber numberWithBool:YES] forKey:@"QTMovieOpenAsyncRequiredAttribute"];
