@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include <QtTest/QtTest>
 #include "qsystemreadwritelock_p.h"
 #include <QThread>

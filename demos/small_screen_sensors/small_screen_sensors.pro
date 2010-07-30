@@ -1,7 +1,7 @@
 TARGET = smallsensors
 TEMPLATE = app
 
-include(../../examples/examples.pri)
+include(../demos.pri)
 
 QT=core gui
 CONFIG+=mobility

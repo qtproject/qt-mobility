@@ -108,7 +108,11 @@ protected:
 
     bool setMediaObject(QMediaObject *object);
 
-protected:
+#if defined(Q_WS_WIN)
+    bool winEvent(MSG *message, long *result);
+#endif
+
+    QVideoWidget(QVideoWidgetPrivate &dd, QWidget *parent);
     QVideoWidgetPrivate *d_ptr;
 
 private:

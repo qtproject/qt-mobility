@@ -58,6 +58,9 @@ QTM_BEGIN_NAMESPACE
   Please see the class documentation of QContactAbstractRequest for more information about
   the usage of request classes and ownership semantics.
 
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-requests
  */
 
@@ -65,6 +68,13 @@ QTM_BEGIN_NAMESPACE
 QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate, parent)
 {
+}
+
+
+/*! Frees any memory used by this request */
+QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!

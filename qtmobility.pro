@@ -40,22 +40,29 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
 
     unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
-    win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
-    symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
+    win32 {
+        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
+        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    }
+    symbian {
+        nativePath=$$replace(QT_MOBILITY_SOURCE_TREE,/,\\)
+        system(type $${nativePath}\\features\\mobility.prf.template >> $$PRF_OUTPUT)
+    }
 
     PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
     system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
-    system(echo MOBILITY_VERSION = 1.0.2 > $$PRF_CONFIG)
+    system(echo MOBILITY_VERSION = 1.0.2 >> $$PRF_CONFIG)
     system(echo MOBILITY_MAJOR_VERSION = 1 >> $$PRF_CONFIG)
     system(echo MOBILITY_MINOR_VERSION = 0 >> $$PRF_CONFIG)
     system(echo MOBILITY_PATCH_VERSION = 2 >> $$PRF_CONFIG)
 
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
-        FORMATDIR=$$[QT_INSTALL_DATA]\mkspecs\features
-        FORMATDIR=$$replace(FORMATDIR,/,\\ )
-        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$FORMATDIR")
-        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobilityconfig.prf $$FORMATDIR")
+        nativePath=$$replace(QT_MOBILITY_BUILD_TREE,/,\\)
+        FORMATDIR=$$[QT_INSTALL_DATA]\\mkspecs\\features
+        FORMATDIR=$$replace(FORMATDIR,/,\\)
+        system(copy "$${nativePath}\\features\\mobility.prf $$FORMATDIR")
+        system(copy "$${nativePath}\\features\\mobilityconfig.prf $$FORMATDIR")
     }
 
     # install config file
@@ -151,16 +158,16 @@ contains(build_docs, yes):SUBDIRS+=demos
         INSTALLS += qtmheaderssysteminfo
     }
 
-    contains(mobility_modules,systeminfo) {
-        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
-        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
-        INSTALLS += qtmheaderssysteminfo
-    }
-
     contains(mobility_modules,sensors) {
         qtmheaderssensors.path = $${QT_MOBILITY_INCLUDE}/QtSensors
         qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
         INSTALLS += qtmheaderssensors
+    }
+
+    contains(mobility_modules,organizer) {
+        qtmheadersorganizer.path = $${QT_MOBILITY_INCLUDE}/QtOrganizer
+        qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
+        INSTALLS += qtmheadersorganizer
     }
 } else {
     #absolute path does not work and 
@@ -175,7 +182,8 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtPublishSubscribe/* \
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
-                       include/QtSensors/*
+                       include/QtSensors/* \
+                       include/QtOrganizer/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
@@ -189,7 +197,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove

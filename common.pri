@@ -157,6 +157,11 @@ wince* {
     LOCATION.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLocation).dll
     LOCATION.path = .
     DEPLOYMENT += LOCATION
+
+    ### Landmarks
+    LANDMARKS.sources = $$OUTPUT_DIR/lib/$$mobilityDeployFilename(QtLandmarks).dll
+    LANDMARKS.path = .
+    DEPLOYMENT += LANDMARKS
 }
 
 symbian {
@@ -175,6 +180,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
+linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

@@ -66,29 +66,29 @@ public:
 
         qmlRegisterType<QSensorReading>();
 
-        qmlRegisterType<QAccelerometer>("QtMobility.sensors", 1, 0, "Accelerometer");
-        qmlRegisterType<QAccelerometerReading>("QtMobility.sensors", 1, 0, "AccelerometerReading");
+        qmlRegisterType<QAccelerometer>("QtMobility.sensors", 1, 1, "Accelerometer");
+        qmlRegisterType<QAccelerometerReading>("QtMobility.sensors", 1, 1, "AccelerometerReading");
 
-        qmlRegisterType<QAmbientLightSensor>("QtMobility.sensors", 1, 0, "AmbientLightSensor");
-        qmlRegisterType<QAmbientLightReading>("QtMobility.sensors", 1, 0, "AmbientLightReading");
+        qmlRegisterType<QAmbientLightSensor>("QtMobility.sensors", 1, 1, "AmbientLightSensor");
+        qmlRegisterType<QAmbientLightReading>("QtMobility.sensors", 1, 1, "AmbientLightReading");
 
-        qmlRegisterType<QCompass>("QtMobility.sensors", 1, 0, "Compass");
-        qmlRegisterType<QCompassReading>("QtMobility.sensors", 1, 0, "CompassReading");
+        qmlRegisterType<QCompass>("QtMobility.sensors", 1, 1, "Compass");
+        qmlRegisterType<QCompassReading>("QtMobility.sensors", 1, 1, "CompassReading");
 
-        qmlRegisterType<QMagnetometer>("QtMobility.sensors", 1, 0, "Magnetometer");
-        qmlRegisterType<QMagnetometerReading>("QtMobility.sensors", 1, 0, "MagnetometerReading");
+        qmlRegisterType<QMagnetometer>("QtMobility.sensors", 1, 1, "Magnetometer");
+        qmlRegisterType<QMagnetometerReading>("QtMobility.sensors", 1, 1, "MagnetometerReading");
 
-        qmlRegisterType<QOrientationSensor>("QtMobility.sensors", 1, 0, "OrientationSensor");
-        qmlRegisterType<QOrientationReading>("QtMobility.sensors", 1, 0, "OrientationReading");
+        qmlRegisterType<QOrientationSensor>("QtMobility.sensors", 1, 1, "OrientationSensor");
+        qmlRegisterType<QOrientationReading>("QtMobility.sensors", 1, 1, "OrientationReading");
 
-        qmlRegisterType<QProximitySensor>("QtMobility.sensors", 1, 0, "ProximitySensor");
-        qmlRegisterType<QProximityReading>("QtMobility.sensors", 1, 0, "ProximityReading");
+        qmlRegisterType<QProximitySensor>("QtMobility.sensors", 1, 1, "ProximitySensor");
+        qmlRegisterType<QProximityReading>("QtMobility.sensors", 1, 1, "ProximityReading");
 
-        qmlRegisterType<QRotationSensor>("QtMobility.sensors", 1, 0, "RotationSensor");
-        qmlRegisterType<QRotationReading>("QtMobility.sensors", 1, 0, "RotationReading");
+        qmlRegisterType<QRotationSensor>("QtMobility.sensors", 1, 1, "RotationSensor");
+        qmlRegisterType<QRotationReading>("QtMobility.sensors", 1, 1, "RotationReading");
 
-        qmlRegisterType<QTapSensor>("QtMobility.sensors", 1, 0, "TapSensor");
-        qmlRegisterType<QTapReading>("QtMobility.sensors", 1, 0, "TapReading");
+        qmlRegisterType<QTapSensor>("QtMobility.sensors", 1, 1, "TapSensor");
+        qmlRegisterType<QTapReading>("QtMobility.sensors", 1, 1, "TapReading");
     }
 };
 

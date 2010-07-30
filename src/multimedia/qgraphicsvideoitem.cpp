@@ -169,6 +169,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 
     \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a QMediaObject.
 
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
@@ -377,6 +378,9 @@ void QGraphicsVideoItem::paint(
     } else if (d->updatePaintDevice && (painter->paintEngine()->type() == QPaintEngine::OpenGL
             || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
         d->updatePaintDevice = false;
+
+        if (widget)
+            connect(widget, SIGNAL(destroyed()), d->surface, SLOT(viewportDestroyed()));
 
         d->surface->setGLContext(const_cast<QGLContext *>(QGLContext::currentContext()));
         if (d->surface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {

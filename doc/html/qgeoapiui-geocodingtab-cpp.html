@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt 1.1: geocodingtab.cpp Example File (qgeoapiui/geocodingtab.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+  <script src="./scripts/superfish.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/narrow.css" />
+  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+</head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<h1 class="title">geocodingtab.cpp Example File</h1>
+<span class="small-subtitle">qgeoapiui/geocodingtab.cpp</span>
+<!-- $$$qgeoapiui/geocodingtab.cpp-description -->
+<div class="descr"> <a name="details"></a>
+<pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** In addition, as a special exception, Nokia gives you certain additional
+ ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/</span>
+
+ #include &quot;geocodingtab.h&quot;
+ #include &quot;placepresenter.h&quot;
+
+ #include &lt;QTreeWidget&gt;
+ #include &lt;QLineEdit&gt;
+ #include &lt;QString&gt;
+ #include &lt;QLabel&gt;
+ #include &lt;QVBoxLayout&gt;
+ #include &lt;QHBoxLayout&gt;
+ #include &lt;QPushButton&gt;
+ #include &lt;QMessageBox&gt;
+ #include &lt;qgeoaddress.h&gt;
+
+ GeocodingTab::GeocodingTab(QWidget *parent) :
+         QWidget(parent),
+         m_searchManager(NULL)
+ {
+     m_obloc = new QLineEdit(&quot;Deutschland, Mnchen&quot;);
+     m_obloc-&gt;setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+     QLabel *countrylbl = new QLabel(tr(&quot;Country:&quot;));
+     m_country = new QLineEdit(&quot;&quot;);
+     m_country-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+     QLabel *statelbl = new QLabel(tr(&quot;State:&quot;));
+     m_state = new QLineEdit(&quot;&quot;);
+     m_state-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+     QLabel *citylbl = new QLabel(tr(&quot;City:&quot;));
+     m_city = new QLineEdit(&quot;&quot;);
+     m_city-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+     QLabel *ziplbl = new QLabel(tr(&quot;Zip:&quot;));
+     m_zip = new QLineEdit(&quot;&quot;);
+     m_zip-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+     QLabel *streetlbl = new QLabel(tr(&quot;Street:&quot;));
+     m_street = new QLineEdit(&quot;&quot;);
+     m_street-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+     QLabel *streetnumlbl = new QLabel(tr(&quot;#:&quot;));
+     m_streetNumber = new QLineEdit(&quot;&quot;);
+     m_streetNumber-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+     requestBtn = new QPushButton(tr(&quot;Geocoding&quot;));
+     requestBtn-&gt;setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+     requestBtn-&gt;setDisabled(true);
+     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
+
+     m_resultTree = new QTreeWidget();
+     QStringList labels;
+     labels &lt;&lt; tr(&quot;Elements&quot;) &lt;&lt; tr(&quot;Value&quot;);
+     m_resultTree-&gt;setHeaderLabels(labels);
+     m_resultTree-&gt;setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+     m_resultTree-&gt;setColumnWidth(0, 150);
+
+     QHBoxLayout *firstrow = new QHBoxLayout;
+     firstrow-&gt;setSpacing(0);
+     firstrow-&gt;setContentsMargins(0, 0, 0, 0);
+     firstrow-&gt;addWidget(m_obloc);
+     firstrow-&gt;addWidget(requestBtn);
+
+     QHBoxLayout *secondrow = new QHBoxLayout;
+     secondrow-&gt;setSpacing(0);
+     secondrow-&gt;setContentsMargins(0, 0, 0, 0);
+     secondrow-&gt;addWidget(streetlbl);
+     secondrow-&gt;addWidget(m_street);
+     secondrow-&gt;addWidget(streetnumlbl);
+     secondrow-&gt;addWidget(m_streetNumber);
+     secondrow-&gt;addWidget(ziplbl);
+     secondrow-&gt;addWidget(m_zip);
+
+     QHBoxLayout *thirdrow = new QHBoxLayout;
+     thirdrow-&gt;setSpacing(0);
+     thirdrow-&gt;setContentsMargins(0, 0, 0, 0);
+     thirdrow-&gt;addWidget(citylbl);
+     thirdrow-&gt;addWidget(m_city);
+     thirdrow-&gt;addWidget(statelbl);
+     thirdrow-&gt;addWidget(m_state);
+     thirdrow-&gt;addWidget(countrylbl);
+     thirdrow-&gt;addWidget(m_country);
+
+     QVBoxLayout *mainLayout = new QVBoxLayout;
+     mainLayout-&gt;setSpacing(2);
+     mainLayout-&gt;setContentsMargins(2, 1, 2, 1);
+     mainLayout-&gt;addLayout(firstrow);
+     mainLayout-&gt;addLayout(secondrow);
+     mainLayout-&gt;addLayout(thirdrow);
+     mainLayout-&gt;addWidget(m_resultTree);
+     setLayout(mainLayout);
+ }
+
+ GeocodingTab::~GeocodingTab()
+ {
+ }
+
+ void GeocodingTab::initialize(QGeoSearchManager *searchManager)
+ {
+     m_resultTree-&gt;clear();
+     m_searchManager = searchManager;
+     if (m_searchManager) {
+         QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
+                          SLOT(replyFinished(QGeoSearchReply*)));
+         QObject::connect(m_searchManager,
+                          SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
+                          SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+         if(m_searchManager-&gt;supportsGeocoding())
+             requestBtn-&gt;setDisabled(false);
+     }
+     else
+         requestBtn-&gt;setDisabled(true);
+
+ }
+
+ void GeocodingTab::on_btnRequest_clicked()
+ {
+     if (m_searchManager) {
+         QString s = m_obloc-&gt;text();
+
+         m_resultTree-&gt;clear();
+
+         if (!s.isEmpty()) {
+             m_searchManager-&gt;placeSearch(s, QGeoSearchManager::SearchGeocode);
+         } else {
+             QGeoAddress address;
+             address.setCountry(m_country-&gt;text());
+             address.setState(m_state-&gt;text());
+             address.setCity(m_city-&gt;text());
+             address.setPostCode(m_zip-&gt;text());
+             address.setThoroughfareName(m_street-&gt;text());
+             address.setThoroughfareNumber(m_streetNumber-&gt;text());
+             m_searchManager-&gt;geocode(address);
+         }
+     } else {
+         QMessageBox::warning(this, tr(&quot;Geocoding&quot;), tr(&quot;No search manager available.&quot;));
+     }
+ }
+
+ void GeocodingTab::replyFinished(QGeoSearchReply* reply)
+ {
+     if (!isHidden() &amp;&amp; reply-&gt;error() == QGeoSearchReply::NoError) {
+         PlacePresenter presenter(m_resultTree, reply);
+         presenter.show();
+         reply-&gt;deleteLater();
+     }
+ }
+
+ void GeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString)
+ {
+     Q_UNUSED(errorCode)
+
+     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+     top-&gt;setText(0, tr(&quot;Error&quot;));
+     top-&gt;setText(1, errorString);
+     reply-&gt;deleteLater();
+ }</pre>
+</div>
+<!-- @@@qgeoapiui/geocodingtab.cpp -->
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
+</html>

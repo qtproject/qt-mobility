@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/publishsubscribe
+
 #include <qmallocpool_p.h>
 
 #include <QtTest/QTest>

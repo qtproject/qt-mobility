@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/contacts
 
 /* Force a static plugin */
 #define QT_STATICPLUGIN

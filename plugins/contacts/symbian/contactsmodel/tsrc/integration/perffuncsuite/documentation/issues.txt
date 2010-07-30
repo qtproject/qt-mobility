@@ -1,0 +1,35 @@
+issues:
+disk full test:
+old model:
+SetCurrentItem --- doesnt leave, only leaves internally (-1)
+exportcontacts -- exports an empty file when disk is full?
+updatecontactlc -- doesnt leave when disk is full
+importcontacts --  doesnt leave when disk is full
+
+new model:
+CreateOwnCardL() leaks memory, object always changing location in memory?
+
+OOM test:
+old:
+fialing on various instances
+
+new:
+failing on the server-side
+
+contact views tests:
+new model:
+one or more fields being set may be causing an extreme slow down in population of views
+
+
+concurrent notifications tests:
+on the old model  EContactDbObserverEventRollback for contact 0 is generated when a 
+transaction is rolled back this doesn't occur for the new model.
+
+on new model database is damaged after a single update transaction is reverted, this doesnt occur on the old model
+
+
+blobs test:
+new model:
+max blob size is 131kb
+old model:
+max blob size is 192kb

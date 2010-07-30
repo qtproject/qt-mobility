@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QSensorBackend
     \ingroup sensors_backend
+    \inmodule QtSensors
 
     \brief The QSensorBackend class is a sensor implementation.
 

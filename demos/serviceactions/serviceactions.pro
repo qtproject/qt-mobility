@@ -3,7 +3,7 @@ TARGET = serviceactions
 
 QT += gui
 
-include(../../examples/examples.pri)
+include(../demos.pri)
 
 CONFIG += mobility
 MOBILITY = messaging

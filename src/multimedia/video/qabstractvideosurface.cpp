@@ -47,6 +47,7 @@ QT_BEGIN_NAMESPACE
     \class QAbstractVideoSurface
     \brief The QAbstractVideoSurface class is a base class for video presentation surfaces.
     \since 4.6
+    \inmodule QtMultimediaKit
 
     The QAbstractVideoSurface class defines the standard interface that video producers use to
     inter-operate with video presentation surfaces.  It is not supposed to be instantiated directly.
@@ -280,4 +281,34 @@ void QAbstractVideoSurface::setError(Error error)
     d->error = error;
 }
 
+/*!
+   \property QAbstractVideoSurface::nativeResolution
+
+   The native resolution of video surface.
+   This is the resolution of video frames the surface
+   can render with optimal quality and/or performance.
+
+   The native resolution is not always known and can be changed during playback.
+ */
+
+QSize QAbstractVideoSurface::nativeResolution() const
+{
+    return d_func()->nativeResolution;
+}
+
+/*!
+    Set the video surface native \a resolution.
+ */
+void QAbstractVideoSurface::setNativeResolution(const QSize &resolution)
+{
+    Q_D(QAbstractVideoSurface);
+    if (d->nativeResolution != resolution) {
+        d->nativeResolution = resolution;
+        emit nativeResolutionChanged(resolution);
+    }
+}
+
 QT_END_NAMESPACE
+
+#include "moc_qabstractvideosurface.cpp"
+

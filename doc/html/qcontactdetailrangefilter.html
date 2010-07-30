@@ -1,109 +1,232 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qcontactdetailrangefilter.cpp -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
-  <title>Qt Mobility Project 1.1: QContactDetailRangeFilter Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qcontactdetailrangefilter.cpp -->
+  <title>Qt 1.1: QContactDetailRangeFilter Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+  <script src="./scripts/superfish.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/narrow.css" />
+  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QContactDetailRangeFilter"></a>
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactDetailRangeFilter Class Reference</h1>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtcontacts.html">QtContacts</a></li>
+              <li>QContactDetailRangeFilter</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<div class="toc">
+<h3><a name="toc">Contents</a></h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QContactDetailRangeFilter Class Reference</h1>
+<!-- $$$QContactDetailRangeFilter-brief -->
 <p>The QContactDetailRangeFilter class provides a filter based around a detail value range criterion. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactDetailRangeFilter&gt;</pre><p>Inherits <a href="qcontactfilter.html">QContactFilter</a>.</p>
+<!-- @@@QContactDetailRangeFilter -->
+<pre class="highlightedCode brush: cpp"> #include &lt;QContactDetailRangeFilter&gt;</pre><p>Inherits <a href="qcontactfilter.html">QContactFilter</a>.</p>
 <ul>
 <li><a href="qcontactdetailrangefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlag</a></b> { IncludeLower, IncludeUpper, ExcludeLower, ExcludeUpper }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a></b></td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlag</a></b> { IncludeLower, IncludeUpper, ExcludeLower, ExcludeUpper }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a></b></td></tr>
 </table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#QContactDetailRangeFilter">QContactDetailRangeFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#QContactDetailRangeFilter-2">QContactDetailRangeFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactFilter::MatchFlags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#maxValue">maxValue</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#minValue">minValue</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">RangeFlags </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a></b> ( QContactFilter::MatchFlags <i>flags</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetailrangefilter.html#setRange">setRange</a></b> ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, RangeFlags <i>flags</i> = 0 )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#QContactDetailRangeFilter">QContactDetailRangeFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#QContactDetailRangeFilter-2">QContactDetailRangeFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QContactFilter::MatchFlags </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#maxValue">maxValue</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#minValue">minValue</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> RangeFlags </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a></b> ( QContactFilter::MatchFlags <i>flags</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactdetailrangefilter.html#setRange">setRange</a></b> ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, RangeFlags <i>flags</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qcontactfilter.html#public-functions">QContactFilter</a></li>
+<li class="fn">4 public functions inherited from <a href="qcontactfilter.html#public-functions">QContactFilter</a></li>
 </ul>
 <a name="details"></a>
-<hr />
+<!-- $$$QContactDetailRangeFilter-description -->
+<div class="descr">
 <h2>Detailed Description</h2>
 <p>The QContactDetailRangeFilter class provides a filter based around a detail value range criterion.</p>
 <p>It may be used to select contacts which contain a detail of a particular definition with a particular value that lies in a range (either open or closed).</p>
-<hr />
+</div>
+<!-- @@@QContactDetailRangeFilter -->
+<div class="types">
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QContactDetailRangeFilter/RangeFlag"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailRangeFilter/IncludeLower"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailRangeFilter/IncludeUpper"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailRangeFilter/ExcludeLower"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailRangeFilter/ExcludeUpper"></a>
-<a name="//apple_ref/cpp/tdef/QContactDetailRangeFilter/RangeFlags"></a>
-<h3 class="flags"><a name="RangeFlag-enum"></a>enum QContactDetailRangeFilter::RangeFlag<br />flags QContactDetailRangeFilter::RangeFlags</h3>
+<!-- $$$RangeFlag$$$IncludeLower$$$IncludeUpper$$$ExcludeLower$$$ExcludeUpper -->
+<h3 class="flags"><a name="RangeFlag-enum"></a>enum QContactDetailRangeFilter::RangeFlag<br/>flags QContactDetailRangeFilter::RangeFlags</h3>
 <p>Enumerates the semantics of the boundary conditions of the detail range filter</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeLower</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter will match if the field value is equal to or greater than the minimum value</td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeUpper</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The filter will match if the field value is equal to or less than the maximum value</td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeLower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The filter will match if the field value is greater than the minimum value (but not equal)</td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeUpper</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter will match if the field value is less than the maximum value (but not equal)</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th class="tblConst">Constant</th><th class="tblval">Value</th><th class="tbldscr">Description</th></tr>
+<tr><td  class="topAlign"><tt>QContactDetailRangeFilter::IncludeLower</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter will match if the field value is equal to or greater than the minimum value</td></tr>
+<tr><td  class="topAlign"><tt>QContactDetailRangeFilter::IncludeUpper</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The filter will match if the field value is equal to or less than the maximum value</td></tr>
+<tr><td  class="topAlign"><tt>QContactDetailRangeFilter::ExcludeLower</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The filter will match if the field value is greater than the minimum value (but not equal)</td></tr>
+<tr><td  class="topAlign"><tt>QContactDetailRangeFilter::ExcludeUpper</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The filter will match if the field value is less than the maximum value (but not equal)</td></tr>
+</table>
 <p>The RangeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;RangeFlag&gt;. It stores an OR combination of RangeFlag values.</p>
-<hr />
+<!-- @@@RangeFlag -->
+</div>
+<div class="func">
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/QContactDetailRangeFilter"></a>
+<!-- $$$QContactDetailRangeFilter[overload1]$$$QContactDetailRangeFilter -->
 <h3 class="fn"><a name="QContactDetailRangeFilter"></a>QContactDetailRangeFilter::QContactDetailRangeFilter ()</h3>
 <p>Constructs a new detail range filter</p>
+<!-- @@@QContactDetailRangeFilter -->
+<!-- $$$QContactDetailRangeFilter$$$QContactDetailRangeFilterconstQContactFilter& -->
 <h3 class="fn"><a name="QContactDetailRangeFilter-2"></a>QContactDetailRangeFilter::QContactDetailRangeFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new detail range filter</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/detailDefinitionName"></a>
-<h3 class="fn"><a name="detailDefinitionName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetailRangeFilter::detailDefinitionName () const</h3>
+<!-- @@@QContactDetailRangeFilter -->
+<!-- $$$detailDefinitionName[overload1]$$$detailDefinitionName -->
+<h3 class="fn"><a name="detailDefinitionName"></a>QString QContactDetailRangeFilter::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected for matching values</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/detailFieldName"></a>
-<h3 class="fn"><a name="detailFieldName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetailRangeFilter::detailFieldName () const</h3>
+<!-- @@@detailDefinitionName -->
+<!-- $$$detailFieldName[overload1]$$$detailFieldName -->
+<h3 class="fn"><a name="detailFieldName"></a>QString QContactDetailRangeFilter::detailFieldName () const</h3>
 <p>Returns the name of the field which contains the value which will be matched against the value criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/matchFlags"></a>
+<!-- @@@detailFieldName -->
+<!-- $$$matchFlags[overload1]$$$matchFlags -->
 <h3 class="fn"><a name="matchFlags"></a><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> QContactDetailRangeFilter::matchFlags () const</h3>
 <p>Returns the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/maxValue"></a>
-<h3 class="fn"><a name="maxValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetailRangeFilter::maxValue () const</h3>
+<!-- @@@matchFlags -->
+<!-- $$$maxValue[overload1]$$$maxValue -->
+<h3 class="fn"><a name="maxValue"></a>QVariant QContactDetailRangeFilter::maxValue () const</h3>
 <p>Returns the upper bound of the value range criterion If this value is null, there is no upper bound. If it is valid, the <a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a>() determines whether this value is included in the valid values.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/minValue"></a>
-<h3 class="fn"><a name="minValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetailRangeFilter::minValue () const</h3>
+<!-- @@@maxValue -->
+<!-- $$$minValue[overload1]$$$minValue -->
+<h3 class="fn"><a name="minValue"></a>QVariant QContactDetailRangeFilter::minValue () const</h3>
 <p>Returns the lower bound of the value range criterion. If this value is null, there is no lower bound. If it is valid, the <a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a>() determines whether this value is included in the valid values.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/rangeFlags"></a>
+<!-- @@@minValue -->
+<!-- $$$rangeFlags[overload1]$$$rangeFlags -->
 <h3 class="fn"><a name="rangeFlags"></a><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> QContactDetailRangeFilter::rangeFlags () const</h3>
 <p>Returns a set of flags which defines the boundary condition semantics of the value range criterion</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/setDetailDefinitionName"></a>
-<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailRangeFilter::setDetailDefinitionName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fieldName</i> = QString() )</h3>
+<!-- @@@rangeFlags -->
+<!-- $$$setDetailDefinitionName[overload1]$$$setDetailDefinitionNameconstQString&constQString& -->
+<h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactDetailRangeFilter::setDetailDefinitionName ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> = QString() )</h3>
 <p>Sets the name of the detail definition of which type details will be inspected for matching values to <i>definitionName</i>, and the name of the field which will be inspected in details of that definition to <i>fieldName</i>.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qcontactdetailrangefilter.html#detailFieldName">detailFieldName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/setMatchFlags"></a>
+<!-- @@@setDetailDefinitionName -->
+<!-- $$$setMatchFlags[overload1]$$$setMatchFlagsQContactFilter::MatchFlags -->
 <h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the match flags of the filter criterion to <i>flags</i></p>
 <p>Not all flags are supported by a range filter. The supported flags include:</p>
@@ -114,15 +237,29 @@
 </ul>
 <p>Unsupported flags will be ignored.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/setRange"></a>
-<h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>min</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
+<!-- @@@setMatchFlags -->
+<!-- $$$setRange[overload1]$$$setRangeconstQVariant&constQVariant&RangeFlags -->
+<h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const QVariant &amp; <i>min</i>, const QVariant &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
 <p>Sets the value range criterion of the filter to within <i>min</i> and <i>max</i>, with boundary conditions specified in the given <i>flags</i>. If <i>min</i> or <i>max</i> is a null variant, that condition will not be checked. For example, to check for fields with a value greater than 7, you would specify:</p>
-<pre>    filter.setRange(7, QVariant(), QContactDetailRangeFilter::ExcludeLower);</pre>
+<pre class="highlightedCode brush: cpp"> filter.setRange(7, QVariant(), QContactDetailRangeFilter::ExcludeLower);</pre>
 <p>See also <a href="qcontactdetailrangefilter.html#minValue">minValue</a>() and <a href="qcontactdetailrangefilter.html#maxValue">maxValue</a>().</p>
+<!-- @@@setRange -->
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
 </html>

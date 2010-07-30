@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt 1.1: routepresenter.cpp Example File (qgeoapiui/routepresenter.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+  <script src="./scripts/superfish.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/narrow.css" />
+  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+</head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+<h1 class="title">routepresenter.cpp Example File</h1>
+<span class="small-subtitle">qgeoapiui/routepresenter.cpp</span>
+<!-- $$$qgeoapiui/routepresenter.cpp-description -->
+<div class="descr"> <a name="details"></a>
+<pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
+ **
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ ** All rights reserved.
+ ** Contact: Nokia Corporation (qt-info@nokia.com)
+ **
+ ** This file is part of the Qt Mobility Components.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+ ** No Commercial Usage
+ ** This file contains pre-release code and may not be distributed.
+ ** You may use this file in accordance with the terms and conditions
+ ** contained in the Technology Preview License Agreement accompanying
+ ** this package.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+ ** General Public License version 2.1 as published by the Free Software
+ ** Foundation and appearing in the file LICENSE.LGPL included in the
+ ** packaging of this file.  Please review the following information to
+ ** ensure the GNU Lesser General Public License version 2.1 requirements
+ ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+ **
+ ** In addition, as a special exception, Nokia gives you certain additional
+ ** rights.  These rights are described in the Nokia Qt LGPL Exception
+ ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+ **
+ ** If you have questions regarding the use of this file, please contact
+ ** Nokia at qt-info@nokia.com.
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ **
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/</span>
+
+ #include &quot;routepresenter.h&quot;
+
+ #include &lt;QStringBuilder&gt;
+ #include &lt;qgeoboundingbox.h&gt;
+ #include &lt;qgeonavigationinstruction.h&gt;
+
+ RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
+         : GeoPresenter(treeWidget), routeReply(routeReply)
+ {
+ }
+
+ void RoutePresenter::show()
+ {
+     treeWidget-&gt;clear();
+
+     QTreeWidgetItem* requestTop = new QTreeWidgetItem(treeWidget);
+     requestTop-&gt;setText(0, &quot;request&quot;);
+
+     QTreeWidgetItem* prop = new QTreeWidgetItem(requestTop);
+     prop-&gt;setText(0, &quot;modes&quot;);
+     showModes(prop,routeReply-&gt;request().routeOptimization(),routeReply-&gt;request().travelModes(),routeReply-&gt;request().avoidFeatureTypes());
+
+     prop = new QTreeWidgetItem(requestTop);
+     prop-&gt;setText(0, &quot;waypoints&quot;);
+     prop-&gt;setText(1, QString().setNum(routeReply-&gt;request().waypoints().length()));
+     showPoints(prop, routeReply-&gt;request().waypoints());
+
+     prop = new QTreeWidgetItem(requestTop);
+     prop-&gt;setText(0, &quot;exclude areas&quot;);
+     prop-&gt;setText(1, QString().setNum(routeReply-&gt;request().excludeAreas().length()));
+     for (int i = 0; i &lt; routeReply-&gt;request().excludeAreas().length(); ++i)
+         showBoundingBox(prop, routeReply-&gt;request().excludeAreas().at(i));
+
+     prop = new QTreeWidgetItem(requestTop);
+     prop-&gt;setText(0, &quot;alternatives&quot;);
+     prop-&gt;setText(1, QString().setNum(routeReply-&gt;request().numberAlternativeRoutes()));
+
+     QTreeWidgetItem* top = showRoutes();
+     const QList&lt;QGeoRoute&gt; routes = routeReply-&gt;routes();
+
+     for (int i = 0; i &lt; routes.length(); ++i) {
+         showRoute(top, routes[i]);
+     }
+ }
+
+ QTreeWidgetItem* RoutePresenter::showRoutes()
+ {
+     QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
+     top-&gt;setText(0, &quot;routes&quot;);
+
+     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
+     prop-&gt;setText(0, &quot;count&quot;);
+     prop-&gt;setText(1, QString().setNum(routeReply-&gt;routes().size()));
+
+     return top;
+ }
+
+ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute&amp; route)
+ {
+     QTreeWidgetItem* routeItem = new QTreeWidgetItem(top);
+     routeItem-&gt;setText(0, &quot;route&quot;);
+
+     QTreeWidgetItem* prop=0;
+     if(!route.routeId().isEmpty()) {
+         prop = new QTreeWidgetItem(routeItem);
+         prop-&gt;setText(0, &quot;id&quot;);
+         prop-&gt;setText(1, route.routeId());
+     }
+
+     prop = new QTreeWidgetItem(routeItem);
+     prop-&gt;setText(0, &quot;mode&quot;);
+     showModes(prop,route.request().routeOptimization(),route.travelMode(),route.request().avoidFeatureTypes());
+
+     prop = new QTreeWidgetItem(routeItem);
+     prop-&gt;setText(0, &quot;distance&quot;);
+     prop-&gt;setText(1, QString().setNum(route.distance()));
+
+     showBoundingBox(routeItem, route.bounds());
+
+     QTreeWidgetItem* wayPointsItem = new QTreeWidgetItem(routeItem);
+     QString overviewLabel = &quot;route overview&quot;;
+     if(route.path().count()&gt;100)
+         overviewLabel += &quot; (First 100)&quot;;
+     wayPointsItem-&gt;setText(0, overviewLabel);
+     showPoints(wayPointsItem, route.path());
+
+     QList&lt;QGeoRouteSegment&gt; segments = route.routeSegments();
+     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
+     QString segmentsLabel = &quot;segments&quot;;
+     if(segments.length()&gt;100)
+         segmentsLabel += &quot; (First 100)&quot;;
+
+     segmentsItem-&gt;setText(0, segmentsLabel);
+
+     segmentsItem-&gt;setText(1, QString().setNum(segments.length()));
+     for (int i = 0; i &lt; segments.length() &amp;&amp; i&lt;100; ++i) {
+         showRouteSegment(segmentsItem, segments[i]);
+     }
+ }
+
+ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment &amp;segment)
+ {
+     QTreeWidgetItem* maneuverItem = new QTreeWidgetItem(routeItem);
+     maneuverItem-&gt;setText(0, &quot;segment&quot;);
+
+     QTreeWidgetItem* propItem = new QTreeWidgetItem(maneuverItem);
+     propItem-&gt;setText(0, &quot;duration&quot;);
+     propItem-&gt;setText(1, QString().setNum(segment.travelTime()));
+
+     propItem = new QTreeWidgetItem(maneuverItem);
+     propItem-&gt;setText(0, &quot;distance&quot;);
+     propItem-&gt;setText(1, QString().setNum(segment.distance()));
+
+     <span class="comment">// add back in when more qgeonavigationinstruction classes are made available</span>
+<span class="comment"> /*
+     QString s = segment-&gt;turn();
+
+     if (!s.isEmpty()) {
+         propItem = new QTreeWidgetItem(maneuverItem);
+         propItem-&gt;setText(0, &quot;turn&quot;);
+         propItem-&gt;setText(1, s);
+     }
+
+     s = segment-&gt;streetName();
+
+     if (!s.isEmpty()) {
+         propItem = new QTreeWidgetItem(maneuverItem);
+         propItem-&gt;setText(0, &quot;street name&quot;);
+         propItem-&gt;setText(1, s);
+     }
+
+     s = segment-&gt;routeName();
+
+     if (!s.isEmpty()) {
+         propItem = new QTreeWidgetItem(maneuverItem);
+         propItem-&gt;setText(0, &quot;route name&quot;);
+         propItem-&gt;setText(1, s);
+     }
+
+     s = segment-&gt;nextStreetName();
+
+     if (!s.isEmpty()) {
+         propItem = new QTreeWidgetItem(maneuverItem);
+         propItem-&gt;setText(0, &quot;next street name&quot;);
+         propItem-&gt;setText(1, s);
+     }
+
+     s = segment-&gt;signPost();
+
+     if (!s.isEmpty()) {
+         propItem = new QTreeWidgetItem(maneuverItem);
+         propItem-&gt;setText(0, &quot;sign post&quot;);
+         propItem-&gt;setText(1, s);
+     }
+
+     propItem = new QTreeWidgetItem(maneuverItem);
+     propItem-&gt;setText(0, &quot;traffic direction&quot;);
+     propItem-&gt;setText(1, QString().setNum(segment-&gt;trafficDirection()));
+ */</span>
+     QTreeWidgetItem* maneuverPointsItem = new QTreeWidgetItem(maneuverItem);
+     maneuverPointsItem-&gt;setText(0, &quot;segment points&quot;);
+     showPoints(maneuverPointsItem, segment.path());
+
+     if(!segment.instruction().instructionText().isEmpty()) {
+         QTreeWidgetItem* instructionItem = new QTreeWidgetItem(maneuverItem);
+         instructionItem-&gt;setText(0, &quot;instruction&quot;);
+
+         QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
+         positionItem-&gt;setText(0, &quot;position&quot;);
+         QList&lt;QGeoCoordinate&gt; points;
+         points.append(segment.instruction().position());
+         showPoints(positionItem, points);
+
+         propItem = new QTreeWidgetItem(instructionItem);
+         propItem-&gt;setText(0, &quot;text&quot;);
+         propItem-&gt;setText(1, segment.instruction().instructionText());
+     }
+ }
+
+ void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList&lt;QGeoCoordinate&gt;&amp; points)
+ {
+     for (int i = 0; i &lt; points.count() &amp;&amp; i&lt;100; ++i) {
+         QTreeWidgetItem* point = new QTreeWidgetItem(pointsItem);
+         point-&gt;setText(0, QString().setNum(i + 1));
+         point-&gt;setText(1, formatGeoCoordinate(points[i]));
+     }
+ }
+
+<span class="comment"> //-------------------------------------------------------------------------------------------------</span>
+ void GeoPresenter::showBoundingBox(QTreeWidgetItem* routeItem, const QGeoBoundingBox&amp; box)
+ {
+     QTreeWidgetItem* boxItem = new QTreeWidgetItem(routeItem);
+     boxItem-&gt;setText(0, &quot;bounding box&quot;);
+
+     QTreeWidgetItem* nwItem = new QTreeWidgetItem(boxItem);
+     nwItem-&gt;setText(0, &quot;NW&quot;);
+     nwItem-&gt;setText(1, formatGeoCoordinate(box.topLeft()));
+
+     QTreeWidgetItem* seItem = new QTreeWidgetItem(boxItem);
+     seItem-&gt;setText(0, &quot;SE&quot;);
+     seItem-&gt;setText(1, formatGeoCoordinate(box.bottomRight()));
+ }
+
+ QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate&amp; coord)
+ {
+     return QString().setNum(coord.latitude()) %
+            &quot;, &quot; %
+            QString().setNum(coord.longitude());
+ }
+
+ void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
+                                     QGeoRouteRequest::TravelModes travelModes,
+                                     QGeoRouteRequest::AvoidFeatureTypes avoid )
+ {
+     QTreeWidgetItem* item = new QTreeWidgetItem(top);
+     item-&gt;setText(0, &quot;optimization&quot;);
+
+     if ((optimization &amp; QGeoRouteRequest::ShortestRoute) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;ShortestRoute&quot;);
+     }
+     if ((optimization &amp; QGeoRouteRequest::FastestRoute) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;FastestRoute&quot;);
+     }
+     if ((optimization &amp; QGeoRouteRequest::MostEconomicRoute) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;MostEconomicRoute&quot;);
+     }
+     if ((optimization &amp; QGeoRouteRequest::MostScenicRoute) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;MostScenicRoute&quot;);
+     }
+
+     item = new QTreeWidgetItem(top);
+     item-&gt;setText(0, &quot;travel mode&quot;);
+
+     if ((travelModes &amp; QGeoRouteRequest::CarTravel) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;CarTravel&quot;);
+     }
+     if ((travelModes &amp; QGeoRouteRequest::PedestrianTravel) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;PedestrianTravel&quot;);
+     }
+     if ((travelModes &amp; QGeoRouteRequest::PublicTransitTravel) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;PublicTransitTravel&quot;);
+     }
+     if ((travelModes &amp; QGeoRouteRequest::BicycleTravel) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;BicycleTravel&quot;);
+     }
+     if ((travelModes &amp; QGeoRouteRequest::TruckTravel) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;TruckTravel&quot;);
+     }
+
+     item = new QTreeWidgetItem(top);
+     item-&gt;setText(0, &quot;avoid&quot;);
+
+     if (avoid == QGeoRouteRequest::AvoidNothing) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidNothing&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidTolls) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidTolls&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidHighways) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidHighways&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidFerries) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidFerries&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidTunnels) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidTunnels&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidDirtRoads) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidDirtRoads&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidPublicTransit) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidPublicTransit&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidPark) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidPark&quot;);
+     }
+     if ((avoid &amp; QGeoRouteRequest::AvoidMotorPoolLanes) != 0) {
+         QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+         prop-&gt;setText(1, &quot;AvoidMotorPoolLanes&quot;);
+     }
+ }</pre>
+</div>
+<!-- @@@qgeoapiui/routepresenter.cpp -->
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
+</body>
+</html>
