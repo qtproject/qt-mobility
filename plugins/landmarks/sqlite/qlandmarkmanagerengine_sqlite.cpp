@@ -1596,7 +1596,7 @@ bool removeLandmarkHelper(const QString &connectionName, const QLandmarkId &land
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
          if (errorString)
-            *errorString = QString("Landmark with local id, %1, does with exist in database").arg(landmarkId.localId());
+            *errorString = QString("Landmark with local id, %1, does not exist in database").arg(landmarkId.localId());
         return false;
     }
 
@@ -2129,6 +2129,8 @@ bool removeCategory(const QString &connectionName, const QLandmarkCategoryId &ca
                 QLandmarkManager::Error *error,
                 QString *errorString, const QString &managerUri)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
     if (categoryId.managerUri() != managerUri) {
         if (error)
             *error = QLandmarkManager::BadArgumentError;
@@ -2139,49 +2141,45 @@ bool removeCategory(const QString &connectionName, const QLandmarkCategoryId &ca
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
-    bool transacting = db.transaction();
-
-    QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(categoryId.localId());
-    QSqlQuery query0(q0, db);
-    if (!query0.next()) {
-        if (transacting)
-            db.commit();
-
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-        return true;
-    }
-
-    QString q1 = QString("DELETE FROM category WHERE id = %1;").arg(categoryId.localId());
-    QSqlQuery query1(q1, db);
-    if (!query1.exec()) {
-        if (transacting)
-            db.rollback();
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Save landmark: unable to begin transaction, reason: %1").arg(db.lastError().text());
         return false;
     }
 
-    QString q2 = QString("DELETE FROM landmark_category WHERE category_id = %1;").arg(categoryId.localId());
-    QSqlQuery query2(q2, db);
-    if (!query2.exec()) {
-        if (transacting)
-            db.rollback();
+    QMap<QString,QVariant> bindValues;
+    bindValues.insert("catId", categoryId.localId());
+    QString q0 = QString("SELECT 1 FROM category WHERE id = :catId");
+
+    QSqlQuery query(db);
+    if(!executeQuery(&query,q0,bindValues,error,errorString)) {
+        db.rollback();
         return false;
     }
 
-    if (transacting)
-        db.commit();
+    if (!query.next()) {
+        db.rollback();
+        *error = QLandmarkManager::DoesNotExistError;
+        *errorString = QString("Category with local id %1, does not exist in database")
+                        .arg(categoryId.localId());
+        return false;
+    }
 
-    //TODO: notifications
-    //QList<QLandmarkCategoryId> ids;
-    //ids << categoryId;
-    //emit categoriesRemoved(ids);
+    QStringList queryStrings;
+    queryStrings << "DELETE FROM category WHERE id = :catId";
+    queryStrings << "DELETE FROM landmark_category WHERE category_id = :catId";
+    queryStrings << "DELETE FROM category_attribute WHERE category_id= :catId";
 
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        *errorString = "";
+    foreach(const QString &queryString, queryStrings) {
+        if (!executeQuery(&query, queryString, bindValues, error,errorString)) {
+            db.rollback();
+            return false;
+        }
+    }
+
+     db.commit();
+     *error = QLandmarkManager::NoError;
+     *errorString = "";
 
     return true;
 }
