@@ -107,6 +107,11 @@ private:
     QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
 };
 
+inline QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
+{
+    return united(boundingBox);
+}
+
 QTM_END_NAMESPACE
 
 QT_END_HEADER

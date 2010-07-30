@@ -535,12 +535,8 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
 }
 
 /*!
+  \fn QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
 */
-inline
-QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
-{
-    return united(boundingBox);
-}
 
 /*!
 */
