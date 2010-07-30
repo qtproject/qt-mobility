@@ -59,6 +59,7 @@
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkunionfilter.h>
 #include <qlandmarkidfilter.h>
+#include <qlandmarkattributefilter.h>
 
 #include <qlandmarksortorder.h>
 #include <qlandmarknamesort.h>
@@ -179,6 +180,7 @@ private:
                 return false;
             }
         }
+        return true;
     }
 
     //checks if an id fetch request will return the ids for the same landmarks as in \a lms
@@ -395,6 +397,8 @@ private slots:
 
     void filterLandmarksUnion();
     void filterLandmarksUnionAsync();
+
+    void filterAttribute();
 
     void sortLandmarksNull();
 
@@ -4734,6 +4738,100 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksUnionAsync() {
             QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
         }
     }
+}
+
+void tst_QLandmarkManagerEngineSqlite::filterAttribute() {
+    QLandmark lm1;
+    lm1.setName("LM1");
+    lm1.setAttribute("one",1);
+    lm1.setAttribute("two", 2);
+    lm1.setAttribute("three",3);
+    QVERIFY(m_manager->saveLandmark(&lm1));
+
+    QLandmark lm2;
+    lm2.setName("LM2");
+    lm2.setAttribute("two", 22);
+    QVERIFY(m_manager->saveLandmark(&lm2));
+
+    QLandmark lm3;
+    lm3.setName("LM3");
+    lm3.setAttribute("three", 3);
+    lm3.setAttribute("four", 4);
+    QVERIFY(m_manager->saveLandmark(&lm3));
+
+    QLandmark lm4;
+    lm4.setName("LM4");
+    lm4.setAttribute("three", 3);
+    lm4.setAttribute("four", 44);
+    QVERIFY(m_manager->saveLandmark(&lm4));
+
+    QLandmark lm5;
+    lm5.setName("LM5");
+    lm5.setAttribute("three", 33);
+    lm5.setAttribute("four", 4);
+    lm5.setAttribute("five", 5);
+    QVERIFY(m_manager->saveLandmark(&lm5));
+
+    QLandmarkAttributeFilter attributeFilter;
+
+    //try matching any landmark that has an attribute key
+    attributeFilter.setAttribute("two");
+    QList<QLandmark> lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QList<QLandmarkId> lmIds = m_manager->landmarkIds(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+
+    QVERIFY(checkIds(lms, lmIds));
+    QCOMPARE(lms.count(),2);
+    QVERIFY(lms.contains(lm1));
+    QVERIFY(lms.contains(lm2));
+
+    //try matching landmarks that match a specific attribute key
+    attributeFilter.setAttribute("two",22);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    lmIds = m_manager->landmarkIds(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QVERIFY(checkIds(lms, lmIds));
+    QCOMPARE(lms.count(), 1);
+    QVERIFY(lms.contains(lm2));
+
+    //check that we can remove an attribute from the filter.
+    attributeFilter.removeAttribute("two");
+    QCOMPARE(attributeFilter.attributeKeys().count(), 0);
+
+    //try matching using multiple attributes
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttribute("three");
+    attributeFilter.setAttribute("four",4);
+    QCOMPARE(attributeFilter.attributeKeys().count(), 2);
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    lmIds = m_manager->landmarkIds(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QVERIFY(checkIds(lms, lmIds));
+    QCOMPARE(lms.count(),2);
+    QVERIFY(lms.contains(lm3));
+    QVERIFY(lms.contains(lm5));
+
+    //try a filter that has a non-existent key
+    attributeFilter.clearAttributes();
+    attributeFilter.setAttribute("ten");
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    lmIds = m_manager->landmarkIds(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QVERIFY(checkIds(lms, lmIds));
+    QCOMPARE(lms.count(),0);
+
+    //try a filter with no attributes
+    attributeFilter.clearAttributes();
+    lms = m_manager->landmarks(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    lmIds = m_manager->landmarkIds(attributeFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QVERIFY(checkIds(lms, lmIds));
+    QCOMPARE(lms.count(),0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::sortLandmarksNull() {
