@@ -917,7 +917,10 @@ QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 
 int QSystemDisplayInfoPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    QDesktopWidget wid;
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
     GConfItem currentBrightness("/system/osso/dsm/display/display_brightness");
     GConfItem maxBrightness("/system/osso/dsm/display/max_display_brightness_levels");
     if(maxBrightness.value().toInt()) {
