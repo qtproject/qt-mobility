@@ -41,108 +41,11 @@
 
 //TESTED_COMPONENT=src/multimedia
 
-#include <QtTest/QtTest>
-#include <QtCore>
-#include <QtGui>
- #include <QFile>
-
-#include <QMediaPlayer>
-#include <QMediaPlayerControl>
-#include <QMediaPlaylist>
-#include <QMediaService>
-#include <QMediaStreamsControl>
-#include <QVideoWidget>
+#include "tst_qmediaplayer_s60.h"
 
 QT_USE_NAMESPACE
 
-#define WAIT_FOR_CONDITION(a,e)            \
-    for (int _i = 0; _i < 500; _i += 1) {  \
-        if ((a) == (e)) break;             \
-        QTest::qWait(10);}
-
-
-#define WAIT_LONG_FOR_CONDITION(a,e)        \
-    for (int _i = 0; _i < 1800; _i += 1) {  \
-        if ((a) == (e)) break;              \
-        QTest::qWait(100);}
-
-class mediaStatusList : public QObject, public QList<QMediaPlayer::MediaStatus>
-{
-    Q_OBJECT
-public slots:
-    void mediaStatus(QMediaPlayer::MediaStatus status) {
-        append(status);
-    }
-
-public:
-    mediaStatusList(QObject *obj, const char *aSignal)
-    : QObject()
-    {
-        connect(obj, aSignal, this, SLOT(mediaStatus(QMediaPlayer::MediaStatus)));
-    }
-};
-
-class MockProvider : public QMediaServiceProvider
-{
-public:
-    MockProvider(QMediaService *service):mockService(service) {}
-    QMediaService *requestService(const QByteArray &, const QMediaServiceProviderHint &)
-    {
-        return mockService;
-    }
-
-    void releaseService(QMediaService *service) { delete service; }
-
-    QMediaService *mockService;
-};
-
-class tst_QMediaPlayer: public QObject
-{
-    Q_OBJECT
-
-public slots:
-    void initTestCase_data();
-    void initTestCase_data_default_winscw();
-    void initTestCase_data_default_armv5();
-    void initTestCase_data_50_winscw();
-    void initTestCase_data_50_armv5();
-    void initTestCase_data_32_winscw();
-    void initTestCase_data_32_armv5();
-    void initTestCase_data_31_winscw();
-    void initTestCase_data_31_armv5();
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
-private slots:
-    void testPositionWhilePlaying();
-    void testNullService();
-    void testMedia();
-    void testDuration();
-    void testPosition();
-
-    void testVolume();
-    void testVolumeWhilePlaying();
-    void testMuted();
-    void testMutedWhilePlaying();
-    void testVideoAndAudioAvailability();
-    void testError();
-    void testPlay();
-    void testPause();
-    void testStop();
-    void testMediaStatus();
-    void testPlaylist();
-    void testPlaybackRate();
-    void testPlaybackRateWhilePlaying();
-
-private:
-    QMediaPlayer *m_player;
-    QVideoWidget *m_widget;
-    bool runonce;
-};
-
-void tst_QMediaPlayer::initTestCase_data()
+void tst_QMediaPlayer_s60::initTestCase_data()
 {
 #ifdef __WINSCW__
     if(QSysInfo::s60Version() == QSysInfo::SV_S60_3_1)
@@ -165,17 +68,17 @@ void tst_QMediaPlayer::initTestCase_data()
 #endif
 }
 
-void tst_QMediaPlayer::initTestCase_data_default_winscw()
+void tst_QMediaPlayer_s60::initTestCase_data_default_winscw()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase_data_default_armv5()
+void tst_QMediaPlayer_s60::initTestCase_data_default_armv5()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase_data_50_winscw()
+void tst_QMediaPlayer_s60::initTestCase_data_50_winscw()
 {
     QTest::addColumn<bool>("valid");
     QTest::addColumn<QMediaPlayer::State>("state");
@@ -529,32 +432,32 @@ void tst_QMediaPlayer::initTestCase_data_50_winscw()
     << QString(); // errorString
 }
 
-void tst_QMediaPlayer::initTestCase_data_50_armv5()
+void tst_QMediaPlayer_s60::initTestCase_data_50_armv5()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase_data_32_winscw()
+void tst_QMediaPlayer_s60::initTestCase_data_32_winscw()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase_data_32_armv5()
+void tst_QMediaPlayer_s60::initTestCase_data_32_armv5()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase_data_31_winscw()
+void tst_QMediaPlayer_s60::initTestCase_data_31_winscw()
 {
     //backend does not compile on winscw due missing libs.
 }
 
-void tst_QMediaPlayer::initTestCase_data_31_armv5()
+void tst_QMediaPlayer_s60::initTestCase_data_31_armv5()
 {
     //TODO: add data
 }
 
-void tst_QMediaPlayer::initTestCase()
+void tst_QMediaPlayer_s60::initTestCase()
 {
     m_player = new QMediaPlayer();
 
@@ -565,13 +468,13 @@ void tst_QMediaPlayer::initTestCase()
     runonce = false;
 }
 
-void tst_QMediaPlayer::cleanupTestCase()
+void tst_QMediaPlayer_s60::cleanupTestCase()
 {
     delete m_player;
     delete m_widget;
 }
 
-void tst_QMediaPlayer::init()
+void tst_QMediaPlayer_s60::init()
 {
 	qRegisterMetaType<QMediaPlayer::State>("QMediaPlayer::State");
 	qRegisterMetaType<QMediaPlayer::Error>("QMediaPlayer::Error");
@@ -579,15 +482,15 @@ void tst_QMediaPlayer::init()
 	qRegisterMetaType<QMediaContent>("QMediaContent");
 }
 
-void tst_QMediaPlayer::cleanup()
+void tst_QMediaPlayer_s60::cleanup()
 {
 }
 
-void tst_QMediaPlayer::testNullService()
+void tst_QMediaPlayer_s60::testNullService()
 {
     if(runonce)
         return;
-    MockProvider provider(0);
+    MockProvider_s60 provider(0);
     QMediaPlayer player(0, 0, &provider);
 
     const QIODevice *nullDevice = 0;
@@ -691,7 +594,7 @@ void tst_QMediaPlayer::testNullService()
     runonce = true;
 }
 
-void tst_QMediaPlayer::testMedia()
+void tst_QMediaPlayer_s60::testMedia()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     m_player->setMedia(mediaContent);
@@ -700,7 +603,7 @@ void tst_QMediaPlayer::testMedia()
 }
 
 
-void tst_QMediaPlayer::testDuration()
+void tst_QMediaPlayer_s60::testDuration()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(qint64, duration);
@@ -719,7 +622,7 @@ void tst_QMediaPlayer::testDuration()
     //qDebug()<<m_player->duration()<<m_player->error();;
 }
 
-void tst_QMediaPlayer::testPosition()
+void tst_QMediaPlayer_s60::testPosition()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(qint64, duration);
@@ -786,7 +689,7 @@ void tst_QMediaPlayer::testPosition()
     }
 }
 
-void tst_QMediaPlayer::testPositionWhilePlaying()
+void tst_QMediaPlayer_s60::testPositionWhilePlaying()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(qint64, duration);
@@ -905,7 +808,7 @@ void tst_QMediaPlayer::testPositionWhilePlaying()
 }
 
 
-void tst_QMediaPlayer::testVolume()
+void tst_QMediaPlayer_s60::testVolume()
 {
     QFETCH_GLOBAL(int, volume);
 
@@ -953,7 +856,7 @@ void tst_QMediaPlayer::testVolume()
     QCOMPARE(spy.count(), 1);}
 }
 
-void tst_QMediaPlayer::testVolumeWhilePlaying()
+void tst_QMediaPlayer_s60::testVolumeWhilePlaying()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(int, volume);
@@ -1016,7 +919,7 @@ void tst_QMediaPlayer::testVolumeWhilePlaying()
 }
 
 
-void tst_QMediaPlayer::testMuted()
+void tst_QMediaPlayer_s60::testMuted()
 {
     QFETCH_GLOBAL(int, volume);
 
@@ -1055,7 +958,7 @@ void tst_QMediaPlayer::testMuted()
     QVERIFY(m_player->isMuted() == true);}
 }
 
-void tst_QMediaPlayer::testMutedWhilePlaying()
+void tst_QMediaPlayer_s60::testMutedWhilePlaying()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
     QFETCH_GLOBAL(int, volume);
@@ -1109,7 +1012,7 @@ void tst_QMediaPlayer::testMutedWhilePlaying()
 }
 
 
-void tst_QMediaPlayer::testVideoAndAudioAvailability()
+void tst_QMediaPlayer_s60::testVideoAndAudioAvailability()
 {
     QFETCH_GLOBAL(bool, videoAvailable);
     QFETCH_GLOBAL(bool, audioAvailable);
@@ -1131,7 +1034,7 @@ void tst_QMediaPlayer::testVideoAndAudioAvailability()
     }
 }
 
-void tst_QMediaPlayer::testError()
+void tst_QMediaPlayer_s60::testError()
 {
     QFETCH_GLOBAL(QMediaPlayer::Error, error);
     QFETCH_GLOBAL(bool, videoAvailable);
@@ -1154,7 +1057,7 @@ void tst_QMediaPlayer::testError()
     }
 }
 
-void tst_QMediaPlayer::testPlay()
+void tst_QMediaPlayer_s60::testPlay()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -1205,7 +1108,7 @@ void tst_QMediaPlayer::testPlay()
     QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
-void tst_QMediaPlayer::testPause()
+void tst_QMediaPlayer_s60::testPause()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -1251,7 +1154,7 @@ void tst_QMediaPlayer::testPause()
     QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
-void tst_QMediaPlayer::testStop()
+void tst_QMediaPlayer_s60::testStop()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -1300,7 +1203,7 @@ void tst_QMediaPlayer::testStop()
     QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
-void tst_QMediaPlayer::testMediaStatus()
+void tst_QMediaPlayer_s60::testMediaStatus()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -1368,7 +1271,7 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(m_player->state(), QMediaPlayer::StoppedState);
 }
 
-void tst_QMediaPlayer::testPlaylist()
+void tst_QMediaPlayer_s60::testPlaylist()
 {
     if(!runonce) {
         QMediaContent content0(QUrl(QLatin1String("file:///C:/data/testfiles/test_mp4.mp4")));
@@ -1541,7 +1444,7 @@ void tst_QMediaPlayer::testPlaylist()
     }
 }
 
-void tst_QMediaPlayer::testPlaybackRate()
+void tst_QMediaPlayer_s60::testPlaybackRate()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(qreal, playbackRate);
@@ -1561,7 +1464,7 @@ void tst_QMediaPlayer::testPlaybackRate()
     }
 }
 
-void tst_QMediaPlayer::testPlaybackRateWhilePlaying()
+void tst_QMediaPlayer_s60::testPlaybackRateWhilePlaying()
 {
     QFETCH_GLOBAL(bool, valid);
     QFETCH_GLOBAL(qreal, playbackRate);
@@ -1583,7 +1486,3 @@ void tst_QMediaPlayer::testPlaybackRateWhilePlaying()
         QCOMPARE(spy.count(), 1);
     }
 }
-
-QTEST_MAIN(tst_QMediaPlayer)
-
-#include "tst_qmediaplayer_s60.moc"

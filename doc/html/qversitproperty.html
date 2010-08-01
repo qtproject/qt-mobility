@@ -70,9 +70,7 @@
               <li class="defaultLink"><a href="classes.html">Class index</a></li>
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
-              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
-              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
-              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
             </ul> 
           </div>
         </div>
@@ -81,10 +79,11 @@
             Qt Topics</h2>
           <div id="list002" class="list">
             <ul id="ul002" >
-              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
-              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
-              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
-              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
             </ul>  
           </div>
         </div>
@@ -94,10 +93,6 @@
           <div id="list003" class="list">
         <ul id="ul003">
               <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
-              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
-              <li class="defaultLink"><a href="demos.html">Demos</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
             </ul> 
           </div>
         </div>
@@ -123,7 +118,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -131,18 +126,18 @@
 </ul>
 </div>
 <h1 class="title">QVersitProperty Class Reference</h1>
+<!-- $$$QVersitProperty-brief -->
 <p>The QVersitProperty class stores the name, value, groups and parameters of a Versit property. <a href="#details">More...</a></p>
+<!-- @@@QVersitProperty -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QVersitProperty&gt;</pre><ul>
 <li><a href="qversitproperty-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitproperty.html#ValueType-enum">ValueType</a></b> { PlainType, CompoundType, ListType, BinaryType, VersitDocumentType }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitproperty.html#QVersitProperty">QVersitProperty</a></b> ()</td></tr>
@@ -169,8 +164,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QVersitProperty &amp; </td><td class="memItemRight bottomAlign"><b><a href="qversitproperty.html#operator-eq">operator=</a></b> ( const QVersitProperty &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qversitproperty.html#operator-eq-eq">operator==</a></b> ( const QVersitProperty &amp; <i>other</i> ) const</td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<!-- $$$QVersitProperty-description -->
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitProperty class stores the name, value, groups and parameters of a Versit property.</p>
@@ -183,10 +178,11 @@
 <p>QVersitProperty supports implicit sharing. The property name and parameter names of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty.</p>
 </div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
-<hr />
+<!-- @@@QVersitProperty -->
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="ValueType-enum"></a>enum QVersitProperty::ValueType</h3>
+<!-- $$$ValueType -->
+<h3 class="fn"><a name="ValueType-enum"></a>enum QVersitProperty::ValueType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Describes the type of data held in the property's value.</p>
 <p>The vCard and iCalendar specifications allows a property value to hold a string, binary data, or a nested document. String values can either be unstructured or structured. Structured strings can be either of compound type or list type. A compound value is one that is delimited by semicolons, allows empty components, and has a property-specific cardinality and ordering. A list value is one that is delimited by commas, does not have empty components, and has no restrictions on cardinality or ordering.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -196,69 +192,115 @@
 <tr><td  class="topAlign"><tt>QVersitProperty::BinaryType</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The property value holds a binary value and can be retrieved with QVersitProperty::value&lt;QByteArray&gt;()</td></tr>
 <tr><td  class="topAlign"><tt>QVersitProperty::VersitDocumentType</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">The property value holds a nested Versit document and can be retrieved with QVersitProperty::value&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt;()</td></tr>
 </table>
+<!-- @@@ValueType -->
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVersitProperty"></a>QVersitProperty::QVersitProperty ()</h3>
+<!-- $$$QVersitProperty[overload1]$$$QVersitProperty -->
+<h3 class="fn"><a name="QVersitProperty"></a>QVersitProperty::QVersitProperty ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new empty property</p>
-<h3 class="fn"><a name="QVersitProperty-2"></a>QVersitProperty::QVersitProperty ( const QVersitProperty &amp; <i>other</i> )</h3>
+<!-- @@@QVersitProperty -->
+<!-- $$$QVersitProperty$$$QVersitPropertyconstQVersitProperty& -->
+<h3 class="fn"><a name="QVersitProperty-2"></a>QVersitProperty::QVersitProperty ( const QVersitProperty &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a property that is a copy of <i>other</i></p>
-<h3 class="fn"><a name="dtor.QVersitProperty"></a>QVersitProperty::~QVersitProperty ()</h3>
+<!-- @@@QVersitProperty -->
+<!-- $$$~QVersitProperty[overload1]$$$~QVersitProperty -->
+<h3 class="fn"><a name="dtor.QVersitProperty"></a>QVersitProperty::~QVersitProperty ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Frees the memory used by the property</p>
-<h3 class="fn"><a name="clear"></a>void QVersitProperty::clear ()</h3>
+<!-- @@@~QVersitProperty -->
+<!-- $$$clear[overload1]$$$clear -->
+<h3 class="fn"><a name="clear"></a>void QVersitProperty::clear ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Clears the contents of this property.</p>
-<h3 class="fn"><a name="groups"></a>QStringList QVersitProperty::groups () const</h3>
+<!-- @@@clear -->
+<!-- $$$groups[overload1]$$$groups -->
+<h3 class="fn"><a name="groups"></a>QStringList QVersitProperty::groups () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Gets the groups of the property.</p>
 <p>See also <a href="qversitproperty.html#setGroups">setGroups</a>().</p>
-<h3 class="fn"><a name="insertParameter"></a>void QVersitProperty::insertParameter ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3>
+<!-- @@@groups -->
+<!-- $$$insertParameter[overload1]$$$insertParameterconstQString&constQString& -->
+<h3 class="fn"><a name="insertParameter"></a>void QVersitProperty::insertParameter ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Adds a new parameter with <i>name</i> and <i>value</i>. Both the name and the value are converted to upper-case.</p>
-<h3 class="fn"><a name="isEmpty"></a>bool QVersitProperty::isEmpty () const</h3>
+<!-- @@@insertParameter -->
+<!-- $$$isEmpty[overload1]$$$isEmpty -->
+<h3 class="fn"><a name="isEmpty"></a>bool QVersitProperty::isEmpty () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if the property is empty.</p>
-<h3 class="fn"><a name="name"></a>QString QVersitProperty::name () const</h3>
+<!-- @@@isEmpty -->
+<!-- $$$name[overload1]$$$name -->
+<h3 class="fn"><a name="name"></a>QString QVersitProperty::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Gets the name of the property in upper-case.</p>
 <p>See also <a href="qversitproperty.html#setName">setName</a>().</p>
-<h3 class="fn"><a name="parameters"></a>QMultiHash&lt;QString, QString&gt; QVersitProperty::parameters () const</h3>
+<!-- @@@name -->
+<!-- $$$parameters[overload1]$$$parameters -->
+<h3 class="fn"><a name="parameters"></a>QMultiHash&lt;QString, QString&gt; QVersitProperty::parameters () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Return a copy of the contained list of parameters. Note that actual the parameters cannot be modified using the copy.</p>
 <p>See also <a href="qversitproperty.html#setParameters">setParameters</a>().</p>
-<h3 class="fn"><a name="removeParameter"></a>void QVersitProperty::removeParameter ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3>
+<!-- @@@parameters -->
+<!-- $$$removeParameter[overload1]$$$removeParameterconstQString&constQString& -->
+<h3 class="fn"><a name="removeParameter"></a>void QVersitProperty::removeParameter ( const QString &amp; <i>name</i>, const QString &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes a parameter with <i>name</i> and <i>value</i>.</p>
 <p>See also <a href="qversitproperty.html#removeParameters">removeParameters</a>().</p>
-<h3 class="fn"><a name="removeParameters"></a>void QVersitProperty::removeParameters ( const QString &amp; <i>name</i> )</h3>
+<!-- @@@removeParameter -->
+<!-- $$$removeParameters[overload1]$$$removeParametersconstQString& -->
+<h3 class="fn"><a name="removeParameters"></a>void QVersitProperty::removeParameters ( const QString &amp; <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Removes all parameters with the given <i>name</i>.</p>
 <p>See also <a href="qversitproperty.html#removeParameter">removeParameter</a>().</p>
-<h3 class="fn"><a name="setGroups"></a>void QVersitProperty::setGroups ( const QStringList &amp; <i>groups</i> )</h3>
+<!-- @@@removeParameters -->
+<!-- $$$setGroups[overload1]$$$setGroupsconstQStringList& -->
+<h3 class="fn"><a name="setGroups"></a>void QVersitProperty::setGroups ( const QStringList &amp; <i>groups</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the groups in the property to the given list of <i>groups</i>.</p>
 <p>See also <a href="qversitproperty.html#groups">groups</a>().</p>
-<h3 class="fn"><a name="setName"></a>void QVersitProperty::setName ( const QString &amp; <i>name</i> )</h3>
+<!-- @@@setGroups -->
+<!-- $$$setName[overload1]$$$setNameconstQString& -->
+<h3 class="fn"><a name="setName"></a>void QVersitProperty::setName ( const QString &amp; <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the <i>name</i> of the property. The <i>name</i> is converted to upper-case.</p>
 <p>See also <a href="qversitproperty.html#name">name</a>().</p>
-<h3 class="fn"><a name="setParameters"></a>void QVersitProperty::setParameters ( const QMultiHash&lt;QString, QString&gt; &amp; <i>parameters</i> )</h3>
+<!-- @@@setName -->
+<!-- $$$setParameters[overload1]$$$setParametersconstQMultiHash<QString,QString>& -->
+<h3 class="fn"><a name="setParameters"></a>void QVersitProperty::setParameters ( const QMultiHash&lt;QString, QString&gt; &amp; <i>parameters</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Replaces all the parameters with <i>parameters</i>. The parameters are converted to upper-case.</p>
 <p>See also <a href="qversitproperty.html#parameters">parameters</a>().</p>
-<h3 class="fn"><a name="setValue"></a>void QVersitProperty::setValue ( const QVariant &amp; <i>value</i> )</h3>
+<!-- @@@setParameters -->
+<!-- $$$setValue[overload1]$$$setValueconstQVariant& -->
+<h3 class="fn"><a name="setValue"></a>void QVersitProperty::setValue ( const QVariant &amp; <i>value</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the property value to <i>value</i>.</p>
 <p>See also <a href="qversitproperty.html#value">value</a>().</p>
-<h3 class="fn"><a name="setValueType"></a>void QVersitProperty::setValueType ( <a href="qversitproperty.html#ValueType-enum">ValueType</a> <i>type</i> )</h3>
+<!-- @@@setValue -->
+<!-- $$$setValueType[overload1]$$$setValueTypeValueType -->
+<h3 class="fn"><a name="setValueType"></a>void QVersitProperty::setValueType ( <a href="qversitproperty.html#ValueType-enum">ValueType</a> <i>type</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the type of value held in the property to <i>type</i>.</p>
 <p>See also <a href="qversitproperty.html#valueType">valueType</a>().</p>
-<h3 class="fn"><a name="value"></a>QString QVersitProperty::value () const</h3>
+<!-- @@@setValueType -->
+<!-- $$$value[overload1]$$$value -->
+<h3 class="fn"><a name="value"></a>QString QVersitProperty::value () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the value of the property as a string if possible, otherwise return an empty string. If the property is stored as a QByteArray, it is decoded using the charset specified in the property's parameters.</p>
 <p>See also <a href="qversitproperty.html#setValue">setValue</a>() and QVariant::toString().</p>
-<h3 class="fn"><a name="value-2"></a>T QVersitProperty::value () const</h3>
+<!-- @@@value -->
+<!-- $$$value$$$value -->
+<h3 class="fn"><a name="value-2"></a>T QVersitProperty::value () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This is an overloaded function.</p>
 <p>Returns the value of the property as a <tt>T</tt>.</p>
-<h3 class="fn"><a name="valueType"></a><a href="qversitproperty.html#ValueType-enum">ValueType</a> QVersitProperty::valueType () const</h3>
+<!-- @@@value -->
+<!-- $$$valueType[overload1]$$$valueType -->
+<h3 class="fn"><a name="valueType"></a><a href="qversitproperty.html#ValueType-enum">ValueType</a> QVersitProperty::valueType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of value held in the property.</p>
 <p>See also <a href="qversitproperty.html#setValueType">setValueType</a>().</p>
-<h3 class="fn"><a name="variantValue"></a>QVariant QVersitProperty::variantValue () const</h3>
+<!-- @@@valueType -->
+<!-- $$$variantValue[overload1]$$$variantValue -->
+<h3 class="fn"><a name="variantValue"></a>QVariant QVersitProperty::variantValue () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the value of the property.</p>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QVersitProperty::operator!= ( const QVersitProperty &amp; <i>other</i> ) const</h3>
+<!-- @@@variantValue -->
+<!-- $$$operator!=[overload1]$$$operator!=constQVersitProperty& -->
+<h3 class="fn"><a name="operator-not-eq"></a>bool QVersitProperty::operator!= ( const QVersitProperty &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this is not equal to <i>other</i>; false otherwise.</p>
-<h3 class="fn"><a name="operator-eq"></a>QVersitProperty &amp; QVersitProperty::operator= ( const QVersitProperty &amp; <i>other</i> )</h3>
+<!-- @@@operator!= -->
+<!-- $$$operator=[overload1]$$$operator=constQVersitProperty& -->
+<h3 class="fn"><a name="operator-eq"></a>QVersitProperty &amp; QVersitProperty::operator= ( const QVersitProperty &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Assigns this property to <i>other</i></p>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitProperty::operator== ( const QVersitProperty &amp; <i>other</i> ) const</h3>
+<!-- @@@operator= -->
+<!-- $$$operator==[overload1]$$$operator==constQVersitProperty& -->
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitProperty::operator== ( const QVersitProperty &amp; <i>other</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns true if this is equal to <i>other</i>; false otherwise.</p>
+<!-- @@@operator== -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -266,5 +308,15 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
 </body>
 </html>

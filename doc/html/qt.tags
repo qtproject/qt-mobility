@@ -12317,35 +12317,49 @@
             <name>filterSupportLevel</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>filterSupportLevel</anchor>
-            <arglist>(const QLandmarkFilter &amp; filter) const = 0</arglist>
+            <arglist>(const QLandmarkFilter &amp; filter, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual bool</type>
             <name>isFeatureSupported</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>isFeatureSupported</anchor>
-            <arglist>(QLandmarkManager::LandmarkFeature feature) const = 0</arglist>
+            <arglist>(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual bool</type>
             <name>isReadOnly</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>isReadOnly</anchor>
-            <arglist>() const = 0</arglist>
+            <arglist>(QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual bool</type>
             <name>isReadOnly</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>isReadOnly-2</anchor>
-            <arglist>(const QLandmarkId &amp; landmarkId) const = 0</arglist>
+            <arglist>(const QLandmarkId &amp; landmarkId, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual bool</type>
             <name>isReadOnly</name>
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>isReadOnly-3</anchor>
-            <arglist>(const QLandmarkCategoryId &amp; categoryId) const = 0</arglist>
+            <arglist>(const QLandmarkCategoryId &amp; categoryId, QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+        </member>
+        <member kind="function" protection="public" virtual="pure" static="no">
+            <type>virtual QStringList</type>
+            <name>platformLandmarkAttributeKeys</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>platformLandmarkAttributeKeys</anchor>
+            <arglist>(QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
+        </member>
+        <member kind="function" protection="public" virtual="pure" static="no">
+            <type>virtual QStringList</type>
+            <name>platformCategoryAttributeKeys</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>platformCategoryAttributeKeys</anchor>
+            <arglist>(QLandmarkManager::Error * error, QString * errorString) const = 0</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual void</type>
@@ -12374,6 +12388,13 @@
             <anchorfile>qlandmarkmanagerengine.html</anchorfile>
             <anchor>waitForRequestFinished</anchor>
             <arglist>(QLandmarkAbstractRequest * request, int msecs) = 0</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>dataChanged</name>
+            <anchorfile>qlandmarkmanagerengine.html</anchorfile>
+            <anchor>dataChanged</anchor>
+            <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -22552,22 +22573,22 @@
             <anchor>mapType</anchor>
             <arglist>() const</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual void</type>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
             <name>addMapObject</name>
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>addMapObject</anchor>
             <arglist>(QGeoMapObject * mapObject)</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual void</type>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
             <name>removeMapObject</name>
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>removeMapObject</anchor>
             <arglist>(QGeoMapObject * mapObject)</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="virtual" static="no">
-            <type>virtual QList&lt;QGeoMapObject *&gt;</type>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QList&lt;QGeoMapObject *&gt;</type>
             <name>mapObjects</name>
             <anchorfile>qgeomapdata.html</anchorfile>
             <anchor>mapObjects</anchor>
@@ -22595,13 +22616,6 @@
             <arglist>(const QRectF &amp; screenRect)</arglist>
         </member>
         <member kind="function" protection="public" virtual="pure" static="no">
-            <type>virtual QPixmap</type>
-            <name>mapObjectsOverlay</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>mapObjectsOverlay</anchor>
-            <arglist>() = 0</arglist>
-        </member>
-        <member kind="function" protection="public" virtual="pure" static="no">
             <type>virtual QPointF</type>
             <name>coordinateToScreenPosition</name>
             <anchorfile>qgeomapdata.html</anchorfile>
@@ -22615,40 +22629,12 @@
             <anchor>screenPositionToCoordinate</anchor>
             <arglist>(const QPointF &amp; screenPosition) const = 0</arglist>
         </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>setImageChangesTriggerUpdates</name>
+        <member kind="function" protection="public" virtualness="virtual" static="no">
+            <type>virtual void</type>
+            <name>paint</name>
             <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>setImageChangesTriggerUpdates</anchor>
-            <arglist>(bool trigger)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>bool</type>
-            <name>imageChangesTriggerUpdates</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>imageChangesTriggerUpdates</anchor>
-            <arglist>() const</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>setMapImage</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>setMapImage</anchor>
-            <arglist>(const QPixmap &amp; mapImage)</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>QPixmap &amp;</type>
-            <name>mapImage</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>mapImage</anchor>
-            <arglist>()</arglist>
-        </member>
-        <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>imageChanged</name>
-            <anchorfile>qgeomapdata.html</anchorfile>
-            <anchor>imageChanged</anchor>
-            <arglist>(const QRectF &amp; updateRect)</arglist>
+            <anchor>paint</anchor>
+            <arglist>(QPainter * painter, const QStyleOptionGraphicsItem * option)</arglist>
         </member>
         <member kind="function" protection="protected" virtualness="non" static="no">
             <type>QGeoMapWidget *</type>
@@ -29038,7 +29024,19 @@
             <anchor>LandmarkFeature-enum</anchor>
             <arglist></arglist>
         </member>
-        <member name="GenericAttributes">
+        <member name="GenericLandmarkAttributes">
+            <anchor>LandmarkFeature-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="GenericCategoryAttributes">
+            <anchor>LandmarkFeature-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PlatformLandmarkAttributes">
+            <anchor>LandmarkFeature-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PlatformCategoryAttributes">
             <anchor>LandmarkFeature-enum</anchor>
             <arglist></arglist>
         </member>
@@ -29239,6 +29237,20 @@
             <arglist>(LandmarkFeature feature) const</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>platformLandmarkAttributeKeys</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>platformLandmarkAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>platformCategoryAttributeKeys</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>platformCategoryAttributeKeys</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
             <type>bool</type>
             <name>isReadOnly</name>
             <anchorfile>qlandmarkmanager.html</anchorfile>
@@ -29314,6 +29326,13 @@
             <anchorfile>qlandmarkmanager.html</anchorfile>
             <anchor>parseUri</anchor>
             <arglist>(const QString &amp; uri, QString * pManagerId, QMap&lt;QString, QString&gt; * pParams)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>dataChanged</name>
+            <anchorfile>qlandmarkmanager.html</anchorfile>
+            <anchor>dataChanged</anchor>
+            <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
@@ -29689,24 +29708,31 @@
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
-            <name>childObjectAdded</name>
+            <name>objectUpdate</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>childObjectAdded</anchor>
-            <arglist>(QGeoMapObject * childObject)</arglist>
+            <anchor>objectUpdate</anchor>
+            <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
-            <name>childObjectRemoved</name>
+            <name>mapUpdate</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>childObjectRemoved</anchor>
-            <arglist>(QGeoMapObject * childObject)</arglist>
+            <anchor>mapUpdate</anchor>
+            <arglist>()</arglist>
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
-            <type>void</type>
-            <name>zValueChanged</name>
+            <type>bool</type>
+            <name>operator&lt;</name>
             <anchorfile>qgeomapobject.html</anchorfile>
-            <anchor>zValueChanged</anchor>
-            <arglist>(int newZValue, int oldZValue)</arglist>
+            <anchor>operator&lt;</anchor>
+            <arglist>(const QGeoMapObject &amp; other) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>operator&gt;</name>
+            <anchorfile>qgeomapobject.html</anchorfile>
+            <anchor>operator&gt;</anchor>
+            <arglist>(const QGeoMapObject &amp; other) const</arglist>
         </member>
     </compound>
     <compound kind="class">
@@ -36497,6 +36523,20 @@
         </member>
         <member kind="function" protection="public" virtualness="non" static="no">
             <type>void</type>
+            <name>setVideoOutput</name>
+            <anchorfile>qmediaimageviewer.html</anchorfile>
+            <anchor>setVideoOutput</anchor>
+            <arglist>(QVideoWidget * widget)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setVideoOutput</name>
+            <anchorfile>qmediaimageviewer.html</anchorfile>
+            <anchor>setVideoOutput-2</anchor>
+            <arglist>(QGraphicsVideoItem * item)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
             <name>setMedia</name>
             <anchorfile>qmediaimageviewer.html</anchorfile>
             <anchor>media-prop</anchor>
@@ -37266,7 +37306,7 @@
             <name>mapTypeChanged</name>
             <anchorfile>qgeomapwidget.html</anchorfile>
             <anchor>mapTypeChanged</anchor>
-            <arglist>(MapType mapType)</arglist>
+            <arglist>(QGeoMapWidget::MapType mapType)</arglist>
         </member>
     </compound>
     <compound kind="class">

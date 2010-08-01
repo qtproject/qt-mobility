@@ -6,12 +6,9 @@
 
 TEMPLATE = lib
 TARGET = qtfeedbackdocsample
-include(../../../../common.pri)
+include(../../../../features/basic_examples_setup.pri)
 INCLUDEPATH += ../../../../src/global \
                ../../../../src/feedback
-
-DESTDIR = $$QT_MOBILITY_BUILD_TREE/lib
-QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
 CONFIG += mobility
 MOBILITY = feedback
