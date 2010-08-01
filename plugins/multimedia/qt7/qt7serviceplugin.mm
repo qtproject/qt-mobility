@@ -51,7 +51,11 @@ QT_BEGIN_NAMESPACE
 
 QStringList QT7ServicePlugin::keys() const
 {
-    return QStringList() << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
+    return QStringList()
+#ifdef QMEDIA_QT7_PLAYER
+        << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
+#endif
+        ;
 }
 
 QMediaService* QT7ServicePlugin::create(QString const& key)
@@ -59,9 +63,10 @@ QMediaService* QT7ServicePlugin::create(QString const& key)
 #ifdef QT_DEBUG_QT7
     qDebug() << "QT7ServicePlugin::create" << key;
 #endif
+#ifdef QMEDIA_QT7_PLAYER
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QT7PlayerService;
-
+#endif
     qWarning() << "unsupported key:" << key;
 
     return 0;
