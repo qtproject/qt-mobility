@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 //TESTED_COMPONENT=src/multimedia
+
 #include "tst_qmediaplayer.h"
 
 QT_USE_NAMESPACE

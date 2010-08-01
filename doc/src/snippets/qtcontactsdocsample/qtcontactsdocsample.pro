@@ -6,15 +6,12 @@
 
 TEMPLATE = lib
 TARGET = qtcontactsdocsample
-include(../../../../common.pri)
+include(../../../../features/basic_examples_setup.pri)
 INCLUDEPATH += ../../../../src/global \
                ../../../../src/contacts \
                ../../../../src/contacts/requests \
                ../../../../src/contacts/filters \
                ../../../../src/contacts/details
-
-DESTDIR = $$QT_MOBILITY_BUILD_TREE/lib
-QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
 CONFIG += mobility console
 MOBILITY = contacts

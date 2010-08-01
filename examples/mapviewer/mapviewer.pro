@@ -1,6 +1,6 @@
 QT += xml \
     network
-TARGET = MapViewer
+TARGET = mapviewer
 TEMPLATE = app \
     thread
 INCLUDEPATH += ../../src/global \

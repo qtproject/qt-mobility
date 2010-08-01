@@ -141,13 +141,13 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 
     QMediaImageViewer is used together with a media display object such as
     QVideoWidget to present an image.  A display object is attached to the
-    image viewer by assigning it to the videoOutput property.
+    image viewer by means of the bind function.
 
     \code
     viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    viewer->setVideoOutput(display);
+    viewer->bind(display);
     display->show();
     \endcode
 

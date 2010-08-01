@@ -48,10 +48,8 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "          <ul id=\"ul001\" >\n" \
 			  "              <li class=\"defaultLink\"><a href=\"classes.html\">Class index</a></li>\n" \
 			  "              <li class=\"defaultLink\"><a href=\"functions.html\">Function index</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"modules.html\">Modules</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"namespaces.html\">Namespaces</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qtglobal.html\">Global stuff</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qdeclarativeelements.html\">QML elements</a></li>\n" \
+              "              <li class=\"defaultLink\"><a href=\"modules.html\">Modules</a></li>\n" \
+              "              <li class=\"defaultLink\"><a href=\"index.html#platform-compatibility\">Platform Compatibility</a></li>\n" \
 			  "            </ul> \n" \
 			  "          </div>\n" \
 			  "        </div>\n" \
@@ -60,10 +58,11 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "            Qt Topics</h2>\n" \
 			  "          <div id=\"list002\" class=\"list\">\n" \
 			  "            <ul id=\"ul002\" >\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qt-basic-concepts.html\">Basic Qt architecture</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"declarativeui.html\">Device UI's &amp; Qt Quick</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qt-gui-concepts.html\">Desktop UI components</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"platform-specific.html\">Platform-specific info</a></li>\n" \
+              "              <li class=\"defaultLink\"><a href=\"http://doc.qt.nokia.com/4.7-snapshot/\">Qt 4.7</a></li>\n" \
+			  "              <li class=\"defaultLink\"><a href=\"http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html\">Basic Qt architecture</a></li>\n" \
+			  "              <li class=\"defaultLink\"><a href=\"http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html\">Device UI's &amp; Qt Quick</a></li>\n" \
+			  "              <li class=\"defaultLink\"><a href=\"http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html\">Desktop UI components</a></li>\n" \
+			  "              <li class=\"defaultLink\"><a href=\"http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html\">Platform-specific info</a></li>\n" \
 			  "            </ul>  \n" \
 			  "          </div>\n" \
 			  "        </div>\n" \
@@ -73,10 +72,6 @@ HTML.postheader         = " <div class=\"header\" id=\"qtdocheader\">\n" \
 			  "          <div id=\"list003\" class=\"list\">\n" \
 			  "        <ul id=\"ul003\">\n" \
 			  "              <li class=\"defaultLink\"><a href=\"all-examples.html\">Examples</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"tutorials.html\">Tutorials</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"demos.html\">Demos</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qdeclarativeexamples.html\">QML Examples</a></li>\n" \
-			  "              <li class=\"defaultLink\"><a href=\"qdeclarativeexamples.html#Demos\">QML Demos</a></li>\n" \
 			  "            </ul> \n" \
 			  "          </div>\n" \
 			  "        </div>\n" \
