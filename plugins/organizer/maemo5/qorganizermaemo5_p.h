@@ -180,7 +180,6 @@ private:
 
     // saving the occurrences
     int saveEventOccurrence(CCalendar *cal, QOrganizerEventOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemChangeSet &cs, QOrganizerItemManager::Error *error);
-    //int saveTodoOccurrence(QOrganizerTodoOccurrence *occurrence, QOrganizerEvent *parent, QOrganizerItemManager::Error *error);
     void insertOccurenceSortedByStartDate(QOrganizerItem *occurrence, QList<QOrganizerItem> &target) const;
 
     // getting the parent (base) item of an exception item (event occurrence or todo occurrence)
