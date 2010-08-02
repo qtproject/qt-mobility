@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
+#include <QApplication>
 #include <QPointF>
 #include <QNetworkProxy>
 #include <QNetworkProxyFactory>
