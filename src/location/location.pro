@@ -10,9 +10,9 @@ INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 DEPENDPATH += .
 
+include(landmarks/landmarks.pri)
 include(maps/maps.pri)
 
-include(landmarks/landmarks.pri)
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
@@ -22,7 +22,8 @@ PUBLIC_HEADERS += \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
                     qgeosatelliteinfo.h \
-                    qgeosatelliteinfosource.h
+                    qgeosatelliteinfosource.h \
+                    qnmeapositioninfosource.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
