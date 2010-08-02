@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
     \value Dialing       The status of the call is dialing.
     \value Alerting      The status of the call is alerting.
     \value Connected     The status of the call is connected.
-    \value Disconnecting The status of the call is disconnected.
+    \value Disconnecting The status of the call is disconnecting.
     \value Incomming     The status of the call is incomming.
     \value OnHold        The status of the call is on hold.
 */
