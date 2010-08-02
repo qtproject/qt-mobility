@@ -314,8 +314,8 @@ QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &lan
     columns << "county";
     columns << "district";
     columns << "city";
-    columns << "thoroughfare_name";
-    columns << "thoroughfare_number";
+    columns << "street";
+    columns << "street_number";
     columns << "postcode";
     columns << "post_office_box";
     columns << "phone";
@@ -521,10 +521,10 @@ QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &lan
             address.setCity(query1.value(16).toString());
 
         if (!query1.value(17).isNull())
-            address.setThoroughfareName(query1.value(17).toString());
+            address.setStreet(query1.value(17).toString());
 
         if (!query1.value(18).isNull())
-            address.setThoroughfareNumber(query1.value(18).toString());
+            address.setStreetNumber(query1.value(18).toString());
 
         if (!query1.value(19).isNull())
             address.setPostCode(query1.value(19).toString());
@@ -1358,15 +1358,15 @@ bool saveLandmarkHelper(const QString &connectionName, QLandmark *landmark,
     else
         bindValues.insert("city", QVariant());
 
-    if (!address.thoroughfareName().isEmpty())
-        bindValues.insert("thoroughfare_name", address.thoroughfareName());
+    if (!address.street().isEmpty())
+        bindValues.insert("street", address.street());
     else
-        bindValues.insert("thoroughfare_name", QVariant());
+        bindValues.insert("street", QVariant());
 
-    if (!address.thoroughfareNumber().isEmpty())
-        bindValues.insert("thoroughfare_number", address.thoroughfareNumber());
+    if (!address.streetNumber().isEmpty())
+        bindValues.insert("street_number", address.streetNumber());
     else
-        bindValues.insert("thoroughfare_number", QVariant());
+        bindValues.insert("street_number", QVariant());
 
     if (!address.postCode().isEmpty())
         bindValues.insert("postcode", address.postCode());
@@ -3309,15 +3309,15 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     else
         values << "null";
 
-    columns << "thoroughfare_name";
-    if (!address.thoroughfareName().isEmpty())
-        values << quoteString(address.thoroughfareName());
+    columns << "street";
+    if (!address.street().isEmpty())
+        values << quoteString(address.street());
     else
         values << "null";
 
-    columns << "thoroughfare_number";
-    if (!address.thoroughfareNumber().isEmpty())
-        values << quoteString(address.thoroughfareNumber());
+    columns << "street_number";
+    if (!address.streetNumber().isEmpty())
+        values << quoteString(address.streetNumber());
     else
         values << "null";
 

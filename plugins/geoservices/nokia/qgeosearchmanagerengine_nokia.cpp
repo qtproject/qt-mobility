@@ -118,14 +118,14 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
         requestString += address.postCode();
     }
 
-    if (!address.thoroughfareName().isEmpty()) {
+    if (!address.street().isEmpty()) {
         requestString += "&street=";
-        requestString += address.thoroughfareName();
+        requestString += address.street();
     }
 
-    if (!address.thoroughfareNumber().isEmpty()) {
+    if (!address.streetNumber().isEmpty()) {
         requestString += "&number=";
-        requestString += address.thoroughfareNumber();
+        requestString += address.streetNumber();
     }
 
     return search(requestString);

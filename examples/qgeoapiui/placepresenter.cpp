@@ -158,7 +158,7 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         prop->setText(1, s);
     }
 
-    s = address.thoroughfareName();
+    s = address.street();
 
     if (!s.isEmpty()) {
         prop = new QTreeWidgetItem(addrItem);
@@ -166,7 +166,7 @@ void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& a
         prop->setText(1, s);
     }
 
-    s = address.thoroughfareNumber();
+    s = address.streetNumber();
 
     if (!s.isEmpty()) {
         prop = new QTreeWidgetItem(addrItem);
