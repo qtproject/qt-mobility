@@ -73,7 +73,7 @@ public:
 
 signals:
     void targetDetected(const QContactlessTarget &target);
-    void transactionDetected(int slot);
+    void transactionDetected(const QByteArray &applicationIdentifier);
 };
 
 QTM_END_NAMESPACE
