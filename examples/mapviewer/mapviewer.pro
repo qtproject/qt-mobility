@@ -1,15 +1,12 @@
 QT += xml \
     network
 TARGET = MapViewer
-TEMPLATE = app \
-    thread
+TEMPLATE = app 
 INCLUDEPATH += ../../src/global \
-    ../../src/location \
-    ../../include/QtmLocation
+    ../../src/location
 SOURCES += main.cpp \
     mainwindow.cpp
 HEADERS += mainwindow.h
-FORMS += mainwindow.ui
 include(../examples.pri)
 CONFIG += mobility
 MOBILITY = location
@@ -20,4 +17,3 @@ symbian: {
         ReadUserData \
         WriteUserData
 }
-RESOURCES += images.qrc
