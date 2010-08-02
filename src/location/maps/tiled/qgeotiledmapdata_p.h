@@ -109,7 +109,8 @@ public:
 
     QRectF bounds;
 
-    QGraphicsItem *graphicsItem;
+    QGraphicsItem *graphicsItem1;
+    QGraphicsItem *graphicsItem2;
     QGeoTiledMapDataPrivate *mapData;
 };
 
@@ -119,7 +120,7 @@ public:
     QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
     ~QGeoTiledMapRectangleObjectInfo();
 
-    bool contains(const QGeoCoordinate &coord) const;
+    //bool contains(const QGeoCoordinate &coord) const;
 
     void objectUpdate();
     void mapUpdate();
