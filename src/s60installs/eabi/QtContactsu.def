@@ -818,4 +818,27 @@ EXPORTS
 	_ZTIN10QtMobility21QContactActionFactoryE @ 817 NONAME
 	_ZTVN10QtMobility14QContactActionE @ 818 NONAME
 	_ZTVN10QtMobility21QContactActionFactoryE @ 819 NONAME
+	_ZN10QtMobility19QContactUnionFilter5clearEv @ 820 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter3addERKj @ 821 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter5clearEv @ 822 NONAME
+	_ZN10QtMobility21QContactLocalIdFilter6removeERKj @ 823 NONAME
+	_ZN10QtMobility26QContactIntersectionFilter5clearEv @ 824 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_10QContactIdE @ 825 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_14QContactDetailE @ 826 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_14QContactFilterE @ 827 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_17QContactFetchHintE @ 828 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_17QContactSortOrderE @ 829 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_20QContactRelationshipE @ 830 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_24QContactDetailDefinitionE @ 831 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_29QContactDetailFieldDefinitionE @ 832 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_8QContactE @ 833 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_10QContactIdE @ 834 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_14QContactDetailE @ 835 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_14QContactFilterE @ 836 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_17QContactFetchHintE @ 837 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_17QContactSortOrderE @ 838 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_20QContactRelationshipE @ 839 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_24QContactDetailDefinitionE @ 840 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_29QContactDetailFieldDefinitionE @ 841 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_8QContactE @ 842 NONAME
 
