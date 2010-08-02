@@ -73,7 +73,7 @@ class QDeclarativePosition : public QObject
 
 public:
 
-    QDeclarativePosition();
+    QDeclarativePosition(QObject* parent = 0);
     ~QDeclarativePosition();
 
     QDateTime timestamp() const;

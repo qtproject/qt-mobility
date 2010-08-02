@@ -43,9 +43,9 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
-// The actual module provided:
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
+#include "qdeclarativelandmark_p.h"
 
 QT_BEGIN_NAMESPACE
 QTM_USE_NAMESPACE
@@ -57,8 +57,10 @@ class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.location"));
+        // Elements available since Qt mobility 1.1:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
+        qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
     }
 };
 
