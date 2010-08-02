@@ -135,7 +135,6 @@ void TestItemOccurrence::addOccurrenceData(QString managerName, QString itemType
         << itemType
         <<  QDateTime(QDate(QDate::currentDate().year() , 9, 1))
         << rrule;
-    
 }
 
 void TestItemOccurrence::addOccurrenceDetail()
@@ -186,8 +185,7 @@ void TestItemOccurrence::addOccurrenceDetail()
     QOrganizerEventOccurrence secondEvent = static_cast<QOrganizerEventOccurrence>(secondItem);
     QCOMPARE(secondEvent.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 8)));
     QCOMPARE(secondEvent.localId(), (unsigned int)0);
-    QCOMPARE(secondEvent.parentLocalId(), item.localId());
-
+    QCOMPARE(secondEvent.parentLocalId(), item.localId());    
 }
 
 void TestItemOccurrence::addOccurrenceWithException_data()
@@ -198,6 +196,7 @@ void TestItemOccurrence::addOccurrenceWithException_data()
     QTest::addColumn<QString>("managerName");
     QTest::addColumn<QString>("itemType");
     QTest::addColumn<QDateTime>("startTime");
+    QTest::addColumn<QDate>("rDate");
     QTest::addColumn<QDate>("exceptionDate");
     QTest::addColumn<QOrganizerItemRecurrenceRule>("rrule");
     QTest::addColumn<QOrganizerItemPriority>("priority");
@@ -213,14 +212,49 @@ void TestItemOccurrence::addOccurrenceWithException_data()
         QOrganizerItemRecurrenceRule rrule;
         rrule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
         rrule.setCount(10);
+        QDate rDate(QDate::currentDate().year() , 9, 11);
+        QDate exceptionDate(QDate::currentDate().year() , 9, 3);
         QTest::newRow(QString("[%1] Daily event for 10 occurrences").arg(manager).toLatin1().constData())
             << manager
             << itemType
             << QDateTime(QDate(QDate::currentDate().year() , 9, 1))
-            << QDate(QDate::currentDate().year() , 9, 3)
+            << rDate
+            << exceptionDate
             << rrule
             << priority
             << location;        
+        
+        QOrganizerItemRecurrenceRule monthRule;
+        monthRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        monthRule.setCount(5);
+
+        QTest::newRow(QString("[%1] Monthly event for 5 occurrences").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime(QDate(QDate::currentDate().year() , 8, 3))
+            << rDate
+            << exceptionDate
+            << monthRule
+            << priority
+            << location;        
+       
+        QOrganizerItemRecurrenceRule yearRule;
+        yearRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        QList<QOrganizerItemRecurrenceRule::Month> months;
+        months.append(QOrganizerItemRecurrenceRule::September);
+        yearRule.setCount(3);
+        yearRule.setInterval(2);
+        yearRule.setMonths(months);
+        QDate yearException(QDate(QDate::currentDate().year() , 9, 1));
+        QTest::newRow(QString("[%1] yearly rule every other year").arg(manager).toLatin1().constData())
+            << manager
+            << itemType
+            << QDateTime(QDate(QDate::currentDate().year() + 2, 9, 1))            
+            << rDate
+            << yearException
+            << yearRule
+            << priority
+            << location;         
     }
 }
 
@@ -229,6 +263,7 @@ void TestItemOccurrence::addOccurrenceWithException()
     QFETCH(QString, managerName);
     QFETCH(QString, itemType);
     QFETCH(QDateTime, startTime);
+    QFETCH(QDate, rDate);
     QFETCH(QDate,exceptionDate );
     QFETCH(QOrganizerItemRecurrenceRule, rrule);
     QFETCH(QOrganizerItemPriority, priority);
@@ -244,11 +279,14 @@ void TestItemOccurrence::addOccurrenceWithException()
     // Add recurrence rules to the item
     QList<QOrganizerItemRecurrenceRule> rrules;
     QList<QDate> exceptionList;
+    QList<QDate> rDateList;
     rrules.append(rrule);
+    rDateList.append(rDate);
     exceptionList.append(exceptionDate);
     QOrganizerItemRecurrence recurrence;
     recurrence.setRecurrenceRules(rrules);
     recurrence.setExceptionDates(exceptionList);
+    recurrence.setRecurrenceDates(rDateList);
     QVERIFY(item.saveDetail(&recurrence));
     
     //Add other attributes to the item.
@@ -263,13 +301,22 @@ void TestItemOccurrence::addOccurrenceWithException()
     //Fetch instance on the exception date.An empty list should be returned
     QList<QOrganizerItem> instanceList = m_om->itemInstances(item,QDateTime(exceptionDate),QDateTime(exceptionDate));
     QCOMPARE(instanceList.size(),0);
-    
+
+    //Fetch the instance on rdate should return one instance
+    instanceList.clear();
+    instanceList = m_om->itemInstances(item,QDateTime(rDate),QDateTime(rDate));
+    QCOMPARE(instanceList.size(),1);
+    QOrganizerItem rDateItem = instanceList.at(0);
+    QCOMPARE(rDateItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
+    QOrganizerEventOccurrence event = static_cast<QOrganizerEventOccurrence>(rDateItem);
+    QCOMPARE(event.startDateTime(), QDateTime(QDate(QDate::currentDate().year() , 9, 11)));
+
     // Fetch the item again
     instanceList.clear();
-    instanceList = m_om->itemInstances(item,startTime,QDateTime(),rrule.count());
-    QCOMPARE(instanceList.size(),rrule.count() -1);
+    instanceList = m_om->itemInstances(item,startTime,QDateTime(),20);
+    QCOMPARE(instanceList.size(),rrule.count());
 
-    QOrganizerItem lastItem = instanceList.at(rrule.count()-2);
+    QOrganizerItem lastItem = instanceList.at(rrule.count()-1);
     QCOMPARE(lastItem.type(), QLatin1String(QOrganizerItemType::TypeEventOccurrence));
     QOrganizerEventOccurrence lastEvent = static_cast<QOrganizerEventOccurrence>(lastItem);
 
@@ -279,7 +326,14 @@ void TestItemOccurrence::addOccurrenceWithException()
     QOrganizerItemLocation itemLocation = item.detail(QOrganizerItemLocation::DefinitionName);
     QCOMPARE(lastEvent.locationName(),itemLocation.locationName());
     QCOMPARE(lastEvent.locationGeoCoordinates(),itemLocation.geoLocation());
+    
+    //Fetch instance on 1\9\2011.Since interval is 2 the insatnceList size should be 0.
+    instanceList.clear();
+    QDateTime intervalDate(QDate(QDate::currentDate().year()+ 1 , 9, 1));
+    instanceList = m_om->itemInstances(item,intervalDate,intervalDate);
+    QCOMPARE(instanceList.size(),0);
 }
+
 
 void TestItemOccurrence::fetchNegative_data()
 {
