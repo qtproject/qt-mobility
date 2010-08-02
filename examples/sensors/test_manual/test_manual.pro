@@ -1,4 +1,4 @@
-include(../../../common.pri)
+include(../../examples.pri)
 TEMPLATE = app
 QT += testlib
 CONFIG += testcase

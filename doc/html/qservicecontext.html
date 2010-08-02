@@ -70,9 +70,7 @@
               <li class="defaultLink"><a href="classes.html">Class index</a></li>
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
-              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
-              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
-              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
             </ul> 
           </div>
         </div>
@@ -81,10 +79,11 @@
             Qt Topics</h2>
           <div id="list002" class="list">
             <ul id="ul002" >
-              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
-              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
-              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
-              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
             </ul>  
           </div>
         </div>
@@ -94,10 +93,6 @@
           <div id="list003" class="list">
         <ul id="ul003">
               <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
-              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
-              <li class="defaultLink"><a href="demos.html">Demos</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
             </ul> 
           </div>
         </div>
@@ -124,7 +119,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#properties">Properties</a></li>
@@ -133,25 +128,24 @@
 </ul>
 </div>
 <h1 class="title">QServiceContext Class Reference</h1>
+<!-- $$$QServiceContext-brief -->
 <p>The QServiceContext class provides context information to services. <a href="#details">More...</a></p>
+<!-- @@@QServiceContext -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QServiceContext&gt;</pre><ul>
 <li><a href="qservicecontext-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#ContextType-enum">ContextType</a></b> { DisplayContext, ScriptContext, UserDefined }</td></tr>
 </table>
-<hr />
-<a name="properties"></a>
+<a name="properties"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Properties</h2>
 <ul>
 <li class="fn"><b><a href="qservicecontext.html#clientId-prop">clientId</a></b> : QString</li>
 <li class="fn"><b><a href="qservicecontext.html#clientName-prop">clientName</a></b> : QString</li>
 </ul>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#QServiceContext">QServiceContext</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
@@ -162,8 +156,8 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientId-prop">setClientId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qservicecontext.html#clientName-prop">setClientName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<!-- $$$QServiceContext-description -->
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceContext class provides context information to services.</p>
@@ -171,21 +165,23 @@
 <p>Clients must implement this abstract class to receive context information.</p>
 </div>
 <p>See also <a href="qservicemanager.html">QServiceManager</a>.</p>
-<hr />
+<!-- @@@QServiceContext -->
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="ContextType-enum"></a>enum QServiceContext::ContextType</h3>
+<!-- $$$ContextType -->
+<h3 class="fn"><a name="ContextType-enum"></a>enum QServiceContext::ContextType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This enum describes the type of context information.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td  class="topAlign"><tt>QServiceContext::DisplayContext</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The service provides user visible display text such as an error message.</td></tr>
 <tr><td  class="topAlign"><tt>QServiceContext::ScriptContext</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The service provides a script which may be executed by the client.</td></tr>
 <tr><td  class="topAlign"><tt>QServiceContext::UserDefined</tt></td><td class=" topAlign"><tt>100</tt></td><td  class="topAlign">The first context type that can be used for service specific context information.</td></tr>
 </table>
+<!-- @@@ContextType -->
 </div>
-<hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<h3 class="fn"><a name="clientId-prop"></a>clientId : QString</h3>
+<!-- $$$clientId-prop$$$clientId$$$setClientIdconstQString& -->
+<h3 class="fn"><a name="clientId-prop"></a>clientId : QString</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This property holds the id of the client using the service.</p>
 <p>By default, this value is empty but you can change this by calling setClientId().</p>
 <p><b>Access functions:</b></p>
@@ -193,7 +189,9 @@
 <tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><b>clientId</b> () const</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setClientId</b> ( const QString &amp; <i>id</i> )</td></tr>
 </table>
-<h3 class="fn"><a name="clientName-prop"></a>clientName : QString</h3>
+<!-- @@@clientId -->
+<!-- $$$clientName-prop$$$clientName$$$setClientNameconstQString& -->
+<h3 class="fn"><a name="clientName-prop"></a>clientName : QString</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>This property holds the name of the client using the service.</p>
 <p>By default, this value is empty but you can change this by calling setClientName(). This string is translated and can be shown to the user.</p>
 <p><b>Access functions:</b></p>
@@ -201,16 +199,22 @@
 <tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><b>clientName</b> () const</td></tr>
 <tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setClientName</b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
+<!-- @@@clientName -->
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QServiceContext"></a>QServiceContext::QServiceContext ( QObject * <i>parent</i> = 0 )</h3>
+<!-- $$$QServiceContext[overload1]$$$QServiceContextQObject* -->
+<h3 class="fn"><a name="QServiceContext"></a>QServiceContext::QServiceContext ( QObject * <i>parent</i> = 0 )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constrcuts a service context with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QServiceContext"></a>QServiceContext::~QServiceContext ()<tt> [virtual]</tt></h3>
+<!-- @@@QServiceContext -->
+<!-- $$$~QServiceContext[overload1]$$$~QServiceContext -->
+<h3 class="fn"><a name="dtor.QServiceContext"></a>QServiceContext::~QServiceContext ()<tt> [virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Destroys the service context object.</p>
-<h3 class="fn"><a name="notify"></a>void QServiceContext::notify ( <a href="qservicecontext.html#ContextType-enum">ContextType</a> <i>type</i>, const QVariant &amp; <i>data</i> )<tt> [pure virtual]</tt></h3>
+<!-- @@@~QServiceContext -->
+<!-- $$$notify[overload1]$$$notifyContextTypeconstQVariant& -->
+<h3 class="fn"><a name="notify"></a>void QServiceContext::notify ( <a href="qservicecontext.html#ContextType-enum">ContextType</a> <i>type</i>, const QVariant &amp; <i>data</i> )<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Services may call this function to notify the service client about service related context information of the given <i>type</i>. The contextual information is stored in <i>data</i>.</p>
+<!-- @@@notify -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -218,5 +222,15 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
 </body>
 </html>

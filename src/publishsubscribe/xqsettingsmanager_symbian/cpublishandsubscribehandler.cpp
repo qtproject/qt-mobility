@@ -64,6 +64,7 @@ CPublishAndSubscribeHandler::CPublishAndSubscribeHandler(TUid aUid)
 
 CPublishAndSubscribeHandler::~CPublishAndSubscribeHandler()
 {
+    qDeleteAll(m_monitors);
 }
 
 void CPublishAndSubscribeHandler::setObserver(MSettingsHandlerObserver* observer)

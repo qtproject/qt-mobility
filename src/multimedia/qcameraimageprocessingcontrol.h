@@ -74,11 +74,6 @@ public:
     virtual QVariant processingParameter(ProcessingParameter parameter) const = 0;
     virtual void setProcessingParameter(ProcessingParameter parameter, QVariant value) = 0;
 
-    virtual QList<QByteArray> supportedPresets() const = 0;
-    virtual QString presetDescription(const QByteArray &preset) const = 0;
-    virtual QByteArray preset() const = 0;
-    virtual void setPreset(const QByteArray &preset) = 0;
-
 protected:
     QCameraImageProcessingControl(QObject* parent = 0);
 };

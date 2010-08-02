@@ -70,9 +70,7 @@
               <li class="defaultLink"><a href="classes.html">Class index</a></li>
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
-              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
-              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
-              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
             </ul> 
           </div>
         </div>
@@ -81,10 +79,11 @@
             Qt Topics</h2>
           <div id="list002" class="list">
             <ul id="ul002" >
-              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
-              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
-              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
-              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
             </ul>  
           </div>
         </div>
@@ -94,10 +93,6 @@
           <div id="list003" class="list">
         <ul id="ul003">
               <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
-              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
-              <li class="defaultLink"><a href="demos.html">Demos</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
             </ul> 
           </div>
         </div>
@@ -124,7 +119,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -132,19 +127,19 @@
 </ul>
 </div>
 <h1 class="title">QOrganizerItemChangeLogFilter Class Reference</h1>
+<!-- $$$QOrganizerItemChangeLogFilter-brief -->
 <p>The QOrganizerItemChangeLogFilter class provides a filter based around a organizer item timestamp criterion. <a href="#details">More...</a></p>
+<!-- @@@QOrganizerItemChangeLogFilter -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerItemChangeLogFilter&gt;</pre><p>Inherits <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a>.</p>
 <ul>
 <li><a href="qorganizeritemchangelogfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemchangelogfilter.html#EventType-enum">EventType</a></b> { EventAdded, EventChanged, EventRemoved }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizeritemchangelogfilter.html#QOrganizerItemChangeLogFilter">QOrganizerItemChangeLogFilter</a></b> ( QOrganizerItemChangeLogFilter::EventType <i>type</i> = QOrganizerItemChangeLogFilter::EventAdded )</td></tr>
@@ -157,43 +152,56 @@
 <ul>
 <li class="fn">4 public functions inherited from <a href="qorganizeritemfilter.html#public-functions">QOrganizerItemFilter</a></li>
 </ul>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<!-- $$$QOrganizerItemChangeLogFilter-description -->
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QOrganizerItemChangeLogFilter class provides a filter based around a organizer item timestamp criterion.</p>
 <p>It may be used to select organizer items which have been updated or created within a certain period of time.</p>
 </div>
-<hr />
+<!-- @@@QOrganizerItemChangeLogFilter -->
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="EventType-enum"></a>enum QOrganizerItemChangeLogFilter::EventType</h3>
+<!-- $$$EventType -->
+<h3 class="fn"><a name="EventType-enum"></a>enum QOrganizerItemChangeLogFilter::EventType</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Enumerates the type of changes which a changelog filter can match against</p>
 <table class="valuelist"><tr><th>Constant</th><th>Value</th></tr>
 <tr><td  class="topAlign"><tt>QOrganizerItemChangeLogFilter::EventAdded</tt></td><td class=" topAlign"><tt>0</tt></td></tr>
 <tr><td  class="topAlign"><tt>QOrganizerItemChangeLogFilter::EventChanged</tt></td><td class=" topAlign"><tt>1</tt></td></tr>
 <tr><td  class="topAlign"><tt>QOrganizerItemChangeLogFilter::EventRemoved</tt></td><td class=" topAlign"><tt>2</tt></td></tr>
 </table>
+<!-- @@@EventType -->
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QOrganizerItemChangeLogFilter"></a>QOrganizerItemChangeLogFilter::QOrganizerItemChangeLogFilter ( <a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> <i>type</i> = QOrganizerItemChangeLogFilter::EventAdded )</h3>
+<!-- $$$QOrganizerItemChangeLogFilter[overload1]$$$QOrganizerItemChangeLogFilterQOrganizerItemChangeLogFilter::EventType -->
+<h3 class="fn"><a name="QOrganizerItemChangeLogFilter"></a>QOrganizerItemChangeLogFilter::QOrganizerItemChangeLogFilter ( <a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> <i>type</i> = QOrganizerItemChangeLogFilter::EventAdded )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new changelog filter which matches changes of the specified <i>type</i></p>
-<h3 class="fn"><a name="QOrganizerItemChangeLogFilter-2"></a>QOrganizerItemChangeLogFilter::QOrganizerItemChangeLogFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3>
+<!-- @@@QOrganizerItemChangeLogFilter -->
+<!-- $$$QOrganizerItemChangeLogFilter$$$QOrganizerItemChangeLogFilterconstQOrganizerItemFilter& -->
+<h3 class="fn"><a name="QOrganizerItemChangeLogFilter-2"></a>QOrganizerItemChangeLogFilter::QOrganizerItemChangeLogFilter ( const <a href="qorganizeritemfilter.html">QOrganizerItemFilter</a> &amp; <i>other</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new changelog filter</p>
-<h3 class="fn"><a name="eventType"></a><a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> QOrganizerItemChangeLogFilter::eventType () const</h3>
+<!-- @@@QOrganizerItemChangeLogFilter -->
+<!-- $$$eventType[overload1]$$$eventType -->
+<h3 class="fn"><a name="eventType"></a><a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> QOrganizerItemChangeLogFilter::eventType () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the type of change that this filter will match against</p>
 <p>See also <a href="qorganizeritemchangelogfilter.html#setEventType">setEventType</a>().</p>
-<h3 class="fn"><a name="setEventType"></a>void QOrganizerItemChangeLogFilter::setEventType ( <a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> <i>type</i> )</h3>
+<!-- @@@eventType -->
+<!-- $$$setEventType[overload1]$$$setEventTypeQOrganizerItemChangeLogFilter::EventType -->
+<h3 class="fn"><a name="setEventType"></a>void QOrganizerItemChangeLogFilter::setEventType ( <a href="qorganizeritemchangelogfilter.html#EventType-enum">QOrganizerItemChangeLogFilter::EventType</a> <i>type</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the type of change that this filter will match against to <i>type</i></p>
 <p>See also <a href="qorganizeritemchangelogfilter.html#eventType">eventType</a>().</p>
-<h3 class="fn"><a name="setSince"></a>void QOrganizerItemChangeLogFilter::setSince ( const QDateTime &amp; <i>since</i> )</h3>
+<!-- @@@setEventType -->
+<!-- $$$setSince[overload1]$$$setSinceconstQDateTime& -->
+<h3 class="fn"><a name="setSince"></a>void QOrganizerItemChangeLogFilter::setSince ( const QDateTime &amp; <i>since</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Sets the date and time lower-bound criterion of the filter to <i>since</i></p>
 <p>See also <a href="qorganizeritemchangelogfilter.html#since">since</a>().</p>
-<h3 class="fn"><a name="since"></a>QDateTime QOrganizerItemChangeLogFilter::since () const</h3>
+<!-- @@@setSince -->
+<!-- $$$since[overload1]$$$since -->
+<h3 class="fn"><a name="since"></a>QDateTime QOrganizerItemChangeLogFilter::since () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the date and time lower-bound criterion of the filter</p>
 <p>See also <a href="qorganizeritemchangelogfilter.html#setSince">setSince</a>().</p>
+<!-- @@@since -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -201,5 +209,15 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
 </body>
 </html>

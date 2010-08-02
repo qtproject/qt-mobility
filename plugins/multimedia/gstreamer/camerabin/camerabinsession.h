@@ -62,6 +62,7 @@ class CameraBinImageEncoder;
 class CameraBinRecorder;
 class CameraBinContainer;
 class CameraBinExposure;
+class CameraBinFlash;
 class CameraBinFocus;
 class CameraBinImageProcessing;
 class CameraBinLocks;
@@ -100,6 +101,7 @@ public:
     CameraBinVideoEncoder *videoEncodeControl() const { return m_videoEncodeControl; }
     CameraBinImageEncoder *imageEncodeControl() const { return m_imageEncodeControl; }
     CameraBinExposure *cameraExposureControl() const  { return m_cameraExposureControl; }
+    CameraBinFlash *cameraFlashControl() const  { return m_cameraFlashControl; }
     CameraBinFocus *cameraFocusControl() const  { return m_cameraFocusControl; }
     CameraBinImageProcessing *imageProcessingControl() const { return m_imageProcessingControl; }
     CameraBinLocks *cameraLocksControl() const { return m_cameraLocksControl; }
@@ -179,6 +181,7 @@ private:
     CameraBinRecorder *m_recorderControl;
     CameraBinContainer *m_mediaContainerControl;
     CameraBinExposure *m_cameraExposureControl;
+    CameraBinFlash *m_cameraFlashControl;
     CameraBinFocus *m_cameraFocusControl;
     CameraBinImageProcessing *m_imageProcessingControl;
     CameraBinLocks *m_cameraLocksControl;

@@ -45,6 +45,7 @@
 #include "camerabinvideoencoder.h"
 #include "camerabinimageencoder.h"
 #include "camerabinexposure.h"
+#include "camerabinflash.h"
 #include "camerabinfocus.h"
 #include "camerabinimageprocessing.h"
 #include "camerabinlocks.h"
@@ -122,20 +123,10 @@
 #define gstUnref(element) { if (element) { gst_object_unref(GST_OBJECT(element)); element = 0; } }
 
 #define PREVIEW_CAPS \
-    "video/x-raw-rgb, width = (int) 640, height = (int) 480"
+    "video/x-raw-rgb, width = (int) [640, 800], height = (int) [320, 480]"
 
 // Function prototypes
 static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer user_data);
-
-QT_BEGIN_NAMESPACE
-static inline uint qHash(const QSize& key) { return uint(key.width()*256+key.height()); }
-
-static bool operator<(const QSize &s1, const QSize s2)
-{
-    return s1.width()*s1.height() < s2.width()*s2.height();
-}
-QT_END_NAMESPACE
-
 
 CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
@@ -175,9 +166,13 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_recorderControl = new CameraBinRecorder(this);
     m_mediaContainerControl = new CameraBinContainer(this);
     m_cameraExposureControl = new CameraBinExposure(this);
+    m_cameraFlashControl = new CameraBinFlash(this);
     m_cameraFocusControl = new CameraBinFocus(this);
     m_imageProcessingControl = new CameraBinImageProcessing(this);
     m_cameraLocksControl = new CameraBinLocks(this);
+
+    connect(m_cameraLocksControl, SIGNAL(lockStatusChanged(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)),
+            m_cameraFocusControl, SLOT(_q_updateLockStatus(QCamera::LockType,QCamera::LockStatus,QCamera::LockChangeReason)));
 }
 
 CameraBinSession::~CameraBinSession()
@@ -251,8 +246,6 @@ void CameraBinSession::updateVideoSourceCaps()
     }
 
     g_object_get(G_OBJECT(m_pipeline), VIDEO_SOURCE_CAPS_PROPERTY, &m_sourceCaps, NULL);
-
-    qDebug() << "Video source caps:" << gst_caps_to_string(m_sourceCaps);
 }
 
 void CameraBinSession::setupCaptureResolution()
@@ -260,7 +253,9 @@ void CameraBinSession::setupCaptureResolution()
     if (m_captureMode == QCamera::CaptureStillImage) {
         QSize resolution = m_imageEncodeControl->imageSettings().resolution();
         if (!resolution.isEmpty()) {
+#if CAMERABIN_DEBUG
             qDebug() << "image resolution" << resolution;
+#endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
         }
     }
@@ -269,7 +264,9 @@ void CameraBinSession::setupCaptureResolution()
         QSize resolution = m_videoEncodeControl->videoSettings().resolution();
         qreal framerate = m_videoEncodeControl->videoSettings().frameRate();
         if (!resolution.isEmpty() || framerate > 0) {
-            qDebug() << "image resolution" << resolution;
+#if CAMERABIN_DEBUG
+            qDebug() << "video resolution" << resolution;
+#endif
             g_signal_emit_by_name(G_OBJECT(m_pipeline),
                                   SET_VIDEO_RESOLUTION_FPS,
                                   resolution.width(),
@@ -280,9 +277,6 @@ void CameraBinSession::setupCaptureResolution()
         }
     }
 }
-
-#define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
-
 
 GstElement *CameraBinSession::buildVideoSrc()
 {
@@ -316,7 +310,10 @@ void CameraBinSession::captureImage(int requestId, const QString &fileName)
 
     QSize resolution = m_imageEncodeControl->imageSettings().resolution();
     if (!resolution.isEmpty()) {
+
+#if CAMERABIN_DEBUG
         qDebug() << "Set image resolution" << resolution;
+#endif
         g_signal_emit_by_name(G_OBJECT(m_pipeline), SET_IMAGE_RESOLUTION, resolution.width(), resolution.height(), NULL);
     }
 
@@ -344,11 +341,7 @@ QDir CameraBinSession::defaultDir(QCamera::CaptureMode mode) const
     QStringList dirCandidates;
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    if (mode == QCamera::CaptureVideo)
-        dirCandidates << QLatin1String("/home/user/MyDocs/.videos");
-    else
-        dirCandidates << QLatin1String("/home/user/MyDocs/.images");
-
+    dirCandidates << QLatin1String("/home/user/MyDocs/DCIM");
     dirCandidates << QLatin1String("/home/user/MyDocs/");
 #endif
 
@@ -437,6 +430,10 @@ void CameraBinSession::setState(QCamera::State newState)
     switch (newState) {
     case QCamera::StoppedState:
     case QCamera::IdleState:
+        //focus is lost when the state is changed from Active to Idle
+        if (m_state == QCamera::ActiveState)
+            emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
         if (m_state == QCamera::IdleState && m_videoInputHasChanged) {
@@ -700,7 +697,10 @@ static gboolean imgCaptured(GstElement *camera,
                         const gchar *filename,
                         gpointer user_data)
 {
-    qDebug() << "Image done" << filename;
+#if CAMERABIN_DEBUG
+    qDebug() << "Image saved" << filename;
+#endif
+
     Q_UNUSED(camera);
     CameraBinSession *session = (CameraBinSession *)user_data;
     session->processSavedImage(QString::fromUtf8(filename));
@@ -739,6 +739,8 @@ void CameraBinSession::stopVideoRecording()
     g_signal_emit_by_name(G_OBJECT(m_pipeline), CAPTURE_STOP, NULL);
 }
 
+//internal, only used by CameraBinSession::supportedFrameRates.
+//recursively fills the list of framerates res from value data.
 static void readValue(const GValue *value, QList< QPair<int,int> > *res, bool *continuous)
 {
     if (GST_VALUE_HOLDS_FRACTION(value)) {
@@ -814,8 +816,10 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
         readValue(rateValue, &res, continuous);
     }
 
-    //qDebug() << "Supported rates:" << gst_caps_to_string(caps);
-    //qDebug() << res;
+#if CAMERABIN_DEBUG
+    qDebug() << "Supported rates:" << gst_caps_to_string(caps);
+    qDebug() << res;
+#endif
 
     gst_caps_unref(caps);
 
@@ -897,8 +901,10 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
         }
     }
 
-    //qDebug() << "Supported resolutions:" << gst_caps_to_string(caps);
-    //qDebug() << res;
+#if CAMERABIN_DEBUG
+    qDebug() << "Supported resolutions:" << gst_caps_to_string(caps);
+    qDebug() << res;
+#endif
 
     gst_caps_unref(caps);
 
