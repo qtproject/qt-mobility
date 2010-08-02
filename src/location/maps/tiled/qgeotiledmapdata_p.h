@@ -139,7 +139,8 @@ public:
     void mapUpdate();
 
     const QGeoMapCircleObjectPrivate* circle;
-    QGraphicsPolygonItem *polygonItem;
+    QGraphicsPolygonItem *polygonItem1;
+    QGraphicsPolygonItem *polygonItem2;
 
     QPolygonF points;
 };
@@ -169,7 +170,8 @@ public:
     void mapUpdate();
 
     const QGeoMapPolygonObjectPrivate *polygon;
-    QGraphicsPolygonItem *polygonItem;
+    QGraphicsPolygonItem *polygonItem1;
+    QGraphicsPolygonItem *polygonItem2;
 
     QPolygonF points;
 };

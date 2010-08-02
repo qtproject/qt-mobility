@@ -1100,7 +1100,8 @@ void QGeoTiledMapRectangleObjectInfo::mapUpdate() {
 
 QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
     : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    polygonItem(0)
+    polygonItem1(0),
+    polygonItem2(0)
 {
     circle = static_cast<const QGeoMapCircleObjectPrivate*>(mapObjectPrivate);
 }
@@ -1121,10 +1122,10 @@ inline static double qgeocoordinate_radToDeg(double rad)
 void QGeoTiledMapCircleObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path;
-    
+
     QGeoCoordinate center = circle->center;
     double radius = circle->radius/(qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
-    
+
     // To simplify things, we're using formulae from astronomy, namely those from the nautic triangle for converting from horizontal system to equatorial system.
     // First, we calculate the input coordinates (horizontal system)
     // altitude - derivation:
@@ -1149,26 +1150,26 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
     explanations:
         A is the central point
         E is the peripheral point
-        
+
         AD is the tangent at the central point
         BE is the tangent at the peripheral point
-        
+
         h = <)ACB is the altitude
         r = <)FDA is the radius, in radians, of the small circle we want to achieve
         x = <)DCE is an auxilary angle
-        
+
         <)EDC, <)DCF, <)BAC and <)AFD are rectangular (as denoted by the dot or 90°)
         AB and FD are parallel
-    
+
     knowns:
         r
-    
+
     unknowns:
         h
-    
+
     derivation:
         h = x | the triangles ABC and CDE have the same angles (h/x, 90° and the angle between the two tangents)
-                
+
         r + x + 90° = 180° | sum of interior angles
         <=> r + h + 90° = 180° | h = x
         <=> h = 90° - r
@@ -1181,12 +1182,12 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
     double cosphi = cos(phi), sinphi = sin(phi);
     // Star time (since we're not doing actual astronomy here, we use a greenwich star time of 0)
     double theta = qgeocoordinate_degToRad(center.longitude());
-    
+
     double sinphi_sinh = sinphi*sinh;
     double cosphi_cosh = cosphi*cosh;
     double sinphi_cosh = sinphi*cosh;
     double cosphi_sinh = cosphi*sinh;
-    
+
     //qDebug("circle: h=%f lat=%f lng=%f radius=%fm",h,phi,theta, radius*(qgeocoordinate_EARTH_MEAN_RADIUS * 1000));
     // Azimut - we iterate over a full circle, in 128 steps for now. TODO: find a better step count, adjust by display size etc
     int steps = 128;
@@ -1200,33 +1201,42 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         double cosdelta_costau = cosphi_sinh + sinphi_cosh * cos(a);
         // ...and cos(delta)*sin(tau)
         double cosdelta_sintau = -sin(a) * cosh;
-        
+
         // now we obtain the actual value of the hour angle...
         // convert from cartesian to polar ( cos(delta)*cos(tau) | cos(delta)*sin(tau) ) -> ( tau | cos(delta) )
         double tau = atan2(cosdelta_sintau, cosdelta_costau);
         double cosdelta = sqrt(cosdelta_sintau*cosdelta_sintau + cosdelta_costau*cosdelta_costau);
-        
+
         // ...and the declination
         // convert from cartesian to polar ( cos(delta) | sin(delta) ) -> ( delta | 1 )
         double delta = atan2(sindelta, cosdelta);
         //qAssert(qFuzzyCompare(sqrt(sindelta*sindelta + cosdelta*cosdelta), 1)); // taken out because it takes too much cpu
-        
+
         // we calculate right ascension from tau
         double alpha = theta-tau;
 
-        // we interpret right ascension as latitude and declination as longtitude
+        // we interpret right ascension as latitude and declination as longitude
         double lat = qgeocoordinate_radToDeg(delta);
         double lng = qgeocoordinate_radToDeg(alpha);
-        
+        if (lng < -180)
+            lng += 360;
+        if (lng > 180)
+            lng -= 360;
+
         //qDebug("lat=%f lng=%f",lat,lng);
         path.append(QGeoCoordinate(lat,lng));
     }
-    
-    // --- copy-pasted from polygon (replaced polygon with circle) ---
+
+    const QGeoMapCircleObjectPrivate *polygon = circle;
+    // --- copy-pasted from polygon ---
     points.clear();
 
     //TODO - handle when polygons are drawn across the dateline...
     // regular graphics item with polygon item children?
+    QGeoCoordinate lastCoord = path.at(0);
+
+    qreal xoffset = 0;
+    bool polygonCrossesDateline = false;
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -1234,27 +1244,64 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         if (!coord.isValid())
             continue;
 
-        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
+        const qreal lng = coord.longitude();
+        const qreal lastLng = lastCoord.longitude();
+
+        // is the dateline crossed = different sign AND gap is large enough
+        const bool crossesDateline = lastLng*lng < 0 && abs(lastLng-lng)>180;
+
+        polygonCrossesDateline |= crossesDateline;
+
+        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+        const bool goesEast = crossesDateline != (lng>lastLng);
+        // direction = positive if east, negative otherwise
+        const qreal dir = goesEast ? 1 : -1;
+
+        // if the dateline is crossed, advance the offset in the given direction
+        if (crossesDateline)
+            xoffset += mapData->maxZoomSize.width()*dir;
+
+        // calculate base point
+        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
+
+        // apply offset
+        point += QPointF(xoffset, 0);
+
+        // add point to polygon
+        points.append(point);
+
+        lastCoord = coord;
     }
 
-    if (!polygonItem)
-        polygonItem = new QGraphicsPolygonItem();
+    if (!polygonItem1)
+        polygonItem1 = new QGraphicsPolygonItem();
 
-    polygonItem->setPolygon(points);
-    polygonItem->setPen(circle->pen);
-    polygonItem->setBrush(circle->brush);
+    polygonItem1->setPolygon(points);
+    polygonItem1->setBrush(polygon->brush);
 
-    graphicsItem = polygonItem;
+    if (polygonCrossesDateline) {
+        if (!polygonItem2)
+            polygonItem2 = new QGraphicsPolygonItem();
+        polygonItem2->setPolygon(points.translated(mapData->maxZoomSize.width(),0));
+        polygonItem2->setBrush(polygon->brush);
+    }
+    else {
+        delete polygonItem2;
+        polygonItem2 = 0;
+    }
+    graphicsItem = polygonItem1;
     // --- snip ---
 }
 
 void QGeoTiledMapCircleObjectInfo::mapUpdate()
 {
-    // --- copy-pasted from polygon (replaced polygon with circle) ---
-    if (polygonItem) {
-        QPen pen = circle->pen;
+    const QGeoMapCircleObjectPrivate *polygon = circle;
+    // --- copy-pasted from polygon ---
+    if (polygonItem1) {
+        QPen pen = polygon->pen;
         pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        polygonItem->setPen(pen);
+        polygonItem1->setPen(pen);
+        if (polygonItem2) polygonItem2->setPen(pen);
     }
     // --- snip ---
 }
@@ -1314,7 +1361,8 @@ void QGeoTiledMapPolylineObjectInfo::mapUpdate()
 
 QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
     : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    polygonItem(0)
+    polygonItem1(0),
+    polygonItem2(0)
 {
     polygon = static_cast<const QGeoMapPolygonObjectPrivate*>(mapObjectPrivate);
 }
@@ -1329,6 +1377,10 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 
     //TODO - handle when polygons are drawn across the dateline...
     // regular graphics item with polygon item children?
+    QGeoCoordinate lastCoord = path.at(0);
+
+    qreal xoffset = 0;
+    bool polygonCrossesDateline = false;
 
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -1336,25 +1388,61 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
         if (!coord.isValid())
             continue;
 
-        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
+        const qreal lng = coord.longitude();
+        const qreal lastLng = lastCoord.longitude();
+
+        // is the dateline crossed = different sign AND gap is large enough
+        const bool crossesDateline = lastLng*lng < 0 && abs(lastLng-lng)>180;
+
+        polygonCrossesDateline |= crossesDateline;
+
+        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
+        const bool goesEast = crossesDateline != (lng>lastLng);
+        // direction = positive if east, negative otherwise
+        const qreal dir = goesEast ? 1 : -1;
+
+        // if the dateline is crossed, advance the offset in the given direction
+        if (crossesDateline)
+            xoffset += mapData->maxZoomSize.width()*dir;
+
+        // calculate base point
+        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
+
+        // apply offset
+        point += QPointF(xoffset, 0);
+
+        // add point to polygon
+        points.append(point);
+
+        lastCoord = coord;
     }
 
-    if (!polygonItem)
-        polygonItem = new QGraphicsPolygonItem();
+    if (!polygonItem1)
+        polygonItem1 = new QGraphicsPolygonItem();
 
-    polygonItem->setPolygon(points);
-    polygonItem->setPen(polygon->pen);
-    polygonItem->setBrush(polygon->brush);
+    polygonItem1->setPolygon(points);
+    polygonItem1->setBrush(polygon->brush);
 
-    graphicsItem = polygonItem;
+    if (polygonCrossesDateline) {
+        if (!polygonItem2)
+            polygonItem2 = new QGraphicsPolygonItem();
+        polygonItem2->setPolygon(points.translated(mapData->maxZoomSize.width(),0));
+        polygonItem2->setBrush(polygon->brush);
+    }
+    else {
+        delete polygonItem2;
+        polygonItem2 = 0;
+    }
+    graphicsItem = polygonItem1;
 }
 
 void QGeoTiledMapPolygonObjectInfo::mapUpdate()
 {
-    if (polygonItem) {
+    if (polygonItem1) {
         QPen pen = polygon->pen;
         pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        polygonItem->setPen(pen);
+        polygonItem1->setPen(pen);
+        if (polygonItem2) polygonItem2->setPen(pen);
     }
 }
 
