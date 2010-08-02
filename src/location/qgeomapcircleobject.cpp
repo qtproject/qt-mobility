@@ -69,13 +69,46 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 {
 }
 
+void QGeoMapCircleObject::setPen(const QPen &pen)
+{
+    Q_D(QGeoMapCircleObject);
+    bool update = (pen != d->pen);
+    d->pen = pen;
+    if (update)
+        objectUpdate();
+}
+
+QPen QGeoMapCircleObject::pen() const
+{
+    Q_D(const QGeoMapCircleObject);
+    return d->pen;
+}
+
+void QGeoMapCircleObject::setBrush(const QBrush &brush)
+{
+    Q_D(QGeoMapCircleObject);
+    bool update = (brush != d->brush);
+    d->brush = brush;
+    if (update)
+        objectUpdate();
+}
+
+QBrush QGeoMapCircleObject::brush() const
+{
+    Q_D(const QGeoMapCircleObject);
+    return d->brush;
+}
+
 /*!
     Sets the center of the circle object to \a center.
 */
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (center != d->center);
     d->center = center;
+    if (update)
+        objectUpdate();
 }
 
 /*!
@@ -93,7 +126,10 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
+    bool update = (radius != d->radius);
     d->radius = radius;
+    if (update)
+        objectUpdate();
 }
 
 /*!

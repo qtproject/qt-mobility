@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 /*!
-    \example qgeoapiui
-    \title QGeoApiUi Example
+    \example geoservicedemo
+    \title Geo Service Demo
 
     This example demonstrates the routing and geocoding functionality 
     present in the Maps and Navigation API.

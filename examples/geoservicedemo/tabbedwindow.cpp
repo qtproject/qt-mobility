@@ -57,7 +57,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
         : QMainWindow(parent), m_serviceProvider(NULL)
 {
 
-    setWindowTitle(tr("QGeoApiUI Example"));
+    setWindowTitle(tr("Geo Service Demo"));
 
 #ifdef Q_OS_SYMBIAN
     // Set Internet Access Point
@@ -67,7 +67,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
     if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+        QMessageBox::information(this, tr("Geo Service Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
@@ -109,7 +109,7 @@ void TabbedWindow::setProvider(QString providerId)
         delete m_serviceProvider ;
     m_serviceProvider = new QGeoServiceProvider(providerId);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
-        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+        QMessageBox::information(this, tr("Geo Service Demo"), tr(
                                      "Unable to find the %1 geoservices plugin.").arg(providerId));
         QTimer::singleShot(0, qApp, SLOT(quit()));
         return;

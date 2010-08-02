@@ -44,6 +44,9 @@
 
 #include "qgeomapobject.h"
 
+#include <QPen>
+#include <QBrush>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -54,6 +57,12 @@ class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
 public:
     QGeoMapCircleObject(QGeoMapObject *parent = 0);
     ~QGeoMapCircleObject();
+
+    void setPen(const QPen &pen);
+    QPen pen() const;
+
+    void setBrush(const QBrush &brush);
+    QBrush brush() const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
