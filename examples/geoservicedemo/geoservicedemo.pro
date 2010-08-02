@@ -3,7 +3,8 @@ QT += network
 TARGET = GeoServiceDemo
 TEMPLATE = app
 
-INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
+INCLUDEPATH += ../../src/location \
+                ../../src/location/maps
 
 SOURCES += main.cpp\
         routepresenter.cpp \

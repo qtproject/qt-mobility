@@ -3,7 +3,8 @@ QT += xml \
 TARGET = MapViewer
 TEMPLATE = app 
 INCLUDEPATH += ../../src/global \
-    ../../src/location
+    ../../src/location \
+    ../../src/location/maps
 SOURCES += main.cpp \
     mainwindow.cpp
 HEADERS += mainwindow.h

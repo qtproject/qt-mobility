@@ -20,7 +20,8 @@ SOURCES += qlandmarkmanagerengine_sqlite.cpp \
            qlandmarkfilehandler_lmx.cpp \
            qlandmarkfilehandler_gpx.cpp
 
-INCLUDEPATH += $$SOURCE_DIR/src/location
+INCLUDEPATH += $$SOURCE_DIR/src/location \
+                $$SOURCE_DIR/src/location/landmarks
 
 RESOURCES += qlandmarkmanagerengine_sqlite.qrc
 
