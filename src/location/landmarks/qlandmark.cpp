@@ -482,7 +482,7 @@ void QLandmark::clear()
     Q_D(QLandmark);
     d->address.clear();
     d->coordinate = QGeoCoordinate();
-    d->boundingBox = QGeoBoundingBox();
+    d->viewport = QGeoBoundingBox();
     d->name.clear();
     d->categoryIds.clear();
     d->description.clear();

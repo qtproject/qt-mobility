@@ -68,10 +68,10 @@ public:
 
     virtual QGeoSearchReply* geocode(const QGeoAddress &address,
                                      const QGeoBoundingBox &bounds);
-    virtual QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
+    virtual QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
                                      const QGeoBoundingBox &bounds);
 
-    virtual QGeoSearchReply* placeSearch(const QString &searchString,
+    virtual QGeoSearchReply* search(const QString &searchString,
                                           QGeoSearchManager::SearchTypes searchTypes,
                                           const QGeoBoundingBox &bounds);
 

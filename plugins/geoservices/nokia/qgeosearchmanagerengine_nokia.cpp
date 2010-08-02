@@ -131,12 +131,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(bounds)
 
     if (!supportsGeocoding()) {
-        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
+        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -156,7 +156,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coo
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::placeSearch(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()

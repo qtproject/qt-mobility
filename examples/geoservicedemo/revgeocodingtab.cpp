@@ -118,7 +118,7 @@ void ReverseGeocodingTab::on_btnRequest_clicked()
 
         m_resultTree->clear();
 
-        m_searchManager->geocode(coord);
+        m_searchManager->reverseGeocode(coord);
     } else {
         QMessageBox::warning(this, tr("Reverse Geocoding"), tr("No search manager available."));
     }

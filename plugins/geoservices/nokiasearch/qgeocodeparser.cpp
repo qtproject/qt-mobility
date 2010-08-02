@@ -227,7 +227,7 @@ bool QGeoCodeParser::parsePlace(QGeoPlace *place)
     place->setCoordinate(coordinate);
 
     if(bBoxTopLeft.isValid() && bBoxBottomRight.isValid()) {
-        place->setBoundingBox(QGeoBoundingBox(bBoxTopLeft,bBoxBottomRight));
+        place->setViewport(QGeoBoundingBox(bBoxTopLeft,bBoxBottomRight));
     }
     return true;
 }

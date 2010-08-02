@@ -315,12 +315,12 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, const QG
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManager::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
 
-    return d_ptr->engine->geocode(coordinate, bounds);
+    return d_ptr->engine->reverseGeocode(coordinate, bounds);
 }
 
 /*!
@@ -361,12 +361,12 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoCoordinate &coordinate, co
     QGeoSearchManager::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManager::placeSearch(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManager::search(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
 
-    return d_ptr->engine->placeSearch(searchString, searchTypes, bounds);
+    return d_ptr->engine->search(searchString, searchTypes, bounds);
 }
 
 /*!

@@ -76,8 +76,8 @@ public:
 
     PlaceType type() const;
 
-    QGeoBoundingBox boundingBox() const;
-    void setBoundingBox(const QGeoBoundingBox &boundingBox);
+    QGeoBoundingBox viewport() const;
+    void setViewport(const QGeoBoundingBox &viewport);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);

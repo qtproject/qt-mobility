@@ -156,7 +156,7 @@ void GeocodingTab::on_btnRequest_clicked()
         m_resultTree->clear();
 
         if (!s.isEmpty()) {
-            m_searchManager->placeSearch(s, QGeoSearchManager::SearchGeocode);
+            m_searchManager->search(s, QGeoSearchManager::SearchGeocode);
         } else {
             QGeoAddress address;
             address.setCountry(m_country->text());

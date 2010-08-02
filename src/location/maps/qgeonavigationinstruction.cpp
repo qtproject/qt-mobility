@@ -59,6 +59,49 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+\enum InstructionDirection
+
+Describes the change in direction associated with an instruction.
+
+\value NoDirection
+There is no direction associated with the instruction.
+
+\value DirectionForward
+The instruction indicates that the direction of travel does not need to change.
+
+\value DirectionBearRight
+The instruction indicates that the direction of travel should bear to the right.
+
+\value DirectionLightRight
+The instruction indicates that a light turn to the right is required.
+
+\value DirectionRight
+The instruction indicates that a turn to the right is required.
+
+\value DirectionHardRight
+The instruction indicates that a hard turn to the right is required.
+
+\value DirectionUTurnRight
+The instruction indicates that a u-turn to the right is required.
+
+\value DirectionUTurnLeft
+The instruction indicates that a u-turn to the left is required.
+
+\value DirectionHardLeft
+The instruction indicates that a hard turn to the left is required.
+
+\value DirectionLeft
+The instruction indicates that a turn to the left is required.
+
+\value DirectionLightLeft
+The instruction indicates that a light turn to the left is required.
+
+\value DirectionBearLeft
+The instruction indicates that the direction of travel should bear to the left.
+
+*/
+
+/*!
     Constructs a navigation instruction object.
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction()
@@ -135,6 +178,22 @@ QString QGeoNavigationInstruction::instructionText() const
 }
 
 /*!
+    Sets the direction associated with this instruction to \a direction.
+*/
+void QGeoNavigationInstruction::setDirection(QGeoNavigationInstruction::InstructionDirection direction)
+{
+    d_ptr->direction = direction;
+}
+
+/*!
+    Returns the direction associated with this instruction.
+*/
+QGeoNavigationInstruction::InstructionDirection QGeoNavigationInstruction::direction() const
+{
+    return d_ptr->direction;
+}
+
+/*!
     Sets the estimated time it will take to travel from the point at which this
     instruction was issued and the point that the next instruction should be
     issued, in seconds, to \a secs.
@@ -176,13 +235,15 @@ qreal QGeoNavigationInstruction::distanceToNextInstruction() const
 *******************************************************************************/
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
-    : timeToNextInstruction(0),
+    : direction(QGeoNavigationInstruction::NoDirection),
+    timeToNextInstruction(0),
     distanceToNextInstruction(0.0) {}
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
         : QSharedData(other),
         position(other.position),
         text(other.text),
+        direction(other.direction),
         timeToNextInstruction(other.timeToNextInstruction),
         distanceToNextInstruction(other.distanceToNextInstruction) {}
 
@@ -192,6 +253,7 @@ bool QGeoNavigationInstructionPrivate::operator ==(const QGeoNavigationInstructi
 {
     return ((position == other.position)
             && (text == other.text)
+            && (direction == other.direction)
             && (timeToNextInstruction == other.timeToNextInstruction)
             && (distanceToNextInstruction == other.distanceToNextInstruction));
 }

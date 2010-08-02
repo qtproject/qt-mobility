@@ -76,10 +76,10 @@ public:
 
     QGeoSearchReply* geocode(const QGeoAddress &address,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
-    QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
+    QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
-    QGeoSearchReply* placeSearch(const QString &searchString,
+    QGeoSearchReply* search(const QString &searchString,
                                   SearchTypes searchTypes = SearchTypes(SearchAll),
                                   const QGeoBoundingBox &bounds = QGeoBoundingBox());
 

@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include "qgeonavigationinstruction.h"
 #include "qgeocoordinate.h"
 
 #include <QSharedData>
@@ -72,6 +73,7 @@ public:
     QString id;
     QGeoCoordinate position;
     QString text;
+    QGeoNavigationInstruction::InstructionDirection direction;
     int timeToNextInstruction;
     qreal distanceToNextInstruction;
 };

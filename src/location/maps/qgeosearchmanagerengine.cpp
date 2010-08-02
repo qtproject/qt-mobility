@@ -252,13 +252,13 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     QGeoSearchManagerEngine::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoCoordinate &coordinate,
+QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
                                                   const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Geocoding is not supported by this service provider.", this);
+                              "Reverse geocoding is not supported by this service provider.", this);
 }
 
 /*!
@@ -299,7 +299,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoCoordinate &coordina
     QGeoSearchManagerEngine::error(), QGeoSearchReply::finished() or
     QGeoSearchReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManagerEngine::placeSearch(const QString &searchString,
+QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
                                                        QGeoSearchManager::SearchTypes searchTypes,
                                                        const QGeoBoundingBox &bounds)
 {
@@ -308,7 +308,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::placeSearch(const QString &searchStrin
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Places searching is not supported by this service provider.", this);
+                              "Searching is not supported by this service provider.", this);
 }
 
 /*!

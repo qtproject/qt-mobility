@@ -59,6 +59,22 @@ class Q_LOCATION_EXPORT QGeoNavigationInstruction
 {
 
 public:
+
+    enum InstructionDirection {
+        NoDirection,
+        DirectionForward,
+        DirectionBearRight,
+        DirectionLightRight,
+        DirectionRight,
+        DirectionHardRight,
+        DirectionUTurnRight,
+        DirectionUTurnLeft,
+        DirectionHardLeft,
+        DirectionLeft,
+        DirectionLightLeft,
+        DirectionBearLeft
+    };
+
     QGeoNavigationInstruction();
     QGeoNavigationInstruction(const QGeoNavigationInstruction &other);
     ~QGeoNavigationInstruction();
@@ -73,6 +89,9 @@ public:
 
     void setInstructionText(const QString &instructionText);
     QString instructionText() const;
+
+    void setDirection(InstructionDirection direction);
+    InstructionDirection direction() const;
 
     void setTimeToNextInstruction(int secs);
     int timeToNextInstruction() const;
