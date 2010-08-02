@@ -20,7 +20,7 @@ class QDeclarativeLandmark : public QObject
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
 public:
-    explicit QDeclarativeLandmark(QObject *parent = 0);
+    explicit QDeclarativeLandmark(QObject* parent = 0);
 
     QString name();
     void setName(const QString& name);
