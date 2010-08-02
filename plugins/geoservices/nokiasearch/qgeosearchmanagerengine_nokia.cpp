@@ -101,13 +101,13 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     requestString += "/nsp?vi=where&la=eng-uk&to=20&q=";
 
 
-    if (!address.thoroughfareName().isEmpty()) {
-        requestString += address.thoroughfareName();
+    if (!address.street().isEmpty()) {
+        requestString += address.street();
         requestString += ",";
     }
 
-    if (!address.thoroughfareNumber().isEmpty()) {
-        requestString += address.thoroughfareNumber();
+    if (!address.streetNumber().isEmpty()) {
+        requestString += address.streetNumber();
         requestString += ",";
     }
 

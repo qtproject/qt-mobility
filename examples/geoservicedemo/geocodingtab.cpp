@@ -163,8 +163,8 @@ void GeocodingTab::on_btnRequest_clicked()
             address.setState(m_state->text());
             address.setCity(m_city->text());
             address.setPostCode(m_zip->text());
-            address.setThoroughfareName(m_street->text());
-            address.setThoroughfareNumber(m_streetNumber->text());
+            address.setStreet(m_street->text());
+            address.setStreetNumber(m_streetNumber->text());
             m_searchManager->geocode(address);
         }
     } else {

@@ -176,10 +176,10 @@ bool QGeoCodeParser::parsePlace(QGeoPlace *place)
                     address.setCountry(m_reader->readElementText());
                 }
                 else if (m_reader->attributes().value("name").toString() == "ADDR_STREET_NAME") {
-                    address.setThoroughfareName(m_reader->readElementText());
+                    address.setStreet(m_reader->readElementText());
                 }
                 else if (m_reader->attributes().value("name").toString() == "ADDR_HOUSE_NUMBER") {
-                    address.setThoroughfareNumber(m_reader->readElementText());
+                    address.setStreetNumber(m_reader->readElementText());
                 }
                 else if (m_reader->attributes().value("name").toString() == "ADDR_POSTAL_CODE") {
                     address.setPostCode(m_reader->readElementText());
