@@ -51,6 +51,7 @@
 #include "camerabinlocks.h"
 #include "camerabinmetadata.h"
 #include "camerabinexposure.h"
+#include "camerabinflash.h"
 #include "camerabinfocus.h"
 #include "camerabinimagecapture.h"
 #include "camerabinimageprocessing.h"
@@ -179,6 +180,9 @@ QMediaControl *CameraBinService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraExposureControl_iid) == 0)
         return m_captureSession->cameraExposureControl();
+
+    if (qstrcmp(name, QCameraFlashControl_iid) == 0)
+        return m_captureSession->cameraFlashControl();
 
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
         return m_captureSession->cameraFocusControl();

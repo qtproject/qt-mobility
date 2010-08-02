@@ -81,7 +81,7 @@ class QNetworkSessionPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-        tx_data(0), rx_data(0), m_activeTime(0), isOpen(false),
+        isOpen(false),
         connectFlags(ICD_CONNECTION_FLAG_USER_EVENT),
         currentState(QNetworkSession::Invalid),
         m_asynchCallActive(false)
@@ -161,9 +161,11 @@ private Q_SLOTS:
 private:
     QNetworkConfigurationManager manager;
 
-    quint64 tx_data;
-    quint64 rx_data;
-    quint64 m_activeTime;
+    struct Statistics {
+        quint64 txData;
+        quint64 rxData;
+        quint64 activeTime;
+    };
 
     // The config set on QNetworkSession.
     QNetworkConfiguration publicConfig;
@@ -196,7 +198,7 @@ private:
     friend class IcdListener;
     void updateState(QNetworkSession::State);
     void updateIdentifier(const QString &newId);
-    quint64 getStatistics(bool sent) const;
+    Statistics getStatistics() const;
     void cleanupSession(void);
 
     void updateProxyInformation();
