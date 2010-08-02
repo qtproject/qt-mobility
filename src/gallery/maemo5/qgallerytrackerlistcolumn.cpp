@@ -43,6 +43,7 @@
 
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qcryptographichash.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
@@ -117,6 +118,33 @@ QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterat
 QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator row) const
 {
     return QUrl::fromLocalFile((row + m_column)->toString());
+}
+
+QVariant QGalleryTrackerFilePathColumn::value(QVector<QVariant>::const_iterator row) const
+{
+    return *row;
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerFilePathColumn;
+}
+
+QVariant QGalleryTrackerThumbnailCacheIdColumn::value(QVector<QVariant>::const_iterator row) const
+{
+    return QCryptographicHash::hash(
+#ifdef Q_WS_MAEMO_5
+            QUrl::fromLocalFile(row->toString()).toString().toUtf8(),
+#else
+            QUrl::fromLocalFile(row->toString()).toEncoded(),
+#endif
+            QCryptographicHash::Md5).toHex();
+
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerThumbnailCacheIdColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerThumbnailCacheIdColumn;
 }
 
 #include "moc_qgallerytrackerlistcolumn_p.cpp"

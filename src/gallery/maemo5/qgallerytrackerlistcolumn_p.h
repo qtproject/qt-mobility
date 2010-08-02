@@ -188,6 +188,22 @@ private:
     const int m_column;
 };
 
+class QGalleryTrackerFilePathColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &columns);
+};
+
+class QGalleryTrackerThumbnailCacheIdColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &columns);
+};
+
 QTM_END_NAMESPACE
 
 #endif
