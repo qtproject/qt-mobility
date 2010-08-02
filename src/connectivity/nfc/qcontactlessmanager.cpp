@@ -43,6 +43,11 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QContactlessManager
+    \brief The QContactlessManager class provides access to notifications for NFC events.
+*/
+
 QContactlessManager::QContactlessManager(QObject *parent)
 :   QObject(parent)
 {
