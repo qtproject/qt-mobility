@@ -39,55 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILTER_H
-#define QLANDMARKFILTER_H
+#ifndef QLANDMARKFREETEXTFILTER_H
+#define QLANDMARKFREETEXTFILTER_H
 
-#include "qmobilityglobal.h"
-#include <QSharedData>
+#include "qlandmarkfilter.h"
+#include "qnamespace.h"
+
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-#define Q_DECLARE_LANDMARKFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QLandmarkFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkFilter
+class QLandmarkFreeTextFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkFreeTextFilter : public QLandmarkFilter
 {
-
-friend class QLandmarkFilterPrivate;
-
 public:
-    enum FilterType {InvalidFilter, DefaultFilter,
-                     NameFilter, ProximityFilter,
-                     CategoryFilter, BoxFilter, IntersectionFilter,
-                     UnionFilter, AttributeFilter,
-                     LandmarkIdFilter, FreeTextFilter
-                    };
-    QLandmarkFilter();
-    QLandmarkFilter(const QLandmarkFilter &other);
-    QLandmarkFilter &operator=(const QLandmarkFilter &other);
-    virtual ~QLandmarkFilter();
+    QLandmarkFreeTextFilter(const QString &searchString = QString());
+    QLandmarkFreeTextFilter(const QLandmarkFilter &other);
+    virtual ~QLandmarkFreeTextFilter();
 
-    FilterType type() const;
+    QString searchString() const;
+    void setSearchString(const QString &searchString);
 
-    bool operator==(const QLandmarkFilter &other) const;
-    bool operator!=(const QLandmarkFilter &other) const {
-        return !(*this == other);
-    }
-
-protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *dd);
-    QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
+private:
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkFreeTextFilter)
 };
 
-const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
-const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);
-
 QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkFilter), Q_MOVABLE_TYPE);
-
 
 #endif

@@ -39,55 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILTER_H
-#define QLANDMARKFILTER_H
+#ifndef QLANDMARKFREETEXTFILTER_P_H
+#define QLANDMARKFREETEXTFILTER_P_H
 
-#include "qmobilityglobal.h"
-#include <QSharedData>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qlandmarkfilter_p.h"
+
+#include "qnamespace.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-#define Q_DECLARE_LANDMARKFILTER_PRIVATE(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const; \
-    friend class Class##Private;
-
-class QLandmarkFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkFilter
+class QLandmarkFreeTextFilterPrivate : public QLandmarkFilterPrivate
 {
-
-friend class QLandmarkFilterPrivate;
-
 public:
-    enum FilterType {InvalidFilter, DefaultFilter,
-                     NameFilter, ProximityFilter,
-                     CategoryFilter, BoxFilter, IntersectionFilter,
-                     UnionFilter, AttributeFilter,
-                     LandmarkIdFilter, FreeTextFilter
-                    };
-    QLandmarkFilter();
-    QLandmarkFilter(const QLandmarkFilter &other);
-    QLandmarkFilter &operator=(const QLandmarkFilter &other);
-    virtual ~QLandmarkFilter();
+    QLandmarkFreeTextFilterPrivate(const QString &searchString = QString());
+    QLandmarkFreeTextFilterPrivate(const QLandmarkFreeTextFilterPrivate &other);
+    virtual ~QLandmarkFreeTextFilterPrivate();
 
-    FilterType type() const;
-
-    bool operator==(const QLandmarkFilter &other) const;
-    bool operator!=(const QLandmarkFilter &other) const {
-        return !(*this == other);
+    virtual bool compare(const QLandmarkFilterPrivate *other) const
+    {
+        const QLandmarkFreeTextFilterPrivate *od = static_cast<const QLandmarkFreeTextFilterPrivate*>(other);
+        return (searchString == od->searchString);
     }
 
-protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *dd);
-    QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkFreeTextFilter, QLandmarkFilter::FreeTextFilter)
+
+    QString searchString;
 };
 
-const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
-const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);
-
 QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkFilter), Q_MOVABLE_TYPE);
-
 
 #endif
