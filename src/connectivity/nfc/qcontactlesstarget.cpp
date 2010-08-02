@@ -44,47 +44,85 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 
+/*!
+    \class QContactlessTarget
+    \brief The QContactlessTarget class provides an interface for communicating with a target
+           device.
+*/
+
+/*!
+    \enum QContactlessTarget::TagType
+
+    This enum describes the type of tag the target is detected as.
+
+    \value NfcTagType1  An NFC tag type 1 target
+    \value NfcTagType2  An NFC tag type 2 target
+    \value NfcTagType3  An NFC tag type 3 target
+    \value NfcTagType4  An NFC tag type 4 target
+    \value Mifare       A Mifare target
+    \value Proprietary  An unidentified proprietary target tag.
+*/
+
+/*!
+    \enum QContactlessTarget::TagAccessMethod
+
+    This enum describes the access methods a contactless target supports.
+
+    \value NdefAccess               The target supports NDEF records using ndefMessage() and
+                                    setNdefMessage().
+    \value AdpuAccess               The target supports ADPU access using sendAdpuCommand() and
+                                    sendApduCommands().
+    \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
+                                    sendCommand() and sendCommands().
+*/
+
 class QContactlessTargetPrivate
 {
 public:
     QString uid;
     QUrl url;
-    QContactlessTarget::Type type;
+    QContactlessTarget::TagType tagType;
+    QContactlessTarget::TagAccessMethods accessMethods;
 };
 
+/*!
+    Constructs a new contactless target.
+*/
 QContactlessTarget::QContactlessTarget()
 {
 }
 
+/*!
+    Returns the UID of the contactless target.
+*/
 QString QContactlessTarget::uid() const
 {
     return d->uid;
 }
 
+/*!
+    Returns the URL of the contactless target.
+*/
 QUrl QContactlessTarget::url() const
 {
-    if (d->type != NdefTag)
+    if (!(d->accessMethods & QContactlessTarget::NdefAccess))
         return QUrl();
 
     return d->url;
 }
 
-QList<QContactlessTarget::Type> QContactlessTarget::types() const
+/*!
+    Returns the type of tag type of this contactless target.
+*/
+QContactlessTarget::TagType QContactlessTarget::type() const
 {
-    return QList<QContactlessTarget::Type>();
+    return d->tagType;
 }
 
-bool QContactlessTarget::isNdefTag() const
+/*!
+    Returns the access methods support by this contactless target.
+*/
+QContactlessTarget::TagAccessMethods QContactlessTarget::accessMethods() const
 {
-    return types().contains(NdefTag);
-}
-
-bool QContactlessTarget::isIso14443Card() const
-{
-    return types().contains(Iso14443Card);
-}
-
-bool QContactlessTarget::isRfidTag() const
-{
-    return types().contains(RfidTag);
+    return d->accessMethods;
 }

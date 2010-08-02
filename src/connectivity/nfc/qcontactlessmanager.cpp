@@ -68,7 +68,7 @@ QContactlessManager::~QContactlessManager()
 {
 }
 
-bool QContactlessManager::connect(QContactlessTarget::Type type,
+bool QContactlessManager::connect(QContactlessTarget::TagType type,
                                   const QObject *object,
                                   const char *slot)
 {
@@ -79,7 +79,7 @@ bool QContactlessManager::connect(QContactlessTarget::Type type,
     return false;
 }
 
-bool QContactlessManager::disconnect(QContactlessTarget::Type type,
+bool QContactlessManager::disconnect(QContactlessTarget::TagType type,
                                      const QObject *object,
                                      const char *slot)
 {

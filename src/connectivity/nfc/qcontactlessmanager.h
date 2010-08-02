@@ -62,8 +62,8 @@ public:
     ~QContactlessManager();
 
     // (dis)connect to targetDetected signal
-    bool connect(QContactlessTarget::Type type, const QObject *object, const char *slot);
-    bool disconnect(QContactlessTarget::Type type, const QObject *object, const char *slot);
+    bool connect(QContactlessTarget::TagType type, const QObject *object, const char *slot);
+    bool disconnect(QContactlessTarget::TagType type, const QObject *object, const char *slot);
 
     // (dis)connect to ndefRecordDetected signal
     bool connect(QNdefRecord::TypeNameFormat typeNameFormat,

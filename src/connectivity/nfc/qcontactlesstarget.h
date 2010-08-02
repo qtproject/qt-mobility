@@ -58,29 +58,37 @@ class QNdefMessage;
 class Q_CONNECTIVITY_EXPORT QContactlessTarget
 {
 public:
-    enum Type {
-        Iso14443Card,
-        NdefTag,
-        RfidTag
+    enum TagType {
+        Proprietary,
+        NfcTagType1,
+        NfcTagType2,
+        NfcTagType3,
+        NfcTagType4,
+        Mifare
     };
+
+    enum TagAccessMethod {
+        NdefAccess,
+        AdpuAccess,
+        TagTypeSpecificAccess
+    };
+    Q_DECLARE_FLAGS(TagAccessMethods, TagAccessMethod)
 
     QContactlessTarget();
 
     QString uid() const;
     QUrl url() const;
 
-    QList<Type> types() const;
-    bool isNdefTag() const;
-    bool isIso14443Card() const;
-    bool isRfidTag() const;
+    TagType type() const;
+    TagAccessMethods accessMethods() const;
 
     // might need to make async
     QNdefMessage ndefMessage() const;
     void setNdefMessage(const QNdefMessage &message);
 
     // might need to make async
-    QByteArray sendAPDUCommand(const QByteArray &command);
-    QList<QByteArray> sendAPDUCommands(const QList<QByteArray> &commands);
+    QByteArray sendApduCommand(const QByteArray &command);
+    QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
 
     // might need to make async
     QVariant sendCommand(const QVariant &command);
