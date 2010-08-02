@@ -642,10 +642,10 @@ QString landmarkIdsCategoryQueryString(const QLandmarkCategoryFilter &filter)
 
 QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
 {
-    double tly = filter.topLeftCoordinate().latitude();
-    double bry = filter.bottomRightCoordinate().latitude();
-    double tlx = filter.topLeftCoordinate().longitude();
-    double brx = filter.bottomRightCoordinate().longitude();
+    double tly = filter.boundingBox().topLeft().latitude();
+    double bry = filter.boundingBox().bottomRight().latitude();
+    double tlx = filter.boundingBox().topLeft().longitude();
+    double brx = filter.boundingBox().bottomRight().longitude();
 
     //note: it is already assumed tly > bry
     bool lonWrap = (tlx > brx);
@@ -828,39 +828,34 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 shiftCoordinate(&bottomRight, 180, radius+1000);
                 shiftCoordinate(&bottomRight, 90, radius+1000);
 
-                boxFilter.setTopLeftCoordinate(topLeft);
-                boxFilter.setBottomRightCoordinate(bottomRight);
+                QGeoBoundingBox box;
+                box.setTopLeft(topLeft);
+                box.setBottomRight(bottomRight);
+
+                boxFilter.setBoundingBox(box);
 
                 //TODO: handle poles
             }
 
-            if (!boxFilter.topLeftCoordinate().isValid()) {
+            if (!boxFilter.boundingBox().isValid()) {
                 if (error)
                     *error =  QLandmarkManager::BadArgumentError;
                 if (errorString)
-                    *errorString = QString("Invalid top left coordinate for landmark box filter");
+                    *errorString = QString("Invalid bounding box for landmark box filter");
                 return result;
             }
 
             //TODO: handle box covering poles
 
-            if (!boxFilter.bottomRightCoordinate().isValid()) {
-                if (error)
-                    *error =  QLandmarkManager::BadArgumentError;
-                if (errorString)
-                    *errorString = QString("Invalid bottom right coordinate for landmark box filter");
-                return result;
-            }
-
-            if (boxFilter.topLeftCoordinate().latitude()
-                < boxFilter.bottomRightCoordinate().latitude()) {
+            if (boxFilter.boundingBox().topLeft().latitude()
+                < boxFilter.boundingBox().bottomRight().latitude()) {
                 if (error)
                     *error = QLandmarkManager::BadArgumentError;
                 if (errorString)
                     *errorString = QString("Box filter top left coordinate latitude, %1,  is less than "
                                            "bottom right coordinate latitude, %2")
-                            .arg(boxFilter.topLeftCoordinate().latitude())
-                            .arg(boxFilter.bottomRightCoordinate().latitude());
+                            .arg(boxFilter.boundingBox().topLeft().latitude())
+                            .arg(boxFilter.boundingBox().bottomRight().latitude());
                  return result;
             }
 
@@ -1022,19 +1017,19 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 //need to do a fuzzy compare on the coordinates (using inBetween() and outside() fns)
                 //since sqlite doeesn't handle comparison of floating point numbers
                 QLandmarkBoxFilter boxFilter = filter;
-                double maxLat = boxFilter.topLeftCoordinate().latitude();
-                double minLat = boxFilter.bottomRightCoordinate().latitude();
+                double maxLat = boxFilter.boundingBox().topLeft().latitude();
+                double minLat = boxFilter.boundingBox().bottomRight().latitude();
                 double minLong;
                 double maxLong;
 
                 //special edge case if the bounding box crosses the dateline
-                bool longWrap = boxFilter.topLeftCoordinate().longitude() > boxFilter.bottomRightCoordinate().longitude();
+                bool longWrap = boxFilter.boundingBox().topLeft().longitude() > boxFilter.boundingBox().bottomRight().longitude();
                 if (longWrap) {
-                    minLong = boxFilter.bottomRightCoordinate().longitude();
-                    maxLong = boxFilter.topLeftCoordinate().longitude();
+                    minLong = boxFilter.boundingBox().bottomRight().longitude();
+                    maxLong = boxFilter.boundingBox().topLeft().longitude();
                 } else {
-                    minLong = boxFilter.topLeftCoordinate().longitude();
-                    maxLong = boxFilter.bottomRightCoordinate().longitude();
+                    minLong = boxFilter.boundingBox().topLeft().longitude();
+                    maxLong = boxFilter.boundingBox().bottomRight().longitude();
                 }
 
                 do {
