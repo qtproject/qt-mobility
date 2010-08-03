@@ -90,7 +90,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
-    QString QLocaleToISO639_1(QLocale::Language language) const;  
+    QString QLocaleToISO639_1(QLocale::Language language) const;
     QString TLanguageToISO639_1(TLanguage language) const;
     QString S60Version() const;
 };
@@ -160,12 +160,12 @@ public:
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);};
+//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+//     float contrast(int screen);
+//     int getDPIWidth(int screen);
+//     int getDPIHeight(int screen);
+//     int physicalHeight(int screen);
+//     int physicalWidth(int screen);};
 
 
 //////// QSystemStorageInfo
