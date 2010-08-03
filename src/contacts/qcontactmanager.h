@@ -79,17 +79,15 @@ public:
     explicit QContactManager(QObject* parent);
 
 #if Q_QDOC
-    static const QLatin1Constant ParameterKeySignalCausality;
-    static const QLatin1Constant ParameterKeySignalDefinitions;
-    static const QLatin1Constant ParameterValueSignalCausalityOtherProcesses;
-    static const QLatin1Constant ParameterValueSignalCausalityOtherManagers;
-    static const QLatin1Constant ParameterValueSignalCausalityNone;
+    static const QLatin1Constant ParameterSignalSources;
+    static const QLatin1Constant ParameterSignalDefinitions;
+    static const QLatin1Constant ParameterValueOnlyOtherProcesses;
+    static const QLatin1Constant ParameterValueOnlyOtherManagers;
 #else
-    Q_DECLARE_LATIN1_CONSTANT(ParameterKeySignalCausality, "SignalCausality");
-    Q_DECLARE_LATIN1_CONSTANT(ParameterKeySignalDefinitions, "SignalDefinitions");
-    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityOtherProcesses, "OtherProcesses");
-    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityOtherManagers, "OtherManagers");
-    Q_DECLARE_LATIN1_CONSTANT(ParameterValueSignalCausalityNone, "None");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterSignalSources, "SignalSources");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterSignalDefinitions, "SignalDefinitions");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueOnlyOtherProcesses, "OnlyOtherProcesses");
+    Q_DECLARE_LATIN1_CONSTANT(ParameterValueOnlyOtherManagers, "OnlyOtherManagers");
 #endif
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
