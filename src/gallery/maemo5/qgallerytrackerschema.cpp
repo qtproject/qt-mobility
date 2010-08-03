@@ -276,15 +276,6 @@ namespace
 #define QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES(PropertyName, Type, Factory) \
 { QLatin1String(PropertyName), QVariant::Type, QGalleryItemPropertyList(), Factory }
 
-#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Profile, Type, Dependencies, Factory) \
-{ \
-    QLatin1String(PropertyName), \
-    QLatin1String(Profile), \
-    QVariant::Type, \
-    QGalleryItemPropertyList(Dependencies), \
-    Factory \
-}
-
 #define QT_GALLERY_ITEM_TYPE(Type, Service, Prefix, PropertyGroup) \
 { \
     QLatin1String(#Type), \
