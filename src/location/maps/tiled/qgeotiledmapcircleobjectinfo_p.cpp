@@ -186,9 +186,17 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    //makepoly(circle, points, point.y()+sign(center.latitude())*50); // doesn't work here
-    //makepoly(circle, points, -100);
-    makepoly(*this, path, circle, points, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100);
+    //makepoly(*this, path, circle, points, true, mapData->q_ptr->coordinateToWorldPixel(center).y() + (center.latitude() > 0 ? 50 : -50)); // 50px towards the closest pole
+    //makepoly(*this, path, circle, points, true); // always north pole
+    makepoly(*this, path, circle, points, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
+
+    if (!polygonItem)
+        polygonItem = new QGraphicsPolygonItem();
+
+    polygonItem->setPolygon(points);
+    polygonItem->setBrush(circle->brush);
+
+    graphicsItem1 = polygonItem;
 }
 
 void QGeoTiledMapCircleObjectInfo::mapUpdate()

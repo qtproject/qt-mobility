@@ -55,7 +55,7 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
-#include <QList>
+#include <QPolygonF>
 
 class QGraphicsPathItem;
 class QPointF;
@@ -76,7 +76,7 @@ public:
     const QGeoMapPolylineObjectPrivate *polyline;
     QGraphicsPathItem *pathItem;
 
-    QList<QPointF> points;
+    QPolygonF points;
 };
 
 QTM_END_NAMESPACE

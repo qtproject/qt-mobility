@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeotiledmappolylineobjectinfo_p.h"
+#include "makepoly_p.h"
 
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
@@ -63,21 +64,13 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path = polyline->path;
 
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
-    }
+    makepoly(*this, path, polyline, points, false);
 
     if (points.size() < 2)
         return;
 
-    QPainterPath painterPath(points.at(0));
-    for (int i = 1; i < points.size(); ++i)
-        painterPath.lineTo(points.at(i));
+    QPainterPath painterPath;
+    painterPath.addPolygon(points);
 
     if (!pathItem)
         pathItem = new QGraphicsPathItem();

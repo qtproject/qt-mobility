@@ -61,12 +61,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-template<typename Info, typename Private> void makepoly(Info & self, const QList<QGeoCoordinate> & path, const Private *polygon, QPolygonF &points, qreal ypole = -100) {
+// TODO: replace boolean parameter by enum
+template<typename Info, typename Private> void makepoly(Info & self, const QList<QGeoCoordinate> & path, const Private *polygon, QPolygonF &points, bool closedPath, qreal ypole = -100) {
     points.clear();
 
     //TODO - handle when polygons are drawn across the dateline...
     // regular graphics item with polygon item children?
-    QGeoCoordinate lastCoord = path.last();
+    QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = self.mapData->q_ptr->coordinateToWorldPixel(lastCoord);
 
     int width = self.mapData->maxZoomSize.width();
@@ -107,8 +108,8 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
 
             // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
             // this works for now :)
-            L_ += (L_ - P)*3;
-            P_ += (P_ - L)*3;
+            L_ += (L_ - P)*7;
+            P_ += (P_ - L)*7;
 
             // pole point on this side
             QPointF O1 = QPointF(P_.x(), ypole);
@@ -130,14 +131,6 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
         lastCoord = coord;
         lastPoint = point;
     }
-
-    if (!self.polygonItem)
-        self.polygonItem = new QGraphicsPolygonItem();
-
-    self.polygonItem->setPolygon(points);
-    self.polygonItem->setBrush(polygon->brush);
-
-    self.graphicsItem1 = self.polygonItem;
 }
 
 QTM_END_NAMESPACE
