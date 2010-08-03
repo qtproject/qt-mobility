@@ -6,6 +6,14 @@
 #include <qlandmark.h>
 #include <QtDeclarative/qdeclarative.h>
 
+
+// Define this to get qDebug messages
+#define QDECLARATIVE_LANDMARK_DEBUG
+
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
+#include <QDebug>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QDeclarativeLandmark : public QObject
@@ -41,7 +49,6 @@ public:
     void setUrl(const QUrl& url);
 
 signals:
-
     void nameChanged(QString name);
     void phoneChanged(QString phone);
     void descriptionChanged(QString descriptionChanged);
@@ -52,7 +59,10 @@ signals:
 public slots:
 
 private:
+    friend class QDeclarativeLandmarkSource;
+    void setLandmark(const QLandmark& landmark);
 
+private:
     QLandmark m_landmark;
 };
 

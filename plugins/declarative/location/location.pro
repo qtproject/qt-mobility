@@ -20,13 +20,15 @@ INCLUDEPATH += ../../../src/location
 HEADERS += qdeclarativeposition_p.h \
                      qdeclarativepositionsource_p.h \
 		     qdeclarativelandmark_p.h \
-    qdeclarativelandmarkmanager_p.h
+                     qdeclarativelandmarksource_p.h \
+                     qdeclarativelandmarkcategory_p.h
 
 SOURCES += qdeclarativeposition.cpp \
                      location.cpp \
                      qdeclarativepositionsource.cpp \
 		     qdeclarativelandmark.cpp \
-    qdeclarativelandmarkmanager.cpp
+                     qdeclarativelandmarksource.cpp \
+                     qdeclarativelandmarkcategory.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

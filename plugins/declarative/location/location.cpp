@@ -43,7 +43,8 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 #include "qdeclarativelandmark_p.h"
-#include "qdeclarativelandmarkmanager_p.h"
+#include "qdeclarativelandmarkcategory_p.h"
+#include "qdeclarativelandmarksource_p.h"
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -61,8 +62,9 @@ public:
         // Elements available since Qt mobility 1.1:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
+        qmlRegisterType<QDeclarativeLandmarkSource>(uri, 1, 1, "LandmarkSource");
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
-        qmlRegisterType<QDeclarativeLandmarkManager>(uri, 1, 1, "LandmarkManager");
+        qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
     }
 };
 
