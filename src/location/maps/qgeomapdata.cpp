@@ -187,7 +187,7 @@ void QGeoMapData::stopPanning() {}
 
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
-    in they y direction.
+    in the y direction.
 
     The x and y axes are specified in Graphics View Framework coordinates.
     By default this will mean that positive values of \a dx move the

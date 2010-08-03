@@ -111,7 +111,7 @@ private:
     QPoint panDir;
     QTimer *kineticTimer;
     QTime lastMoveTime;
-    
+
     // An entry in the mouse history. first=speed, second=time
     typedef QPair<QPointF,QTime> MouseHistoryEntry;
     // A history of the last (currently 5) mouse move events is stored in order to smooth out movement detection for kinetic panning
