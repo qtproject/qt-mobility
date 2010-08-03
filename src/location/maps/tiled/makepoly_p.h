@@ -105,7 +105,10 @@ template<typename Info, typename Private> void makepoly(Info & self, const QList
             // point on this side
             QPointF P_ = P + QPointF(width*dir, 0);
 
-            // TODO: make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
+            // TODO: make a better algorithm to make sure the off-screen points P' and L' are far enough from the dateline so the lines to the poles don't flicker through.
+            // this works for now :)
+            L_ += (L_ - P)*3;
+            P_ += (P_ - L)*3;
 
             // pole point on this side
             QPointF O1 = QPointF(P_.x(), ypole);
