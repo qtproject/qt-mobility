@@ -57,9 +57,8 @@
 #define PI 3.14159265
 #include <math.h>
 
-QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_parameters(parameters),
         m_host("loc.desktop.maps.svc.ovi.com")
 {
     setTileSize(QSize(128,128));
@@ -81,29 +80,29 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     m_cache->setCacheDirectory(dir.path());
 
-    QList<QString> keys = m_parameters.keys();
+    QList<QString> keys = parameters.keys();
 
     if (keys.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("mapping.proxy");
+        QString proxy = parameters.value("mapping.proxy").toString();
         if (!proxy.isEmpty())
             m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("mapping.host")) {
-        QString host = m_parameters.value("mapping.host");
+        QString host = parameters.value("mapping.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
     if (keys.contains("mapping.cache.directory")) {
-        QString cacheDir = m_parameters.value("mapping.cache.directory");
+        QString cacheDir = parameters.value("mapping.cache.directory").toString();
         if (!cacheDir.isEmpty())
             m_cache->setCacheDirectory(cacheDir);
     }
 
     if (keys.contains("mapping.cache.size")) {
         bool ok = false;
-        qint64 cacheSize = m_parameters.value("mapping.cache.size").toLongLong(&ok);
+        qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
         if (ok)
             m_cache->setMaximumCacheSize(cacheSize);
     }

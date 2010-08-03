@@ -264,7 +264,10 @@ void QGeoMapWidget::pan(int dx, int dy)
 void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->mapData && d_ptr->manager) {
-        d_ptr->mapData->setCenter(center);
+        if (d_ptr->mapData->center() != center) {
+            d_ptr->mapData->setCenter(center);
+            emit centerChanged(center);
+        }
     }
 }
 
@@ -302,12 +305,11 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
             return;
 
-        QGeoMapWidget::MapType oldType = d_ptr->mapData->mapType();
+        if (d_ptr->mapData->mapType() == mapType)
+            return;
 
         d_ptr->mapData->setMapType(mapType);
-
-        if (oldType != mapType)
-            emit mapTypeChanged(mapType);
+        emit mapTypeChanged(mapType);
     }
 }
 

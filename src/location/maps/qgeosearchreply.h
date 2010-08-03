@@ -72,7 +72,7 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QGeoBoundingBox bounds() const;
+    QGeoBoundingBox viewport() const;
     QList<QGeoPlace> places() const;
 
 public slots:
@@ -88,7 +88,7 @@ protected:
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void setBounds(const QGeoBoundingBox& bounds);
+    void setViewport(const QGeoBoundingBox& viewport);
     void addPlace(const QGeoPlace &place);
     void setPlaces(const QList<QGeoPlace> &places);
 

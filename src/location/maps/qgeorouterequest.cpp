@@ -233,6 +233,22 @@ QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 }
 
 /*!
+    Returns whether this route request and \a other are equal.
+*/
+bool QGeoRouteRequest::operator ==(const QGeoRouteRequest &other) const
+{
+    return (d_ptr.constData() == other.d_ptr.constData());
+}
+
+/*!
+    Returns whether this route request and \a other are equal.
+*/
+bool QGeoRouteRequest::operator !=(const QGeoRouteRequest &other) const
+{
+    return (d_ptr.constData() != other.d_ptr.constData());
+}
+
+/*!
     Sets \a waypoints as the waypoints that the route should pass through.
 
     The waypoints should be given in order from origin to destination.
@@ -411,5 +427,16 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
 
 QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
+bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) const
+{
+    return ((waypoints == other.waypoints)
+            && (excludeAreas == other.excludeAreas)
+            && (numberAlternativeRoutes == other.numberAlternativeRoutes)
+            && (travelModes == other.travelModes)
+            && (avoidFeatureTypes == other.avoidFeatureTypes)
+            && (routeOptimization == other.routeOptimization)
+            && (segmentDetail == other.segmentDetail)
+            && (instructionDetail == other.instructionDetail));
+}
 
 QTM_END_NAMESPACE

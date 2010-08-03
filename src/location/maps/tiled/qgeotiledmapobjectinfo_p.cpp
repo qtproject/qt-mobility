@@ -93,11 +93,24 @@ QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
     if (!graphicsItem1)
         return QGeoBoundingBox();
 
-    QRectF rect = graphicsItem1->boundingRect();
-    QGeoCoordinate topLeft = mapData->q_ptr->worldPixelToCoordinate(rect.topLeft().toPoint());
-    QGeoCoordinate bottomRight = mapData->q_ptr->worldPixelToCoordinate(rect.bottomRight().toPoint());
+    QRectF rect1 = graphicsItem1->boundingRect();
+    QGeoCoordinate topLeft1 = mapData->q_ptr->worldPixelToCoordinate(rect1.topLeft().toPoint());
+    QGeoCoordinate bottomRight1 = mapData->q_ptr->worldPixelToCoordinate(rect1.bottomRight().toPoint());
 
-    return QGeoBoundingBox(topLeft, bottomRight);
+    QGeoBoundingBox box1 = QGeoBoundingBox(topLeft1, bottomRight1);
+
+    if (!graphicsItem2)
+        return box1;
+
+    QRectF rect2 = graphicsItem2->boundingRect();
+    QGeoCoordinate topLeft2 = mapData->q_ptr->worldPixelToCoordinate(rect2.topLeft().toPoint());
+    QGeoCoordinate bottomRight2 = mapData->q_ptr->worldPixelToCoordinate(rect2.bottomRight().toPoint());
+
+    QGeoBoundingBox box2 = QGeoBoundingBox(topLeft2, bottomRight2);
+
+    box1 |= box2;
+
+    return box1;
 }
 
 bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const

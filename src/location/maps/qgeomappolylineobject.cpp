@@ -51,51 +51,22 @@ QTM_BEGIN_NAMESPACE
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
-QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd)
-        : QGeoMapObject(dd) {}
-
 /*!
 */
 QGeoMapPolylineObject::~QGeoMapPolylineObject()
 {
 }
 
-/*!
-  TODO - deal with paths that cross the dateline
-*/
 void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoMapPolylineObject);
-    d->path = path;
-    //compute geo bounding box
-    double maxLong = -180.0;
-    double minLong = 180.0;
-    double maxLat = -90.0;
-    double minLat = 90.0;
-
-    QListIterator<QGeoCoordinate> it(path);
-
-    while (it.hasNext()) {
-        const QGeoCoordinate &coord = it.next();
-
-        if (!coord.isValid())
-            continue;
-
-        if (coord.latitude() < minLat)
-            minLat = coord.latitude();
-        if (coord.latitude() > maxLat)
-            maxLat = coord.latitude();
-        if (coord.longitude() < minLong)
-            minLong = coord.longitude();
-        if (coord.longitude() > maxLong)
-            maxLong = coord.longitude();
+    if (d->path != path) {
+        d->path = path;
+        objectUpdate();
+        emit pathChanged(d->path);
     }
-
-    d->bounds = QGeoBoundingBox(QGeoCoordinate(maxLat, minLong), QGeoCoordinate(minLat, maxLong));
 }
 
-/*!
-*/
 QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 {
     Q_D(const QGeoMapPolylineObject);
@@ -105,7 +76,11 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::path() const
 void QGeoMapPolylineObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapPolylineObject);
-    d->pen = pen;
+    if (d->pen != pen) {
+        d->pen = pen;
+        objectUpdate();
+        emit penChanged(d->pen);
+    }
 }
 
 QPen QGeoMapPolylineObject::pen() const
@@ -117,10 +92,12 @@ QPen QGeoMapPolylineObject::pen() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
-        : QGeoMapObjectPrivate(impl, parent, type) {}
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolylineType) {}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
+
+#include "moc_qgeomappolylineobject.cpp"
 
 QTM_END_NAMESPACE
 

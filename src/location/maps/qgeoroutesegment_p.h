@@ -70,6 +70,8 @@ public:
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
     ~QGeoRouteSegmentPrivate();
 
+    bool operator ==(const QGeoRouteSegmentPrivate &other) const;
+
     int travelTime;
     qreal distance;
     QList<QGeoCoordinate> path;

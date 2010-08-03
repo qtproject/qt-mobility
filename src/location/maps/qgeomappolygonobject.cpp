@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject(QGeoMapObject *parent)
-        : QGeoMapPolylineObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -57,10 +57,47 @@ QGeoMapPolygonObject::~QGeoMapPolygonObject()
 {
 }
 
+void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
+{
+    Q_D(QGeoMapPolygonObject);
+    if (d->path != path) {
+        d->path = path;
+        objectUpdate();
+        emit pathChanged(emit d->path);
+    }
+}
+
+QList<QGeoCoordinate> QGeoMapPolygonObject::path() const
+{
+    Q_D(const QGeoMapPolygonObject);
+    return d->path;
+}
+
+void QGeoMapPolygonObject::setPen(const QPen &pen)
+{
+    Q_D(QGeoMapPolygonObject);
+    if (d->pen != pen) {
+        d->pen = pen;
+        objectUpdate();
+        emit penChanged(emit d->pen);
+    }
+}
+
+QPen QGeoMapPolygonObject::pen() const
+{
+    Q_D(const QGeoMapPolygonObject);
+    return d->pen;
+}
+
+
 void QGeoMapPolygonObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapPolygonObject);
-    d->brush = brush;
+    if (d->brush != brush) {
+        d->brush = brush;
+        objectUpdate();
+        emit brushChanged(d->brush);
+    }
 }
 
 QBrush QGeoMapPolygonObject::brush() const
@@ -73,9 +110,11 @@ QBrush QGeoMapPolygonObject::brush() const
 *******************************************************************************/
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapPolylineObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
+
+#include "moc_qgeomappolygonobject.cpp"
 
 QTM_END_NAMESPACE
 

@@ -54,6 +54,12 @@ class QGeoMapCircleObjectPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+    //Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    //Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
+
 public:
     QGeoMapCircleObject(QGeoMapObject *parent = 0);
     ~QGeoMapCircleObject();
@@ -69,6 +75,12 @@ public:
 
     void setRadius(qreal radius);
     qreal radius() const;
+
+signals:
+    void centerChanged(const QGeoCoordinate &coordinate);
+    void radiusChanged(qreal radius);
+    //void penChanged(const QPen &pen);
+    //void brushChanged(const QBrush &brush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapCircleObject)

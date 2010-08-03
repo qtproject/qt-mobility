@@ -46,7 +46,7 @@
 #include <QNetworkProxy>
 #include <qgeoboundingbox.h>
 
-QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
         m_host("stg.loupe.lbsp.navteq.com")
 {
@@ -55,13 +55,13 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     QList<QString> keys = parameters.keys();
 
     if (keys.contains("routing.proxy")) {
-        QString proxy = parameters.value("routing.proxy");
+        QString proxy = parameters.value("routing.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("routing.host")) {
-        QString host = parameters.value("routing.host");
+        QString host = parameters.value("routing.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }

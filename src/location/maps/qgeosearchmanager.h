@@ -71,7 +71,6 @@ public:
     ~QGeoSearchManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     QGeoSearchReply* geocode(const QGeoAddress &address,

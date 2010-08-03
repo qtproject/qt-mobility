@@ -106,6 +106,22 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 }
 
 /*!
+    Returns whether this route and \a other are equal.
+*/
+bool QGeoRoute::operator ==(const QGeoRoute &other) const
+{
+    return (d_ptr.constData() == other.d_ptr.constData());
+}
+
+/*!
+    Returns whether this route and \a other are not equal.
+*/
+bool QGeoRoute::operator !=(const QGeoRoute &other) const
+{
+    return (d_ptr.constData() != other.d_ptr.constData());
+}
+
+/*!
     Sets the ID of this route to \a id.
 
     Service providers which support the updating of routes commonly assign
@@ -294,5 +310,16 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
+bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
+{
+    return ((id == other.id)
+            && (request == other.request)
+            && (bounds == other.bounds)
+            && (routeSegments == other.routeSegments)
+            && (travelTime == other.travelTime)
+            && (distance == other.distance)
+            && (travelMode == other.travelMode)
+            && (path == other.path));
+}
 
 QTM_END_NAMESPACE

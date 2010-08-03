@@ -214,17 +214,6 @@ QString QGeoSearchManager::managerName() const
 }
 
 /*!
-    Returns the parameters used in the creation of this search manager.
-*/
-QMap<QString, QString> QGeoSearchManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
-}
-
-/*!
     Returns the version of the engine which implements the behaviour of this
     search manager.
 

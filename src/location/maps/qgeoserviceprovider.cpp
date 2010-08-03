@@ -52,6 +52,7 @@
 
 #include <QList>
 #include <QString>
+#include <QVariant>
 
 #include <QPluginLoader>
 #include <QDebug>
@@ -133,28 +134,11 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     If no plugin matching \a providerName was able to be loaded then error()
     and errorString() will provide details about why this is the case.
 */
-QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters)
+QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QVariant> &parameters)
         : d_ptr(new QGeoServiceProviderPrivate())
 {
     d_ptr->loadPlugin(providerName, parameters);
     d_ptr->parameterMap = parameters;
-}
-
-/*!
-    Constructs a QGeoServiceProvider whose backend has the name \a providerName
-    and version \a providerVersion, using the provided \a parameters.
-
-    If no plugin matching \a providerName and \a providerVersion was able to be
-    loaded then error() and errorString() will provide details about why this
-    is the case.
-*/
-QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters)
-        : d_ptr(new QGeoServiceProviderPrivate())
-{
-
-    d_ptr->parameterMap = parameters;
-    d_ptr->parameterMap["version"] = QString::number(providerVersion);
-    d_ptr->loadPlugin(providerName, d_ptr->parameterMap);
 }
 
 /*!
@@ -349,7 +333,7 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
         delete mappingManager;
 }
 
-void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QString> &parameters)
+void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters)
 {
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
@@ -365,26 +349,13 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
 
     QList<QGeoServiceProviderFactory*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
 
-    bool ok = false;
-    int versionTarget  = parameters.value("version", "-1").toInt(&ok);
-    if (!ok)
-        versionTarget = -1;
     int versionFound = -1;
 
     for (int i = 0; i < candidates.size(); ++i) {
         QGeoServiceProviderFactory* f = candidates[i];
-        if (f) {
-            if (versionTarget == -1) {
-                if (f->providerVersion() > versionFound) {
-                    versionFound = f->providerVersion();
-                    factory = f;
-                }
-            } else {
-                if (f->providerVersion() == versionTarget) {
-                    factory = f;
-                    break;
-                }
-            }
+        if (f && (f->providerVersion() > versionFound)) {
+            versionFound = f->providerVersion();
+            factory = f;
         }
     }
 }

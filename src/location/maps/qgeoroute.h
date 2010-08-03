@@ -67,6 +67,9 @@ public:
 
     QGeoRoute& operator = (const QGeoRoute &other);
 
+    bool operator == (const QGeoRoute &other) const;
+    bool operator != (const QGeoRoute &other) const;
+
     void setRouteId(const QString &id);
     QString routeId() const;
 

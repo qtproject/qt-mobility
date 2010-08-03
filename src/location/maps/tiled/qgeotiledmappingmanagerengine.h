@@ -73,7 +73,7 @@ public:
     QSize tileSize() const;
 
 protected:
-    QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    QGeoTiledMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
 
     void setSupportedImageFormats(const QList<QString> &imageFormats);
     void setTileSize(const QSize &tileSize);

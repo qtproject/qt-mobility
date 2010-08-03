@@ -60,8 +60,8 @@ QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
 
 void QGeoTiledMapRectangleObjectInfo::objectUpdate()
 {
-    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.topLeft());
-    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.bottomRight());
+    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.topLeft());
+    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(rectangle->bounds.bottomRight());
 
     bounds = QRectF(topLeft, bottomRight);
 

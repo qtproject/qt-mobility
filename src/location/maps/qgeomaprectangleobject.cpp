@@ -48,13 +48,15 @@ QTM_BEGIN_NAMESPACE
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->bounds = boundingBox;
+    Q_D(QGeoMapRectangleObject);
+    d->bounds = boundingBox;
 }
 
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent)
         : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
-    d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
+    Q_D(QGeoMapRectangleObject);
+    d->bounds = QGeoBoundingBox(topLeft, bottomRight);
 }
 
 QGeoMapRectangleObject::~QGeoMapRectangleObject()
@@ -70,7 +72,11 @@ QGeoBoundingBox QGeoMapRectangleObject::bounds() const
 void QGeoMapRectangleObject::setBounds(const QGeoBoundingBox &bounds)
 {
     Q_D(QGeoMapRectangleObject);
-    d->bounds = bounds;
+    if (d->bounds != bounds) {
+        d->bounds = bounds;
+        objectUpdate();
+        emit boundsChanged(d->bounds);
+    }
 }
 
 QPen QGeoMapRectangleObject::pen() const
@@ -82,7 +88,11 @@ QPen QGeoMapRectangleObject::pen() const
 void QGeoMapRectangleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapRectangleObject);
-    d->pen = pen;
+    if (d->pen != pen) {
+        d->pen = pen;
+        objectUpdate();
+        emit penChanged(d->pen);
+    }
 }
 
 QBrush QGeoMapRectangleObject::brush() const
@@ -94,7 +104,11 @@ QBrush QGeoMapRectangleObject::brush() const
 void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapRectangleObject);
-    d->brush = brush;
+    if (d->brush != brush) {
+        d->brush = brush;
+        objectUpdate();
+        emit brushChanged(d->brush);
+    }
 }
 
 /*******************************************************************************
@@ -104,6 +118,8 @@ QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl
         : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
+
+#include "moc_qgeomaprectangleobject.cpp"
 
 QTM_END_NAMESPACE
 

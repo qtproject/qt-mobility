@@ -64,14 +64,13 @@ class QLandmarkManager;
 class QGeoSearchManagerEnginePrivate
 {
 public:
-    QGeoSearchManagerEnginePrivate(const QMap<QString, QString> &parameters);
+    QGeoSearchManagerEnginePrivate();
     QGeoSearchManagerEnginePrivate(const QGeoSearchManagerEnginePrivate &other);
     ~QGeoSearchManagerEnginePrivate();
 
     QGeoSearchManagerEnginePrivate& operator= (const QGeoSearchManagerEnginePrivate &other);
 
     QString managerName;
-    QMap<QString, QString> managerParameters;
     int managerVersion;
 
     QLandmarkManager *defaultLandmarkManager;

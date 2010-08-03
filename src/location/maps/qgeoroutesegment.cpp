@@ -89,6 +89,22 @@ QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 }
 
 /*!
+    Returns whether this route segment and \a other are equal.
+*/
+bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
+{
+    return (d_ptr.constData() == other.d_ptr.constData());
+}
+
+/*!
+    Returns whether this route segment and \a other are not equal.
+*/
+bool QGeoRouteSegment::operator !=(const QGeoRouteSegment &other) const
+{
+    return (d_ptr.constData() != other.d_ptr.constData());
+}
+
+/*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
 */
@@ -175,6 +191,14 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &
         instruction(other.instruction) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+
+bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) const
+{
+    return ((travelTime == other.travelTime)
+            && (distance == other.distance)
+            && (path == other.path)
+            && (instruction == other.instruction));
+}
 
 QTM_END_NAMESPACE
 

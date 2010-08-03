@@ -66,7 +66,6 @@ public:
     ~QGeoMappingManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     QGeoMapData* createMapData(QGeoMapWidget *widget);

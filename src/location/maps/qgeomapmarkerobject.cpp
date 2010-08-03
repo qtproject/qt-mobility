@@ -59,26 +59,61 @@ QGeoMapMarkerObject::~QGeoMapMarkerObject()
 {
 }
 
+QGeoCoordinate QGeoMapMarkerObject::coordinate() const
+{
+    Q_D(const QGeoMapMarkerObject);
+    return d->coordinate;
+}
+
+void QGeoMapMarkerObject::setCoordinate(const QGeoCoordinate &coordinate)
+{
+    Q_D(QGeoMapMarkerObject);
+    if (d->coordinate != coordinate) {
+        d->coordinate = coordinate;
+        objectUpdate();
+        emit coordinateChanged(d->coordinate);
+    }
+}
+
 QPixmap QGeoMapMarkerObject::icon() const
 {
     Q_D(const QGeoMapMarkerObject);
-
     return d->icon;
+}
+
+void QGeoMapMarkerObject::setIcon(const QPixmap &icon)
+{
+    Q_D(QGeoMapMarkerObject);
+
+    if (d->icon.isNull() && icon.isNull())
+        return;
+
+    if ((d->icon.isNull() && !icon.isNull())
+            || (!d->icon.isNull() && icon.isNull())
+            || (d->icon.toImage() != icon.toImage())) {
+        d->icon = icon;
+        objectUpdate();
+        emit iconChanged(d->icon);
+    }
 }
 
 QPoint QGeoMapMarkerObject::anchor() const
 {
     Q_D(const QGeoMapMarkerObject);
-
     return d->anchor;
 }
 
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
+void QGeoMapMarkerObject::setAnchor(const QPoint &anchor)
 {
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
+    Q_D(QGeoMapMarkerObject);
+    if (d->anchor != anchor) {
+        d->anchor = anchor;
+        objectUpdate();
+        emit anchorChanged(d->anchor);
+    }
 }
+
+
 
 /*******************************************************************************
 *******************************************************************************/
@@ -87,6 +122,8 @@ QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeo
         : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
 
 QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
+
+#include "moc_qgeomapmarkerobject.cpp"
 
 QTM_END_NAMESPACE
 

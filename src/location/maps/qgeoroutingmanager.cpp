@@ -204,17 +204,6 @@ QString QGeoRoutingManager::managerName() const
 }
 
 /*!
-    Returns the parameters used in the creation of this routing manager.
-*/
-QMap<QString, QString> QGeoRoutingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
-}
-
-/*!
     Returns the version of the engine which implements the behaviour of this
     routin manager.
 

@@ -56,6 +56,10 @@ class QGeoMapWidgetPrivate;
 class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
 {
     Q_OBJECT
+    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    Q_PROPERTY(QGeoMapWidget::MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+
 public:
     enum MapType {
         NoMap,
@@ -104,7 +108,7 @@ protected:
 
 signals:
     void zoomLevelChanged(qreal zoomLevel);
-    void centered(const QGeoCoordinate &coordinate);
+    void centerChanged(const QGeoCoordinate &coordinate);
     void mapTypeChanged(QGeoMapWidget::MapType mapType);
 
 private:

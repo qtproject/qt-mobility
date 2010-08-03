@@ -53,7 +53,7 @@ class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters,
+    QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
     ~QGeoSearchManagerEngineNokia();

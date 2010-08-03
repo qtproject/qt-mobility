@@ -109,9 +109,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
 */
-QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
+QGeoSearchManagerEngine::QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoSearchManagerEnginePrivate(parameters)) {}
+        d_ptr(new QGeoSearchManagerEnginePrivate()) {}
 
 /*!
     Destroys this engine.
@@ -144,14 +144,6 @@ void QGeoSearchManagerEngine::setManagerName(const QString &managerName)
 QString QGeoSearchManagerEngine::managerName() const
 {
     return d_ptr->managerName;
-}
-
-/*!
-    Returns the parameters used in the creation of this engine object.
-*/
-QMap<QString, QString> QGeoSearchManagerEngine::managerParameters() const
-{
-    return d_ptr->managerParameters;
 }
 
 /*!
@@ -450,15 +442,13 @@ void QGeoSearchManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *lan
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate(const QMap<QString, QString> &parameters)
-        : managerParameters(parameters),
-        managerVersion(-1),
+QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate()
+        : managerVersion(-1),
         defaultLandmarkManager(0),
         supportsGeocoding(false) {}
 
 QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate(const QGeoSearchManagerEnginePrivate &other)
         : managerName(other.managerName),
-        managerParameters(other.managerParameters),
         managerVersion(other.managerVersion),
         defaultLandmarkManager(other.defaultLandmarkManager),
         additionalLandmarkManagers(other.additionalLandmarkManagers),
@@ -476,7 +466,6 @@ QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 QGeoSearchManagerEnginePrivate& QGeoSearchManagerEnginePrivate::operator= (const QGeoSearchManagerEnginePrivate & other)
 {
     managerName = other.managerName;
-    managerParameters = other.managerParameters;
     managerVersion = other.managerVersion;
     defaultLandmarkManager = other.defaultLandmarkManager;
     additionalLandmarkManagers = other.additionalLandmarkManagers;
