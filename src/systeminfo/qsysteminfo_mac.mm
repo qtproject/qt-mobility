@@ -1455,125 +1455,125 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-    if(screen < 16 && screen > -1) {
-        int rotation = (int)CGDisplayRotation(getCGId(screen));
-        switch(rotation) {
-        case 0:
-        case 360:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
-
-
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-    QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
-    QSettings accessSettings(accessplist, QSettings::NativeFormat);
-    accessSettings.value("contrast").toFloat();
-    return accessSettings.value("contrast").toFloat();
-}
-
-static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
-{
-    CFNumberRef value;
-    int resultNumber = 0;
-    if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
-            || CFGetTypeID(value) != CFNumberGetTypeID())
-        return 0;
-    CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
-    return resultNumber;
-}
-
-CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
-    double *horizontalDPI, double *verticalDPI)
-{
-    CGDisplayErr displayError = kCGErrorFailure;
-    io_connect_t ioPort;
-    CFDictionaryRef displayDict;
-
-    ioPort = CGDisplayIOServicePort(displayID);
-    if (ioPort != MACH_PORT_NULL) {
-        displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
-        if (displayDict != NULL) {
-            const double mmPerInch = 25.4;
-            double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
-            double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
-
-            CFRelease(displayDict);
-
-            *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
-            *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
-            displayError = CGDisplayNoErr;
-        }
-    }
-    return displayError;
-}
-
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        double horizontalDPI, verticalDPI;
-
-        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-        if (displayError == CGDisplayNoErr) {
-            dpi = horizontalDPI;
-        }
-    }
-    return dpi;
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        double horizontalDPI, verticalDPI;
-
-        CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
-        if (displayError == CGDisplayNoErr) {
-            dpi = verticalDPI;
-        }
-    }
-    return dpi;
-}
+//     if(screen < 16 && screen > -1) {
+//         int rotation = (int)CGDisplayRotation(getCGId(screen));
+//         switch(rotation) {
+//         case 0:
+//         case 360:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case 90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case 180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case 270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
-    if(screen < 16 && screen > -1) {
-        CGSize size = CGDisplayScreenSize(getCGId(screen));
-        height = size.height;
-    }
-    return height;
-}
+// float QSystemDisplayInfoPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
+//     QString accessplist = QDir::homePath() + "/Library/Preferences/com.apple.universalaccess.plist";
+//     QSettings accessSettings(accessplist, QSettings::NativeFormat);
+//     accessSettings.value("contrast").toFloat();
+//     return accessSettings.value("contrast").toFloat();
+// }
 
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
-    if(screen < 16 && screen > -1) {
-        CGSize size = CGDisplayScreenSize(getCGId(screen));
-        width = size.width;
-    }
-    return width;
-}
+// static int GetIntFromDictionaryForKey(CFDictionaryRef desc, CFStringRef key)
+// {
+//     CFNumberRef value;
+//     int resultNumber = 0;
+//     if ((value = (const __CFNumber*)CFDictionaryGetValue(desc,key)) == NULL
+//             || CFGetTypeID(value) != CFNumberGetTypeID())
+//         return 0;
+//     CFNumberGetValue(value, kCFNumberIntType, &resultNumber);
+//     return resultNumber;
+// }
+
+// CGDisplayErr GetDisplayDPI(CFDictionaryRef displayModeDict,CGDirectDisplayID displayID,
+//     double *horizontalDPI, double *verticalDPI)
+// {
+//     CGDisplayErr displayError = kCGErrorFailure;
+//     io_connect_t ioPort;
+//     CFDictionaryRef displayDict;
+
+//     ioPort = CGDisplayIOServicePort(displayID);
+//     if (ioPort != MACH_PORT_NULL) {
+//         displayDict = IOCreateDisplayInfoDictionary(ioPort, 0);
+//         if (displayDict != NULL) {
+//             const double mmPerInch = 25.4;
+//             double horizontalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayHorizontalImageSize)) / mmPerInch;
+//             double verticalSizeInInches = (double)GetIntFromDictionaryForKey(displayDict, CFSTR(kDisplayVerticalImageSize)) / mmPerInch;
+
+//             CFRelease(displayDict);
+
+//             *horizontalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayWidth) / horizontalSizeInInches;
+//             *verticalDPI = (double)GetIntFromDictionaryForKey(displayModeDict, kCGDisplayHeight) / verticalSizeInInches;
+//             displayError = CGDisplayNoErr;
+//         }
+//     }
+//     return displayError;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         double horizontalDPI, verticalDPI;
+
+//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay), kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+//         if (displayError == CGDisplayNoErr) {
+//             dpi = horizontalDPI;
+//         }
+//     }
+//     return dpi;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         double horizontalDPI, verticalDPI;
+
+//         CGDisplayErr displayError = GetDisplayDPI(CGDisplayCurrentMode(kCGDirectMainDisplay),  kCGDirectMainDisplay, &horizontalDPI, &verticalDPI);
+//         if (displayError == CGDisplayNoErr) {
+//             dpi = verticalDPI;
+//         }
+//     }
+//     return dpi;
+// }
+
+
+// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+//     if(screen < 16 && screen > -1) {
+//         CGSize size = CGDisplayScreenSize(getCGId(screen));
+//         height = size.height;
+//     }
+//     return height;
+// }
+
+// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+//     if(screen < 16 && screen > -1) {
+//         CGSize size = CGDisplayScreenSize(getCGId(screen));
+//         width = size.width;
+//     }
+//     return width;
+// }
 
 
 DAApprovalSessionRef session = NULL;
