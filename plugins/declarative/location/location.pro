@@ -18,17 +18,19 @@ INCLUDEPATH += ../../../src/location
 # The header and source files of this project. Note that qmake generates dependency information
 # and automatically adds necessary 'moc' files as it sees Q_OBJECT macros' in header files
 HEADERS += qdeclarativeposition_p.h \
-                     qdeclarativepositionsource_p.h \
-		     qdeclarativelandmark_p.h \
-                     qdeclarativelandmarksource_p.h \
-                     qdeclarativelandmarkcategory_p.h
+           qdeclarativepositionsource_p.h \
+           qdeclarativelandmark_p.h \
+           qdeclarativelandmarksource_p.h \
+           qdeclarativelandmarkcategory_p.h \
+           qdeclarativelandmarkfilters_p.h
 
 SOURCES += qdeclarativeposition.cpp \
-                     location.cpp \
-                     qdeclarativepositionsource.cpp \
-		     qdeclarativelandmark.cpp \
-                     qdeclarativelandmarksource.cpp \
-                     qdeclarativelandmarkcategory.cpp
+           location.cpp \
+           qdeclarativepositionsource.cpp \
+           qdeclarativelandmark.cpp \
+           qdeclarativelandmarksource.cpp \
+           qdeclarativelandmarkcategory.cpp \
+           qdeclarativelandmarkfilters.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

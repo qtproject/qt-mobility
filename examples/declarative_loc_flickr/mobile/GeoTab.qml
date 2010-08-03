@@ -47,9 +47,9 @@ Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
     property double latitude
-    property double longtitude
+    property double longitude
     latitude: positionSource.position.latitude
-    longtitude: positionSource.position.longtitude
+    longitude: positionSource.position.longitude
 
     width: 300; height: 130
     color: "blue"
@@ -112,8 +112,8 @@ Rectangle {
         Text {color: "white"; font.bold: true
             text: "Lon:"; style: Text.Raised; styleColor: "black"
         }
-        Text {id: longtitudeValue; color: "white"; font.bold: true
-            text: positionSource.position.longtitude; style: Text.Raised; styleColor: "black"
+        Text {id: longitudeValue; color: "white"; font.bold: true
+            text: positionSource.position.longitude; style: Text.Raised; styleColor: "black"
         }
     }
     Image {

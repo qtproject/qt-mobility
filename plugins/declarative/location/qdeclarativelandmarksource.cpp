@@ -1,6 +1,8 @@
 #include "qdeclarativelandmarksource_p.h"
 #include <QTimer>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
@@ -16,7 +18,6 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
     roleNames.insert(IconUrlRole, "iconUrl");
     roleNames.insert(UrlRole, "url");
     setRoleNames(roleNames);
-
     // Instantiate default manager
     m_manager = new QLandmarkManager();
 }
@@ -76,7 +77,6 @@ void QDeclarativeLandmarkSource::setActive(bool active)
 {
     if (active == m_active)
         return;
-
     if (active)
         QTimer::singleShot(0, this, SLOT(update())); // delay ensures all properties have been set
     else
@@ -86,6 +86,18 @@ void QDeclarativeLandmarkSource::setActive(bool active)
 bool QDeclarativeLandmarkSource::isActive() const
 {
     return m_active;
+}
+
+QObject* QDeclarativeLandmarkSource::nameFilter()
+{
+    qDebug() << "qdeclarativelandmarksource returning reference to nameFilter";
+    return &m_nameFilter;
+}
+
+QObject* QDeclarativeLandmarkSource::proximityFilter()
+{
+    qDebug() << "qdeclarativelandmarksource returning reference to proximityFilter";
+    return &m_proximityFilter;
 }
 
 void QDeclarativeLandmarkSource::update()
@@ -155,8 +167,7 @@ void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractReque
         m_error = m_fetchRequest->errorString();
         emit errorChanged(m_error);
     }
-    // Convert into declarative classes so that it is possible to return
-    // landmarks in a list.
+    // Convert into declarative classes --> possible to return landmarks in a list in QML
     convertLandmarksToDeclarative();
 }
 

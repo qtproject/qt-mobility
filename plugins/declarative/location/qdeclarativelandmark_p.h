@@ -56,8 +56,6 @@ signals:
     void iconUrlChanged(QUrl iconUrl);
     void urlChanged(QUrl url);
 
-public slots:
-
 private:
     friend class QDeclarativeLandmarkSource;
     void setLandmark(const QLandmark& landmark);

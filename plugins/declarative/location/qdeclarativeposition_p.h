@@ -64,8 +64,8 @@ class QDeclarativePosition : public QObject
     Q_PROPERTY(QDateTime timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
     Q_PROPERTY(bool latitudeValid READ isLatitudeValid NOTIFY latitudeValidChanged)
-    Q_PROPERTY(double longtitude READ longtitude WRITE setLongtitude NOTIFY longtitudeChanged)
-    Q_PROPERTY(bool longtitudeValid READ isLongtitudeValid NOTIFY longtitudeValidChanged)
+    Q_PROPERTY(double longitude READ longitude WRITE setlongitude NOTIFY longitudeChanged)
+    Q_PROPERTY(bool longitudeValid READ islongitudeValid NOTIFY longitudeValidChanged)
     Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
     Q_PROPERTY(bool altitudeValid READ isAltitudeValid NOTIFY altitudeValidChanged)
     Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged)
@@ -83,9 +83,9 @@ public:
     void setLatitude(double latitude);
     bool isLatitudeValid() const;
 
-    double longtitude() const;
-    void setLongtitude(double longtitude);
-    bool isLongtitudeValid() const;
+    double longitude() const;
+    void setlongitude(double longitude);
+    bool islongitudeValid() const;
 
     double speed() const;
     void setSpeed(double speed);
@@ -99,8 +99,8 @@ Q_SIGNALS:
     void timestampChanged(QDateTime timestamp);
     void latitudeChanged(double latitude);
     void latitudeValidChanged(bool isValid);
-    void longtitudeChanged(double longtitude);
-    void longtitudeValidChanged(bool isValid);
+    void longitudeChanged(double longitude);
+    void longitudeValidChanged(bool isValid);
     void altitudeChanged(double altitude);
     void altitudeValidChanged(bool isValid);
     void speedChanged(double speed);
@@ -111,8 +111,8 @@ private:
     QDateTime m_timestamp;
     double m_latitude;
     bool m_latitudeValid;
-    double m_longtitude;
-    bool m_longtitudeValid;
+    double m_longitude;
+    bool m_longitudeValid;
     double m_altitude;
     bool m_altitudeValid;
     double m_speed;

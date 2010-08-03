@@ -65,6 +65,8 @@ public:
         qmlRegisterType<QDeclarativeLandmarkSource>(uri, 1, 1, "LandmarkSource");
         qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
         qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
+        qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
+        qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
     }
 };
 

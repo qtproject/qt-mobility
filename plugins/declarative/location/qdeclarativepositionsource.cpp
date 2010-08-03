@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as \l Position::latitude,
-    \l Position::longtitude, \l Position::speed, and
+    \l Position::longitude, \l Position::speed, and
     \l Position::altitude. This element is part of the \bold{QtMobility.location 1.0} module.
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
@@ -98,12 +98,12 @@ QTM_BEGIN_NAMESPACE
             Text {text: "active: "     + positionSource.active}
             Text {text: "<==== Position ====>"}
             Text {text: "latitude: "   + positionSource.position.latitude}
-            Text {text: "longtitude: "   + positionSource.position.longtitude}
+            Text {text: "longitude: "   + positionSource.position.longitude}
             Text {text: "altitude: "   + positionSource.position.altitude}
             Text {text: "speed: " + positionSource.position.speed}
             Text {text: "timestamp: "  + positionSource.position.timestamp}
             Text {text: "altitudeValid: "  + positionSource.position.altitudeValid}
-            Text {text: "longtitudeValid: "  + positionSource.position.longtitudeValid}
+            Text {text: "longitudeValid: "  + positionSource.position.longitudeValid}
             Text {text: "latitudeValid: "  + positionSource.position.latitudeValid}
             Text {text: "speedValid: "     + positionSource.position.speedValid}
         }
@@ -367,7 +367,7 @@ void QDeclarativePositionSource::stop()
 
     This signal is sent when a position update has been received
     from the location source. Upon receiving this signal, at least
-    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp
+    \l Position::latitude, \l Position::longitude, and \l Position::timestamp
     members of the \l position have been update.
 
     \sa updateInterval
@@ -411,7 +411,7 @@ bool QDeclarativePositionSource::isActive() const
     (e.g. sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
-    \l Position::latitude, \l Position::longtitude, and \l Position::timestamp can
+    \l Position::latitude, \l Position::longitude, and \l Position::timestamp can
     be assumed to be valid.
 
     \sa start, stop, update
@@ -428,7 +428,7 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());
         m_position.setLatitude(update.coordinate().latitude());
-        m_position.setLongtitude(update.coordinate().longitude());
+        m_position.setlongitude(update.coordinate().longitude());
 
         if (update.coordinate().type() == QGeoCoordinate::Coordinate3D) {
             m_position.setAltitude(update.coordinate().altitude());
@@ -450,5 +450,3 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
 #include "moc_qdeclarativepositionsource_p.cpp"
 
 QTM_END_NAMESPACE
-
-
