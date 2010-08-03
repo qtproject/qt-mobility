@@ -112,6 +112,8 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
 
         g_object_set(G_OBJECT(m_playbin), "video-sink", m_videoOutputBin, NULL);
 
+        g_signal_connect(G_OBJECT(m_playbin), "notify::source", G_CALLBACK(playbinNotifySource), this);
+
         // Initial volume
         double volume = 1.0;
         g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
@@ -132,15 +134,15 @@ QGstreamerPlayerSession::~QGstreamerPlayerSession()
     }
 }
 
-void QGstreamerPlayerSession::load(const QUrl &url)
+void QGstreamerPlayerSession::load(const QNetworkRequest &request)
 {
-    m_url = url;
+    m_request = request;
 
     if (m_playbin) {
         m_tags.clear();
         emit tagsChanged();
 
-        g_object_set(G_OBJECT(m_playbin), "uri", m_url.toEncoded().constData(), NULL);
+        g_object_set(G_OBJECT(m_playbin), "uri", m_request.url().toEncoded().constData(), NULL);
 
         if (!m_streamTypes.isEmpty()) {
             m_streamProperties.clear();
@@ -319,6 +321,11 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 
     if (m_state == QMediaPlayer::StoppedState) {
         m_pendingVideoSink = 0;
+        GstState sinkState = GST_STATE_NULL;
+        GstState sinkPendingState = GST_STATE_NULL;
+        gst_element_get_state(m_videoSink, &sinkState, &sinkPendingState, GST_CLOCK_TIME_NONE);
+
+        gst_element_set_state(m_videoSink, GST_STATE_NULL);
         gst_element_unlink(m_videoScale, m_videoSink);
 
         gst_bin_remove(GST_BIN(m_videoOutputBin), m_videoSink);
@@ -327,7 +334,7 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
 
         gst_bin_add(GST_BIN(m_videoOutputBin), m_videoSink);
         gst_element_link(m_videoScale, m_videoSink);
-
+        gst_element_set_state(m_videoSink, sinkPendingState);
     } else {
         if (m_pendingVideoSink) {
             m_pendingVideoSink = videoSink;
@@ -434,11 +441,11 @@ bool QGstreamerPlayerSession::play()
 {
     if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_url.toString();
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
             m_state = QMediaPlayer::StoppedState;            
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_url.path()));
+            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }
@@ -450,11 +457,11 @@ bool QGstreamerPlayerSession::pause()
 {
     if (m_playbin) {
         if (gst_element_set_state(m_playbin, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE) {
-            qWarning() << "GStreamer; Unable to play -" << m_url.toString();
+            qWarning() << "GStreamer; Unable to play -" << m_request.url().toString();
             m_state = QMediaPlayer::StoppedState;
 
             emit stateChanged(m_state);
-            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_url.path()));
+            emit error(int(QMediaPlayer::ResourceError), tr("Unable to play %1").arg(m_request.url().path()));
         } else
             return true;
     }
@@ -940,3 +947,65 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     emit streamsChanged();
 }
+
+void QGstreamerPlayerSession::playbinNotifySource(GObject *o, GParamSpec *p, gpointer d)
+{
+    Q_UNUSED(p);
+
+    GstElement *source = 0;
+    g_object_get(o, "source", &source, NULL);
+    if (source == 0)
+        return;
+
+    // Turn off icecast metadata request, will be re-set if in QNetworkRequest
+    // (souphttpsrc docs say is false by default, but header appears in request
+    // @version 0.10.21)
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "iradio-mode") != 0)
+        g_object_set(G_OBJECT(source), "iradio-mode", FALSE, NULL);
+
+
+    // Set Headers
+    const QByteArray userAgentString("User-Agent");
+
+    QGstreamerPlayerSession *self = reinterpret_cast<QGstreamerPlayerSession *>(d);
+
+    // User-Agent - special case, souphhtpsrc will always set something, even if
+    // defined in extra-headers
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "user-agent") != 0) {
+        g_object_set(G_OBJECT(source), "user-agent",
+                     self->m_request.rawHeader(userAgentString).constData(), NULL);
+    }
+
+    // The rest
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(source), "extra-headers") != 0) {
+        GstStructure *extras = gst_structure_empty_new("extras");
+
+        foreach (const QByteArray &rawHeader, self->m_request.rawHeaderList()) {
+            if (rawHeader == userAgentString) // Filter User-Agent
+                continue;
+            else {
+                GValue headerValue;
+
+                memset(&headerValue, 0, sizeof(GValue));
+                g_value_init(&headerValue, G_TYPE_STRING);
+
+                g_value_set_string(&headerValue,
+                                   self->m_request.rawHeader(rawHeader).constData());
+
+                gst_structure_set_value(extras, rawHeader.constData(), &headerValue);
+            }
+        }
+
+        if (gst_structure_n_fields(extras) > 0)
+            g_object_set(G_OBJECT(source), "extra-headers", extras, NULL);
+
+        gst_structure_free(extras);
+    }
+
+    gst_object_unref(source);
+
+    // NOTE: code assumes souphttpsrc, but written so anything with "extra-headers"
+    // should be functional.
+}
+
+

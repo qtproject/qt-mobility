@@ -124,7 +124,7 @@ int main(int argc, char** argv)
 
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
-    control->publishServices("qt_sfw_example_echo");
+    control->publishServices("sfwecho_service");
 #ifdef Q_OS_SYMBIAN
     RProcess::Rendezvous(KErrNone);
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef TST_QMEDIARECORDER_XA_H
-#define TST_QMEDIARECORDER_XA_H
-
+#include <QtCore/qcoreapplication.h>
 #include <QtTest/QtTest>
-#include <qmediarecorder.h>
-#include <qaudiocapturesource.h>
 
-QT_USE_NAMESPACE
+#include "tst_qradiotuner.h"
 
-class tst_QMediaRecorder: public QObject
+#ifdef Q_OS_SYMBIAN
+#include "tst_qradiotuner_s60.h"
+#endif
+
+int main(int argc, char**argv)
 {
-    Q_OBJECT
-
-public slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-private slots:
-    void testMediaRecorderObject(); //1
-    void testDefaultAudioEncodingSettings(); //2
-    void testOutputLocation(); //3
-    void testAudioRecordingLocationOnly(); //4
-    void testAudioRecording_data(); //5
-    void testAudioRecording(); //6
-
-private:
-    QUrl nextFileName(QDir outputDir, QString appendName, QString ext);
-
-private:
-    QAudioCaptureSource* audiosource;
-    QMediaRecorder* audiocapture;
-
-};
-
-#endif /* TST_QMEDIARECORDER_XA_H */
+    QApplication app(argc,argv);
+    int ret;
+    tst_QRadioTuner test_api;
+    ret = QTest::qExec(&test_api, argc, argv);
+#ifdef Q_OS_SYMBIAN
+    tst_QRadioTuner_s60 test_s60;
+    ret = QTest::qExec(&test_s60, argc, argv);
+#endif
+    return ret;
+}

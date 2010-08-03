@@ -59,13 +59,13 @@ void tst_QSystemDisplayInfo::tst_displayBrightness()
 {
     QSystemDisplayInfo di;
     QVERIFY(di.displayBrightness(0) > -2);
+    QVERIFY(di.displayBrightness(999) == -1);
 }
 
 void tst_QSystemDisplayInfo::tst_colorDepth()
 {
     QSystemDisplayInfo di;
     int depth = di.colorDepth(0);
-    qWarning() << __FUNCTION__ << depth;
 
     QVERIFY(depth == 0
             || depth == 8
@@ -73,6 +73,8 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
             || depth == 24
             || depth == 32
             || depth == 64);
+
+    QVERIFY(di.colorDepth(999) == -1);
 }
 
 
