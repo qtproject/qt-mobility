@@ -51,6 +51,7 @@
 #include "camerabinlocks.h"
 #include "camerabinmetadata.h"
 #include "camerabinexposure.h"
+#include "camerabinflash.h"
 #include "camerabinfocus.h"
 #include "camerabinimagecapture.h"
 #include "camerabinimageprocessing.h"
@@ -94,7 +95,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
                 m_captureSession, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));        
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoWindow = new QGstreamerVideoOverlay(this);
@@ -179,6 +180,9 @@ QMediaControl *CameraBinService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraExposureControl_iid) == 0)
         return m_captureSession->cameraExposureControl();
+
+    if (qstrcmp(name, QCameraFlashControl_iid) == 0)
+        return m_captureSession->cameraFlashControl();
 
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
         return m_captureSession->cameraFocusControl();

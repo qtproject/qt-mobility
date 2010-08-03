@@ -1057,16 +1057,14 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::BoxFilter:
         {
             const QLandmarkBoxFilter boxFilter(filter);
-            if (!boxFilter.topLeftCoordinate().isValid())
+
+            if (!boxFilter.boundingBox().isValid())
                 return false;
 
-            if (!boxFilter.bottomRightCoordinate().isValid())
-                return false;
-
-            double tly = boxFilter.topLeftCoordinate().latitude();
-            double bry = boxFilter.bottomRightCoordinate().latitude();
-            double tlx = boxFilter.topLeftCoordinate().longitude();
-            double brx = boxFilter.bottomRightCoordinate().longitude();
+            double tly = boxFilter.boundingBox().topLeft().latitude();
+            double bry = boxFilter.boundingBox().bottomRight().latitude();
+            double tlx = boxFilter.boundingBox().topLeft().longitude();
+            double brx = boxFilter.boundingBox().bottomRight().longitude();
 
             bool latWrap = (tly < bry);
             bool longWrap = (tlx > brx);

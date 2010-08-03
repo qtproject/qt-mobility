@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-filter
 */
 
@@ -62,7 +62,15 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter);
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
                                        const QGeoCoordinate &bottomRight)
-        : QLandmarkFilter(new QLandmarkBoxFilterPrivate(topLeft, bottomRight))
+        : QLandmarkFilter(new QLandmarkBoxFilterPrivate(QGeoBoundingBox(topLeft, bottomRight)))
+{
+}
+
+/*!
+    Creates a filter that will search for landmarks within the \a boundingBox.
+*/
+QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoBoundingBox &boundingBox)
+        : QLandmarkFilter(new QLandmarkBoxFilterPrivate(boundingBox))
 {
 }
 
@@ -80,61 +88,37 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
 }
 
 /*!
-    Returns the top-left corner of the bounding box this filter uses
-    to select landmarks.
+    Returns the filter's bounding box.
 */
-QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate() const
+QGeoBoundingBox QLandmarkBoxFilter::boundingBox() const
 {
     Q_D(const QLandmarkBoxFilter);
-    return d->topLeftCoord;
+    return d->boundingBox;
 }
 
 /*!
-    Sets the \a topLeft corner of the bounding box this filter uses to
-    select landmarks.
+    Sets the \a boundingBox of the filter.
 */
-void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
+void QLandmarkBoxFilter::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
     Q_D(QLandmarkBoxFilter);
-    d->topLeftCoord = topLeft;
+    d->boundingBox = boundingBox;
 }
 
-/*!
-    Returns the bottom-right coordinate of the bounding box this filter uses
-    to select landmarks.
-*/
-QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate() const
-{
-    Q_D(const QLandmarkBoxFilter);
-    return d->bottomRightCoord;
-}
-
-/*!
-    Sets the \a bottomRight coordinate of the bounding box this filter uses to
-    select landmarks.
-*/
-void QLandmarkBoxFilter::setBottomRightCoordinate(const QGeoCoordinate &bottomRight)
-{
-    Q_D(QLandmarkBoxFilter);
-    d->bottomRightCoord = bottomRight;
-}
 
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft,
-        const QGeoCoordinate &bottomRight)
+QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QGeoBoundingBox &box)
         : QLandmarkFilterPrivate(),
-        topLeftCoord(topLeft),
-        bottomRightCoord(bottomRight)
+        boundingBox(box)
 {
     type = QLandmarkFilter::BoxFilter;
 }
 
 QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
-        topLeftCoord(other.topLeftCoord),
-        bottomRightCoord(other.bottomRightCoord) {}
+        boundingBox(other.boundingBox) {}
 
 QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate() {}
 
