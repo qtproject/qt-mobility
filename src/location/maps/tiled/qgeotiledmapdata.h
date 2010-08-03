@@ -51,8 +51,6 @@ class QGeoTiledMapDataPrivate;
 
 class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
 {
-    friend class QGeoTiledMapDataPrivate;
-
     Q_OBJECT
 
 public:
