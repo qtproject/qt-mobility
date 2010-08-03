@@ -62,12 +62,8 @@
 #include <QRectF>
 #include <QHash>
 #include <QCache>
-#include <QVector>
-#include <QString>
-#include <QPainterPath>
 #include <QPair>
 #include <QList>
-#include <QLineF>
 
 class QGraphicsScene;
 
