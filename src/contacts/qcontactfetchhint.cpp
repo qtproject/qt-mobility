@@ -173,6 +173,62 @@ void QContactFetchHint::setRelationshipTypesHint(const QStringList& relationship
 }
 
 /*!
+  Returns the maximum size of the result set that the manager should retrieve
+  when fetching contacts, relationships or detail definitions.  This hint may
+  be ignored by the backend, in which case it will return all of the results
+  for a given query.  If the limit is negative, or not set at all, the manager
+  will return all of the results for a given query.
+
+  \sa setResultLimit()
+ */
+int QContactFetchHint::resultLimit() const
+{
+    return d->m_resultLimit;
+}
+
+/*!
+  Sets the maximum size of the result set that the manager should retrieve
+  when fetching contacts, relationships or detail definitions to \a limit.
+  This hint may be ignored by the backend, in which case it will return all
+  of the results for a given query.
+
+  Note that if the fetch hint is part of an asynchronous request, the results
+  reported by the request may change iteratively until the request transitions
+  to the QContactAbstractRequest::StateFinished or
+  QContactAbstractRequest::StateCanceled states.
+
+  If the \a limit is negative, or no limit is set, the manager will return
+  all results for the query.
+
+  \sa resultLimit()
+*/
+void QContactFetchHint::setResultLimit(int limit)
+{
+    d->m_resultLimit = limit;
+}
+
+/*!
+  Returns the preferred (geometric) size of any images returned
+  by the manager for a given request.  This hint may be ignored
+  by the manager, in which case it may return images of any size.
+ */
+QSize QContactFetchHint::preferredImageSize() const
+{
+    return d->m_preferredImageSize;
+}
+
+/*!
+  Sets the preferred (geometric) size of any images returned
+  by the manager for the given request to \a size.  This hint
+  may be ignored by the manager, in which case it may return
+  images of any size.
+ */
+void QContactFetchHint::setPreferredImageSize(const QSize& size)
+{
+    d->m_preferredImageSize = size;
+}
+
+/*!
   Returns the optimization hint flags specified by the client.
   These hints may be ignored by the backend, in which case it will return
   the full set of information accessible in a contact, including
