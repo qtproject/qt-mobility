@@ -18,7 +18,6 @@ PUBLIC_HEADERS += \
                     landmarks/qlandmarkfetchhint.h \
                     landmarks/qlandmarkfetchrequest.h \
                     landmarks/qlandmarkfilter.h \
-                    landmarks/qlandmarkfreetextfilter.h \
                     landmarks/qlandmarkid.h \
                     landmarks/qlandmarkidfetchrequest.h \
                     landmarks/qlandmarkidfilter.h \
@@ -45,7 +44,6 @@ PRIVATE_HEADERS += \
                     landmarks/qlandmarkdistancesort_p.h \
                     landmarks/qlandmarkfetchhint_p.h \
                     landmarks/qlandmarkfilter_p.h \
-                    landmarks/qlandmarkfreetextfilter_p.h \
                     landmarks/qlandmarkid_p.h \
                     landmarks/qlandmarkidfilter_p.h \
                     landmarks/qlandmarkintersectionfilter_p.h \
@@ -73,7 +71,6 @@ SOURCES += \
             landmarks/qlandmarkfetchhint.cpp \
             landmarks/qlandmarkfetchrequest.cpp \
             landmarks/qlandmarkfilter.cpp \
-            landmarks/qlandmarkfreetextfilter.cpp \
             landmarks/qlandmarkid.cpp \
             landmarks/qlandmarkidfetchrequest.cpp \
             landmarks/qlandmarkidfilter.cpp \
