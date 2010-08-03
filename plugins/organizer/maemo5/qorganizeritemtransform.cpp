@@ -82,7 +82,7 @@ QOrganizerEvent OrganizerItemTransform::convertCEventToQEvent(CEvent *cevent)
     // Priority
     int tempint = cevent->getPriority();
     if (tempint != -1)
-    retn.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+        retn.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
 
     // Location geo coordinates
     QString tempstr = QString::fromStdString(cevent->getGeo());
@@ -290,9 +290,20 @@ void OrganizerItemTransform::fillInCommonCComponentDetails(QOrganizerItem *item,
         // Location
         tempstr = QString::fromStdString(component->getLocation());
         if(!tempstr.isEmpty()) {
-            QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
-            il.setLocationName( tempstr );
-            item->saveDetail(&il);
+            int lastCr = tempstr.lastIndexOf("\n");
+            if (lastCr == -1) {
+                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+                il.setLocationName(tempstr);
+                item->saveDetail(&il);
+            }
+            else {
+                QString locationName = tempstr.left(lastCr);
+                QString locationAddress = tempstr.mid(lastCr + 1);
+                QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+                il.setLocationName(locationName);
+                il.setAddress(locationAddress);
+                item->saveDetail(&il);
+            }
         }
 
         // Timestamps
@@ -373,8 +384,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
             cevent->setGeo(event->locationGeoCoordinates().toStdString());
 
         // Priority
-        if (!event->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-            cevent->setPriority(static_cast<int>(event->priority()));
+        cevent->setPriority(static_cast<int>(event->priority()));
 
         // Start date
         if (!event->startDateTime().isNull())
@@ -416,8 +426,7 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
         const QOrganizerTodo *todo = static_cast<const QOrganizerTodo *>(item);
 
         // Priority
-        if (!todo->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-            ctodo->setPriority(static_cast<int>(todo->priority()));
+        ctodo->setPriority(static_cast<int>(todo->priority()));
 
         // Date start
         if (!todo->startDateTime().isNull())
@@ -485,8 +494,10 @@ CComponent* OrganizerItemTransform::createCComponent(CCalendar *cal, const QOrga
 
         // Location (Geo location is not set here as it's not a general CComponent detail)
         QOrganizerItemLocation location = item->detail("QOrganizerItemLocation::DefinitionName");
-        if (!location.isEmpty())
-            retn->setLocation(location.locationName().toStdString());
+        if (!location.isEmpty()) {
+            QString locationString = location.locationName() + "\n" + location.address();
+            retn->setLocation(locationString.toStdString());
+        }
 
         // dateStart and dateEnd are common fields for all CComponents, but those are set
         // separately for each item type here, because there are independent time ranges
