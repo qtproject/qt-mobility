@@ -55,7 +55,6 @@ AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags
 
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::title);
-    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
     properties.insert(AlbumDelegate::Artist, QDocumentGallery::artist);
     properties.insert(AlbumDelegate::TrackCount, QDocumentGallery::trackCount);
     model->addColumn(properties);

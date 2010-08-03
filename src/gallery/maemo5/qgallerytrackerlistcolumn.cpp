@@ -120,6 +120,11 @@ QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator r
     return QUrl::fromLocalFile((row + m_column)->toString());
 }
 
+QGalleryTrackerCompositeColumn *QGalleryTrackerFileUrlColumn::create(const QVector<int> &)
+{
+    return new QGalleryTrackerFileUrlColumn(0);
+}
+
 QVariant QGalleryTrackerFilePathColumn::value(QVector<QVariant>::const_iterator row) const
 {
     return *row;

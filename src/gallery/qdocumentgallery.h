@@ -69,6 +69,7 @@ public:
     static const QGalleryType PhotoAlbum;
 
     // Common
+    static const QGalleryProperty url;
     static const QGalleryProperty author;
     static const QGalleryProperty copyright;
     static const QGalleryProperty description;
@@ -78,12 +79,6 @@ public:
     static const QGalleryProperty subject;
     static const QGalleryProperty keywords;
     static const QGalleryProperty language;
-    static const QGalleryProperty iconImage;
-    static const QGalleryProperty iconPixmap;
-    static const QGalleryProperty thumbnailImage;
-    static const QGalleryProperty thumbnailPixmap;
-    static const QGalleryProperty previewImage;
-    static const QGalleryProperty previewPixmap;
 
     // File
     static const QGalleryProperty path;

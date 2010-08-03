@@ -164,7 +164,6 @@ void DocumentPropertiesWidget::requestDocumentProperties()
 void DocumentPropertiesWidget::requestImageProperties()
 {
     QStringList propertyNames = QStringList()
-            << QDocumentGallery::previewPixmap
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
@@ -183,14 +182,12 @@ void DocumentPropertiesWidget::requestImageProperties()
 void DocumentPropertiesWidget::requestVideoProperties()
 {
     QStringList propertyNames = QStringList()
-            << QDocumentGallery::previewPixmap
             << QDocumentGallery::title
             << QDocumentGallery::width
             << QDocumentGallery::height
             << QDocumentGallery::duration;
 
     QStringList labels = QStringList()
-            << tr("Preview")
             << tr("Title")
             << tr("Width")
             << tr("Height")

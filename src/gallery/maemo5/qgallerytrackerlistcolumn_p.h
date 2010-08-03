@@ -184,6 +184,8 @@ public:
 
     QVariant value(QVector<QVariant>::const_iterator row) const;
 
+    static QGalleryTrackerCompositeColumn *create(const QVector<int> &);
+
 private:
     const int m_column;
 };

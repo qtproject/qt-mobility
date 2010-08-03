@@ -55,7 +55,6 @@ PhotoView::PhotoView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags
 
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
-    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailPixmap);
     model->addColumn(properties);
 
     model->setSortPropertyNames(QStringList()

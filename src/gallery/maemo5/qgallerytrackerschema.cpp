@@ -626,10 +626,8 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
 };
 
 #define QT_GALLERY_FILE_COMPOSITE_PROPERTIES \
-    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create)
-
-#define QT_GALLERY_THUMBNAIL_COMPOSITE_PROPERTIES \
-    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("thumbnailCacheId", String, QGalleryTrackerThumbnailCacheIdColumn::create)
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("filePath", String, QGalleryTrackerFilePathColumn::create), \
+    QT_GALLERY_COMPOSITE_PROPERTY_NO_DEPENDENCIES("url", Url, QGalleryTrackerFileUrlColumn::create)
 
 static const QGalleryCompositeProperty qt_galleryFileCompositePropertyList[] =
 {
@@ -779,8 +777,7 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
 
 static const QGalleryCompositeProperty qt_galleryImageCompositePropertyList[] =
 {
-    QT_GALLERY_FILE_COMPOSITE_PROPERTIES,
-    QT_GALLERY_THUMBNAIL_COMPOSITE_PROPERTIES
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
 ////////
@@ -807,8 +804,7 @@ static const QGalleryItemProperty qt_galleryVideoPropertyList[] =
 
 static const QGalleryCompositeProperty qt_galleryVideoCompositePropertyList[] =
 {
-    QT_GALLERY_FILE_COMPOSITE_PROPERTIES,
-    QT_GALLERY_THUMBNAIL_COMPOSITE_PROPERTIES
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
 ///////////
@@ -831,8 +827,7 @@ static const QGalleryItemProperty qt_galleryDocumentPropertyList[] =
 
 static const QGalleryCompositeProperty qt_galleryDocumentCompositePropertyList[] =
 {
-    QT_GALLERY_FILE_COMPOSITE_PROPERTIES,
-    QT_GALLERY_THUMBNAIL_COMPOSITE_PROPERTIES
+    QT_GALLERY_FILE_COMPOSITE_PROPERTIES
 };
 
 /////////////
@@ -1408,6 +1403,7 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
     for (int i = 0, count = types.count(); i < count; ++i) {
         switch (types.at(i)) {
         case QVariant::String:
+        case QVariant::Url:
             columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::StringList:
@@ -1609,7 +1605,6 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     QStringList aggregateNames;
     QStringList aliasNames;
     QStringList compositeNames;
-    QStringList thumbnailNames;
     QVector<QGalleryProperty::Attributes> identityAttributes;
     QVector<QGalleryProperty::Attributes> aggregateAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
