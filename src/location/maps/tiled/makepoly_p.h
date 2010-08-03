@@ -65,8 +65,6 @@ QTM_BEGIN_NAMESPACE
 template<typename Info, typename Private> void makepoly(Info & self, const QList<QGeoCoordinate> & path, const Private *polygon, QPolygonF &points, bool closedPath, qreal ypole = -100) {
     points.clear();
 
-    //TODO - handle when polygons are drawn across the dateline...
-    // regular graphics item with polygon item children?
     QGeoCoordinate lastCoord = closedPath ? path.last() : path.first();
     QPointF lastPoint = self.mapData->q_ptr->coordinateToWorldPixel(lastCoord);
 
