@@ -100,6 +100,7 @@ public:
 
 public Q_SLOTS:
     void processRequest();
+    void doStart();
 
 private:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest *req);

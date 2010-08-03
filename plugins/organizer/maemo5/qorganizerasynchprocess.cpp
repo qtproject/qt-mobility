@@ -74,6 +74,11 @@ void OrganizerRequestTimeoutTimer::internalTimeout()
 OrganizerAsynchProcess::OrganizerAsynchProcess(QOrganizerItemMaemo5Engine* engine)
     : m_engine(engine)
 {
+    QTimer::singleShot(0, this, SLOT(doStart()));
+}
+
+void OrganizerAsynchProcess::doStart()
+{
     start();
     QObject::moveToThread(this);
 }
