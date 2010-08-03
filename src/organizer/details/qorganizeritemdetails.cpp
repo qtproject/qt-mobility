@@ -613,6 +613,24 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderTypes, "ReminderTy
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
 
+// XXX TODO: documentation for field keys + functions...
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldDateTime, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "RepetitionCount");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualMessage, "VisualMessage");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualDataUrl, "VisualDataUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualData, "VisualData");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldAudibleDataUrl, "AudibleDataUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldAudibleData, "AudibleData");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTactileDataUrl, "TactileDataUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTactileData, "TactileData");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailSubject, "EmailSubject");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailBody, "EmailBody");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailAttachments, "EmailAttachments");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailRecipients, "EmailRecipients");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldProcedureUrl, "ProcedureUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldProcedureArguments, "ProcedureArguments");
+
 /*!
    \fn QOrganizerItemReminder::setReminderTypes(ReminderTypes reminderTypes)
 
