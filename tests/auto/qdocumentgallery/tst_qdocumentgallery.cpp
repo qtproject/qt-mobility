@@ -89,11 +89,13 @@ void tst_QDocumentGallery::itemTypeProperties_data()
             << QDocumentGallery::copyright
             << QDocumentGallery::fileName
             << QDocumentGallery::path
+            << QDocumentGallery::filePath
+            << QDocumentGallery::url
             << QDocumentGallery::fileSize
             << QDocumentGallery::language
             << QDocumentGallery::lastAccessed
             << QDocumentGallery::lastModified
-            << QDocumentGallery::mimeType
+            << QDocumentGallery::mimeType;
 #endif
             ;
     QTest::newRow("File") << QString(QDocumentGallery::File) << (QStringList(fileProperties)
@@ -191,6 +193,15 @@ void tst_QDocumentGallery::propertyAttributes_data()
 #else
             << QGalleryProperty::Attributes();
 #endif
+    QTest::newRow("File.filePath")
+                    << QString(QDocumentGallery::File)
+                    << QString(QDocumentGallery::filePath)
+#if defined(Q_OS_UNIX) && !defined(QT_NO_DBUS)
+                    << (QGalleryProperty::CanRead | QGalleryProperty::CanFilter);
+#else
+                    << QGalleryProperty::Attributes();
+#endif
+
     QTest::newRow("Audio.albumTitle")
             << QString(QDocumentGallery::Audio)
             << QString(QDocumentGallery::albumTitle)

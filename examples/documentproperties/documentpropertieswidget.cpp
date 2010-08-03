@@ -55,8 +55,7 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
     setLayout(new QFormLayout);
 
     request = new QGalleryQueryRequest(gallery, this);
-    request->setFilter(QDocumentGallery::fileName == file.fileName()
-            && QDocumentGallery::path == file.absolutePath());
+    request->setFilter(QDocumentGallery::filePath == file.absoluteFilePath());
 
     QStringList propertyNames = QStringList()
             << QDocumentGallery::fileName
@@ -170,7 +169,6 @@ void DocumentPropertiesWidget::requestImageProperties()
             << QDocumentGallery::keywords;
 
     QStringList labels = QStringList()
-            << tr("Preview")
             << tr("Title")
             << tr("Width")
             << tr("Height")
@@ -302,10 +300,6 @@ void DocumentPropertiesWidget::updateValue(int widgetIndex, int propertyKey)
     } else if (propertyAttributes & QGalleryProperty::CanRead) {
         if (QLabel *label = qobject_cast<QLabel *>(widget)) {
             switch (value.type()) {
-            case QVariant::Image:
-            case QVariant::Pixmap:
-                label->setPixmap(value.value<QPixmap>());
-                break;
             case QVariant::StringList:
                 label->setText(value.toStringList().join(QLatin1String("; ")));
             default:
