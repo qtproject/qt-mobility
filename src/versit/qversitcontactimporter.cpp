@@ -127,6 +127,33 @@ QTM_USE_NAMESPACE
   list of details that the importer will update, and can be modified (by removing, modifying or
   adding details to the list)
  */
+void QVersitContactImporterPropertyHandlerV2::propertyProcessed(
+        const QVersitDocument& document,
+        const QVersitProperty& property,
+        bool alreadyProcessed,
+        const QContact& contact,
+        QList<QContactDetail>* updatedDetails)
+{
+    Q_UNUSED(document)
+    Q_UNUSED(property)
+    Q_UNUSED(alreadyProcessed)
+    Q_UNUSED(contact)
+    Q_UNUSED(updatedDetails)
+}
+
+void QVersitContactImporterPropertyHandlerV2::propertyProcessed(
+        const QVersitDocument& document,
+        const QVersitProperty& property,
+        const QContact& contact,
+        bool *alreadyProcessed,
+        QList<QContactDetail>* updatedDetails)
+{
+    Q_UNUSED(document)
+    Q_UNUSED(property)
+    Q_UNUSED(contact)
+    Q_UNUSED(alreadyProcessed)
+    Q_UNUSED(updatedDetails)
+}
 
 /*!
   \fn void QVersitContactImporterPropertyHandlerV2::documentProcessed(const QVersitDocument& document, QContact* contact)

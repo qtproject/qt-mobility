@@ -79,8 +79,7 @@ public:
                                  QSet<QString> processedFields,
                                  const QVersitDocument& document,
                                  QList<QVersitProperty>* toBeRemoved,
-                                 QList<QVersitProperty>* toBeAdded) {}
-
+                                 QList<QVersitProperty>* toBeAdded);
     virtual ~QVersitContactExporterDetailHandlerV2() {}
 
     // made non-pure for the transition period - this will soon be made pure, so it must be
@@ -90,7 +89,7 @@ public:
                                  const QVersitDocument& document,
                                  QSet<QString>* processedFields,
                                  QList<QVersitProperty>* toBeRemoved,
-                                 QList<QVersitProperty>* toBeAdded) {}
+                                 QList<QVersitProperty>* toBeAdded);
     virtual void contactProcessed(const QContact& contact,
                                   QVersitDocument* document) = 0;
 };

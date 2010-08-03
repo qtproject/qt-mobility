@@ -86,8 +86,13 @@ HEADERS += \
 symbian { 
     TARGET.UID3 = 0x2002BFBF
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL \
-        -TCB
+    TARGET.CAPABILITY = ALL -TCB
+
+    LIBS += -lefsrv
+
+    VERSIT_DEPLOYMENT.sources = QtVersit.dll
+    VERSIT_DEPLOYMENT.path = /sys/bin
+    DEPLOYMENT += VERSIT_DEPLOYMENT
 }
 
 maemo5|maemo6 {
