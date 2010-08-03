@@ -65,6 +65,9 @@ public:
 
     QGeoRouteSegment& operator= (const QGeoRouteSegment &other);
 
+    bool operator ==(const QGeoRouteSegment &other) const;
+    bool operator !=(const QGeoRouteSegment &other) const;
+
     void setTravelTime(int secs);
     int travelTime() const;
 

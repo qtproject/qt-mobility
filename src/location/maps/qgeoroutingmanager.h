@@ -60,7 +60,6 @@ public:
     ~QGeoRoutingManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);

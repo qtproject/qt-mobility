@@ -62,14 +62,13 @@ QTM_BEGIN_NAMESPACE
 class QGeoRoutingManagerEnginePrivate
 {
 public:
-    QGeoRoutingManagerEnginePrivate(const QMap<QString, QString> &parameters);
+    QGeoRoutingManagerEnginePrivate();
     QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other);
     ~QGeoRoutingManagerEnginePrivate();
 
     QGeoRoutingManagerEnginePrivate& operator= (const QGeoRoutingManagerEnginePrivate &other);
 
     QString managerName;
-    QMap<QString, QString> managerParameters;
     int managerVersion;
 
     bool supportsRouteUpdates;

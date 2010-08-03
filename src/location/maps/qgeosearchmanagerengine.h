@@ -59,21 +59,20 @@ class Q_LOCATION_EXPORT QGeoSearchManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoSearchManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QGeoSearchManagerEngine();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     virtual QGeoSearchReply* geocode(const QGeoAddress &address,
                                      const QGeoBoundingBox &bounds);
     virtual QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                     const QGeoBoundingBox &bounds);
+                                            const QGeoBoundingBox &bounds);
 
     virtual QGeoSearchReply* search(const QString &searchString,
-                                          QGeoSearchManager::SearchTypes searchTypes,
-                                          const QGeoBoundingBox &bounds);
+                                    QGeoSearchManager::SearchTypes searchTypes,
+                                    const QGeoBoundingBox &bounds);
 
     bool supportsGeocoding() const;
     QGeoSearchManager::SearchTypes supportedSearchTypes() const;

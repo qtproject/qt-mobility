@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
@@ -76,9 +76,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
 */
-QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
+QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoMappingManagerEnginePrivate(parameters)) {}
+        d_ptr(new QGeoMappingManagerEnginePrivate()) {}
 
 /*!
   \internal
@@ -118,14 +118,6 @@ void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
 QString QGeoMappingManagerEngine::managerName() const
 {
     return d_ptr->managerName;
-}
-
-/*!
-    Returns the parameters used in the creation of this engine object.
-*/
-QMap<QString, QString> QGeoMappingManagerEngine::managerParameters() const
-{
-    return d_ptr->managerParameters;
 }
 
 /*!
@@ -328,13 +320,11 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QMap<QString, QString> &parameters)
-        : managerParameters(parameters),
-        managerVersion(-1) {}
+QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
+        : managerVersion(-1) {}
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other)
         : managerName(other.managerName),
-        managerParameters(other.managerParameters),
         managerVersion(other.managerVersion),
         supportedMapTypes(other.supportedMapTypes),
         minimumZoomLevel(other.minimumZoomLevel),
@@ -347,7 +337,6 @@ QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 QGeoMappingManagerEnginePrivate& QGeoMappingManagerEnginePrivate::operator= (const QGeoMappingManagerEnginePrivate & other)
 {
     managerName = other.managerName;
-    managerParameters = other.managerParameters;
     managerVersion = other.managerVersion;
     supportedMapTypes = other.supportedMapTypes;
     minimumZoomLevel = other.minimumZoomLevel;

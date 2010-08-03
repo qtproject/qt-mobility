@@ -632,6 +632,11 @@ void MainWindow::createMenus()
     QAction* menuItem;
     m_popupMenu = new QMenu(this);
 
+    menuItem = new QAction(tr("Spawn stuff"), this);
+    m_popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(demo(bool)));
+
     //**************************************************************
     QMenu* subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
@@ -683,6 +688,18 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(calcRoute(bool)));
+}
+
+#define MVTEST_MARK(pos) do { QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
+#define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
+void MainWindow::demo(bool /*checked*/)
+{
+    MVTEST_MARK2(-30,175);
+    MVTEST_MARK2(-20,170);
+    MVTEST_MARK2(-25,-175);
+    drawRect(false);
+    drawPolygon(false);
+    drawCircle(false);
 }
 
 void MainWindow::drawRect(bool /*checked*/)

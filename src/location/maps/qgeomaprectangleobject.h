@@ -55,6 +55,11 @@ class QGeoCoordinate;
 
 class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QGeoBoundingBox bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
+
 public:
     QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent = 0);
     QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent = 0);
@@ -68,6 +73,11 @@ public:
 
     QBrush brush() const;
     void setBrush(const QBrush &brush);
+
+signals:
+    void boundsChanged(const QGeoBoundingBox &bounds);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapRectangleObject)

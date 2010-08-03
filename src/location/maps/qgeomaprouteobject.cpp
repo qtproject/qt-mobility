@@ -47,62 +47,76 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoMapRouteObject::QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRouteObjectPrivate(this, parent))
 {
     Q_D(QGeoMapRouteObject);
     d->route = route;
-    d->bounds = route.bounds();
 }
 
 QGeoMapRouteObject::~QGeoMapRouteObject()
 {
 }
 
-QPen QGeoMapRouteObject::pen() const
-{
-    Q_D(const QGeoMapRouteObject);
-
-    return d->pen;
-}
-
-void QGeoMapRouteObject::setPen(const QPen &aPen)
-{
-    Q_D(QGeoMapRouteObject);
-
-    d->pen = aPen;
-}
-
 QGeoRoute QGeoMapRouteObject::route() const
 {
     Q_D(const QGeoMapRouteObject);
-
     return d->route;
 }
 
-void QGeoMapRouteObject::setDetailLevel(quint32 pixels)
+void QGeoMapRouteObject::setRoute(const QGeoRoute &route)
 {
     Q_D(QGeoMapRouteObject);
+    //if (d->route != route) {
+        d->route = route;
+        objectUpdate();
+        emit routeChanged(d->route);
+    //}
+}
 
-    d->detailLevel = pixels;
+QPen QGeoMapRouteObject::pen() const
+{
+    Q_D(const QGeoMapRouteObject);
+    return d->pen;
+}
+
+void QGeoMapRouteObject::setPen(const QPen &pen)
+{
+    Q_D(QGeoMapRouteObject);
+    if (d->pen != pen) {
+        d->pen = pen;
+        objectUpdate();
+        emit penChanged(d->pen);
+    }
 }
 
 quint32 QGeoMapRouteObject::detailLevel() const
 {
     Q_D(const QGeoMapRouteObject);
-
     return d->detailLevel;
+}
+
+void QGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
+{
+    Q_D(QGeoMapRouteObject);
+    if (d->detailLevel != detailLevel) {
+        d->detailLevel = detailLevel;
+        objectUpdate();
+        emit detailLevelChanged(d->detailLevel);
+    }
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMapRouteObjectPrivate::QGeoMapRouteObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::GeoRouteType)
 {
     detailLevel = DEFAULT_ROUTE_DETAIL_LEVEL;
 }
 
 QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
+
+#include "moc_qgeomaprouteobject.cpp"
 
 QTM_END_NAMESPACE
 

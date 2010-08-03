@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     Instances of QGeoRouteReply manage the state and results of these

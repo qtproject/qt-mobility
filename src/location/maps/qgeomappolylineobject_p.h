@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoMapPolylineObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type = QGeoMapObject::PolylineType);
+    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     ~QGeoMapPolylineObjectPrivate();
 
     QList<QGeoCoordinate> path;

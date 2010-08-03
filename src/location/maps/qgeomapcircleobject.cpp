@@ -42,6 +42,8 @@
 #include "qgeomapcircleobject.h"
 #include "qgeomapcircleobject_p.h"
 
+#include "qgeocoordinate.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -50,17 +52,15 @@ QTM_BEGIN_NAMESPACE
     within a certain distance of a coordinate.
 
     \inmodule QtLocation
-    
-    \ingroup maps-mapping-objects
 
-    TODO add pen and brush attributes as per alignment doc
+    \ingroup maps-mapping-objects
 */
 
 /*!
     Constructs a new circle object with the specified \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
 
 /*!
     Destroys this circle object.
@@ -72,10 +72,11 @@ QGeoMapCircleObject::~QGeoMapCircleObject()
 void QGeoMapCircleObject::setPen(const QPen &pen)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (pen != d->pen);
-    d->pen = pen;
-    if (update)
+    if (d->pen != pen) {
+        d->pen = pen;
         objectUpdate();
+        //emit penChanged(d->pen);
+    }
 }
 
 QPen QGeoMapCircleObject::pen() const
@@ -87,10 +88,11 @@ QPen QGeoMapCircleObject::pen() const
 void QGeoMapCircleObject::setBrush(const QBrush &brush)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (brush != d->brush);
-    d->brush = brush;
-    if (update)
+    if (d->brush != brush) {
+        d->brush = brush;
         objectUpdate();
+        //emit brushChanged(d->brush);
+    }
 }
 
 QBrush QGeoMapCircleObject::brush() const
@@ -105,10 +107,11 @@ QBrush QGeoMapCircleObject::brush() const
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (center != d->center);
-    d->center = center;
-    if (update)
+    if (d->center != center) {
+        d->center = center;
         objectUpdate();
+        emit centerChanged(d->center);
+    }
 }
 
 /*!
@@ -126,10 +129,11 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
-    bool update = (radius != d->radius);
-    d->radius = radius;
-    if (update)
+    if (radius != d->radius) {
+        d->radius = radius;
         objectUpdate();
+        emit radiusChanged(d->radius);
+    }
 }
 
 /*!
@@ -145,9 +149,11 @@ qreal QGeoMapCircleObject::radius() const
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
+
+#include "moc_qgeomapcircleobject.cpp"
 
 QTM_END_NAMESPACE
 

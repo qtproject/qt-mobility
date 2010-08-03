@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of
@@ -89,9 +89,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new engine with the specified \a parent, using \a parameters
     to pass any implementation specific data to the engine.
 */
-QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
+QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate(parameters)) {}
+        d_ptr(new QGeoRoutingManagerEnginePrivate()) {}
 
 /*!
     Destroys this engine.
@@ -123,14 +123,6 @@ void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
 QString QGeoRoutingManagerEngine::managerName() const
 {
     return d_ptr->managerName;
-}
-
-/*!
-    Returns the parameters used in the creation of this engine object.
-*/
-QMap<QString, QString> QGeoRoutingManagerEngine::managerParameters() const
-{
-    return d_ptr->managerParameters;
 }
 
 /*!
@@ -410,16 +402,14 @@ Use deleteLater() instead.
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QMap<QString, QString> &parameters)
-        : managerParameters(parameters),
-        managerVersion(-1),
+QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
+        : managerVersion(-1),
         supportsRouteUpdates(false),
         supportsAlternativeRoutes(false),
         supportsExcludeAreas(false) {}
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other)
         : managerName(other.managerName),
-        managerParameters(other.managerParameters),
         managerVersion(other.managerVersion),
         supportsRouteUpdates(other.supportsRouteUpdates),
         supportsAlternativeRoutes(other.supportsAlternativeRoutes),
@@ -435,7 +425,6 @@ QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
 QGeoRoutingManagerEnginePrivate& QGeoRoutingManagerEnginePrivate::operator= (const QGeoRoutingManagerEnginePrivate & other)
 {
     managerName = other.managerName;
-    managerParameters = other.managerParameters;
     managerVersion = other.managerVersion;
     supportsRouteUpdates = other.supportsRouteUpdates;
     supportsAlternativeRoutes = other.supportsAlternativeRoutes;

@@ -63,11 +63,10 @@ class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
     Q_OBJECT
 
 public:
-    QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     virtual QGeoMapData* createMapData(QGeoMapWidget *widget) = 0;

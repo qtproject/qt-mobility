@@ -101,7 +101,7 @@ public:
     QList<QGeoMapObject *> children;
     int zValue;
     bool isVisible;
-    QGeoBoundingBox bounds;
+    //QGeoBoundingBox bounds;
 
     QGeoMapDataPrivate *mapData;
     mutable QGeoMapObjectInfo *info;

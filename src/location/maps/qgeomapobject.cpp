@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     distances.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping-objects
 
     QGeoMapObject instances can also be grouped into heirarchies in order to
@@ -85,19 +85,19 @@ QTM_BEGIN_NAMESPACE
     Constructs a new map object with the specified \a parent.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
-    : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
+        : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
 
 /*!
     Constructs a new root map object associated with \a mapData.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapDataPrivate *mapData)
-    : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
+        : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
 
 /*!
   \internal
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObjectPrivate *dd)
-    : d_ptr(dd) {}
+        : d_ptr(dd) {}
 
 /*!
     Destroys this map object.
@@ -308,11 +308,11 @@ bool QGeoMapObject::operator>(const QGeoMapObject &other) const
 *******************************************************************************/
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
-    : type(type),
-    parent(parent),
-    info(0),
-    q_ptr(impl),
-    mapData(0)
+        : type(type),
+        parent(parent),
+        info(0),
+        q_ptr(impl),
+        mapData(0)
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
@@ -321,13 +321,14 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
 }
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type)
-    : type(type),
-    parent(0),
-    info(0),
-    q_ptr(impl),
-    mapData(mapData) {}
+        : type(type),
+        parent(0),
+        info(0),
+        q_ptr(impl),
+        mapData(mapData) {}
 
-QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
+QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
+{
     if (parent) {
         Q_Q(QGeoMapObject);
         parent->removeChildObject(q);
