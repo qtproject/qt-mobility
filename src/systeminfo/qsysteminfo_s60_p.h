@@ -165,8 +165,9 @@ public:
 //     int getDPIWidth(int screen);
 //     int getDPIHeight(int screen);
 //     int physicalHeight(int screen);
-//     int physicalWidth(int screen);};
+//     int physicalWidth(int screen);
 
+};
 
 //////// QSystemStorageInfo
 class QSystemStorageInfoPrivate : public QObject
