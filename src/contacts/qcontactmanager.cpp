@@ -323,8 +323,12 @@ QContactManager::~QContactManager()
    changes which might cause a signal to be emitted do not match particular criteria.
 
    If the parameter (or value given for the parameter) is not supported by the manager,
-   the manager will still be constructed, however the parameter will not be reported
+   the manager may still be constructed, however the parameter will not be reported
    to the client if the client calls managerParameters() subsequent to manager construction.
+
+   The default (assumed) value for this parameter, if this parameter is not given,
+   is that the client wants to be notified of all changes to the data, regardless of
+   the source of the change.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterKeySignalCausality, "SignalCausality");
 
@@ -344,49 +348,37 @@ Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterKeySignalCausality, "SignalCa
    will cause a change signal to be emitted.
 
    The value of this parameter should be a comma (,) separated list of definition names.  Any
-   commas which might be part of a definition name should be escaped with a single backslash
-   (\) character prior to concatenation.
+   commas which might be part of a definition name must be escaped with a single backslash
+   (\) character prior to concatenation.  Any backslash character which might be part of a
+   definition name must also be escaped with a backslash.
 
    If the parameter (or value given for the parameter) is not supported by the manager,
-   the manager will still be constructed, however the parameter will not be reported
+   the manager may still be constructed, however the parameter will not be reported
    to the client if the client calls managerParameters() subsequent to manager construction.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactManager::ParameterKeySignalDefinitions, "SignalDefinitions");
 
 /*!
-   \variable QContactManager::ParameterValueSignalCausalitySelf
-   This value tells the manager to only emit signals for changes which are
-   caused by this client, in this manager.  That is, the client considers
-   itself to be the canonical source of contact information, and will not
-   update its internal datastructures if another client modifies the
-   persistent data in the manager.
-
-   It does, however, want to be notified of all changes which it causes,
-   either to keep some UI elements up to date, or to remain aware of
-   any side effects of operations which it might have performed.
- */
-Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalitySelf, "Self");
-
-/*!
-   \variable QContactManager::ParameterValueSignalCausalityOther
+   \variable QContactManager::ParameterValueSignalCausalityOtherManagers
    This value tells the manager to only emit signals for changes which
-   are caused by other clients.  That is, the client wishes to receive
+   are made in other manager instances.  That is, the client wishes to receive
    change signals when another client (or background service) changes
-   the data as it is stored in the manager, but does not wish to be
+   the data as it is stored in the backend, but does not wish to be
    notified of changes (or side effects) which it has caused itself.
  */
-Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityOther, "Other");
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityOtherManagers, "OtherManagers");
 
 /*!
-   \variable QContactManager::ParameterValueSignalCausalityAll
-   This is the default value for signal causality, and if no causality
-   is given, the manager should emit signals for all changes.
-   This value tells the manager that the client is interested in all
-   changes, caused either by that client or by other clients.  This
-   allows a client to always maintain its internal data structures
-   in a state which is consistent with the data stored in the manager.
+   \variable QContactManager::ParameterValueSignalCausalityOtherProcesses
+   This value tells the manager to only emit signals for changes which
+   are made in other processes.  That is, the client wishes to receive
+   change signals when a client (or background service) in another process changes
+   the data as it is stored in the backend, but does not wish to be
+   notified of changes (or side effects) which were caused in the current client's
+   process, even if those changes were made in a different manager instance to this
+   one.
  */
-Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityAll, "All");
+Q_DEFINE_LATIN1_CONSTANT(ParameterValueSignalCausalityOtherProcesses, "OtherProcesses");
 
 /*!
    \variable QContactManager::ParameterValueSignalCausalityNone
