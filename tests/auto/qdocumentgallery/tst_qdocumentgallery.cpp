@@ -71,9 +71,9 @@ void tst_QDocumentGallery::isRequestSupported()
     const bool platformSupported = false;
 #endif
 
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Query), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Remove), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Type(1000)), false);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::QueryRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RemoveRequest), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::RequestType(1000)), false);
 }
 
 void tst_QDocumentGallery::itemTypeProperties_data()

@@ -43,16 +43,20 @@
 
 #include <QtTest/QtTest>
 
-#include <qgalleryremoverequest.h>
+#include <qgalleryitemrequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
 
 QTM_USE_NAMESPACE
 
-class tst_QGalleryRemoveRequest : public QObject
+Q_DECLARE_METATYPE(QGalleryItemList*)
+
+class tst_QGalleryItemRequest : public QObject
 {
     Q_OBJECT
+public Q_SLOTS:
+    void initTestCase();
 
 private Q_SLOTS:
     void properties();
@@ -70,9 +74,26 @@ public:
             finish(result, idle);
     }
 
+    QStringList propertyNames() const { return QStringList(); }
+    int propertyKey(const QString &) const { return -1; }
+    QGalleryProperty::Attributes propertyAttributes(int) const {
+        return QGalleryProperty::Attributes(); }
+    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
+
+    int count() const { return 0; }
+
+    QVariant id(int) const { return QVariant(); }
+    QUrl url(int) const { return QUrl(); }
+    QString type(int) const { return QString(); }
+    QString parentId(int) const { return QString(); }
+    QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
+    ItemStatus status(int) const { return ItemStatus(); }
+
+    QVariant metaData(int, int) const { return QVariant(); }
+    void setMetaData(int, int, const QVariant &) {}
+
     bool waitForFinished(int) { return false; }
 
-public Q_SLOTS:
     void doFinish(int result, bool idle) { finish(result, idle); }
 
 private:
@@ -80,31 +101,20 @@ private:
 
 class QtTestGallery : public QAbstractGallery
 {
-    Q_OBJECT
 public:
     QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
-    bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
-        return type == QGalleryAbstractRequest::RemoveRequest; }
+    bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
+        return type == QGalleryAbstractRequest::Item; }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
 
-#ifdef Q_MOC_RUN
-Q_SIGNALS:
-#endif
-    void finish(int result, bool idle);
-
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (request->type() == QGalleryAbstractRequest::RemoveRequest) {
-            QtGalleryTestResponse *response = new QtGalleryTestResponse(m_result, m_idle);
-
-            connect(this, SIGNAL(finish(int,bool)), response, SLOT(doFinish(int,bool)));
-
-            return response;
-        }
+        if (request->type() == QGalleryAbstractRequest::Item)
+            return new QtGalleryTestResponse(m_result, m_idle);
         return 0;
     }
 
@@ -113,9 +123,34 @@ private:
     bool m_idle;
 };
 
-void tst_QGalleryRemoveRequest::properties()
+void tst_QGalleryItemRequest::initTestCase()
 {
-    QGalleryRemoveRequest request;
+    qRegisterMetaType<QGalleryItemList*>();
+}
+
+void tst_QGalleryItemRequest::properties()
+{
+    const QGalleryProperty titleProperty("title");
+    const QGalleryProperty artistProperty("artist");
+
+    QGalleryItemRequest request;
+
+    QCOMPARE(request.propertyNames(), QStringList());
+    QCOMPARE(request.isLive(), false);
+
+    request.setPropertyNames(QStringList()
+            << titleProperty
+            << artistProperty.name()
+            << QLatin1String("album")
+            << QString::fromLatin1("trackNumber"));
+    QCOMPARE(request.propertyNames(), QStringList()
+            << QLatin1String("title")
+            << QLatin1String("artist")
+            << QLatin1String("album")
+            << QLatin1String("trackNumber"));
+
+    request.setLive(true);
+    QCOMPARE(request.isLive(), true);
 
     request.setItemId(QVariant(76));
     QCOMPARE(request.itemId(), QVariant(76));
@@ -124,41 +159,64 @@ void tst_QGalleryRemoveRequest::properties()
     QCOMPARE(request.itemId(), QVariant(QLatin1String("65")));
 }
 
-void tst_QGalleryRemoveRequest::executeSynchronous()
+void tst_QGalleryItemRequest::executeSynchronous()
 {
     QtTestGallery gallery;
     gallery.setResult(QGalleryAbstractRequest::ConnectionError);
 
-    QGalleryRemoveRequest request(&gallery);
+    QGalleryItemRequest request(&gallery);
+    QVERIFY(request.item() == 0);
+
+    QSignalSpy spy(&request, SIGNAL(itemChanged(QGalleryItemList*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
+    QCOMPARE(spy.count(), 0);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) == 0);
 
     gallery.setResult(QGalleryAbstractRequest::Succeeded);
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(request.item() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 }
 
-void tst_QGalleryRemoveRequest::executeAsynchronous()
+void tst_QGalleryItemRequest::executeAsynchronous()
 {
     QtTestGallery gallery;
     gallery.setResult(QGalleryAbstractRequest::NoResult);
 
-    QGalleryRemoveRequest request(&gallery);
+    QGalleryItemRequest request(&gallery);
+    QVERIFY(request.item() == 0);
+
+    QSignalSpy spy(&request, SIGNAL(itemChanged(QGalleryItemList*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 
-    gallery.finish(QGalleryAbstractRequest::Succeeded, false);
+    qobject_cast<QtGalleryTestResponse *>(request.item())->doFinish(
+            QGalleryAbstractRequest::Succeeded, false);
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(spy.count(), 1);
+    QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) != 0);
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 2);
+    QVERIFY(request.item() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 }
 
-QTEST_MAIN(tst_QGalleryRemoveRequest)
+QTEST_MAIN(tst_QGalleryItemRequest)
 
-#include "tst_qgalleryremoverequest.moc"
+#include "tst_qgalleryitemrequest.moc"

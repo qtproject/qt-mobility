@@ -39,61 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYRESULTSET_H
-#define QGALLERYRESULTSET_H
+#ifndef QGALLERYNULLRESULTSET_P_H
+#define QGALLERYNULLRESULTSET_P_H
 
-#include <QtCore/qmap.h>
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include <QtCore/qvariant.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <qgalleryabstractresponse.h>
-#include <qgalleryproperty.h>
+#include "qgalleryresultset.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryResource;
-
-class QGalleryResultSetPrivate;
-
-class Q_GALLERY_EXPORT QGalleryResultSet : public QGalleryAbstractResponse
+class QGalleryNullResultSet : public QGalleryResultSet
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryResultSet)
 public:
-    QGalleryResultSet(QObject *parent = 0);
-    ~QGalleryResultSet();
+    int propertyKey(const QString &) const { return -1; }
+    QGalleryProperty::Attributes propertyAttributes(int) const {
+        return QGalleryProperty::Attributes(); }
+    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
 
-    virtual int propertyKey(const QString &property) const = 0;
-    virtual QGalleryProperty::Attributes propertyAttributes(int key) const = 0;
-    virtual QVariant::Type propertyType(int key) const = 0;
+    int itemCount() const { return 0; }
 
-    virtual int itemCount() const = 0;
+    QVariant itemId() const { return QVariant(); }
+    QUrl itemUrl() const { return QUrl(); }
+    QString itemType() const { return QString(); }
+    QList<QGalleryResource> resources() const { return QList<QGalleryResource>(); }
 
-    virtual bool isValid() const;
+    QVariant metaData(int) const { return QVariant(); }
+    bool setMetaData(int, const QVariant &) { return false; }
 
-    virtual QVariant itemId() const = 0;
-    virtual QUrl itemUrl() const = 0;
-    virtual QString itemType() const = 0;
-    virtual QList<QGalleryResource> resources() const;
-
-    virtual QVariant metaData(int key) const = 0;
-    virtual bool setMetaData(int key, const QVariant &value) = 0;
-
-    virtual int currentIndex() const = 0;
-    virtual bool seek(int index, bool relative) = 0;
-
-Q_SIGNALS:
-    void currentItemChanged();
-    void currentIndexChanged(int index);
-    void itemsInserted(int index, int count);
-    void itemsRemoved(int index, int count);
-    void itemsMoved(int from, int to, int count);
-
-    void metaDataChanged(int index, int count, const QList<int> &keys);
-
-protected:
-    QGalleryResultSet(QGalleryResultSetPrivate &dd, QObject *parent);
+    int currentIndex() const { return -1; }
+    bool seek(int, bool) { return false; }
 };
 
 QTM_END_NAMESPACE

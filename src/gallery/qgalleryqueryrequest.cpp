@@ -73,7 +73,7 @@ class QGalleryQueryRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
     QGalleryQueryRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Query)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::QueryRequest)
         , offset(0)
         , limit(0)
         , scope(QGalleryAbstractRequest::AllDescendants)
@@ -463,6 +463,15 @@ bool QGalleryQueryRequest::previous()
 }
 
 /*!
+
+*/
+
+bool QGalleryQueryRequest::isValid() const
+{
+    return d_func()->internalResultSet->isValid();
+}
+
+/*!
     \reimp
 */
 
@@ -474,6 +483,8 @@ void QGalleryQueryRequest::setResponse(QGalleryAbstractResponse *response)
 
     if (d->resultSet) {
         d->internalResultSet = d->resultSet;
+
+        connect(d->resultSet, SIGNAL(currentItemChanged()), this, SIGNAL(currentItemChanged()));
     } else {
         d->internalResultSet = &d->nullResultSet;
     }

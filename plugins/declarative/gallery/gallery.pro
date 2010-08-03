@@ -25,13 +25,15 @@ QT += declarative
 HEADERS += \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \
-        qdeclarativegalleryquerymodel.h
+        qdeclarativegalleryquerymodel.h \
+        qdeclarativegallerytype.h
 
 SOURCES += \
         qdeclarativegallery.cpp \
         qdeclarativegalleryfilter.cpp \
         qdeclarativegalleryitem.cpp \
-        qdeclarativegalleryquerymodel.cpp
+        qdeclarativegalleryquerymodel.cpp \
+        qdeclarativegallerytype.cpp
 
 CONFIG += mobility
 MOBILITY += gallery

@@ -46,6 +46,7 @@
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemlist_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
+#include "qgallerytrackertyperesultset_p.h"
 
 #include <QtCore/qdatetime.h>
 #include <QtCore/qmetatype.h>
@@ -1237,7 +1238,7 @@ int QGalleryTrackerSchema::prepareFilterResponse(
         QGalleryTrackerItemListArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
+        const QString &rootItemId,
         const QGalleryFilter &filter,
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
@@ -1246,8 +1247,8 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 
     QString query;
 
-    if (!scopeItemId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, scope, scopeItemId, filter);
+    if (!rootItemId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, scope, rootItemId, filter);
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1264,19 +1265,19 @@ int QGalleryTrackerSchema::prepareFilterResponse(
     }
 }
 
-int QGalleryTrackerSchema::prepareCountResponse(
-        QGalleryTrackerCountResponseArguments *arguments,
+int QGalleryTrackerSchema::prepareTypeResponse(
+        QGalleryTrackerTypeResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
+        const QString &rootItemId,
         const QGalleryFilter &filter) const
 {
     int result = QGalleryAbstractRequest::Succeeded;
 
     QString query;
 
-    if (!scopeItemId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, scope, scopeItemId, filter);
+    if (!rootItemId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, scope, rootItemId, filter);
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1332,7 +1333,7 @@ int QGalleryTrackerSchema::prepareCountResponse(
 int QGalleryTrackerSchema::buildFilterQuery(
         QString *query,
         QGalleryAbstractRequest::Scope scope,
-        const QString &scopeItemId,
+        const QString &rootItemId,
         const QGalleryFilter &filter) const
 {
     const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
@@ -1343,29 +1344,29 @@ int QGalleryTrackerSchema::buildFilterQuery(
     QXmlStreamWriter xml(query);
     xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
-    if (!scopeItemId.isEmpty()) {
+    if (!rootItemId.isEmpty()) {
         if (filter.isValid())
             xml.writeStartElement(QLatin1String("rdfq:and"));
 
         int index;
 
-        if ((index = itemTypes.indexOfItemId(scopeItemId)) != -1) {
+        if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
             switch (scope) {
             case QGalleryAbstractRequest::AllDescendants:
                 qt_writeFileScopeCondition(
-                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                        &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
             case QGalleryAbstractRequest::DirectDescendants:
                 qt_writeFileContainerCondition(
-                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                        &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
             default:
                 result = QGalleryAbstractRequest::InvalidPropertyError;
                 break;
             }
-        } else if ((index = aggregateTypes.indexOfItemId((scopeItemId))) != -1) {
+        } else if ((index = aggregateTypes.indexOfItemId((rootItemId))) != -1) {
             aggregateTypes[index].writeIdCondition(
-                    &result, &xml, aggregateTypes[index].prefix.strip(scopeItemId));
+                    &result, &xml, aggregateTypes[index].prefix.strip(rootItemId));
         } else {
             result = QGalleryAbstractRequest::InvalidItemError;
         }
@@ -1389,7 +1390,7 @@ int QGalleryTrackerSchema::buildFilterQuery(
         }
     }
 
-    if (!scopeItemId.isEmpty() && filter.isValid())
+    if (!rootItemId.isEmpty() && filter.isValid())
         xml.writeEndElement();
 
     xml.writeEndElement();

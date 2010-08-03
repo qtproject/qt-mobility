@@ -122,8 +122,8 @@ class QtTestGallery : public QAbstractGallery
 public:
     QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
-        return type == QGalleryAbstractRequest::Query; }
+    bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
+        return type == QGalleryAbstractRequest::QueryRequest; }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
@@ -131,7 +131,7 @@ public:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (request->type() == QGalleryAbstractRequest::Query) {
+        if (request->type() == QGalleryAbstractRequest::QueryRequest) {
             return new QtGalleryTestResponse(
                     static_cast<QGalleryQueryRequest *>(request)->propertyNames(),
                     m_result,

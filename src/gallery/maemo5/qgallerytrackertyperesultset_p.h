@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYABSTRACTREQUEST_P_H
-#define QGALLERYABSTRACTREQUEST_P_H
+#ifndef QGALLERYTRACKERTYPERESULTSET_P_H
+#define QGALLERYTRACKERTYPERESULTSET_P_H
 
 //
 //  W A R N I N G
@@ -53,45 +53,62 @@
 // We mean it.
 //
 
-#include "qgalleryabstractrequest.h"
+#include "qgalleryresultset.h"
 
-#include "qgalleryabstractresponse.h"
+#include "qgallerydbusinterface_p.h"
+
+#include <QtDBus/qdbusinterface.h>
+#include <QtDBus/qdbuspendingcall.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryAbstractRequestPrivate
+struct QGalleryTrackerTypeResultSetArguments
 {
-    Q_DECLARE_PUBLIC(QGalleryAbstractRequest)
+    QGalleryTrackerTypeResultSetArguments() : accumulative(false), updateMask(0) {}
+
+    bool accumulative;
+    int updateMask;
+    QGalleryDBusInterfacePointer queryInterface;
+    QString queryMethod;
+    QVariantList queryArguments;
+};
+
+class QGalleryTrackerTypeResultSetPrivate;
+
+class QGalleryTrackerTypeResultSet : public QGalleryResultSet
+{
+    Q_OBJECT
 public:
-    QGalleryAbstractRequestPrivate(
-            QAbstractGallery *gallery, QGalleryAbstractRequest::RequestType type)
-        : gallery(gallery)
-        , response(0)
-        , type(type)
-        , state(QGalleryAbstractRequest::Inactive)
-        , result(QGalleryAbstractRequest::NoResult)
-        , currentProgress(0)
-        , maximumProgress(0)
-    {
-    }
+    QGalleryTrackerTypeResultSet(
+            const QGalleryTrackerTypeResultSetArguments &arguments, QObject *parent = 0);
+    ~QGalleryTrackerTypeResultSet();
 
-    virtual ~QGalleryAbstractRequestPrivate()
-    {
-        delete response;
-    }
+    int propertyKey(const QString &property) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
 
-    void _q_finished();
-    void _q_galleryDestroyed();
-    void _q_progressChanged(int current, int maximum);
+    int itemCount() const;
 
-    QGalleryAbstractRequest *q_ptr;
-    QAbstractGallery *gallery;
-    QGalleryAbstractResponse *response;
-    QGalleryAbstractRequest::RequestType type;
-    QGalleryAbstractRequest::State state;
-    int result;
-    int currentProgress;
-    int maximumProgress;
+    QVariant itemId() const;
+    QUrl itemUrl() const;
+    QString itemType() const;
+
+    QVariant metaData(int key) const;
+    bool setMetaData(int key, const QVariant &value);
+
+    int currentIndex() const;
+    bool seek(int index, bool relative);
+
+    bool waitForFinished(int msecs);
+
+    void cancel();
+
+public Q_SLOTS:
+    void refresh(int serviceId = -1);
+
+private:
+    Q_DECLARE_PRIVATE(QGalleryTrackerTypeResultSet)
+    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE

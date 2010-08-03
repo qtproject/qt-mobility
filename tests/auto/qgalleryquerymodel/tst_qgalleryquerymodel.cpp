@@ -211,7 +211,7 @@ public:
     {
     }
 
-    bool isRequestSupported(QGalleryAbstractRequest::Type) const { return true; }
+    bool isRequestSupported(QGalleryAbstractRequest::RequestType) const { return true; }
 
     void setPropertyAttributes(const QHash<QString, QGalleryProperty::Attributes> &attributes)
     {

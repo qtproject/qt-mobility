@@ -154,7 +154,7 @@ public:
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();
 
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const;
+    bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const;
 
     QStringList itemTypePropertyNames(const QString &itemType) const;
     QGalleryProperty::Attributes propertyAttributes(

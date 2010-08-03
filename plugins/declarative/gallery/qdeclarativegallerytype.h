@@ -39,19 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGALLERYITEM_H
-#define QDECLARATIVEGALLERYITEM_H
+#ifndef QDECLARATIVEGALLERYTYPE_H
+#define QDECLARATIVEGALLERYTYPE_H
 
-#include <qgalleryitemrequest.h>
+#include <qgallerytyperequest.h>
 
 #include <QtCore/qpointer.h>
 #include <QtCore/qurl.h>
 #include <QtDeclarative/qdeclarative.h>
 #include <QtDeclarative/qdeclarativepropertymap.h>
 
+#include "qdeclarativegalleryfilter.h"
+
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -64,10 +66,6 @@ class QDeclarativeGalleryItem : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QVariant item READ itemId WRITE setItemId)
-//    Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
-//    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
-//    Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
     {
@@ -88,8 +86,14 @@ public:
         InvalidItemError                = QGalleryAbstractRequest::NoResult
     };
 
-    QDeclarativeGalleryItem(QObject *parent = 0);
-    ~QDeclarativeGalleryItem();
+    enum Scope
+    {
+        AllDescendants = QGalleryAbstractRequest::AllDescendants,
+        DirectDescendants = QGalleryAbstractRequest::DirectDescendants
+    };
+
+    QDeclarativeGalleryType(QObject *parent = 0);
+    ~QDeclarativeGalleryType();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
@@ -107,12 +111,19 @@ public:
     bool isLive() const { return m_request.isLive(); }
     void setLive(bool live) { m_request.setLive(live); }
 
-    QVariant itemId() const { return m_request.itemId(); }
-    void setItemId(const QVariant &itemId) {
-        m_request.setItemId(itemId); if (m_complete) m_request.execute(); }
-
     QString itemType() const { return m_request.itemType(); }
-    QUrl itemUrl() const { return m_request.itemUrl(); }
+    void setItemType(const QString itemType) {
+        m_request.setItemType(itemType); if (m_complete) m_request.execute(); }
+
+    Scope scope() const { return Scope(m_request.scope()); }
+    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+
+    QVariant rootItem() const { return m_request.rootItem(); }
+    void setRootItem(const QVariant &itemId) {
+        m_request.setRootItem(itemId); emit rootItemChanged(); }
+
+    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
+    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
 
     QObject *metaData() const { return m_metaData; }
 
@@ -134,25 +145,26 @@ Q_SIGNALS:
     void progressChanged();
     void availableChanged();
     void metaDataChanged();
+    void rootItemChanged();
+    void filterChanged();
 
 private Q_SLOTS:
     void _q_resultSetChanged(QGalleryResultSet *resultSet);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
     void _q_metaDataChanged(int index, int count, const QList<int> &keys);
-    void _q_valueChanged(const QString &key, const QVariant &value) {
-        m_request.setMetaData(key, value); }
 
 private:
-    QGalleryItemRequest m_request;
+    QGalleryTypeRequest m_request;
     QGalleryResultSet *m_resultSet;
     QDeclarativePropertyMap *m_metaData;
+    QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QHash<int, QString> m_propertyKeys;
     bool m_complete;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryItem))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGalleryType))
 
 #endif

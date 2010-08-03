@@ -98,6 +98,17 @@ QGalleryResultSet::~QGalleryResultSet()
 */
 
 /*!
+
+*/
+
+bool QGalleryResultSet::isValid() const
+{
+    const int index = currentIndex();
+
+    return index >= 0 && index < itemCount();
+}
+
+/*!
     \fn QGalleryResultSet::itemId() const
 
 */

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegalleryitem.h"
+#include "qdeclarativegallerytype.h"
 
 #include <qgalleryresultset.h>
 
@@ -48,8 +48,8 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryItem QDeclarativeGalleryItem
-    \brief The GalleryItem element allows you to request information about a
+    \qmlclass GalleryType QDeclarativeGalleryType
+    \brief The GalleryType element allows you to request information about a
     single item from a gallery
 
     This element is part of the \bold {QtMobility.gallery 1.0} module.
@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     \sa GalleryQueryModel, GalleryQueryCount
 */
 
-QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
+QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
     : QObject(parent)
     , m_resultSet(0)
     , m_metaData(0)
@@ -82,18 +82,18 @@ QDeclarativeGalleryItem::QDeclarativeGalleryItem(QObject *parent)
             this, SLOT(_q_valueChanged(QString,QVariant)));
 }
 
-QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
+QDeclarativeGalleryType::~QDeclarativeGalleryType()
 {
 }
 
 /*!
-    \qmlproperty QAbstractGallery GalleryItem::gallery
+    \qmlproperty QAbstractGallery GalleryType::gallery
 
     This property holds the gallery an item should be requested from.
 */
 
 /*!
-    \qmlproperty enum GalleryItem::state
+    \qmlproperty enum GalleryType::state
 
     This property holds the state of an item request.  It can be one of:
 
@@ -108,7 +108,7 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 */
 
 /*!
-    \qmlproperty enum GalleryItem::result
+    \qmlproperty enum GalleryType::result
 
     The property holds the result of an item request. It can be one of:
 
@@ -125,129 +125,103 @@ QDeclarativeGalleryItem::~QDeclarativeGalleryItem()
 */
 
 /*!
-    \qmlproperty int GalleryItem::currentProgress
+    \qmlproperty int GalleryType::currentProgress
 
     This property holds the current progress value.
 */
 
 /*!
-    \qmlproperty int GalleryItem::maximumProgress
+    \qmlproperty int GalleryType::maximumProgress
 
     This property holds the maximum progress value.
 */
 
 /*!
-    \qmlproperty QStringList GalleryItem::properties
+    \qmlproperty QStringList GalleryType::properties
 
     This property holds the item properties a request should return values for.
 */
 
 /*!
-    \qmlproperty bool GalleryItem::live
+    \qmlproperty bool GalleryType::live
 
     This property holds whether a request should refresh its results
     automatically.
 */
 
 /*!
-    \qmlproperty variant GalleryItem::item
+    \qmlproperty variant GalleryType::item
 
     This property holds the id of the item to return information about.
 */
 
 /*!
-    \qmlproperty bool GalleryItem::available
-
-    This property holds whether the meta-data of an item is available.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::reading
-
-    This property holds whether the meta-data of an item is currently being
-    read.
-*/
-
-/*!
-    \qmlproperty bool GalleryItem::writing
-
-    This property holds whether the meta-data of an item is currently being
-    written.
-*/
-
-/*!
-    \qmlproperty string GalleryItem::itemType
+    \qmlproperty string GalleryType::itemType
 
     This property holds the type of a gallery item.
 */
 
 /*!
-    \qmlproperty url GalleryItem::itemUrl
-
-    This property holds the URL of a gallery item.
-*/
-
-/*!
-    \qmlproperty object GalleryItem::metaData
+    \qmlproperty object GalleryType::metaData
 
     This property holds the meta-data of a gallery item.
 */
 
 /*!
-    \qmlmethod GalleryItem::reload()
+    \qmlmethod GalleryType::reload()
 
     Re-queries the gallery.
 */
 
 /*!
-    \qmlmethod GalleryItem::cancel()
+    \qmlmethod GalleryType::cancel()
 
     Cancels an executing request.
 */
 
 /*!
-    \qmlmethod GalleryItem::clear()
+    \qmlmethod GalleryType::clear()
 
     Clears the results of a request.
 */
 
 /*!
-    \qmlsignal GalleryItem::onSucceeded()
+    \qmlsignal GalleryType::onSucceeded()
 
     Signals that a request has finished successfully.
 */
 
 /*!
-    \qmlsignal GalleryItem::onCancelled()
+    \qmlsignal GalleryType::onCancelled()
 
     Signals that a request was cancelled.
 */
 
 /*!
-    \qmlsignal GalleryItem::onFailed(error)
+    \qmlsignal GalleryType::onFailed(error)
 
     Signals that a request failed with the given \a error.
 */
 
 /*!
-    \qmlsignal GalleryItem::onFinished(result)
+    \qmlsignal GalleryType::onFinished(result)
 
     Signals that a request finished with the given \a result.
 */
 
-void QDeclarativeGalleryItem::classBegin()
+void QDeclarativeGalleryType::classBegin()
 {
 }
 
-void QDeclarativeGalleryItem::componentComplete()
+void QDeclarativeGalleryType::componentComplete()
 {
     m_complete = true;
 
-    if (m_request.itemId().isValid())
+    if (!m_request.itemType().isEmpty())
         m_request.execute();
 }
 
-void QDeclarativeGalleryItem::_q_resultSetChanged(QGalleryResultSet *resultSet)
+void QDeclarativeGalleryType::_q_resultSetChanged(QGalleryResultSet *resultSet)
 {
     if (m_resultSet && m_resultSet->itemCount() > 0) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -293,7 +267,7 @@ void QDeclarativeGalleryItem::_q_resultSetChanged(QGalleryResultSet *resultSet)
     emit availableChanged();
 }
 
-void QDeclarativeGalleryItem::_q_itemsInserted(int index, int)
+void QDeclarativeGalleryType::_q_itemsInserted(int index, int)
 {
     if (index == 0) {
         m_resultSet->seek(0, false);
@@ -310,7 +284,7 @@ void QDeclarativeGalleryItem::_q_itemsInserted(int index, int)
     }
 }
 
-void QDeclarativeGalleryItem::_q_itemsRemoved(int index, int)
+void QDeclarativeGalleryType::_q_itemsRemoved(int index, int)
 {
     if (index == 0) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -331,7 +305,7 @@ void QDeclarativeGalleryItem::_q_itemsRemoved(int index, int)
     }
 }
 
-void QDeclarativeGalleryItem::_q_metaDataChanged(int index, int, const QList<int> &keys)
+void QDeclarativeGalleryType::_q_metaDataChanged(int index, int, const QList<int> &keys)
 {
     if (index == 0 && keys.isEmpty()) {
         typedef QHash<int, QString>::const_iterator iterator;
@@ -352,6 +326,6 @@ void QDeclarativeGalleryItem::_q_metaDataChanged(int index, int, const QList<int
     }
 }
 
-#include "moc_qdeclarativegalleryitem.cpp"
+#include "moc_qdeclarativegallerytype.cpp"
 
 QTM_END_NAMESPACE

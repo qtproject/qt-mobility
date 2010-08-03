@@ -187,7 +187,7 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     The \a parent is passed to QObject.
 */
 
-QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
+QGalleryAbstractRequest::QGalleryAbstractRequest(RequestType type, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(0, type))
 {
@@ -201,7 +201,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
 */
 
 QGalleryAbstractRequest::QGalleryAbstractRequest(
-        QAbstractGallery *gallery, Type type, QObject *parent)
+        QAbstractGallery *gallery, RequestType type, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(gallery, type))
 {
@@ -277,7 +277,7 @@ bool QGalleryAbstractRequest::isSupported() const
 /*!
     Returns the type of a request.
 */
-QGalleryAbstractRequest::Type QGalleryAbstractRequest::type() const
+QGalleryAbstractRequest::RequestType QGalleryAbstractRequest::type() const
 {
     return d_ptr->type;
 }

@@ -191,10 +191,12 @@ contains(mobility_modules,gallery) {
         qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
+        qgalleryitemrequest \
         qgalleryquerymodel \
         qgalleryqueryrequest \
         qgalleryremoverequest \
-        qgalleryresource
+        qgalleryresource \
+        qgallerytyperequest
 
     !unix: SUBDIRS += qgalleryfilter
 

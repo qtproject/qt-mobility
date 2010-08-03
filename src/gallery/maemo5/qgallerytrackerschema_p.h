@@ -67,7 +67,7 @@ class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
 
 struct QGalleryTrackerItemListArguments;
-struct QGalleryTrackerCountResponseArguments;
+struct QGalleryTrackerTypeResultSetArguments;
 
 class QGalleryTrackerSchema
 {
@@ -106,8 +106,8 @@ public:
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
 
-    int prepareCountResponse(
-            QGalleryTrackerCountResponseArguments *arguments,
+    int prepareTypeResponse(
+            QGalleryTrackerTypeResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             QGalleryAbstractRequest::Scope scope,
             const QString &scopeItemId,

@@ -43,13 +43,16 @@
 
 #include "qabstractgallery_p.h"
 
+#include "qgalleryitemrequest.h"
 #include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
+#include "qgallerytyperequest.h"
 
 #include "qgallerytrackerchangenotifier_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
+#include "qgallerytrackertyperesultset_p.h"
 
 #include <QtCore/qmetaobject.h>
 #include <QtDBus/qdbusmetatype.h>
@@ -61,6 +64,8 @@ QTM_BEGIN_NAMESPACE
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
 public:
+    QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
+    QGalleryAbstractResponse *createTypeResponse(QGalleryTypeRequest *request);
     QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
@@ -158,6 +163,50 @@ QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
     return notifier.data();
 }
 
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
+{
+    QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(request->itemId().toString());
+
+    QGalleryTrackerItemListArguments arguments;
+
+    int result = schema.prepareIdResponse(
+            &arguments, this, request->itemId().toString(), request->propertyNames());
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return new QGalleryAbstractResponse(result);
+    } else {
+        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
+    }
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTypeRequest *request)
+{
+    QGalleryTrackerSchema schema(request->itemType());
+
+    QGalleryTrackerTypeResultSetArguments arguments;
+
+    int result = schema.prepareTypeResponse(
+            &arguments,
+            this,
+            request->scope(),
+            request->rootItem().toString(),
+            request->filter());
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return new QGalleryAbstractResponse(result);
+    } else {
+        QGalleryTrackerTypeResultSet *response = new QGalleryTrackerTypeResultSet(arguments);
+
+        if (request->isLive()) {
+            QObject::connect(
+                    changeNotifier(), SIGNAL(itemsChanged(int)),
+                    response, SLOT(refresh(int)));
+        }
+
+        return response;
+    }
+}
+
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         const QGalleryTrackerItemListArguments &arguments,
         int offset,
@@ -239,11 +288,13 @@ QDocumentGallery::~QDocumentGallery()
 {
 }
 
-bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 {
     switch (type) {
-    case QGalleryAbstractRequest::Query:
-    case QGalleryAbstractRequest::Remove:
+    case QGalleryAbstractRequest::QueryRequest:
+    case QGalleryAbstractRequest::ItemRequest:
+    case QGalleryAbstractRequest::TypeRequest:
+    case QGalleryAbstractRequest::RemoveRequest:
         return true;
     default:
         return false;
@@ -266,9 +317,13 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     Q_D(QDocumentGallery);
 
     switch (request->type()) {
-    case QGalleryAbstractRequest::Query:
+    case QGalleryAbstractRequest::QueryRequest:
         return d->createFilterResponse(static_cast<QGalleryQueryRequest *>(request));
-    case QGalleryAbstractRequest::Remove:
+    case QGalleryAbstractRequest::ItemRequest:
+        return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
+    case QGalleryAbstractRequest::TypeRequest:
+        return d->createTypeResponse(static_cast<QGalleryTypeRequest *>(request));
+    case QGalleryAbstractRequest::RemoveRequest:
         return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:
         return 0;
