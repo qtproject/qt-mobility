@@ -73,8 +73,7 @@ public:
     void mapUpdate();
 
     const QGeoMapCircleObjectPrivate* circle;
-    QGraphicsPolygonItem *polygonItem1;
-    QGraphicsPolygonItem *polygonItem2;
+    QGraphicsPolygonItem *polygonItem;
 
     QPolygonF points;
 };

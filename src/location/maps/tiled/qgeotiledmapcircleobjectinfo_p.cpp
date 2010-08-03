@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeotiledmapcircleobjectinfo_p.h"
+#include "makepoly_p.h"
 
 #include "qgeotiledmapobjectinfo_p.h"
 #include "qgeotiledmapdata.h"
@@ -59,8 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
         : QGeoTiledMapObjectInfo(mapObjectPrivate),
-        polygonItem1(0),
-        polygonItem2(0)
+        polygonItem(0)
 {
     circle = static_cast<const QGeoMapCircleObjectPrivate*>(mapObjectPrivate);
 }
@@ -186,87 +186,19 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    const QGeoMapCircleObjectPrivate *polygon = circle;
-    // --- copy-pasted from polygon ---
-    points.clear();
-
-    //TODO - handle when polygons are drawn across the dateline...
-    // regular graphics item with polygon item children?
-    QGeoCoordinate lastCoord = path.at(0);
-
-    qreal xoffset = 0;
-    bool polygonCrossesDateline = false;
-    int width = mapData->maxZoomSize.width();
-
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        const qreal lng = coord.longitude();
-        const qreal lastLng = lastCoord.longitude();
-
-        // is the dateline crossed = different sign AND gap is large enough
-        const bool crossesDateline = lastLng * lng < 0 && abs(lastLng - lng) > 180;
-
-        polygonCrossesDateline |= crossesDateline;
-
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng > lastLng);
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
-        // if the dateline is crossed, advance the offset in the given direction
-        if (crossesDateline)
-            xoffset += width * dir;
-
-        if (xoffset < 0) {
-            xoffset += width;
-            points.translate(width, 0);
-        }
-
-        // calculate base point
-        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
-
-        // apply offset
-        point += QPointF(xoffset, 0);
-
-        // add point to polygon
-        points.append(point);
-
-        lastCoord = coord;
-    }
-
-    if (!polygonItem1)
-        polygonItem1 = new QGraphicsPolygonItem();
-
-    polygonItem1->setPolygon(points);
-    polygonItem1->setBrush(polygon->brush);
-
-    if (polygonCrossesDateline) {
-        if (!polygonItem2)
-            polygonItem2 = new QGraphicsPolygonItem();
-        polygonItem2->setPolygon(points.translated(-width, 0));
-        polygonItem2->setBrush(polygon->brush);
-    } else {
-        delete polygonItem2;
-        polygonItem2 = 0;
-    }
-    graphicsItem1 = polygonItem1;
-    graphicsItem2 = polygonItem2;
-    // --- snip ---
+    //makepoly(circle, points, point.y()+sign(center.latitude())*50); // doesn't work here
+    //makepoly(circle, points, -100);
+    makepoly(*this, path, circle, points, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100);
 }
 
 void QGeoTiledMapCircleObjectInfo::mapUpdate()
 {
     const QGeoMapCircleObjectPrivate *polygon = circle;
     // --- copy-pasted from polygon ---
-    if (polygonItem1) {
+    if (polygonItem) {
         QPen pen = polygon->pen;
         pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        polygonItem1->setPen(pen);
-        if (polygonItem2) polygonItem2->setPen(pen);
+        polygonItem->setPen(pen);
     }
     // --- snip ---
 }
