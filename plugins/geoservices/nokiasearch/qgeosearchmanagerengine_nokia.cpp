@@ -101,13 +101,13 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     requestString += "/nsp?vi=where&la=eng-uk&to=20&q=";
 
 
-    if (!address.thoroughfareName().isEmpty()) {
-        requestString += address.thoroughfareName();
+    if (!address.street().isEmpty()) {
+        requestString += address.street();
         requestString += ",";
     }
 
-    if (!address.thoroughfareNumber().isEmpty()) {
-        requestString += address.thoroughfareNumber();
+    if (!address.streetNumber().isEmpty()) {
+        requestString += address.streetNumber();
         requestString += ",";
     }
 
@@ -133,14 +133,14 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coordinate,
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
     const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(bounds)
 
     if (!supportsGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "Geocoding is not supported by this service provider.", this);
+            "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -151,7 +151,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coo
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::placeSearch(const QString &searchString,
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
     QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
