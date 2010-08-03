@@ -113,7 +113,7 @@ symbian|win32|maemo6|maemo5|mac {
         documentation.files = doc/html
         PKGCONFIG += glib-2.0 \
             dbus-glib-1 \
-            gconf-2.0 \const
+            gconf-2.0 \
             libosso \
             libmodest-dbus-client-1.0 \
             TpSession \
