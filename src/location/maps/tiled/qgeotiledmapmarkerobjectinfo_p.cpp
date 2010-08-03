@@ -39,54 +39,50 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
+#include "qgeotiledmapmarkerobjectinfo_p.h"
+
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
+
 #include "qgeomapmarkerobject_p.h"
-#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
-{
-    Q_D(QGeoMapMarkerObject);
+QGeoTiledMapMarkerObjectInfo::QGeoTiledMapMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
+        : QGeoTiledMapObjectInfo(mapObjectPrivate),
+        pixmapItem(0)
 
-    d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
+{
+    marker = static_cast<const QGeoMapMarkerObjectPrivate*>(mapObjectPrivate);
 }
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
+QGeoTiledMapMarkerObjectInfo::~QGeoTiledMapMarkerObjectInfo() {}
+
+void QGeoTiledMapMarkerObjectInfo::objectUpdate()
 {
+    QPointF position = mapData->q_ptr->coordinateToWorldPixel(marker->coordinate);
+
+    if (!pixmapItem)
+        pixmapItem = new QGraphicsPixmapItem();
+
+    pixmapItem->setPixmap(marker->icon);
+    pixmapItem->setOffset(position);
+    pixmapItem->setTransformOriginPoint(position);
+
+    mapUpdate();
+
+    graphicsItem1 = pixmapItem;
+    graphicsItem2 = 0;
 }
 
-QPixmap QGeoMapMarkerObject::icon() const
+void QGeoTiledMapMarkerObjectInfo::mapUpdate()
 {
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->icon;
+    if (pixmapItem) {
+        pixmapItem->resetTransform();
+        pixmapItem->setScale(mapData->zoomFactor);
+        pixmapItem->translate(marker->anchor.x() * mapData->zoomFactor, marker->anchor.y() * mapData->zoomFactor);
+    }
 }
-
-QPoint QGeoMapMarkerObject::anchor() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->anchor;
-}
-
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
-
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
 
 QTM_END_NAMESPACE
 

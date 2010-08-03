@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     The calculateRoute() and updateRoute() methods function QGeoRouteReply

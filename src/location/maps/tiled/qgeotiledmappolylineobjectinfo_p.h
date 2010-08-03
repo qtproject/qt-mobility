@@ -39,54 +39,46 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeoboundingbox.h"
+#ifndef QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+#define QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qgeotiledmapobjectinfo_p.h"
+
+#include <QList>
+
+class QGraphicsPathItem;
+class QPointF;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+class QGeoMapPolylineObjectPrivate;
+
+class QGeoTiledMapPolylineObjectInfo : public QGeoTiledMapObjectInfo
 {
-    Q_D(QGeoMapMarkerObject);
+public:
+    QGeoTiledMapPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapPolylineObjectInfo();
 
-    d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
-}
+    void objectUpdate();
+    void mapUpdate();
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
-{
-}
+    const QGeoMapPolylineObjectPrivate *polyline;
+    QGraphicsPathItem *pathItem;
 
-QPixmap QGeoMapMarkerObject::icon() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->icon;
-}
-
-QPoint QGeoMapMarkerObject::anchor() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->anchor;
-}
-
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
-
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
+    QList<QPointF> points;
+};
 
 QTM_END_NAMESPACE
 
+#endif //QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H

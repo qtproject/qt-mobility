@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
     geographical information.
 
     \inmodule QtLocation
-    
+
     \ingroup maps
 
     The Maps and Navigation API allows people to access various kinds of
@@ -96,7 +96,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-\enum QGeoServiceProvider::Error 
+\enum QGeoServiceProvider::Error
 
 Describes an error related to the loading and setup of a service provider
 plugin.
@@ -189,8 +189,8 @@ QGeoSearchManager* QGeoServiceProvider::searchManager() const
 
     if (!d_ptr->searchManager) {
         QGeoSearchManagerEngine *engine = d_ptr->factory->createSearchManagerEngine(d_ptr->parameterMap,
-                                                                                    &(d_ptr->searchError),
-                                                                                    &(d_ptr->searchErrorString));
+                                          &(d_ptr->searchError),
+                                          &(d_ptr->searchErrorString));
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
             engine->setManagerVersion(d_ptr->factory->providerVersion());
@@ -235,8 +235,8 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 
     if (!d_ptr->mappingManager) {
         QGeoMappingManagerEngine *engine = d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap,
-                                                                                      &(d_ptr->mappingError),
-                                                                                      &(d_ptr->mappingErrorString));
+                                           &(d_ptr->mappingError),
+                                           &(d_ptr->mappingErrorString));
 
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
@@ -282,8 +282,8 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 
     if (!d_ptr->routingManager) {
         QGeoRoutingManagerEngine *engine = d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap,
-                                                                                      &(d_ptr->routingError),
-                                                                                      &(d_ptr->routingErrorString));
+                                           &(d_ptr->routingError),
+                                           &(d_ptr->routingErrorString));
 
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());

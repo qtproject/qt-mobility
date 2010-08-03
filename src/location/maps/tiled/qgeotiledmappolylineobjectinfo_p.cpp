@@ -39,54 +39,64 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeoboundingbox.h"
+#include "qgeotiledmappolylineobjectinfo_p.h"
+
+#include "qgeotiledmapdata.h"
+#include "qgeotiledmapdata_p.h"
+
+#include "qgeomappolylineobject_p.h"
+
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
+        : QGeoTiledMapObjectInfo(mapObjectPrivate)
+        , pathItem(0)
 {
-    Q_D(QGeoMapMarkerObject);
-
-    d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
+    polyline = static_cast<const QGeoMapPolylineObjectPrivate*>(mapObjectPrivate);
 }
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
+QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
+
+void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 {
+    QList<QGeoCoordinate> path = polyline->path;
+
+    for (int i = 0; i < path.size(); ++i) {
+        const QGeoCoordinate &coord = path.at(i);
+
+        if (!coord.isValid())
+            continue;
+
+        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
+    }
+
+    if (points.size() < 2)
+        return;
+
+    QPainterPath painterPath(points.at(0));
+    for (int i = 1; i < points.size(); ++i)
+        painterPath.lineTo(points.at(i));
+
+    if (!pathItem)
+        pathItem = new QGraphicsPathItem();
+
+    pathItem->setPath(painterPath);
+    mapUpdate();
+
+    graphicsItem1 = pathItem;
+    graphicsItem2 = 0;
 }
 
-QPixmap QGeoMapMarkerObject::icon() const
+void QGeoTiledMapPolylineObjectInfo::mapUpdate()
 {
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->icon;
+    if (pathItem) {
+        QPen pen = polyline->pen;
+        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
+        pathItem->setPen(pen);
+    }
 }
-
-QPoint QGeoMapMarkerObject::anchor() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->anchor;
-}
-
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
-
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
 
 QTM_END_NAMESPACE
 

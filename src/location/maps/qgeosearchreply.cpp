@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-places
 
     Instances of QGeoSearchReply manage the state and results of these

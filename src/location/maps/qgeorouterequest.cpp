@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     which define a request for routing information.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     The default state of a QGeoRouteRequest instance will result in a request
@@ -152,11 +152,11 @@ QTM_BEGIN_NAMESPACE
         Maximize the scenic potential of the journey.
 */
 
-        enum SegmentDetail {
-            NoSegmentData = 0x0000,
-            BasicSegmentData = 0x0001,
-            DetailedSegmentData = 0x0002
-        };
+enum SegmentDetail {
+    NoSegmentData = 0x0000,
+    BasicSegmentData = 0x0001,
+    DetailedSegmentData = 0x0002
+};
 
 /*!
     \enum QGeoRouteRequest::SegmentDetail

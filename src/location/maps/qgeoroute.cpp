@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRoute class represents a route between two points.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     A QGeoRoute object contains high level information about a route, such
@@ -278,8 +278,8 @@ QList<QGeoCoordinate> QGeoRoute::path() const
 *******************************************************************************/
 
 QGeoRoutePrivate::QGeoRoutePrivate()
-    : travelTime(0),
-    distance(0.0){}
+        : travelTime(0),
+        distance(0.0) {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         : QSharedData(other),

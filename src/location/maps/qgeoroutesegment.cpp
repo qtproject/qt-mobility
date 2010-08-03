@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRouteSegment class represents a segment of a route.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     A QGeoRouteSegment instance has information about the physcial layout
@@ -70,7 +70,7 @@ QGeoRouteSegment::QGeoRouteSegment()
     Constructs a route segment object from the contents of \a other.
 */
 QGeoRouteSegment::QGeoRouteSegment(const QGeoRouteSegment &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this route segment object.
@@ -82,7 +82,7 @@ QGeoRouteSegment::~QGeoRouteSegment() {}
     Assigns \a other to this route segment object and then returns a
     reference to this route segment object.
 */
-QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment &other)
+QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 {
     d_ptr = other.d_ptr;
     return *this;
@@ -164,8 +164,8 @@ QGeoNavigationInstruction QGeoRouteSegment::instruction() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-    : travelTime(0),
-    distance(0.0) {}
+        : travelTime(0),
+        distance(0.0) {}
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : QSharedData(other),

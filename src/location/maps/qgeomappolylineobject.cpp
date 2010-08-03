@@ -49,10 +49,10 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
 QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapPolylineObjectPrivate* dd)
-    : QGeoMapObject(dd) {}
+        : QGeoMapObject(dd) {}
 
 /*!
 */
@@ -118,7 +118,7 @@ QPen QGeoMapPolylineObject::pen() const
 *******************************************************************************/
 
 QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent, QGeoMapObject::Type type)
-    : QGeoMapObjectPrivate(impl, parent, type) {}
+        : QGeoMapObjectPrivate(impl, parent, type) {}
 
 QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 

@@ -47,33 +47,17 @@
 #include "qgeotiledmaprequest.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
-#include "qgeomaprectangleobject.h"
-#include "qgeomapmarkerobject.h"
-#include "qgeomappolylineobject.h"
-#include "qgeomappolygonobject.h"
-#include "qgeomaprouteobject.h"
-#include "qgeoroutesegment.h"
 
-#include "qgeomaprectangleobject_p.h"
-#include "qgeomapcircleobject_p.h"
-#include "qgeomappolylineobject_p.h"
-#include "qgeomappolygonobject_p.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeomaprouteobject_p.h"
+#include "qgeotiledmapcircleobjectinfo_p.h"
+#include "qgeotiledmaprectangleobjectinfo_p.h"
+#include "qgeotiledmappolylineobjectinfo_p.h"
+#include "qgeotiledmappolygonobjectinfo_p.h"
+#include "qgeotiledmapmarkerobjectinfo_p.h"
+#include "qgeotiledmaprouteobjectinfo_p.h"
 
 #include <QTimer>
 #include <QImage>
-#include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QGraphicsItem>
-#include <QGraphicsRectItem>
-#include <QGraphicsPolygonItem>
-#include <QGraphicsPathItem>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsLineItem>
-#include <QGraphicsItemGroup>
-
-#include <QPen>
 
 #include <QDebug>
 
@@ -148,7 +132,7 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
     if (y < 0)
         y = 0;
 
-    QPointF posF(offsetX + qreal(x) / d->zoomFactor, offsetY + qreal(y)/ d->zoomFactor);
+    QPointF posF(offsetX + qreal(x) / d->zoomFactor, offsetY + qreal(y) / d->zoomFactor);
 
     return posF;
 }
@@ -335,7 +319,7 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
         if (!d->intersectsScreen(tileRect))
             continue;
 
-        QList<QPair<QRect,QRect> > overlaps = d->intersectedScreen(tileRect);
+        QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
         for (int i = 0; i < overlaps.size(); ++i) {
             QRect t = overlaps.at(i).second;
 
@@ -395,7 +379,7 @@ void QGeoTiledMapData::pan(int dx, int dy)
 
     y = (y + dy * d->zoomFactor);
     int height = int(d->maxZoomScreenRect.height() / 2.0);
-    if ( y < height)
+    if (y < height)
         y = height;
     if (y > d->maxZoomSize.height() - height)
         y = d->maxZoomSize.height() - height;
@@ -434,7 +418,7 @@ void QGeoTiledMapData::paintMap(QPainter *painter, const QStyleOptionGraphicsIte
         QGeoTiledMapRequest req = it.next();
         QRect tileRect = req.tileRect();
 
-        QList<QPair<QRect,QRect> > overlaps = d->intersectedScreen(tileRect);
+        QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
         for (int i = 0; i < overlaps.size(); ++i) {
             QRect s = overlaps.at(i).first;
             QRect t = overlaps.at(i).second;
@@ -478,7 +462,7 @@ void QGeoTiledMapData::paintMapObjects(QPainter *painter, const QStyleOptionGrap
     qreal targetW = d->viewportSize.width() - 2 * targetX;
     qreal targetH = d->viewportSize.height() - 2 * targetY;
 
-    QRect worldRect = QRect(QPoint(0.0,0.0), d->maxZoomSize);
+    QRect worldRect = QRect(QPoint(0.0, 0.0), d->maxZoomSize);
 
     if (worldRect.contains(d->maxZoomScreenRect)) {
         d->scene->render(painter,
@@ -568,17 +552,17 @@ void QGeoTiledMapData::processRequests()
     while (replyIter.hasNext()) {
         QGeoTiledMapReply *reply = replyIter.next();
         if (!d->intersectsScreen(reply->request().tileRect())
-            || (zoomLevel() != reply->request().zoomLevel())
-            || (mapType() != reply->request().mapType())) {
-                reply->abort();
-                d->replyRects.remove(reply->request().tileRect());
-                replyIter.remove();
-                d->zoomCache.remove(reply->request());
+                || (zoomLevel() != reply->request().zoomLevel())
+                || (mapType() != reply->request().mapType())) {
+            reply->abort();
+            d->replyRects.remove(reply->request().tileRect());
+            replyIter.remove();
+            d->zoomCache.remove(reply->request());
         }
     }
 
     QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+    = static_cast<QGeoTiledMappingManagerEngine*>(engine());
 
     QMutableListIterator<QGeoTiledMapRequest> requestIter(d->requests);
     while (requestIter.hasNext()) {
@@ -675,9 +659,9 @@ void QGeoTiledMapData::tileFinished()
     qreal offsetY = ((d->viewportSize.height() * d->zoomFactor) - d->maxZoomScreenRect.height()) / 2.0;
     if (offsetY < 0.0)
         offsetY = 0.0;
-    offsetY /=d->zoomFactor;
+    offsetY /= d->zoomFactor;
 
-    QList<QPair<QRect,QRect> > overlaps = d->intersectedScreen(tileRect);
+    QList<QPair<QRect, QRect> > overlaps = d->intersectedScreen(tileRect);
     for (int i = 0; i < overlaps.size(); ++i) {
         QRect t = overlaps.at(i).second;
         QRectF target = QRectF(offsetX + int(t.left()) / d->zoomFactor,
@@ -706,7 +690,7 @@ void QGeoTiledMapData::cleanupCaches()
     int boundaryTiles = 3;
 
     QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(engine());
+    = static_cast<QGeoTiledMappingManagerEngine*>(engine());
 
     QSize tileSize = tiledEngine->tileSize();
 
@@ -714,9 +698,9 @@ void QGeoTiledMapData::cleanupCaches()
     QRectF cacheRect2;
 
     cacheRect1 = d->maxZoomScreenRect.adjusted(-boundaryTiles * tileSize.width(),
-                                               -boundaryTiles * tileSize.height(),
-                                               boundaryTiles * tileSize.width(),
-                                               boundaryTiles * tileSize.height());
+                 -boundaryTiles * tileSize.height(),
+                 boundaryTiles * tileSize.width(),
+                 boundaryTiles * tileSize.height());
 
     if (cacheRect1.width() > d->maxZoomSize.width()) {
         cacheRect1.setX(0);
@@ -775,7 +759,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
 {
     Q_D(QGeoTiledMapData);
 
-    QRectF rect(d->maxZoomScreenRect.left() +(screenPosition.x() - radius) * d->zoomFactor,
+    QRectF rect(d->maxZoomScreenRect.left() + (screenPosition.x() - radius) * d->zoomFactor,
                 d->maxZoomScreenRect.top() + (screenPosition.y() - radius) * d->zoomFactor,
                 2 * radius * d->zoomFactor,
                 2 * radius * d->zoomFactor);
@@ -827,8 +811,8 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 *******************************************************************************/
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget, QGeoTiledMapData *q)
-    : QGeoMapDataPrivate(engine, widget),
-    q_ptr(q) {}
+        : QGeoMapDataPrivate(engine, widget),
+        q_ptr(q) {}
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other)
         : QGeoMapDataPrivate(other),
@@ -969,691 +953,16 @@ QGeoMapObjectInfo* QGeoTiledMapDataPrivate::createRouteObjectInfo(const QGeoMapO
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoMapObjectInfo(mapObjectPrivate),
-    graphicsItem1(0),
-    graphicsItem2(0)
-{
-    mapData = static_cast<QGeoTiledMapDataPrivate*>(mapObjectPrivate->mapData);
-}
-
-QGeoTiledMapObjectInfo::~QGeoTiledMapObjectInfo()
-{
-    if (graphicsItem1)
-        delete graphicsItem1;
-    if (graphicsItem2)
-        delete graphicsItem2;
-}
-
-void QGeoTiledMapObjectInfo::addToParent()
-{
-    if (graphicsItem1) {
-        mapData->scene->addItem(graphicsItem1);
-        mapData->itemMap.insert(graphicsItem1, mapObjectPrivate->q_ptr);
-    }
-    if (graphicsItem2) {
-        mapData->scene->addItem(graphicsItem2);
-        mapData->itemMap.insert(graphicsItem2, mapObjectPrivate->q_ptr);
-    }
-}
-
-void QGeoTiledMapObjectInfo::removeFromParent()
-{
-    if (graphicsItem1) {
-        mapData->scene->removeItem(graphicsItem1);
-        mapData->itemMap.remove(graphicsItem1);
-    }
-    if (graphicsItem2) {
-        mapData->scene->removeItem(graphicsItem2);
-        mapData->itemMap.remove(graphicsItem2);
-    }
-}
-
-QGeoBoundingBox QGeoTiledMapObjectInfo::boundingBox() const
-{
-    if (!graphicsItem1)
-        return QGeoBoundingBox();
-
-    QRectF rect = graphicsItem1->boundingRect();
-    QGeoCoordinate topLeft = mapData->q_ptr->worldPixelToCoordinate(rect.topLeft().toPoint());
-    QGeoCoordinate bottomRight = mapData->q_ptr->worldPixelToCoordinate(rect.bottomRight().toPoint());
-
-    return QGeoBoundingBox(topLeft, bottomRight);
-}
-
-bool QGeoTiledMapObjectInfo::contains(const QGeoCoordinate &coord) const
-{
-    QPoint point = mapData->q_ptr->coordinateToWorldPixel(coord);
-
-    if (graphicsItem1 && graphicsItem1->contains(point))
-        return true;
-
-    if (graphicsItem2 && graphicsItem2->contains(point))
-        return true;
-
-    return false;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    rectangleItem1(0),
-    rectangleItem2(0)
-{
-    rectangle = static_cast<const QGeoMapRectangleObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapRectangleObjectInfo::~QGeoTiledMapRectangleObjectInfo() {}
-
-/*bool QGeoTiledMapRectangleObjectInfo::contains(const QGeoCoordinate &coord) const
-{
-    QPoint point = mapData->q_ptr->coordinateToWorldPixel(coord);
-
-    if (rectangleItem1 && rectangleItem1->contains(point))
-        return true;
-
-    if (rectangleItem2 && rectangleItem2->contains(point))
-        return true;
-
-    return false;
-}*/
-
-void QGeoTiledMapRectangleObjectInfo::objectUpdate()
-{
-    QPoint topLeft = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.topLeft());
-    QPoint bottomRight = mapData->q_ptr->coordinateToWorldPixel(mapObjectPrivate->bounds.bottomRight());
-
-    bounds = QRectF(topLeft, bottomRight);
-
-    QRectF bounds1 = bounds;
-    QRectF bounds2;
-
-    if (bounds1.right() < bounds1.left()) {
-        bounds1.setRight(bounds1.right() + mapData->maxZoomSize.width());
-        bounds2 = bounds1.translated(-mapData->maxZoomSize.width(), 0);
-    }
-
-    if (!rectangleItem1)
-        rectangleItem1 = new QGraphicsRectItem();
-
-    if (bounds2.isValid()) {
-        if (!rectangleItem2)
-            rectangleItem2 = new QGraphicsRectItem(rectangleItem1);
-    } else {
-        if (rectangleItem2) {
-            delete rectangleItem2;
-            rectangleItem2 = 0;
-        }
-    }
-
-    rectangleItem1->setRect(bounds1);
-    if (rectangleItem2)
-        rectangleItem2->setRect(bounds2);
-
-    rectangleItem1->setBrush(rectangle->brush);
-    if (rectangleItem2)
-        rectangleItem2->setBrush(rectangle->brush);
-
-    mapUpdate();
-
-    graphicsItem1 = rectangleItem1;
-    graphicsItem2 = rectangleItem2;
-}
-
-void QGeoTiledMapRectangleObjectInfo::mapUpdate() {
-    if (rectangleItem1) {
-        QPen pen = rectangle->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        rectangleItem1->setPen(pen);
-        if (rectangleItem2)
-            rectangleItem2->setPen(pen);
-    }
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    polygonItem1(0),
-    polygonItem2(0)
-{
-    circle = static_cast<const QGeoMapCircleObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapCircleObjectInfo::~QGeoTiledMapCircleObjectInfo() {}
-
-static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
-
-inline static double qgeocoordinate_degToRad(double deg)
-{
-    return deg * M_PI / 180;
-}
-inline static double qgeocoordinate_radToDeg(double rad)
-{
-    return rad * 180 / M_PI;
-}
-
-void QGeoTiledMapCircleObjectInfo::objectUpdate()
-{
-    QList<QGeoCoordinate> path;
-
-    QGeoCoordinate center = circle->center;
-    double radius = circle->radius/(qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
-
-    // To simplify things, we're using formulae from astronomy, namely those from the nautic triangle for converting from horizontal system to equatorial system.
-    // First, we calculate the input coordinates (horizontal system)
-    // altitude - derivation:
-    /*
-                   A________B
-                   /\ h) (.|
-                  /  \/   \|
-                 / 90°\    |
-                /\____/\   |
-               /        \  |
-              /          \ |
-             /            \|
-            /              |C
-           /               |\
-          /                | \
-         /                 |  \
-        /                  |   \
-       /                   |    \
-      /\                   |\   /\
-    F/ r)                 E|.) (x \D
-     ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-    explanations:
-        A is the central point
-        E is the peripheral point
-
-        AD is the tangent at the central point
-        BE is the tangent at the peripheral point
-
-        h = <)ACB is the altitude
-        r = <)FDA is the radius, in radians, of the small circle we want to achieve
-        x = <)DCE is an auxilary angle
-
-        <)EDC, <)DCF, <)BAC and <)AFD are rectangular (as denoted by the dot or 90°)
-        AB and FD are parallel
-
-    knowns:
-        r
-
-    unknowns:
-        h
-
-    derivation:
-        h = x | the triangles ABC and CDE have the same angles (h/x, 90° and the angle between the two tangents)
-
-        r + x + 90° = 180° | sum of interior angles
-        <=> r + h + 90° = 180° | h = x
-        <=> h = 90° - r
-    */
-    //double h = M_PI/2 - radius;
-    double cosh = sin(radius); // cos(M_PI/2 - radius); // cos(h);
-    double sinh = cos(radius); // sin(M_PI/2 - radius); // sin(h);
-    // Location latitude
-    double phi = qgeocoordinate_degToRad(center.latitude());
-    double cosphi = cos(phi), sinphi = sin(phi);
-    // Star time (since we're not doing actual astronomy here, we use a greenwich star time of 0)
-    double theta = qgeocoordinate_degToRad(center.longitude());
-
-    double sinphi_sinh = sinphi*sinh;
-    double cosphi_cosh = cosphi*cosh;
-    double sinphi_cosh = sinphi*cosh;
-    double cosphi_sinh = cosphi*sinh;
-
-    //qDebug("circle: h=%f lat=%f lng=%f radius=%fm",h,phi,theta, radius*(qgeocoordinate_EARTH_MEAN_RADIUS * 1000));
-    // Azimut - we iterate over a full circle, in 128 steps for now. TODO: find a better step count, adjust by display size etc
-    int steps = 128;
-    for (int i = 0; i < steps; ++i) {
-        double a = M_PI/2+2*M_PI*i/steps;
-        // next, we convert from horizontal system -> equatorial system
-        // First, sin(delta)
-        double sindelta = sinphi_sinh - cosphi_cosh * cos(a);
-
-        // calculate the value of cos(delta)*cos(tau)...
-        double cosdelta_costau = cosphi_sinh + sinphi_cosh * cos(a);
-        // ...and cos(delta)*sin(tau)
-        double cosdelta_sintau = -sin(a) * cosh;
-
-        // now we obtain the actual value of the hour angle...
-        // convert from cartesian to polar ( cos(delta)*cos(tau) | cos(delta)*sin(tau) ) -> ( tau | cos(delta) )
-        double tau = atan2(cosdelta_sintau, cosdelta_costau);
-        double cosdelta = sqrt(cosdelta_sintau*cosdelta_sintau + cosdelta_costau*cosdelta_costau);
-
-        // ...and the declination
-        // convert from cartesian to polar ( cos(delta) | sin(delta) ) -> ( delta | 1 )
-        double delta = atan2(sindelta, cosdelta);
-        //qAssert(qFuzzyCompare(sqrt(sindelta*sindelta + cosdelta*cosdelta), 1)); // taken out because it takes too much cpu
-
-        // we calculate right ascension from tau
-        double alpha = theta-tau;
-
-        // we interpret right ascension as latitude and declination as longitude
-        double lat = qgeocoordinate_radToDeg(delta);
-        double lng = qgeocoordinate_radToDeg(alpha);
-        if (lng < -180)
-            lng += 360;
-        if (lng > 180)
-            lng -= 360;
-
-        //qDebug("lat=%f lng=%f",lat,lng);
-        path.append(QGeoCoordinate(lat,lng));
-    }
-
-    const QGeoMapCircleObjectPrivate *polygon = circle;
-    // --- copy-pasted from polygon ---
-    points.clear();
-
-    //TODO - handle when polygons are drawn across the dateline...
-    // regular graphics item with polygon item children?
-    QGeoCoordinate lastCoord = path.at(0);
-
-    qreal xoffset = 0;
-    bool polygonCrossesDateline = false;
-    int width = mapData->maxZoomSize.width();
-
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        const qreal lng = coord.longitude();
-        const qreal lastLng = lastCoord.longitude();
-
-        // is the dateline crossed = different sign AND gap is large enough
-        const bool crossesDateline = lastLng*lng < 0 && abs(lastLng-lng)>180;
-
-        polygonCrossesDateline |= crossesDateline;
-
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng>lastLng);
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
-        // if the dateline is crossed, advance the offset in the given direction
-        if (crossesDateline)
-            xoffset += width*dir;
-
-        if (xoffset < 0) {
-            xoffset += width;
-            points.translate(width,0);
-        }
-
-        // calculate base point
-        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
-
-        // apply offset
-        point += QPointF(xoffset, 0);
-
-        // add point to polygon
-        points.append(point);
-
-        lastCoord = coord;
-    }
-
-    if (!polygonItem1)
-        polygonItem1 = new QGraphicsPolygonItem();
-
-    polygonItem1->setPolygon(points);
-    polygonItem1->setBrush(polygon->brush);
-
-    if (polygonCrossesDateline) {
-        if (!polygonItem2)
-            polygonItem2 = new QGraphicsPolygonItem();
-        polygonItem2->setPolygon(points.translated(-width,0));
-        polygonItem2->setBrush(polygon->brush);
-    }
-    else {
-        delete polygonItem2;
-        polygonItem2 = 0;
-    }
-    graphicsItem1 = polygonItem1;
-    graphicsItem2 = polygonItem2;
-    // --- snip ---
-}
-
-void QGeoTiledMapCircleObjectInfo::mapUpdate()
-{
-    const QGeoMapCircleObjectPrivate *polygon = circle;
-    // --- copy-pasted from polygon ---
-    if (polygonItem1) {
-        QPen pen = polygon->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        polygonItem1->setPen(pen);
-        if (polygonItem2) polygonItem2->setPen(pen);
-    }
-    // --- snip ---
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapPolylineObjectInfo::QGeoTiledMapPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate)
-    , pathItem(0)
-{
-    polyline = static_cast<const QGeoMapPolylineObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapPolylineObjectInfo::~QGeoTiledMapPolylineObjectInfo() {}
-
-void QGeoTiledMapPolylineObjectInfo::objectUpdate()
-{
-    QList<QGeoCoordinate> path = polyline->path;
-
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
-    }
-
-    if (points.size() < 2)
-        return;
-
-    QPainterPath painterPath(points.at(0));
-    for (int i = 1; i < points.size(); ++i)
-        painterPath.lineTo(points.at(i));
-
-    if (!pathItem)
-        pathItem = new QGraphicsPathItem();
-
-    pathItem->setPath(painterPath);
-    mapUpdate();
-
-    graphicsItem1 = pathItem;
-    graphicsItem2 = 0;
-}
-
-void QGeoTiledMapPolylineObjectInfo::mapUpdate()
-{
-    if (pathItem) {
-        QPen pen = polyline->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        pathItem->setPen(pen);
-    }
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    polygonItem1(0),
-    polygonItem2(0)
-{
-    polygon = static_cast<const QGeoMapPolygonObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapPolygonObjectInfo::~QGeoTiledMapPolygonObjectInfo() {}
-
-void QGeoTiledMapPolygonObjectInfo::objectUpdate()
-{
-    QList<QGeoCoordinate> path = polygon->path;
-
-    points.clear();
-
-    //TODO - handle when polygons are drawn across the dateline...
-    // regular graphics item with polygon item children?
-    QGeoCoordinate lastCoord = path.at(0);
-
-    qreal xoffset = 0;
-    bool polygonCrossesDateline = false;
-    int width = mapData->maxZoomSize.width();
-
-    for (int i = 0; i < path.size(); ++i) {
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        const qreal lng = coord.longitude();
-        const qreal lastLng = lastCoord.longitude();
-
-        // is the dateline crossed = different sign AND gap is large enough
-        const bool crossesDateline = lastLng*lng < 0 && abs(lastLng-lng)>180;
-
-        polygonCrossesDateline |= crossesDateline;
-
-        // is the shortest route east = dateline crossed XOR longitude is east by simple comparison
-        const bool goesEast = crossesDateline != (lng>lastLng);
-        // direction = positive if east, negative otherwise
-        const qreal dir = goesEast ? 1 : -1;
-
-        // if the dateline is crossed, advance the offset in the given direction
-        if (crossesDateline)
-            xoffset += width*dir;
-
-        if (xoffset < 0) {
-            xoffset += width;
-            points.translate(width,0);
-        }
-
-        // calculate base point
-        QPointF point = mapData->q_ptr->coordinateToWorldPixel(coord);
-
-        // apply offset
-        point += QPointF(xoffset, 0);
-
-        // add point to polygon
-        points.append(point);
-
-        lastCoord = coord;
-    }
-
-    if (!polygonItem1)
-        polygonItem1 = new QGraphicsPolygonItem();
-
-    polygonItem1->setPolygon(points);
-    polygonItem1->setBrush(polygon->brush);
-
-    if (polygonCrossesDateline) {
-        if (!polygonItem2)
-            polygonItem2 = new QGraphicsPolygonItem();
-        polygonItem2->setPolygon(points.translated(-width,0));
-        polygonItem2->setBrush(polygon->brush);
-    }
-    else {
-        delete polygonItem2;
-        polygonItem2 = 0;
-    }
-    graphicsItem1 = polygonItem1;
-    graphicsItem2 = polygonItem2;
-}
-
-void QGeoTiledMapPolygonObjectInfo::mapUpdate()
-{
-    if (polygonItem1) {
-        QPen pen = polygon->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        polygonItem1->setPen(pen);
-        if (polygonItem2) polygonItem2->setPen(pen);
-    }
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapMarkerObjectInfo::QGeoTiledMapMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    pixmapItem(0)
-
-{
-    marker = static_cast<const QGeoMapMarkerObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapMarkerObjectInfo::~QGeoTiledMapMarkerObjectInfo() {}
-
-void QGeoTiledMapMarkerObjectInfo::objectUpdate()
-{
-    QPointF position = mapData->q_ptr->coordinateToWorldPixel(marker->coordinate);
-
-    if (!pixmapItem)
-        pixmapItem = new QGraphicsPixmapItem();
-
-    pixmapItem->setPixmap(marker->icon);
-    pixmapItem->setOffset(position);
-    pixmapItem->setTransformOriginPoint(position);
-
-    mapUpdate();
-
-    graphicsItem1 = pixmapItem;
-    graphicsItem2 = 0;
-}
-
-void QGeoTiledMapMarkerObjectInfo::mapUpdate()
-{
-    if (pixmapItem) {
-        pixmapItem->resetTransform();
-        pixmapItem->setScale(mapData->zoomFactor);
-        pixmapItem->translate(marker->anchor.x() * mapData->zoomFactor, marker->anchor.y() * mapData->zoomFactor);
-    }
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-    : QGeoTiledMapObjectInfo(mapObjectPrivate),
-    pathItem(0),
-    //groupItem(0),
-    oldZoom(-1.0)
-{
-    route = static_cast<const QGeoMapRouteObjectPrivate*>(mapObjectPrivate);
-}
-
-QGeoTiledMapRouteObjectInfo::~QGeoTiledMapRouteObjectInfo() {}
-
-void QGeoTiledMapRouteObjectInfo::objectUpdate()
-{
-    QListIterator<QGeoRouteSegment> segIt(route->route.routeSegments());
-
-    while (segIt.hasNext()) {
-        QListIterator<QGeoCoordinate> coordIt(segIt.next().path());
-        while (coordIt.hasNext()) {
-            QGeoCoordinate coord = coordIt.next();
-
-            if (!coord.isValid())
-                continue;
-
-            points.append(mapData->q_ptr->coordinateToWorldPixel(coord));
-        }
-    }
-
-    if (!pathItem)
-        pathItem = new QGraphicsPathItem();
-
-    mapUpdate();
-
-    graphicsItem1 = pathItem;
-    graphicsItem2 = 0;
-}
-
-void QGeoTiledMapRouteObjectInfo::mapUpdate()
-{
-    if (!pathItem)
-        return;
-
-    if (mapData->zoomLevel != oldZoom) {
-        oldZoom = mapData->zoomLevel;
-
-        distanceFilteredPoints.clear();
-
-        QPointF lastPoint = points.at(0);
-        distanceFilteredPoints.append(points.at(0));
-        for (int i = 1; i < points.size() - 1; ++i) {
-            if ((lastPoint - points.at(i)).manhattanLength() >= route->detailLevel * mapData->zoomFactor) {
-                distanceFilteredPoints.append(points.at(i));
-                lastPoint = points.at(i);
-            }
-        }
-
-        distanceFilteredPoints.append(points.at(points.size() - 1));
-
-        QPen pen = route->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
-        pathItem->setPen(pen);
-    }
-
-    QPainterPath painterPath;
-
-    if (distanceFilteredPoints.size() < 2) {
-        pathItem->setPath(painterPath);
-        return;
-    }
-
-    bool offScreen = true;
-
-    for (int i = 0; i < distanceFilteredPoints.size() - 1; ++i) {
-        if (!offScreen)
-            painterPath.lineTo(distanceFilteredPoints.at(i));
-
-        bool wasOffScreen = offScreen;
-
-        QPointF point1 = distanceFilteredPoints.at(i);
-        QPointF point2 = distanceFilteredPoints.at(i + 1);
-        QPointF midpoint = (point1 + point2) / 2.0;
-
-        offScreen = !(mapData->maxZoomScreenRect.contains(point1.toPoint())
-                     || mapData->maxZoomScreenRect.contains(point2.toPoint())
-                     || mapData->maxZoomScreenRect.contains(midpoint.toPoint()));
-
-        if (wasOffScreen && !offScreen)
-            painterPath.moveTo(distanceFilteredPoints.at(i));
-    }
-
-    pathItem->setPath(painterPath);
-}
-
-//QLineF QGeoTiledMapRouteObjectInfo::connectShortest(const QGeoCoordinate &point1, const QGeoCoordinate &point2) const
-//{
-//    //order from west to east
-//    QGeoCoordinate pt1;
-//    QGeoCoordinate pt2;
-
-//    if (point1.longitude() < point2.longitude()) {
-//        pt1 = point1;
-//        pt2 = point2;
-//    } else {
-//        pt1 = point2;
-//        pt2 = point1;
-//    }
-
-//    qulonglong x;
-//    qulonglong y;
-//    mapData->q_ptr->coordinateToWorldPixel(pt1, &x, &y);
-//    QPointF mpt1(x, y);
-//    mapData->q_ptr->coordinateToWorldPixel(pt2, &x, &y);
-//    QPointF mpt2(x, y);
-
-//    if (pt2.longitude() - pt1.longitude() > 180.0) {
-//        mpt1.rx() += mapData->maxZoomSize.width();
-//        return QLineF(mpt2, mpt1);
-//    }
-
-//    return QLineF(mpt1, mpt2);
-//}
-
-///*******************************************************************************
-//*******************************************************************************/
-
 QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate)
-    : mapData(mapDataPrivate->q_ptr),
-    atEnd(false),
-    row(-1),
-    col(-1),
-    screenRect(mapDataPrivate->maxZoomScreenRect),
-    zoomLevel(mapDataPrivate->zoomLevel)
+        : mapData(mapDataPrivate->q_ptr),
+        atEnd(false),
+        row(-1),
+        col(-1),
+        screenRect(mapDataPrivate->maxZoomScreenRect),
+        zoomLevel(mapDataPrivate->zoomLevel)
 {
     QGeoTiledMappingManagerEngine *tiledEngine
-            = static_cast<QGeoTiledMappingManagerEngine*>(mapDataPrivate->engine);
+    = static_cast<QGeoTiledMappingManagerEngine*>(mapDataPrivate->engine);
     tileSize = tiledEngine->tileSize() * mapDataPrivate->zoomFactor;
     tileRect = QRect(QPoint(0, 0), tileSize);
 
@@ -1667,14 +976,14 @@ QGeoTileIterator::QGeoTileIterator(const QGeoTiledMapDataPrivate *mapDataPrivate
 }
 
 QGeoTileIterator::QGeoTileIterator(QGeoTiledMapData *mapData, const QRect &screenRect, const QSize &tileSize, int zoomLevel)
-    : mapData(mapData),
-    atEnd(false),
-    row(-1),
-    col(-1),
-    screenRect(screenRect),
-    tileSize(tileSize),
-    zoomLevel(zoomLevel),
-    tileRect(QPoint(0,0), tileSize)
+        : mapData(mapData),
+        atEnd(false),
+        row(-1),
+        col(-1),
+        screenRect(screenRect),
+        tileSize(tileSize),
+        zoomLevel(zoomLevel),
+        tileRect(QPoint(0, 0), tileSize)
 {
     qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
     qulonglong y = static_cast<qulonglong>(screenRect.topLeft().y() / tileSize.height());

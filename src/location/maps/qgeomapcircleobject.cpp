@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     within a certain distance of a coordinate.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping-objects
 
     TODO add pen and brush attributes as per alignment doc
@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new circle object with the specified \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
 
 /*!
     Destroys this circle object.
@@ -145,7 +145,7 @@ qreal QGeoMapCircleObject::radius() const
 *******************************************************************************/
 
 QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::CircleType) {}
 
 QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
 

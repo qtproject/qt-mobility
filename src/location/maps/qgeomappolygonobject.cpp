@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoMapPolygonObject::QGeoMapPolygonObject(QGeoMapObject *parent)
-    : QGeoMapPolylineObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
+        : QGeoMapPolylineObject(new QGeoMapPolygonObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -73,7 +73,7 @@ QBrush QGeoMapPolygonObject::brush() const
 *******************************************************************************/
 
 QGeoMapPolygonObjectPrivate::QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapPolylineObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
+        : QGeoMapPolylineObjectPrivate(impl, parent, QGeoMapObject::PolygonType) {}
 
 QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
 

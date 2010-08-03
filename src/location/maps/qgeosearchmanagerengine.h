@@ -69,11 +69,11 @@ public:
     virtual QGeoSearchReply* geocode(const QGeoAddress &address,
                                      const QGeoBoundingBox &bounds);
     virtual QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                     const QGeoBoundingBox &bounds);
+                                            const QGeoBoundingBox &bounds);
 
     virtual QGeoSearchReply* search(const QString &searchString,
-                                          QGeoSearchManager::SearchTypes searchTypes,
-                                          const QGeoBoundingBox &bounds);
+                                    QGeoSearchManager::SearchTypes searchTypes,
+                                    const QGeoBoundingBox &bounds);
 
     bool supportsGeocoding() const;
     QGeoSearchManager::SearchTypes supportedSearchTypes() const;

@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of

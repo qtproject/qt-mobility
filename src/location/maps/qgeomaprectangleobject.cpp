@@ -46,13 +46,13 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
     d_ptr->bounds = boundingBox;
 }
 
 QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+        : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
 {
     d_ptr->bounds = QGeoBoundingBox(topLeft, bottomRight);
 }
@@ -101,7 +101,7 @@ void QGeoMapRectangleObject::setBrush(const QBrush &brush)
 *******************************************************************************/
 
 QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-    : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
+        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::RectangleType) {}
 
 QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
 

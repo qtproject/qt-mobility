@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations

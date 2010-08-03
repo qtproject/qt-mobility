@@ -39,54 +39,43 @@
 **
 ****************************************************************************/
 
-#include "qgeomapmarkerobject.h"
-#include "qgeomapmarkerobject_p.h"
-#include "qgeoboundingbox.h"
+#ifndef QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
+#define QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qgeotiledmapobjectinfo_p.h"
+
+class QGraphicsRectItem;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor, const QPixmap &icon, QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent))
+class QGeoMapRectangleObjectPrivate;
+
+class QGeoTiledMapRectangleObjectInfo : public QGeoTiledMapObjectInfo
 {
-    Q_D(QGeoMapMarkerObject);
+public:
+    QGeoTiledMapRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate);
+    ~QGeoTiledMapRectangleObjectInfo();
 
-    d->coordinate = coordinate;
-    d->icon = icon;
-    d->anchor = anchor;
-}
+    void objectUpdate();
+    void mapUpdate();
 
-QGeoMapMarkerObject::~QGeoMapMarkerObject()
-{
-}
-
-QPixmap QGeoMapMarkerObject::icon() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->icon;
-}
-
-QPoint QGeoMapMarkerObject::anchor() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->anchor;
-}
-
-QGeoCoordinate QGeoMapMarkerObject::coordinate() const
-{
-    Q_D(const QGeoMapMarkerObject);
-
-    return d->coordinate;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
-        : QGeoMapObjectPrivate(impl, parent, QGeoMapObject::MarkerType) {}
-
-QGeoMapMarkerObjectPrivate::~QGeoMapMarkerObjectPrivate() {}
+    const QGeoMapRectangleObjectPrivate* rectangle;
+    QGraphicsRectItem *rectangleItem1;
+    QGraphicsRectItem *rectangleItem2;
+};
 
 QTM_END_NAMESPACE
+
+#endif //QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
 

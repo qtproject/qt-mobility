@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     In the default implementation, supportsGeocoding() returns false while
@@ -208,12 +208,12 @@ int QGeoSearchManagerEngine::managerVersion() const
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
-                                                  const QGeoBoundingBox &bounds)
+        const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Geocoding is not supported by this service provider.", this);
+                               "Geocoding is not supported by this service provider.", this);
 }
 
 /*!
@@ -253,12 +253,12 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
-                                                  const QGeoBoundingBox &bounds)
+        const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Reverse geocoding is not supported by this service provider.", this);
+                               "Reverse geocoding is not supported by this service provider.", this);
 }
 
 /*!
@@ -300,15 +300,15 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
-                                                       QGeoSearchManager::SearchTypes searchTypes,
-                                                       const QGeoBoundingBox &bounds)
+        QGeoSearchManager::SearchTypes searchTypes,
+        const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(searchString)
     Q_UNUSED(searchTypes)
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                              "Searching is not supported by this service provider.", this);
+                               "Searching is not supported by this service provider.", this);
 }
 
 /*!
