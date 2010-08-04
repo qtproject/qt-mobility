@@ -166,6 +166,7 @@ private:
     QCamera::State m_state;
     QCamera::State m_pendingState;
     QString m_inputDevice;
+    bool m_pendingResolutionUpdate;
 
     bool m_muted;    
     QCamera::CaptureMode m_captureMode;

@@ -132,6 +132,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
      m_state(QCamera::UnloadedState),
      m_pendingState(QCamera::UnloadedState),
+     m_pendingResolutionUpdate(false),
      m_muted(false),
      m_captureMode(QCamera::CaptureStillImage),
      m_audioInputFactory(0),
@@ -459,8 +460,10 @@ void CameraBinSession::setState(QCamera::State newState)
         emit stateChanged(m_state);
         break;
     case QCamera::ActiveState:
-        if (setupCameraBin())
-            gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+        if (setupCameraBin()) {
+            m_pendingResolutionUpdate = true;
+            gst_element_set_state(m_pipeline, GST_STATE_READY);
+        }
 
         /*bool continuous = false;
         supportedFrameRates(QSize(), &continuous);
@@ -680,7 +683,11 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
                             emit stateChanged(m_state = QCamera::UnloadedState);
                         break;
                     case GST_STATE_READY:
-                        setupCaptureResolution();
+                        if (m_pendingResolutionUpdate) {
+                            m_pendingResolutionUpdate = false;
+                            setupCaptureResolution();
+                            gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+                        }
                         if (m_state != QCamera::LoadedState)
                             emit stateChanged(m_state = QCamera::LoadedState);
                         break;
@@ -727,8 +734,6 @@ void CameraBinSession::recordVideo()
         QString ext = m_mediaContainerControl->containerMimeType();
         m_actualSink = generateFileName("clip_", defaultDir(QCamera::CaptureVideo), ext);
     }
-
-    setupCaptureResolution();
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, m_actualSink.toEncoded().constData(), NULL);
 
