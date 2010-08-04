@@ -69,10 +69,12 @@
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
-
 #endif
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/bnep.h>
+
+#ifdef BLUEZ_SUPPORTED
+# include <bluetooth/bluetooth.h>
+# include <bluetooth/bnep.h>
+#endif
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -603,6 +605,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
+#ifdef BLUEZ_SUPPORTED
     int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
     if (ctl < 0) {
         qDebug() << "Cannot open bnep socket";
@@ -625,6 +628,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         }
     }
     close(ctl);
+#endif
 
     return QSystemNetworkInfo::UndefinedStatus;
 }
@@ -875,8 +879,13 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#ifdef Q_WS_X11
     QDesktopWidget wid;
+
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
+
+#ifdef Q_WS_X11
     return wid.screen(screen)->x11Info().depth();
 #else
         return QPixmap::defaultDepth();
@@ -886,7 +895,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    QDesktopWidget wid;
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
@@ -971,96 +983,96 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 }
 
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
-    XRRScreenConfiguration *sc;
-    Rotation cur_rotation;
-    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    if (!sc) {
-        return orientation;
-    }
-    XRRConfigRotations(sc, &cur_rotation);
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+//     XRRScreenConfiguration *sc;
+//     Rotation cur_rotation;
+//     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     if (!sc) {
+//         return orientation;
+//     }
+//     XRRConfigRotations(sc, &cur_rotation);
 
-    if(screen < 16 && screen > -1) {
-        switch(cur_rotation) {
-        case RR_Rotate_0:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case RR_Rotate_90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case RR_Rotate_180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case RR_Rotate_270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
+//     if(screen < 16 && screen > -1) {
+//         switch(cur_rotation) {
+//         case RR_Rotate_0:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case RR_Rotate_90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case RR_Rotate_180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case RR_Rotate_270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
+// float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
 
-    return 0.0;
-}
+//     return 0.0;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
-    }
-    return dpi;
-}
+// int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+//         dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
+//     }
+//     return dpi;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
-{
-    int height=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           height = output->mm_height;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
-    return height;
-}
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            height = output->mm_height;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
+//     return height;
+// }
 
-int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
-{
-    int width=0;
-    XRRScreenResources *sr;
+// int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+//     XRRScreenResources *sr;
 
-    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    for (int i = 0; i < sr->noutput; ++i) {
-        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
-        if (output->crtc) {
-           width = output->mm_width;
-        }
-        XRRFreeOutputInfo(output);
-    }
-    XRRFreeScreenResources(sr);
+//     sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+//     for (int i = 0; i < sr->noutput; ++i) {
+//         XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+//         if (output->crtc) {
+//            width = output->mm_width;
+//         }
+//         XRRFreeOutputInfo(output);
+//     }
+//     XRRFreeScreenResources(sr);
 
-    return width;
-}
+//     return width;
+// }
 
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
@@ -1070,6 +1082,7 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
 #if !defined(QT_NO_DBUS)
     halIface = new QHalInterface();
 #endif
+    logicalDrives();
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
@@ -1079,14 +1092,14 @@ QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
         mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
         connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
     }
 
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
         mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
         connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
@@ -1111,28 +1124,38 @@ void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
 {
     Q_UNUSED(path);
-    QMap<QString, QString> mountEntriesMap2 = mountEntriesMap;
+    QMap<QString, QString> oldDrives = mountEntriesMap;
     mountEntries();
 
-    if(mountEntriesMap.count() > mountEntriesMap2.count()) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-        emit logicalDrivesChanged(true);
+    if(mountEntriesMap.count() < oldDrives.count()) {
+        QMapIterator<QString, QString> i(oldDrives);
+        while (i.hasNext()) {
+            i.next();
+            if(!mountEntriesMap.contains(i.key())) {
+                delete mtabWatcherA;
+                mtabWatcherA = 0;
+                mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+                connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                        this,SLOT(deviceChanged(const QString &)));
+                emit logicalDriveChanged(false, i.key());
+            }
+        }
+    } else if(mountEntriesMap.count() > oldDrives.count()) {
+        QMapIterator<QString, QString> i(mountEntriesMap);
+        while (i.hasNext()) {
+            i.next();
 
-    } else if(mountEntriesMap.count() < mountEntriesMap2.count()) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-
-        emit logicalDrivesChanged(false);
+            if(oldDrives.contains(i.key()))
+                continue;
+            delete mtabWatcherB;
+            mtabWatcherB = 0;
+            mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
+            connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                    this,SLOT(deviceChanged(false, const QString &)));
+            emit logicalDriveChanged(true,i.key());
+        }
     }
 }
-
 
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
 {

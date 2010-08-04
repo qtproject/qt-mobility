@@ -50,6 +50,9 @@
 #define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version"
 #define QTCONTACTS_VERSION 1
 
+// TODO: QLatin1Constant should be defined in some global module
+#ifndef QLATIN1CONSTANT_DEFINED
+#define QLATIN1CONSTANT_DEFINED
 QTM_BEGIN_NAMESPACE
 
 /*
@@ -163,6 +166,7 @@ template<int N> bool operator!=(const QString& b, const QLatin1Constant<N>& a)
 #define Q_DEFINE_LATIN1_CONSTANT(varname, str) const QLatin1Constant<sizeof(str)> varname = {str}
 
 QTM_END_NAMESPACE
+#endif // QLATIN1CONSTANT_DEFINED
 
 // Not needed since this is a typedef, and qglobal already does this for the base type
 // Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactLocalId), Q_PRIMITIVE_TYPE);

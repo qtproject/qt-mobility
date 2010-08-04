@@ -51,6 +51,9 @@ QTM_BEGIN_NAMESPACE
    \brief The QContactUnionFilter class provides a filter which unions the
     results of other filters.
    
+  
+  \inmodule QtContacts
+  
    \ingroup contacts-filters
  
    It may be used to select contacts which match all of the filters in the union

@@ -56,8 +56,8 @@ QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {
     qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
-    connect(d,SIGNAL(logicalDrivesChanged(bool)),
-           this,SIGNAL(logicalDrivesChanged(bool)));
+    connect(d,SIGNAL(logicalDriveChanged(bool,const QString &)),
+           this,SIGNAL(logicalDriveChanged(bool,const QString &)));
 }
 
 /*!

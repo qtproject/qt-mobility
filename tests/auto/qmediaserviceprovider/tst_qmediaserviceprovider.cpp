@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/multimedia
+
 #include <QtTest/QtTest>
 #include <QDebug>
 #include <QStringList>
@@ -133,7 +135,8 @@ class MockServicePlugin2 : public QMediaServiceProviderPlugin,
 public:
     QStringList keys() const
     {
-        return QStringList() << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
+        return QStringList() << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
+                             << QLatin1String(Q_MEDIASERVICE_RADIO);
     }
 
     QMediaService* create(QString const& key)
@@ -311,7 +314,7 @@ void tst_QMediaServiceProvider::initTestCase()
     plugins << new MockServicePlugin3;
     plugins << new MockServicePlugin4;
 
-    QMediaPluginLoader::setStaticPlugins(QLatin1String("/mediaservice"), plugins);
+    QMediaPluginLoader::setStaticPlugins(QLatin1String("mediaservice"), plugins);
 }
 
 void tst_QMediaServiceProvider::testDefaultProviderAvailable()

@@ -107,6 +107,37 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
+#Camera
+PUBLIC_HEADERS += \
+    qcamera.h \
+    qcameraviewfinder.h \
+    qcameraimagecapture.h \
+    qcameraimagecapturecontrol.h \
+    qcameraexposure.h \
+    qcamerafocus.h \
+    qcameraimageprocessing.h \
+    qcameracontrol.h \
+    qcameralockscontrol.h \
+    qcameraexposurecontrol.h \
+    qcamerafocuscontrol.h \
+    qcameraflashcontrol.h \
+    qcameraimageprocessingcontrol.h
+
+SOURCES += \
+    qcamera.cpp \
+    qcameraviewfinder.cpp \
+    qcameraexposure.cpp \
+    qcamerafocus.cpp \
+    qcameraimageprocessing.cpp \
+    qcameraimagecapture.cpp \
+    qcameraimagecapturecontrol.cpp \
+    qcameracontrol.cpp \
+    qcameralockscontrol.cpp \
+    qcameraexposurecontrol.cpp \
+    qcamerafocuscontrol.cpp \
+    qcameraflashcontrol.cpp \
+    qcameraimageprocessingcontrol.cpp
+
 include(audio/audio.pri)
 include(video/video.pri)
 include(effects/effects.pri)
@@ -119,11 +150,11 @@ mac {
 }
 
 maemo5 {
-    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+    isEqual(QT_ARCH,armv6):QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
     HEADERS += qxvideosurface_maemo5_p.h
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp
-    LIBS += -lXv
+    LIBS += -lXv  -lX11 -lXext
 } else {
     SOURCES += qgraphicsvideoitem.cpp
 }

@@ -5,13 +5,15 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-               bluetoothtransferplugin \
-               notesmanagerplugin \
-               servicebrowser
+            bluetoothtransferplugin \
+            notesmanagerplugin \
+            servicebrowser \
+	    sfwecho
 
+    #These examples do not work on Symbian yet
     !symbian:SUBDIRS+= sfw-notes
     
-    contains(QT_CONFIG, declarative) {
+    !symbian:contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative-sfw-dialer
 
         sources.files += declarative-sfw-notes \
@@ -28,13 +30,28 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog
+               satellitedialog 
+
+    !symbian:!wince* {
+        SUBDIRS += landmarkbrowser
+    }
+
+    !symbian|contains(mobility_modules,bearer) {
+    	SUBDIRS += geoservicedemo \
+                   mapviewer
+
+    }
+
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
+        
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
-    }		
+	contains(QT_CONFIG, declarative) {
+	        sources.files += declarative_loc_flickr
+	}
+    }
 }
 
 #Contacts examples
@@ -61,6 +78,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
+        camera \
         slideshow \
         audiorecorder \
         audiodevices \
@@ -94,10 +112,34 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        mediabrowser
+
+    contains(QT_CONFIG, webkit): SUBDIRS += documentshare
+}
+
+# Organizer API examples
+contains(mobility_modules, organizer) {
+    SUBDIRS += calendardemo
+}
+
+# Telephony API examples
+contains(mobility_modules,telephony) {
+    unix:!mac:!maemo* {SUBDIRS += telephony}
+}
+
+# Feedback API examples
+contains(mobility_modules, feedback) {
+    SUBDIRS += hapticsplayer hapticsquare
+}
+
 # Connectivity
 contains(mobility_modules,connectivity) {
     SUBDIRS += btscanner btchat
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
+sources.path = $$QT_MOBILITY_EXAMPLES
+
 INSTALLS += sources
+

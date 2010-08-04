@@ -63,6 +63,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaPlayer
     \brief The QMediaPlayer class allows the playing of a media source.
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \preliminary
@@ -574,7 +575,7 @@ void QMediaPlayer::setPosition(qint64 position)
     if (d->control == 0 || !isSeekable())
         return;
 
-    d->control->setPosition(qBound(qint64(0), duration(), position));
+    d->control->setPosition(qBound(qint64(0), position, duration()));
 }
 
 void QMediaPlayer::setVolume(int v)

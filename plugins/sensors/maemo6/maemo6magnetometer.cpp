@@ -60,10 +60,6 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
         qWarning() << "Unable to initialize "<< sensorName;
 
     setReading<QMagnetometerReading>(&m_reading);
-    // metadata
-    addDataRate(1, 130); // 43 Hz
-    addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
-    setDescription(QLatin1String("Measures magnetic flux density in teslas"));
 
 }
 

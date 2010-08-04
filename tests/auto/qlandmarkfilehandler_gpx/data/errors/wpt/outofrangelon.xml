@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<gpx
+ version="1.1"
+ creator="Qt Mobility API"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://www.topografix.com/GPX/1/1"
+ xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<wpt lat="42.062835" lon="-271.279118">
+ <ele>97.444560</ele>
+ <name>Waypoint 1</name>
+</wpt>
+<wpt lat="42.063553" lon="-71.284009">
+ <name>Waypoint 2</name>
+</wpt>
+<wpt lat="42.063376" lon="-71.284365">
+ <ele>104.180640</ele>
+ <name>Waypoint 3</name>
+</wpt>
+</gpx>

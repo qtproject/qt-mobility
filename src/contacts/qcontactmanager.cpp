@@ -55,6 +55,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContactManager
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
+  \inmodule QtContacts
+  
   \ingroup contacts-main
  
   This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.
@@ -363,7 +365,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -384,7 +386,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -405,7 +407,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details and relationships
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -630,7 +632,6 @@ QContactLocalId QContactManager::selfContactId() const
     return d->m_engine->selfContactId(&d->m_error);
 }
 
-
 /*!
   Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
@@ -707,6 +708,7 @@ bool QContactManager::removeRelationship(const QContactRelationship& relationshi
     return d->m_engine->removeRelationship(relationship, &d->m_error);
 }
 
+
 /*!
   Removes the given \a relationships from the database and returns true if the operation was successful.
   For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
@@ -776,7 +778,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \enum QContactManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
   \value Groups The manager supports saving contacts of the \c QContactType::TypeGroup type
-  \omitvalue ActionPreferences The manager supports saving preferred details per action per contact
+  \value ActionPreferences The manager supports saving preferred details per action per contact
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts
   \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts

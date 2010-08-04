@@ -318,7 +318,7 @@ public:
         // Is there default access point, use it
         QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
-            m_networkSetupError = QString(tr("This example requires networking, and no avaliable networks or access points could be found."));
+            m_networkSetupError = QString(tr("This example requires networking, and no available networks or access points could be found."));
             QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;
         }
@@ -723,7 +723,7 @@ public:
         connect(nightModeAction, SIGNAL(triggered()), map, SLOT(toggleNightMode()));
         connect(osmAction, SIGNAL(triggered()), SLOT(aboutOsm()));
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         menuBar()->addAction(gpsAction);
         menuBar()->addAction(osloAction);
         menuBar()->addAction(berlinAction);
@@ -787,7 +787,7 @@ int main(int argc, char **argv)
 
     MapZoom w;
     w.setWindowTitle("OpenStreetMap");
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     w.showMaximized();
 #else
     w.resize(600, 450);

@@ -1,0 +1,14 @@
+EXPORTS
+	??1CContactSynchroniser@@UAE@XZ @ 1 NONAME ; CContactSynchroniser::~CContactSynchroniser(void)
+	?MContactSynchroniser_Reserved_1@MContactSynchroniser@@EAEXXZ @ 2 NONAME ; void MContactSynchroniser::MContactSynchroniser_Reserved_1(void)
+	?ContactProperties@CPersistenceLayer@@QAEAAVMLplContactProperties@@XZ @ 3 NONAME ; class MLplContactProperties & CPersistenceLayer::ContactProperties(void)
+	?ContactsFileL@CPersistenceLayer@@QAEAAVMLplContactsFile@@XZ @ 4 NONAME ; class MLplContactsFile & CPersistenceLayer::ContactsFileL(void)
+	?CreateL@CPplContactsFile@@UAEXABVTDesC16@@W4TPlCreateMode@MLplContactsFile@@@Z @ 5 NONAME ; void CPplContactsFile::CreateL(class TDesC16 const &, enum MLplContactsFile::TPlCreateMode)
+	?FactoryL@CPersistenceLayer@@QAEAAVMLplPersistenceLayerFactory@@XZ @ 6 NONAME ; class MLplPersistenceLayerFactory & CPersistenceLayer::FactoryL(void)
+	?NewLC@CPersistenceLayer@@SAPAV1@AAVRFs@@PAVMIniFileManager@@PAVMContactDbObserverV2@@@Z @ 7 NONAME ; class CPersistenceLayer * CPersistenceLayer::NewLC(class RFs &, class MIniFileManager *, class MContactDbObserverV2 *)
+	?PersistenceBroker@CPersistenceLayer@@QAEAAVMLplPersistenceBroker@@XZ @ 8 NONAME ; class MLplPersistenceBroker & CPersistenceLayer::PersistenceBroker(void)
+	?PersistenceLayerTestL@CPersistenceLayer@@QAEAAVMLplPersistenceLayerTest@@XZ @ 9 NONAME ; class MLplPersistenceLayerTest & CPersistenceLayer::PersistenceLayerTestL(void)
+	?RegisterDbObserver@CPersistenceLayer@@QAEXAAVMContactDbObserverV2@@@Z @ 10 NONAME ; void CPersistenceLayer::RegisterDbObserver(class MContactDbObserverV2 &)
+	?TransactionManager@CPersistenceLayer@@QAEAAVMLplTransactionManager@@XZ @ 11 NONAME ; class MLplTransactionManager & CPersistenceLayer::TransactionManager(void)
+	?KContactsModelSqliteDbCacheSize@@3HB @ 12 NONAME ; int const KContactsModelSqliteDbCacheSize
+	

@@ -69,7 +69,6 @@ public:
     QContactId relatedContactId() const;
     QContactRelationship::Role relatedContactRole() const;
 
-
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 };

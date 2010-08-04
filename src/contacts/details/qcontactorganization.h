@@ -73,6 +73,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldRole, "Role");
     Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
     Q_DECLARE_LATIN1_CONSTANT(FieldAssistantName, "AssistantName");
+
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}

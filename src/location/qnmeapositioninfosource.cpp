@@ -46,6 +46,7 @@
 #include <QTimerEvent>
 #include <QTimer>
 
+
 QTM_BEGIN_NAMESPACE
 
 QNmeaRealTimeReader::QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
@@ -426,6 +427,9 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 /*!
     \class QNmeaPositionInfoSource
     \brief The QNmeaPositionInfoSource class provides positional information using a NMEA data source.
+
+    \inmodule QtLocation
+    
     \ingroup location
 
     NMEA is a commonly used protocol for the specification of one's global
@@ -515,6 +519,8 @@ QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
 
     \bold {Note:} The \a device must emit QIODevice::readyRead() for the
     source to be notified when data is available for reading.
+    QNmeaPositionInfoSource does not assume the ownership of the device,
+    and hence does not deallocate it upon destruction.
 */
 void QNmeaPositionInfoSource::setDevice(QIODevice *device)
 {

@@ -48,6 +48,9 @@ QTM_BEGIN_NAMESPACE
   \class QContactManagerEngineFactory
   \brief The QContactManagerEngineFactory class provides the interface for
  plugins that implement QContactManagerEngine functionality.
+  
+  \inmodule QtContacts
+  
   \ingroup contacts-backends
  
   This class provides a simple interface for the creation of

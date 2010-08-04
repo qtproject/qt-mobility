@@ -15,7 +15,7 @@ INCLUDEPATH += ../../src/global \
                 ../../examples/satellitedialog \
                 ../../examples/flickrdemo
 
-include(../../examples/examples.pri)
+include(../demos.pri)
 
 CONFIG += mobility
 MOBILITY = location bearer
@@ -33,7 +33,7 @@ symbian|wince* {
         DEPLOYMENT += addFiles
     }
 } else {
-    logfile.path = $$QT_MOBILITY_PREFIX/bin
+    logfile.path = $$QT_MOBILITY_DEMOS
     logfile.files = nmealog.txt
     INSTALLS += logfile
 }
