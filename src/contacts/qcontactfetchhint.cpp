@@ -68,7 +68,6 @@ QTM_BEGIN_NAMESPACE
    \o some optimization flags which allow the client to tell the backend if they are
   not interested in any relationships, any action preferences, or any binary blobs (images etc).
    \o a preferred size for any images, if the backend supports multiple sizes or scaling
-   \o the desired maximum count of results returned from a fetch operation
   \endlist
 
   Important note: a client should not make changes to a contact which has been retrieved
