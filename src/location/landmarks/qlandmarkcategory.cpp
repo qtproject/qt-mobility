@@ -102,7 +102,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,
@@ -218,21 +218,6 @@ void QLandmarkCategory::setIconUrl(const QUrl &url)
     d->iconUrl = url;
 }
 
-/*!
-    Returns the description of the category.
-*/
-QString QLandmarkCategory::description() const
-{
-    return d->description;
-}
-
-/*!
-    Sets the \a description of the category
-*/
-void QLandmarkCategory::setDescription(const QString &description)
-{
-    d->description = description;
-}
 
 /*!
     Returns the identifier of the category.

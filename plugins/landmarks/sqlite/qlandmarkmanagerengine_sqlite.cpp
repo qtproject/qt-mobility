@@ -1868,9 +1868,9 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
 
         if (!query.value(0).isNull())
             cat.setName(query.value(0).toString());
-
-        if (!query.value(1).isNull())
-            cat.setDescription(query.value(1).toString());
+// TODO: category description is not a common data attribute, make it a platform specific attribute
+//        if (!query.value(1).isNull())
+//            cat.setDescription(query.value(1).toString());
 
         if (!query.value(2).isNull())
             cat.setIconUrl(query.value(2).toString());
@@ -2021,10 +2021,10 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
     else
         bindValues.insert("name", QVariant());
 
-    if (!category->description().isEmpty())
-        bindValues.insert("description", category->description());
-    else
-        bindValues.insert("description", QVariant());
+//    if (!category->description().isEmpty())
+//        bindValues.insert("description", category->description());
+//    else
+//        bindValues.insert("description", QVariant());
 
     if (!category->iconUrl().isEmpty())
         bindValues.insert("icon_url", category->iconUrl().toString());

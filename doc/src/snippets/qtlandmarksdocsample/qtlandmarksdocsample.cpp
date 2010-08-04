@@ -72,7 +72,6 @@ void RequestExample::categorySaveRequest()
 {
     QLandmarkCategory cafes;
     cafes.setName("Cafes");
-    cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
 
     //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)
@@ -295,7 +294,6 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
 //! [Add category synchronously]
     QLandmarkCategory cafes;
     cafes.setName("Cafes");
-    cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
     lm->saveCategory(&cafes);  //lm is a QLandmarkManager *
 //! [Add category synchronously]
