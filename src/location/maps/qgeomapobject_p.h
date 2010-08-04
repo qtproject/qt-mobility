@@ -106,8 +106,8 @@ public:
     QGeoMapDataPrivate *mapData;
     mutable QGeoMapObjectInfo *info;
 
-//private:
     QGeoMapObject *q_ptr;
+private:
     Q_DECLARE_PUBLIC(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };

@@ -75,7 +75,7 @@ void QGeoMapCircleObject::setPen(const QPen &pen)
     if (d->pen != pen) {
         d->pen = pen;
         objectUpdate();
-        //emit penChanged(d->pen);
+        emit penChanged(d->pen);
     }
 }
 
@@ -91,7 +91,7 @@ void QGeoMapCircleObject::setBrush(const QBrush &brush)
     if (d->brush != brush) {
         d->brush = brush;
         objectUpdate();
-        //emit brushChanged(d->brush);
+        emit brushChanged(d->brush);
     }
 }
 

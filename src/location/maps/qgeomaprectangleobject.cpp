@@ -41,6 +41,7 @@
 
 #include "qgeomaprectangleobject.h"
 #include "qgeomaprectangleobject_p.h"
+
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
