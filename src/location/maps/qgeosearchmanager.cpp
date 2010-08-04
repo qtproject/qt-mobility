@@ -127,9 +127,8 @@ private slots:
         QList<QLandmark> landmarks;
         for (int i = 0; i < places().size(); ++i) {
             QGeoPlace place = places.at(i);
-            if (place.type() == QGeoPlace::LandmarkType) {
+            if (place.isLandmark())
                 landmarks.append(QLandmark(place));
-            }
         }
 
         // ... now we have to make use of the places and landmarks ...

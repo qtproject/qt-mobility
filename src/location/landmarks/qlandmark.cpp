@@ -63,14 +63,14 @@ QTM_USE_NAMESPACE
 QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
-    type = QGeoPlace::LandmarkType;
+    type = QGeoPlacePrivate::LandmarkType;
     radius = -1.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
         : QGeoPlacePrivate(other)
 {
-    type = QGeoPlace::LandmarkType;
+    type = QGeoPlacePrivate::LandmarkType;
     radius = -1.0;
 }
 
@@ -181,11 +181,11 @@ QLandmark::QLandmark()
 QLandmark::QLandmark(const QGeoPlace &other)
     : QGeoPlace(other)
 {
-    switch (other.type()) {
-        case QGeoPlace::GeoPlaceType:
+    switch (other.d_ptr->type) {
+        case QGeoPlacePrivate::GeoPlaceType:
         d_ptr = new QLandmarkPrivate(*(other.d_ptr.constData()));
         break;
-    case QGeoPlace::LandmarkType:
+    case QGeoPlacePrivate::LandmarkType:
         // nothing extra to do here
         break;
     default:
