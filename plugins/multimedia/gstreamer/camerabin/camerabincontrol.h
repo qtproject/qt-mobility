@@ -62,6 +62,8 @@ public:
     QCamera::State state() const;
     void setState(QCamera::State state);
 
+    QCamera::Status status() const { return m_status; }
+
     QCamera::CaptureMode captureMode() const;
     void setCaptureMode(QCamera::CaptureMode mode);
 
@@ -70,14 +72,20 @@ public:
         return mode == QCamera::CaptureStillImage || mode == QCamera::CaptureVideo;
     }
 
+public slots:
+    void reloadLater();
+
 private slots:
-    void updateState();
+    void updateStatus();
+    void reloadPipeline();
 
 private:
     void updateSupportedResolutions(const QString &device);
 
     CameraBinSession *m_session;
     QCamera::State m_state;
+    QCamera::Status m_status;
+    bool m_reloadPending;
 };
 
 #endif // CAMERABINCONTROL_H
