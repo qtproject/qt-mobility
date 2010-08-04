@@ -6,7 +6,8 @@
 QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
-    QAbstractListModel(parent), m_manager(0), m_fetchRequest(0), m_active(false)
+    QAbstractListModel(parent), m_manager(0), m_nameFilter(0), m_proximityFilter(0),
+    m_fetchRequest(0), m_active(false), m_maxItems(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -17,6 +18,8 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
     roleNames.insert(RadiusRole, "radius");
     roleNames.insert(IconUrlRole, "iconUrl");
     roleNames.insert(UrlRole, "url");
+    roleNames.insert(LatitudeRole, "latitude");
+    roleNames.insert(LongitudeRole, "longitude");
     setRoleNames(roleNames);
     // Instantiate default manager
     m_manager = new QLandmarkManager();
@@ -24,7 +27,7 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
 
 QDeclarativeLandmarkSource::~QDeclarativeLandmarkSource()
 {
-    delete m_manager;
+    delete m_manager; 
     delete m_fetchRequest;
 }
 
@@ -57,6 +60,10 @@ QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) co
         return landmark.iconUrl();
     case UrlRole:
         return landmark.url();
+    case LatitudeRole:
+        return landmark.coordinate().latitude();
+    case LongitudeRole:
+        return landmark.coordinate().longitude();
     }
     return QVariant();
 }
@@ -91,28 +98,47 @@ bool QDeclarativeLandmarkSource::isActive() const
 QObject* QDeclarativeLandmarkSource::nameFilter()
 {
     qDebug() << "qdeclarativelandmarksource returning reference to nameFilter";
-    return &m_nameFilter;
+    return m_nameFilter;
+}
+
+void QDeclarativeLandmarkSource::setFilter(QObject* filter)
+{
+    qDebug() << "qdeclarativelandmarksource setFilter enter";
+    if (qobject_cast<QDeclarativeLandmarkNameFilter*>(filter)) {
+        qDebug() << "qdeclarativelandmarksource namefilter match";
+        m_nameFilter = qobject_cast<QDeclarativeLandmarkNameFilter*>(filter);
+        QObject::connect(m_nameFilter, SIGNAL(filterChanged()), this, SLOT(update()));
+    } else if (qobject_cast<QDeclarativeLandmarkProximityFilter*>(filter)) {
+        qDebug() << "qdeclarativelandmarksource proximityFilter match";
+        m_proximityFilter = qobject_cast<QDeclarativeLandmarkProximityFilter*>(filter);
+        QObject::connect(m_proximityFilter, SIGNAL(filterChanged()), this, SLOT(update()));
+    } else {
+      qDebug() << "qdeclarativelandmarksource no filter match";
+    }
 }
 
 QObject* QDeclarativeLandmarkSource::proximityFilter()
 {
     qDebug() << "qdeclarativelandmarksource returning reference to proximityFilter";
-    return &m_proximityFilter;
+    return m_proximityFilter;
 }
 
 void QDeclarativeLandmarkSource::update()
 {
+    qDebug("QDeclarativeLandmarkSource::update()");
     if (!m_manager)
         return;
     // Clear any previous updates and request new
     cancelUpdate();
     m_fetchRequest = new QLandmarkFetchRequest(m_manager, this);
     QObject::connect(m_fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this, SLOT(fetchRequestStateChanged(QLandmarkAbstractRequest::State)));
-
-    // TODO Build filters/hints/sort orders for the request
-
+    // Set filters and hints. Fetch orders are not currently supported.
+    if (m_nameFilter)
+        m_fetchRequest->setFilter(*m_nameFilter->filter());
+    if (m_proximityFilter)
+        m_fetchRequest->setFilter(*m_proximityFilter->filter());
+    setFetchHints();
     m_fetchRequest->start();
-
     if (!m_active) {
         m_active = true;
         emit activeChanged(m_active);
@@ -125,6 +151,27 @@ void QDeclarativeLandmarkSource::cancelUpdate()
         delete m_fetchRequest;
         m_fetchRequest = 0;
     }
+}
+
+int QDeclarativeLandmarkSource::maxItems()
+{
+    return m_maxItems;
+}
+
+void QDeclarativeLandmarkSource::setMaxItems(int maxItems)
+{
+    if (maxItems == m_maxItems)
+        return;
+    m_maxItems = maxItems;
+    emit maxItemsChanged(maxItems);
+}
+
+void QDeclarativeLandmarkSource::setFetchHints()
+{
+    if (!m_fetchRequest || m_maxItems <= 0)
+        return;
+    m_fetchHint.setMaxItems(m_maxItems);
+    m_fetchRequest->setFetchHint(m_fetchHint);
 }
 
 void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()
@@ -152,7 +199,6 @@ void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractReque
     if (m_fetchRequest)
         qDebug() << "and related request error code is: " << m_fetchRequest->errorString();
 #endif
-
     if (!m_fetchRequest || state != QLandmarkAbstractRequest::FinishedState)
         return;
 

@@ -20,10 +20,9 @@ class QDeclarativeLandmarkSource: public QAbstractListModel
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
-    Q_PROPERTY(QObject* nameFilter READ nameFilter WRITE setNameFilter NOTIFY nameFilterChanged)
-    //Q_PROPERTY(QObject* nameFilter READ nameFilter NOTIFY nameFilterChanged)
-    //Q_PROPERTY(QObject* proximityFilter READ proximityFilter NOTIFY proximityFilterChanged)
-    Q_PROPERTY(QObject* proximityFilter READ proximityFilter WRITE setProximityFilter NOTIFY proximityFilterChanged)
+    Q_PROPERTY(QObject* nameFilter READ nameFilter WRITE setFilter NOTIFY nameFilterChanged)
+    Q_PROPERTY(QObject* proximityFilter READ proximityFilter WRITE setFilter NOTIFY proximityFilterChanged)
+    Q_PROPERTY(int maxItems READ maxItems WRITE setMaxItems NOTIFY maxItemsChanged)
 
 public:
     explicit QDeclarativeLandmarkSource(QObject* parent = 0);
@@ -40,23 +39,27 @@ public:
         DescriptionRole,
         RadiusRole,
         IconUrlRole,
-        UrlRole
+        UrlRole,
+        LatitudeRole,
+        LongitudeRole
     };
-
     QString name();
+    int maxItems();
+    void setMaxItems(int maxItems);
     QString error();
     void setActive(bool active);
     bool isActive() const;
     QObject* nameFilter();
     QObject* proximityFilter();
-    void setNameFilter(QObject* correctThisFunction) {}
-    void setProximityFilter(QObject* correctThisFunction) {}
+    void setFilter(QObject* filter);
 
 signals:
     void nameChanged(QString name);
     void errorChanged(QString error);
     void activeChanged(bool active);
     void nameFilterChanged(QObject* nameFilter);
+    void proximityFilterChanged(QObject* nameFilter);
+    void maxItemsChanged(int maxItems);
 
 private slots:
     void update();
@@ -65,18 +68,21 @@ private slots:
 
 private:
     void convertLandmarksToDeclarative();
+    void setFetchHints();
 
 private:
     QLandmarkManager* m_manager;
+    QDeclarativeLandmarkNameFilter* m_nameFilter;
+    QDeclarativeLandmarkProximityFilter* m_proximityFilter;
     QLandmarkFetchRequest* m_fetchRequest;
-    QDeclarativeLandmarkNameFilter m_nameFilter;
-    QDeclarativeLandmarkProximityFilter m_proximityFilter;
+    QLandmarkFetchHint m_fetchHint;
     // Landmark list received from platform
     QList<QLandmark> m_landmarks;
     // Same landmark list, but as declarative classes
     QMap<QString, QDeclarativeLandmark*> m_landmarkMap;
     QString m_error;
     bool m_active;
+    int m_maxItems;
 };
 
 QTM_END_NAMESPACE

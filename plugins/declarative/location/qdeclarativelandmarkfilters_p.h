@@ -23,6 +23,7 @@ public:
     void setName(const QString& name);
 signals:
     void nameChanged(QString name);
+    void filterChanged();
 private:
     QLandmarkNameFilter m_filter;
     friend class QDeclarativeLandmarkSource;
@@ -50,10 +51,12 @@ signals:
     void latitudeChanged(double latitude);
     void longitudeChanged(double longitude);
     void radiusChanged(double radius);
+    void filterChanged();
 private:
     QLandmarkProximityFilter m_filter;
     friend class QDeclarativeLandmarkSource;
     QLandmarkProximityFilter* filter();
+    QGeoCoordinate m_coordinate;
 };
 
 QTM_END_NAMESPACE

@@ -21,6 +21,7 @@ void QDeclarativeLandmarkNameFilter::setName(const QString& name)
         return;
     m_filter.setName(name);
     emit nameChanged(name);
+    emit filterChanged();
 }
 
 QLandmarkNameFilter* QDeclarativeLandmarkNameFilter::filter()
@@ -42,8 +43,10 @@ void QDeclarativeLandmarkProximityFilter::setLatitude(double latitude)
 {
     if (m_filter.coordinate().latitude() == latitude)
         return;
-    m_filter.coordinate().setLatitude(latitude);
+    m_coordinate.setLatitude(latitude);
+    m_filter.setCoordinate(m_coordinate);
     emit latitudeChanged(latitude);
+    emit filterChanged();
 }
 
 double QDeclarativeLandmarkProximityFilter::longitude() const
@@ -55,8 +58,10 @@ void QDeclarativeLandmarkProximityFilter::setlongitude(double longitude)
 {
     if (longitude == m_filter.coordinate().longitude())
         return;
-    m_filter.coordinate().setLongitude(longitude);
+    m_coordinate.setLongitude(longitude);
+    m_filter.setCoordinate(m_coordinate);
     emit longitudeChanged(longitude);
+    emit filterChanged();
 }
 
 double QDeclarativeLandmarkProximityFilter::radius() const
@@ -69,6 +74,7 @@ void QDeclarativeLandmarkProximityFilter::setRadius(double radius)
         return;
     m_filter.setRadius(radius);
     emit radiusChanged(radius);
+    emit filterChanged();
 }
 
 QLandmarkProximityFilter* QDeclarativeLandmarkProximityFilter::filter()
