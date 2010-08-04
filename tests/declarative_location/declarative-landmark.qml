@@ -103,11 +103,11 @@ Rectangle {
     ListView {
         id: mainList
         
-        //model: lmsource
-        //delegate: landmarklistdelegate
+        model: lmsource
+        delegate: landmarklistdelegate
         
-        model: lmcatsource
-        delegate: categorylistdelegate
+        //model: lmcatsource
+        //delegate: categorylistdelegate
         
         anchors {top: title.bottom; left: title.left}
         width: parent.width; height: parent.height

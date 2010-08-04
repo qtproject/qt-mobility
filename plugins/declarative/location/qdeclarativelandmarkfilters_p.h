@@ -16,7 +16,7 @@ QTM_BEGIN_NAMESPACE
 class QDeclarativeLandmarkNameFilter : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 public:
     explicit QDeclarativeLandmarkNameFilter(QObject *parent = 0);
     QString name();

@@ -14,6 +14,8 @@ win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 # Where to search for the #include'd files
 INCLUDEPATH += ../../../src/global
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location/landmarks
+INCLUDEPATH += .
 
 # The header and source files of this project. Note that qmake generates dependency information
 # and automatically adds necessary 'moc' files as it sees Q_OBJECT macros' in header files
