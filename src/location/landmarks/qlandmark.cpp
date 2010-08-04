@@ -60,6 +60,13 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkPrivate -----
 
+QStringList QLandmarkPrivate::commonKeys = QStringList() << "name"
+                                                         << "description"
+                                                         << "iconurl"
+                                                         << "radius"
+                                                         << "phone"
+                                                         << "url";
+
 QLandmarkPrivate::QLandmarkPrivate()
         : QGeoPlacePrivate()
 {
@@ -392,6 +399,21 @@ void QLandmark::setRadius(double radius)
 QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) const
 {
     Q_D(const QLandmark);
+
+    if (key.compare("name",Qt::CaseInsensitive) == 0) {
+        return name();
+    } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
+        return description();
+    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
+        return iconUrl();
+    } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
+        return radius();
+    } else if (key.compare("phone", Qt::CaseInsensitive) == 0) {
+        return phone();
+    } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
+        return url();
+    }
+
     return d->attributes.value(key, defaultValue);
 }
 
@@ -401,6 +423,27 @@ QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) 
 void QLandmark::setAttribute(const QString &key, const QVariant &value)
 {
     Q_D(QLandmark);
+
+    if (key.compare("name",Qt::CaseInsensitive) == 0) {
+        setName(value.toString());
+        return;
+    } else if (key.compare("description", Qt::CaseInsensitive) == 0) {
+        setDescription(value.toString());
+        return;
+    } else if (key.compare("iconurl",Qt::CaseInsensitive) ==0) {
+        setIconUrl(QUrl(value.toString()));
+        return;
+    } else if (key.compare("radius", Qt::CaseInsensitive) == 0) {
+        setRadius(value.toDouble());
+        return;
+    } else if (key.compare("phone", Qt::CaseInsensitive) == 0) {
+        setPhone(value.toString());
+        return;
+    } else if (key.compare("url", Qt::CaseInsensitive) ==0 ) {
+        setUrl(QUrl(value.toString()));
+        return;
+    }
+
     if (!value.isValid())
         d->attributes.remove(key);
     else
@@ -415,7 +458,8 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
 QStringList QLandmark::attributeKeys() const
 {
     Q_D(const QLandmark);
-    return d->attributes.keys();
+
+    return d->commonKeys + d->attributes.keys();
 }
 
 /*!
