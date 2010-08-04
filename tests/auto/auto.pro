@@ -36,7 +36,8 @@ contains(mobility_modules,location) {
           qnmeapositioninfosource \
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine \
-          qlandmark
+          qlandmark \
+          qlandmarkcategory
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
