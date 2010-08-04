@@ -66,9 +66,6 @@ public:
     QStringList relationshipTypesHint() const;
     void setRelationshipTypesHint(const QStringList& relationshipTypes);
 
-    int resultLimit() const;
-    void setResultLimit(int limit);
-
     QSize preferredImageSize() const;
     void setPreferredImageSize(const QSize& size);
 
