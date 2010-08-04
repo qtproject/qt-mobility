@@ -111,7 +111,7 @@ void RequestExample::landmarkSaveRequest()
     monks.setCoordinate(QGeoCoordinate(40.81, 73.97));
 
     QGeoAddress address;
-    address.setThoroughfareNumber("2880");
+    address.setStreetNumber("2880");
     // ...
     address.setCountryCode("US");
     monks.setAddress(address);
@@ -306,8 +306,8 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
     monks.setCoordinate(QGeoCoordinate(40.81, 73.97));
 
     QGeoAddress address;
-    address.setThoroughfareNumber("2880");
-    address.setThoroughfareName("112th Street");
+    address.setStreetNumber("2880");
+    address.setStreet("112th Street");
     address.setCity("New York City");
     address.setState("New York");
     address.setCountry("United States");

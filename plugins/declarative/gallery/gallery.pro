@@ -20,8 +20,6 @@ MOBILITY = gallery
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-QT += declarative
-
 HEADERS += \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \
@@ -35,15 +33,11 @@ SOURCES += \
         qdeclarativegalleryquerymodel.cpp \
         qdeclarativegallerytype.cpp
 
-CONFIG += mobility
-MOBILITY += gallery
-
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
+INSTALLS += qmldir
 
 # The symbian UID reserved for this plug-in is 0x2002BFCC

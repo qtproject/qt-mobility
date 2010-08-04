@@ -151,6 +151,7 @@ private:
                                    QNetworkSession::State newState);
 #ifdef OCC_FUNCTIONALITY_AVAILABLE
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> configurationFromEasyWlan(TUint32 apId, TUint connectionId);
+    bool easyWlanTrueIapId(TUint32& trueIapId);
 #endif
 
 public: // Data

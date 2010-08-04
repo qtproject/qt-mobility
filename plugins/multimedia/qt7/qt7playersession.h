@@ -43,14 +43,18 @@
 #define QT7PLAYERSESSION_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qbytearray.h>
 #include <QtCore/qset.h>
+#include <QtCore/qresource.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
 
+
 QT_BEGIN_NAMESPACE
+
 class QT7PlayerControl;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
@@ -61,7 +65,7 @@ class QT7PlayerService;
 
 class QT7PlayerSession : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     QT7PlayerSession(QObject *parent = 0);
     ~QT7PlayerSession();
@@ -123,6 +127,43 @@ signals:
     void error(int error, const QString &errorString);
 
 private:
+    class ResourceHandler {
+    public:
+        ResourceHandler():resource(0) {}
+        ~ResourceHandler() { clear(); }
+        void setResourceFile(const QString &file) {
+            if (resource) {
+                if (resource->fileName() == file)
+                    return;
+                delete resource;
+                rawData.clear();
+            }
+            resource = new QResource(file);
+        }
+        bool isValid() const { return resource && resource->isValid() && resource->data() != 0; }
+        const uchar *data() {
+            if (!isValid())
+                return 0;
+            if (resource->isCompressed()) {
+                if (rawData.size() == 0)
+                    rawData = qUncompress(resource->data(), resource->size());
+                return (const uchar *)rawData.constData();
+            }
+            return resource->data();
+        }
+        qint64 size() {
+            if (data() == 0)
+                return 0;
+            return resource->isCompressed() ? rawData.size() : resource->size();
+        }
+        void clear() {
+            delete resource;
+            rawData.clear();
+        }
+        QResource *resource;
+        QByteArray rawData;
+    };
+
     void openMovie(bool tryAsync);
 
     void *m_QTMovie;
@@ -132,6 +173,7 @@ private:
     QMediaPlayer::MediaStatus m_mediaStatus;
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
+    ResourceHandler m_resourceHandler;
 
     QT7VideoOutput * m_videoOutput;
 
