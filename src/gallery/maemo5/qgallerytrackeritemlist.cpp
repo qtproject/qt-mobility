@@ -67,7 +67,7 @@ void QGalleryTrackerItemListPrivate::update()
     if (!(flags & (Active | Cancelled))) {
         query();
 
-        flags &= ~(Refresh | PositionUpdated);
+        flags &= ~Refresh;
     }
 }
 
@@ -75,6 +75,7 @@ void QGalleryTrackerItemListPrivate::query()
 {
     flags &= ~(Refresh | SyncFinished);
     flags |= Active;
+    flags |= Reset;
 
     updateTimer.stop();
 
@@ -86,8 +87,10 @@ void QGalleryTrackerItemListPrivate::query()
 
     qSwap(rCache.values, iCache.values);
 
+    const int limit = queryLimit < 1 || queryLimit > 1024 ? 1024 : queryLimit;
+
     QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
-            queryMethod, QVariantList(queryArguments) << queryOffset << queryLimit);
+            queryMethod, QVariantList(queryArguments) << queryOffset << limit);
 
     if (call.isFinished()) {
         queryFinished(call);
@@ -128,14 +131,20 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
+        const int limit = queryLimit < 1 ? 1023 : queryLimit - iCache.count;
+        const bool reset = flags & Reset;
+
+        flags &= ~Reset;
+
         parseWatcher.setFuture(QtConcurrent::run(
-                this, &QGalleryTrackerItemListPrivate::parseRows, call));
+                this, &QGalleryTrackerItemListPrivate::parseRows, call, limit, reset));
 
         emit q_func()->progressChanged(1, 2);
     }
 }
 
-void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
+bool QGalleryTrackerItemListPrivate::parseRows(
+        const QDBusPendingCall &call, int limit, bool reset)
 {
     QDBusReply<QVector<QStringList> > reply(call);
 
@@ -143,11 +152,16 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
 
     const QVector<QStringList> resultSet = reply.value();
 
-    iCache.count = resultSet.count();
-
     QVector<QVariant> &values = iCache.values;
-    values.clear();
-    values.reserve(resultSet.count() * tableWidth);
+
+    if (reset) {
+        values.clear();
+        iCache.count = 0;
+    }
+
+    iCache.count += resultSet.count();
+
+    values.reserve(iCache.count * tableWidth);
 
     for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
         for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
@@ -161,17 +175,21 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
             values.append(QVariant());
     }
 
-    if (!values.isEmpty()) {
-        if (!sortCriteria.isEmpty()) {
+    if (resultSet.count() <= limit) {
+        if (!values.isEmpty() && !sortCriteria.isEmpty()) {
             correctRows(
                     row_iterator(values.begin(), tableWidth),
                     row_iterator(values.end(), tableWidth),
                     sortCriteria.constBegin(),
                     sortCriteria.constEnd());
         }
-    }
 
-    synchronize();
+        synchronize();
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void QGalleryTrackerItemListPrivate::correctRows(
@@ -472,20 +490,48 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
     processSyncEvents();
 
-    Q_ASSERT(rCache.offset == rCache.count);
-    Q_ASSERT(iCache.cutoff == iCache.count);
+    if (parseWatcher.result()) {
+        Q_ASSERT(rCache.offset == rCache.count);
+        Q_ASSERT(iCache.cutoff == iCache.count);
 
-    rCache.values.clear();
-    rCache.count = 0;
+        rCache.values.clear();
+        rCache.count = 0;
 
-    flags &= ~Active;
+        flags &= ~Active;
 
-    if (flags & (Refresh | PositionUpdated))
-        update();
-    else
-        emit q_func()->progressChanged(2, 2);
+        if (flags & Refresh)
+            update();
+        else
+            emit q_func()->progressChanged(2, 2);
 
-    q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
+        q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
+    } else if (flags & Cancelled) {
+        iCache.count = 0;
+
+        flags &= ~Active;
+
+        q_func()->QGalleryAbstractResponse::cancel();
+    } else {
+        const int offset = queryOffset + iCache.count;
+        const int limit = queryLimit < 1 || queryLimit - iCache.count > 1024
+                ? 1024
+                : queryLimit - iCache.count;
+
+        QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(
+                queryMethod, QVariantList(queryArguments) << offset << limit);
+
+        if (call.isFinished()) {
+            queryFinished(call);
+        } else {
+            queryWatcher.reset(new QDBusPendingCallWatcher(call));
+
+            QObject::connect(
+                    queryWatcher.data(), SIGNAL(finished(QDBusPendingCallWatcher*)),
+                    q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
+
+            emit q_func()->progressChanged(0, 2);
+        }
+    }
 }
 
 void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit *edit)
@@ -693,7 +739,7 @@ bool QGalleryTrackerItemList::waitForFinished(int msecs)
 
             d->queryFinished(*watcher);
 
-            if (!(d->flags &QGalleryTrackerItemListPrivate::Active))
+            if (!(d->flags & QGalleryTrackerItemListPrivate::Active))
                 return true;
         } else if (d->flags & QGalleryTrackerItemListPrivate::Active) {
             if (d->waitForSyncFinish(msecs)) {
@@ -701,12 +747,12 @@ bool QGalleryTrackerItemList::waitForFinished(int msecs)
 
                 d->_q_parseFinished();
 
-                return true;
+                if (!(d->flags & QGalleryTrackerItemListPrivate::Active))
+                    return true;
             } else {
                 return false;
             }
-        } else if (d->flags & (QGalleryTrackerItemListPrivate::Refresh
-                | QGalleryTrackerItemListPrivate::PositionUpdated)) {
+        } else if (d->flags & (QGalleryTrackerItemListPrivate::Refresh)) {
             d->update();
         } else {
             return true;

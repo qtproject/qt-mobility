@@ -125,8 +125,8 @@ bool QGalleryTrackerItemResponse::setMetaData(int key, const QVariant &value)
         connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
                 this, SLOT(_q_editFinished(QGalleryTrackerMetaDataEdit*)));
 
-        connect(this, SIGNAL(inserted(int,int)), edit, SLOT(itemsInserted(int,int)));
-        connect(this, SIGNAL(removed(int,int)), edit, SLOT(itemsRemoved(int,int)));
+        connect(this, SIGNAL(itemsInserted(int,int)), edit, SLOT(itemsInserted(int,int)));
+        connect(this, SIGNAL(itemsRemoved(int,int)), edit, SLOT(itemsRemoved(int,int)));
 
         d->edits.append(edit);
 

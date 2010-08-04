@@ -211,7 +211,7 @@ public:
         Cancelled       = 0x01,
         Live            = 0x02,
         Refresh         = 0x04,
-        PositionUpdated = 0x08,
+        Reset           = 0x08,
         UpdateRequested = 0x10,
         Active          = 0x20,
         SyncFinished    = 0x40
@@ -296,7 +296,7 @@ public:
     Cache iCache;   // Insert cache.
 
     QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
-    QFutureWatcher<void> parseWatcher;
+    QFutureWatcher<bool> parseWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
@@ -318,7 +318,7 @@ public:
     void query();
 
     void queryFinished(const QDBusPendingCall &call);
-    void parseRows(const QDBusPendingCall &call);
+    bool parseRows(const QDBusPendingCall &call, int limit, bool reset);
     void correctRows(
             row_iterator begin,
             row_iterator end,
