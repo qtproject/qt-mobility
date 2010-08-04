@@ -86,7 +86,7 @@ void QDeclarativeLandmark::setUrl(const QUrl& url)
 }
 
 // Initializes this landmark from the given landmark
-void QDeclarativeLandmark::setLandmark(const QLandmark &landmark)
+void QDeclarativeLandmark::setLandmark(const QLandmark& landmark)
 {
     m_landmark = landmark;
     // TODO update notifications when the whole scenario is more clear

@@ -40,6 +40,9 @@ public slots:
 private:
 
     QLandmarkCategory m_category;
+    friend class QDeclarativeLandmarkCategorySource;
+    void setCategory(const QLandmarkCategory& category);
+
 };
 
 QTM_END_NAMESPACE

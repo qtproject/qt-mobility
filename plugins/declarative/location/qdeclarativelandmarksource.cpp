@@ -1,7 +1,9 @@
 #include "qdeclarativelandmarksource_p.h"
 #include <QTimer>
 
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
 #include <QDebug>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -35,16 +37,13 @@ QDeclarativeLandmarkSource::~QDeclarativeLandmarkSource()
 int QDeclarativeLandmarkSource::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    qDebug() << "Row count requested, returning: " <<  m_landmarks.count();
     return m_landmarks.count();
 }
 
 // Returns the stored under the given role for the item referred to by the index.
 QVariant QDeclarativeLandmarkSource::data(const QModelIndex &index, int role) const
 {
-    qDebug() << "Requested index.row(), role is: " << index.row() << role;
     QLandmark landmark = m_landmarks.value(index.row());
-
     switch (role) {
     //case Qt::DisplayRole:
     //    return landmark.name();
@@ -97,35 +96,30 @@ bool QDeclarativeLandmarkSource::isActive() const
 
 QObject* QDeclarativeLandmarkSource::nameFilter()
 {
-    qDebug() << "qdeclarativelandmarksource returning reference to nameFilter";
     return m_nameFilter;
 }
 
 void QDeclarativeLandmarkSource::setFilter(QObject* filter)
 {
-    qDebug() << "qdeclarativelandmarksource setFilter enter";
     if (qobject_cast<QDeclarativeLandmarkNameFilter*>(filter)) {
-        qDebug() << "qdeclarativelandmarksource namefilter match";
         m_nameFilter = qobject_cast<QDeclarativeLandmarkNameFilter*>(filter);
         QObject::connect(m_nameFilter, SIGNAL(filterChanged()), this, SLOT(update()));
     } else if (qobject_cast<QDeclarativeLandmarkProximityFilter*>(filter)) {
-        qDebug() << "qdeclarativelandmarksource proximityFilter match";
         m_proximityFilter = qobject_cast<QDeclarativeLandmarkProximityFilter*>(filter);
         QObject::connect(m_proximityFilter, SIGNAL(filterChanged()), this, SLOT(update()));
-    } else {
-      qDebug() << "qdeclarativelandmarksource no filter match";
     }
 }
 
 QObject* QDeclarativeLandmarkSource::proximityFilter()
 {
-    qDebug() << "qdeclarativelandmarksource returning reference to proximityFilter";
     return m_proximityFilter;
 }
 
 void QDeclarativeLandmarkSource::update()
 {
+#ifdef QDECLARATIVE_LANDMARK_DEBUG
     qDebug("QDeclarativeLandmarkSource::update()");
+#endif
     if (!m_manager)
         return;
     // Clear any previous updates and request new
@@ -176,20 +170,16 @@ void QDeclarativeLandmarkSource::setFetchHints()
 
 void QDeclarativeLandmarkSource::convertLandmarksToDeclarative()
 {
-    qDebug("convertLandmarksToDeclarative enter");
     foreach (const QLandmark& landmark, m_landmarks) {
         if (!m_landmarkMap.contains(landmark.landmarkId().localId())) {
-            qDebug() << "convertLandmarksToDeclarative entering new: " << landmark.name();
             QDeclarativeLandmark* declarativeLandmark = new QDeclarativeLandmark(this);
             declarativeLandmark->setLandmark(landmark);
             m_landmarkMap.insert(landmark.landmarkId().localId(), declarativeLandmark);
         } else {
             // The landmark exists already, update it
-            qDebug() << "convertLandmarksToDeclarative updating existing: " << landmark.name();
             m_landmarkMap.value(landmark.landmarkId().localId())->setLandmark(landmark);
         }
     }
-    qDebug("convertLandmarksToDeclarative exit");
 }
 
 void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractRequest::State state)
@@ -204,12 +194,10 @@ void QDeclarativeLandmarkSource::fetchRequestStateChanged(QLandmarkAbstractReque
 
     if (m_fetchRequest->error() == QLandmarkManager::NoError) {
         // TODO Later improvement item is to make udpate incremental by connecting to resultsAvailable() -function.
-        qDebug("got no error from fetch request, updating landmarks in the model");
         beginInsertRows(QModelIndex(), 0, m_landmarks.count());
         m_landmarks = m_fetchRequest->landmarks();
         endInsertRows();
     } else if (m_error != m_fetchRequest->errorString()) {
-        qDebug("got error from fetch request, updating error");
         m_error = m_fetchRequest->errorString();
         emit errorChanged(m_error);
     }

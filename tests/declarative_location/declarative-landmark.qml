@@ -93,13 +93,25 @@ Rectangle {
 	//proximityFilter: existingCityPositionFilter
         maxItems: 15
     }
+    
+    LandmarkCategorySource {
+         id: lmcatsource
+         active: true
+    }
+    
     // The view which lays the overall view
     ListView {
         id: mainList
-        model: lmsource
+        
+        //model: lmsource
+        //delegate: landmarklistdelegate
+        
+        model: lmcatsource
+        delegate: categorylistdelegate
+        
         anchors {top: title.bottom; left: title.left}
         width: parent.width; height: parent.height
-        delegate: listdelegate
+        
         highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
@@ -107,7 +119,7 @@ Rectangle {
     }
      // The delegate which determines how individual element is shown
     Component {
-	id: listdelegate
+	id: landmarklistdelegate
 	Item {
 	    width: 200; height: 50
 	    Text { id: nameField; text: name }
@@ -117,6 +129,15 @@ Rectangle {
 	    Text { id: longitudeField; text: "  lon:"  + longitude;  anchors.left: latitudeField.right }
 	}
     }
+    Component {
+	id: categorylistdelegate
+	Item {
+	    width: 200; height: 50
+	    Text { id: nameField; text: name }
+	}
+    }
+
+
 
     /*
     Column {

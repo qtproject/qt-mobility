@@ -21,6 +21,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
            qdeclarativelandmark_p.h \
            qdeclarativelandmarksource_p.h \
+           qdeclarativelandmarkcategorysource_p.h \
            qdeclarativelandmarkcategory_p.h \
            qdeclarativelandmarkfilters_p.h
 
@@ -29,6 +30,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativepositionsource.cpp \
            qdeclarativelandmark.cpp \
            qdeclarativelandmarksource.cpp \
+           qdeclarativelandmarkcategorysource.cpp \
            qdeclarativelandmarkcategory.cpp \
            qdeclarativelandmarkfilters.cpp
 

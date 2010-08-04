@@ -46,6 +46,13 @@ void QDeclarativeLandmarkCategory::setIconUrl(const QUrl& iconUrl)
     emit iconUrlChanged(iconUrl);
 }
 
+// Initializes this category from the given category
+void QDeclarativeLandmarkCategory::setCategory(const QLandmarkCategory& category)
+{
+    m_category = category;
+    // TODO update notifications when the whole scenario is more clear
+}
+
 #include "moc_qdeclarativelandmarkcategory_p.cpp"
 
 QTM_END_NAMESPACE
