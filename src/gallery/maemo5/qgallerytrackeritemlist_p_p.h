@@ -238,6 +238,7 @@ public:
         , currentRow(0)
         , currentIndex(-1)
         , rowCount(0)
+        , progressMaximum(0)
         , queryInterface(arguments.queryInterface)
         , queryMethod(arguments.queryMethod)
         , queryArguments(arguments.queryArguments)
@@ -280,6 +281,7 @@ public:
     QVector<QVariant>::const_iterator currentRow;
     int currentIndex;
     int rowCount;
+    int progressMaximum;
     const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;

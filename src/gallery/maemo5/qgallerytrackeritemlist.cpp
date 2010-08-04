@@ -101,7 +101,9 @@ void QGalleryTrackerItemListPrivate::query()
                 queryWatcher.data(), SIGNAL(finished(QDBusPendingCallWatcher*)),
                 q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
 
-        emit q_func()->progressChanged(0, 2);
+        progressMaximum = 2;
+
+        emit q_func()->progressChanged(0, progressMaximum);
     }
 }
 
@@ -117,7 +119,7 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished(QDBusPendingCallWatcher *w
 void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 {
     if (call.isError()) {
-        emit q_func()->progressChanged(2, 2);
+        emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
         qWarning("DBUS error %s", qPrintable(call.error().message()));
 
@@ -139,7 +141,7 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
         parseWatcher.setFuture(QtConcurrent::run(
                 this, &QGalleryTrackerItemListPrivate::parseRows, call, limit, reset));
 
-        emit q_func()->progressChanged(1, 2);
+        emit q_func()->progressChanged(progressMaximum - 1, progressMaximum);
     }
 }
 
@@ -502,7 +504,7 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
         if (flags & Refresh)
             update();
         else
-            emit q_func()->progressChanged(2, 2);
+            emit q_func()->progressChanged(progressMaximum, progressMaximum);
 
         q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
     } else if (flags & Cancelled) {
@@ -529,7 +531,9 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
                     queryWatcher.data(), SIGNAL(finished(QDBusPendingCallWatcher*)),
                     q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
 
-            emit q_func()->progressChanged(0, 2);
+            progressMaximum += 2;
+
+            emit q_func()->progressChanged(progressMaximum - 2, progressMaximum);
         }
     }
 }
