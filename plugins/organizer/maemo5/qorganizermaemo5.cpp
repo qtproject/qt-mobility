@@ -346,7 +346,7 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem> *items, QMap<in
 {
     // TODO: Add changeset manipulation and signal emissions
 
-    if (!items) {
+    if (!items || items->isEmpty()) {
         *error = QOrganizerItemManager::BadArgumentError;
         return false;
     }
@@ -830,6 +830,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     CComponent *component = d->m_itemTransformer.createCComponent(cal, item, error);
     if (!component || *error != QOrganizerItemManager::NoError) {
         delete component;
+        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
 
@@ -885,6 +886,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
 
         delete cevent;
         qDebug() << "doSaveItem: event saving ended with return value " << calError;
+        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeEventOccurrence)
@@ -913,6 +915,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         qDebug() << "doSaveItem: event occurrence saving ended with return value " << calError;
+        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeTodo || item->type() == QOrganizerItemType::TypeTodoOccurrence) {
@@ -928,6 +931,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
             *error = d->m_itemTransformer.calErrorToManagerError(calError);
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 delete ctodo;
+                qDebug() << "DOSAVEITEM RETURNED";
                 return calError;
             }
             ctodo->setId(todosWithGuid[0]->getId()); // this is safe as validity check has passed
@@ -978,6 +982,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         delete ctodo;
+        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
@@ -1021,6 +1026,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
         }
 
         delete cjournal;
+        qDebug() << "DOSAVEITEM RETURNED";
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeNote) {
@@ -1028,6 +1034,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar *cal, QOrganizerItem *item,
     }
 
     qDebug() << "doSaveItem: went to end, return value = " << calError;
+    qDebug() << "DOSAVEITEM RETURNED";
     return calError;
 }
 
