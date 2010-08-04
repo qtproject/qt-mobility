@@ -45,6 +45,7 @@
 #include "camerabinvideoencoder.h"
 #include "camerabinimageencoder.h"
 #include "camerabinexposure.h"
+#include "camerabinflash.h"
 #include "camerabinfocus.h"
 #include "camerabinimageprocessing.h"
 #include "camerabinlocks.h"
@@ -165,6 +166,7 @@ CameraBinSession::CameraBinSession(QObject *parent)
     m_recorderControl = new CameraBinRecorder(this);
     m_mediaContainerControl = new CameraBinContainer(this);
     m_cameraExposureControl = new CameraBinExposure(this);
+    m_cameraFlashControl = new CameraBinFlash(this);
     m_cameraFocusControl = new CameraBinFocus(this);
     m_imageProcessingControl = new CameraBinImageProcessing(this);
     m_cameraLocksControl = new CameraBinLocks(this);

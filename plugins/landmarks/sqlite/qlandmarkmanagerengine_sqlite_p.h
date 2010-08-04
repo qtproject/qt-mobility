@@ -54,6 +54,7 @@
 //
 
 #include "qlandmarkmanagerengine.h"
+#include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
@@ -128,14 +129,15 @@ public:
                         QString *errorString);
 
     bool importLandmarks(QIODevice *device,
-                         const QByteArray &format,
+                         const QString &format,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
-                         const QByteArray &format,
+                         const QString &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
+    QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
     QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
@@ -176,11 +178,17 @@ public slots:
                                      QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
+private slots:
+    void databaseChanged();
+
 public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
         return QLandmarkManagerEngine::sortLandmarks(landmarks,sortOrders);
     }
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 private:
     bool saveLandmarkInternal(QLandmark* landmark,
@@ -193,9 +201,13 @@ private:
                                 QString *errorString,
                                 bool *removed);
 
+    void setChangeNotificationsEnabled(bool enabled);
+
     QString m_dbFilename;
     QString m_dbConnectionName;
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
+    DatabaseFileWatcher *m_dbWatcher;
+    qreal m_latestTimestamp;
     friend class QueryRun;
 };
 
