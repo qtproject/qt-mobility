@@ -408,8 +408,10 @@ void QGalleryTrackerItemListPrivate::removeItems(
 
     emit q_func()->itemsRemoved(iIndex, count);
 
-    if (originalIndex != currentIndex)
+    if (originalIndex != currentIndex) {
         emit q_func()->currentIndexChanged(currentIndex);
+        emit q_func()->currentItemChanged();
+    }
 }
 
 void QGalleryTrackerItemListPrivate::insertItems(
@@ -426,26 +428,41 @@ void QGalleryTrackerItemListPrivate::insertItems(
 void QGalleryTrackerItemListPrivate::syncUpdate(
         const int rIndex, const int rCount, const int iIndex, const int iCount)
 {
-    if (currentIndex >= iCache.cutoff && currentIndex < iCache.cutoff + iCount)
+    bool itemChanged = false;
+
+    if (currentIndex >= iCache.cutoff && currentIndex < iCache.cutoff + iCount) {
         currentRow = iCache.values.constBegin() + (currentIndex * tableWidth);
 
+        itemChanged = true;
+    }
     rCache.offset = rIndex + rCount;
     iCache.cutoff = iIndex + iCount;
 
     emit q_func()->metaDataChanged(iIndex, iCount, propertyKeys);
+
+    if (itemChanged)
+        emit q_func()->currentItemChanged();
 }
 
 void QGalleryTrackerItemListPrivate::syncReplace(
         const int rIndex, const int rCount, const int iIndex, const int iCount)
 {
+    bool itemChanged = false;
+
     if (rCount > 0)
         removeItems(rIndex, iIndex, rCount);
 
-    if (currentIndex >= iCache.cutoff && currentIndex < iCache.cutoff + iCount)
+    if (currentIndex >= iCache.cutoff && currentIndex < iCache.cutoff + iCount) {
         currentRow = iCache.values.constBegin() + (currentIndex * tableWidth);
+
+        itemChanged = true;
+    }
 
     if (iCount > 0)
         insertItems(rIndex + rCount, iIndex, iCount);
+
+    if (itemChanged)
+        emit q_func()->currentItemChanged();
 }
 
 void QGalleryTrackerItemListPrivate::syncFinish(const int rIndex, const int iIndex)
@@ -453,18 +470,26 @@ void QGalleryTrackerItemListPrivate::syncFinish(const int rIndex, const int iInd
     const int rCount = rCache.count - rIndex;
     const int iCount = iCache.count - iIndex;
 
+    bool itemChanged = false;
+
     if (rCount > 0)
         removeItems(rIndex, iIndex, rCount);
     else
         rCache.offset = rCache.count;
 
-    if (currentIndex >= iCache.cutoff && currentIndex < iCache.count)
+    if (currentIndex >= iCache.cutoff && currentIndex < iCache.count) {
         currentRow = iCache.values.constBegin() + (currentIndex * tableWidth);
+
+        itemChanged = true;
+    }
 
     if (iCount > 0)
         insertItems(rIndex + rCount, iIndex, iCount);
     else
         iCache.cutoff = iCache.count;
+
+    if (itemChanged)
+        emit q_func()->currentItemChanged();
 
     flags |= SyncFinished;
 }
@@ -638,6 +663,7 @@ bool QGalleryTrackerItemList::seek(int index, bool relative)
     }
 
     emit currentIndexChanged(d->currentIndex);
+    emit currentItemChanged();
 
     return d->currentRow != 0;
 }
