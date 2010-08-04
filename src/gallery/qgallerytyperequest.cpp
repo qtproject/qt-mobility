@@ -113,12 +113,12 @@ public:
 
     \inmodule QtGallery
 
-    \brief The QGalleryTypeRequest class provides a request for a set of
-    items from a gallery.
+    \brief The QGalleryTypeRequest class provides an interface for requesting
+    the properties of a type from a gallery.
 
 */
 /*!
-    Constructs a new gallery query request.
+    Constructs a new gallery type request.
 
     The \a parent is passed to QObject.
 */
@@ -129,7 +129,7 @@ QGalleryTypeRequest::QGalleryTypeRequest(QObject *parent)
 {
 }
 /*!
-    Contructs a new query request for the given \a gallery.
+    Contructs a new type request for the given \a gallery.
 
     The \a parent is passed to QObject.
 */
@@ -140,7 +140,7 @@ QGalleryTypeRequest::QGalleryTypeRequest(QAbstractGallery *gallery, QObject *par
 }
 
 /*!
-    Destroys a gallery query request.
+    Destroys a gallery type request.
 */
 
 QGalleryTypeRequest::~QGalleryTypeRequest()
@@ -149,7 +149,8 @@ QGalleryTypeRequest::~QGalleryTypeRequest()
 /*!
     \property QGalleryTypeRequest::propertyNames
 
-    \brief A list of names of meta-data properties a request should return values for.
+    \brief A list of names of meta-data properties a request should return
+    values for.
 */
 
 
@@ -187,7 +188,7 @@ void QGalleryTypeRequest::setLive(bool live)
 /*!
     \property QGalleryTypeRequest::itemType
 
-    \brief the root item type the results of a query should be restricted to.
+    \brief the type a request should return the properties of.
 
 */
 
@@ -204,9 +205,16 @@ void QGalleryTypeRequest::setItemType(const QString &itemType)
 }
 
 /*!
+    \fn QGalleryTypeRequest::itemTypeChanged()
+
+    Signals that the \l itemType property has changed.
+*/
+
+/*!
     \property QGalleryTypeRequest::rootItem
 
-    \brief the ID of an item the query should return the descendents of.
+    \brief the ID of an item that accumulative type information should be
+    restricted to the descendents of.
 */
 
 QVariant QGalleryTypeRequest::rootItem() const
@@ -223,8 +231,8 @@ void QGalleryTypeRequest::setRootItem(const QVariant &itemId)
 /*!
     \property QGalleryTypeRequest::scope
 
-    \brief whether all descendants of the scopeItemId should be returned by
-    a request or just the direct descendants.
+    \brief whether all descendants of the rootItem should included in a request
+    or just the direct descendants.
 */
 
 QGalleryAbstractRequest::Scope QGalleryTypeRequest::scope() const
@@ -240,10 +248,8 @@ void QGalleryTypeRequest::setScope(QGalleryAbstractRequest::Scope scope)
 /*!
     \property QGalleryTypeRequest::filter
 
-    \brief A filter identifying the items a request should return.
-
-    If no filter is set the results of the request will be determined
-    by the \l itemType and \l scopeItemId properties.
+    \brief A filter restricting the items that accumulative type information
+    should derived from.
 */
 
 QGalleryFilter QGalleryTypeRequest::filter() const
@@ -257,13 +263,26 @@ void QGalleryTypeRequest::setFilter(const QGalleryFilter &filter)
 }
 
 /*!
-    \property QGalleryTypeRequest::resultSet
+    Returns the result set containing the meta-data of a type.
 */
 
 QGalleryResultSet *QGalleryTypeRequest::resultSet() const
 {
     return d_func()->resultSet;
 }
+
+/*!
+    \fn QGalleryTypeRequest::resultSetChanged(QGalleryResultSet *resultSet)
+
+    Signals that the \a resultSet containing the meta-data of a type has
+    changed.
+*/
+
+/*!
+    \fn QGalleryTypeRequest::typeChanged()
+
+    Signals that the properties of a type have changed.
+*/
 
 /*!
     Returns the key of \a property.
@@ -293,7 +312,9 @@ QVariant::Type QGalleryTypeRequest::propertyType(int key) const
 }
 
 /*!
+    \property QGalleryTypeRequest::valid
 
+    \brief Whether the request currently holds valid type information.
 */
 
 bool QGalleryTypeRequest::isValid() const
@@ -302,8 +323,7 @@ bool QGalleryTypeRequest::isValid() const
 }
 
 /*!
-    Returns the value of a meta-data property identified by \a key for the
-    current item.
+    Returns the value of a meta-data property identified by \a key.
 */
 
 
@@ -313,7 +333,7 @@ QVariant QGalleryTypeRequest::metaData(int key) const
 }
 
 /*!
-    Returns the value of a meta-data \a property for the current item.
+    Returns the value of a meta-data \a property.
 */
 
 QVariant QGalleryTypeRequest::metaData(const QString &property) const
@@ -321,6 +341,13 @@ QVariant QGalleryTypeRequest::metaData(const QString &property) const
     return d_func()->internalResultSet->metaData(
             d_func()->internalResultSet->propertyKey(property));
 }
+
+/*!
+    \fn QGalleryTypeRequest::metaDataChanged(const QList<int> &keys)
+
+    Signals that the values of meta-data properties identified by \a keys
+    have changed.
+*/
 
 /*!
     \reimp

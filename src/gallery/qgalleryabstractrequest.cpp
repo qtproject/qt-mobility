@@ -159,15 +159,14 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 */
 
 /*!
-    \enum QGalleryAbstractRequest::Type
+    \enum QGalleryAbstractRequest::RequestType
 
     Identifies the type of a request.
 
-    \value Item The request is a QGalleryItemRequest.
-    \value Url The request is a QGalleryUrlRequest.
-    \value Query The request is a QGalleryQueryRequest.
-    \value Count The request is a QGalleryCountRequest.
-    \value Remove The request is a QGalleryRemoveRequest.
+    \value QueryRequest The request is a QGalleryQueryRequest.
+    \value ItemRequest The request is a QGalleryItemRequest.
+    \value TypeRequest The request is a QGalleryTypeRequest
+    \value RemoveReqest The request is a QGalleryRemoveRequest.
 */
 
 /*!

@@ -65,6 +65,8 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
     Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(int result READ result NOTIFY resultChanged)
+    Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
 public:
     QGalleryQueryModel(QObject *parent = 0);
     QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent = 0);
@@ -106,7 +108,7 @@ public:
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);
 
-    bool execute();
+    void execute();
     void cancel();
     void clear();
 

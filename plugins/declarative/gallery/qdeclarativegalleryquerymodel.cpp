@@ -48,11 +48,14 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryQueryModel GalleryQueryRequest
+    \qmlclass GalleryQueryModel QDeclarativeGalleryQueryModel
+
+    \inmodule QtGallery
+
     \brief The GalleryQueryRequest element is used to specify a model containing
     items from a gallery.
 
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
 
     The properties that should be returned for each item by the query are
     specified in \l properties. In addition all queries return the following
@@ -72,7 +75,7 @@ QTM_BEGIN_NAMESPACE
 
     \qml
     import Qt 4.7
-    import QtMobility.gallery 1.0
+    import QtMobility.gallery 1.1
 
     Rectangle {
         width: 1024
@@ -102,7 +105,7 @@ QTM_BEGIN_NAMESPACE
     }
     \endqml
 
-    \sa GalleryItem, GalleryQueryCount
+    \sa GalleryItem, GalleryType
 */
 
 QDeclarativeGalleryQueryModel::QDeclarativeGalleryQueryModel(QObject *parent)
@@ -222,20 +225,19 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty int GalleryQueryModel::cursorPosition
+    \qmlproperty int GalleryQueryModel::offset
 
-    This property holds the offset of a query's internal cache.
+    This property holds the offset of the first item returned by a query.
 */
 
 /*!
-    \qmlproperty int GalleryQueryModel::minimumPagedItems
+    \qmlproperty int GalleryQueryModel::limit
 
-    This property contains the minimum number of consectutive items a query
-    should retain in it's internal cache.
+    This property contains the maximum number of items returned by a query.
 */
 
 /*!
-    \qmlproperty string GalleryQueryModel::itemType
+    \qmlproperty string GalleryQueryModel::rootType
 
     This property contains the type of item a query should return.
 */
@@ -247,10 +249,10 @@ void QDeclarativeGalleryQueryModel::componentComplete()
 */
 
 /*!
-    \qmlproperty variant GalleryQueryModel::scopeItemId
+    \qmlproperty variant GalleryQueryModel::rootItem
 
-    This property contains the id of an item that a query should return a
-    count of the descendants of.
+    This property contains the id of an item that a query should return the
+    descendants of.
 */
 
 /*!

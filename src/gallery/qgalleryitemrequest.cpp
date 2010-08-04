@@ -110,12 +110,12 @@ public:
 
     \inmodule QtGallery
 
-    \brief The QGalleryItemRequest class provides a request for a set of
-    items from a gallery.
+    \brief The QGalleryItemRequest class provides a request for the properties
+    of a single item from a gallery.
 
 */
 /*!
-    Constructs a new gallery query request.
+    Constructs a new gallery item request.
 
     The \a parent is passed to QObject.
 */
@@ -126,7 +126,7 @@ QGalleryItemRequest::QGalleryItemRequest(QObject *parent)
 {
 }
 /*!
-    Contructs a new query request for the given \a gallery.
+    Contructs a new item request for the given \a gallery.
 
     The \a parent is passed to QObject.
 */
@@ -137,7 +137,7 @@ QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *par
 }
 
 /*!
-    Destroys a gallery query request.
+    Destroys a gallery item request.
 */
 
 QGalleryItemRequest::~QGalleryItemRequest()
@@ -184,7 +184,7 @@ void QGalleryItemRequest::setLive(bool live)
 /*!
     \property QGalleryItemRequest::itemId
 
-    \brief the ID of an item the query should return the descendents of.
+    \brief the ID of an item the request should return the properties of.
 */
 
 QVariant QGalleryItemRequest::itemId() const
@@ -200,13 +200,32 @@ void QGalleryItemRequest::setItemId(const QVariant &itemId)
 }
 
 /*!
-    \property QGalleryItemRequest::resultSet
+    \fn QGalleryItemRequest::itemIdChanged()
+
+    Signals that the value of the \l itemId property has changed.
+*/
+
+/*!
+    Returns the result set containing the meta-data of a type.
 */
 
 QGalleryResultSet *QGalleryItemRequest::resultSet() const
 {
     return d_func()->resultSet;
 }
+
+/*!
+    \fn QGalleryItemRequest::resultSetChanged(QGalleryResultSet *resultSet)
+
+    Signals that the \a resultSet containing the meta-data of an item has
+    changed.
+*/
+
+/*!
+    \fn QGalleryItemRequest::itemChanged()
+
+    Signals that the properties of an item have changed.
+*/
 
 /*!
     Returns the key of \a property.
@@ -237,6 +256,8 @@ QVariant::Type QGalleryItemRequest::propertyType(int key) const
 
 /*!
     \property QGalleryItemRequest::valid
+
+    \brief Whether the request currently holds valid type information.
 */
 
 bool QGalleryItemRequest::isValid() const
@@ -245,7 +266,9 @@ bool QGalleryItemRequest::isValid() const
 }
 
 /*!
-    Returns the URL of the current item.
+    \property QGalleryItemRequest::itemUrl
+
+    \brief The URL of an item.
 */
 
 QUrl QGalleryItemRequest::itemUrl() const
@@ -254,7 +277,9 @@ QUrl QGalleryItemRequest::itemUrl() const
 }
 
 /*!
-    Returns the type of the current item.
+    \property QGalleryItemRequest::itemType
+
+    \brief the type of an item.
 */
 
 QString QGalleryItemRequest::itemType() const
@@ -263,7 +288,9 @@ QString QGalleryItemRequest::itemType() const
 }
 
 /*!
-    Returns the resources of the current item.
+    \property QGalleryItemRequest::resources
+
+    \brief the resources of an item.
 */
 
 QList<QGalleryResource> QGalleryItemRequest::resources() const
@@ -272,8 +299,7 @@ QList<QGalleryResource> QGalleryItemRequest::resources() const
 }
 
 /*!
-    Returns the value of a meta-data property identified by \a key for the
-    current item.
+    Returns the value of a meta-data property identified by \a key.
 */
 
 
@@ -283,8 +309,9 @@ QVariant QGalleryItemRequest::metaData(int key) const
 }
 
 /*!
-    Sets the \a value of a meta-data property identified by \a key for the
-    current item.
+    Sets the \a value of a meta-data property identified by \a key.
+
+    Returns true if the value was changed; otherwise returns false.
 */
 
 bool QGalleryItemRequest::setMetaData(int key, const QVariant &value)
@@ -293,7 +320,7 @@ bool QGalleryItemRequest::setMetaData(int key, const QVariant &value)
 }
 
 /*!
-    Returns the value of a meta-data \a property for the current item.
+    Returns the value of a meta-data \a property.
 */
 
 
@@ -304,7 +331,9 @@ QVariant QGalleryItemRequest::metaData(const QString &property) const
 }
 
 /*!
-    Sets the \value of a meta-data \a property for the current item.
+    Sets the \value of a meta-data \a property.
+
+    Returns true if the value was changed; otherwise returns false.
 */
 
 bool QGalleryItemRequest::setMetaData(const QString &property, const QVariant &value)
@@ -312,6 +341,13 @@ bool QGalleryItemRequest::setMetaData(const QString &property, const QVariant &v
     return d_func()->internalResultSet->setMetaData(
             d_func()->internalResultSet->propertyKey(property), value);
 }
+
+/*!
+    \fn QGalleryItemRequest::metaDataChanged(const QList<int> &keys)
+
+    Signals that the values of meta-data properties identified by \a keys
+    have changed.
+*/
 
 /*!
     \reimp

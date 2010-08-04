@@ -269,9 +269,19 @@ void QGalleryQueryModelPrivate::_q_metaDataChanged(int index, int count, const Q
 
 /*!
     \class QGalleryQueryModel
+
+    \ingroup gallery
+
+    \inmodule QtGallery
+
+    \brief The QGalleryQueryModel class provides a model for the results of a
+    gallery query.
 */
 
 /*!
+    Constructs a new query model.
+
+    The \a parent is passed to QAbstractItemModel.
 */
 
 QGalleryQueryModel::QGalleryQueryModel(QObject *parent)
@@ -282,6 +292,9 @@ QGalleryQueryModel::QGalleryQueryModel(QObject *parent)
 }
 
 /*!
+    Constructs a new model which queries items from a \a gallery.
+
+    The \a parent is passed to QAbstractItemModel.
 */
 
 QGalleryQueryModel::QGalleryQueryModel(QAbstractGallery *gallery, QObject *parent)
@@ -300,6 +313,8 @@ QGalleryQueryModel::~QGalleryQueryModel()
 
 /*!
     \property QGalleryQueryModel::gallery
+
+    \brief The Gallery a model executes its queries against.
 */
 
 QAbstractGallery *QGalleryQueryModel::gallery() const
@@ -313,7 +328,7 @@ void QGalleryQueryModel::setGallery(QAbstractGallery *gallery)
 }
 
 /*!
-
+    Returns the meta-data properties which a \a column maps to roles.
 */
 
 QHash<int, QString> QGalleryQueryModel::roleProperties(int column) const
@@ -322,7 +337,9 @@ QHash<int, QString> QGalleryQueryModel::roleProperties(int column) const
 }
 
 /*!
+    Sets the meta-data \a properties which a \a column maps to roles.
 
+    New properties will not be populated until the query is executed.
 */
 
 void QGalleryQueryModel::setRoleProperties(int column, const QHash<int, QString> &properties)
@@ -340,7 +357,9 @@ void QGalleryQueryModel::setRoleProperties(int column, const QHash<int, QString>
 }
 
 /*!
+    Adds a column which maps the given \a properties to a query model.
 
+    The column will not be populated until the query is executed.
 */
 
 void QGalleryQueryModel::addColumn(const QHash<int, QString> &properties)
@@ -362,7 +381,10 @@ void QGalleryQueryModel::addColumn(const QHash<int, QString> &properties)
 }
 
 /*!
+    Adds a column which maps a meta-data \a property to \a role to a query
+    model.
 
+    The column will not be populated until the query is executed.
 */
 
 void QGalleryQueryModel::addColumn(const QString &property, int role)
@@ -375,7 +397,10 @@ void QGalleryQueryModel::addColumn(const QString &property, int role)
 }
 
 /*!
+    Inserts a column which maps the given \a properties into a query model at
+    \a index.
 
+    The column will not be populated until the query is executed.
 */
 
 void QGalleryQueryModel::insertColumn(int index, const QHash<int, QString> &properties)
@@ -397,7 +422,10 @@ void QGalleryQueryModel::insertColumn(int index, const QHash<int, QString> &prop
 }
 
 /*!
+    Inserts a column which maps a meta-data \a property to \a role into a
+    query model at \a index.
 
+    The column will not be populated until the query is executed.
 */
 
 void QGalleryQueryModel::insertColumn(int index, const QString &property, int role)
@@ -410,7 +438,7 @@ void QGalleryQueryModel::insertColumn(int index, const QString &property, int ro
 }
 
 /*!
-
+    Removes the column at \a index from a query model.
 */
 
 void QGalleryQueryModel::removeColumn(int index)
@@ -439,6 +467,13 @@ void QGalleryQueryModel::removeColumn(int index)
 
 /*!
     \property QGalleryQueryModel::sortPropertyNames
+
+    \brief A list of names of meta-data properties the results of a query
+    should be sorted on.
+
+    Prefixing a property name with the '+' character indicates it should be sorted
+    in ascending order, and a '-' character prefix indicates a descending order.
+    If there is no prefix ascending order is assumed.
 */
 
 QStringList QGalleryQueryModel::sortPropertyNames() const
@@ -453,6 +488,9 @@ void QGalleryQueryModel::setSortPropertyNames(const QStringList &names)
 
 /*!
     \property QGalleryQueryModel::live
+
+    \brief Whether a query should continue to update its result set after the
+    initial query succeeded.
 */
 
 bool QGalleryQueryModel::isLive() const
@@ -467,6 +505,8 @@ void QGalleryQueryModel::setLive(bool live)
 
 /*!
     \property QGalleryQueryModel::offset
+
+    \brief The offset of the first item a query should return.
 */
 
 int QGalleryQueryModel::offset() const
@@ -481,6 +521,8 @@ void QGalleryQueryModel::setOffset(int offset)
 
 /*!
     \property QGalleryQueryModel::limit
+
+    \brief The maximum number of items a query should return.
 */
 
 int QGalleryQueryModel::limit() const
@@ -495,6 +537,8 @@ void QGalleryQueryModel::setLimit(int limit)
 
 /*!
     \property QGalleryQueryModel::rootType
+
+    \brief The root item type the results of a query should be restricted to.
 */
 
 QString QGalleryQueryModel::rootType() const
@@ -509,6 +553,10 @@ void QGalleryQueryModel::setRootType(const QString &itemType)
 
 /*!
     \property QGalleryQueryModel::rootItem
+
+    \brief The ID of the item a query should return the descendents of.
+
+    \sa scope()
 */
 
 QVariant QGalleryQueryModel::rootItem() const
@@ -523,6 +571,11 @@ void QGalleryQueryModel::setRootItem(const QVariant &itemId)
 
 /*!
     \property QGalleryQueryModel::scope
+
+    \brief Whether a query will return all descendents of its root item or
+    just the direct decendents.
+
+    \sa rootItem()
 */
 
 QGalleryAbstractRequest::Scope QGalleryQueryModel::scope() const
@@ -537,6 +590,8 @@ void QGalleryQueryModel::setScope(QGalleryAbstractRequest::Scope scope)
 
 /*!
     \property QGalleryQueryModel::filter
+
+    \brief A filter restricting the results of a query.
 */
 
 QGalleryFilter QGalleryQueryModel::filter() const
@@ -550,10 +605,10 @@ void QGalleryQueryModel::setFilter(const QGalleryFilter &filter)
 }
 
 /*!
-
+    Executes a query.
 */
 
-bool QGalleryQueryModel::execute()
+void QGalleryQueryModel::execute()
 {
     QStringList propertyNames;
 
@@ -571,13 +626,10 @@ bool QGalleryQueryModel::execute()
     d_ptr->query.execute();
 
     d_ptr->updateRoles();
-
-    return d_ptr->query.result() == QGalleryAbstractRequest::Succeeded
-            || d_ptr->query.result() == QGalleryAbstractRequest::NoResult;
 }
 
 /*!
-
+    Cancels a query.
 */
 
 void QGalleryQueryModel::cancel()
@@ -586,7 +638,7 @@ void QGalleryQueryModel::cancel()
 }
 
 /*!
-
+    Clears the results of a query.
 */
 
 void QGalleryQueryModel::clear()
@@ -596,6 +648,8 @@ void QGalleryQueryModel::clear()
 
 /*!
     \property QGalleryQueryModel::result
+
+    \brief The result of a query.
 */
 
 int QGalleryQueryModel::result() const
@@ -606,26 +660,38 @@ int QGalleryQueryModel::result() const
 
 /*!
     \fn QGalleryQueryModel::resultChanged()
+
+    Signals that the result of the query has changed.
 */
 
 /*!
     \fn QGalleryQueryModel::succeeded()
+
+    Signals that the query has finished successfully.
 */
 
 /*!
     \fn QGalleryQueryModel::cancelled()
+
+    Signals that the query was cancelled.
 */
 
 /*!
     \fn QGalleryQueryModel::failed(int result)
+
+    Signals that the query has failed with the given \a result.
 */
 
 /*!
     \fn QGalleryQueryModel::finished(int result)
+
+    Signals that the query has finished with the given \a result.
 */
 
 /*!
     \property QGalleryQueryModel::state
+
+    \brief The state of a query.
 */
 
 QGalleryAbstractRequest::State QGalleryQueryModel::state() const
@@ -634,7 +700,9 @@ QGalleryAbstractRequest::State QGalleryQueryModel::state() const
 }
 
 /*!
-    \fn QGalleryQueryModel::stateChanged()
+    \fn QGalleryQueryModel::stateChanged(QGalleryAbstractRequest::State state)
+
+    Signals that the \a state of the query has changed.
 */
 
 
@@ -725,7 +793,7 @@ bool QGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value
 }
 
 /*!
-
+    Returns the ID of the item at \a index.
 */
 
 QVariant QGalleryQueryModel::itemId(const QModelIndex &index) const
@@ -740,7 +808,7 @@ QVariant QGalleryQueryModel::itemId(const QModelIndex &index) const
 }
 
 /*!
-
+    Returns the URL of the item at \a index.
 */
 
 QUrl QGalleryQueryModel::itemUrl(const QModelIndex &index) const
@@ -755,7 +823,7 @@ QUrl QGalleryQueryModel::itemUrl(const QModelIndex &index) const
 }
 
 /*!
-
+    Returns the type of the item at \a index.
 */
 
 QString QGalleryQueryModel::itemType(const QModelIndex &index) const

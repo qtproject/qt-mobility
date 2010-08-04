@@ -108,8 +108,7 @@ public:
     enum Scope
     {
         AllDescendants,
-        DirectDescendants,
-        RootItem
+        DirectDescendants
     };
 
     explicit QGalleryAbstractRequest(RequestType type, QObject *parent = 0);

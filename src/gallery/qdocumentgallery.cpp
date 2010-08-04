@@ -651,7 +651,7 @@ const QGalleryProperty QDocumentGallery::director("director");
 */
 
 /*!
-    \fn QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
+    \fn QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType type) const
 
     \reimp
 */

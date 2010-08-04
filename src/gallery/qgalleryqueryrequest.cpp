@@ -268,7 +268,7 @@ void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
 /*!
     \property QGalleryQueryRequest::scope
 
-    \brief whether all descendants of the scopeItemId should be returned by
+    \brief whether all descendants of the \l rootItem should be returned by
     a request or just the direct descendants.
 */
 
@@ -288,7 +288,7 @@ void QGalleryQueryRequest::setScope(QGalleryAbstractRequest::Scope scope)
     \brief A filter identifying the items a request should return.
 
     If no filter is set the results of the request will be determined
-    by the \l itemType and \l scopeItemId properties.
+    by the \l rootType and \l rootItem properties.
 */
 
 QGalleryFilter QGalleryQueryRequest::filter() const
@@ -302,13 +302,20 @@ void QGalleryQueryRequest::setFilter(const QGalleryFilter &filter)
 }
 
 /*!
-    \property QGalleryQueryRequest::resultSet
+    Returns the result set containing the results of a query.
 */
 
 QGalleryResultSet *QGalleryQueryRequest::resultSet() const
 {
     return d_func()->resultSet;
 }
+
+/*!
+    \fn QGalleryQueryRequest::resultSetChanged(QGalleryResultSet *resultSet)
+
+    Signals that the \a resultSet containing the results of a query have
+    changed.
+*/
 
 /*!
     Returns the key of \a property.
@@ -347,7 +354,9 @@ int QGalleryQueryRequest::itemCount() const
 }
 
 /*!
-    Returns the ID of the current item.
+    \property QGalleryQueryRequest::itemId
+
+    \brief The ID of the current item.
 */
 
 QVariant QGalleryQueryRequest::itemId() const
@@ -356,7 +365,9 @@ QVariant QGalleryQueryRequest::itemId() const
 }
 
 /*!
-    Returns the URL of the current item.
+    \property QGalleryQueryRequest::itemUrl
+
+    \brief The URL of the current item.
 */
 
 QUrl QGalleryQueryRequest::itemUrl() const
@@ -365,7 +376,9 @@ QUrl QGalleryQueryRequest::itemUrl() const
 }
 
 /*!
-    Returns the type of the current item.
+    \property QGalleryQueryRequest::itemType
+
+    \brief he type of the current item.
 */
 
 QString QGalleryQueryRequest::itemType() const
@@ -374,7 +387,9 @@ QString QGalleryQueryRequest::itemType() const
 }
 
 /*!
-    Returns the resources of the current item.
+    \property QGalleryQueryRequest::resources
+
+    \brief The resources of the current item.
 */
 
 QList<QGalleryResource> QGalleryQueryRequest::resources() const
@@ -396,6 +411,8 @@ QVariant QGalleryQueryRequest::metaData(int key) const
 /*!
     Sets the \a value of a meta-data property identified by \a key for the
     current item.
+
+    Returns true if the value was changed; otherwise returns false.
 */
 
 bool QGalleryQueryRequest::setMetaData(int key, const QVariant &value)
@@ -416,6 +433,8 @@ QVariant QGalleryQueryRequest::metaData(const QString &property) const
 
 /*!
     Sets the \value of a meta-data \a property for the current item.
+
+    Returns true if the value was changed; otherwise returns false.
 */
 
 bool QGalleryQueryRequest::setMetaData(const QString &property, const QVariant &value)
@@ -425,7 +444,9 @@ bool QGalleryQueryRequest::setMetaData(const QString &property, const QVariant &
 }
 
 /*!
-    Return the index of current item.
+    \property QGalleryQueryRequest::currentIndex
+
+    \brief The index of current item.
 */
 
 int QGalleryQueryRequest::currentIndex() const
@@ -434,9 +455,18 @@ int QGalleryQueryRequest::currentIndex() const
 }
 
 /*!
+    \fn QGalleryQueryRequest::currentItemChanged()
+
+    Signals that the item the result set is positioned on has changed.
+*/
+
+/*!
     Seeks to the item at \a index.
 
     If \a relative is true the seek is peformed relative to the current index.
+
+    Returns true if the position of the result set after the seek is valid; and
+    false otherwise.
 */
 
 bool QGalleryQueryRequest::seek(int index, bool relative)
@@ -463,7 +493,9 @@ bool QGalleryQueryRequest::previous()
 }
 
 /*!
+    \property QGalleryQueryRequest::valid
 
+    \brief Whether the result set is currently positioned on a valid item.
 */
 
 bool QGalleryQueryRequest::isValid() const

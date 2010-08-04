@@ -49,12 +49,15 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \qmlclass GalleryType QDeclarativeGalleryType
-    \brief The GalleryType element allows you to request information about a
-    single item from a gallery
 
-    This element is part of the \bold {QtMobility.gallery 1.0} module.
+    \inmodule QtGallery
 
-    \sa GalleryQueryModel, GalleryQueryCount
+    \brief The GalleryType element allows you to request information about an
+    item type from a gallery
+
+    This element is part of the \bold {QtMobility.gallery 1.1} module.
+
+    \sa GalleryQueryModel, GalleryItem
 */
 
 QDeclarativeGalleryType::QDeclarativeGalleryType(QObject *parent)
@@ -89,13 +92,13 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 /*!
     \qmlproperty QAbstractGallery GalleryType::gallery
 
-    This property holds the gallery an item should be requested from.
+    This property holds the gallery type information should be requested from.
 */
 
 /*!
     \qmlproperty enum GalleryType::state
 
-    This property holds the state of an item request.  It can be one of:
+    This property holds the state of a type request.  It can be one of:
 
     \list
     \o Inactive The request has finished.
@@ -110,7 +113,7 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 /*!
     \qmlproperty enum GalleryType::result
 
-    The property holds the result of an item request. It can be one of:
+    The property holds the result of a type request. It can be one of:
 
     \list
     \o NoResult The request is still executing.
@@ -139,7 +142,7 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 /*!
     \qmlproperty QStringList GalleryType::properties
 
-    This property holds the item properties a request should return values for.
+    This property holds the type properties a request should return values for.
 */
 
 /*!
@@ -150,21 +153,15 @@ QDeclarativeGalleryType::~QDeclarativeGalleryType()
 */
 
 /*!
-    \qmlproperty variant GalleryType::item
-
-    This property holds the id of the item to return information about.
-*/
-
-/*!
     \qmlproperty string GalleryType::itemType
 
-    This property holds the type of a gallery item.
+    This property holds the item type that a request fetches information about.
 */
 
 /*!
     \qmlproperty object GalleryType::metaData
 
-    This property holds the meta-data of a gallery item.
+    This property holds the meta-data of an item type/
 */
 
 /*!

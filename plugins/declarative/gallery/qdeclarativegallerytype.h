@@ -66,6 +66,8 @@ class QDeclarativeGalleryType : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
     {
