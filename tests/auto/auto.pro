@@ -35,7 +35,8 @@ contains(mobility_modules,location) {
           qlocationutils \
           qnmeapositioninfosource \
           #qlandmarkmanagerplugins \
-          qlandmarkmanagerengine
+          qlandmarkmanagerengine \
+          qlandmark
 
      contains(QT_CONFIG, declarative) {
          SUBDIRS += qdeclarativeposition
@@ -48,11 +49,6 @@ contains(mobility_modules,location) {
                 qlandmarkfilehandler_lmx
     
     SUBDIRS += qlandmarkmanagerengine_sqlite
-}
-
-contains(mobility_modules,landmarks) {
-    SUBDIRS += qlandmark \                      #Landmark
-            qlandmarkcategory
 }
 
 contains(mobility_modules,publishsubscribe) {
