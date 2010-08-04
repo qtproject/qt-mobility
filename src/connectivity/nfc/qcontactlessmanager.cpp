@@ -46,6 +46,19 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QContactlessManager
     \brief The QContactlessManager class provides access to notifications for NFC events.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    \fn void QContactlessManager::targetDetected(const QContactlessTarget &target)
+
+    This signal is emitted whenever a target is detected. The \a target parameter represents the
+    detected target.
+
+    This signal will be emitted for all detected targets. To receive signals only for desired
+    targets use the connect() member function.
 */
 
 /*!
@@ -59,15 +72,28 @@ QTM_BEGIN_NAMESPACE
     transaction.
 */
 
+/*!
+    Constructs a new contactless manager with \a parent.
+*/
 QContactlessManager::QContactlessManager(QObject *parent)
 :   QObject(parent)
 {
 }
 
+/*!
+    Destroys the contactless manager.
+*/
 QContactlessManager::~QContactlessManager()
 {
 }
 
+/*!
+    Registers for notifications when a target of \a type is detected. The \a slot method on
+    \a object will be called and should have the prototype
+    'void targetDetected(const QContactlessTarget &target)'.
+
+    Returns true of success; other returns false.
+*/
 bool QContactlessManager::connect(QContactlessTarget::TagType type,
                                   const QObject *object,
                                   const char *slot)
@@ -79,11 +105,46 @@ bool QContactlessManager::connect(QContactlessTarget::TagType type,
     return false;
 }
 
+/*!
+    Unregisters notifications for targets of \a type to \a slot on \a object. Returns true on
+    success; otherwise returns false.
+*/
 bool QContactlessManager::disconnect(QContactlessTarget::TagType type,
                                      const QObject *object,
                                      const char *slot)
 {
     Q_UNUSED(type);
+    Q_UNUSED(object);
+    Q_UNUSED(slot);
+
+    return false;
+}
+
+/*!
+    Registers for notifications when an NDEF record that matches \a typeNameFormat is detected. The
+    \a slot method on \a object will be called and should have the prototype
+    'void ndefRecordDetected(const QNdefRecord &record)'.
+
+    Returns true on success; otherwise return false.
+*/
+bool QContactlessManager::connect(QNdefRecord::TypeNameFormat typeNameFormat,
+                                  const QObject *object, const char *slot)
+{
+    Q_UNUSED(typeNameFormat);
+    Q_UNUSED(object);
+    Q_UNUSED(slot);
+
+    return false;
+}
+
+/*!
+    Unregisters notifications for when an NDEF record that match \a typeNameFormat to \a slot on
+    \a object. Returns true o success; otherwise returns false.
+*/
+bool QContactlessManager::disconnect(QNdefRecord::TypeNameFormat typeNameFormat,
+                                     const QObject *object, const char *slot)
+{
+    Q_UNUSED(typeNameFormat);
     Q_UNUSED(object);
     Q_UNUSED(slot);
 

@@ -45,13 +45,48 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QNdefRecord
+    \brief The QNdefRecord class provides an NFC NDEF record.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+*/
+
+/*!
+    \enum QNdefRecord::TypeNameFormat
+
+    This enum describe the type name format of an NDEF record.
+
+    \value Empty        An empty NDEF record, the record does not contain a payload
+    \value NfcRtd       The NDEF record type is defined by an NFC RTD Specification
+    \value Mime         The NDEF record type follows the construct described in RFC 2046
+    \value Uri          The NDEF record type follows the construct described in RFC 3986
+    \value ExternalRtd  The NDEF record type follows the construct for external type names
+                        described the NFC RTD Specification
+    \value Unknown      The type of the record is unknown and should be treated similar to content
+                        with MIME type 'application/octet-stream' without further context
+*/
+
+/*!
+    \fn bool QNdefRecord::operator!=(const QNdefRecord &other) const
+
+    Returns true if this NDEF record does not equal \a other; otherwise return false.
+*/
+
+/*!
+    Constructs a new empty NDEF record.
+*/
 QNdefRecord::QNdefRecord()
 {
 }
 
+/*!
+    Constructs a new NDEF record that is a copy of \a other.
+*/
 QNdefRecord::QNdefRecord(const QNdefRecord &other)
-:   d(other.d)
 {
+    d = other.d;
 }
 
 /*!

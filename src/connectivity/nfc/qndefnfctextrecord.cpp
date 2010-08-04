@@ -45,6 +45,19 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QNdefNfcTextRecord
+    \brief The QNdefNfcTextRecord class provides an NFC RTD-Text
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+    RTD-Text encapsulates a user displayable text record.
+*/
+
+/*!
+    Returns the locale of the text record.
+*/
 QLocale QNdefNfcTextRecord::locale() const
 {
     const QByteArray p = payload();
@@ -59,6 +72,9 @@ QLocale QNdefNfcTextRecord::locale() const
     return QLocale(QString::fromAscii(p.constData() + 1, codeLength));
 }
 
+/*!
+    Returns the contents of the text record as a string.
+*/
 QString QNdefNfcTextRecord::text() const
 {
     const QByteArray p = payload();

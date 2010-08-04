@@ -48,6 +48,9 @@
     \class QContactlessTarget
     \brief The QContactlessTarget class provides an interface for communicating with a target
            device.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
 */
 
 /*!
@@ -125,4 +128,50 @@ QContactlessTarget::TagType QContactlessTarget::type() const
 QContactlessTarget::TagAccessMethods QContactlessTarget::accessMethods() const
 {
     return d->accessMethods;
+}
+
+/*!
+    Returns the NDEF message stored on the contactless target.
+*/
+QNdefMessage QContactlessTarget::ndefMessage() const
+{
+}
+
+/*!
+    Sets the NDEF message on the contactless target to \a message.
+*/
+void QContactlessTarget::setNdefMessage(const QNdefMessage &message)
+{
+}
+
+/*!
+    Sends the APDU \a command to the contactless target and returns the result.
+*/
+QByteArray QContactlessTarget::sendApduCommand(const QByteArray &command)
+{
+    return QByteArray();
+}
+
+/*!
+    Sends multiple APDU \a commands to the contactless target and returns the results.
+*/
+QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &commands)
+{
+    return QList<QByteArray>();
+}
+
+/*!
+    Sends \a command to the contactless target and returns the result.
+*/
+QVariant QContactlessTarget::sendCommand(const QVariant &command)
+{
+    return QVariant();
+}
+
+/*!
+    Sends multiple \a commands to the contactless target and returns the result.
+*/
+QVariantList QContactlessTarget::sendCommands(const QVariantList &commands)
+{
+    return QVariantList();
 }

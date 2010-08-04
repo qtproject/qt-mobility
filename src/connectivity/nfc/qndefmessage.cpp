@@ -46,15 +46,34 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QNdefMessage
+    \brief The QNdefMessage class provides an NFC NDEF message.
+
+    \ingroup connectivity-nfc
+    \inmodule QtConnectivity
+
+    A QNdefMessage is a collection of 0 or more QNdefRecords.
+*/
+
+/*!
+    Constructs a new empty NDEF message.
+*/
 QNdefMessage::QNdefMessage()
 {
 }
 
+/*!
+    Constructs a new NDEF message that is a copy of \a other.
+*/
 QNdefMessage::QNdefMessage(const QNdefMessage &other)
     :   m_records(other.m_records)
 {
 }
 
+/*!
+    Constructs a new NDEF message that contains a copy of \a records.
+*/
 QNdefMessage::QNdefMessage(const QList<QNdefRecord> &records)
     :   m_records(records)
 {
@@ -62,6 +81,10 @@ QNdefMessage::QNdefMessage(const QList<QNdefRecord> &records)
     m_records[m_records.count() - 1].d->messageEnd = true;
 }
 
+/*!
+    Constructs a new NDEF message based on the contents of \a message.  The \a message paramater is
+    interpreted as the raw message format defined in the NFC Specifications.
+*/
 QNdefMessage::QNdefMessage(const QByteArray &message)
 {
     bool messageBegin = false;
@@ -132,10 +155,16 @@ QNdefMessage::QNdefMessage(const QByteArray &message)
     }
 }
 
+/*!
+    Destroys the NDEF message.
+*/
 QNdefMessage::~QNdefMessage()
 {
 }
 
+/*!
+    Returns true if this NDEF message is equivalent to \a other; otherwise returns false.
+*/
 bool QNdefMessage::operator==(const QNdefMessage &other) const
 {
     // both records are empty
@@ -163,9 +192,21 @@ bool QNdefMessage::operator==(const QNdefMessage &other) const
     return true;
 }
 
+/*!
+    Returns the list of NDEF records in the NDEF message.
+*/
 const QList<QNdefRecord> &QNdefMessage::records() const
 {
     return m_records;
+}
+
+
+/*!
+    Appends \a record onto the end of the NDEF message.
+*/
+void QNdefMessage::append(const QNdefRecord &record)
+{
+    m_records.append(record);
 }
 
 QTM_END_NAMESPACE
