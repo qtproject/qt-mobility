@@ -107,7 +107,6 @@ private slots: // Tests
     void testImportFiles_data();
     void testExportImport();
     void testExportImport_data();
-    void testImportICalFiles();
 
 private:
 };
@@ -260,48 +259,6 @@ void tst_QVersit::testImportFiles_data()
         contact.saveDetail(&assistantphone);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
         QTEST_NEW_ROW("test1.vcf", "UTF-8", QList<QContact>() << contact);
-    }
-}
-
-void tst_QVersit::testImportICalFiles()
-{
-    QFETCH(QString, filename);
-    QFETCH(QByteArray, charset);
-    QFETCH(QList<QContact>, expectedContacts);
-
-    QVersitReader reader;
-    QFile file(filename);
-    QVERIFY2(file.open(QIODevice::ReadOnly), filename.toAscii());
-    reader.setDevice(&file);
-    if (charset != "") {
-        reader.setDefaultCodec(QTextCodec::codecForName(charset));
-    }
-    QVERIFY(reader.startReading());
-    QVERIFY(reader.waitForFinished());
-    QList<QVersitDocument> documents = reader.results();
-    QCOMPARE(documents.size(), 1);
-    QCOMPARE(reader.error(), QVersitReader::NoError);
-    QVersitOrganizerImporter importer;
-    QVERIFY(importer.importDocument(documents.at(0)));
-    QList<QContact> contacts = importer.contacts();
-
-    if (expectedContacts.size() > 0) {
-        QCOMPARE(contacts.size(), expectedContacts.size());
-        QListIterator<QContact> i(expectedContacts);
-        foreach (QContact parsed, contacts) {
-            QContact expected = i.next();
-            QList<QContactDetail> expectedDetails = expected.details();
-            foreach(QContactDetail expectedDetail, expectedDetails) {
-                QString name = expectedDetail.definitionName();
-                QContactDetail parsedDetail = parsed.detail(name);
-                if (parsedDetail != expectedDetail) {
-                    qDebug() << "Detail: " << name.toAscii();
-                    qDebug() << "Actual:" << parsedDetail.variantValues();
-                    qDebug() << "Expected:" << expectedDetail.variantValues();
-                    QCOMPARE(parsedDetail, expectedDetail);
-                }
-            }
-        }
     }
 }
 
