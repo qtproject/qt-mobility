@@ -77,6 +77,7 @@ public:
     QString description;
     QHash<QString, QVariant> attributes;
     QLandmarkCategoryId id;
+    static QStringList commonKeys;
 };
 
 
