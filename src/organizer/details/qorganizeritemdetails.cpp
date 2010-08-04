@@ -598,12 +598,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrence::FieldExceptionDates, "Excepti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::DefinitionName, "Reminder");
 
 /*!
-   \variable QOrganizerItemReminder::FieldReminderTypes
+   \variable QOrganizerItemReminder::FieldReminderType
 
-   The constant key for which the reminder types value is stored in details of
-   the QOrganizerItemReminder type.
+   The constant key for which the reminder type value is stored in details of
+   the QOrganizerItemReminder type (and its subclasses).
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderTypes, "ReminderTypes");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderType, "ReminderType");
 
 /*!
    \variable QOrganizerItemReminder::FieldTimeDelta
@@ -613,34 +613,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldReminderTypes, "ReminderTy
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTimeDelta, "TimeDelta");
 
-// XXX TODO: documentation for field keys + functions...
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldDateTime, "DateTime");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionCount, "RepetitionCount");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "RepetitionDelay");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualMessage, "VisualMessage");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualDataUrl, "VisualDataUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldVisualData, "VisualData");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldAudibleDataUrl, "AudibleDataUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldAudibleData, "AudibleData");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTactileDataUrl, "TactileDataUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldTactileData, "TactileData");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailSubject, "EmailSubject");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailBody, "EmailBody");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailAttachments, "EmailAttachments");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldEmailRecipients, "EmailRecipients");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldProcedureUrl, "ProcedureUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldProcedureArguments, "ProcedureArguments");
 
 /*!
-   \fn QOrganizerItemReminder::setReminderTypes(ReminderTypes reminderTypes)
+   \fn ReminderTypes QOrganizerItemReminder::reminderType() const
 
-   Sets the reminder types associated with this reminder for an organizer item to \a reminderTypes.
- */
-
-/*!
-   \fn ReminderTypes QOrganizerItemReminder::reminderTypes() const
-
-   Returns the reminder types associated with this reminder for an organizer item.
+   Returns the reminder type of this reminder for an organizer item.
  */
 
 /*!
@@ -665,8 +645,57 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldProcedureArguments, "Proce
    it is the start date time.
  */
 
+/*!
+  \macro Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL
+  \relates QOrganizerItemReminder
+
+  Macro for simplifying declaring custom (leaf) reminder detail classes.
+
+  The first argument is the name of the class, and the second argument
+  is a Latin-1 string literal naming the detail type, and the third argument
+  is the reminder type of the leaf reminder detail class.
+
+  If you are creating a convenience class for a type of QOrganizerItemReminder,
+  you should use this macro when declaring your class to ensure that
+  it interoperates with other organizer item functionality.
+ */
 
 
+/* ==================== QOrganizerItemAudibleReminder ======================= */
+
+/*!
+   \variable QOrganizerItemAudibleReminder::DefinitionName
+   The constant string which identifies the definition of details which contain audible reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
+
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldData, "Data");
+
+/* ==================== QOrganizerItemEmailReminder ======================= */
+
+/*!
+   \variable QOrganizerItemEmailReminder::DefinitionName
+   The constant string which identifies the definition of details which contain email reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::DefinitionName, "EmailReminder");
+
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldSubject, "Subject");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldBody, "Body");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldAttachments, "Attachments");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEmailReminder::FieldRecipients, "Recipients");
+
+/* ==================== QOrganizerItemVisualReminder ======================= */
+
+/*!
+   \variable QOrganizerItemVisualReminder::DefinitionName
+   The constant string which identifies the definition of details which contain visual reminder information of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::DefinitionName, "VisualReminder");
+
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldMessage, "Message");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldData, "Data");
 
 
 

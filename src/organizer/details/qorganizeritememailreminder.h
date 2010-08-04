@@ -39,30 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
-
-#include "qorganizereventtimerange.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltimerange.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotimerange.h"
+#ifndef QORGANIZERITEMEMAILREMINDER_H
+#define QORGANIZERITEMEMAILREMINDER_H
 
 #include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemEmailReminder : public QOrganizerItemReminder
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldSubject;
+    const char* FieldBody;
+    const char* FieldAttachments;
+    const char* FieldRecipients;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemEmailReminder, "EmailReminder", QOrganizerItemReminder::EmailReminder)
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubject, "Subject");
+    Q_DECLARE_LATIN1_CONSTANT(FieldBody, "Body");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttachments, "Attachments");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRecipients, "Recipients");
+#endif
+
+    // email data if email notification.
+    void setContents(const QString& subject, const QString& body, const QVariantList& attachments) {setValue(FieldSubject, subject); setValue(FieldBody, body); setValue(FieldAttachments, attachments);}
+    QString subject() const {return value(FieldSubject);}
+    QString body() const {return value(FieldBody);}
+    QVariantList attachments() {return value<QVariantList>(FieldAttachments);}
+    void setRecipients(const QStringList& recipients) {setValue(FieldRecipients, recipients);}
+    QStringList recipients() const {return value<QStringList>(FieldRecipients);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

@@ -39,30 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
-
-#include "qorganizereventtimerange.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltimerange.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotimerange.h"
+#ifndef QORGANIZERITEMVISUALREMINDER_H
+#define QORGANIZERITEMVISUALREMINDER_H
 
 #include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemVisualReminder : public QOrganizerItemReminder
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldMessage;
+    const char* FieldDataUrl;
+    const char* FieldData;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemVisualReminder, "VisualReminder", QOrganizerItemReminder::VisualReminder)
+    Q_DECLARE_LATIN1_CONSTANT(FieldMessage, "Message");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldData, "Data");
+#endif
+
+    // message and visual data to be displayed if visual notification.
+    void setMessage(const QString& message) {setValue(FieldMessage, message);}
+    QString message() const {return value<QString>(FieldMessage);}
+    void setDataUrl(const QUrl& dataUrl) {setValue(FieldDataUrl, dataUrl);}
+    QUrl dataUrl() const {return value<QUrl>(FieldDataUrl);}
+    void setData(const QByteArray& data) {setValue(FieldData, data);}
+    QByteArray data() const {return value<QByteArray>(FieldData);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

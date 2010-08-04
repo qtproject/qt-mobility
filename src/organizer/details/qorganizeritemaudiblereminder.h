@@ -39,30 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
-
-#include "qorganizereventtimerange.h"
-#include "qorganizeritemcomment.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizerjournaltimerange.h"
-#include "qorganizertodoprogress.h"
-#include "qorganizertodotimerange.h"
+#ifndef QORGANIZERITEMAUDIBLEREMINDER_H
+#define QORGANIZERITEMAUDIBLEREMINDER_H
 
 #include "qorganizeritemreminder.h"
-#include "qorganizeritemaudiblereminder.h"
-#include "qorganizeritememailreminder.h"
-#include "qorganizeritemvisualreminder.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemAudibleReminder : public QOrganizerItemReminder
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldDataUrl;
+    const char* FieldData;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemAudibleReminder, "AudibleReminder", QOrganizerItemReminder::AudibleReminder)
+    Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldData, "Data");
+#endif
+
+    // audio data to be played if audible notification.
+    void setDataUrl(const QUrl& dataUrl) {setValue(FieldDataUrl, dataUrl);}
+    QUrl dataUrl() const {return value<QUrl>(FieldDataUrl);}
+    void setData(const QByteArray& data) {setValue(FieldData, data);}
+    QByteArray data() const {return value<QByteArray>(FieldData);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
