@@ -148,9 +148,6 @@ public:
     FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
     bool isFeatureSupported(LandmarkFeature feature) const;
 
-    QStringList platformLandmarkAttributeKeys() const;
-    QStringList platformCategoryAttributeKeys() const;
-
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
     bool isReadOnly(const QLandmarkCategoryId &id) const;

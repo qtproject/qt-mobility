@@ -63,7 +63,7 @@ public:
                      NameFilter, ProximityFilter,
                      CategoryFilter, BoxFilter, IntersectionFilter,
                      UnionFilter, AttributeFilter,
-                     LandmarkIdFilter, FreeTextFilter
+                     LandmarkIdFilter
                     };
     QLandmarkFilter();
     QLandmarkFilter(const QLandmarkFilter &other);
