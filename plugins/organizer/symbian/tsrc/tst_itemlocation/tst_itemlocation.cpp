@@ -45,6 +45,9 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
+//uncomment the below line when compiling for 9.2 and later versions.
+//#define AGENDA_EXT_SUPPORT
+
 QTM_USE_NAMESPACE
 
 const QString m_managerNameSymbian("symbian");
@@ -141,6 +144,7 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
         << location
         << QOrganizerItemManager::NoError;
     
+#ifdef AGENDA_EXT_SUPPORT
     location.setLocationName("TestLocationName");
     location.setGeoLocation("20.356784;76.276748");
     QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
@@ -257,6 +261,16 @@ void TestItemLocation::addLocationData(QString managerName, QString itemType)
 		<< QDateTime::currentDateTime().addDays(1)
 		<< location
 		<< QOrganizerItemManager::NoError;
+#else
+	location.setLocationName("TestLocationName");
+	location.setGeoLocation("0.128675;0.709");
+	QTest::newRow(QString("[%1]").arg(managerName).toLatin1().constData())
+		<< managerName
+		<< itemType
+		<< QDateTime::currentDateTime().addDays(1)
+		<< location
+		<< QOrganizerItemManager::NotSupportedError;
+#endif
 }
 
 void TestItemLocation::addLocationDetail()

@@ -99,6 +99,11 @@ void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& ite
 			}
 		}
 	}
+#else
+    if(!loc.geoLocation().isEmpty()) {
+    	// We do not support saving of geolocation.
+    	User::Leave(KErrNotSupported);
+    }
 #endif
 }
 
