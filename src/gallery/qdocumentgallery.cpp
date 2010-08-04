@@ -513,13 +513,6 @@ const QGalleryProperty QDocumentGallery::height("height");
 const QGalleryProperty QDocumentGallery::orientation("orientation");
 
 // Photo
-/*!
-    \variable QDocumentGallery::photoAlbum
-
-    This property contains the name of the album a photo belongs to.
-*/
-
-const QGalleryProperty QDocumentGallery::photoAlbum("photoAlbum");
 
 /*!
     \variable QDocumentGallery::dateTaken

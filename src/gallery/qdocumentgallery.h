@@ -127,7 +127,6 @@ public:
     static const QGalleryProperty orientation;
 
     // Photo
-    static const QGalleryProperty photoAlbum;
     static const QGalleryProperty dateTaken;
     static const QGalleryProperty cameraManufacturer;
     static const QGalleryProperty cameraModel;

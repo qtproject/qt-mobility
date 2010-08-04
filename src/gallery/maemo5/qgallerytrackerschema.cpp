@@ -840,7 +840,7 @@ static const QGalleryItemProperty qt_galleryImagePropertyList[] =
     QT_GALLERY_ITEM_PROPERTY("keywords"          , "Image:Keywords"       , StringList, CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("height"            , "Image:Height"         , Int       , CanRead | CanSort | CanFilter | IsResource),
     QT_GALLERY_ITEM_PROPERTY("width"             , "Image:Width"          , Int       , CanRead | CanSort | CanFilter | IsResource),
-    QT_GALLERY_ITEM_PROPERTY("album"             , "Image:Album"          , String    , CanRead | CanWrite | CanSort | CanFilter),
+    //QT_GALLERY_ITEM_PROPERTY(""                , "Image:Album"          , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("dateTaken"         , "Image:Date"           , DateTime  , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("author"            , "Image:Creator"        , String    , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("comment"           , "Image:Comments"       , String    , CanRead | CanWrite | CanSort | CanFilter),
