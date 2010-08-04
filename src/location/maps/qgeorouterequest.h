@@ -110,6 +110,9 @@ public:
 
     QGeoRouteRequest& operator= (const QGeoRouteRequest &other);
 
+    bool operator == (const QGeoRouteRequest &other) const;
+    bool operator != (const QGeoRouteRequest &other) const;
+
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
 

@@ -44,6 +44,7 @@
 
 #include "qgeomapobject.h"
 
+#include <QMetaType>
 #include <QPen>
 #include <QBrush>
 
@@ -54,21 +55,33 @@ class QGeoMapCircleObjectPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
 {
+    Q_OBJECT
 public:
+    Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
+
     QGeoMapCircleObject(QGeoMapObject *parent = 0);
     ~QGeoMapCircleObject();
 
-    void setPen(const QPen &pen);
-    QPen pen() const;
-
-    void setBrush(const QBrush &brush);
-    QBrush brush() const;
-
-    void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
+    void setCenter(const QGeoCoordinate &center);
 
-    void setRadius(qreal radius);
     qreal radius() const;
+    void setRadius(qreal radius);
+
+    QPen pen() const;
+    void setPen(const QPen &pen);
+
+    QBrush brush() const;
+    void setBrush(const QBrush &brush);
+
+signals:
+    void centerChanged(const QGeoCoordinate &center);
+    void radiusChanged(qreal radius);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapCircleObject)
@@ -76,5 +89,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(qreal)
 
 #endif

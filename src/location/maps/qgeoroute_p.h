@@ -71,6 +71,8 @@ public:
     QGeoRoutePrivate(const QGeoRoutePrivate &other);
     ~QGeoRoutePrivate();
 
+    bool operator == (const QGeoRoutePrivate &other) const;
+
     QString id;
     QGeoRouteRequest request;
 

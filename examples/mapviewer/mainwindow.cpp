@@ -141,13 +141,13 @@ void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
                 emit coordQueryResult(screenPositionToCoordinate(event->lastPos()));
                 return;
             }
-            
+
             panActive = true;
-    
+
             // When pressing, stop the timer and stop all current kinetic panning
             kineticTimer->stop();
             kineticPanSpeed = QPointF();
-    
+
             lastMoveTime = QTime::currentTime();
             // TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.
             startPanning();
@@ -162,15 +162,15 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     if (event->button() == Qt::LeftButton) {
         if (panActive) {
             panActive = false;
-    
+
             if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) > holdTimeThreshold) {
                 stopPanning();
                 return;
             }
-    
+
             kineticPanSpeed = QPointF();
             int entries_considered = 0;
-    
+
             QTime currentTime = QTime::currentTime();
             foreach (MouseHistoryEntry entry, mouseHistory) {
                 // first=speed, second=time
@@ -182,7 +182,7 @@ void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             }
             if (entries_considered > 0) kineticPanSpeed /= entries_considered;
             lastMoveTime = currentTime;
-    
+
             // When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).
             kineticTimer->start();
             panDecellerate = true;
@@ -632,6 +632,11 @@ void MainWindow::createMenus()
     QAction* menuItem;
     m_popupMenu = new QMenu(this);
 
+    menuItem = new QAction(tr("Spawn stuff"), this);
+    m_popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(demo(bool)));
+
     //**************************************************************
     QMenu* subMenuItem = new QMenu(tr("Marker"), this);
     m_popupMenu->addMenu(subMenuItem);
@@ -669,7 +674,7 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
-    
+
     menuItem = new QAction(tr("Circle"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
@@ -683,6 +688,18 @@ void MainWindow::createMenus()
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(calcRoute(bool)));
+}
+
+#define MVTEST_MARK(pos) do { QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget->addMapObject(marker); markerObjects.append(marker); } while (0)
+#define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
+void MainWindow::demo(bool /*checked*/)
+{
+    MVTEST_MARK2(-30,175);
+    MVTEST_MARK2(-20,170);
+    MVTEST_MARK2(-25,-175);
+    drawRect(false);
+    drawPolygon(false);
+    drawCircle(false);
 }
 
 void MainWindow::drawRect(bool /*checked*/)
@@ -744,7 +761,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     QGeoMapMarkerObject* p1 = markerObjects.at(0);
     QGeoMapMarkerObject* p2 = markerObjects.at(markerObjects.count()-1);//1);
-    
+
     // center of the circle
     QGeoCoordinate center = p1->coordinate();
     // its radius, in meters
@@ -766,7 +783,7 @@ void MainWindow::drawCircle(bool /*checked*/)
 
 void MainWindow::drawMarker(bool /*checked*/)
 {
-    QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked), 
+    QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget->screenPositionToCoordinate(lastClicked),
                                                           QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon);
     m_mapWidget->addMapObject(marker);
     markerObjects.append(marker);

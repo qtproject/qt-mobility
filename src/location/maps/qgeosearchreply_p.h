@@ -77,7 +77,7 @@ public:
     QString errorString;
     bool isFinished;
 
-    QGeoBoundingBox bounds;
+    QGeoBoundingBox viewport;
     QList<QGeoPlace> places;
 };
 

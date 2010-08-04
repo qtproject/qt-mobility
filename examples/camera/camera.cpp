@@ -112,8 +112,6 @@ void Camera::setCamera(const QByteArray &cameraDevice)
 
     imageCapture = new QCameraImageCapture(camera);
 
-    mediaRecorder->setOutputLocation(QUrl("test.mkv"));
-
     connect(mediaRecorder, SIGNAL(durationChanged(qint64)), this, SLOT(updateRecordTime()));
     connect(mediaRecorder, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(displayRecorderError()));
 

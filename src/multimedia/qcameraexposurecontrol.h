@@ -76,12 +76,6 @@ public:
     };
     Q_DECLARE_FLAGS(ParameterFlags, ParameterFlag)
 
-    virtual QCameraExposure::FlashModes flashMode() const = 0;
-    virtual void setFlashMode(QCameraExposure::FlashModes mode) = 0;
-    virtual bool isFlashModeSupported(QCameraExposure::FlashModes mode) const = 0;
-
-    virtual bool isFlashReady() const = 0;
-
     virtual QCameraExposure::ExposureMode exposureMode() const = 0;
     virtual void setExposureMode(QCameraExposure::ExposureMode mode) = 0;
     virtual bool isExposureModeSupported(QCameraExposure::ExposureMode mode) const = 0;
@@ -115,5 +109,5 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QCameraExposureControl::ParameterFlags)
 
 QT_END_NAMESPACE
 
-#endif  // QCAMERACONTROL_H
+#endif  // QCAMERAEXPOSURECONTROL_H
 

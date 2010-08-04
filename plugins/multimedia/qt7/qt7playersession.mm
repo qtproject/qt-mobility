@@ -391,6 +391,7 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
 
         [(QTMovie*)m_QTMovie release];
         m_QTMovie = 0;
+        m_resourceHandler.clear();
     }
 
     m_resources = content;
@@ -443,12 +444,35 @@ void QT7PlayerSession::openMovie(bool tryAsync)
     NSString *urlString = [NSString stringWithUTF8String:requestUrl.toEncoded().constData()];
 
     NSMutableDictionary *attr = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                [NSURL URLWithString:urlString], QTMovieURLAttribute,
                 [NSNumber numberWithBool:YES], QTMovieOpenAsyncOKAttribute,
                 [NSNumber numberWithBool:YES], QTMovieIsActiveAttribute,
                 [NSNumber numberWithBool:YES], QTMovieResolveDataRefsAttribute,
                 [NSNumber numberWithBool:YES], QTMovieDontInteractWithUserAttribute,
                 nil];
+
+
+    if (requestUrl.scheme() == QLatin1String("qrc")) {
+        // Load from Qt resource
+        m_resourceHandler.setResourceFile(QLatin1Char(':') + requestUrl.path());
+        if (!m_resourceHandler.isValid()) {
+            emit error(QMediaPlayer::FormatError, tr("Attempting to play invalid Qt resource"));
+            return;
+        }
+
+        CFDataRef resourceData =
+                CFDataCreateWithBytesNoCopy(0, m_resourceHandler.data(), m_resourceHandler.size(), kCFAllocatorNull);
+
+        QTDataReference *dataReference =
+                [QTDataReference dataReferenceWithReferenceToData:(NSData*)resourceData
+                                                             name:qString2CFStringRef(requestUrl.path())
+                                                         MIMEType:nil];
+
+        [attr setObject:dataReference forKey:QTMovieDataReferenceAttribute];
+
+        CFRelease(resourceData);
+    } else {
+        [attr setObject:[NSURL URLWithString:urlString] forKey:QTMovieURLAttribute];
+    }
 
     if (tryAsync && QSysInfo::MacintoshVersion >= QSysInfo::MV_10_6) {
         [attr setObject:[NSNumber numberWithBool:YES] forKey:@"QTMovieOpenAsyncRequiredAttribute"];

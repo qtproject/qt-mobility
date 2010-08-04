@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-places
 
     The geocode(QGeoAddress), geocode(QGeoCoordinate) and placeSearch()
@@ -211,17 +211,6 @@ QString QGeoSearchManager::managerName() const
 //        return QString();
 
     return d_ptr->engine->managerName();
-}
-
-/*!
-    Returns the parameters used in the creation of this search manager.
-*/
-QMap<QString, QString> QGeoSearchManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
 }
 
 /*!
@@ -417,7 +406,7 @@ QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
 void QGeoSearchManager::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
 //    if (d_ptr->engine)
-        d_ptr->engine->setAdditionalLandmarkManagers(landmarkManagers);
+    d_ptr->engine->setAdditionalLandmarkManagers(landmarkManagers);
 }
 
 /*!
@@ -443,7 +432,7 @@ QList<QLandmarkManager *> QGeoSearchManager::additionalLandmarkManagers() const
 void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
 {
 //    if (d_ptr->engine && landmarkManager)
-    if(landmarkManager)
+    if (landmarkManager)
         d_ptr->engine->addAdditionalLandmarkManager(landmarkManager);
 }
 

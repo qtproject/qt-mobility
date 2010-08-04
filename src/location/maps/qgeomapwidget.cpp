@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
     interactions between the user and the map.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping
 
     Most of the functionality is provided by QGeoMappingManager, which
@@ -243,7 +243,7 @@ void QGeoMapWidget::stopPanning()
 
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
-    in they y direction.
+    in the y direction.
 
     The x and y axes are specified in Graphics View Framework coordinates.
     By default this will mean that positive values of \a dx move the
@@ -264,7 +264,10 @@ void QGeoMapWidget::pan(int dx, int dy)
 void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->mapData && d_ptr->manager) {
-        d_ptr->mapData->setCenter(center);
+        if (d_ptr->mapData->center() != center) {
+            d_ptr->mapData->setCenter(center);
+            emit centerChanged(center);
+        }
     }
 }
 
@@ -302,12 +305,11 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
         if (!d_ptr->manager->supportedMapTypes().contains(mapType))
             return;
 
-        QGeoMapWidget::MapType oldType = d_ptr->mapData->mapType();
+        if (d_ptr->mapData->mapType() == mapType)
+            return;
 
         d_ptr->mapData->setMapType(mapType);
-
-        if (oldType != mapType)
-            emit mapTypeChanged(mapType);
+        emit mapTypeChanged(mapType);
     }
 }
 

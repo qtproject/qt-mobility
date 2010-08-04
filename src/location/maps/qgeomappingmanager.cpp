@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-mapping
 
     A QGeoMappingManager instance can create QGeoMapData instances with
@@ -114,17 +114,6 @@ QString QGeoMappingManager::managerName() const
 }
 
 /*!
-    Returns the parameters used in the creation of this mapping manager.
-*/
-QMap<QString, QString> QGeoMappingManager::managerParameters() const
-{
-//    if (!d_ptr->engine)
-//        return QMap<QString, QString>();
-
-    return d_ptr->engine->managerParameters();
-}
-
-/*!
     Returns the version of the engine which implements the behaviour of this
     mapping manager.
 
@@ -156,7 +145,7 @@ QGeoMapData* QGeoMappingManager::createMapData(QGeoMapWidget *widget)
 void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
 {
 //    if (d_ptr->engine)
-        d_ptr->engine->removeMapData(mapData);
+    d_ptr->engine->removeMapData(mapData);
 }
 
 ///*!

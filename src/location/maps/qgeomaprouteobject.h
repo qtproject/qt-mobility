@@ -55,17 +55,28 @@ class QGeoCoordinate;
 
 class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QGeoRoute route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    Q_PROPERTY(quint32 detailLevel READ detailLevel WRITE setDetailLevel NOTIFY detailLevelChanged)
+
 public:
     QGeoMapRouteObject(const QGeoRoute &route, QGeoMapObject *parent = 0);
     ~QGeoMapRouteObject();
 
-    QPen pen() const;
-    void setPen(const QPen &aPen);
-
     QGeoRoute route() const;
+    void setRoute(const QGeoRoute &route);
 
-    void setDetailLevel(quint32 pixels);
+    QPen pen() const;
+    void setPen(const QPen &pen);
+
     quint32 detailLevel() const;
+    void setDetailLevel(quint32 detailLevel);
+
+signals:
+    void routeChanged(const QGeoRoute &route);
+    void penChanged(const QPen &pen);
+    void detailLevelChanged(quint32 detailLevel);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapRouteObject)

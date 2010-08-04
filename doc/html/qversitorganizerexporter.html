@@ -70,9 +70,7 @@
               <li class="defaultLink"><a href="classes.html">Class index</a></li>
               <li class="defaultLink"><a href="functions.html">Function index</a></li>
               <li class="defaultLink"><a href="modules.html">Modules</a></li>
-              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
-              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
-              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+              <li class="defaultLink"><a href="index.html#platform-compatibility">Platform Compatibility</a></li>
             </ul> 
           </div>
         </div>
@@ -81,10 +79,11 @@
             Qt Topics</h2>
           <div id="list002" class="list">
             <ul id="ul002" >
-              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
-              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
-              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
-              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/">Qt 4.7</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="http://doc.qt.nokia.com/4.7-snapshot/platform-specific.html">Platform-specific info</a></li>
             </ul>  
           </div>
         </div>
@@ -94,10 +93,6 @@
           <div id="list003" class="list">
         <ul id="ul003">
               <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
-              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
-              <li class="defaultLink"><a href="demos.html">Demos</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
-              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
             </ul> 
           </div>
         </div>
@@ -123,7 +118,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3>Contents</h3>
+<h3><a name="toc">Contents</a></h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -131,18 +126,18 @@
 </ul>
 </div>
 <h1 class="title">QVersitOrganizerExporter Class Reference</h1>
+<!-- $$$QVersitOrganizerExporter-brief -->
 <p>The QVersitOrganizerExporter class converts <a href="qorganizeritem.html">QOrganizerItems</a> into <a href="qversitdocument.html">QVersitDocuments</a>. <a href="#details">More...</a></p>
+<!-- @@@QVersitOrganizerExporter -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QVersitOrganizerExporter&gt;</pre><ul>
 <li><a href="qversitorganizerexporter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
+<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerexporter.html#Error-enum">Error</a></b> { NoError, EmptyOrganizerError, UnknownComponentTypeError, UnderspecifiedOccurrenceError }</td></tr>
 </table>
-<hr />
-<a name="public-functions"></a>
+<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerexporter.html#QVersitOrganizerExporter">QVersitOrganizerExporter</a></b> ()</td></tr>
@@ -154,50 +149,67 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerexporter.html#setDetailHandler">setDetailHandler</a></b> ( QVersitOrganizerExporterDetailHandler * <i>handler</i> )<tt> (preliminary)</tt></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerexporter.html#setResourceHandler">setResourceHandler</a></b> ( QVersitResourceHandler * <i>handler</i> )<tt> (preliminary)</tt></td></tr>
 </table>
-<a name="details"></a>
-<hr />
+<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<!-- $$$QVersitOrganizerExporter-description -->
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitOrganizerExporter class converts <a href="qorganizeritem.html">QOrganizerItems</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
 <p>This class is used to convert a list of <a href="qorganizeritem.html">QOrganizerItems</a> (which may be stored in a <a href="qorganizeritemmanager.html">QOrganizerItemManager</a>) into a <a href="qversitdocument.html">QVersitDocument</a> (which may be written to an I/O device using <a href="qversitreader.html">QVersitReader</a>. While multiple items are provided as input, a single <a href="qversitdocument.html">QVersitDocument</a> is produced as output. Unless there is an error, there is a one-to-one mapping between organizer items and sub-documents of the result.</p>
 </div>
-<hr />
+<!-- @@@QVersitOrganizerExporter -->
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<h3 class="fn"><a name="Error-enum"></a>enum QVersitOrganizerExporter::Error</h3>
+<!-- $$$Error -->
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitOrganizerExporter::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<!-- @@@Error -->
 </div>
-<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QVersitOrganizerExporter"></a>QVersitOrganizerExporter::QVersitOrganizerExporter ()</h3>
+<!-- $$$QVersitOrganizerExporter[overload1]$$$QVersitOrganizerExporter -->
+<h3 class="fn"><a name="QVersitOrganizerExporter"></a>QVersitOrganizerExporter::QVersitOrganizerExporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Constructs a new importer</p>
-<h3 class="fn"><a name="dtor.QVersitOrganizerExporter"></a>QVersitOrganizerExporter::~QVersitOrganizerExporter ()</h3>
+<!-- @@@QVersitOrganizerExporter -->
+<!-- $$$~QVersitOrganizerExporter[overload1]$$$~QVersitOrganizerExporter -->
+<h3 class="fn"><a name="dtor.QVersitOrganizerExporter"></a>QVersitOrganizerExporter::~QVersitOrganizerExporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Frees the memory used by the importer</p>
-<h3 class="fn"><a name="document"></a><a href="qversitdocument.html">QVersitDocument</a> QVersitOrganizerExporter::document () const</h3>
+<!-- @@@~QVersitOrganizerExporter -->
+<!-- $$$document[overload1]$$$document -->
+<h3 class="fn"><a name="document"></a><a href="qversitdocument.html">QVersitDocument</a> QVersitOrganizerExporter::document () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the document exported in the most recent call to <a href="qversitorganizerexporter.html#exportItems">exportItems</a>().</p>
 <p>See also <a href="qversitorganizerexporter.html#exportItems">exportItems</a>().</p>
-<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitorganizerexporter.html#Error-enum">Error</a>&gt; QVersitOrganizerExporter::errors () const</h3>
+<!-- @@@document -->
+<!-- $$$errors[overload1]$$$errors -->
+<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitorganizerexporter.html#Error-enum">Error</a>&gt; QVersitOrganizerExporter::errors () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Returns the map of errors encountered in the most recent call to <a href="qversitorganizerexporter.html#exportItems">exportItems</a>(). The key is the index into the input list of organizer items and the value is the error that occurred on that item.</p>
 <p>See also <a href="qversitorganizerexporter.html#exportItems">exportItems</a>().</p>
-<h3 class="fn"><a name="exportItems"></a>bool QVersitOrganizerExporter::exportItems ( const QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; &amp; <i>items</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3>
+<!-- @@@errors -->
+<!-- $$$exportItems[overload1]$$$exportItemsconstQList<QOrganizerItem>&QVersitDocument::VersitType -->
+<h3 class="fn"><a name="exportItems"></a>bool QVersitOrganizerExporter::exportItems ( const QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; &amp; <i>items</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p>Converts <i>items</i> into a <a href="qversitdocument.html">QVersitDocument</a>, using the format given by <i>versitType</i>. Returns true on success. If any of the items could not be exported, false is returned and <a href="qversitorganizerexporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully exported components will still be available via <a href="qversitorganizerexporter.html#document">document</a>().</p>
-<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitOrganizerExporter::resourceHandler () const</h3>
+<!-- @@@exportItems -->
+<!-- $$$resourceHandler[overload1]$$$resourceHandler -->
+<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitOrganizerExporter::resourceHandler () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p><b>This function is under development and is subject to change.</b></p>
 <p>Returns the associated resource handler.</p>
 <p>NOTE: Resource handlers for organizer items have not been implemented yet.</p>
 <p>See also <a href="qversitorganizerexporter.html#setResourceHandler">setResourceHandler</a>().</p>
-<h3 class="fn"><a name="setDetailHandler"></a>void QVersitOrganizerExporter::setDetailHandler ( QVersitOrganizerExporterDetailHandler * <i>handler</i> )</h3>
+<!-- @@@resourceHandler -->
+<!-- $$$setDetailHandler[overload1]$$$setDetailHandlerQVersitOrganizerExporterDetailHandler* -->
+<h3 class="fn"><a name="setDetailHandler"></a>void QVersitOrganizerExporter::setDetailHandler ( QVersitOrganizerExporterDetailHandler * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p><b>This function is under development and is subject to change.</b></p>
 <p>Sets <i>handler</i> to be the handler for processing QOrganizerItemDetails, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>Only one detail handler can be set. If another detail handler (of any version) was previously set, it will no longer be associated with the exporter.</p>
 <p>NOTE: Detail handlers for organizer items have not been implemented yet.</p>
-<h3 class="fn"><a name="setResourceHandler"></a>void QVersitOrganizerExporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
+<!-- @@@setDetailHandler -->
+<!-- $$$setResourceHandler[overload1]$$$setResourceHandlerQVersitResourceHandler* -->
+<h3 class="fn"><a name="setResourceHandler"></a>void QVersitOrganizerExporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
 <p><b>This function is under development and is subject to change.</b></p>
 <p>Sets <i>handler</i> to be the handler to load files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>NOTE: Resource handlers for organizer items have not been implemented yet.</p>
 <p>See also <a href="qversitorganizerexporter.html#resourceHandler">resourceHandler</a>().</p>
+<!-- @@@setResourceHandler -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -205,5 +217,15 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+  <!-- <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-4457116-5']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script> -->
 </body>
 </html>

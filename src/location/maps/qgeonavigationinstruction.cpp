@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoNavigationInstruction class represents a navigation instruction.
 
     \inmodule QtLocation
-    
+
     \ingroup maps-routing
 
     A QGeoNavigationInstruction instance has a position at which the
@@ -112,7 +112,7 @@ QGeoNavigationInstruction::QGeoNavigationInstruction()
     Constructs a navigation instruction object from the contents of \a other.
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction(const QGeoNavigationInstruction &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this navigation instruction object.
@@ -123,7 +123,7 @@ QGeoNavigationInstruction::~QGeoNavigationInstruction() {}
     Assigns \a other to this navigation instruction object and then returns
     a reference to this navigation instruction object.
 */
-QGeoNavigationInstruction& QGeoNavigationInstruction::operator= (const QGeoNavigationInstruction &other)
+QGeoNavigationInstruction& QGeoNavigationInstruction::operator= (const QGeoNavigationInstruction & other)
 {
     d_ptr = other.d_ptr;
     return *this;
@@ -235,9 +235,9 @@ qreal QGeoNavigationInstruction::distanceToNextInstruction() const
 *******************************************************************************/
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
-    : direction(QGeoNavigationInstruction::NoDirection),
-    timeToNextInstruction(0),
-    distanceToNextInstruction(0.0) {}
+        : direction(QGeoNavigationInstruction::NoDirection),
+        timeToNextInstruction(0),
+        distanceToNextInstruction(0.0) {}
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
         : QSharedData(other),

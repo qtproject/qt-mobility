@@ -879,8 +879,13 @@ QSystemDisplayInfoLinuxCommonPrivate::~QSystemDisplayInfoLinuxCommonPrivate()
 
 int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 {
-#ifdef Q_WS_X11
     QDesktopWidget wid;
+
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
+
+#ifdef Q_WS_X11
     return wid.screen(screen)->x11Info().depth();
 #else
         return QPixmap::defaultDepth();
@@ -890,7 +895,10 @@ int QSystemDisplayInfoLinuxCommonPrivate::colorDepth(int screen)
 
 int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 {
-    Q_UNUSED(screen);
+    QDesktopWidget wid;
+    if(wid.screenCount() - 1 < screen) {
+        return -1;
+    }
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;

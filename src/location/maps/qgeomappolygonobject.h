@@ -44,20 +44,38 @@
 
 #include "qgeomappolylineobject.h"
 
+#include <QList>
+#include <QPen>
 #include <QBrush>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapPolygonObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapPolylineObject
+class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
+    Q_PROPERTY(QPen pen READ pen WRITE setPen NOTIFY penChanged)
+    Q_PROPERTY(QBrush brush READ brush WRITE setBrush NOTIFY brushChanged)
+
 public:
     QGeoMapPolygonObject(QGeoMapObject *parent = 0);
     ~QGeoMapPolygonObject();
 
+    void setPath(const QList<QGeoCoordinate> &path);
+    QList<QGeoCoordinate> path() const;
+
+    void setPen(const QPen &pen);
+    QPen pen() const;
+
     void setBrush(const QBrush &brush);
     QBrush brush() const;
+
+signals:
+    void pathChanged(const QList<QGeoCoordinate> &path);
+    void penChanged(const QPen &pen);
+    void brushChanged(const QBrush &brush);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapPolygonObject)
