@@ -34,4 +34,4 @@ SOURCES += bearerex.cpp \
 
 CONFIG += mobility
 MOBILITY = bearer
-symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
+symbian:TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData WriteDeviceData ReadDeviceData

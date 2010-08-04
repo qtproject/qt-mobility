@@ -179,25 +179,3 @@ void CameraBinImageProcessing::setProcessingParameter(
     updateColorBalanceValues();
 }
 
-QList<QByteArray> CameraBinImageProcessing::supportedPresets() const
-{
-    return m_presets;
-}
-
-QString CameraBinImageProcessing::presetDescription(const QByteArray &preset) const
-{
-    return QString::fromLatin1(preset);
-}
-
-QByteArray CameraBinImageProcessing::preset() const
-{
-    return m_preset;
-}
-
-void CameraBinImageProcessing::setPreset(const QByteArray &preset)
-{
-    if (m_presets.contains(preset))
-        m_preset = preset;
-    else
-        m_preset.clear();
-}

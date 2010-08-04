@@ -48,7 +48,6 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
     \section2 Document Gallery
@@ -75,7 +74,7 @@
     \o \l{flickrdemo}{Flickr Demo}
     \o \l{landmarkbrowser}{Landmark Browser}
     \o \l{mapviewer}{Map Viewer}
-    \o \l{qgeoapiui}{QGeoApiUi}
+    \o \l{geoservicedemo}{Geo Service Demo}
     \endlist
 
     \section2 Messaging

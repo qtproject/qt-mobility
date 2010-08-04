@@ -47,6 +47,7 @@
 #include <qgeomapwidget.h>
 #include <qgeoserviceprovider.h>
 #include <qgeomapmarkerobject.h>
+#include <qgeomapcircleobject.h>
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
@@ -118,6 +119,8 @@ private:
 
     void panFloatWrapper(const QPointF& delta);
     void applyPan(const Qt::KeyboardModifiers& modifiers);
+public:
+    QGeoMapCircleObject *lastCircle;
 };
 
 class MainWindow : public QMainWindow
@@ -142,6 +145,7 @@ private slots:
     void drawMarker(bool checked);
     void drawPolyline(bool checked);
     void drawPolygon(bool checked);
+    void drawCircle(bool checked);
     void calcRoute(bool checked);
     void customContextMenuRequest(const QPoint&);
     void routeFinished();
