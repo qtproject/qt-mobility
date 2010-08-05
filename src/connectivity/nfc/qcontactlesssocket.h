@@ -40,63 +40,36 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTLESSTARGET_H
-#define QCONTACTLESSTARGET_H
+#ifndef QCONTACTLESSSOCKET_H
+#define QCONTACTLESSSOCKET_H
 
-#include "qmobilityglobal.h"
+#include <QtCore/QIODevice>
 
-#include <QtCore/QList>
+class QContactlessTarget;
 
-class QString;
-class QUrl;
-class QVariant;
-class QVariantList;
-
-class QContactlessTargetPrivate;
-class QNdefMessage;
-
-class Q_CONNECTIVITY_EXPORT QContactlessTarget
+class QContactlessSocket : public QIODevice
 {
+    Q_OBJECT
+
 public:
-    enum TagType {
-        Proprietary,
-        NfcTagType1,
-        NfcTagType2,
-        NfcTagType3,
-        NfcTagType4,
-        Mifare
-    };
+    explicit QContactlessSocket(QObject *parent = 0);
+    ~QContactlessSocket();
 
-    enum TagAccessMethod {
-        NdefAccess,
-        AdpuAccess,
-        TagTypeSpecificAccess,
-        LlcpAccess
-    };
-    Q_DECLARE_FLAGS(TagAccessMethods, TagAccessMethod)
+    void connectToService(const QContactlessTarget &target, const QString &serviceUri);
+    void disconnectFromService();
 
-    QContactlessTarget();
+    bool hasPendingDatagrams() const;
+    qint64 pendingDatagramSize() const;
+    qint64 readDatagram(char *data, qint64 maxSize,
+                        QContactlessTarget *target = 0, QString *serviceUri = 0);
+    qint64 writeDatagram(const char *data, qint64 size,
+                         const QContactlessTarget &target, const QString &serviceUri);
+    qint64 writeDatagram(const QByteArray &datagram,
+                         const QContactlessTarget &target, const QString &serviceUri);
 
-    QString uid() const;
-    QUrl url() const;
-
-    TagType type() const;
-    TagAccessMethods accessMethods() const;
-
-    // might need to make async
-    QNdefMessage ndefMessage() const;
-    void setNdefMessage(const QNdefMessage &message);
-
-    // might need to make async
-    QByteArray sendApduCommand(const QByteArray &command);
-    QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
-
-    // might need to make async
-    QVariant sendCommand(const QVariant &command);
-    QVariantList sendCommands(const QVariantList &commands);
-
-private:
-    QContactlessTargetPrivate *d;
+protected:
+    qint64 readData(char *data, qint64 maxlen);
+    qint64 writeData(const char *data, qint64 len);
 };
 
-#endif // QCONTACTLESSTARGET_H
+#endif // QCONTACTLESSSOCKET_H

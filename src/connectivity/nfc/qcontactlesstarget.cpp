@@ -77,6 +77,7 @@
                                     sendApduCommands().
     \value TagTypeSpecificAccess    The target supports sending tag type specific commands using
                                     sendCommand() and sendCommands().
+    \value LlcpAccess               The target supports peer-to-peer LLCP communication.
 */
 
 class QContactlessTargetPrivate
