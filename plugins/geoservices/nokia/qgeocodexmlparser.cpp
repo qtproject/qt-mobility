@@ -291,7 +291,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoPlace *place)
             if (!parseBoundingBox(&bounds))
                 return false;
 
-            place->setBoundingBox(bounds);
+            place->setViewport(bounds);
 
             parsedBounds = true;
         } else {
@@ -394,13 +394,13 @@ bool QGeoCodeXmlParser::parseAddress(QGeoAddress *address)
         inThoroughfare = m_reader->readNextStartElement();
 
         if (inThoroughfare && (m_reader->name() == "name")) {
-            address->setThoroughfareName(m_reader->readElementText());
+            address->setStreet(m_reader->readElementText());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }
 
         if (inThoroughfare && (m_reader->name() == "number")) {
-            address->setThoroughfareNumber(m_reader->readElementText());
+            address->setStreetNumber(m_reader->readElementText());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }

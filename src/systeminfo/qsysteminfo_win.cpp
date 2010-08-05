@@ -398,11 +398,11 @@ static void resolveLibrary()
 
 Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, qsystemNetworkInfoPrivate)
 
-typedef struct _DISPLAY_BRIGHTNESS {
-    UCHAR ucDisplayPolicy;
-    UCHAR ucACBrightness;
-    UCHAR ucDCBrightness;
-} DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
+// typedef struct _DISPLAY_BRIGHTNESS {
+//     UCHAR ucDisplayPolicy;
+//     UCHAR ucACBrightness;
+//     UCHAR ucDCBrightness;
+// } DISPLAY_BRIGHTNESS, *PDISPLAY_BRIGHTNESS;
 
 
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
@@ -1315,9 +1315,9 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 
     return v.toUInt();
 #else
-    // This could would detect the state of the backlight, which is as close as we're going to get 
+    // This could would detect the state of the backlight, which is as close as we're going to get
     // for WinCE.  Unfortunately, some devices don't honour the Microsoft power management API.
-    // This means that the following code is not portable across WinCE devices and so shouldn't 
+    // This means that the following code is not portable across WinCE devices and so shouldn't
     // be included.
 
     //CEDEVICE_POWER_STATE powerState;
@@ -1356,71 +1356,71 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
-{
-    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+// QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+// {
+//     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
 
-    if(screen < 16 && screen > -1) {
-        int rotation = 0;
-        switch(rotation) {
-        case 0:
-        case 360:
-            orientation = QSystemDisplayInfo::Landscape;
-            break;
-        case 90:
-            orientation = QSystemDisplayInfo::Portrait;
-            break;
-        case 180:
-            orientation = QSystemDisplayInfo::InvertedLandscape;
-            break;
-        case 270:
-            orientation = QSystemDisplayInfo::InvertedPortrait;
-            break;
-        };
-    }
-    return orientation;
-}
-
-
-float QSystemDisplayInfoPrivate::contrast(int screen)
-{
-    Q_UNUSED(screen);
-
-    return 0.0;
-}
-
-int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-
-        }
-    return dpi;
-}
-
-int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
-{
-    int dpi=0;
-    if(screen < 16 && screen > -1) {
-
-    }
-    return dpi;
-}
+//     if(screen < 16 && screen > -1) {
+//         int rotation = 0;
+//         switch(rotation) {
+//         case 0:
+//         case 360:
+//             orientation = QSystemDisplayInfo::Landscape;
+//             break;
+//         case 90:
+//             orientation = QSystemDisplayInfo::Portrait;
+//             break;
+//         case 180:
+//             orientation = QSystemDisplayInfo::InvertedLandscape;
+//             break;
+//         case 270:
+//             orientation = QSystemDisplayInfo::InvertedPortrait;
+//             break;
+//         };
+//     }
+//     return orientation;
+// }
 
 
-int QSystemDisplayInfoPrivate::physicalHeight(int screen)
-{
-    int height=0;
+// float QSystemDisplayInfoPrivate::contrast(int screen)
+// {
+//     Q_UNUSED(screen);
 
-    return height;
-}
+//     return 0.0;
+// }
 
-int QSystemDisplayInfoPrivate::physicalWidth(int screen)
-{
-    int width=0;
+// int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
 
-    return width;
-}
+//         }
+//     return dpi;
+// }
+
+// int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+// {
+//     int dpi=0;
+//     if(screen < 16 && screen > -1) {
+
+//     }
+//     return dpi;
+// }
+
+
+// int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+// {
+//     int height=0;
+
+//     return height;
+// }
+
+// int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+// {
+//     int width=0;
+
+//     return width;
+// }
 
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
@@ -1581,7 +1581,7 @@ QPowerNotificationThread::~QPowerNotificationThread() {
 
 void QPowerNotificationThread::run() {
 
-    const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO) 
+    const int MaxMessageSize = sizeof(POWER_BROADCAST) + sizeof(POWER_BROADCAST_POWER_INFO)
         + MAX_PATH;
 
     MSGQUEUEOPTIONS messageQueueOptions = { 0 };
@@ -1596,7 +1596,7 @@ void QPowerNotificationThread::run() {
     if (messageQueue == NULL)
         return;
 
-    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION 
+    HANDLE powerNotificationHandle = RequestPowerNotifications(messageQueue, PBT_TRANSITION
             | PBT_POWERINFOCHANGE);
 
     if (messageQueue == NULL)
@@ -1631,7 +1631,7 @@ void QPowerNotificationThread::run() {
             POWER_BROADCAST *broadcast = (POWER_BROADCAST*) (buffer);
 
             if (broadcast->Message == PBT_POWERINFOCHANGE) {
-                POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;                
+                POWER_BROADCAST_POWER_INFO *info = (POWER_BROADCAST_POWER_INFO*) broadcast->SystemPowerState;
                 parent->batteryLevel();
             }
 
@@ -1727,7 +1727,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
 # endif
-#else 
+#else
     // detect the presence of a mouse
     RECT rect;
     if (GetClipCursor(&rect)) {
@@ -1736,11 +1736,11 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
         }
     }
     // We could also try to detect the presence of a stylus / single touch input.
-    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.    
+    // A team from Microsoft was unable to do this in a way which scaled across multiple devices.
     // For more details see:
     // http://blogs.msdn.com/netcfteam/archive/2006/10/02/Platform-detection-III_3A00_-How-to-detect-a-touch-screen-on-Windows-CE-in-.NET-CF.aspx
     // Since all non-Qt apps on non-compliant devices will be able to use the touch screen
-    // (by virtue of being written for one particular device) shipping a library which will cause 
+    // (by virtue of being written for one particular device) shipping a library which will cause
     // just the Qt apps to fail may not be the best move.
 #endif
     int keyboardType = GetKeyboardType(0);

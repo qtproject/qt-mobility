@@ -181,16 +181,16 @@ on which parts of an API is utilized by an application.
     \o No additional capabilities required.
 \row
     \o \l {Document Gallery}
-    \o ???
+    \o No capabilities at this stage.
 \row
     \o \l {Telephony Events}{Telephony Events}
-    \o ???
+    \o No capabilities at this stage.
 \row
     \o \l {Organizer}
     \o ReadUserData WriteUserData
 \row
     \o \l {Feedback}{Tactile Feedback}
-    \o ???
+    \o No capabilities at this stage.
 \endtable
 
 The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 

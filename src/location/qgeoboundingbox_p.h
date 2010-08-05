@@ -71,7 +71,6 @@ public:
 //    static double degreesDown(double latitudeFrom, double latitudeTo);
 
     QGeoBoundingBoxPrivate();
-    QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
     QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
     QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
     ~QGeoBoundingBoxPrivate();
