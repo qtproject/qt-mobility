@@ -135,6 +135,38 @@ void Camera::setCamera(const QByteArray &cameraDevice)
     camera->start();
 }
 
+void Camera::keyPressEvent(QKeyEvent * event)
+{
+    switch (event->key()) {
+    case Qt::Key_CameraFocus:
+        camera->searchAndLock();
+        break;
+    case Qt::Key_Camera:
+        if (camera->captureMode() == QCamera::CaptureStillImage)
+            takeImage();
+        else
+            record();
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+}
+
+void Camera::keyReleaseEvent(QKeyEvent * event)
+{
+    switch (event->key()) {
+    case Qt::Key_CameraFocus:
+        camera->unlock();
+        break;
+    case Qt::Key_Camera:
+        if (camera->captureMode() == QCamera::CaptureVideo)
+            stop();
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+}
+
 void Camera::updateRecordTime()
 {
     QString str = QString("Recorded %1 sec").arg(mediaRecorder->duration()/1000);
