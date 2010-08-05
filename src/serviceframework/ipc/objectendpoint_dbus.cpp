@@ -200,7 +200,7 @@ void ObjectEndPoint::disconnected()
     deleteLater();
 }
 
-/*!
+/*
     Client requests proxy object. The proxy is owned by calling
     code and this object must clean itself up upon destruction of
     proxy.
@@ -634,7 +634,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
     }
 }
 
-/*!
+/*
     Client side call that Will block if return value expected
     Handles property calls
 */
@@ -750,7 +750,7 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
     return QVariant();
 }
 
-/*!
+/*
     Client side call that will block if return value expected
     Handles signal/slots
 */
