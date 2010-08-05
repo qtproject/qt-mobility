@@ -1,5 +1,4 @@
 #include "qdeclarativelandmarkfilters_p.h"
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -10,13 +9,11 @@ QDeclarativeLandmarkNameFilter::QDeclarativeLandmarkNameFilter(QObject *parent) 
 
 QString QDeclarativeLandmarkNameFilter::name()
 {
-    qDebug() << "qdeclarativelandmarkfilters name() asked.";
     return m_filter.name();
 }
 
 void QDeclarativeLandmarkNameFilter::setName(const QString& name)
 {
-    qDebug() << "qdeclarativelandmarkfilters setName() put.";
     if (name == m_filter.name())
         return;
     m_filter.setName(name);

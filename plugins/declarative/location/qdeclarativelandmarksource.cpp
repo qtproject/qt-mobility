@@ -9,7 +9,7 @@ QTM_BEGIN_NAMESPACE
 
 QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
     QAbstractListModel(parent), m_manager(0), m_nameFilter(0), m_proximityFilter(0),
-    m_fetchRequest(0), m_active(false), m_maxItems(-1)
+    m_fetchRequest(0), m_autoUpdate(false), m_landmarksPerUpdate(-1), m_landmarksOffset(-1)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -29,7 +29,7 @@ QDeclarativeLandmarkSource::QDeclarativeLandmarkSource(QObject *parent) :
 
 QDeclarativeLandmarkSource::~QDeclarativeLandmarkSource()
 {
-    delete m_manager; 
+    delete m_manager;
     delete m_fetchRequest;
 }
 
@@ -79,19 +79,19 @@ QString QDeclarativeLandmarkSource::error()
     return m_error;
 }
 
-void QDeclarativeLandmarkSource::setActive(bool active)
+void QDeclarativeLandmarkSource::setAutoUpdate(bool autoUpdate)
 {
-    if (active == m_active)
+    if (autoUpdate == m_autoUpdate)
         return;
-    if (active)
+    if (autoUpdate)
         QTimer::singleShot(0, this, SLOT(update())); // delay ensures all properties have been set
     else
         cancelUpdate();
 }
 
-bool QDeclarativeLandmarkSource::isActive() const
+bool QDeclarativeLandmarkSource::autoUpdate() const
 {
-    return m_active;
+    return m_autoUpdate;
 }
 
 QObject* QDeclarativeLandmarkSource::nameFilter()
@@ -133,10 +133,6 @@ void QDeclarativeLandmarkSource::update()
         m_fetchRequest->setFilter(*m_proximityFilter->filter());
     setFetchHints();
     m_fetchRequest->start();
-    if (!m_active) {
-        m_active = true;
-        emit activeChanged(m_active);
-    }
 }
 
 void QDeclarativeLandmarkSource::cancelUpdate()
@@ -147,24 +143,40 @@ void QDeclarativeLandmarkSource::cancelUpdate()
     }
 }
 
-int QDeclarativeLandmarkSource::maxItems()
+int QDeclarativeLandmarkSource::landmarksPerUpdate()
 {
-    return m_maxItems;
+    return m_landmarksPerUpdate;
 }
 
-void QDeclarativeLandmarkSource::setMaxItems(int maxItems)
+void QDeclarativeLandmarkSource::setLandmarksPerUpdate(int landmarksPerUpdate)
 {
-    if (maxItems == m_maxItems)
+    if (landmarksPerUpdate == m_landmarksPerUpdate)
         return;
-    m_maxItems = maxItems;
-    emit maxItemsChanged(maxItems);
+    m_landmarksPerUpdate = landmarksPerUpdate;
+    emit landmarksPerUpdateChanged(landmarksPerUpdate);
+}
+
+int QDeclarativeLandmarkSource::landmarksOffset()
+{
+    return m_landmarksOffset;
+}
+
+void QDeclarativeLandmarkSource::setLandmarksOffset(int landmarksOffset)
+{
+    if (landmarksOffset == m_landmarksOffset)
+        return;
+    m_landmarksOffset = landmarksOffset;
+    emit landmarksOffsetChanged(landmarksOffset);
 }
 
 void QDeclarativeLandmarkSource::setFetchHints()
 {
-    if (!m_fetchRequest || m_maxItems <= 0)
+    if (!m_fetchRequest || ((m_landmarksPerUpdate <= 0) && (m_landmarksOffset <= 0)))
         return;
-    m_fetchHint.setMaxItems(m_maxItems);
+    if (m_landmarksPerUpdate > 0)
+        m_fetchHint.setMaxItems(m_landmarksPerUpdate);
+    if ((m_landmarksOffset > 0))
+        m_fetchHint.setOffset(m_landmarksOffset);
     m_fetchRequest->setFetchHint(m_fetchHint);
 }
 

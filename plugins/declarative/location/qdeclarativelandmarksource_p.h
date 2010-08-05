@@ -19,10 +19,11 @@ class QDeclarativeLandmarkSource: public QAbstractListModel
 
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(QObject* nameFilter READ nameFilter WRITE setFilter NOTIFY nameFilterChanged)
     Q_PROPERTY(QObject* proximityFilter READ proximityFilter WRITE setFilter NOTIFY proximityFilterChanged)
-    Q_PROPERTY(int maxItems READ maxItems WRITE setMaxItems NOTIFY maxItemsChanged)
+    Q_PROPERTY(int landmarksPerUpdate READ landmarksPerUpdate WRITE setLandmarksPerUpdate NOTIFY landmarksPerUpdateChanged)
+    Q_PROPERTY(int landmarksOffset READ landmarksOffset WRITE setLandmarksOffset NOTIFY landmarksOffsetChanged)
 
 public:
     explicit QDeclarativeLandmarkSource(QObject* parent = 0);
@@ -44,11 +45,13 @@ public:
         LongitudeRole
     };
     QString name();
-    int maxItems();
-    void setMaxItems(int maxItems);
+    int landmarksPerUpdate();
+    void setLandmarksPerUpdate(int landmarksPerUpdate);
+    int landmarksOffset();
+    void setLandmarksOffset(int landmarksOffset);
     QString error();
-    void setActive(bool active);
-    bool isActive() const;
+    void setAutoUpdate(bool autoUpdate);
+    bool autoUpdate() const;
     QObject* nameFilter();
     QObject* proximityFilter();
     void setFilter(QObject* filter);
@@ -56,10 +59,11 @@ public:
 signals:
     void nameChanged(QString name);
     void errorChanged(QString error);
-    void activeChanged(bool active);
+    void autoUpdateChanged(bool autoUpdate);
     void nameFilterChanged(QObject* nameFilter);
     void proximityFilterChanged(QObject* nameFilter);
-    void maxItemsChanged(int maxItems);
+    void landmarksPerUpdateChanged(int landmarksPerUpdate);
+    void landmarksOffsetChanged(int landmarksOffset);
 
 private slots:
     void update();
@@ -81,8 +85,9 @@ private:
     // Same landmark list, but as declarative classes
     QMap<QString, QDeclarativeLandmark*> m_landmarkMap;
     QString m_error;
-    bool m_active;
-    int m_maxItems;
+    bool m_autoUpdate;
+    int m_landmarksPerUpdate;
+    int m_landmarksOffset;
 };
 
 QTM_END_NAMESPACE

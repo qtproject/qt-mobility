@@ -20,7 +20,7 @@ class QDeclarativeLandmarkCategorySource: public QAbstractListModel
 
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
-    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
 
 public:
     explicit QDeclarativeLandmarkCategorySource(QObject* parent = 0);
@@ -38,13 +38,13 @@ public:
     };
     QString name();
     QString error();
-    void setActive(bool active);
-    bool isActive() const;
+    void setAutoUpdate(bool autoUpdate);
+    bool autoUpdate() const;
 
 signals:
     void nameChanged(QString name);
     void errorChanged(QString error);
-    void activeChanged(bool active);
+    void autoUpdateChanged(bool autoUpdate);
 
 private slots:
     void update();
@@ -63,7 +63,7 @@ private:
     // Same category list, but as declarative classes
     QMap<QString, QDeclarativeLandmarkCategory*> m_categoryMap;
     QString m_error;
-    bool m_active;
+    bool m_autoUpdate;
 };
 
 QTM_END_NAMESPACE
