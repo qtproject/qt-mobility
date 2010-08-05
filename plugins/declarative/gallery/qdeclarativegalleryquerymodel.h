@@ -108,7 +108,6 @@ public:
     {
         ItemId = 0,
         ItemType,
-        ItemUrl,
         MetaDataOffset
     };
 

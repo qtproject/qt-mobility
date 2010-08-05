@@ -63,14 +63,7 @@ QTM_BEGIN_NAMESPACE
 
     \list
     \o itemId The ID of an item.
-    \o itemUrl The URL of an item.
     \o itemType The type of an item.
-    \o available Whether the meta-data of an item is currently available.
-    Meta-data can be unavailable when an item is outside the loaded range.
-    \o reading Whether the model is in the process of querying new meta-data
-    values for an item.
-    \o writing Whether the model is in the process of writing changes to
-    meta-data values back to the gallery.
     \endlist
 
     \qml
@@ -90,6 +83,7 @@ QTM_BEGIN_NAMESPACE
                 gallery: DocumentGallery {}
 
                 rootType: "Image"
+                properties: [ "url" ]
                 filter: GalleryFilter {
                     property: "fileName";
                     value: "*.jpg";
@@ -326,8 +320,6 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
             return m_resultSet->itemId();
         case ItemType:
             return m_resultSet->itemType();
-        case ItemUrl:
-            return m_resultSet->itemUrl();
         default:
             {
                 QVariant value = m_resultSet->metaData(role - MetaDataOffset);
@@ -379,7 +371,6 @@ void QDeclarativeGalleryQueryModel::_q_setResultSet(QGalleryResultSet *resultSet
 
         roleNames.insert(ItemId, QByteArray("itemId"));
         roleNames.insert(ItemType, QByteArray("itemType"));
-        roleNames.insert(ItemUrl, QByteArray("url"));
 
         setRoleNames(roleNames);
 
