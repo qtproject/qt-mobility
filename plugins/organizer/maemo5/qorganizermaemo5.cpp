@@ -131,6 +131,50 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
     return 1;
 }
 
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+{
+    QList<QOrganizerItem> retn;
+
+    QList<QOrganizerItem> itemList = items(filter, sortOrders, fetchHint, error);
+
+    if (*error != QOrganizerItemManager::NoError)
+        return QList<QOrganizerItem>();
+
+    if (itemList.isEmpty())
+        return retn;
+
+    QDateTime periodStart;
+    QDateTime periodEnd;
+    if (filter.type() == QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter) {
+        // if only a single period filter is used, the period can be obtained directly from the filter
+        QOrganizerItemDateTimePeriodFilter dateTimePeriodFilter = static_cast<QOrganizerItemDateTimePeriodFilter>(filter);
+        periodStart = dateTimePeriodFilter.startPeriod();
+        periodEnd = dateTimePeriodFilter.endPeriod();
+    }
+    else {
+        // otherwise just set a large enough period
+        // TODO: If absolutely needed for performace reasons the union and intersection filters could be iterated
+        // TODO: too to resolve the needed period. However it is quite a laborous task and not done for now.
+        periodStart.setTime_t(0);
+        periodEnd.setTime_t(UINT_MAX);
+    }
+
+    foreach (QOrganizerItem generatorItem, itemList) {
+        if (generatorItem.type() == QOrganizerItemType::TypeEvent || generatorItem.type() == QOrganizerItemType::TypeTodo)
+        {
+            QList<QOrganizerItem> generatorInstances = itemInstances(generatorItem, periodStart, periodEnd, 0, error);
+            if (*error != QOrganizerItemManager::NoError)
+                break;
+
+            foreach (QOrganizerItem instance, generatorInstances)
+                if (QOrganizerItemManagerEngine::testFilter(filter, instance))
+                    QOrganizerItemManagerEngine::addSorted(&retn, instance, sortOrders);
+        }
+    }
+
+    return retn;
+}
+
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem &generator, const QDateTime &periodStart, const QDateTime &periodEnd, int maxCount, QOrganizerItemManager::Error *error) const
 {
     //qDebug() << "itemInstances(" << generator.localId() << ", " << periodStart << ", " << periodEnd << ", " << maxCount << ")";

@@ -76,6 +76,7 @@ private slots:  // Test cases
 
     void getItemIds();
     void getItems();
+    void getItemInstances();
 
     // TODO: Asynchronous requests testing
 
@@ -735,6 +736,68 @@ void tst_Maemo5Om::getItems()
         QVERIFY(itemFound);
     }
 
+}
+
+void tst_Maemo5Om::getItemInstances()
+{
+    // Create an event with recurrence
+    QOrganizerEvent event;
+
+    event.setStartDateTime(QDateTime(QDate(2010, 1, 1), QTime(12, 0, 0)));
+    event.setEndDateTime(QDateTime(QDate(2010, 1, 1), QTime(13, 0, 0)));
+    event.setDisplayLabel("Daily recurring event");
+    event.setDescription("A daily recurring event");
+
+    // Create recurrence
+    QOrganizerItemRecurrenceRule recurrenceRule;
+    recurrenceRule.setCount(15);
+    recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+
+    QList<QOrganizerItemRecurrenceRule> recurrenceRules;
+    recurrenceRules << recurrenceRule;
+
+    // Set recurrence
+    event.setRecurrenceRules(recurrenceRules);
+
+    // Save event
+    QVERIFY(m_om->saveItem(&event));
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QVERIFY(event.id().localId() != 0);
+    QVERIFY(event.id().managerUri().contains(managerName));
+    QVERIFY(!event.guid().isEmpty());
+
+    // Make a few exception occurrences too
+    for (int i = 0; i < 3; ++i) {
+        QOrganizerEventOccurrence occ;
+        occ.setGuid(event.guid());
+        occ.setStartDateTime(QDateTime(QDate(2010,1,20+i), QTime(14, 0, 0)));
+        occ.setEndDateTime(QDateTime(QDate(2010,1,20+i), QTime(15, 0, 0)));
+        occ.setDisplayLabel("Exception occurrence");
+        occ.setDescription("Exception occurrence");
+        QVERIFY(m_om->saveItem(&occ));
+        QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    }
+
+    // Create a filter for fetching instances of January 2010
+    QOrganizerItemDateTimePeriodFilter filter;
+    filter.setStartPeriod(QDateTime(QDate(2010,1,1), QTime(0,0,0)));
+    filter.setEndPeriod(QDateTime(QDate(2010,2,1), QTime(0,0,0)));
+
+    // Create empty sortorder list
+    QList<QOrganizerItemSortOrder> sortOrders;
+
+    // Create empty fetch hint
+    QOrganizerItemFetchHint fetchHint;
+
+    // Get all the instances occurring in January 2010
+    QList<QOrganizerItem> januaryInstances = m_om->itemInstances(filter, sortOrders, fetchHint);
+
+    int instancesWithRightGuidCount = 0;
+    foreach(QOrganizerItem instance, januaryInstances) {
+        if (instance.guid() == event.guid())
+            ++instancesWithRightGuidCount;
+    }
+    QCOMPARE(instancesWithRightGuidCount, 15 + 3);
 }
 
 void tst_Maemo5Om::addItem_data()
