@@ -53,31 +53,31 @@
 // We mean it.
 //
 
-#include "qgallerytrackeritemlist_p.h"
+#include "qgallerytrackerresultset_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerMetaDataEdit;
 
-class QGalleryTrackerItemResponsePrivate;
+class QGalleryTrackerEditableResultSetPrivate;
 
-class QGalleryTrackerItemResponse : public QGalleryTrackerItemList
+class QGalleryTrackerEditableResultSet : public QGalleryTrackerResultSet
 {
     Q_OBJECT
 public:
-    QGalleryTrackerItemResponse(
-            const QGalleryTrackerItemListArguments &arguments,
+    QGalleryTrackerEditableResultSet(
+            const QGalleryTrackerResultSetArguments &arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
             bool live,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);
-    ~QGalleryTrackerItemResponse();
+    ~QGalleryTrackerEditableResultSet();
 
     bool setMetaData(int key, const QVariant &value);
 
 private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerItemResponse)
+    Q_DECLARE_PRIVATE(QGalleryTrackerEditableResultSet)
     Q_PRIVATE_SLOT(d_func(), void _q_editFinished(QGalleryTrackerMetaDataEdit *))
 };
 

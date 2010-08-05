@@ -44,7 +44,7 @@
 #include "qgalleryabstractrequest.h"
 #include "qgallerydbusinterface_p.h"
 #include "qgallerytrackercountresponse_p.h"
-#include "qgallerytrackeritemlist_p.h"
+#include "qgallerytrackerresultset_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
 #include "qgallerytrackertyperesultset_p.h"
 
@@ -1289,7 +1289,7 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
 }
 
 int QGalleryTrackerSchema::prepareIdResponse(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &itemId,
         const QStringList &propertyNames) const
@@ -1338,7 +1338,7 @@ int QGalleryTrackerSchema::prepareIdResponse(
 }
 
 int QGalleryTrackerSchema::prepareFilterResponse(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         QGalleryQueryRequest::Scope scope,
         const QString &rootItemId,
@@ -1527,7 +1527,7 @@ static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
 }
 
 void QGalleryTrackerSchema::populateItemArguments(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,
@@ -1691,7 +1691,7 @@ void QGalleryTrackerSchema::populateItemArguments(
 }
 
 void QGalleryTrackerSchema::populateAggregateArguments(
-        QGalleryTrackerItemListArguments *arguments,
+        QGalleryTrackerResultSetArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
         const QString &query,
         const QStringList &propertyNames,

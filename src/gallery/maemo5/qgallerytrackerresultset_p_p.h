@@ -54,7 +54,7 @@
 //
 
 
-#include "qgallerytrackeritemlist_p.h"
+#include "qgallerytrackerresultset_p.h"
 #include "qgalleryresultset_p.h"
 
 #include "qgallerytrackerlistcolumn_p.h"
@@ -70,9 +70,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerItemListPrivate : public QGalleryResultSetPrivate
+class QGalleryTrackerResultSetPrivate : public QGalleryResultSetPrivate
 {
-    Q_DECLARE_PUBLIC(QGalleryTrackerItemList)
+    Q_DECLARE_PUBLIC(QGalleryTrackerResultSet)
 public:
     struct SyncEvent
     {
@@ -219,8 +219,8 @@ public:
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
-    QGalleryTrackerItemListPrivate(
-            const QGalleryTrackerItemListArguments &arguments,
+    QGalleryTrackerResultSetPrivate(
+            const QGalleryTrackerResultSetArguments &arguments,
             bool live,
             int offset,
             int limit)
@@ -255,7 +255,7 @@ public:
             flags |= Live;
     }
 
-    ~QGalleryTrackerItemListPrivate()
+    ~QGalleryTrackerResultSetPrivate()
     {
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
@@ -351,9 +351,9 @@ public:
 
 QTM_END_NAMESPACE
 
-template <> inline void qSwap<QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row)>(
-        QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row) &row1,
-        QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row) &row2)
+template <> inline void qSwap<QTM_PREPEND_NAMESPACE(QGalleryTrackerResultSetPrivate::Row)>(
+        QTM_PREPEND_NAMESPACE(QGalleryTrackerResultSetPrivate::Row) &row1,
+        QTM_PREPEND_NAMESPACE(QGalleryTrackerResultSetPrivate::Row) &row2)
 {
     typedef QVector<QVariant>::iterator iterator;
 
@@ -363,5 +363,5 @@ template <> inline void qSwap<QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPriva
 
 #endif
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Flags))
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryTrackerResultSetPrivate::Flags))
 

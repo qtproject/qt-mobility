@@ -193,7 +193,7 @@ contains(mobility_modules,gallery) {
 
     unix: contains(QT_CONFIG, dbus) {
         SUBDIRS += \
-                qgallerytrackeritemlist_maemo5
+                qgallerytrackerresultset_maemo5
     }
 }
 

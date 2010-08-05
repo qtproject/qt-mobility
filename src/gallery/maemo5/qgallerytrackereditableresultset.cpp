@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "qgallerytrackeritemresponse_p.h"
+#include "qgallerytrackereditableresultset_p.h"
 
-#include "qgallerytrackeritemlist_p_p.h"
+#include "qgallerytrackerresultset_p_p.h"
 #include "qgallerytrackerschema_p.h"
 
 #include <QtCore/qcoreapplication.h>
@@ -51,17 +51,17 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerItemResponsePrivate : public QGalleryTrackerItemListPrivate
+class QGalleryTrackerEditableResultSetPrivate : public QGalleryTrackerResultSetPrivate
 {
-    Q_DECLARE_PUBLIC(QGalleryTrackerItemResponse)
+    Q_DECLARE_PUBLIC(QGalleryTrackerEditableResultSet)
 public:
-    QGalleryTrackerItemResponsePrivate(
-            const QGalleryTrackerItemListArguments &arguments,
+    QGalleryTrackerEditableResultSetPrivate(
+            const QGalleryTrackerResultSetArguments &arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
             bool live,
             int cursorPosition,
             int minimumPagedItems)
-        : QGalleryTrackerItemListPrivate(arguments, live, cursorPosition, minimumPagedItems)
+        : QGalleryTrackerResultSetPrivate(arguments, live, cursorPosition, minimumPagedItems)
         , metaDataInterface(metaDataInterface)
         , fieldNames(arguments.fieldNames)
     {
@@ -71,27 +71,27 @@ public:
     const QStringList fieldNames;
 };
 
-QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
-        const QGalleryTrackerItemListArguments &arguments,
+QGalleryTrackerEditableResultSet::QGalleryTrackerEditableResultSet(
+        const QGalleryTrackerResultSetArguments &arguments,
         const QGalleryDBusInterfacePointer &metaDataInterface,
         bool live,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
-    : QGalleryTrackerItemList(
-            *new QGalleryTrackerItemResponsePrivate(
+    : QGalleryTrackerResultSet(
+            *new QGalleryTrackerEditableResultSetPrivate(
                     arguments, metaDataInterface, live, cursorPosition, minimumPagedItems),
             parent)
 {
 }
 
-QGalleryTrackerItemResponse::~QGalleryTrackerItemResponse()
+QGalleryTrackerEditableResultSet::~QGalleryTrackerEditableResultSet()
 {
 }
 
-bool QGalleryTrackerItemResponse::setMetaData(int key, const QVariant &value)
+bool QGalleryTrackerEditableResultSet::setMetaData(int key, const QVariant &value)
 {
-    Q_D(QGalleryTrackerItemResponse);
+    Q_D(QGalleryTrackerEditableResultSet);
 
     if (!d->currentRow || key < d->valueOffset || key >= d->columnCount)
         return false;
@@ -140,6 +140,6 @@ bool QGalleryTrackerItemResponse::setMetaData(int key, const QVariant &value)
     return true;
 }
 
-#include "moc_qgallerytrackeritemresponse_p.cpp"
+#include "moc_qgallerytrackereditableresultset_p.cpp"
 
 QTM_END_NAMESPACE

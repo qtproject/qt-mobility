@@ -66,7 +66,7 @@ class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
 
-struct QGalleryTrackerItemListArguments;
+struct QGalleryTrackerResultSetArguments;
 struct QGalleryTrackerTypeResultSetArguments;
 
 class QGalleryTrackerSchema
@@ -92,13 +92,13 @@ public:
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
     int prepareIdResponse(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &itemId,
             const QStringList &propertyNames) const;
 
     int prepareFilterResponse(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,
@@ -121,13 +121,13 @@ private:
             const QGalleryFilter &filter) const;
 
     void populateItemArguments(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
     void populateAggregateArguments(
-            QGalleryTrackerItemListArguments *arguments,
+            QGalleryTrackerResultSetArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
             const QString &query,
             const QStringList &propertyNames,

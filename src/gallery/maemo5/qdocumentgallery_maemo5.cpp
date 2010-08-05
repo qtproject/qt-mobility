@@ -49,7 +49,7 @@
 #include "qgallerytyperequest.h"
 
 #include "qgallerytrackerchangenotifier_p.h"
-#include "qgallerytrackeritemresponse_p.h"
+#include "qgallerytrackereditableresultset_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackertyperesultset_p.h"
@@ -78,7 +78,7 @@ private:
     QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
-            const QGalleryTrackerItemListArguments &arguments,
+            const QGalleryTrackerResultSetArguments &arguments,
             int offset,
             int limit,
             bool isItemType,
@@ -167,7 +167,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 {
     QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(request->itemId().toString());
 
-    QGalleryTrackerItemListArguments arguments;
+    QGalleryTrackerResultSetArguments arguments;
 
     int result = schema.prepareIdResponse(
             &arguments, this, request->itemId().toString(), request->propertyNames());
@@ -203,19 +203,19 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
-        const QGalleryTrackerItemListArguments &arguments,
+        const QGalleryTrackerResultSetArguments &arguments,
         int offset,
         int limit,
         bool isItemType,
         bool isLive)
 {
-    QGalleryTrackerItemList *response = 0;
+    QGalleryTrackerResultSet *response = 0;
 
     if (isItemType) {
-        response = new QGalleryTrackerItemResponse(
+        response = new QGalleryTrackerEditableResultSet(
                 arguments, metaDataInterface(), isLive, offset, limit);
     } else {
-        response = new QGalleryTrackerItemList(arguments, isLive, offset, limit);
+        response = new QGalleryTrackerResultSet(arguments, isLive, offset, limit);
     }
 
     if (isLive) {
@@ -233,7 +233,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 {
     QGalleryTrackerSchema schema(request->rootType());
 
-    QGalleryTrackerItemListArguments arguments;
+    QGalleryTrackerResultSetArguments arguments;
 
     int result = schema.prepareFilterResponse(
             &arguments,

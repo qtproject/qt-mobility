@@ -86,11 +86,11 @@ struct QGalleryTrackerSortCriteria
     short flags;
 };
 
-class QGalleryTrackerItemListPrivate;
+class QGalleryTrackerResultSetPrivate;
 
-struct QGalleryTrackerItemListArguments
+struct QGalleryTrackerResultSetArguments
 {
-    QGalleryTrackerItemListArguments()
+    QGalleryTrackerResultSetArguments()
         : idColumn(0)
         , urlColumn(0)
         , typeColumn(0)
@@ -119,17 +119,17 @@ struct QGalleryTrackerItemListArguments
     QVector<int> resourceKeys;
 };
 
-class Q_AUTOTEST_EXPORT QGalleryTrackerItemList : public QGalleryResultSet
+class Q_AUTOTEST_EXPORT QGalleryTrackerResultSet : public QGalleryResultSet
 {
     Q_OBJECT
 public:
-    QGalleryTrackerItemList(
-            const QGalleryTrackerItemListArguments &arguments,
+    QGalleryTrackerResultSet(
+            const QGalleryTrackerResultSetArguments &arguments,
             bool live,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);
-    ~QGalleryTrackerItemList();
+    ~QGalleryTrackerResultSet();
 
     QStringList propertyNames() const;
     int propertyKey(const QString &property) const;
@@ -162,12 +162,12 @@ Q_SIGNALS:
     void itemEdited(const QString &service);
 
 protected:
-    QGalleryTrackerItemList(QGalleryTrackerItemListPrivate &dd, QObject *parent);
+    QGalleryTrackerResultSet(QGalleryTrackerResultSetPrivate &dd, QObject *parent);
 
     void timerEvent(QTimerEvent *event);
 
 private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
+    Q_DECLARE_PRIVATE(QGalleryTrackerResultSet)
     Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))
     Q_PRIVATE_SLOT(d_func(), void _q_parseFinished())
 };
