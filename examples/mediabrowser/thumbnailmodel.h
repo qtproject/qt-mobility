@@ -38,58 +38,38 @@
 **
 ****************************************************************************/
 
-#include "photoview.h"
+#ifndef THUMBNAILMODEL_H
+#define THUMBNAILMODEL_H
 
-#include "photodelegate.h"
-#include "thumbnailmodel.h"
+#include <qgalleryquerymodel.h>
 
-#include <QtGui>
+#include <QtCore/qcache.h>
+#include <QtCore/qfuturewatcher.h>
 
-#include <qdocumentgallery.h>
+QTM_USE_NAMESPACE
 
-
-PhotoView::PhotoView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
-    : GalleryView(parent, flags)
-    , model(new ThumbnailModel(gallery))
+class ThumbnailModel : public QGalleryQueryModel
 {
-    model->setRootType(QDocumentGallery::Image);
+    Q_OBJECT
+public:
+    ThumbnailModel(QAbstractGallery *gallery, QObject *parent = 0);
+    ~ThumbnailModel();
 
-    QHash<int, QString> properties;
-    properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
-    model->addColumn(properties);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-    model->setSortPropertyNames(QStringList()
-            << QDocumentGallery::title);
+    static const QSize thumbnailSize;
 
-    QListView *view = new QListView;
-    view->setIconSize(ThumbnailModel::thumbnailSize);
-    view->setFlow(QListView::TopToBottom);
-    view->setViewMode(QListView::IconMode);
-    view->setUniformItemSizes(true);
-    view->setWrapping(true);
-    view->setModel(model.data());
-    view->setItemDelegate(new PhotoDelegate(this));
-    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+protected:
+    virtual QString imagePath(const QModelIndex &index) const;
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(view);
+    QString thumbnailPath(const QUrl &url) const;
+private slots:
+    void thumbnailLoaded();
 
-    setLayout(layout);
-}
+private:
+    static QImage load(const QString &fileName);
 
-PhotoView::~PhotoView()
-{
-}
+    mutable QCache<QString, QFutureWatcher<QImage> > cache;
+};
 
-void PhotoView::showChildren(const QVariant &itemId)
-{
-    model->setRootItem(itemId);
-    model->execute();
-}
-
-void PhotoView::activated(const QModelIndex &)
-{
-}
-
+#endif

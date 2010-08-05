@@ -38,58 +38,46 @@
 **
 ****************************************************************************/
 
-#include "photoview.h"
+#include "coverartmodel.h"
 
-#include "photodelegate.h"
-#include "thumbnailmodel.h"
+#include "albumdelegate.h"
 
-#include <QtGui>
+#include <QtCore/qcryptographichash.h>
+#include <QtCore/qdir.h>
+#include <QtCore/qurl.h>
 
-#include <qdocumentgallery.h>
+#define QT_GALLERY_MEDIA_ART_ILLEGAL_CHARACTERS \
+    "\\(.*\\)|\\{.*\\}|\\[.*\\]|<.*>|[\\(\\)_\\{\\}\\[\\]\\!@#$\\^&\\*\\+\\=\\|\\\\/\"'\\?~`]"
 
-
-PhotoView::PhotoView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
-    : GalleryView(parent, flags)
-    , model(new ThumbnailModel(gallery))
-{
-    model->setRootType(QDocumentGallery::Image);
-
-    QHash<int, QString> properties;
-    properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
-    model->addColumn(properties);
-
-    model->setSortPropertyNames(QStringList()
-            << QDocumentGallery::title);
-
-    QListView *view = new QListView;
-    view->setIconSize(ThumbnailModel::thumbnailSize);
-    view->setFlow(QListView::TopToBottom);
-    view->setViewMode(QListView::IconMode);
-    view->setUniformItemSizes(true);
-    view->setWrapping(true);
-    view->setModel(model.data());
-    view->setItemDelegate(new PhotoDelegate(this));
-    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(view);
-
-    setLayout(layout);
-}
-
-PhotoView::~PhotoView()
+CoverArtModel::CoverArtModel(QAbstractGallery *gallery, QObject *parent)
+    : ThumbnailModel(gallery, parent)
+    , illegalCharacters(QLatin1String(QT_GALLERY_MEDIA_ART_ILLEGAL_CHARACTERS))
+    , whitespace(QCryptographicHash::hash(" ", QCryptographicHash::Md5).toHex())
 {
 }
 
-void PhotoView::showChildren(const QVariant &itemId)
+QString CoverArtModel::imagePath(const QModelIndex &index) const
 {
-    model->setRootItem(itemId);
-    model->execute();
+    QString title = index.data(Qt::DisplayRole).toString();
+    QString artist = index.data(AlbumDelegate::Artist).toString();
+
+    QString fileName = QDir::homePath()
+            + QLatin1String("/.cache/media-art/album-")
+            + hash(artist)
+            + QLatin1Char('-')
+            + hash(title)
+            + QLatin1String(".jpeg");
+
+    return thumbnailPath(QUrl::fromLocalFile(fileName));
 }
 
-void PhotoView::activated(const QModelIndex &)
+QString CoverArtModel::hash(const QString &identifier) const
 {
+    if (identifier.isEmpty()) {
+        return whitespace;
+    } else {
+        return QCryptographicHash::hash(
+                identifier.toLower().remove(illegalCharacters).simplified().toUtf8(),
+                QCryptographicHash::Md5).toHex();
+    }
 }
-

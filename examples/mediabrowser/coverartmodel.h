@@ -38,58 +38,29 @@
 **
 ****************************************************************************/
 
-#include "photoview.h"
+#ifndef COVERARTMODEL_H
+#define COVERARTMODEL_H
 
-#include "photodelegate.h"
 #include "thumbnailmodel.h"
 
-#include <QtGui>
+#include <QtCore/qregexp.h>
 
-#include <qdocumentgallery.h>
+QTM_USE_NAMESPACE
 
-
-PhotoView::PhotoView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
-    : GalleryView(parent, flags)
-    , model(new ThumbnailModel(gallery))
+class CoverArtModel : public ThumbnailModel
 {
-    model->setRootType(QDocumentGallery::Image);
+    Q_OBJECT
+public:
+    CoverArtModel(QAbstractGallery *gallery, QObject *parent = 0);
 
-    QHash<int, QString> properties;
-    properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
-    model->addColumn(properties);
+protected:
+    QString imagePath(const QModelIndex &index) const;
 
-    model->setSortPropertyNames(QStringList()
-            << QDocumentGallery::title);
+private:
+    QString hash(const QString &identifier) const;
 
-    QListView *view = new QListView;
-    view->setIconSize(ThumbnailModel::thumbnailSize);
-    view->setFlow(QListView::TopToBottom);
-    view->setViewMode(QListView::IconMode);
-    view->setUniformItemSizes(true);
-    view->setWrapping(true);
-    view->setModel(model.data());
-    view->setItemDelegate(new PhotoDelegate(this));
-    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+    QRegExp illegalCharacters;
+    QString whitespace;
+};
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(view);
-
-    setLayout(layout);
-}
-
-PhotoView::~PhotoView()
-{
-}
-
-void PhotoView::showChildren(const QVariant &itemId)
-{
-    model->setRootItem(itemId);
-    model->execute();
-}
-
-void PhotoView::activated(const QModelIndex &)
-{
-}
-
+#endif

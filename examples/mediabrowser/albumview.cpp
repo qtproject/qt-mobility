@@ -45,11 +45,20 @@
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryquerymodel.h>
+
+#if defined(Q_WS_MAEMO_5)
+#include "coverartmodel.h"
+#else
+#include <thumbnailmodel.h>
+#endif
 
 AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
     : GalleryView(parent, flags)
+#if defined(Q_WS_MAEMO_5)
+    , model(new CoverArtModel(gallery))
+#else
     , model(new QGalleryQueryModel(gallery))
+#endif
 {
     model->setRootType(QDocumentGallery::Album);
 
@@ -63,7 +72,7 @@ AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags
             << QDocumentGallery::title);
 
     QListView *view = new QListView;
-    view->setIconSize(QSize(124, 124));
+    view->setIconSize(ThumbnailModel::thumbnailSize);
     view->setFlow(QListView::LeftToRight);
     view->setViewMode(QListView::IconMode);
     view->setSpacing(4);
@@ -71,7 +80,6 @@ AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags
     view->setModel(model.data());
     view->setItemDelegate(new AlbumDelegate(this));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
-
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
