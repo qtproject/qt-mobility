@@ -113,6 +113,12 @@ MonthPage::MonthPage(QWidget *parent)
     QAction* deleteAllEntires = optionsMenu->addAction("Delete all entries");
     connect(deleteAllEntires, SIGNAL(triggered(bool)), this, SLOT(deleteAllEntries()));
     
+    // Connect to the save and remove request status change signals
+    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
+            this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
+    
     backendChanged(comboBox->currentText());
     refresh();
 }
@@ -185,9 +191,6 @@ void MonthPage::addEvents()
     }
     
     // Now create a save request and execute it
-    connect(&m_saveReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-            this, SLOT(saveReqStateChanged(QOrganizerItemAbstractRequest::State)));
-    
     m_saveReq.setItems(m_itemsList);
     m_saveReq.setManager(m_manager);
     m_saveReq.start();
@@ -201,8 +204,6 @@ void MonthPage::deleteAllEntries()
     if(ids.count()) {
         m_remReq.setItemIds(ids);
         m_remReq.setManager(m_manager);
-        connect(&m_remReq, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)),
-                this, SLOT(removeReqStateChanged(QOrganizerItemAbstractRequest::State)));
         m_remReq.start();
     }
 }
@@ -350,7 +351,6 @@ void MonthPage::saveReqStateChanged(QOrganizerItemAbstractRequest::State reqStat
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Saving events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_saveReq, SLOT(cancel()));
-        connect(m_progressDlg, SIGNAL(canceled()), m_progressDlg, SLOT(hide()));
         m_progressDlg->show();
     } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
                QOrganizerItemAbstractRequest::CanceledState == reqState) {
@@ -366,7 +366,6 @@ void MonthPage::removeReqStateChanged(QOrganizerItemAbstractRequest::State reqSt
         // Request started. Show a progress or wait dialog
         m_progressDlg = new QProgressDialog("Removing events..", "Cancel", 100, 100, this);
         connect(m_progressDlg, SIGNAL(canceled()), &m_remReq, SLOT(cancel()));
-        connect(m_progressDlg, SIGNAL(canceled()), m_progressDlg, SLOT(hide()));
         m_progressDlg->show();
     } else if (QOrganizerItemAbstractRequest::FinishedState == reqState ||
                QOrganizerItemAbstractRequest::CanceledState == reqState) {
