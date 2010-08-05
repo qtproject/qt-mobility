@@ -7,9 +7,14 @@ include (../../../common.pri)
 QT += sql
 
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location/landmarks
+INCLUDEPATH+= ../../../plugins/landmarks/sqlite
 
 # Input 
-SOURCES += tst_qlandmarkfilehandler_lmx.cpp
+SOURCES += tst_qlandmarkfilehandler_lmx.cpp \
+           ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_lmx.cpp
+
+HEADERS += ../../../plugins/landmarks/sqlite/qlandmarkfilehandler_lmx_p.h
 
 RESOURCES += data.qrc
 
