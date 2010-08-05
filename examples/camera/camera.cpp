@@ -54,8 +54,8 @@
 
 #include <QtGui>
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#define HAVE_CAMERA_BUTTONS 1
+#if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) && QT_VERSION >= 0x040700
+#define HAVE_CAMERA_BUTTONS
 #endif
 
 Camera::Camera(QWidget *parent) :
@@ -146,6 +146,7 @@ void Camera::setCamera(const QByteArray &cameraDevice)
 void Camera::keyPressEvent(QKeyEvent * event)
 {
     switch (event->key()) {
+#if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
         camera->searchAndLock();
         break;
@@ -155,6 +156,7 @@ void Camera::keyPressEvent(QKeyEvent * event)
         else
             record();
         break;
+#endif
     default:
         QMainWindow::keyPressEvent(event);
     }
@@ -163,6 +165,7 @@ void Camera::keyPressEvent(QKeyEvent * event)
 void Camera::keyReleaseEvent(QKeyEvent * event)
 {
     switch (event->key()) {
+#if QT_VERSION >= 0x040700
     case Qt::Key_CameraFocus:
         camera->unlock();
         break;
@@ -170,6 +173,7 @@ void Camera::keyReleaseEvent(QKeyEvent * event)
         if (camera->captureMode() == QCamera::CaptureVideo)
             stop();
         break;
+#endif
     default:
         QMainWindow::keyReleaseEvent(event);
     }

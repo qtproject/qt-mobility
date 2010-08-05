@@ -54,6 +54,7 @@ CameraButtonListener::CameraButtonListener(QObject *parent) :
     m_focusPressed(false),
     m_shutterPressed(false)
 {
+#if QT_VERSION >= 0x040700
     QDBusConnection::systemBus().connect(
                 QString(),
                 "/org/freedesktop/Hal/devices/platform_cam_launch",
@@ -69,6 +70,7 @@ CameraButtonListener::CameraButtonListener(QObject *parent) :
                 "PropertyModified",
                 this,
                 SLOT(updateFocusButtonState()));
+#endif
 }
 
 
@@ -78,6 +80,7 @@ CameraButtonListener::~CameraButtonListener()
 
 void CameraButtonListener::updateFocusButtonState()
 {
+#if QT_VERSION >= 0x040700
     QDBusInterface propertyInterface("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/devices/platform_cam_focus",
                                      "org.freedesktop.Hal.Device",
@@ -96,11 +99,12 @@ void CameraButtonListener::updateFocusButtonState()
                                                   Qt::NoModifier));
         }
     }
+#endif
 }
 
 void CameraButtonListener::updateShuterButtonState()
 {
-
+#if QT_VERSION >= 0x040700
     QDBusInterface propertyInterface("org.freedesktop.Hal",
                                      "/org/freedesktop/Hal/devices/platform_cam_launch",
                                      "org.freedesktop.Hal.Device",
@@ -119,4 +123,5 @@ void CameraButtonListener::updateShuterButtonState()
                                                   Qt::NoModifier));
         }
     }
+#endif
 }
