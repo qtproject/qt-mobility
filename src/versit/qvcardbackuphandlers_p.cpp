@@ -121,8 +121,8 @@ QVCardImporterBackupHandler::QVCardImporterBackupHandler()
 void QVCardImporterBackupHandler::propertyProcessed(
         const QVersitDocument& document,
         const QVersitProperty& property,
-        bool alreadyProcessed,
         const QContact& contact,
+        bool* alreadyProcessed,
         QList<QContactDetail>* updatedDetails)
 {
     Q_UNUSED(document)
@@ -130,7 +130,7 @@ void QVCardImporterBackupHandler::propertyProcessed(
     QString group;
     if (!property.groups().isEmpty())
         group = property.groups().first();
-    if (!alreadyProcessed) {
+    if (!*alreadyProcessed) {
         if (property.name() != PropertyName)
             return;
         if (property.groups().size() != 1)
@@ -160,6 +160,7 @@ void QVCardImporterBackupHandler::propertyProcessed(
             }
         }
         updatedDetails->append(detail);
+        *alreadyProcessed = true;
     }
     if (!group.isEmpty()) {
         // Keep track of which details were generated from which Versit groups
@@ -222,8 +223,8 @@ QVCardExporterBackupHandler::QVCardExporterBackupHandler()
 void QVCardExporterBackupHandler::detailProcessed(
         const QContact& contact,
         const QContactDetail& detail,
-        const QSet<QString>& processedFields,
         const QVersitDocument& document,
+        QSet<QString>* processedFields,
         QList<QVersitProperty>* toBeRemoved,
         QList<QVersitProperty>* toBeAdded)
 {
@@ -238,7 +239,7 @@ void QVCardExporterBackupHandler::detailProcessed(
     int toBeAddedCount = toBeAdded->count();
     bool propertiesSynthesized = false;
     for (QVariantMap::const_iterator it = fields.constBegin(); it != fields.constEnd(); it++) {
-        if (!processedFields.contains(it.key()) && !it.value().toString().isEmpty()) {
+        if (!processedFields->contains(it.key()) && !it.value().toString().isEmpty()) {
             // Generate a property for the unknown field
             QVersitProperty property;
             property.setGroups(QStringList(detailGroup));
@@ -250,6 +251,7 @@ void QVCardExporterBackupHandler::detailProcessed(
 
             toBeAdded->append(property);
             propertiesSynthesized = true;
+            processedFields->insert(it.key());
         }
     }
     if (propertiesSynthesized) {

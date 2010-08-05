@@ -557,8 +557,8 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
                 address.setPostCode(m_reader->readElementText());
             } else if (name == "street") {
                 QStringList street = m_reader->readElementText().split(' ');
-                address.setThoroughfareNumber(street.takeFirst());
-                address.setThoroughfareName(street.join(" "));
+                address.setStreetNumber(street.takeFirst());
+                address.setStreet(street.join(" "));
             } else if (name == "phoneNumber") {
                 landmark.setPhone(m_reader->readElementText());
             } else {
@@ -836,8 +836,8 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
 {
     QGeoAddress address = landmark.address();
 
-    if (address.thoroughfareNumber().isEmpty()
-            && address.thoroughfareName().isEmpty()
+    if (address.streetNumber().isEmpty()
+            && address.street().isEmpty()
             && address.city().isEmpty()
             && address.state().isEmpty()
             && address.country().isEmpty()
@@ -860,14 +860,14 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
         m_writer->writeTextElement(m_ns, "postalCode", address.postCode());
 
     QString street;
-    if (!address.thoroughfareNumber().isEmpty())
-        street.append(address.thoroughfareNumber());
+    if (!address.streetNumber().isEmpty())
+        street.append(address.streetNumber());
 
-    if (!address.thoroughfareNumber().isEmpty() && !address.thoroughfareName().isEmpty())
+    if (!address.streetNumber().isEmpty() && !address.street().isEmpty())
         street.append(" ");
 
-    if (!address.thoroughfareName().isEmpty())
-        street.append(address.thoroughfareName());
+    if (!address.street().isEmpty())
+        street.append(address.street());
 
     if (!street.isEmpty())
         m_writer->writeTextElement(m_ns, "street", street);

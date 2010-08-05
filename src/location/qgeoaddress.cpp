@@ -58,8 +58,8 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sCounty(other.sCounty),
         sCity(other.sCity),
         sDistrict(other.sDistrict),
-        sThoroughfareName(other.sThoroughfareName),
-        sThoroughfareNumber(other.sThoroughfareNumber),
+        sStreet(other.sStreet),
+        sStreetNumber(other.sStreetNumber),
         sPostCode(other.sPostCode),
         sPostOfficeBox(other.sPostOfficeBox)
 {
@@ -74,7 +74,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \brief The QGeoAddress class represents an address
 
     \inmodule QtLocation
-    
+
     \ingroup location
 
     This class represents an address of a location.
@@ -125,8 +125,8 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sCounty == other.county() &&
            d->sCity == other.city() &&
            d->sDistrict == other.district() &&
-           d->sThoroughfareName == other.thoroughfareName() &&
-           d->sThoroughfareNumber == other.thoroughfareNumber() &&
+           d->sStreet == other.street() &&
+           d->sStreetNumber == other.streetNumber() &&
            d->sPostCode == other.postCode() &&
            d->sPostOfficeBox == other.postOfficeBox();
 }
@@ -235,35 +235,35 @@ void QGeoAddress::setDistrict(const QString &district)
 }
 
 /*!
-    Returns the thoroughfare name.
+    Returns the street.
 */
-QString QGeoAddress::thoroughfareName() const
+QString QGeoAddress::street() const
 {
-    return d->sThoroughfareName;
+    return d->sStreet;
 }
 
 /*!
-    Sets the \a thoroughfareName.
+    Sets the \a street
 */
-void QGeoAddress::setThoroughfareName(const QString &thoroughfareName)
+void QGeoAddress::setStreet(const QString &street)
 {
-    d->sThoroughfareName = thoroughfareName;
+    d->sStreet = street;
 }
 
 /*!
-    Returns the thoroughfare number.
+    Returns the street number.
 */
-QString QGeoAddress::thoroughfareNumber() const
+QString QGeoAddress::streetNumber() const
 {
-    return d->sThoroughfareNumber;
+    return d->sStreetNumber;
 }
 
 /*!
-    Sets the \a thoroughfareNumber.
+    Sets the \a streetNumber.
 */
-void QGeoAddress::setThoroughfareNumber(const QString &thoroughfareNumber)
+void QGeoAddress::setStreetNumber(const QString &streetNumber)
 {
-    d->sThoroughfareNumber = thoroughfareNumber;
+    d->sStreetNumber = streetNumber;
 }
 
 /*!
@@ -310,8 +310,8 @@ bool QGeoAddress::isEmpty() const
            d->sCounty.isEmpty() &&
            d->sCity.isEmpty() &&
            d->sDistrict.isEmpty() &&
-           d->sThoroughfareName.isEmpty() &&
-           d->sThoroughfareNumber.isEmpty() &&
+           d->sStreet.isEmpty() &&
+           d->sStreetNumber.isEmpty() &&
            d->sPostCode.isEmpty() &&
            d->sPostOfficeBox.isEmpty();
 }
@@ -326,8 +326,8 @@ void QGeoAddress::clear()
     d->sCounty.clear();
     d->sCity.clear();
     d->sDistrict.clear();
-    d->sThoroughfareName.clear();
-    d->sThoroughfareNumber.clear();
+    d->sStreet.clear();
+    d->sStreetNumber.clear();
     d->sPostCode.clear();
     d->sPostOfficeBox.clear();
 }

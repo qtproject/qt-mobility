@@ -417,7 +417,7 @@ void tst_QMediaPlayer::testIsAvailable()
 }
 
 void tst_QMediaPlayer::testService()
-{    
+{
     /*
     QFETCH_GLOBAL(bool, valid);
 

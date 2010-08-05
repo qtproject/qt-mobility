@@ -7,6 +7,7 @@ include (../../../common.pri)
 QT += sql
 
 INCLUDEPATH += ../../../src/location
+INCLUDEPATH += ../../../src/location/landmarks
 INCLUDEPATH+= ../../../plugins/landmarks/sqlite
 
 # Input 

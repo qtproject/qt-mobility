@@ -1,0 +1,138 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in a
+** written agreement between you and Nokia.
+**
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of this
+** file.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page versitplugins.html
+
+\title Versit Plugins
+
+\section1 Introduction
+
+While the \l{Versit API} provides a convenient way to import and export vCards,
+it is common to encounter domain-specific vCard properties that the Versit
+importer and exporter classes don't support.  While it would be convenient if
+the base Versit module could support everything, that is not possible because
+there may be properties with the same name that have different semantics in
+different domains.
+
+\section1 Local Extension with Handlers
+
+To remedy this, some hooks are provided to allow clients to alter the behaviour
+of QVersitContactImporter and QVersitContactExporter.  The basic mechanisms that
+allow this are the QVersitContactImporterPropertyHandlerV2 and the
+QVersitContactExporterDetailHandlerV2 interfaces.  A client can supplement the
+importer and exporter classes by implementing these interfaces and associating
+them using QVersitContactImporter::setPropertyHandler() and
+QVersitContactExporter::setDetailHandler().
+
+\section1 Global Extension with Plugins
+
+While these interfaces allow a single client to supplement the behaviour of
+import and export, there are many cases where the entire deployment of the
+Versit library will be operating under a known context.  For example, the
+library might be deployed on a device on a particular network where all of its
+peers are known to support certain properties.  In this situation, it's
+desirable for all clients of the Versit library on that device to support those
+properties through the Versit API.  It is possible to extend the library
+globally by installing plugins that provide handlers automatically to all users
+of the library on the system.
+
+Writing a plugin involves these steps:
+\list
+\o Implement a handler class that inherits from QVersitContactHandler.
+\o Implement a plugin class that inherits from QObject and QVersitContactHandlerFactory
+   and implements the createHandler() function to create the handler class.
+\o Include the following two lines at the top of the factory declaration:
+\code
+Q_OBJECT
+Q_INTERFACES(QtMobility::QVersitContactHandlerFactory)
+\endcode
+\o Export the plugin using the Q_EXPORT_PLUGIN2 macro.
+\o Build the plugin using a suitable \tt{.pro} file.
+\o Deploy the plugin in the \tt{plugins/versit} directory.
+\endlist
+
+Please see the relevant documentation in Qt for more details on writing a
+plugin.
+
+\section2 Example Plugin: Backup and Restore
+
+A plugin is provided with the Qt Versit module that provides backup and restore
+functionality to the exporter and importer.
+
+These can be used by creating the exporter and importer under the "backup"
+profile:
+\code
+QVersitContactExporter exporter(QVersitContactHandlerFactory::ProfileBackup);
+\endcode
+\code
+QVersitContactImporter importer(QVersitContactHandlerFactory::ProfileBackup);
+\endcode
+
+When applied to the exporter, this handler encodes all writable details that the
+exporter doesn't recognise.  The format it uses to encode the detail is as
+follows:
+\list
+\o All generated properties will have the name X-NOKIA-QCONTACTFIELD
+\o All generated properties will have a single Versit group, and all properties
+ generated from a single detail will have the same group.
+\o All generated properties will have at least the parameters DETAIL, which
+ holds the definition name of the QContactDetail from which it was generated, and
+ FIELD, which holds the name of the field within the detail from which it was
+ generated.
+\o If the field is of type QString or QByteArray, the property's value is set
+ directly to the value of the field.  (For a QByteArray value, the QVersitWriter
+ will base-64 encode it.)
+\o If the field is of type bool, int, uint, QDate, QTime, QDateTime or QUrl a
+ the property's value is set to a string representation of the field.  A
+ parameter DATATYPE is added to the property with value BOOL, INT, UINT, DATE,
+ TIME or DATETIME depending on the type.
+\o If the field is of some other type, the field value is encoded to a
+ QByteArray via QDataStream (and the resulting byte array is base-64 encoded by
+ the QVersitWriter).  In this case, the parameter DATATYPE=VARIANT is added to
+ the Versit property.
+\endlist
+
+For example, a detail with definition name "Pet" and fields "Name"="Rex" and
+"Age"=(int)14 will be exported to the vCard properties:
+\code
+G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Rex
+G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Age;DATATYPE=INT:14
+\endcode
+
+And the next detail (say, "Pet" with a field "Name"="Molly" will generate:
+\code
+G1.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Molly
+\endcode
+
+When applied to the importer, this handler decodes the properties that were
+generated by the exporter under the backup profile.
+
+The code for this plugin can be perused in the
+\tt{plugins/versit/backuphandler} directory.
+
+*/
