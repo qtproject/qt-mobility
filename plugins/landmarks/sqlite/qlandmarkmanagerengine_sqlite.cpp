@@ -2736,7 +2736,7 @@ void QueryRun::run()
 
 QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
         : m_dbFilename(filename),
-        m_dbConnectionName("landmarks"),
+        m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
         m_latestTimestamp(0.0)
 {
