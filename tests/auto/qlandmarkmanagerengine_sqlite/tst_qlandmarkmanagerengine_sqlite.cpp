@@ -2897,7 +2897,11 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     ids = m_manager->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
     QVERIFY(checkIds(lms, ids));
 
-    QCOMPARE(lms.count(), 50);
+    //try with an offset which greater than the number of items
+    fetchHint.setMaxItems(100);
+    fetchHint.setOffset(500);
+    lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
+    QCOMPARE(lms.count(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatchesAsync() {
@@ -2980,6 +2984,16 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatchesAsync() {
     QVERIFY(waitForAsync(spy, &fetchRequest));
     lms = fetchRequest.landmarks();
     QCOMPARE(lms.count(), 50);
+
+    //try with an offset which greater than the number of items
+    fetchHint.setMaxItems(100);
+    fetchHint.setOffset(500);
+    fetchRequest.setFetchHint(fetchHint);
+    fetchRequest.start();
+
+    QVERIFY(waitForAsync(spy, &fetchRequest));
+    lms = fetchRequest.landmarks();
+    QCOMPARE(lms.count(), 0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksDefault() {

@@ -1122,6 +1122,12 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         }
     }
 
+    int offset = fetchHint.offset();
+    if (offset >= result.count()) {
+        result.clear();
+        return result;
+    }
+
     if (!alreadySorted && sortOrders.count() > 0 ) {
         //TODO: optimize this
         QList<QLandmark> landmarks;
@@ -1142,9 +1148,9 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         result = QLandmarkManagerEngineSqlite::sortLandmarks(landmarks, sortOrders);
     }
 
-    int offset = fetchHint.offset();
     if (offset < 0 )
         offset = 0;
+
     return result.mid(offset, fetchHint.maxItems());
 }
 
