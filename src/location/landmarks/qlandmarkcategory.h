@@ -75,9 +75,6 @@ public:
     QUrl iconUrl() const;
     void setIconUrl(const QUrl &url);
 
-    QString description() const;
-    void setDescription(const QString &description);
-
     QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &id);
 

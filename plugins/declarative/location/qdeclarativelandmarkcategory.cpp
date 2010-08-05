@@ -20,19 +20,6 @@ void QDeclarativeLandmarkCategory::setName(const QString& name)
     emit nameChanged(name);
 }
 
-QString QDeclarativeLandmarkCategory::description()
-{
-    return m_category.description();
-}
-
-void QDeclarativeLandmarkCategory::setDescription(const QString& description)
-{
-    if (description == m_category.description())
-        return;
-    m_category.setDescription(description);
-    emit descriptionChanged(description);
-}
-
 QUrl QDeclarativeLandmarkCategory::iconUrl()
 {
     return m_category.iconUrl();

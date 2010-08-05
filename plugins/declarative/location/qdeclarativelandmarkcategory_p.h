@@ -14,7 +14,6 @@ class QDeclarativeLandmarkCategory : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(QUrl iconUrl READ iconUrl WRITE setIconUrl NOTIFY iconUrlChanged)
 
 public:
@@ -23,16 +22,12 @@ public:
     QString name();
     void setName(const QString& name);
 
-    QString description();
-    void setDescription(const QString& description);
-
     QUrl iconUrl();
     void setIconUrl(const QUrl& iconUrl);
 
 signals:
 
     void nameChanged(QString name);
-    void descriptionChanged(QString description);
     void iconUrlChanged(QUrl iconUrl);
 
 public slots:

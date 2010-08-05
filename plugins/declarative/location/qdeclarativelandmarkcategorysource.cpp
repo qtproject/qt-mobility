@@ -42,8 +42,6 @@ QVariant QDeclarativeLandmarkCategorySource::data(const QModelIndex &index, int 
     switch (role) {
     case NameRole:
         return category.name();
-    case DescriptionRole:
-        return category.description();
     case IconUrlRole:
         return category.iconUrl();
     }

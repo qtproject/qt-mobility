@@ -855,6 +855,29 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
 }
 
+QStringList QLandmarkManager::platformLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
+QStringList QLandmarkManager::platformCategoryAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+    return  d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
 /*!
     Returns true if the manager is entirely read-only.  Meaning
     landmarks and categories cannot be added, modified or removed.

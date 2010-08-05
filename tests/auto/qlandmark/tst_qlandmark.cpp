@@ -42,6 +42,7 @@
 //TESTED_COMPONENT=src/location
 
 #include <qlandmark.h>
+#include <qlandmarkcategory.h>
 
 #include <qtest.h>
 #include <QMetaType>
@@ -62,7 +63,35 @@ public:
     typedef QHash<QString, QVariant> variantMap;
 
 private slots:
-    void settersAndGetters() {
+    void setViaAttribute() {
+        QLandmark lm;
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("description", "LM1 description");
+        lm.setAttribute("iconurl", "LM1 icon url");
+        lm.setAttribute("radius", 5.0);
+        lm.setAttribute("url", "lm1 url");
+
+        QCOMPARE(lm.name(), QString("LM1"));
+        QCOMPARE(lm.description(), QString("LM1 description"));
+        QCOMPARE(lm.iconUrl().toString(), QString("LM1 icon url"));
+        QCOMPARE(lm.radius(), 5.0);
+        QCOMPARE(lm.url().toString(),QString("lm1 url"));
+
+        QCOMPARE(lm.attribute("name").toString(), QString("LM1"));
+        QCOMPARE(lm.attribute("description").toString(), QString("LM1 description"));
+        QCOMPARE(lm.attribute("iconurl").toString(), QString("LM1 icon url"));
+        QCOMPARE(lm.attribute("radius").toDouble(), 5.0);
+        QCOMPARE(lm.attribute("url").toString(), QString("lm1 url"));
+
+        QStringList keys = lm.attributeKeys();
+        QVERIFY(keys.contains("name"));
+        QVERIFY(keys.contains("description"));
+        QVERIFY(keys.contains("iconurl"));
+        QVERIFY(keys.contains("radius"));
+        QVERIFY(keys.contains("url"));
+    }
+
+    /*/void settersAndGetters() {
         QFETCH(QString, name);
         QFETCH(QString, icon);
         QFETCH(QString, description);
@@ -425,24 +454,19 @@ private slots:
 
         QLandmark lm19(lm0);
         QTest::newRow("allEqual") << lm0 << lm19 << true;
-    }
+    }*/
 
 private:
-    void genericData() {
+    /*void genericData() {
         QTest::addColumn<QString>("name");
-        QTest::addColumn<QString>("icon");
         QTest::addColumn<QString>("description");
-        QTest::addColumn<QString>("street");
-        QTest::addColumn<QString>("locality");
-        QTest::addColumn<QString>("region");
-        QTest::addColumn<QString>("country");
-        QTest::addColumn<QString>("postcode");
+        QTest::addColumn<QString>("iconurl");
+        QTest::addColumn<double>("radius");
         QTest::addColumn<QString>("phone");
         QTest::addColumn<QString>("url");
-        QTest::addColumn<double>("radius");
-        QTest::addColumn<QGeoCoordinate>("coordinate");
-        QTest::addColumn<QList<QLandmarkCategory> >("categories");
-        QTest::addColumn<QHash<QString, QVariant> >("attributes");
+
+        QTest::newRow("Row0") << "lm name one" << "lm"
+
 
 
         QTest::newRow("Row0") << "" << "" << "" << "" << "" << "" << "" << "" << "" << ""
@@ -584,7 +608,7 @@ private:
                                 << QGeoCoordinate(10.0, 10.0, 10.0)
                                 << categories
                                 << attributes;
-    }
+    }*/
 };
 
 QTEST_MAIN(tst_QLandmark)

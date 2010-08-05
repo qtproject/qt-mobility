@@ -84,6 +84,7 @@ public:
     QString phone;
     QUrl url;
     QLandmarkId id;
+    static QStringList commonKeys;
 };
 
 QTM_END_NAMESPACE

@@ -1122,6 +1122,12 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         }
     }
 
+    int offset = fetchHint.offset();
+    if (offset >= result.count()) {
+        result.clear();
+        return result;
+    }
+
     if (!alreadySorted && sortOrders.count() > 0 ) {
         //TODO: optimize this
         QList<QLandmark> landmarks;
@@ -1142,9 +1148,9 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         result = QLandmarkManagerEngineSqlite::sortLandmarks(landmarks, sortOrders);
     }
 
-    int offset = fetchHint.offset();
     if (offset < 0 )
         offset = 0;
+
     return result.mid(offset, fetchHint.maxItems());
 }
 
@@ -1868,9 +1874,9 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
 
         if (!query.value(0).isNull())
             cat.setName(query.value(0).toString());
-
-        if (!query.value(1).isNull())
-            cat.setDescription(query.value(1).toString());
+// TODO: category description is not a common data attribute, make it a platform specific attribute
+//        if (!query.value(1).isNull())
+//            cat.setDescription(query.value(1).toString());
 
         if (!query.value(2).isNull())
             cat.setIconUrl(query.value(2).toString());
@@ -2021,10 +2027,10 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
     else
         bindValues.insert("name", QVariant());
 
-    if (!category->description().isEmpty())
-        bindValues.insert("description", category->description());
-    else
-        bindValues.insert("description", QVariant());
+//    if (!category->description().isEmpty())
+//        bindValues.insert("description", category->description());
+//    else
+//        bindValues.insert("description", QVariant());
 
     if (!category->iconUrl().isEmpty())
         bindValues.insert("icon_url", category->iconUrl().toString());
@@ -3509,11 +3515,31 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     switch(feature) {
         case (QLandmarkManager::GenericLandmarkAttributes):
         case (QLandmarkManager::GenericCategoryAttributes):
+        case (QLandmarkManager::PlatformLandmarkAttributes):
+        case (QLandmarkManager::PlatformCategoryAttributes):
             return false;
             break;
         default:
             return false;
     }
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const
