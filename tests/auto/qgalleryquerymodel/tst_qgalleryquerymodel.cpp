@@ -324,7 +324,7 @@ void tst_QGalleryItemListModel::execute()
     QSignalSpy stateSpy(&model, SIGNAL(stateChanged(QGalleryAbstractRequest::State)));
     QSignalSpy resultSpy(&model, SIGNAL(resultChanged()));
 
-    QCOMPARE(model.execute(), true);
+    model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
@@ -335,7 +335,7 @@ void tst_QGalleryItemListModel::execute()
     QCOMPARE(resultSpy.count(), 1);
 
     gallery.setResult(QGalleryAbstractRequest::NoResult);
-    QCOMPARE(model.execute(), true);
+    model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(model.state(), QGalleryAbstractRequest::Active);
     QCOMPARE(succeededSpy.count(), 1);
@@ -356,7 +356,7 @@ void tst_QGalleryItemListModel::execute()
     QCOMPARE(resultSpy.count(), 3);
 
     gallery.setResult(QGalleryAbstractRequest::ConnectionError);
-    QCOMPARE(model.execute(), false);
+    model.execute();
     QCOMPARE(model.result(), int(QGalleryAbstractRequest::ConnectionError));
     QCOMPARE(model.state(), QGalleryAbstractRequest::Inactive);
     QCOMPARE(succeededSpy.count(), 1);
@@ -436,7 +436,7 @@ void tst_QGalleryItemListModel::properties()
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    QCOMPARE(model.execute(), true);
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     const QStringList propertyNames = gallery.request()->propertyNames();
@@ -502,7 +502,7 @@ void tst_QGalleryItemListModel::indexes()
     QCOMPARE(model.index( 2,  4).isValid(), false);
     QCOMPARE(model.index( 2,  5).isValid(), false);
 
-    QVERIFY(model.execute());
+    model.execute();
 
     QCOMPARE(model.rowCount(), 2);
     QCOMPARE(model.columnCount(), 5);
@@ -584,7 +584,7 @@ void tst_QGalleryItemListModel::data()
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    QVERIFY(model.execute());
+    model.execute();
 
     QModelIndex index;
 
@@ -739,7 +739,7 @@ void tst_QGalleryItemListModel::flags()
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
     model.addColumn(QLatin1String("turtle"), Qt::DisplayRole);
-    QVERIFY(model.execute());
+    model.execute();
 
     QCOMPARE(model.index(0, 0).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     QCOMPARE(model.index(0, 1).flags(), Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
@@ -803,7 +803,7 @@ void tst_QGalleryItemListModel::addColumn()
     populateGallery(&gallery);
 
     QGalleryQueryModel model(&gallery);
-    QVERIFY(model.execute());
+    model.execute();
 
     QSignalSpy columnSpy(&model, SIGNAL(columnsInserted(QModelIndex,int,int)));
 
@@ -1150,7 +1150,7 @@ void tst_QGalleryItemListModel::removeColumn()
     QCOMPARE(model.setHeaderData(3, Qt::Horizontal, QLatin1String("Rating")), true);
     QCOMPARE(model.setHeaderData(4, Qt::Horizontal, QLatin1String("Turtle")), true);
 
-    QVERIFY(model.execute());
+    model.execute();
 
     QSignalSpy columnSpy(&model, SIGNAL(columnsRemoved(QModelIndex,int,int)));
 
@@ -1225,7 +1225,7 @@ void tst_QGalleryItemListModel::setRoleProperties()
     populateGallery(&gallery);
 
     QGalleryQueryModel model(&gallery);
-    QVERIFY(model.execute());
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
@@ -1288,7 +1288,7 @@ void tst_QGalleryItemListModel::itemsInserted()
     QtTestGallery gallery;
 
     QGalleryQueryModel model(&gallery);
-    QVERIFY(model.execute());
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
@@ -1342,7 +1342,7 @@ void tst_QGalleryItemListModel::itemsRemoved()
     QtTestGallery gallery;
 
     QGalleryQueryModel model(&gallery);
-    QVERIFY(model.execute());
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
@@ -1393,7 +1393,7 @@ void tst_QGalleryItemListModel::itemsMoved()
     QtTestGallery gallery;
 
     QGalleryQueryModel model(&gallery);
-    QVERIFY(model.execute());
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
@@ -1461,7 +1461,7 @@ void tst_QGalleryItemListModel::metaDataChanged()
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
 
-    QVERIFY(model.execute());
+    model.execute();
     QVERIFY(gallery.request() != 0);
 
     QtTestResultSet *resultSet = qobject_cast<QtTestResultSet *>(gallery.request()->resultSet());
@@ -1580,7 +1580,7 @@ void tst_QGalleryItemListModel::hierarchy()
     model.addColumn(titleProperties);
     model.addColumn(QLatin1String("duration"), Qt::DisplayRole);
     model.addColumn(QLatin1String("rating"), Qt::DisplayRole);
-    QVERIFY(model.execute());
+    model.execute();
 
     QModelIndex index = model.index(0, 0);
     QCOMPARE(index.isValid(), true);
