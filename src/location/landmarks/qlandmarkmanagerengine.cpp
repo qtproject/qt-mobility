@@ -428,10 +428,18 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *er
 }
 
 /*!
-    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter,
+    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter,
                                                             QLandmarkManager::Error *error, QString *errorString) const
 
     Returns the support level the manager engine provides for the given \a filter.  Errors are stored in \a error
+    and \a errorString.
+*/
+
+/*!
+    \fn QLandmarkManager::SupportLevel QLandmarkManagerEngine::sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders,
+                                                            QLandmarkManager::Error *error, QString *errorString) const
+
+    Returns the support level the manager engine provides for the given \a sort orders.  Errors are stored in \a error
     and \a errorString.
 */
 

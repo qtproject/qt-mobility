@@ -139,7 +139,8 @@ public:
                          QString *errorString) const;
     QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
-    QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
+    QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const;
+    QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
 
     QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
