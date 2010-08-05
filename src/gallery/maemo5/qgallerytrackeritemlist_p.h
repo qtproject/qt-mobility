@@ -139,7 +139,7 @@ public:
     int itemCount() const;
 
     int currentIndex() const;
-    bool seek(int index, bool relative);
+    bool fetch(int index);
 
     QVariant itemId() const;
     QUrl itemUrl() const;

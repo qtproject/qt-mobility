@@ -76,7 +76,7 @@ public:
     bool setMetaData(int, const QVariant &) { return false; }
 
     int currentIndex() const { return -1; }
-    bool seek(int, bool) { return false; }
+    bool fetch(int) { return false; }
 };
 
 QTM_END_NAMESPACE

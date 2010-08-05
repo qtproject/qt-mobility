@@ -81,7 +81,11 @@ public:
     virtual bool setMetaData(int key, const QVariant &value) = 0;
 
     virtual int currentIndex() const = 0;
-    virtual bool seek(int index, bool relative) = 0;
+    virtual bool fetch(int index) = 0;
+    virtual bool fetchNext();
+    virtual bool fetchPrevious();
+    virtual bool fetchFirst();
+    virtual bool fetchLast();
 
 Q_SIGNALS:
     void currentItemChanged();

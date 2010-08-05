@@ -93,11 +93,9 @@ public:
 
     int currentIndex() const { return m_currentIndex; }
 
-    bool seek(int index, bool relative)
+    bool fetch(int index)
     {
-        m_currentIndex = relative ? m_currentIndex + index : index;
-
-        emit currentIndexChanged(m_currentIndex);
+        emit currentIndexChanged(m_currentIndex = index);
         emit currentItemChanged();
 
         return isValid();

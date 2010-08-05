@@ -141,13 +141,12 @@ public:
     int itemCount() const { return m_rows.count(); }
 
     int currentIndex() const { return m_currentIndex; }
-    bool seek(int index, bool relative)
+    bool fetch(int index)
     {
-        m_currentIndex = relative ? m_currentIndex + index : index;
+        emit currentIndexChanged(m_currentIndex = index);
+        emit currentItemChanged();
 
-        emit currentIndexChanged(m_currentIndex);
-
-        return m_currentIndex >= 0 && m_currentIndex < m_rows.count();
+        return isValid();
     }
 
     QVariant itemId() const { return m_rows.value(m_currentIndex).itemId; }
@@ -159,7 +158,7 @@ public:
 
     bool setMetaData(int key, const QVariant &value)
     {
-        if (m_currentIndex >=  0 && m_currentIndex < m_rows.count() && key >= 0) {
+        if (isValid() && key >= 0) {
             const QString propertyName = m_propertyNames.at(key);
 
             if (m_propertyAttributes.value(propertyName) & QGalleryProperty::CanWrite) {

@@ -137,6 +137,8 @@ public:
     bool seek(int index, bool relative = false);
     bool next();
     bool previous();
+    bool first();
+    bool last();
 
 Q_SIGNALS:
     void resultSetChanged(QGalleryResultSet *resultSet);

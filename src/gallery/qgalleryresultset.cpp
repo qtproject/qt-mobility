@@ -196,11 +196,62 @@ QList<QGalleryResource> QGalleryResultSet::resources() const
 */
 
 /*!
-    \fn QGalleryResultSet::seek(int index, bool relative)
+    \fn QGalleryResultSet::fetch(int index)
 
-    Moves the current position of a result set to \a index.  If \a relative
-    is true \a index is added to the existing index.
+    Moves the current position of a result set to an arbitrary \a index.
+
+    Returns true if the result set is positioned on a valid item on return;
+    otherwise returns false.
 */
+
+/*!
+    Moves the current position of the result set to the next item in the set.
+
+    Returns true if the result set is positioned on a valid item on return;
+    otherwise returns false.
+*/
+
+bool QGalleryResultSet::fetchNext()
+{
+    return fetch(currentIndex() + 1);
+}
+
+/*!
+    Moves the current position of the result set to the previous item in the
+    set.
+
+    Returns true if the result set is positioned on a valid item on return;
+    otherwise returns false.
+*/
+
+bool QGalleryResultSet::fetchPrevious()
+{
+    return fetch(currentIndex() - 1);
+}
+
+/*!
+    Moves the current position of the result set to the first item in the set.
+
+    Returns true if the result set is positioned on a valid item on return;
+    otherwise returns false.
+*/
+
+bool QGalleryResultSet::fetchFirst()
+{
+    return fetch(0);
+}
+
+/*!
+    Moves the current position of the result set to the last item in the set.
+
+    Returns true if the result set is positioned on a valid item on return;
+    otherwise returns false.
+*/
+
+bool QGalleryResultSet::fetchLast()
+{
+    return fetch(itemCount() - 1);
+}
 
 /*!
     \fn QGalleryResultSet::currentItemChanged()

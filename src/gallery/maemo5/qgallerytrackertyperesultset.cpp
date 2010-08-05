@@ -248,9 +248,9 @@ int QGalleryTrackerTypeResultSet::currentIndex() const
     return d_func()->currentIndex;
 }
 
-bool QGalleryTrackerTypeResultSet::seek(int index, bool relative)
+bool QGalleryTrackerTypeResultSet::fetch(int index)
 {
-    d_func()->currentIndex = relative ? d_func()->currentIndex + index : index;
+    d_func()->currentIndex = index;
 
     return d_func()->currentIndex == 0;
 }

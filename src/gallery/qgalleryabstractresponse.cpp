@@ -132,6 +132,8 @@ int QGalleryAbstractResponse::result() const
 
 bool QGalleryAbstractResponse::waitForFinished(int msecs)
 {
+    Q_UNUSED(msecs);
+
     return true;
 }
 

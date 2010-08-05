@@ -313,7 +313,7 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
 {
     if (index.isValid()) {
         if (m_resultSet->currentIndex() != index.row())
-            m_resultSet->seek(index.row(), false);
+            m_resultSet->fetch(index.row());
 
         switch (role) {
         case ItemId:
@@ -337,7 +337,7 @@ QVariant QDeclarativeGalleryQueryModel::data(const QModelIndex &index, int role)
 bool QDeclarativeGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && (role -= MetaDataOffset) > 0) {
-        if (m_resultSet->currentIndex() != index.row() && !m_resultSet->seek(index.row(), false))
+        if (m_resultSet->currentIndex() != index.row() && !m_resultSet->fetch(index.row()))
             return false;
 
         return m_resultSet->setMetaData(role, value);

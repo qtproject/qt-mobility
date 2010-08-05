@@ -455,31 +455,63 @@ int QGalleryQueryRequest::currentIndex() const
 
     If \a relative is true the seek is peformed relative to the current index.
 
-    Returns true if the position of the result set after the seek is valid; and
+    Returns true if the position of the result set is valid after the seek; and
     false otherwise.
 */
 
 bool QGalleryQueryRequest::seek(int index, bool relative)
 {
-    return d_func()->internalResultSet->seek(index, relative);
+    return d_func()->internalResultSet->fetch(relative
+            ? d_func()->internalResultSet->currentIndex() + index
+            : index);
 }
 
 /*!
-    Moves the current item to the next item in the result set.
+    Seeks to the next item in the result set.
+
+    Returns true if the position of the result set is valid after the seek; and
+    false otherwise.
 */
 
 bool QGalleryQueryRequest::next()
 {
-    return d_func()->internalResultSet->seek(1, true);
+    return d_func()->internalResultSet->fetchNext();
 }
 
 /*!
-    Moves the current item to the previous item in the result set.
+    Seeks to the previous item in the result set.
+
+    Returns true if the position of the result set is valid after the seek; and
+    false otherwise.
 */
 
 bool QGalleryQueryRequest::previous()
 {
-    return d_func()->internalResultSet->seek(-1, true);
+    return d_func()->internalResultSet->fetchPrevious();
+}
+
+/*!
+    Seeks to the first item in the result set.
+
+    Returns true if the position of the result set is valid after the seek; and
+    false otherwise.
+*/
+
+bool QGalleryQueryRequest::first()
+{
+    return d_func()->internalResultSet->fetchFirst();
+}
+
+/*!
+    Seeks to the last item in the result set.
+
+    Returns true if the position of the result set is valid after the seek; and
+    false otherwise.
+*/
+
+bool QGalleryQueryRequest::last()
+{
+    return d_func()->internalResultSet->fetchLast();
 }
 
 /*!

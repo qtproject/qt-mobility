@@ -646,11 +646,11 @@ int QGalleryTrackerItemList::currentIndex() const
     return d_func()->currentIndex;
 }
 
-bool QGalleryTrackerItemList::seek(int index, bool relative)
+bool QGalleryTrackerItemList::fetch(int index)
 {
     Q_D(QGalleryTrackerItemList);
 
-    d->currentIndex = relative ? d->currentIndex + index : index;
+    d->currentIndex = index;
 
     if (d->currentIndex < 0 || d->currentIndex >= d->rowCount) {
         d->currentRow = 0;

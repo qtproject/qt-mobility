@@ -758,7 +758,7 @@ QVariant QGalleryQueryModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
         if (d_ptr->resultSet->currentIndex() != index.row())
-            d_ptr->resultSet->seek(index.row(), false);
+            d_ptr->resultSet->fetch(index.row());
 
         const int offset = index.column() != 0 ? d_ptr->columnOffsets.at(index.column() - 1) : 0;
         const int count = d_ptr->columnOffsets.at(index.column());
@@ -779,7 +779,7 @@ bool QGalleryQueryModel::setData(const QModelIndex &index, const QVariant &value
 {
     if (index.isValid()) {
         if (d_ptr->resultSet->currentIndex() != index.row())
-            d_ptr->resultSet->seek(index.row(), false);
+            d_ptr->resultSet->fetch(index.row());
 
         const int offset = index.column() != 0 ? d_ptr->columnOffsets.at(index.column() - 1) : 0;
         const int count = d_ptr->columnOffsets.at(index.column());
@@ -800,7 +800,7 @@ QVariant QGalleryQueryModel::itemId(const QModelIndex &index) const
 {
     if (index.isValid()) {
         if (d_ptr->resultSet->currentIndex() != index.row())
-            d_ptr->resultSet->seek(index.row(), false);
+            d_ptr->resultSet->fetch(index.row());
 
         return d_ptr->resultSet->itemId();
     }
@@ -815,7 +815,7 @@ QUrl QGalleryQueryModel::itemUrl(const QModelIndex &index) const
 {
     if (index.isValid()) {
         if (d_ptr->resultSet->currentIndex() != index.row())
-            d_ptr->resultSet->seek(index.row(), false);
+            d_ptr->resultSet->fetch(index.row());
 
         return d_ptr->resultSet->itemUrl();
     }
@@ -830,7 +830,7 @@ QString QGalleryQueryModel::itemType(const QModelIndex &index) const
 {
     if (index.isValid()) {
         if (d_ptr->resultSet->currentIndex() != index.row())
-            d_ptr->resultSet->seek(index.row(), false);
+            d_ptr->resultSet->fetch(index.row());
 
         return d_ptr->resultSet->itemType();
     }

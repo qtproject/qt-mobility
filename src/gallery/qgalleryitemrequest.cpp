@@ -63,19 +63,19 @@ public:
     void _q_itemsInserted(int index, int)
     {
         if (index == 0)
-            resultSet->seek(0, false);
+            resultSet->fetch(0);
     }
 
     void _q_itemsRemoved(int index, int)
     {
         if (index == 0)
-            resultSet->seek(0, false);
+            resultSet->fetch(0);
     }
 
     void _q_itemsMoved(int from, int to, int)
     {
         if (from == 0 || to == 0)
-            resultSet->seek(0, false);
+            resultSet->fetch(0);
     }
 
     void _q_currentItemChanged()
@@ -388,7 +388,7 @@ void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)
     emit resultSetChanged(d->resultSet);
 
     if (d->internalResultSet->itemCount() > 0)
-        d->internalResultSet->seek(0, false);
+        d->internalResultSet->fetch(0);
     else if (wasValid)
         emit itemChanged();
 }

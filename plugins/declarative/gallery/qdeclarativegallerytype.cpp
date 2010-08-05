@@ -234,7 +234,7 @@ void QDeclarativeGalleryType::_q_resultSetChanged(QGalleryResultSet *resultSet)
 
         typedef QStringList::const_iterator iterator;
         if (m_resultSet->itemCount() > 0) {
-            m_resultSet->seek(0, false);
+            m_resultSet->fetch(0);
 
             for (iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
                 const int key = m_resultSet->propertyKey(*it);
@@ -267,7 +267,7 @@ void QDeclarativeGalleryType::_q_resultSetChanged(QGalleryResultSet *resultSet)
 void QDeclarativeGalleryType::_q_itemsInserted(int index, int)
 {
     if (index == 0) {
-        m_resultSet->seek(0, false);
+        m_resultSet->fetch(0);
 
         typedef QHash<int, QString>::const_iterator iterator;
         for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it) {

@@ -68,12 +68,14 @@ private Q_SLOTS:
     void noResponse();
 };
 
+
 class QtGalleryTestResponse : public QGalleryResultSet
 {
     Q_OBJECT
 public:
-    QtGalleryTestResponse(const QStringList &propertyNames, int result, bool idle)
-        : m_currentIndex(-1)
+    QtGalleryTestResponse(const QStringList &propertyNames, int count, int result, bool idle)
+        : m_count(count)
+        , m_currentIndex(-1)
         , m_propertyNames(propertyNames)
     {
         if (result != QGalleryAbstractRequest::NoResult)
@@ -86,23 +88,28 @@ public:
         return QGalleryProperty::CanRead | QGalleryProperty::CanWrite; }
     QVariant::Type propertyType(int) const { return QVariant::String; }
 
-    int itemCount() const { return 1; }
+    int itemCount() const { return m_count; }
 
     int currentIndex() const { return m_currentIndex; }
 
-    bool seek(int index, bool relative) {
-        m_currentIndex = relative ? m_currentIndex + index : index; return m_currentIndex == 0; }
+    bool fetch(int index)
+    {
+        emit currentIndexChanged(m_currentIndex = index);
+        emit currentItemChanged();
 
-    QVariant itemId() const { return m_currentIndex == 0 ? QVariant(1) : QVariant(); }
-    QUrl itemUrl() const { return m_currentIndex == 0 ? QUrl("http://example.com") : QUrl(); }
-    QString itemType() const { return m_currentIndex == 0 ? QLatin1String("WebPage") : QString(); }
+        return isValid();
+    }
 
-    QVariant metaData(int key) const {
-        return m_currentIndex == 0 ? m_metaData.value(key) : QVariant(); }
+    QVariant itemId() const { return isValid() ? QVariant(1) : QVariant(); }
+    QUrl itemUrl() const { return isValid() ? QUrl("http://example.com") : QUrl(); }
+    QString itemType() const { return isValid() ? QLatin1String("WebPage") : QString(); }
+
+    QVariant metaData(int key) const { return isValid() ? m_metaData.value(key) : QVariant(); }
     bool setMetaData(int key, const QVariant &value)
     {
-        if (m_currentIndex == 0 && key >= 0) {
+        if (isValid()) {
             m_metaData.insert(key, value);
+            emit metaDataChanged(m_currentIndex, 1, QList<int>() << key);
             return true;
         } else {
             return false;
@@ -111,7 +118,15 @@ public:
 
     void doFinish(int result, bool idle) { finish(result, idle); }
 
+    void setCount(int count) { m_count = count; }
+
+    using QGalleryResultSet::itemsInserted;
+    using QGalleryResultSet::itemsRemoved;
+    using QGalleryResultSet::itemsMoved;
+    using QGalleryResultSet::metaDataChanged;
+
 private:
+    int m_count;
     int m_currentIndex;
     QStringList m_propertyNames;
     QHash<int, QVariant> m_metaData;
@@ -120,7 +135,7 @@ private:
 class QtTestGallery : public QAbstractGallery
 {
 public:
-    QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
+    QtTestGallery() : m_count(1), m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
     bool isRequestSupported(QGalleryAbstractRequest::RequestType type) const {
         return type == QGalleryAbstractRequest::QueryRequest; }
@@ -128,12 +143,15 @@ public:
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
 
+    void setCount(int count) { m_count = count; }
+
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
         if (request->type() == QGalleryAbstractRequest::QueryRequest) {
             return new QtGalleryTestResponse(
                     static_cast<QGalleryQueryRequest *>(request)->propertyNames(),
+                    m_count,
                     m_result,
                     m_idle);
         }
@@ -141,9 +159,11 @@ protected:
     }
 
 private:
+    int m_count;
     int m_result;
     bool m_idle;
 };
+
 
 void tst_QGalleryQueryRequest::initTestCase()
 {
@@ -248,6 +268,7 @@ void tst_QGalleryQueryRequest::executeSynchronous()
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.resultSet()) == 0);
 
     gallery.setResult(QGalleryAbstractRequest::Succeeded);
+    gallery.setCount(10);
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(spy.count(), 1);
@@ -261,7 +282,7 @@ void tst_QGalleryQueryRequest::executeSynchronous()
     QCOMPARE(request.propertyAttributes(0), QGalleryProperty::CanRead | QGalleryProperty::CanWrite);
     QCOMPARE(request.propertyType(0), QVariant::String);
 
-    QCOMPARE(request.itemCount(), 1);
+    QCOMPARE(request.itemCount(), 10);
     QCOMPARE(request.currentIndex(), -1);
     QCOMPARE(request.itemId(), QVariant());
     QCOMPARE(request.itemUrl(), QUrl());
@@ -276,17 +297,19 @@ void tst_QGalleryQueryRequest::executeSynchronous()
 
     QCOMPARE(request.seek(0, false), true);
     QCOMPARE(request.currentIndex(), 0);
-    QCOMPARE(request.seek(1, true), false);
+    QCOMPARE(request.seek(1, true), true);
     QCOMPARE(request.currentIndex(), 1);
     QCOMPARE(request.seek(-1, true), true);
     QCOMPARE(request.currentIndex(), 0);
     QCOMPARE(request.seek(-1, false), false);
     QCOMPARE(request.currentIndex(), -1);
-    QCOMPARE(request.seek(1, true), true);
-    QCOMPARE(request.currentIndex(), 0);
+    QCOMPARE(request.last(), true);
+    QCOMPARE(request.currentIndex(), 9);
     QCOMPARE(request.next(), false);
-    QCOMPARE(request.currentIndex(), 1);
+    QCOMPARE(request.currentIndex(), 10);
     QCOMPARE(request.previous(), true);
+    QCOMPARE(request.currentIndex(), 9);
+    QCOMPARE(request.first(), true);
     QCOMPARE(request.currentIndex(), 0);
     QCOMPARE(request.previous(), false);
     QCOMPARE(request.currentIndex(), -1);

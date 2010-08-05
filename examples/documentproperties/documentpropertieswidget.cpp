@@ -78,7 +78,7 @@ DocumentPropertiesWidget::DocumentPropertiesWidget(
 
 void DocumentPropertiesWidget::itemsInserted(int index, int count)
 {
-    resultSet->seek(0, false);
+    resultSet->fetch(0);
 
     metaDataChanged(index, count, QList<int>());
 

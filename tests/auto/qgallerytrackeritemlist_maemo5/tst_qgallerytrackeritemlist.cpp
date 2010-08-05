@@ -343,7 +343,7 @@ void tst_QGalleryTrackerItemList::query()
     QCOMPARE(list.metaData(8), QVariant());
     QCOMPARE(list.resources(), QList<QGalleryResource>());
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetchFirst(), true);
     QCOMPARE(list.currentIndex(), 0);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.itemUrl(), QUrl(QLatin1String("file:///a/000")));
@@ -366,7 +366,7 @@ void tst_QGalleryTrackerItemList::query()
                  << QGalleryResource(QUrl(QLatin1String("file:///a/000")), attributes));
     }
 
-    QCOMPARE(list.seek(-1, true), false);
+    QCOMPARE(list.fetchPrevious(), false);
     QCOMPARE(list.currentIndex(), -1);
     QCOMPARE(list.itemId(), QVariant());
     QCOMPARE(list.itemUrl(), QUrl());
@@ -382,7 +382,7 @@ void tst_QGalleryTrackerItemList::query()
     QCOMPARE(list.metaData(8), QVariant());
     QCOMPARE(list.resources(), QList<QGalleryResource>());
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetchLast(), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-015")));
     QCOMPARE(list.itemUrl(), QUrl(QLatin1String("file:///a/015")));
     QCOMPARE(list.itemType(), QLatin1String("typea"));
@@ -404,7 +404,7 @@ void tst_QGalleryTrackerItemList::query()
                  << QGalleryResource(QUrl(QLatin1String("file:///a/015")), attributes));
     }
 
-    QCOMPARE(list.seek(1, true), false);
+    QCOMPARE(list.fetchNext(), false);
     QCOMPARE(list.currentIndex(), 16);
     QCOMPARE(list.itemId(), QVariant());
     QCOMPARE(list.itemUrl(), QUrl());
@@ -449,10 +449,10 @@ void tst_QGalleryTrackerItemList::refresh()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-015")));
 
     list.refresh();
@@ -464,10 +464,10 @@ void tst_QGalleryTrackerItemList::refresh()
     QCOMPARE(removeSpy.count(), 0);
     QCOMPARE(changeSpy.count(), 0);
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-015")));
 }
 
@@ -498,10 +498,10 @@ void tst_QGalleryTrackerItemList::reset()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-015")));
 
     m_queryAdaptor->setCount('a', 0);
@@ -520,10 +520,10 @@ void tst_QGalleryTrackerItemList::reset()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-015")));
 }
 
@@ -557,13 +557,13 @@ void tst_QGalleryTrackerItemList::removeItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 18);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
-    QCOMPARE(list.seek(10, false), true);
+    QCOMPARE(list.fetch(10), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 
     m_queryAdaptor->setCount('b', 0);
@@ -579,10 +579,10 @@ void tst_QGalleryTrackerItemList::removeItem()
     QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(),  8);
     QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(),  2);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 }
 
@@ -614,10 +614,10 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 
     m_queryAdaptor->setCount('b', 2);
@@ -633,13 +633,13 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  8);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  2);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
-    QCOMPARE(list.seek(10, false), true);
+    QCOMPARE(list.fetch(10), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 }
 
@@ -672,10 +672,10 @@ void tst_QGalleryTrackerItemList::replaceFirstItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-000")));
 
-    QCOMPARE(list.seek(1, false), true);
+    QCOMPARE(list.fetch(1), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 
     m_queryAdaptor->setCount('a', 0);
@@ -694,10 +694,10 @@ void tst_QGalleryTrackerItemList::replaceFirstItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  1);
 
-    QCOMPARE(list.seek(0, false), true);
+    QCOMPARE(list.fetch(0), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
-    QCOMPARE(list.seek(1, false), true);
+    QCOMPARE(list.fetch(1), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 }
 
@@ -730,10 +730,10 @@ void tst_QGalleryTrackerItemList::replaceLastItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(14, false), true);
+    QCOMPARE(list.fetch(14), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-014")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
     m_queryAdaptor->setCount('b', 0);
@@ -753,10 +753,10 @@ void tst_QGalleryTrackerItemList::replaceLastItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  1);
 
 
-    QCOMPARE(list.seek(14, false), true);
+    QCOMPARE(list.fetch(14), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-014")));
 
-    QCOMPARE(list.seek(15, false), true);
+    QCOMPARE(list.fetch(15), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 }
 
@@ -789,16 +789,16 @@ void tst_QGalleryTrackerItemList::replaceMiddleItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-000")));
 
-    QCOMPARE(list.seek(9, false), true);
+    QCOMPARE(list.fetch(9), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("b-001")));
 
-    QCOMPARE(list.seek(10, false), true);
+    QCOMPARE(list.fetch(10), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("d-000")));
 
     m_queryAdaptor->setCount('b', 0);
@@ -817,16 +817,16 @@ void tst_QGalleryTrackerItemList::replaceMiddleItem()
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  8);
     QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  2);
 
-    QCOMPARE(list.seek(7, false), true);
+    QCOMPARE(list.fetch(7), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("a-007")));
 
-    QCOMPARE(list.seek(8, false), true);
+    QCOMPARE(list.fetch(8), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-000")));
 
-    QCOMPARE(list.seek(9, false), true);
+    QCOMPARE(list.fetch(9), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("c-001")));
 
-    QCOMPARE(list.seek(10, false), true);
+    QCOMPARE(list.fetch(10), true);
     QCOMPARE(list.itemId(), QVariant(QLatin1String("d-000")));
 }
 
