@@ -53,7 +53,6 @@ class QGalleryTypeRequestPrivate : public QGalleryAbstractRequestPrivate
 public:
     QGalleryTypeRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::TypeRequest)
-        , scope(QGalleryAbstractRequest::AllDescendants)
         , live(false)
         , resultSet(0)
         , internalResultSet(0)
@@ -93,15 +92,12 @@ public:
             emit q_func()->metaDataChanged(keys);
     }
 
-    QGalleryAbstractRequest::Scope scope;
     bool live;
     QGalleryResultSet *resultSet;
     QGalleryResultSet *internalResultSet;
     QGalleryNullResultSet nullResultSet;
     QStringList propertyNames;
     QString itemType;
-    QVariant rootItem;
-    QGalleryFilter filter;
     QList<int> propertyKeys;
 };
 

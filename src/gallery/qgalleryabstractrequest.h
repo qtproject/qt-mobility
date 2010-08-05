@@ -67,7 +67,6 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
     Q_ENUMS(State)
     Q_ENUMS(Result)
     Q_ENUMS(RequestType)
-    Q_ENUMS(Scope)
 public:
     enum State
     {
@@ -103,12 +102,6 @@ public:
         ItemRequest,
         TypeRequest,
         RemoveRequest
-    };
-
-    enum Scope
-    {
-        AllDescendants,
-        DirectDescendants
     };
 
     explicit QGalleryAbstractRequest(RequestType type, QObject *parent = 0);

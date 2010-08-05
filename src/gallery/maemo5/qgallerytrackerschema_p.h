@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgalleryabstractrequest.h"
+#include "qgalleryqueryrequest.h"
 #include "qgalleryfilter.h"
 #include "qgalleryproperty.h"
 
@@ -100,7 +100,7 @@ public:
     int prepareFilterResponse(
             QGalleryTrackerItemListArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
-            QGalleryAbstractRequest::Scope scope,
+            QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,
             const QGalleryFilter &filter,
             const QStringList &propertyNames,
@@ -116,7 +116,7 @@ private:
 
     int buildFilterQuery(
             QString *query,
-            QGalleryAbstractRequest::Scope scope,
+            QGalleryQueryRequest::Scope scope,
             const QString &scopeItemId,
             const QGalleryFilter &filter) const;
 

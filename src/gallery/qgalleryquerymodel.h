@@ -44,7 +44,7 @@
 
 #include <QtCore/qabstractitemmodel.h>
 
-#include <qgalleryabstractrequest.h>
+#include <qgalleryqueryrequest.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,7 +63,7 @@ class Q_GALLERY_EXPORT QGalleryQueryModel : public QAbstractItemModel
     Q_PROPERTY(int limit READ limit WRITE setLimit)
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
-    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
     Q_PROPERTY(QGalleryAbstractRequest::State state READ state NOTIFY stateChanged)
@@ -102,8 +102,8 @@ public:
     QVariant rootItem() const;
     void setRootItem(const QVariant &itemId);
 
-    QGalleryAbstractRequest::Scope scope() const;
-    void setScope(QGalleryAbstractRequest::Scope scope);
+    QGalleryQueryRequest::Scope scope() const;
+    void setScope(QGalleryQueryRequest::Scope scope);
 
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);

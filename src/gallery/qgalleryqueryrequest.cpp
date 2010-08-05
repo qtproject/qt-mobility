@@ -42,32 +42,10 @@
 #include "qgalleryqueryrequest.h"
 #include "qgalleryabstractrequest_p.h"
 
+#include "qgallerynullresultset_p.h"
 #include "qgalleryresource.h"
-#include "qgalleryresultset.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QGalleryNullResultSet : public QGalleryResultSet
-{
-public:
-    int propertyKey(const QString &) const { return -1; }
-    QGalleryProperty::Attributes propertyAttributes(int) const {
-        return QGalleryProperty::Attributes(); }
-    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
-
-    int itemCount() const { return 0; }
-
-    QVariant itemId() const { return QVariant(); }
-    QUrl itemUrl() const { return QUrl(); }
-    QString itemType() const { return QString(); }
-    QList<QGalleryResource> resources() const { return QList<QGalleryResource>(); }
-
-    QVariant metaData(int) const { return QVariant(); }
-    bool setMetaData(int, const QVariant &) { return false; }
-
-    int currentIndex() const { return -1; }
-    bool seek(int, bool) { return false; }
-};
 
 class QGalleryQueryRequestPrivate : public QGalleryAbstractRequestPrivate
 {
@@ -76,7 +54,7 @@ public:
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::QueryRequest)
         , offset(0)
         , limit(0)
-        , scope(QGalleryAbstractRequest::AllDescendants)
+        , scope(QGalleryQueryRequest::AllDescendants)
         , live(false)
         , resultSet(0)
         , internalResultSet(0)
@@ -86,7 +64,7 @@ public:
 
     int offset;
     int limit;
-    QGalleryAbstractRequest::Scope scope;
+    QGalleryQueryRequest::Scope scope;
     bool live;
     QGalleryResultSet *resultSet;
     QGalleryResultSet *internalResultSet;
@@ -110,6 +88,18 @@ public:
     items from a gallery.
 
 */
+
+/*!
+    \enum QGalleryQueryRequest::Scope
+
+    Identifies the scope of query.
+
+    \value AllDescendants The query will return all descendents of the scope
+    item.
+    \value DirectDescendants The query will return only direct descendents of
+    the scope item.
+*/
+
 /*!
     Constructs a new gallery query request.
 
@@ -272,12 +262,12 @@ void QGalleryQueryRequest::setRootItem(const QVariant &itemId)
     a request or just the direct descendants.
 */
 
-QGalleryAbstractRequest::Scope QGalleryQueryRequest::scope() const
+QGalleryQueryRequest::Scope QGalleryQueryRequest::scope() const
 {
     return d_func()->scope;
 }
 
-void QGalleryQueryRequest::setScope(QGalleryAbstractRequest::Scope scope)
+void QGalleryQueryRequest::setScope(QGalleryQueryRequest::Scope scope)
 {
     d_func()->scope = scope;
 }

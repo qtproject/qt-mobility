@@ -386,7 +386,7 @@ void tst_QGalleryItemListModel::properties()
     const int limit = 12;
     const QString rootType = QLatin1String("Document");
     const QVariant rootItem = 35;
-    const QGalleryAbstractRequest::Scope scope = QGalleryAbstractRequest::DirectDescendants;
+    const QGalleryQueryRequest::Scope scope = QGalleryQueryRequest::DirectDescendants;
     const QGalleryFilter filter = QGalleryMetaDataFilter(
             QLatin1String("rating"), 3, QGalleryFilter::GreaterThan);
 
@@ -404,7 +404,7 @@ void tst_QGalleryItemListModel::properties()
     QCOMPARE(model.limit(), 0);
     QCOMPARE(model.rootType(), QString());
     QCOMPARE(model.rootItem(), QVariant());
-    QCOMPARE(model.scope(), QGalleryAbstractRequest::AllDescendants);
+    QCOMPARE(model.scope(), QGalleryQueryRequest::AllDescendants);
     QCOMPARE(model.filter(), QGalleryFilter());
 
     model.setSortPropertyNames(sortPropertyNames);

@@ -168,7 +168,7 @@ void tst_QGalleryQueryRequest::properties()
     QCOMPARE(request.offset(), 0);
     QCOMPARE(request.limit(), 0);
     QCOMPARE(request.rootType(), QString());
-    QCOMPARE(request.scope(), QGalleryAbstractRequest::AllDescendants);
+    QCOMPARE(request.scope(), QGalleryQueryRequest::AllDescendants);
     QCOMPARE(request.rootItem(), QVariant());
     QCOMPARE(request.filter(), QGalleryFilter());
 
@@ -215,8 +215,8 @@ void tst_QGalleryQueryRequest::properties()
     request.setRootType(videoType.name());
     QCOMPARE(request.rootType(), QString::fromLatin1("Video"));
 
-    request.setScope(QGalleryAbstractRequest::DirectDescendants);
-    QCOMPARE(request.scope(), QGalleryAbstractRequest::DirectDescendants);
+    request.setScope(QGalleryQueryRequest::DirectDescendants);
+    QCOMPARE(request.scope(), QGalleryQueryRequest::DirectDescendants);
 
     request.setRootItem(QVariant(76));
     QCOMPARE(request.rootItem(), QVariant(76));

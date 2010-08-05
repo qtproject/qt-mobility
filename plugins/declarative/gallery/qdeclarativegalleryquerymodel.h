@@ -100,8 +100,8 @@ public:
 
     enum Scope
     {
-        AllDescendants = QGalleryAbstractRequest::AllDescendants,
-        DirectDescendants = QGalleryAbstractRequest::DirectDescendants
+        AllDescendants = QGalleryQueryRequest::AllDescendants,
+        DirectDescendants = QGalleryQueryRequest::DirectDescendants
     };
 
     enum Roles
@@ -140,7 +140,7 @@ public:
         if (!m_complete) m_request.setRootType(itemType); emit rootTypeChanged(); }
 
     Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+    void setScope(Scope scope) { m_request.setScope(QGalleryQueryRequest::Scope(scope)); }
 
     QVariant rootItem() const { return m_request.rootItem(); }
     void setRootItem(const QVariant &itemId) {

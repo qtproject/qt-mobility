@@ -578,12 +578,12 @@ void QGalleryQueryModel::setRootItem(const QVariant &itemId)
     \sa rootItem()
 */
 
-QGalleryAbstractRequest::Scope QGalleryQueryModel::scope() const
+QGalleryQueryRequest::Scope QGalleryQueryModel::scope() const
 {
     return d_ptr->query.scope();
 }
 
-void QGalleryQueryModel::setScope(QGalleryAbstractRequest::Scope scope)
+void QGalleryQueryModel::setScope(QGalleryQueryRequest::Scope scope)
 {
     d_ptr->query.setScope(scope);
 }

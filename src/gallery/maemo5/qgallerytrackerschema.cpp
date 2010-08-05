@@ -1340,7 +1340,7 @@ int QGalleryTrackerSchema::prepareIdResponse(
 int QGalleryTrackerSchema::prepareFilterResponse(
         QGalleryTrackerItemListArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
-        QGalleryAbstractRequest::Scope scope,
+        QGalleryQueryRequest::Scope scope,
         const QString &rootItemId,
         const QGalleryFilter &filter,
         const QStringList &propertyNames,
@@ -1424,7 +1424,7 @@ int QGalleryTrackerSchema::prepareTypeResponse(
 
 int QGalleryTrackerSchema::buildFilterQuery(
         QString *query,
-        QGalleryAbstractRequest::Scope scope,
+        QGalleryQueryRequest::Scope scope,
         const QString &rootItemId,
         const QGalleryFilter &filter) const
 {
@@ -1444,11 +1444,11 @@ int QGalleryTrackerSchema::buildFilterQuery(
 
         if ((index = itemTypes.indexOfItemId(rootItemId)) != -1) {
             switch (scope) {
-            case QGalleryAbstractRequest::AllDescendants:
+            case QGalleryQueryRequest::AllDescendants:
                 qt_writeFileScopeCondition(
                         &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;
-            case QGalleryAbstractRequest::DirectDescendants:
+            case QGalleryQueryRequest::DirectDescendants:
                 qt_writeFileContainerCondition(
                         &result, &xml, itemTypes[index].prefix.strip(rootItemId));
                 break;

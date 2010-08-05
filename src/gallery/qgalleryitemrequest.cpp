@@ -92,7 +92,6 @@ public:
             emit q_func()->metaDataChanged(keys);
     }
 
-    QGalleryAbstractRequest::Scope scope;
     bool live;
     QGalleryResultSet *resultSet;
     QGalleryResultSet *internalResultSet;

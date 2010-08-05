@@ -65,7 +65,7 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
     Q_PROPERTY(int limit READ limit WRITE setLimit)
     Q_PROPERTY(QString rootType READ rootType WRITE setRootType)
     Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
-    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QGalleryQueryRequest::Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY currentItemChanged)
     Q_PROPERTY(QVariant itemId READ itemId NOTIFY currentItemChanged)
@@ -73,7 +73,14 @@ class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY currentItemChanged)
     Q_PROPERTY(QList<QGalleryResource> resources READ resources NOTIFY currentItemChanged)
     Q_PROPERTY(int currentIndex READ currentIndex WRITE seek NOTIFY currentItemChanged)
+    Q_ENUMS(Scope)
 public:
+    enum Scope
+    {
+        AllDescendants,
+        DirectDescendants
+    };
+
     explicit QGalleryQueryRequest(QObject *parent = 0);
     explicit QGalleryQueryRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryQueryRequest();
@@ -99,8 +106,8 @@ public:
     QVariant rootItem() const;
     void setRootItem(const QVariant &itemId);
 
-    QGalleryAbstractRequest::Scope scope() const;
-    void setScope(QGalleryAbstractRequest::Scope scope);
+    QGalleryQueryRequest::Scope scope() const;
+    void setScope(QGalleryQueryRequest::Scope scope);
 
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);
