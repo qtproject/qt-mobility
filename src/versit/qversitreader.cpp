@@ -53,8 +53,10 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
-  \brief The QVersitReader class reads Versit documents such as vCards from a device.
+  \brief The QVersitReader class provides an interface for reading versit
+  documents such as vCards from a Stream.
   \ingroup versit
+  \inmodule QtVersit
 
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
@@ -213,7 +215,8 @@ QVersitReader::Error QVersitReader::error() const
  * when the reading has finished.
  */
 bool QVersitReader::startReading()
-{    if (d->state() == ActiveState || d->isRunning()) {
+{
+    if (d->state() == ActiveState || d->isRunning()) {
         d->setError(QVersitReader::NotReadyError);
         return false;
     } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {

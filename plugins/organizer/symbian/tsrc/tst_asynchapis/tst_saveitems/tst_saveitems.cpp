@@ -47,14 +47,15 @@
 
 QTM_USE_NAMESPACE
 
-
+// Constants
 const QString m_managerNameSymbian("symbian");
+const int KNumberOfEntries = 2; 
 
 // We need to be able to pass QOrganizerItem as parameter from
 // test data functions
 Q_DECLARE_METATYPE(QOrganizerItem)
 
-class TestAsychApis : public QObject
+class TestSaveitems : public QObject
 {
    Q_OBJECT
    
@@ -71,105 +72,98 @@ public slots:
    void requestResultsAvailable();
    
 private:
-    QOrganizerItemManager *m_om;
-    QOrganizerItem *m_organizerItem;
-    QOrganizerItemSaveRequest* m_saveItemRequest;
+   QList<QOrganizerItem> createItems(int noOfItems);
+   
+private:
+    QOrganizerItemManager*              m_om;
+    QOrganizerItemSaveRequest*          m_saveItemRequest;
 };
 
-void TestAsychApis::init()
+void TestSaveitems::init()
 {
-    //QFETCH(QString, managerName);
-
     // Create a new item manager instance
     m_om = new QOrganizerItemManager(m_managerNameSymbian);
         
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds(), 0);
     
-    // Create a new organizer item
-    m_organizerItem = new QOrganizerItem();
-    
-    // Set the organizer item type
-    m_organizerItem->setType(QOrganizerItemType::TypeEvent);
-    
-    // Set organizer item description
-    m_organizerItem->setDescription("myDescription");
-    
-    // Set display label
-    m_organizerItem->setDisplayLabel("myDisplaylabel");
-            
-    QOrganizerEventTimeRange timeRange;
-    QDateTime startTime;
-    startTime.currentDateTime();
-    timeRange.setStartDateTime(startTime.currentDateTime());
-    QVERIFY(m_organizerItem->saveDetail(&timeRange));
-
-    
     // Create asynchronous request to save an item
     m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     
+     
     // Connect for the state change signal 
     connect(m_saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
     
     connect(m_saveItemRequest, SIGNAL(resultsAvailable()), this, SLOT(requestResultsAvailable()));
 }
 
-void TestAsychApis::cleanup()
+void TestSaveitems::cleanup()
 {
+
     if (m_om) {
         delete m_om;
         m_om = 0;
     }
-    if (m_organizerItem) {
-        delete m_organizerItem;
-        m_organizerItem = 0;
-    }
 }
    
-void TestAsychApis::saveItem()
+void TestSaveitems::saveItem()
 {
-    QList<QOrganizerItem> itemsList;
-    itemsList.append(*m_organizerItem);
-    
-    // Create a new organizer item
-    QOrganizerItem organizerItem;
-    // Set the organizer item type
-    organizerItem.setType(QOrganizerItemType::TypeEvent);
-    // Set organizer item description
-    organizerItem.setDescription("myDescription 1");
-    // Set display label
-    organizerItem.setDisplayLabel("myDisplaylabel 1");
-            
-    QOrganizerEventTimeRange timeRange;
-    QDateTime startTime;
-    startTime.currentDateTime();
-    timeRange.setStartDateTime(startTime.currentDateTime());
-    
-    QVERIFY(organizerItem.saveDetail(&timeRange));
-
-    //
-    itemsList.append(organizerItem);
-    m_saveItemRequest->setItems(itemsList);
+    m_saveItemRequest->setItems(createItems(KNumberOfEntries));
     m_saveItemRequest->setManager(m_om);
     m_saveItemRequest->start();
-    QTest::qWait(100000);
+    QTest::qWait(10000);
 }
 
-void TestAsychApis::saveItem_data()
+QList<QOrganizerItem> TestSaveitems::createItems(int noOfItems)
+{
+    QList<QOrganizerItem> itemsList;
+    
+    for (int index(0); index < noOfItems; index++) {
+        // Create a new organizer item
+        QOrganizerItem organizerItem;
+        // Set the organizer item type
+        organizerItem.setType(QOrganizerItemType::TypeEvent);
+        // Create description string 
+        QString description("myDescription");
+        // Set organizer item description
+        organizerItem.setDescription(description);
+        // Create desplay label
+        QString desplaylabel("myDescription");
+        // Set display label
+        organizerItem.setDisplayLabel(desplaylabel);
+        
+        // Set current time
+        QOrganizerEventTimeRange timeRange;
+        QDateTime startTime;
+        startTime.currentDateTime();
+        timeRange.setStartDateTime(startTime.currentDateTime());
+        
+        QVERIFY(organizerItem.saveDetail(&timeRange));
+        
+        itemsList.append(organizerItem);
+    }
+    
+    return itemsList;
+}
+
+void TestSaveitems::saveItem_data()
 {
     QTest::addColumn<QString>("managerName");
 
     QStringList managerNames = QOrganizerItemManager::availableManagers();
-    managerNames.removeAll("invalid"); // The test cases would not pass on invalid backend
-    managerNames.removeAll("skeleton"); // The test cases would not pass on skeleton backend
+    
+    // The test cases would not pass on invalid backend
+    managerNames.removeAll("invalid");
+    
+    // The test cases would not pass on skeleton backend
+    managerNames.removeAll("skeleton"); 
 
     foreach (QString managerName, managerNames) {
         
     }
-    
 }
 
-void TestAsychApis::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestSaveitems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -189,9 +183,9 @@ void TestAsychApis::requestStateChanged(QOrganizerItemAbstractRequest::State cur
             // Operation either completed successfully or failed.  
             // No further results will be available.
             // test completed, compare the results
-            QList<QOrganizerItem> itemsSaved = m_saveItemRequest->items();
-            QVERIFY(itemsSaved.size() == 2);
-            QVERIFY(itemsSaved[1].type() == QOrganizerItemType::TypeEvent);
+            QList<QOrganizerItem> items = m_saveItemRequest->items();
+            QCOMPARE(KNumberOfEntries, items.count());
+            QVERIFY(items[1].type() == QOrganizerItemType::TypeEvent);
             break;
         }
         default: {
@@ -200,12 +194,12 @@ void TestAsychApis::requestStateChanged(QOrganizerItemAbstractRequest::State cur
     }
 }
 
-void TestAsychApis::requestResultsAvailable()
+void TestSaveitems::requestResultsAvailable()
 {
-    // Results available
-    // Verify the results
+    QList<QOrganizerItem> items = m_saveItemRequest->items();
+    QCOMPARE(KNumberOfEntries, items.count());
 }
 
-QTEST_MAIN(TestAsychApis);
+QTEST_MAIN(TestSaveitems);
 
-#include "tst_asynchapis.moc"
+#include "tst_saveitems.moc"

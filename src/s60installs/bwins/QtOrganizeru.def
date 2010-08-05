@@ -821,4 +821,12 @@ EXPORTS
 	?setDateTime@QOrganizerJournal@QtMobility@@QAEXABVQDateTime@@@Z @ 820 NONAME ; void QtMobility::QOrganizerJournal::setDateTime(class QDateTime const &)
 	?parseUri@QOrganizerItemManager@QtMobility@@SA_NABVQString@@PAV3@PAV?$QMap@VQString@@V1@@@@Z @ 821 NONAME ; bool QtMobility::QOrganizerItemManager::parseUri(class QString const &, class QString *, class QMap<class QString, class QString> *)
 	?address@QOrganizerItemLocation@QtMobility@@QBE?AVQString@@XZ @ 822 NONAME ; class QString QtMobility::QOrganizerItemLocation::address(void) const
+	??_EQOrganizerItemRecurrenceRule@QtMobility@@QAE@I@Z @ 823 NONAME ; QtMobility::QOrganizerItemRecurrenceRule::~QOrganizerItemRecurrenceRule(unsigned int)
+	??0QOrganizerItemComment@QtMobility@@QAE@ABV01@@Z @ 824 NONAME ; QtMobility::QOrganizerItemComment::QOrganizerItemComment(class QtMobility::QOrganizerItemComment const &)
+	??_EQOrganizerItemSortOrder@QtMobility@@QAE@I@Z @ 825 NONAME ; QtMobility::QOrganizerItemSortOrder::~QOrganizerItemSortOrder(unsigned int)
+	??_EQOrganizerItemComment@QtMobility@@QAE@I@Z @ 826 NONAME ; QtMobility::QOrganizerItemComment::~QOrganizerItemComment(unsigned int)
+	??_EQOrganizerItemFilter@QtMobility@@QAE@I@Z @ 827 NONAME ; QtMobility::QOrganizerItemFilter::~QOrganizerItemFilter(unsigned int)
+	??_EQOrganizerItemDetailDefinition@QtMobility@@QAE@I@Z @ 828 NONAME ; QtMobility::QOrganizerItemDetailDefinition::~QOrganizerItemDetailDefinition(unsigned int)
+	??_EQOrganizerItemDetail@QtMobility@@QAE@I@Z @ 829 NONAME ; QtMobility::QOrganizerItemDetail::~QOrganizerItemDetail(unsigned int)
+	??_EQOrganizerItem@QtMobility@@QAE@I@Z @ 830 NONAME ; QtMobility::QOrganizerItem::~QOrganizerItem(unsigned int)
 

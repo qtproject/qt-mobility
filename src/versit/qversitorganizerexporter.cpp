@@ -52,7 +52,9 @@ QTM_USE_NAMESPACE
   \class QVersitOrganizerExporter
   \brief The QVersitOrganizerExporter class converts \l {QOrganizerItem}{QOrganizerItems} into
   \l {QVersitDocument}{QVersitDocuments}.
+  
   \ingroup versit
+  \inmodule QtVersit
 
   This class is used to convert a list of \l {QOrganizerItem}{QOrganizerItems} (which may be stored
   in a QOrganizerItemManager) into a QVersitDocument (which may be written to an I/O device using
