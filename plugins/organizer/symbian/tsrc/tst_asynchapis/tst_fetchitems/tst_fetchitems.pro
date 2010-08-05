@@ -3,7 +3,7 @@
 
 
 TEMPLATE = app
-TARGET = tst_asynchapis
+TARGET = tst_fetchitems
 QT += testlib
 CONFIG += qtestlib
 
@@ -12,7 +12,7 @@ symbian:
 	INCLUDEPATH += .\inc
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-    SOURCES += tst_asynchapis.cpp
+    SOURCES += tst_fetchitems.cpp
 
     CONFIG += mobility
     MOBILITY = organizer

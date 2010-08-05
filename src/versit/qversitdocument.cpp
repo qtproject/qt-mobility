@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
   \class QVersitDocument
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
+  \inmodule QtVersit
 
   A vCard is represented in abstract form as a QVersitDocument that consists of a number of
   properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for
@@ -95,6 +96,7 @@ QTM_BEGIN_NAMESPACE
   \value InvalidType No type specified or a document with an invalid type was parsed
   \value VCard21Type vCard version 2.1
   \value VCard30Type vCard version 3.0
+  \value VCard40Type vCard version 4.0
   \value ICalendar20Type iCalendar version 2.0
  */
 

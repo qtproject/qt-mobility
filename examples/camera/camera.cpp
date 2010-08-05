@@ -132,6 +132,7 @@ void Camera::setCamera(const QByteArray &cameraDevice)
             this, SLOT(updateLockStatus(QCamera::LockStatus, QCamera::LockChangeReason)));
 
     updateCaptureMode();
+    camera->start();
 }
 
 void Camera::updateRecordTime()
@@ -177,12 +178,7 @@ void Camera::configureVideoSettings()
         videoSettings = settingsDialog.videoSettings();
         videoContainerFormat = settingsDialog.format();
 
-        //apply video settings immediately if camera is in the Idle state,
-        //otherwise request state change to Idle with setCaptureMode
-        if (camera->state() != QCamera::IdleState)
-            camera->setCaptureMode(QCamera::CaptureVideo);
-        else
-            mediaRecorder->setEncodingSettings(
+        mediaRecorder->setEncodingSettings(
                     audioSettings,
                     videoSettings,
                     videoContainerFormat);
@@ -197,13 +193,7 @@ void Camera::configureImageSettings()
 
     if (settingsDialog.exec()) {
         imageSettings = settingsDialog.imageSettings();
-
-        //apply image settings immediately if camera is in the Idle state,
-        //otherwise request state change to Idle with setCaptureMode
-        if (camera->state() != QCamera::IdleState)
-            camera->setCaptureMode(QCamera::CaptureStillImage);
-        else
-            imageCapture->setEncodingSettings(imageSettings);
+        imageCapture->setEncodingSettings(imageSettings);
     }
 }
 
@@ -270,8 +260,7 @@ void Camera::takeImage()
 
 void Camera::startCamera()
 {
-    //start still image or video capture
-    updateCaptureMode();
+    camera->start();
 }
 
 void Camera::stopCamera()
@@ -288,26 +277,15 @@ void Camera::updateCaptureMode()
 
 void Camera::updateCameraState(QCamera::State state)
 {
-    switch (state) {
-    case QCamera::IdleState:
-        if (camera->captureMode() == QCamera::CaptureVideo) {
-            mediaRecorder->setEncodingSettings(
-                    audioSettings,
-                    videoSettings,
-                    videoContainerFormat);
-        } else if (camera->captureMode() == QCamera::CaptureStillImage) {
-            imageCapture->setEncodingSettings(imageSettings);
-        }
-
-        camera->start();
-        //fall
+    switch (state) {    
     case QCamera::ActiveState:
         ui->actionStartCamera->setEnabled(false);
         ui->actionStopCamera->setEnabled(true);
         ui->captureWidget->setEnabled(true);
         ui->actionSettings->setEnabled(true);
         break;
-    case QCamera::StoppedState:
+    case QCamera::UnloadedState:
+    case QCamera::LoadedState:
         ui->actionStartCamera->setEnabled(true);
         ui->actionStopCamera->setEnabled(false);
         ui->captureWidget->setEnabled(false);
