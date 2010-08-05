@@ -2516,7 +2516,8 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
       errorMap(QMap<int,QLandmarkManager::Error>()),
       managerUri(uri),
       isCanceled(false),
-      engine(eng)
+      engine(eng),
+      gpxHandler(0)
 {
 };
 

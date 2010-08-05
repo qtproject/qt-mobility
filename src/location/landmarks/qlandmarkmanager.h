@@ -64,7 +64,6 @@ class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
-    friend class QLandmarkAbstractRequest;
     Q_OBJECT
 public:
     enum Error {
@@ -183,7 +182,7 @@ protected:
 private:
     QLandmarkManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QLandmarkManager)
-
+    friend class QLandmarkAbstractRequest;
     QLandmarkManagerEngine *engine();
 };
 

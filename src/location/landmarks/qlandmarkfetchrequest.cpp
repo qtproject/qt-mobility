@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 */
 
