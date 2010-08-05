@@ -171,7 +171,7 @@ void Camera::keyReleaseEvent(QKeyEvent * event)
             stop();
         break;
     default:
-        QMainWindow::keyPressEvent(event);
+        QMainWindow::keyReleaseEvent(event);
     }
 }
 
