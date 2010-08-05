@@ -346,11 +346,6 @@ information from the system.
   This signal is emitted whenever the network mode changes, specified by \a mode.
 */
 
-/*!
-  \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
-
-  This signal is emitted whenever bluetooth state changes, specified by \a on.
-*/
 
 /*!
   \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
