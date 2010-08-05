@@ -213,9 +213,7 @@ private slots:
     }
 
     void testFilterBox() {
-        QLandmarkBoxFilter boxFilter;
-        boxFilter.setTopLeftCoordinate(QGeoCoordinate(20,30));
-        boxFilter.setBottomRightCoordinate(QGeoCoordinate(10,40));
+        QLandmarkBoxFilter boxFilter(QGeoCoordinate(20,30),QGeoCoordinate(10,40));
 
         //landmark is in box
         QLandmark lm;
@@ -227,8 +225,10 @@ private slots:
         QVERIFY(!MockEngine::testFilter(boxFilter,lm));
 
         //test landmark inside box when box crosses dateline
-        boxFilter.setTopLeftCoordinate(QGeoCoordinate(20,170));
-        boxFilter.setBottomRightCoordinate(QGeoCoordinate(10,-170));
+        QGeoBoundingBox box;
+        box.setTopLeft(QGeoCoordinate(20,170));
+        box.setBottomRight(QGeoCoordinate(10,-170));
+        boxFilter.setBoundingBox(box);
 
         lm.setCoordinate(QGeoCoordinate(15,-175));
         QVERIFY(MockEngine::testFilter(boxFilter, lm));

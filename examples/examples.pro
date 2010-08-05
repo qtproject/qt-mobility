@@ -37,15 +37,13 @@ contains(mobility_modules,location) {
     }
 
     !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += qgeoapiui \
+    	SUBDIRS += geoservicedemo \
                    mapviewer
 
     }
 
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo
-                   #mapviewer (disable for now) 
-                   #qgeoapiui
         
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps

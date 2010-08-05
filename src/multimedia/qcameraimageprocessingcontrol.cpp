@@ -154,30 +154,6 @@ QCameraImageProcessingControl::~QCameraImageProcessingControl()
     and 100 for maximum sharpening/denoising applied.
 */
 
-/*!
-    \fn QCameraImageProcessingControl::supportedPresets() const
-
-    Returns the list of image processing presets camera supports.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::presetDescription(const QByteArray &preset) const
-
-    Returns the image processing \a preset description.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::preset() const = 0;
-
-    Retuns the current image processing preset.
-*/
-
-/*!
-    \fn QCameraImageProcessingControl::setPreset(const QByteArray &preset) = 0;
-
-    Sets the current image processing \a preset.
-*/
-
 #include "moc_qcameraimageprocessingcontrol.cpp"
 QT_END_NAMESPACE
 

@@ -47,6 +47,7 @@
 #include <qcameracontrol.h>
 #include <qcameralockscontrol.h>
 #include <qcameraexposurecontrol.h>
+#include <qcameraflashcontrol.h>
 #include <qcamerafocuscontrol.h>
 #include <qcameraimagecapturecontrol.h>
 #include <qimageencodercontrol.h>
@@ -434,6 +435,45 @@ private:
     QCameraExposure::FlashModes m_flashMode;
 };
 
+class MockCameraFlashControl : public QCameraFlashControl
+{
+    Q_OBJECT
+public:
+    MockCameraFlashControl(QObject *parent = 0):
+        QCameraFlashControl(parent),
+        m_flashMode(QCameraExposure::FlashAuto)
+    {
+    }
+
+    ~MockCameraFlashControl() {}
+
+    QCameraExposure::FlashModes flashMode() const
+    {
+        return m_flashMode;
+    }
+
+    void setFlashMode(QCameraExposure::FlashModes mode)
+    {
+        if (isFlashModeSupported(mode)) {
+            m_flashMode = mode;
+        }
+    }
+
+    bool isFlashModeSupported(QCameraExposure::FlashModes mode) const
+    {
+        return mode & (QCameraExposure::FlashAuto | QCameraExposure::FlashOff | QCameraExposure::FlashOn);
+    }
+
+    bool isFlashReady() const
+    {
+        return true;
+    }
+
+private:
+    QCameraExposure::FlashModes m_flashMode;
+};
+
+
 class MockCameraFocusControl : public QCameraFocusControl
 {
     Q_OBJECT
@@ -597,28 +637,6 @@ public:
         }
     }
 
-    QList<QByteArray> supportedPresets() const
-    {
-        return m_presets;
-    }
-
-    QString presetDescription(const QByteArray &preset) const
-    {
-        return QString::fromLatin1(preset);
-    }
-
-    QByteArray preset() const
-    {
-        return m_preset;
-    }
-    void setPreset(const QByteArray &preset)
-    {
-        if (m_presets.contains(preset))
-            m_preset = preset;
-        else
-            m_preset.clear();
-    }
-
 
 private:
     QCameraImageProcessing::WhiteBalanceMode m_whiteBalanceMode;
@@ -626,9 +644,6 @@ private:
     int m_manualWhiteBalance;
     QVariant m_contrast;
     QVariant m_sharpeningLevel;
-
-    QList<QByteArray> m_presets;
-    QByteArray m_preset;
 };
 
 class MockImageEncoderControl : public QImageEncoderControl
@@ -706,6 +721,7 @@ public:
         mockControl = new MockCameraControl(this);
         mockLocksControl = new MockCameraLocksControl(this);
         mockExposureControl = new MockCameraExposureControl(this);
+        mockFlashControl = new MockCameraFlashControl(this);
         mockFocusControl = new MockCameraFocusControl(this);
         mockCaptureControl = new MockCaptureControl(mockControl, this);
         mockImageProcessingControl = new MockImageProcessingControl(this);
@@ -726,6 +742,9 @@ public:
 
         if (qstrcmp(iid, QCameraExposureControl_iid) == 0)
             return mockExposureControl;
+
+        if (qstrcmp(iid, QCameraFlashControl_iid) == 0)
+            return mockFlashControl;
 
         if (qstrcmp(iid, QCameraFocusControl_iid) == 0)
             return mockFocusControl;
@@ -748,6 +767,7 @@ public:
     MockCameraLocksControl *mockLocksControl;
     MockCaptureControl *mockCaptureControl;
     MockCameraExposureControl *mockExposureControl;
+    MockCameraFlashControl *mockFlashControl;
     MockCameraFocusControl *mockFocusControl;
     MockImageProcessingControl *mockImageProcessingControl;
     MockImageEncoderControl *mockImageEncoderControl;
