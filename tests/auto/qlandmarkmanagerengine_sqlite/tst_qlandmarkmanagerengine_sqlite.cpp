@@ -2902,6 +2902,13 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatches() {
     fetchHint.setOffset(500);
     lms = m_manager->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder), fetchHint);
     QCOMPARE(lms.count(), 0);
+
+    QLandmarkNameFilter nameFilter;
+    nameFilter.setName("LM1");
+    fetchHint.setMaxItems(-1);
+    fetchHint.setOffset(5);
+    lms = m_manager->landmarks(nameFilter,QLandmarkSortOrder(),fetchHint);
+    QCOMPARE(lms.count(),0);
 }
 
 void tst_QLandmarkManagerEngineSqlite::filterLandmarksLimitMatchesAsync() {
@@ -5533,6 +5540,7 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
         QCOMPARE(formats.count(), 1);
         QVERIFY(formats.at(0) == "GpxV1.1");
 }
+
 
 
 QTEST_MAIN(tst_QLandmarkManagerEngineSqlite)
