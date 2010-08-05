@@ -4,7 +4,8 @@
 TEMPLATE = app
 TARGET =
 DEPENDPATH += .
-INCLUDEPATH += ../../src/location
+INCLUDEPATH += ../../src/location \
+                ../../src/location/landmarks
 include(../examples.pri)
 
 # Input
