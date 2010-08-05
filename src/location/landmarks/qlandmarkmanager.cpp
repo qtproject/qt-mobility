@@ -154,11 +154,12 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkManager::FilterSupportLevel
-    Defines the possible support levels the manager can provide for a given filter.
-    \value Native The manager natively supports the filter.
-    \value Emulated The manager emulates the behaviour of the filter.  An emulated filter will inherently be slower than a natively supported filter.
-    \value None The manager does not support the filter at all.
+    \enum QLandmarkManager::SupportLevel
+    Defines the possible support levels the manager can provide for a given filter or sort order list.
+    \value Native The manager natively supports the filter or sort order list.
+    \value Emulated The manager emulates the behaviour of the filter or sort order list.
+                     Emulated behaviour will inherently be slower than a natively supported implementation.
+    \value None The manager does not support the filter or sort order list at all.
 */
 
 
@@ -842,7 +843,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
 /*!
     Returns the support level the manager provides for the given \a filter.
 */
-QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
+QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
     Q_D(const QLandmarkManager);
 
@@ -853,6 +854,22 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns the support level the manager provides for the given list of \a sortOrders.
+*/
+QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const
+{
+    Q_D(const QLandmarkManager);
+
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return QLandmarkManager::None;
+    }
+
+    return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
 }
 
 QStringList QLandmarkManager::platformLandmarkAttributeKeys() const

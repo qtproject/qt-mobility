@@ -83,7 +83,7 @@ public:
         UnknownError,
     };
 
-    enum FilterSupportLevel {
+    enum SupportLevel {
         Native,
         Emulated,
         None
@@ -145,7 +145,8 @@ public:
     Error error() const;
     QString errorString() const;
 
-    FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const;
     bool isFeatureSupported(LandmarkFeature feature) const;
 
     QStringList platformLandmarkAttributeKeys() const;

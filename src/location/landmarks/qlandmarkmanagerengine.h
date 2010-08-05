@@ -129,7 +129,8 @@ public:
                                  QLandmarkManager::Error *error, QString *errorString) const;
     virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
-    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const = 0;
