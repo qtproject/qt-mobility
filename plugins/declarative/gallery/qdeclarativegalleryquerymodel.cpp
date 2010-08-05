@@ -89,8 +89,7 @@ QTM_BEGIN_NAMESPACE
             model: GalleryQueryModel {
                 gallery: DocumentGallery {}
 
-                itemType: "Image"
-                properties: ["thumbnailImage"]
+                rootType: "Image"
                 filter: GalleryFilter {
                     property: "fileName";
                     value: "*.jpg";
@@ -99,7 +98,7 @@ QTM_BEGIN_NAMESPACE
             }
 
             delegate: Image {
-                pixmap: thumbnailImage
+                source: url
             }
         }
     }

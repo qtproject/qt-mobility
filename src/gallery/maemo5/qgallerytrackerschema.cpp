@@ -1369,22 +1369,11 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 }
 
 int QGalleryTrackerSchema::prepareTypeResponse(
-        QGalleryTrackerTypeResultSetArguments *arguments,
-        QGalleryDBusInterfaceFactory *dbus,
-        QGalleryAbstractRequest::Scope scope,
-        const QString &rootItemId,
-        const QGalleryFilter &filter) const
+        QGalleryTrackerTypeResultSetArguments *arguments, QGalleryDBusInterfaceFactory *dbus) const
 {
-    int result = QGalleryAbstractRequest::Succeeded;
-
     QString query;
 
-    if (!rootItemId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, scope, rootItemId, filter);
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return result;
-    } else if (m_itemIndex >= 0) {
+    if (m_itemIndex >= 0) {
         arguments->accumulative = false;
         arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
         arguments->queryInterface = dbus->metaDataInterface();

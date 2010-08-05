@@ -185,12 +185,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createTypeResponse(QGalleryTy
 
     QGalleryTrackerTypeResultSetArguments arguments;
 
-    int result = schema.prepareTypeResponse(
-            &arguments,
-            this,
-            request->scope(),
-            request->rootItem().toString(),
-            request->filter());
+    int result = schema.prepareTypeResponse(&arguments, this);
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryAbstractResponse(result);

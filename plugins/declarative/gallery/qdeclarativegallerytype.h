@@ -88,12 +88,6 @@ public:
         InvalidItemError                = QGalleryAbstractRequest::NoResult
     };
 
-    enum Scope
-    {
-        AllDescendants = QGalleryAbstractRequest::AllDescendants,
-        DirectDescendants = QGalleryAbstractRequest::DirectDescendants
-    };
-
     QDeclarativeGalleryType(QObject *parent = 0);
     ~QDeclarativeGalleryType();
 
@@ -116,16 +110,6 @@ public:
     QString itemType() const { return m_request.itemType(); }
     void setItemType(const QString itemType) {
         m_request.setItemType(itemType); if (m_complete) m_request.execute(); }
-
-    Scope scope() const { return Scope(m_request.scope()); }
-    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
-
-    QVariant rootItem() const { return m_request.rootItem(); }
-    void setRootItem(const QVariant &itemId) {
-        m_request.setRootItem(itemId); emit rootItemChanged(); }
-
-    QDeclarativeGalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(QDeclarativeGalleryFilterBase *filter) { m_filter = filter; filterChanged(); }
 
     QObject *metaData() const { return m_metaData; }
 

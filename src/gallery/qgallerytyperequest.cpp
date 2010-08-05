@@ -211,58 +211,6 @@ void QGalleryTypeRequest::setItemType(const QString &itemType)
 */
 
 /*!
-    \property QGalleryTypeRequest::rootItem
-
-    \brief the ID of an item that accumulative type information should be
-    restricted to the descendents of.
-*/
-
-QVariant QGalleryTypeRequest::rootItem() const
-{
-    return d_func()->rootItem;
-}
-
-void QGalleryTypeRequest::setRootItem(const QVariant &itemId)
-{
-    d_func()->rootItem = itemId;
-}
-
-
-/*!
-    \property QGalleryTypeRequest::scope
-
-    \brief whether all descendants of the rootItem should included in a request
-    or just the direct descendants.
-*/
-
-QGalleryAbstractRequest::Scope QGalleryTypeRequest::scope() const
-{
-    return d_func()->scope;
-}
-
-void QGalleryTypeRequest::setScope(QGalleryAbstractRequest::Scope scope)
-{
-    d_func()->scope = scope;
-}
-
-/*!
-    \property QGalleryTypeRequest::filter
-
-    \brief A filter restricting the items that accumulative type information
-    should derived from.
-*/
-
-QGalleryFilter QGalleryTypeRequest::filter() const
-{
-    return d_func()->filter;
-}
-
-void QGalleryTypeRequest::setFilter(const QGalleryFilter &filter)
-{
-    d_func()->filter = filter;
-}
-
-/*!
     Returns the result set containing the meta-data of a type.
 */
 

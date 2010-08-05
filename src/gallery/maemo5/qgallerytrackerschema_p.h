@@ -108,10 +108,7 @@ public:
 
     int prepareTypeResponse(
             QGalleryTrackerTypeResultSetArguments *arguments,
-            QGalleryDBusInterfaceFactory *dbus,
-            QGalleryAbstractRequest::Scope scope,
-            const QString &scopeItemId,
-            const QGalleryFilter &filter) const;
+            QGalleryDBusInterfaceFactory *dbus) const;
 
 private:
     QGalleryTrackerSchema(int itemIndex, int aggregateIndex)

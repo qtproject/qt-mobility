@@ -208,18 +208,6 @@ void tst_QGalleryTypeRequest::properties()
 
     request.setItemType(videoType.name());
     QCOMPARE(request.itemType(), QString::fromLatin1("Video"));
-
-    request.setScope(QGalleryAbstractRequest::DirectDescendants);
-    QCOMPARE(request.scope(), QGalleryAbstractRequest::DirectDescendants);
-
-    request.setRootItem(QVariant(76));
-    QCOMPARE(request.rootItem(), QVariant(76));
-
-    request.setRootItem(QVariant(QLatin1String("65")));
-    QCOMPARE(request.rootItem(), QVariant(QLatin1String("65")));
-
-    request.setFilter(filter);
-    QCOMPARE(request.filter(), filter);
 }
 
 void tst_QGalleryTypeRequest::executeSynchronous()
@@ -331,12 +319,8 @@ void tst_QGalleryTypeRequest::executeAsynchronous()
     QCOMPARE(request.isValid(), false);
     QCOMPARE(request.metaData(1), QVariant());
 
-    {
-
-
-        resultSet->setCount(1);
-        resultSet->itemsInserted(0, 1);
-    }
+    resultSet->setCount(1);
+    resultSet->itemsInserted(0, 1);
 
     QCOMPARE(typeChangedSpy.count(), 1);
     QCOMPARE(metaDataSpy.count(), 1);
@@ -451,7 +435,6 @@ void tst_QGalleryTypeRequest::multipleResults()
     QCOMPARE(request.isValid(), true);
     QCOMPARE(typeChangedSpy.count(), 3);
     QCOMPARE(metaDataSpy.count(), 2);
-
 }
 
 QTEST_MAIN(tst_QGalleryTypeRequest)

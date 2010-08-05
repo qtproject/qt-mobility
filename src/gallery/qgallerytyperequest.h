@@ -60,9 +60,6 @@ class Q_GALLERY_EXPORT QGalleryTypeRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType NOTIFY itemTypeChanged)
-    Q_PROPERTY(QVariant rootItem READ rootItem WRITE setRootItem)
-    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(bool valid READ isValid NOTIFY typeChanged)
 public:
     explicit QGalleryTypeRequest(QObject *parent = 0);
@@ -77,15 +74,6 @@ public:
 
     QString itemType() const;
     void setItemType(const QString &itemType);
-
-    QVariant rootItem() const;
-    void setRootItem(const QVariant &itemId);
-
-    QGalleryAbstractRequest::Scope scope() const;
-    void setScope(QGalleryAbstractRequest::Scope scope);
-
-    QGalleryFilter filter() const;
-    void setFilter(const QGalleryFilter &filter);
 
     QGalleryResultSet *resultSet() const;
 
