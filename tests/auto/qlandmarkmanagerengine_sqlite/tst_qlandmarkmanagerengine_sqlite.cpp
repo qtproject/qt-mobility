@@ -134,6 +134,9 @@ public:
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE","landmarks");
+    db.setDatabaseName("test.db");
     }
 
 private:
