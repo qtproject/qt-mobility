@@ -48,9 +48,12 @@
 
 
 // Static two phase construction
-COrganizerItemRequestsServiceProvider* COrganizerItemRequestsServiceProvider::NewL(QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine)
+COrganizerItemRequestsServiceProvider* 
+COrganizerItemRequestsServiceProvider::NewL(
+        QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine)
     {
-    COrganizerItemRequestsServiceProvider* self(new (ELeave) COrganizerItemRequestsServiceProvider(aOrganizerItemManagerEngine));
+    COrganizerItemRequestsServiceProvider* self(new (ELeave) 
+            COrganizerItemRequestsServiceProvider(aOrganizerItemManagerEngine));
     CleanupStack::PushL(self);
     self->ConstructL();
     CleanupStack::Pop(self);
@@ -58,7 +61,8 @@ COrganizerItemRequestsServiceProvider* COrganizerItemRequestsServiceProvider::Ne
     }
 
 // Basic first phase constructor
-COrganizerItemRequestsServiceProvider::COrganizerItemRequestsServiceProvider(QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine) : 
+COrganizerItemRequestsServiceProvider::COrganizerItemRequestsServiceProvider(
+        QOrganizerItemSymbianEngine& aOrganizerItemManagerEngine) : 
         CActive(EPriorityNormal), 
         iOrganizerItemManagerEngine(aOrganizerItemManagerEngine),
         iReq(NULL), iNoOfItems(0), iIndex(0)
@@ -80,34 +84,35 @@ COrganizerItemRequestsServiceProvider::~COrganizerItemRequestsServiceProvider()
     }
 
 // Start processing aReq request to be processed asynchronously
-TBool COrganizerItemRequestsServiceProvider::StartRequest(QOrganizerItemAbstractRequest* aReq)
+TBool COrganizerItemRequestsServiceProvider::StartRequest(
+        QOrganizerItemAbstractRequest* aReq)
     {
     if (!IsActive())
         {
         // Change the state of the request and emit signal
-        QOrganizerItemManagerEngine::updateRequestState(aReq, QOrganizerItemAbstractRequest::ActiveState);
-
-        // Save asynchronous request, start the timer and then return
+        QOrganizerItemManagerEngine::updateRequestState(aReq, 
+                QOrganizerItemAbstractRequest::ActiveState);
+        // Store the request to be processed
         iReq = aReq;
-        iIndex = 0; // Reset the index as new request is being processed
+        // Initialize the member variables for the new requests
+        Cleanup();
         QOrganizerItemAbstractRequest::RequestType requestType(iReq->type());
         switch (requestType)
             {
             case QOrganizerItemAbstractRequest::ItemRemoveRequest:
                 {
-                iItemIds.clear();
-                iItemIds.append(((QOrganizerItemRemoveRequest*)(iReq))->itemIds());
+                iItemIds.append(
+                        ((QOrganizerItemRemoveRequest*)(iReq))->itemIds());
                 iNoOfItems = iItemIds.count();
                 }
                 break;
             case QOrganizerItemAbstractRequest::ItemSaveRequest:
                 {
-                iItemList.clear();
                 iItemList.append(((QOrganizerItemSaveRequest*)(iReq))->items());
                 iNoOfItems = iItemList.count();
                 }
                 break;
-            }
+           }
 
         SelfComplete();
         return ETrue;
@@ -129,17 +134,10 @@ TBool COrganizerItemRequestsServiceProvider::CancelRequest()
     return ETrue;
     }
 
-TBool COrganizerItemRequestsServiceProvider::waitForRequestFinished(TTimeIntervalMicroSeconds32 aInterval)
+TBool COrganizerItemRequestsServiceProvider::waitForRequestFinished(
+        TTimeIntervalMicroSeconds32 aInterval)
     {
-    if (aInterval.Int() > 0)
-        {
-        // Block for aInterval microseconds
-        }
-    else
-        {
-        // Block forever
-        }
-    // Return false as its yet to be fully implemented
+    // We do not support this feature
     return false;
     }
 
@@ -176,17 +174,17 @@ void COrganizerItemRequestsServiceProvider::RunL()
             break;
         case QOrganizerItemAbstractRequest::DetailDefinitionFetchRequest: 
             {
-            
+            FetchDetailDefinitionL();
             }
             break;
         case QOrganizerItemAbstractRequest::DetailDefinitionRemoveRequest: 
             {
-            
+            RemoveDetailDefinitionL();
             }
             break;
         case QOrganizerItemAbstractRequest::DetailDefinitionSaveRequest: 
             {
-            
+            SaveDetailDefinitionL();
             }
             break;
         default:
@@ -207,7 +205,8 @@ void COrganizerItemRequestsServiceProvider::RemoveItemL()
         // RunError would call SelfComplete() for recursive operation
         iIndex++;
         // Delete an item
-        iOrganizerItemManagerEngine.deleteItemL(iItemIds.at(iIndex-1), sucessCount);
+        iOrganizerItemManagerEngine.deleteItemL(
+                iItemIds.at(iIndex-1), sucessCount);
         // Calls itself recursively until all the items are deleted
         SelfComplete();
 
@@ -257,9 +256,11 @@ void COrganizerItemRequestsServiceProvider::SaveItemL()
 void COrganizerItemRequestsServiceProvider::FetchItemsL()
     {
     QOrganizerItemFilter filter = ((QOrganizerItemFetchRequest*)iReq)->filter();
-    QList<QOrganizerItemSortOrder> sortOrder = ((QOrganizerItemFetchRequest*)iReq)->sorting();
+    QList<QOrganizerItemSortOrder> sortOrder = 
+            ((QOrganizerItemFetchRequest*)iReq)->sorting();
     // Fetch hint is not supported as of now
-    QOrganizerItemFetchHint fetchHint = ((QOrganizerItemFetchRequest*)iReq)->fetchHint();
+    QOrganizerItemFetchHint fetchHint = 
+            ((QOrganizerItemFetchRequest*)iReq)->fetchHint();
     
     // Get the filter type
     QOrganizerItemFilter::FilterType filterType = filter.type();
@@ -283,11 +284,13 @@ void COrganizerItemRequestsServiceProvider::FetchItemsL()
 void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     {
     QOrganizerItemFilter filter(((QOrganizerItemFetchRequest*)iReq)->filter());
-    QList<QOrganizerItemSortOrder> sortOrder(((QOrganizerItemFetchRequest*)iReq)->sorting());
+    QList<QOrganizerItemSortOrder> sortOrder(
+            ((QOrganizerItemFetchRequest*)iReq)->sorting());
     
     QOrganizerItemManager::Error error(QOrganizerItemManager::NoError);
  
-    QList<QOrganizerItemLocalId> ids(iOrganizerItemManagerEngine.itemIds(filter, sortOrder, &error));
+    QList<QOrganizerItemLocalId> ids(iOrganizerItemManagerEngine.itemIds(
+            filter, sortOrder, &error));
     
     QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(
             (QOrganizerItemLocalIdFetchRequest*)iReq, 
@@ -295,7 +298,8 @@ void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     }
 
 // Fetch Entries by local Ids
-void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(QOrganizerItemFilter& filter, QOrganizerItemFetchHint& fetchHint)
+void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(
+        QOrganizerItemFilter& filter, QOrganizerItemFetchHint& fetchHint)
     {
     // Get the local id filter
     QOrganizerItemLocalIdFilter localIdFilter(filter);
@@ -310,7 +314,8 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(QOrganizerItem
     
     for (int index(0); index < count; index++) 
         {
-        QOrganizerItem item = iOrganizerItemManagerEngine.item(QOrganizerItemLocalId(ids[index]), fetchHint, &error);
+        QOrganizerItem item = iOrganizerItemManagerEngine.item(
+                QOrganizerItemLocalId(ids[index]), fetchHint, &error);
         if (error != QOrganizerItemManager::NoError)
             {
             // Change state to finish and update the results whatsoever available
@@ -321,16 +326,126 @@ void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(QOrganizerItem
             }
         iItemList << item;
         }
-    QOrganizerItemManagerEngine::updateItemFetchRequest((QOrganizerItemFetchRequest*)(iReq), iItemList, error, QOrganizerItemAbstractRequest::FinishedState);
+    QOrganizerItemManagerEngine::updateItemFetchRequest(
+            (QOrganizerItemFetchRequest*)(iReq), iItemList, error, 
+            QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch items/entries by details
-void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(QOrganizerItemFilter& filter, QList<QOrganizerItemSortOrder>& sortOrder, QOrganizerItemFetchHint& fetchHint)
+void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
+        QOrganizerItemFilter& filter, QList<QOrganizerItemSortOrder>& sortOrder,
+        QOrganizerItemFetchHint& fetchHint)
     {
     QOrganizerItemManager::Error error;
     iItemList.clear();
-    iItemList = iOrganizerItemManagerEngine.items(filter, sortOrder, fetchHint, &error);
-    QOrganizerItemManagerEngine::updateItemFetchRequest((QOrganizerItemFetchRequest*)(iReq), iItemList, error, QOrganizerItemAbstractRequest::FinishedState);
+    iItemList = iOrganizerItemManagerEngine.items(filter, sortOrder, 
+            fetchHint, &error);
+    QOrganizerItemManagerEngine::updateItemFetchRequest(
+            (QOrganizerItemFetchRequest*)(iReq), iItemList, 
+            error, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
+// Fetch detail definition
+void COrganizerItemRequestsServiceProvider::FetchDetailDefinitionL()
+    {
+    QStringList stringList(((QOrganizerItemDetailDefinitionFetchRequest*)
+            (iReq))->definitionNames());
+    TInt count(stringList.count());
+
+    QString itemType(((QOrganizerItemDetailDefinitionFetchRequest*)
+            (iReq))->itemType());
+
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitionMap;
+
+    // As there are no costly IPC is involved in this operation so
+    // execute a loop to perform the operation as it's done in a short
+    // time span
+    for (TInt index(0); index < count; index++)
+        {
+        // Fetch detail definition
+        QOrganizerItemDetailDefinition detailDefinition( 
+                (iOrganizerItemManagerEngine.detailDefinition(
+                        stringList[index], itemType, &iError)));
+    
+        if (QOrganizerItemManager::NoError == iError)
+            {
+            detailDefinitionMap.insert(stringList[index], detailDefinition);
+            }
+        else
+            {
+            iErrorMap.insert(index, iError);
+            }
+        }
+    // Notify results
+    QOrganizerItemManagerEngine::updateDefinitionFetchRequest(
+            (QOrganizerItemDetailDefinitionFetchRequest*)(iReq), 
+            detailDefinitionMap, iError, iErrorMap, 
+            QOrganizerItemAbstractRequest::FinishedState);
+    }
+
+// Remove detail definition
+void COrganizerItemRequestsServiceProvider::RemoveDetailDefinitionL()
+    {
+    QStringList stringList(((QOrganizerItemDetailDefinitionRemoveRequest*)
+            (iReq))->definitionNames());
+    TInt count(stringList.count());
+
+    QString itemType(((QOrganizerItemDetailDefinitionRemoveRequest*)
+            (iReq))->itemType());
+
+    // As there are no costly IPC is involved in this operation so
+    // execute a loop to perform the operation as it's done in a short
+    // time span
+    for (TInt index(0); index < count; index++)
+        {
+		// Remove detail definition
+        iOrganizerItemManagerEngine.removeDetailDefinition(
+                stringList[index], itemType, &iError);
+    
+        if (iError != QOrganizerItemManager::NoError)
+            {
+            iErrorMap.insert(index, iError);
+            }
+        }
+    // Notify results
+    QOrganizerItemManagerEngine::updateDefinitionRemoveRequest(
+            (QOrganizerItemDetailDefinitionRemoveRequest*)(iReq), 
+            iError, iErrorMap, QOrganizerItemAbstractRequest::FinishedState);
+    }
+
+// Save detail definition
+void COrganizerItemRequestsServiceProvider::SaveDetailDefinitionL()
+    {
+    QList<QOrganizerItemDetailDefinition> detailDefinitions(
+            ((QOrganizerItemDetailDefinitionSaveRequest*)
+                    (iReq))->definitions());
+    TInt count(detailDefinitions.count());
+
+    QString itemType(((QOrganizerItemDetailDefinitionSaveRequest*)
+            (iReq))->itemType());
+
+    // As there are no costly IPC is involved in this operation so
+    // execute a loop to perform the operation as it's done in a short
+    // time span
+    for (TInt index(0); index < count; index++)
+        {
+		// Save detail definition
+        iOrganizerItemManagerEngine.saveDetailDefinition(
+                detailDefinitions[iIndex], itemType, &iError);
+    
+        if (iError != QOrganizerItemManager::NoError)
+            {
+            iErrorMap.insert(index, iError);
+            }
+        }
+    // Clear all the definition as save definitions is not supported by
+    // Symbian backend
+    detailDefinitions.clear();
+    // Notify results
+    QOrganizerItemManagerEngine::updateDefinitionSaveRequest(
+            (QOrganizerItemDetailDefinitionSaveRequest*)(iReq), 
+            detailDefinitions, iError, iErrorMap, 
+            QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Called by Cancel()
@@ -343,11 +458,11 @@ void COrganizerItemRequestsServiceProvider::DoCancel()
     }
 
 // Call if RunL leaves
-TInt COrganizerItemRequestsServiceProvider::RunError(TInt /*aError*/)
+TInt COrganizerItemRequestsServiceProvider::RunError(TInt aError)
     {
     // Operation not successfull
     // Generate error map
-    iOrganizerItemManagerEngine.transformError(KErrGeneral, &iError);
+    iOrganizerItemManagerEngine.transformError(aError, &iError);
     // Insert error map
     iErrorMap.insert(iIndex, iError);
     // Self complete the request to process more items one by one
@@ -361,4 +476,14 @@ void COrganizerItemRequestsServiceProvider::SelfComplete()
     SetActive();
     TRequestStatus* pStat = &iStatus;
     User::RequestComplete(pStat, KErrNone);
+    }
+
+// Initialize member variables
+void COrganizerItemRequestsServiceProvider::Cleanup()
+    {
+    iIndex = 0;
+    iErrorMap.clear();
+    iItemIds.clear();
+    iItemList.clear();
+    iError = QOrganizerItemManager::NoError;
     }

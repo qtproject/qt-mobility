@@ -67,7 +67,8 @@ public:
     
 private:
     // Private first phase basic constructor
-    COrganizerItemRequestsServiceProvider(QOrganizerItemSymbianEngine& aEntryView);
+    COrganizerItemRequestsServiceProvider(
+            QOrganizerItemSymbianEngine& aEntryView);
     // Second phase constructor
     void ConstructL();
     // From CActive
@@ -78,6 +79,9 @@ private:
     TInt RunError(TInt aError);
     // Complete asynchronous request on self
     void SelfComplete();
+    // Initialize/reset member variables so that these 
+	// can be used by the next request
+    void Cleanup();
     
 private: // Worker functions
     // Save item/entry in agenda server
@@ -95,6 +99,12 @@ private: // Worker functions
     void FetchItemIdsL();
     // Remove items/entries
     void RemoveItemL();
+    // Fetch detail definition
+    void FetchDetailDefinitionL();
+    // Remove detail definition
+    void RemoveDetailDefinitionL();
+    // Save detail definition
+    void SaveDetailDefinitionL();
     
 private:
     QOrganizerItemSymbianEngine&            iOrganizerItemManagerEngine;
