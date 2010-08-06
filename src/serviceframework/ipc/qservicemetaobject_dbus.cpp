@@ -49,20 +49,17 @@ QTM_BEGIN_NAMESPACE
 class QServiceMetaObjectDBusPrivate
 {
 public:
-    //QByteArray metadata;
     QObject *service;
-    const QMetaObject* meta; //remove const once constructed to dbus
+    const QMetaObject* serviceMeta;    //metaobject of the service 
+    const QMetaObject* dbusMeta;       //constructed metaobject for dbus
 };
 
 QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service)
 {
     d = new QServiceMetaObjectDBusPrivate();
-    d->meta = 0;
-    //d->metadata = metadata;
-
     d->service = service;
-    d->meta = service->metaObject();
-    
+    d->serviceMeta = service->metaObject();
+    d->dbusMeta = serviceMetaObject();
     // Create a meta-object to represent all the contents of our service on DBus
 
     /*
@@ -88,23 +85,220 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service)
 
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
 {
-    if (d->meta)
-        delete d->meta;
+    if (d->serviceMeta)
+        delete d->serviceMeta;
+    if (d->dbusMeta)
+        delete d->dbusMeta;
     delete d;
+}
+
+const QMetaObject* QServiceMetaObjectDBus::serviceMetaObject() const
+{
+    QMetaObjectBuilder *builder = new QMetaObjectBuilder();
+  
+    builder->setClassName(d->serviceMeta->className());
+    
+    builder->setSuperClass(d->serviceMeta->superClass()); // needed?
+
+    // Add our property accessor methods
+    QMetaMethodBuilder readProp;
+    readProp = builder->addMethod(QByteArray("propertyRead(QString)"));
+    readProp.setReturnType(QByteArray("QString"));
+    QList<QByteArray> params;
+    params << QByteArray("name");
+    readProp.setParameterNames(params);
+    
+    QMetaMethodBuilder resetProp;
+    resetProp = builder->addMethod(QByteArray("propertyReset(QString)"));
+    resetProp.setReturnType(QByteArray("QString"));
+    QList<QByteArray> paramsReset;
+    paramsReset << QByteArray("name");
+    resetProp.setParameterNames(paramsReset);
+
+    // Add our methods, signals and slots
+    int methodCount = d->serviceMeta->methodCount();
+    for (int i=0; i<methodCount; i++) {
+        QMetaMethod mm = d->serviceMeta->method(i);
+       
+        const int returnType = QMetaType::type(mm.typeName());
+
+        // Convert QVariants to QDBusVariants
+        QByteArray sig(mm.signature());
+        sig.replace(QByteArray("QVariant"), QByteArray("QDBusVariant"));
+        QByteArray ret(mm.typeName());
+        ret.replace(QByteArray("QVariant"), QByteArray("QDBusVariant"));
+
+        // Add a MetaMethod with converted signature to our builder
+        QMetaMethodBuilder method;
+        switch (mm.methodType()) {
+            case QMetaMethod::Method:
+                method = builder->addMethod(sig);
+                break;
+            case QMetaMethod::Slot:
+                method = builder->addSlot(sig);
+                break;
+            case QMetaMethod::Signal:
+                // TODO: signal conversion to DBUS
+                break;
+        }
+
+        // Make sure our built MetaMethod is identical, excluding conversion
+        method.setReturnType(ret);
+        method.setParameterNames(mm.parameterNames());
+        method.setTag(mm.tag());
+        method.setAccess(mm.access());
+        method.setAttributes(mm.attributes());
+    }
+
+    // Add our properties/enums
+    int propCount = d->serviceMeta->propertyCount();
+    for (int i=0; i<propCount; i++) {
+        QMetaProperty mp = d->serviceMeta->property(i);
+        
+        QMetaPropertyBuilder property = builder->addProperty(mp.name(), mp.typeName());
+        property.setReadable(mp.isReadable());
+        property.setWritable(mp.isWritable());
+        property.setResettable(mp.isResettable());
+        property.setDesignable(mp.isDesignable());
+        property.setScriptable(mp.isScriptable());
+        property.setStored(mp.isStored());
+        property.setEditable(mp.isEditable());
+        property.setUser(mp.isUser());
+        property.setStdCppSet(mp.hasStdCppSet());
+        property.setEnumOrFlag(mp.isEnumType());
+
+        if (mp.hasNotifySignal()) {
+            //TODO: signal notify for method
+        }
+    }
+
+    // Add our CLASS_INFO
+    // TODO: Introspect needed?
+    /*
+    QByteArray ifaceName("D-Bus Interface");
+    QByteArray ifaceValue("com.qt.nokia.ipcunittest"); //TODO: fix based on interface
+    builder->addClassInfo(ifaceName, ifaceValue);
+
+    QString xml = ""
+        "<interface name=\"com.qt.nokia.ipcunittest\" />\n"
+            "<method name=\"ping\" >\n"
+        "</interface>\n";
+
+    QByteArray introspectName("D-Bus Introspection");
+    QByteArray introspectValue = xml.toLatin1();
+    builder->addClassInfo(introspectName, introspectValue);
+    */
+   
+    //TODO: Add enumerator support
+
+    // return our constructed dbus metaobject
+    const QMetaObject *mo = builder->toMetaObject();
+
+    return mo;
 }
 
 //provide custom Q_OBJECT implementation
 const QMetaObject* QServiceMetaObjectDBus::metaObject() const
 {
-    return d->meta;
+    // provide our construected dbus metaobject
+    return d->dbusMeta;
 }
 
 int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
     // given QDBusVariants, recast to original QVariants or custom args
-    
+
     // relay the meta-object cal to the service object
-    id = d->service->qt_metacall(c, id, a);
+    if (c == QMetaObject::InvokeMetaMethod) {
+        //method
+       
+        // find the corresponding metaindex to our service object
+        QMetaMethod method = d->dbusMeta->method(id);
+
+        ////////// CHECK SPECIAL PROPERTY ////////////
+        QString methodName(method.signature());
+        int index = methodName.indexOf("(");
+        methodName.chop(methodName.size()-index);
+        
+        if (methodName == "propertyRead") {
+            int index = d->dbusMeta->indexOfProperty("value");
+            id = qt_metacall(QMetaObject::ReadProperty, index, a);
+            return id;
+
+        } else if (methodName == "propertyReset") {
+            int index = d->dbusMeta->indexOfProperty("value");
+            id = qt_metacall(QMetaObject::ResetProperty, index, a);
+            return id;
+        }
+        //////////////////////////////////////////////
+
+        QByteArray sig(method.signature());
+        sig.replace(QByteArray("QDBusVariant"), QByteArray("QVariant"));
+        id = d->serviceMeta->indexOfMethod(sig);
+        //qDebug() << "METHOD TO INVOKE IS" << id << method.signature();
+
+        //process arguments
+        const QList<QByteArray> pTypes = method.parameterTypes();
+        const int pTypesCount = pTypes.count();
+        QVariantList args;
+       
+        for (int i=0; i < pTypesCount; i++) {
+            const QByteArray& t = pTypes[i];
+            int variantType = QVariant::nameToType(t);
+            if (variantType == QVariant::UserType)
+                variantType = QMetaType::type(t);
+            
+            if (pTypes[i] == "QDBusVariant") {
+                QVariant convert = QVariant(variantType, a[i+1]);
+                QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(convert);
+                *reinterpret_cast< QVariant*>(a[i+1]) = dbusVariant.variant();
+            }
+            
+            //const QByteArray& t = pTypes[i];
+
+            /*
+            int variantType = QVariant::nameToType(t);
+            if (variantType == QVariant::UserType)
+                variantType = QMetaType::type(t);
+
+            if (t == "QVariant") {  //ignore whether QVariant is declared as metatype
+                args << *reinterpret_cast<const QVariant(*)>(a[i+1]);
+            } else if ( variantType == 0 ){
+                qWarning("%s: argument %s has unknown type. Use qRegisterMetaType to register it.",
+                        method.signature(), t.data());
+                return id;
+            } else {
+                args << QVariant(variantType, a[i+1]);
+            }
+            */
+        }
+        
+        // make the metacall to our service object
+        id = d->service->qt_metacall(c, id, a);
+
+        //const QByteArray& retType = QByteArray(method.typeName());
+        //if (retType == "QDBusVariant")
+       // {
+            //QVariant convert = QVariant(QVariant::String, a[0]);
+            //QDBusVariant replacement(convert);
+            //*reinterpret_cast< QVariant*>(a[0]) = QVariant::fromValue(replacement);
+            //qDebug() << "RETURN CASTED VALUE" << QVariant(QVariant::String, a[0]);
+        //}
+    } else {
+        // property
+
+        // find the corresponding metaindex to our service object
+        QMetaProperty property = d->dbusMeta->property(id);
+        QByteArray name(property.name());
+        id = d->serviceMeta->indexOfProperty(name);
+        
+        // metacall our service object property
+        id = d->service->qt_metacall(c, id, a);
+    }
+
+    return id;
+    //QVariant result(-7);
+    //if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
 
     // cast any QVariant or custom return values to QDBusVariants
 

@@ -131,8 +131,6 @@ Q_SIGNALS:
     void progressChanged();
     void availableChanged();
     void metaDataChanged();
-    void rootItemChanged();
-    void filterChanged();
 
 private Q_SLOTS:
     void _q_resultSetChanged(QGalleryResultSet *resultSet);
@@ -144,7 +142,6 @@ private:
     QGalleryTypeRequest m_request;
     QGalleryResultSet *m_resultSet;
     QDeclarativePropertyMap *m_metaData;
-    QPointer<QDeclarativeGalleryFilterBase> m_filter;
     QHash<int, QString> m_propertyKeys;
     bool m_complete;
 };

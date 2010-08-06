@@ -61,6 +61,8 @@ public:
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
 
+    const QMetaObject* serviceMetaObject() const;
+
 /*protected:
     void connectNotify(const char* signal);
     void disconnectNotify(const char* signal);*/

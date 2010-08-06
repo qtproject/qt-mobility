@@ -43,6 +43,7 @@
 #define GALLERYQUERYREQUEST_H
 
 #include <qgalleryqueryrequest.h>
+#include "qdeclarativegalleryfilter.h"
 
 #include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qpointer.h>
