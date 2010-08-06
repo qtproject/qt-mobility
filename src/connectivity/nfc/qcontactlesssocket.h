@@ -60,6 +60,10 @@ public:
 
     bool hasPendingDatagrams() const;
     qint64 pendingDatagramSize() const;
+
+    qint64 writeDatagram(const char *data, qint64 size);
+    qint64 writeDatagram(const QByteArray &datagram);
+
     qint64 readDatagram(char *data, qint64 maxSize,
                         QContactlessTarget *target = 0, QString *serviceUri = 0);
     qint64 writeDatagram(const char *data, qint64 size,

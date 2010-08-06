@@ -104,6 +104,30 @@ qint64 QContactlessSocket::pendingDatagramSize() const
 }
 
 /*!
+    Sends the datagram at \a data of size \a size to the service that this socket is connected to.
+    Returns the number of bytes sent on success; otherwise return -1;
+*/
+qint64 QContactlessSocket::writeDatagram(const char *data, qint64 size)
+{
+    Q_UNUSED(data);
+    Q_UNUSED(size);
+
+    return -1;
+}
+
+/*!
+    \overload
+
+    Sends the datagram \a datagram to the service that this socket is connected to.
+*/
+qint64 QContactlessSocket::writeDatagram(const QByteArray &datagram)
+{
+    Q_UNUSED(datagram);
+
+    return -1;
+}
+
+/*!
     Receives a datagram no larger than \a maxSize bytes and stores it in \a data. The sender's
     details are stored in \a target and \a serviceUri (unless the pointers are 0).
 
