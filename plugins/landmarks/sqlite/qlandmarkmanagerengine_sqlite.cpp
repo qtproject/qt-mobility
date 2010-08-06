@@ -629,7 +629,7 @@ QString landmarkIdsQueryString(const QLandmarkIdFilter &filter)
 
 QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
 {
-    if (filter.caseSensitivity() == Qt::CaseSensitive)
+    if (filter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
         return QString("SELECT id FROM landmark WHERE name = \"%1\" ").arg(filter.name());
     else
         return QString("SELECT id FROM landmark WHERE name LIKE \"%1\" ").arg(filter.name());

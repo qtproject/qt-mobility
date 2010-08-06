@@ -401,12 +401,12 @@ private slots:
         QVERIFY(MockEngine::testFilter(nameFilter, lm));
 
         //test for no match,case mismatch, filter is case sensitive
-        nameFilter.setCaseSensitivity(Qt::CaseSensitive);
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
 
         //test for match, case matches, filter is case sensitive
         nameFilter.setName("Madara");
-        nameFilter.setCaseSensitivity(Qt::CaseSensitive);
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
         QVERIFY(MockEngine::testFilter(nameFilter,lm));
     }
 
