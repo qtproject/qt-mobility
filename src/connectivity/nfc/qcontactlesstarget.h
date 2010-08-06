@@ -46,11 +46,14 @@
 #include "qmobilityglobal.h"
 
 #include <QtCore/QList>
+#include <QtCore/QVariantList>
 
 class QString;
 class QUrl;
-class QVariant;
-class QVariantList;
+
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
 
 class QContactlessTargetPrivate;
 class QNdefMessage;
@@ -83,20 +86,25 @@ public:
     TagType type() const;
     TagAccessMethods accessMethods() const;
 
-    // might need to make async
-    QNdefMessage ndefMessage() const;
-    void setNdefMessage(const QNdefMessage &message);
+    // NdefAccess
+    virtual bool hasNdefMessage() const;
+    virtual QNdefMessage ndefMessage() const;
+    virtual void setNdefMessage(const QNdefMessage &message);
 
-    // might need to make async
-    QByteArray sendApduCommand(const QByteArray &command);
-    QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
+    // AdpuAccess
+    virtual QByteArray sendApduCommand(const QByteArray &command);
+    virtual QList<QByteArray> sendApduCommands(const QList<QByteArray> &commands);
 
-    // might need to make async
-    QVariant sendCommand(const QVariant &command);
-    QVariantList sendCommands(const QVariantList &commands);
+    // TagTypeSpecificAccess
+    virtual QVariant sendCommand(const QVariant &command);
+    virtual QVariantList sendCommands(const QVariantList &commands);
 
 private:
     QContactlessTargetPrivate *d;
 };
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QCONTACTLESSTARGET_H

@@ -40,9 +40,12 @@
 ****************************************************************************/
 
 #include "qcontactlesstarget.h"
+#include "qndefmessage.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QContactlessTarget
@@ -51,6 +54,9 @@
 
     \ingroup connectivity-nfc
     \inmodule QtConnectivity
+
+    QContactlessTarget provides a generic interface for communicating with an NFC target device.
+    All target specific classes subclass this class.
 */
 
 /*!
@@ -132,10 +138,19 @@ QContactlessTarget::TagAccessMethods QContactlessTarget::accessMethods() const
 }
 
 /*!
+    Returns true if an NDEF message is stored on the contactless target; otherwise returns false.
+*/
+bool QContactlessTarget::hasNdefMessage() const
+{
+    return false;
+}
+
+/*!
     Returns the NDEF message stored on the contactless target.
 */
 QNdefMessage QContactlessTarget::ndefMessage() const
 {
+    return QNdefMessage();
 }
 
 /*!
@@ -143,6 +158,7 @@ QNdefMessage QContactlessTarget::ndefMessage() const
 */
 void QContactlessTarget::setNdefMessage(const QNdefMessage &message)
 {
+    Q_UNUSED(message);
 }
 
 /*!
@@ -150,6 +166,8 @@ void QContactlessTarget::setNdefMessage(const QNdefMessage &message)
 */
 QByteArray QContactlessTarget::sendApduCommand(const QByteArray &command)
 {
+    Q_UNUSED(command);
+
     return QByteArray();
 }
 
@@ -158,6 +176,8 @@ QByteArray QContactlessTarget::sendApduCommand(const QByteArray &command)
 */
 QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &commands)
 {
+    Q_UNUSED(commands);
+
     return QList<QByteArray>();
 }
 
@@ -166,6 +186,8 @@ QList<QByteArray> QContactlessTarget::sendApduCommands(const QList<QByteArray> &
 */
 QVariant QContactlessTarget::sendCommand(const QVariant &command)
 {
+    Q_UNUSED(command);
+
     return QVariant();
 }
 
@@ -174,5 +196,9 @@ QVariant QContactlessTarget::sendCommand(const QVariant &command)
 */
 QVariantList QContactlessTarget::sendCommands(const QVariantList &commands)
 {
+    Q_UNUSED(commands);
+
     return QVariantList();
 }
+
+QTM_END_NAMESPACE
