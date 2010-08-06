@@ -112,6 +112,21 @@ TBool COrganizerItemRequestsServiceProvider::StartRequest(
                 iNoOfItems = iItemList.count();
                 }
                 break;
+            case QOrganizerItemAbstractRequest::ItemFetchRequest:
+                {
+                QOrganizerItemFilter filter = 
+                        ((QOrganizerItemFetchRequest*)iReq)->filter();
+                if (QOrganizerItemFilter::LocalIdFilter == filter.type())
+                    {
+                    // Get the local id filter
+                    QOrganizerItemLocalIdFilter localIdFilter(filter);
+                    // Get the local ids for the entries to be fetched
+                    iItemIds.append(localIdFilter.ids());
+                    iNoOfItems = iItemIds.count();
+                    }
+                
+                }
+                break;
            }
 
         SelfComplete();
@@ -269,7 +284,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsL()
         {
         case QOrganizerItemFilter::LocalIdFilter :
             {
-            FetchItemsByLocalIdsL(filter, fetchHint);
+            FetchItemsByLocalIdsL();
             }
             break;
          default :
@@ -298,37 +313,30 @@ void COrganizerItemRequestsServiceProvider::FetchItemIdsL()
     }
 
 // Fetch Entries by local Ids
-void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL(
-        QOrganizerItemFilter& filter, QOrganizerItemFetchHint& fetchHint)
+void COrganizerItemRequestsServiceProvider::FetchItemsByLocalIdsL()
     {
-    // Get the local id filter
-    QOrganizerItemLocalIdFilter localIdFilter(filter);
-    // Get the local ids for the entries to be fetched
-    QList<QOrganizerItemLocalId> ids = localIdFilter.ids();
-    // Fetch all the entries for the ids in loop
-    TInt count(ids.count());
-    // Clear the items list before appending items in it
-    iItemList.clear();
-    
-    QOrganizerItemManager::Error error;
-    
-    for (int index(0); index < count; index++) 
+    QOrganizerItemFetchHint fetchHint;
+    if (iIndex < iNoOfItems)
         {
-        QOrganizerItem item = iOrganizerItemManagerEngine.item(
-                QOrganizerItemLocalId(ids[index]), fetchHint, &error);
-        if (error != QOrganizerItemManager::NoError)
-            {
-            // Change state to finish and update the results whatsoever available
-            // If index < count, fetch rest of the items and keep on appending to 
-            // iItemList
-            // Exit out of the loop
-            break;
-            }
+        // update index beforehand in case itemL leaves, if so
+        // RunError would call SelfComplete() for recursive operation
+        iIndex++;
+        // Fetch the item
+        QOrganizerItem item;
+        iOrganizerItemManagerEngine.itemL(
+                iItemIds.at(iIndex-1), &item, fetchHint);
+        // Append the fetched item to iItemList
         iItemList << item;
+        // Calls itself recursively until all the items are deleted
+        SelfComplete();
         }
-    QOrganizerItemManagerEngine::updateItemFetchRequest(
-            (QOrganizerItemFetchRequest*)(iReq), iItemList, error, 
-            QOrganizerItemAbstractRequest::FinishedState);
+    else
+        {
+        // Notify results
+        QOrganizerItemManagerEngine::updateItemFetchRequest(
+                (QOrganizerItemFetchRequest*)(iReq), iItemList, iError, 
+                QOrganizerItemAbstractRequest::FinishedState);
+        }    
     }
 
 // Fetch items/entries by details
@@ -336,13 +344,12 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
         QOrganizerItemFilter& filter, QList<QOrganizerItemSortOrder>& sortOrder,
         QOrganizerItemFetchHint& fetchHint)
     {
-    QOrganizerItemManager::Error error;
     iItemList.clear();
     iItemList = iOrganizerItemManagerEngine.items(filter, sortOrder, 
-            fetchHint, &error);
+            fetchHint, &iError);
     QOrganizerItemManagerEngine::updateItemFetchRequest(
             (QOrganizerItemFetchRequest*)(iReq), iItemList, 
-            error, QOrganizerItemAbstractRequest::FinishedState);
+            &iError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch detail definition
@@ -454,7 +461,6 @@ void COrganizerItemRequestsServiceProvider::DoCancel()
     // Update the request status
     QOrganizerItemManagerEngine::updateRequestState(iReq, 
             QOrganizerItemAbstractRequest::CanceledState);
-    // Clean up
     }
 
 // Call if RunL leaves

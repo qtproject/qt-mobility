@@ -97,7 +97,8 @@ void TestDetailDefs::initTestCase()
     m_om->removeItems(m_om->itemIds(), 0);
     
     // Create asynchronous request to save detail definitions
-    m_detailDefsSaveRequest = new QOrganizerItemDetailDefinitionSaveRequest(this);
+    m_detailDefsSaveRequest = 
+            new QOrganizerItemDetailDefinitionSaveRequest(this);
     // Connect for the state change signal
     connect(m_detailDefsSaveRequest, 
             SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
@@ -107,7 +108,8 @@ void TestDetailDefs::initTestCase()
             SLOT(detailDefsSaveRequestResultsAvailable()));
 
     // Create asynchronous request to remvoe detail definitions
-    m_detailDefsRemoveRequest = new QOrganizerItemDetailDefinitionRemoveRequest(this);
+    m_detailDefsRemoveRequest = 
+            new QOrganizerItemDetailDefinitionRemoveRequest(this);
     // Connect for state change signals
     connect(m_detailDefsRemoveRequest, 
             SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
@@ -117,7 +119,8 @@ void TestDetailDefs::initTestCase()
             this, SLOT(detailDefsRemoveRequestResultsAvailable()));
     
     // Create asynchronous request to remvoe detail definitions
-    m_detailDefsFetchRequest = new QOrganizerItemDetailDefinitionFetchRequest(this);
+    m_detailDefsFetchRequest = 
+            new QOrganizerItemDetailDefinitionFetchRequest(this);
     // Connect for state change signals
     connect(m_detailDefsFetchRequest, SIGNAL(
             stateChanged(QOrganizerItemAbstractRequest::State)), 
@@ -168,7 +171,8 @@ void TestDetailDefs::detailDefsSaveRequestStateChanged(
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -231,7 +235,8 @@ void TestDetailDefs::detailDefsRemoveRequestStateChanged(
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -306,7 +311,8 @@ void TestDetailDefs::detailDefsFetchRequestStateChanged(
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 

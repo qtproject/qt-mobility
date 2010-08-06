@@ -70,13 +70,17 @@ private slots:
    // available
    
 public slots:
-   void fetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void fetchRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void fetchRequestResultsAvailable();
-   void saveRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void saveRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void saveRequestResultsAvailable();
-   void removeRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void removeRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void removeRequestResultsAvailable();
-   void localIdFetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void localIdFetchRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void localIdFetchRequestResultsAvailable();
    
 private:
@@ -104,30 +108,41 @@ void TestItemIds::init()
     // Create asynchronous request to save an item
     m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     // Connect for the state change signal 
-    connect(m_saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
+    connect(m_saveItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
             SLOT(saveRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), this, SLOT(saveRequestResultsAvailable()));
+    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(saveRequestResultsAvailable()));
 
     // Create asynchronous request to fetch item/s
     m_fetchItemRequest = new QOrganizerItemFetchRequest(this);
     // Connect for the state change signal 
-    connect(m_fetchItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
-            this, SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), this, SLOT(fetchRequestResultsAvailable()));
+    connect(m_fetchItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            this, 
+            SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(fetchRequestResultsAvailable()));
     
     // Create asynchronous request to remove items
     m_removeItemRequest = new QOrganizerItemRemoveRequest(this);
     // Connect for the state change signals
-    connect(m_removeItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
-             this, SLOT(removeRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_removeItemRequest, SIGNAL(resultsAvailable()), this, SLOT(removeRequestResultsAvailable()));
+    connect(m_removeItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+             this, 
+             SLOT(removeRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_removeItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(removeRequestResultsAvailable()));
     
     // Create asynchronous request to fetchlocalid/s
     m_localIdfetchRequest = new QOrganizerItemLocalIdFetchRequest();
     // Connect for the state change signals
-    connect(m_localIdfetchRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
-              this, SLOT(localIdFetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_localIdfetchRequest, SIGNAL(resultsAvailable()), this, SLOT(localIdFetchRequestResultsAvailable()));
+    connect(m_localIdfetchRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+              this, 
+              SLOT(localIdFetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_localIdfetchRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(localIdFetchRequestResultsAvailable()));
 
 }
 
@@ -185,7 +200,8 @@ QList<QOrganizerItem> TestItemIds::createItems(int noOfItems)
 }
 
 // request status changed for save request
-void TestItemIds::saveRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestItemIds::saveRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -198,7 +214,8 @@ void TestItemIds::saveRequestStateChanged(QOrganizerItemAbstractRequest::State c
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -233,7 +250,8 @@ void TestItemIds::fetchlocalIds()
 }
 
 // request status changed for fetchLocalids request
-void TestItemIds::localIdFetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestItemIds::localIdFetchRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -246,7 +264,8 @@ void TestItemIds::localIdFetchRequestStateChanged(QOrganizerItemAbstractRequest:
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -285,7 +304,8 @@ void TestItemIds::removeItems(QList<QOrganizerItemLocalId>& itemsIds)
 }
 
 // Remove request state changed
-void TestItemIds::removeRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestItemIds::removeRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -298,7 +318,8 @@ void TestItemIds::removeRequestStateChanged(QOrganizerItemAbstractRequest::State
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -322,7 +343,8 @@ void TestItemIds::removeRequestResultsAvailable()
     TInt count(erroMap.count());
     // Error count should be 0 if all the items are deleted successfully
     QCOMPARE(0, count);
-    // Fetch db once again to cross check if the m_itemIds are still present in db
+    // Fetch db once again to cross check if the m_itemIds are still present in 
+    // db
     fetchItems();
 }
 
@@ -335,7 +357,9 @@ void TestItemIds::fetchItems()
     
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
-    detailsFilter.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel); 
+    detailsFilter.setDetailDefinitionName(
+            QOrganizerItemDisplayLabel::DefinitionName, 
+            QOrganizerItemDisplayLabel::FieldLabel); 
     detailsFilter.setValue("myDescription");
     detailsFilter.setMatchFlags(QOrganizerItemFilter::MatchContains);
     //m_fetchItemRequest->setFilter(detailsFilter);
@@ -347,7 +371,8 @@ void TestItemIds::fetchItems()
 }
 
 // Fetch request state changed
-void TestItemIds::fetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestItemIds::fetchRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -360,7 +385,8 @@ void TestItemIds::fetchRequestStateChanged(QOrganizerItemAbstractRequest::State 
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 

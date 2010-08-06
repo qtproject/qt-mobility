@@ -92,9 +92,13 @@ void TestSaveitems::init()
     
      
     // Connect for the state change signal 
-    connect(m_saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_saveItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            this, 
+            SLOT(requestStateChanged(QOrganizerItemAbstractRequest::State)));
     
-    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), this, SLOT(requestResultsAvailable()));
+    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(requestResultsAvailable()));
 }
 
 void TestSaveitems::cleanup()
@@ -163,7 +167,8 @@ void TestSaveitems::saveItem_data()
     }
 }
 
-void TestSaveitems::requestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestSaveitems::requestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -176,7 +181,8 @@ void TestSaveitems::requestStateChanged(QOrganizerItemAbstractRequest::State cur
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 

@@ -70,9 +70,11 @@ private slots:
    // available
    
 public slots:
-   void fetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void fetchRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void fetchRequestResultsAvailable();
-   void saveRequestStateChanged(QOrganizerItemAbstractRequest::State currentState);
+   void saveRequestStateChanged(
+           QOrganizerItemAbstractRequest::State currentState);
    void saveRequestResultsAvailable();
 
    
@@ -97,16 +99,21 @@ void TestFetchItems::init()
     // Create asynchronous request to save an item
     m_saveItemRequest = new QOrganizerItemSaveRequest(this);
     // Connect for the state change signal 
-    connect(m_saveItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
+    connect(m_saveItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), this, 
             SLOT(saveRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), this, SLOT(saveRequestResultsAvailable()));
+    connect(m_saveItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(saveRequestResultsAvailable()));
 
     // Create an item fetch request
     m_fetchItemRequest = new QOrganizerItemFetchRequest(this);
     // Connect for the state change signal 
-    connect(m_fetchItemRequest, SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
-            this, SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
-    connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), this, SLOT(fetchRequestResultsAvailable()));
+    connect(m_fetchItemRequest, 
+            SIGNAL(stateChanged(QOrganizerItemAbstractRequest::State)), 
+            this, 
+            SLOT(fetchRequestStateChanged(QOrganizerItemAbstractRequest::State)));
+    connect(m_fetchItemRequest, SIGNAL(resultsAvailable()), 
+            this, SLOT(fetchRequestResultsAvailable()));
 }
 
 void TestFetchItems::cleanup()
@@ -164,7 +171,8 @@ QList<QOrganizerItem> TestFetchItems::createItems(int noOfItems)
 }
 
 // request status changed for save request
-void TestFetchItems::saveRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestFetchItems::saveRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -177,7 +185,8 @@ void TestFetchItems::saveRequestStateChanged(QOrganizerItemAbstractRequest::Stat
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 
@@ -211,18 +220,22 @@ void TestFetchItems::fetchItems()
     lUids.append(3);
     lUids.append(4);
     localIdFilter.setIds(lUids);
-    //m_fetchItemRequest->setFilter(localIdFilter);
+    m_fetchItemRequest->setFilter(localIdFilter);
     // Set ItemDetailsFilter
     QOrganizerItemDetailFilter detailsFilter;
-    detailsFilter.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel); 
+    detailsFilter.setDetailDefinitionName(
+            QOrganizerItemDisplayLabel::DefinitionName, 
+            QOrganizerItemDisplayLabel::FieldLabel); 
     detailsFilter.setValue("myDescription");
     detailsFilter.setMatchFlags(QOrganizerItemFilter::MatchContains);
-    m_fetchItemRequest->setFilter(detailsFilter);
+    //m_fetchItemRequest->setFilter(detailsFilter);
 
     // Set sorting order
     QList<QOrganizerItemSortOrder> sortOrderlist;
     QOrganizerItemSortOrder sorting;
-    sorting.setDetailDefinitionName(QOrganizerItemDisplayLabel::DefinitionName, QOrganizerItemDisplayLabel::FieldLabel);
+    sorting.setDetailDefinitionName(
+            QOrganizerItemDisplayLabel::DefinitionName, 
+            QOrganizerItemDisplayLabel::FieldLabel);
     sorting.setBlankPolicy(QOrganizerItemSortOrder::BlanksLast);
     //sorting.setDirection(SortOrder::AscendingOrder);
     //sorting.setCaseSensitivity(CaseSensitivity::CaseInsensitive);
@@ -242,7 +255,8 @@ void TestFetchItems::fetchItems()
 }
 
 // Fetch request state changed
-void TestFetchItems::fetchRequestStateChanged(QOrganizerItemAbstractRequest::State currentState)
+void TestFetchItems::fetchRequestStateChanged(
+        QOrganizerItemAbstractRequest::State currentState)
 {
     switch(currentState) {
         case QOrganizerItemAbstractRequest::InactiveState: { 
@@ -255,7 +269,8 @@ void TestFetchItems::fetchRequestStateChanged(QOrganizerItemAbstractRequest::Sta
         break;
         }
         case QOrganizerItemAbstractRequest::CanceledState: { 
-            // Operation is finished due to cancellation test not completed, failed
+            // Operation is finished due to cancellation test not completed, 
+            // failed
         break;
         }
         case QOrganizerItemAbstractRequest::FinishedState: { 

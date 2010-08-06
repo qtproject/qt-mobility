@@ -64,7 +64,8 @@ QOrganizerItemRequestQueue::~QOrganizerItemRequestQueue()
     m_abstractRequestMap.clear();
 }
 
-bool QOrganizerItemRequestQueue::startRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemRequestQueue::startRequest(
+        QOrganizerItemAbstractRequest* req)
 {
     // Find m_abstractRequestMap if an asynchronous service provider for request
     // req already exists
@@ -72,7 +73,8 @@ bool QOrganizerItemRequestQueue::startRequest(QOrganizerItemAbstractRequest* req
             m_abstractRequestMap[req]);
     // asynchronous service provider does not exist, create a new one
     if (!requestServiceProvider) {
-            requestServiceProvider = COrganizerItemRequestsServiceProvider::NewL(
+            requestServiceProvider = 
+                    COrganizerItemRequestsServiceProvider::NewL(
                     iOrganizerItemManagerEngine);
             m_abstractRequestMap.insert(req, requestServiceProvider);
         }
@@ -81,7 +83,8 @@ bool QOrganizerItemRequestQueue::startRequest(QOrganizerItemAbstractRequest* req
 }
 
 // To cancel aReq request
-bool QOrganizerItemRequestQueue::cancelRequest(QOrganizerItemAbstractRequest* req)
+bool QOrganizerItemRequestQueue::cancelRequest(
+        QOrganizerItemAbstractRequest* req)
 {
     COrganizerItemRequestsServiceProvider* requestServiceProvider(
             m_abstractRequestMap[req]);
@@ -115,6 +118,8 @@ void QOrganizerItemRequestQueue::requestDestroyed(
         // Delete the asynchronous service provider
         delete requestServiceProvider;
         // Remove req request & asynchronous service provider from the map 
+        // count is used only for the debugging purpose. Count should always be 
+        // 1, there is a serious programming mistake if not so.
         int count(m_abstractRequestMap.remove(req));
         }
 } 

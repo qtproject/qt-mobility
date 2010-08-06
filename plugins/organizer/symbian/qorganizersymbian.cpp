@@ -646,7 +646,6 @@ bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definiti
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
-    return m_requestServiceProviderQueue->startRequest(req);
     /*
         This is the entry point to the async API.  The request object describes the
         type of request (switch on req->type()).  Req will not be null when called
@@ -682,6 +681,7 @@ bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* re
         Return true if the request can be started, false otherwise.  You can set an error
         in the request if you like.
     */
+    return m_requestServiceProviderQueue->startRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
@@ -694,7 +694,6 @@ bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* r
 
 bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
-    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
     /*
         Wait for a request to complete (up to a max of msecs milliseconds).
 
@@ -705,13 +704,12 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
         It's best to avoid processing events, if you can, or at least only process non-UI events.
     */
+    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
 }
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
     /*
-        TODO
-
         This is called when a request is being deleted.  It lets you know:
 
         1) the client doesn't care about the request any more.  You can still complete it if
@@ -728,8 +726,6 @@ void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest
         ordering problems :D
 
     */
-    // Cancel the request as of now, latter on a rework is needed to cancel the right process
-	// from a Queue
         m_requestServiceProviderQueue->requestDestroyed(req);
 }
 
