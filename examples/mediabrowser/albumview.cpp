@@ -49,7 +49,7 @@
 #if defined(Q_WS_MAEMO_5)
 #include "coverartmodel.h"
 #else
-#include <thumbnailmodel.h>
+#include "thumbnailmodel.h"
 #endif
 
 AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)

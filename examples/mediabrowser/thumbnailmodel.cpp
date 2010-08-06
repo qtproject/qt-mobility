@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include <thumbnailmodel.h>
+#include "thumbnailmodel.h"
 
 #include <QtCore/qcryptographichash.h>
 #include <QtCore/qdir.h>
