@@ -64,7 +64,7 @@ void QGeoTiledMapPolylineObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path = polyline->path;
 
-    makepoly(*this, path, polyline, points, false);
+    makepoly(points, path, mapData, false);
 
     if (points.size() < 2)
         return;

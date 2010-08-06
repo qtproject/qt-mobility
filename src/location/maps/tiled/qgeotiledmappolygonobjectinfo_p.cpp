@@ -62,7 +62,7 @@ void QGeoTiledMapPolygonObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path = polygon->path;
 
-    makepoly(*this, path, polygon, points, true);
+    makepoly(points, path, mapData, true);
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
