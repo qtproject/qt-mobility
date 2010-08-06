@@ -536,8 +536,8 @@ void MainWindow::setupUi()
     widget->setLayout(layout);
     setCentralWidget(widget);
 
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+    qgv->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(qgv, SIGNAL(customContextMenuRequested(const QPoint&)),
                      this, SLOT(customContextMenuRequest(const QPoint&)));
 
     resize(652, 519);
@@ -769,13 +769,11 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
-    QGeoMapCircleObject *circle = new QGeoMapCircleObject();
+    QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
     circle->setPen(pen);
     QColor fill(Qt::black);
     fill.setAlpha(65);
     circle->setBrush(QBrush(fill));
-    circle->setCenter(center);
-    circle->setRadius(radius);
     m_mapWidget->addMapObject(circle);
 
     m_mapWidget->lastCircle = circle;
@@ -800,14 +798,19 @@ void MainWindow::removeMarkers()
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    lastClicked = point - qgv->geometry().topLeft();
+    lastClicked = point;
+#ifdef Q_OS_SYMBIAN
+    // Work around a bug with QGraphicsView's customContextMenuRequeste signal on Symbian
+    // TODO: adjust this #ifdef, so it doesn't break with versions that fix the bug
+    lastClicked -= qgv->geometry().topLeft();
+#endif
 
     if (focusWidget() == qgv) {
 
         if (!m_popupMenu)
             createMenus();
 
-        m_popupMenu->popup(mapToGlobal(point));
+        m_popupMenu->popup(qgv->mapToGlobal(lastClicked));
     }
 }
 

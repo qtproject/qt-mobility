@@ -323,29 +323,7 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
         : managerVersion(-1) {}
 
-QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other)
-        : managerName(other.managerName),
-        managerVersion(other.managerVersion),
-        supportedMapTypes(other.supportedMapTypes),
-        minimumZoomLevel(other.minimumZoomLevel),
-        maximumZoomLevel(other.maximumZoomLevel),
-        minimumImageSize(other.minimumImageSize),
-        maximumImageSize(other.maximumImageSize) {}
-
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
-
-QGeoMappingManagerEnginePrivate& QGeoMappingManagerEnginePrivate::operator= (const QGeoMappingManagerEnginePrivate & other)
-{
-    managerName = other.managerName;
-    managerVersion = other.managerVersion;
-    supportedMapTypes = other.supportedMapTypes;
-    minimumZoomLevel = other.minimumZoomLevel;
-    maximumZoomLevel = other.maximumZoomLevel;
-    minimumImageSize = other.minimumImageSize;
-    maximumImageSize = other.maximumImageSize;
-
-    return *this;
-}
 
 #include "moc_qgeomappingmanagerengine.cpp"
 

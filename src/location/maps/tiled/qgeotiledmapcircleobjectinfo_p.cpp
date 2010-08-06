@@ -82,8 +82,8 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path;
 
-    QGeoCoordinate center = circle->center;
-    double radius = circle->radius / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
+    QGeoCoordinate center = circle->circle.center();
+    double radius = circle->circle.radius() / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 
     // To simplify things, we're using formulae from astronomy, namely those from the nautic triangle for converting from horizontal system to equatorial system.
     // First, we calculate the input coordinates (horizontal system)

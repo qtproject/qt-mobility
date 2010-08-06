@@ -68,6 +68,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
     }
 
     setSupportsGeocoding(true);
+    setSupportsReverseGeocoding(true);
 
     QGeoSearchManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
@@ -82,7 +83,8 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
 QGeoSearchManagerEngineNokia::~QGeoSearchManagerEngineNokia() {}
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &address,
+                                                       QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
@@ -131,11 +133,12 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+                                                              QGeoBoundingArea *bounds)
 {
     Q_UNUSED(bounds)
 
-    if (!supportsGeocoding()) {
+    if (!supportsReverseGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
@@ -156,7 +159,11 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString, QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
+                                                      QGeoSearchManager::SearchTypes searchTypes,
+                                                      int resultsCount,
+                                                      int resultsOffset,
+                                                      QGeoBoundingArea *bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
     // which will make use of the additionLandmarkManagers()

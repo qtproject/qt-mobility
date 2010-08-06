@@ -238,19 +238,10 @@ QSize QGeoMappingManager::maximumImageSize() const
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
         : engine(0) {}
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeomappingmanager.cpp"

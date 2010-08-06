@@ -778,8 +778,6 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF
     delete circle;
 
     return results;
-
-    return QList<QGeoMapObject*>();
 }
 
 /*!
@@ -793,8 +791,7 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
 
     QRectF rect(d->maxZoomScreenRect.topLeft() + screenRect.topLeft() * d->zoomFactor, screenRect.size() * d->zoomFactor);
 
-    QList<QGraphicsItem*> items = d->scene->items(rect);
-
+    QList<QGraphicsItem*> items = d->scene->items(rect, Qt::IntersectsItemShape, Qt::AscendingOrder);
     QList<QGeoMapObject*> results;
 
     for (int i = 0; i < items.size(); ++i) {
@@ -803,8 +800,6 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
     }
 
     return results;
-
-    return QList<QGeoMapObject*>();
 }
 
 /*******************************************************************************

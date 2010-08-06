@@ -64,10 +64,7 @@ class QGeoMappingManagerEnginePrivate
 {
 public:
     QGeoMappingManagerEnginePrivate();
-    QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other);
     virtual ~QGeoMappingManagerEnginePrivate();
-
-    QGeoMappingManagerEnginePrivate& operator= (const QGeoMappingManagerEnginePrivate &other);
 
     QString managerName;
     int managerVersion;
@@ -77,6 +74,9 @@ public:
     qreal maximumZoomLevel;
     QSize minimumImageSize;
     QSize maximumImageSize;
+
+private:
+    Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

@@ -59,8 +59,22 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a new circle object with the specified \a parent.
 */
-QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
-        : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoBoundingCircle &circle, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+{
+    Q_D(QGeoMapCircleObject);
+    d->circle = circle;
+}
+
+/*!
+    Constructs a new circle object with the specified \a parent.
+*/
+QGeoMapCircleObject::QGeoMapCircleObject(const QGeoCoordinate &center, qreal radius, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent))
+{
+    Q_D(QGeoMapCircleObject);
+    d->circle = QGeoBoundingCircle(center, radius);
+}
 
 /*!
     Destroys this circle object.
@@ -107,10 +121,10 @@ QBrush QGeoMapCircleObject::brush() const
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapCircleObject);
-    if (d->center != center) {
-        d->center = center;
+    if (d->circle.center() != center) {
+        d->circle.setCenter(center);
         objectUpdate();
-        emit centerChanged(d->center);
+        emit centerChanged(center);
     }
 }
 
@@ -120,7 +134,7 @@ void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 QGeoCoordinate QGeoMapCircleObject::center() const
 {
     Q_D(const QGeoMapCircleObject);
-    return d->center;
+    return d->circle.center();
 }
 
 /*!
@@ -129,10 +143,10 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 void QGeoMapCircleObject::setRadius(qreal radius)
 {
     Q_D(QGeoMapCircleObject);
-    if (radius != d->radius) {
-        d->radius = radius;
+    if (d->circle.radius() != radius) {
+        d->circle.setRadius(radius);
         objectUpdate();
-        emit radiusChanged(d->radius);
+        emit radiusChanged(radius);
     }
 }
 
@@ -142,7 +156,7 @@ void QGeoMapCircleObject::setRadius(qreal radius)
 qreal QGeoMapCircleObject::radius() const
 {
     Q_D(const QGeoMapCircleObject);
-    return d->radius;
+    return d->circle.radius();
 }
 
 /*******************************************************************************
