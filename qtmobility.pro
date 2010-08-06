@@ -104,6 +104,10 @@ contains(build_docs, yes):SUBDIRS+=demos
 # install Qt style headers
 
 !symbian {
+    qtmheadersglobal.path = $${QT_MOBILITY_INCLUDE}/QtMobility
+    qtmheadersglobal.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMobility/*
+    INSTALLS += qtmheadersglobal
+
     contains(mobility_modules,bearer) {
         qtmheadersbearer.path = $${QT_MOBILITY_INCLUDE}/QtBearer
         qtmheadersbearer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtBearer/*
@@ -172,6 +176,18 @@ contains(build_docs, yes):SUBDIRS+=demos
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
+    qtmGlobalHeaders = include/QtMobility/*
+    for(api, qtmGlobalHeaders) {
+        INCLUDEFILES=$$files($$api);
+        #files() attaches a ';' at the end which we need to remove
+        cleanedFiles=$$replace(INCLUDEFILES, ;,)
+        for(header, cleanedFiles) {
+            exists($$header):
+                BLD_INF_RULES.prj_exports += "$$header $$MW_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
+        }
+    }
+
+
     qtmAppHeaders = include/QtContacts/* \
                           include/QtVersit/*
 

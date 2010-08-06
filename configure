@@ -548,11 +548,12 @@ echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer"
 # At time of writing, libicd-network-wlan-dev is not released for maemo5.
 echo "maemo5:contains(maemo-icd-network-wlan_enabled, no): INCLUDEPATH += $relpath/src/3rdparty/icd-network-wlan" >> "$CONFIG_IN"
 
-# Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
+
+$relpath/bin/syncheaders $shadowpath/include/QtMobility $relpath/src/global
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
