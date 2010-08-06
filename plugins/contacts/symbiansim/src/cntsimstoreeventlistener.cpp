@@ -51,7 +51,7 @@
 
 QTM_USE_NAMESPACE
 
-CntSimStoreEventListener::CntSimStoreEventListener(CntSymbianSimEngine &engine, RMobilePhoneBookStore& store)
+CntSimStoreEventListener::CntSimStoreEventListener(CntSymbianSimEngine &engine, RMobilePhoneStore& store)
     :CActive(CActive::EPriorityUserInput),
      m_engine(engine),
      m_store(store)
