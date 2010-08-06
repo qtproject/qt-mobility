@@ -17,7 +17,8 @@ HEADERS = \
     galleryview.h \
     photodelegate.h \
     photoview.h \
-    songview.h
+    songview.h \
+    thumbnailmodel.h
 
 SOURCES = \
     albumdelegate.cpp \
@@ -29,4 +30,13 @@ SOURCES = \
     main.cpp \
     photodelegate.cpp \
     photoview.cpp \
-    songview.cpp
+    songview.cpp \
+    thumbnailmodel.cpp
+
+maemo5 {
+    HEADERS += \
+            coverartmodel.h
+
+    SOURCES += \
+            coverartmodel.cpp
+}

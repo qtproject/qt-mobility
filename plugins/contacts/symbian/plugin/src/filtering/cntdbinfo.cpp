@@ -207,9 +207,9 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
             // ORDER BY CASE <concatenated string fields> WHEN "" THEN 1 ELSE 0 END, <concatenated string fields & other fields> <order>
             if (blanksLast) {
                 // If concatString is blank, do not evaluate ORDER BY. All unevaluated rows are pushed to the end
-                sortQuery += " ORDER BY CASE " + concatString + " WHEN \"\" THEN 1 ELSE 0 END, " + clause;
+                sortQuery += " ORDER BY CASE WHEN " + concatString + " = \"\" THEN 1 " + " WHEN " + concatString + " IS NULL THEN 1 ELSE 0 END, " + clause;
             } else {
-                sortQuery += " ORDER BY CASE " + concatString + " WHEN \"\" THEN 0 ELSE 1 END, " + clause;
+                sortQuery += " ORDER BY CASE WHEN " + concatString + " = \"\" THEN 0 " + " WHEN " + concatString + " IS NULL THEN 0 ELSE 1 END, " + clause;
             }
         }
     }

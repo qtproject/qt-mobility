@@ -43,6 +43,17 @@
 
 QTM_BEGIN_NAMESPACE
 
+#define CLIENT_DATA_INDEX 0
+
+class ServiceContextClientData : public QObjectUserData
+{
+public:
+    virtual ~ServiceContextClientData() {}
+
+    QHash<QString, QVariant> clientData;
+};
+
+
 /*!
     \class QServiceContext
     \inmodule QtServiceFramework
@@ -80,13 +91,20 @@ QTM_BEGIN_NAMESPACE
     context information of the given \a type. The contextual information is stored in \a data.  
 */
 
+
 /*!
     Constrcuts a service context with the given \a parent.
 */
 QServiceContext::QServiceContext(QObject* parent)
     : QObject(parent)
 {
-
+#ifndef QT_NO_USERDATA
+    //Ideally we would use a new data member to store the client information.
+    //However since a d-pointer was forgotten when designing QServiceContext
+    //we need to fall back to QObject user data.
+    ServiceContextClientData* data = new ServiceContextClientData();
+    setUserData(CLIENT_DATA_INDEX, data);
+#endif
 }
 
 /*!
@@ -94,6 +112,7 @@ QServiceContext::QServiceContext(QObject* parent)
 */
 QServiceContext::~QServiceContext() 
 {
+    //ServiceContextUserData deleted by QObject
 }
 
 /*!
@@ -131,6 +150,51 @@ QString QServiceContext::clientName() const
 void QServiceContext::setClientName(const QString& name)
 {
     m_displayName = name;
+}
+
+/*!
+    Returns the client data associated to \a key.
+
+    \sa setClientData(), resetClientData()
+*/
+QVariant QServiceContext::clientData(const QString& key) const
+{
+#ifndef QT_NO_USERDATA
+    ServiceContextClientData* data =
+        static_cast<ServiceContextClientData*>(userData(CLIENT_DATA_INDEX));
+    return data->clientData.value(key);
+#else
+    return QVariant();
+#endif
+}
+
+/*!
+    Attaches arbitrary data \a value to the context object. The value
+    can be retrieved via \a key.
+
+    \sa clientData(), resetClientData()
+*/
+void QServiceContext::setClientData(const QString& key, const QVariant& value)
+{
+#ifndef QT_NO_USERDATA
+    ServiceContextClientData* data =
+        static_cast<ServiceContextClientData*>(userData(CLIENT_DATA_INDEX));
+    data->clientData[key] = value;
+#endif
+}
+
+/*!
+    Deletes all client data associated to the service context.
+
+    \sa clientData(), setClientData()
+*/
+void QServiceContext::resetClientData()
+{
+#ifndef QT_NO_USERDATA
+    ServiceContextClientData* data =
+        static_cast<ServiceContextClientData*>(userData(CLIENT_DATA_INDEX));
+    data->clientData.clear();
+#endif
 }
 
 #include "moc_qservicecontext.cpp"

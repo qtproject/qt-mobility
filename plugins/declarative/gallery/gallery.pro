@@ -23,15 +23,15 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 HEADERS += \
         qdeclarativegalleryfilter.h \
         qdeclarativegalleryitem.h \
-        qdeclarativegalleryquerycount.h \
-        qdeclarativegalleryquerymodel.h
+        qdeclarativegalleryquerymodel.h \
+        qdeclarativegallerytype.h
 
 SOURCES += \
         qdeclarativegallery.cpp \
         qdeclarativegalleryfilter.cpp \
         qdeclarativegalleryitem.cpp \
-        qdeclarativegalleryquerycount.cpp \
-        qdeclarativegalleryquerymodel.cpp
+        qdeclarativegalleryquerymodel.cpp \
+        qdeclarativegallerytype.cpp
 
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
@@ -40,4 +40,16 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += qmldir
 
-# The symbian UID reserved for this plug-in is 0x2002BFCC
+symbian {
+    # In Symbian, a library should enjoy _largest_ possible capability set.
+    TARGET.CAPABILITY = ALL -TCB
+    # Allow writable DLL data
+    TARGET.EPOCALLOWDLLDATA = 1
+    # Target UID, makes every Symbian app unique
+    TARGET.UID3 = 0x2002BFCC
+    # Specifies what files shall be deployed: the plugin itself and the qmldir file.
+    importFiles.sources = $$DESTDIR/declarative_gallery$${QT_LIBINFIX}.dll qmldir 
+    importFiles.path = $$QT_IMPORTS_BASE_DIR/$$TARGETPATH
+    DEPLOYMENT = importFiles
+ }
+

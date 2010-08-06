@@ -399,10 +399,6 @@ int main(int argc, char** argv)
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("qt_sfw_example_ipc_unittest");
-#ifdef Q_OS_SYMBIAN
-    qDebug("OTR Calling RProcess::rendezvous TODO if needed and correct place");
-    RProcess::Rendezvous(KErrNone); 
-#endif
     int res =  app.exec();
     delete control;
     unregisterExampleService();
