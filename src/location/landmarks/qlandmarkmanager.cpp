@@ -148,6 +148,18 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    \enum QLandmarkManager::ImportExportOption
+    Defines the possible import/export options of the manager.
+    \value IncludeCategoryData During an import category data is included.  If an imported category doesn't exist
+                               the category is created.  If the imported category name matches an existing
+                               category name, then the landmark is added to that category.  For exports, categories
+                               are included in the exported file if the file format allows it.
+    \value ExcludeCategoryData Landmarks are imported or exported without any categories assigned to the landmarks.
+    \value AttachSingleCategory Only relevant for import operations.  When landmarks are imported they are
+                                all assigned to a given category.
+*/
+
+/*!
     \enum QLandmarkManager::LandmarkFeature
     Defines the possible features the landmark manager can support.
     \value GenericAttributes The manager supports landmarks and categories which have generic attributes
@@ -1173,6 +1185,9 @@ bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QS
     return true;
 }
 
+/*!
+    \internal
+*/
 void QLandmarkManager::connectNotify(const char *signal)
 {
     if (d_ptr->engine) {
@@ -1199,6 +1214,9 @@ void QLandmarkManager::connectNotify(const char *signal)
     QObject::connectNotify(signal);
 }
 
+/*!
+    \internal
+*/
 void QLandmarkManager::disconnectNotify(const char *signal)
 {
     if (d_ptr->engine) {
