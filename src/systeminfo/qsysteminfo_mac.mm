@@ -1578,15 +1578,25 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 DAApprovalSessionRef session = NULL;
 
-void mountCallback(DADiskRef disk, void *context)
+void mountCallback(DADiskRef disk, CFArrayRef keys, void *context)
 {
-    QString name = DADiskGetBSDName(disk);
+    NSDictionary *properties;
+    properties = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+    QString name = nsstringToQString([volumePath path]);
+
     static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
 }
 
 void unmountCallback(DADiskRef disk, void *context)
 {
-    QString name = DADiskGetBSDName(disk);
+    NSDictionary *properties;
+    properties = (NSDictionary *)DADiskCopyDescription(disk);
+    NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+    QString name = nsstringToQString([volumePath path]);
+
     static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false,name);
 }
 
@@ -1607,13 +1617,8 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
-    if(mountEntriesHash.contains("/dev/"+vol)) {
-        // removing
-    } else {
-        //adding
-        updateVolumesMap();
-    }
-    Q_EMIT logicalDriveChanged(added, mountEntriesHash["/dev/"+vol]);
+    updateVolumesMap();
+    Q_EMIT logicalDriveChanged(added,vol);
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1626,8 +1631,10 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
-
-        mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+        if(buf[i].f_type != 19
+           && buf[i].f_type != 20) {
+            mountEntriesHash.insert(buf[i].f_mntfromname,volName);
+        }
     }
     return true;
 }
@@ -1657,59 +1664,65 @@ qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 
 QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QString &driveVolume)
 {
-    OSStatus osstatusResult = noErr;
-    ItemCount volumeIndex;
+    QSystemStorageInfo::DriveType drivetype =  QSystemStorageInfo::NoDrive;
 
-    for (volumeIndex = 1; osstatusResult == noErr || osstatusResult != nsvErr; volumeIndex++) {
-        FSVolumeRefNum actualVolume;
-        HFSUniStr255 volumeName;
-        FSVolumeInfo	volumeInfo;
+    DADiskRef diskRef;
+    DASessionRef sessionRef;
+    CFBooleanRef boolRef;
+    CFDictionaryRef descriptionDictionary;
 
-        bzero((void *) &volumeInfo, sizeof(volumeInfo));
+    sessionRef = DASessionCreate(NULL);
+    if (sessionRef == NULL) {
+        return QSystemStorageInfo::NoDrive;
+    }
 
-        osstatusResult = FSGetVolumeInfo(kFSInvalidVolumeRefNum, volumeIndex, &actualVolume, kFSVolInfoFSInfo,
-                                         &volumeInfo, &volumeName, NULL);
+    diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesHash.key(driveVolume).toLatin1());
+    if (diskRef == NULL) {
+        CFRelease(sessionRef);
+        return QSystemStorageInfo::RemoteDrive; //?
+    }
 
-        if (osstatusResult == noErr) {
-            GetVolParmsInfoBuffer volumeParmeters;
-            osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
+    descriptionDictionary = DADiskCopyDescription(diskRef);
+    if (descriptionDictionary == NULL) {
+        CFRelease(diskRef);
+        CFRelease(sessionRef);
+        return QSystemStorageInfo::NoDrive;
+    }
 
-            QString devId = QString((char *)volumeParmeters.vMDeviceID);
-            devId = devId.prepend(QLatin1String("/dev/"));
-            if(mountEntriesHash.value(devId) == driveVolume) {
-                if (volumeParmeters.vMServerAdr == 0) { //local drive
-                    io_service_t ioService;
-                    ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
-                                                            IOBSDNameMatching(kIOMasterPortDefault,
-                                                            0,
-                                                            (char *)volumeParmeters.vMDeviceID));
-
-                    if (IOObjectConformsTo(ioService, kIOMediaClass)) {
-                        CFTypeRef wholeMedia;
-
-                        wholeMedia = IORegistryEntryCreateCFProperty(ioService,
-                                                                     CFSTR(kIOMediaContentKey),
-                                                                     kCFAllocatorDefault,
-                                                                     0);
-
-                        if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
-                            IOObjectRelease(ioService);
-                            CFRelease(wholeMedia);
-                            return QSystemStorageInfo::RemovableDrive;
-                        } else {
-                            IOObjectRelease(ioService);
-                            CFRelease(wholeMedia);
-                            return QSystemStorageInfo::InternalDrive;
-                        }
-                    }
-                    IOObjectRelease(ioService);
-                } else {
-                    return QSystemStorageInfo::RemoteDrive;
-                }
-            }
+    boolRef = (CFBooleanRef)
+              CFDictionaryGetValue(descriptionDictionary, kDADiskDescriptionMediaRemovableKey);
+    if (boolRef) {
+        if(CFBooleanGetValue(boolRef)) {
+            drivetype = QSystemStorageInfo::RemovableDrive;
+        } else {
+            drivetype = QSystemStorageInfo::InternalDrive;
         }
     }
-    return QSystemStorageInfo::NoDrive;
+
+    DADiskRef wholeDisk;
+    wholeDisk = DADiskCopyWholeDisk(diskRef);
+
+    if (wholeDisk) {
+        io_service_t mediaService;
+
+        mediaService = DADiskCopyIOMedia(wholeDisk);
+        if (mediaService) {
+            if (IOObjectConformsTo(mediaService, kIOCDMediaClass)) {
+                drivetype = QSystemStorageInfo::CdromDrive;
+            }
+            if (IOObjectConformsTo(mediaService, kIODVDMediaClass)) {
+                drivetype = QSystemStorageInfo::CdromDrive;
+            }
+            IOObjectRelease(mediaService);
+        }
+        CFRelease(wholeDisk);
+    }
+    CFRelease(diskRef);
+    CFRelease(descriptionDictionary);
+    CFRelease(boolRef);
+    CFRelease(sessionRef);
+
+    return drivetype;
 }
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
@@ -1744,10 +1757,11 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString&))))) {
         sessionThread();
-        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+
+        DARegisterDiskDescriptionChangedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,
+                                                 kDADiskDescriptionWatchVolumePath, mountCallback,this);
+        //        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
-//        connect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
-//                 this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
 }
 
@@ -1758,12 +1772,10 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool,const QString &))))) {
 #ifdef MAC_SDK_10_6
-        DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
+     //   DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
 #else
-        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
+       // DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
 #endif
-//        disconnect(daSessionThread,SIGNAL(logicalDriveChanged(bool,const QString &)),
-//                   this,SIGNAL(logicalDriveChanged(bool,const QString &)));
     }
 }
 

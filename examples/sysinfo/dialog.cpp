@@ -815,9 +815,36 @@ void Dialog::updateSimStatus()
 }
 
 
-void Dialog::storageChanged(bool added,const QString &vol)
+void Dialog::storageChanged(bool added,const QString &volName)
 {
-    setupStorage();
+    if(added) {
+        QString type;
+        QSystemStorageInfo::DriveType volType;
+        volType = sti->typeForDrive(volName);
+        if(volType == QSystemStorageInfo::InternalDrive) {
+            type =  "Internal";
+        }
+
+        if(volType == QSystemStorageInfo::RemovableDrive) {
+            type = "Removable";
+        }
+        if(volType == QSystemStorageInfo::CdromDrive) {
+            type =  "CDRom";
+        }
+        if(volType == QSystemStorageInfo::RemoteDrive) {
+            type =  "Network";
+        }
+        QStringList items;
+        items << volName;
+        items << type;
+        items << QString::number(sti->totalDiskSpace(volName));
+        items << QString::number(sti->availableDiskSpace(volName));
+        QTreeWidgetItem *item = new QTreeWidgetItem(items);
+        storageTreeWidget->addTopLevelItem(item);
+
+    } else {
+        storageTreeWidget->takeTopLevelItem( storageTreeWidget->indexOfTopLevelItem(storageTreeWidget->findItems(volName,Qt::MatchExactly).at(0)));
+    }
 }
 
 void Dialog::bluetoothChanged(bool b)
