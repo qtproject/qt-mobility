@@ -214,7 +214,7 @@ isEmpty(QT_LIBINFIX):symbian {
             "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ELSEIF package(0x102032BE)" \
             "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
-            "ELSE" \
+            "ELSEIF package(0x20022E6D)" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_mmfengine.dll\"" \
             "ENDIF"
 
@@ -225,6 +225,8 @@ isEmpty(QT_LIBINFIX):symbian {
             openmax = \
                 "IF package(0x20022E6D)" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmultimediakit_xarecordservice.dll\"" \
+                "ELSEIF package(0x20032DE7)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimediakit_openmaxalengine.dll\" - \"!:\\sys\\bin\\qtmultimediakit_openmaxalengine.dll\"" \
                 "ENDIF"
 
             qtmobilitydeployment.pkg_postrules += openmax
@@ -232,11 +234,21 @@ isEmpty(QT_LIBINFIX):symbian {
             pluginstubs += \
                 "IF package(0x20022E6D)" \
                     "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmultimediakit_xarecordservice.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
+                "ELSEIF package(0x20032DE7)" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/qmakepluginstubs/qtmultimediakit_openmaxalengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_xarecordservice.qtplugin\"" \
                 "ENDIF"
         }
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "IF package(0x1028315F)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102752AE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x102032BE)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ELSEIF package(0x20022E6D)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmultimediakit_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmultimediakit_mmfengine.qtplugin\"" \
+            "ENDIF"
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmultimediakit_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmultimediakit_m3u.qtplugin\"" \
 	    
 	contains(QT_CONFIG, declarative): {
