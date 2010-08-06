@@ -112,7 +112,7 @@ class CCalEntryView;
 class CCalInstanceView;
 class CActiveSchedulerWait;
 class TCalTime;
-class COrganizerItemRequestsServiceProvider;
+class QOrganizerItemRequestQueue;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
                                     public MCalProgressCallBack,
@@ -193,7 +193,7 @@ private:
     CCalEntryView *m_entryView;
     CCalInstanceView *m_instanceView;
     CActiveSchedulerWait *m_activeSchedulerWait;
-    COrganizerItemRequestsServiceProvider *m_requestServiceProvider;
+    QOrganizerItemRequestQueue* m_requestServiceProviderQueue;
 
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;

@@ -52,7 +52,7 @@
 #include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
 #include "organizeritemguidtransform.h"
-#include "organizeritemrequestserviceprovider.h"
+#include "qorganizeritemrequestqueue.h"
 
 //QTM_USE_NAMESPACE
 
@@ -103,7 +103,7 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
 
     m_activeSchedulerWait->Start();
 
-    m_requestServiceProvider = COrganizerItemRequestsServiceProvider::NewL(*this);
+    m_requestServiceProviderQueue = QOrganizerItemRequestQueue::instance(*this);
     // Create change notification filter
     TCalTime minTime;
     minTime.SetTimeUtcL(TCalTime::MinTime());
@@ -124,7 +124,7 @@ QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
     m_calSession->StopChangeNotification();
 
-	delete m_requestServiceProvider;
+	delete m_requestServiceProviderQueue;
     delete m_activeSchedulerWait;
     delete m_entryView;
     delete m_instanceView;
@@ -646,7 +646,7 @@ bool QOrganizerItemSymbianEngine::removeDetailDefinition(const QString& definiti
 
 bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* req)
 {
-    return m_requestServiceProvider->StartRequest(req);
+    return m_requestServiceProviderQueue->startRequest(req);
     /*
         This is the entry point to the async API.  The request object describes the
         type of request (switch on req->type()).  Req will not be null when called
@@ -686,17 +686,15 @@ bool QOrganizerItemSymbianEngine::startRequest(QOrganizerItemAbstractRequest* re
 
 bool QOrganizerItemSymbianEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
 {
-    Q_UNUSED(req)
     /*
         Cancel an in progress async request.  If not possible, return false from here.
     */
-    return m_requestServiceProvider->CancelRequest();
+    return m_requestServiceProviderQueue->cancelRequest(req);
 }
 
 bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
 {
-	Q_UNUSED(req)
-    return m_requestServiceProvider->waitForRequestFinished(msecs*KOneMicroSecond);
+    return m_requestServiceProviderQueue->waitForRequestFinished(req, msecs*KOneMicroSecond);
     /*
         Wait for a request to complete (up to a max of msecs milliseconds).
 
@@ -711,7 +709,6 @@ bool QOrganizerItemSymbianEngine::waitForRequestFinished(QOrganizerItemAbstractR
 
 void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
 {
-    Q_UNUSED(req)
     /*
         TODO
 
@@ -733,7 +730,7 @@ void QOrganizerItemSymbianEngine::requestDestroyed(QOrganizerItemAbstractRequest
     */
     // Cancel the request as of now, latter on a rework is needed to cancel the right process
 	// from a Queue
-    m_requestServiceProvider->CancelRequest();
+        m_requestServiceProviderQueue->requestDestroyed(req);
 }
 
 bool QOrganizerItemSymbianEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const

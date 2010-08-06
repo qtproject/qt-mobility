@@ -27,6 +27,7 @@ symbian: {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 
     HEADERS += \
+    	qorganizeritemrequestqueue.h \
     	organizeritemrequestserviceprovider.h \
         qorganizersymbian_p.h \
         organizeritemtransform.h \
@@ -44,6 +45,7 @@ symbian: {
         transform/organizertodoprogresstransform.h \
         transform/organizertodotimerangetransform.h
     SOURCES += \
+    	qorganizeritemrequestqueue.cpp \
     	organizeritemrequestserviceprovider.cpp \
         qorganizersymbian.cpp \
         organizeritemtransform.cpp \

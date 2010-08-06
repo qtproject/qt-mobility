@@ -135,7 +135,7 @@ TBool COrganizerItemRequestsServiceProvider::CancelRequest()
     }
 
 TBool COrganizerItemRequestsServiceProvider::waitForRequestFinished(
-        TTimeIntervalMicroSeconds32 aInterval)
+        TTimeIntervalMicroSeconds32 /*aInterval*/)
     {
     // We do not support this feature
     return false;
