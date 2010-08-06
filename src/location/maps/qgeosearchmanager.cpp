@@ -392,14 +392,16 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
     // TODO replace with free text search filter when it becomes available
     QLandmarkNameFilter searchFilter;
     searchFilter.setName(searchString);
-    searchFilter.setCaseSensitivity(Qt::CaseInsensitive);
+    searchFilter.setMatchFlags(QLandmarkFilter::MatchContains);
 
     QLandmarkIntersectionFilter intersectFilter;
     intersectFilter.append(searchFilter);
     if (bounds) {
+        QGeoBoundingBox* box = 0;
+        QGeoBoundingCircle* circle = 0;
         switch (bounds->type()) {
         case QGeoBoundingArea::BoxType:
-            QGeoBoundingBox* box = static_cast<QGeoBoundingBox*>(bounds);
+            box = static_cast<QGeoBoundingBox*>(bounds);
             if (box->isValid() && !box->isEmpty()) {
                 QLandmarkBoxFilter boxFilter;
                 boxFilter.setBoundingBox(*box);
@@ -407,7 +409,7 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
             }
             break;
         case QGeoBoundingArea::CircleType:
-            QGeoBoundingCircle* circle = static_cast<QGeoBoundingBox*>(bounds);
+            circle = static_cast<QGeoBoundingCircle*>(bounds);
             if (circle->isValid() && !circle->isEmpty()) {
                 QLandmarkProximityFilter proximityFilter(circle->center(),
                                                          circle->radius());
