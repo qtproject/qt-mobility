@@ -1578,7 +1578,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 
 DAApprovalSessionRef session = NULL;
 
-void mountCallback(DADiskRef disk, CFArrayRef keys, void *context)
+void mountCallback(DADiskRef disk, CFArrayRef /*keys*/, void *context)
 {
     NSDictionary *properties;
     properties = (NSDictionary *)DADiskCopyDescription(disk);
@@ -1587,6 +1587,33 @@ void mountCallback(DADiskRef disk, CFArrayRef keys, void *context)
     QString name = nsstringToQString([volumePath path]);
 
     static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
+}
+
+void mountCallback2(DADiskRef diskRef, void *context)
+{
+    DADiskRef wholeDisk;
+    wholeDisk = DADiskCopyWholeDisk(diskRef);
+// only deal with whole disks here.. i.e. cdroms
+    if (wholeDisk) {
+        io_service_t mediaService;
+
+        mediaService = DADiskCopyIOMedia(wholeDisk);
+        if (mediaService) {
+            if (IOObjectConformsTo(mediaService, kIOCDMediaClass) || IOObjectConformsTo(mediaService, kIODVDMediaClass)) {
+
+                NSDictionary *properties;
+                properties = (NSDictionary *)DADiskCopyDescription(diskRef);
+                NSURL *volumePath = [[properties objectForKey:(NSString *)kDADiskDescriptionVolumePathKey] copy];
+
+                QString name = nsstringToQString([volumePath path]);
+
+                static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true, name);
+                CFRelease(properties);
+            }
+        }
+        IOObjectRelease(mediaService);
+    }
+    CFRelease(wholeDisk);
 }
 
 void unmountCallback(DADiskRef disk, void *context)
@@ -1617,8 +1644,48 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 void QSystemStorageInfoPrivate::storageChanged( bool added, const QString &vol)
 {
-    updateVolumesMap();
-    Q_EMIT logicalDriveChanged(added,vol);
+    if(!vol.isEmpty()) {
+        QHashIterator<QString, QString> it(mountEntriesHash);
+        QString foundKey;
+        bool seen = false;
+        while (it.hasNext()) {
+            it.next();
+            if( vol == it.value()) {
+                seen = true;
+                foundKey = it.key();
+            }
+        }
+
+        if(added && !seen) {
+            Q_EMIT logicalDriveChanged(added,vol);
+            updateVolumesMap();
+        }
+        if(!added && seen) {
+            mountEntriesHash.remove(foundKey);
+            Q_EMIT logicalDriveChanged(added,vol);
+        }
+
+
+    } else {
+        if(added) {
+
+        } else { //removed
+            // cdroms unmounting seem to not have a volume name with the notification here, so
+            // we need to manually deal with it
+            QHash <QString,QString> oldDrives = mountEntriesHash;
+            updateVolumesMap();
+            QStringList newDrives = mountEntriesHash.keys();
+            QString foundDrive;
+
+            QHashIterator<QString, QString> it(oldDrives);
+            while (it.hasNext()) {
+                it.next();
+                if(!newDrives.contains(it.key())) {
+                    Q_EMIT logicalDriveChanged(added, it.value());
+                }
+            }
+        }
+    }
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1632,7 +1699,8 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
         if(buf[i].f_type != 19
-           && buf[i].f_type != 20) {
+           && buf[i].f_type != 20
+           && !mountEntriesHash.contains(volName)) {
             mountEntriesHash.insert(buf[i].f_mntfromname,volName);
         }
     }
@@ -1727,19 +1795,14 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
 
 QStringList QSystemStorageInfoPrivate::logicalDrives()
 {
+    updateVolumesMap();
     QStringList drivesList;
-
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(buf[i].f_type != 19
-           && buf[i].f_type != 20) {
-            drivesList << volName;
-        }
-    }
+    QHashIterator<QString, QString> it(mountEntriesHash);
+     while (it.hasNext()) {
+         it.next();
+         drivesList << it.value();
+     }
+     drivesList.sort();
     return drivesList;
 }
 
@@ -1760,7 +1823,7 @@ void QSystemStorageInfoPrivate::connectNotify(const char *signal)
 
         DARegisterDiskDescriptionChangedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,
                                                  kDADiskDescriptionWatchVolumePath, mountCallback,this);
-        //        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback2,this);
         DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,unmountCallback,this);
     }
 }

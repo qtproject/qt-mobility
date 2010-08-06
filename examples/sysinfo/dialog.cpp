@@ -308,7 +308,7 @@ void Dialog::updateStorage()
             type = "Removable";
         }
         if(volType == QSystemStorageInfo::CdromDrive) {
-            type =  "Cdrom";
+            type =  "CDRom";
         }
         if(volType == QSystemStorageInfo::RemoteDrive) {
             type =  "Network";
