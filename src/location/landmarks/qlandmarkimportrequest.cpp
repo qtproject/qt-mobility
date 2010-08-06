@@ -147,6 +147,51 @@ void QLandmarkImportRequest::setFormat(const QString &format)
 }
 
 /*!
+    Returns the import option of the import request.
+    The import option defines how categories are treated
+    during the import operation.  The default option is
+    QLandmarkManager::IncludeCategoryData.
+
+*/
+QLandmarkManager::ImportExportOption QLandmarkImportRequest::importOption() const
+{
+    Q_D(const QLandmarkImportRequest);
+    return d->option;
+}
+
+/*!
+    Sets the import \a option of the import request.
+    The import \a option defines how categories are treated
+    during the import operation.
+*/
+void QLandmarkImportRequest::setImportOption(QLandmarkManager::ImportExportOption option)
+{
+    Q_D(QLandmarkImportRequest);
+    d->option = option;
+}
+
+/*!
+    Returns identifier of the category which all landmarks are assigned to if
+    QLandmarkManager::AttachSingleCategory is used
+    as the import option.
+*/
+QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
+{
+    Q_D(const QLandmarkImportRequest);
+    return d->categoryId;
+}
+
+/*!
+    Sets the identifier of the category which all landmarks are assigned to
+    if QLandmarkManager::AttachSingleCategory is used as the import option.
+*/
+void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+    Q_D(QLandmarkImportRequest);
+    d->categoryId = categoryId;
+}
+
+/*!
     Returns a list of identifiers of landmarks that have been imported.
 */
 QList<QLandmarkId> QLandmarkImportRequest::landmarkIds() const

@@ -63,6 +63,9 @@ public:
     QString format() const;
     void setFormat(const QString &format);
 
+    QLandmarkManager::ImportExportOption exportOption() const;
+    void setExportOption(QLandmarkManager::ImportExportOption option);
+
     QList<QLandmarkId> landmarkIds() const;
     void setLandmarkIds(QList<QLandmarkId> &landmarkIds);
 private:

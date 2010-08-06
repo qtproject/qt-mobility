@@ -186,6 +186,8 @@ public:
     QIODevice *device;
     QString fileName;
     QString format;
+    QLandmarkManager::ImportExportOption option;
+    QLandmarkCategoryId categoryId;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -201,6 +203,7 @@ public:
     QIODevice *device;
     QString fileName;
     QString format;
+    QLandmarkManager::ImportExportOption option;
     QList<QLandmarkId> landmarkIds;
 };
 
