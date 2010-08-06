@@ -55,12 +55,10 @@ public:
     const char* DefinitionName;
     const char* FieldMessage;
     const char* FieldDataUrl;
-    const char* FieldData;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemVisualReminder, "VisualReminder", QOrganizerItemReminder::VisualReminder)
     Q_DECLARE_LATIN1_CONSTANT(FieldMessage, "Message");
     Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
-    Q_DECLARE_LATIN1_CONSTANT(FieldData, "Data");
 #endif
 
     // message and visual data to be displayed if visual notification.
@@ -68,8 +66,6 @@ public:
     QString message() const {return value<QString>(FieldMessage);}
     void setDataUrl(const QUrl& dataUrl) {setValue(FieldDataUrl, dataUrl);}
     QUrl dataUrl() const {return value<QUrl>(FieldDataUrl);}
-    void setData(const QByteArray& data) {setValue(FieldData, data);}
-    QByteArray data() const {return value<QByteArray>(FieldData);}
 };
 
 QTM_END_NAMESPACE

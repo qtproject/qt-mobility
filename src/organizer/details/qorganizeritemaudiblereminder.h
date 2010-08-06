@@ -54,18 +54,14 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldDataUrl;
-    const char* FieldData;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_REMINDER_DETAIL(QOrganizerItemAudibleReminder, "AudibleReminder", QOrganizerItemReminder::AudibleReminder)
     Q_DECLARE_LATIN1_CONSTANT(FieldDataUrl, "DataUrl");
-    Q_DECLARE_LATIN1_CONSTANT(FieldData, "Data");
 #endif
 
     // audio data to be played if audible notification.
     void setDataUrl(const QUrl& dataUrl) {setValue(FieldDataUrl, dataUrl);}
     QUrl dataUrl() const {return value<QUrl>(FieldDataUrl);}
-    void setData(const QByteArray& data) {setValue(FieldData, data);}
-    QByteArray data() const {return value<QByteArray>(FieldData);}
 };
 
 QTM_END_NAMESPACE

@@ -670,7 +670,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemReminder::FieldRepetitionDelay, "Repetiti
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::DefinitionName, "AudibleReminder");
 
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldDataUrl, "DataUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAudibleReminder::FieldData, "Data");
 
 /* ==================== QOrganizerItemEmailReminder ======================= */
 
@@ -695,7 +694,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::DefinitionName, "VisualRe
 
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldMessage, "Message");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldDataUrl, "DataUrl");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisualReminder::FieldData, "Data");
 
 
 

@@ -666,8 +666,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemAudibleReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event
     retn.insert(d.name(), d);
@@ -709,8 +707,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemVisualReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event
     retn.insert(d.name(), d);
@@ -909,8 +905,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemAudibleReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
     retn.insert(d.name(), d);
@@ -952,8 +946,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemVisualReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same event occurrence
     retn.insert(d.name(), d);
@@ -1071,8 +1063,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemAudibleReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo
     retn.insert(d.name(), d);
@@ -1114,8 +1104,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemVisualReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo
     retn.insert(d.name(), d);
@@ -1285,8 +1273,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemReminder::FieldDateTime, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemAudibleReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemAudibleReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
     retn.insert(d.name(), d);
@@ -1328,8 +1314,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemVisualReminder::FieldMessage, f);
     f.setDataType(QVariant::Url);
     fields.insert(QOrganizerItemVisualReminder::FieldDataUrl, f);
-    f.setDataType(QVariant::ByteArray);
-    fields.insert(QOrganizerItemVisualReminder::FieldData, f);
     d.setFields(fields);
     d.setUnique(false); // can have multiple alarms at different times for the same todo occurrence
     retn.insert(d.name(), d);

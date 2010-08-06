@@ -74,9 +74,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldRepetitionDelay, "RepetitionDelay");
 #endif
 
-    // XXX TODO: do we need a reminder priority?
-    // highest priority = will cancel phone calls to remind you, lowest = only if the device is idle?
-
     enum ReminderType {
         NoReminder = 0,
         VisualReminder,
