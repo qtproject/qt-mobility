@@ -62,6 +62,7 @@ public:
         CommunicationError,
         ParseError,
         UnsupportedOptionError,
+        CombinationError,
         UnknownError
     };
 
@@ -72,8 +73,11 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QGeoBoundingBox viewport() const;
+    QGeoBoundingArea* viewport() const;
     QList<QGeoPlace> places() const;
+
+    int resultsCount() const;
+    int resultsOffset() const;
 
 public slots:
     virtual void abort();
@@ -83,14 +87,17 @@ signals:
     void error(QGeoSearchReply::Error error, const QString &errorString = QString());
 
 protected:
-    QGeoSearchReply(QObject *parent = 0);
+    QGeoSearchReply(QObject* parent = 0);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void setViewport(const QGeoBoundingBox& viewport);
+    void setViewport(QGeoBoundingArea *viewport);
     void addPlace(const QGeoPlace &place);
     void setPlaces(const QList<QGeoPlace> &places);
+
+    void setResultsCount(int resultsCount);
+    void setResultsOffset(int resultsOffset);
 
 private:
     QGeoSearchReplyPrivate *d_ptr;

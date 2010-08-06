@@ -769,13 +769,11 @@ void MainWindow::drawCircle(bool /*checked*/)
 
     QPen pen(Qt::white);
     pen.setWidth(2);
-    QGeoMapCircleObject *circle = new QGeoMapCircleObject();
+    QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
     circle->setPen(pen);
     QColor fill(Qt::black);
     fill.setAlpha(65);
     circle->setBrush(QBrush(fill));
-    circle->setCenter(center);
-    circle->setRadius(radius);
     m_mapWidget->addMapObject(circle);
 
     m_mapWidget->lastCircle = circle;

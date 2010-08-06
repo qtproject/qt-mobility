@@ -408,35 +408,7 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
         supportsAlternativeRoutes(false),
         supportsExcludeAreas(false) {}
 
-QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other)
-        : managerName(other.managerName),
-        managerVersion(other.managerVersion),
-        supportsRouteUpdates(other.supportsRouteUpdates),
-        supportsAlternativeRoutes(other.supportsAlternativeRoutes),
-        supportsExcludeAreas(other.supportsExcludeAreas),
-        supportedTravelModes(other.supportedTravelModes),
-        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-        supportedRouteOptimizations(other.supportedRouteOptimizations),
-        supportedSegmentDetails(other.supportedSegmentDetails),
-        supportedInstructionDetails(other.supportedInstructionDetails) {}
-
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
-
-QGeoRoutingManagerEnginePrivate& QGeoRoutingManagerEnginePrivate::operator= (const QGeoRoutingManagerEnginePrivate & other)
-{
-    managerName = other.managerName;
-    managerVersion = other.managerVersion;
-    supportsRouteUpdates = other.supportsRouteUpdates;
-    supportsAlternativeRoutes = other.supportsAlternativeRoutes;
-    supportsExcludeAreas = other.supportsExcludeAreas;
-    supportedTravelModes = other.supportedTravelModes;
-    supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
-    supportedRouteOptimizations = other.supportedRouteOptimizations;
-    supportedSegmentDetails = other.supportedSegmentDetails;
-    supportedInstructionDetails = other.supportedInstructionDetails;
-
-    return *this;
-}
 
 #include "moc_qgeoroutingmanagerengine.cpp"
 

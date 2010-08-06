@@ -63,10 +63,7 @@ class QGeoRoutingManagerEnginePrivate
 {
 public:
     QGeoRoutingManagerEnginePrivate();
-    QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other);
     ~QGeoRoutingManagerEnginePrivate();
-
-    QGeoRoutingManagerEnginePrivate& operator= (const QGeoRoutingManagerEnginePrivate &other);
 
     QString managerName;
     int managerVersion;
@@ -79,6 +76,9 @@ public:
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
     QGeoRouteRequest::SegmentDetails supportedSegmentDetails;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
+
+private:
+    Q_DISABLE_COPY(QGeoRoutingManagerEnginePrivate)
 };
 
 QTM_END_NAMESPACE

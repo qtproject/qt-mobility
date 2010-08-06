@@ -66,15 +66,18 @@ public:
     int managerVersion() const;
 
     virtual QGeoSearchReply* geocode(const QGeoAddress &address,
-                                     const QGeoBoundingBox &bounds);
+                                     QGeoBoundingArea *bounds);
     virtual QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                            const QGeoBoundingBox &bounds);
+                                            QGeoBoundingArea *bounds);
 
     virtual QGeoSearchReply* search(const QString &searchString,
                                     QGeoSearchManager::SearchTypes searchTypes,
-                                    const QGeoBoundingBox &bounds);
+                                    int resultsCount,
+                                    int resultsOffset,
+                                    QGeoBoundingArea *bounds);
 
     bool supportsGeocoding() const;
+    bool supportsReverseGeocoding() const;
     QGeoSearchManager::SearchTypes supportedSearchTypes() const;
 
     QLandmarkManager* defaultLandmarkManager() const;
@@ -90,6 +93,7 @@ signals:
 protected:
     void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
     void setSupportsGeocoding(bool supported);
+    void setSupportsReverseGeocoding(bool supported);
     void setSupportedSearchTypes(QGeoSearchManager::SearchTypes searchTypes);
 
 private:

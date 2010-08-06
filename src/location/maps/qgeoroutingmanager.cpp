@@ -407,19 +407,10 @@ Use deleteLater() instead.
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
         : engine(0) {}
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-        : engine(other.engine) {}
-
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
-    delete engine;
-}
-
-QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
-{
-    engine = other.engine;
-
-    return *this;
+    if (engine)
+        delete engine;
 }
 
 #include "moc_qgeoroutingmanager.cpp"

@@ -164,22 +164,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
         : QGeoMappingManagerEnginePrivate() {}
 
-QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
-        : QGeoMappingManagerEnginePrivate(other),
-        supportedImageFormats(other.supportedImageFormats),
-        tileSize(other.tileSize) {}
-
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
-
-QGeoTiledMappingManagerEnginePrivate& QGeoTiledMappingManagerEnginePrivate::operator= (const QGeoTiledMappingManagerEnginePrivate & other)
-{
-    QGeoMappingManagerEnginePrivate::operator =(other);
-
-    supportedImageFormats = other.supportedImageFormats;
-    tileSize = other.tileSize;
-
-    return *this;
-}
 
 /*******************************************************************************
 *******************************************************************************/

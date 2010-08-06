@@ -62,14 +62,6 @@ QTM_BEGIN_NAMESPACE
 class QGeoBoundingBoxPrivate : public QSharedData
 {
 public:
-//    static double longitudeShift(double longitudeFrom, double delta);
-//    static double latitudeShift(double latitudeFrom, double delta);
-
-//    static double degreesLeft(double longitudeFrom, double longitudeTo);
-//    static double degreesRight(double longitudeFrom, double longitudeTo);
-//    static double degreesUp(double latitudeFrom, double latitudeTo);
-//    static double degreesDown(double latitudeFrom, double latitudeTo);
-
     QGeoBoundingBoxPrivate();
     QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
     QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
