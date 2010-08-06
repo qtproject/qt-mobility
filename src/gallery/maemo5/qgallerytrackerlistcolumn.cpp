@@ -135,23 +135,6 @@ QGalleryTrackerCompositeColumn *QGalleryTrackerFilePathColumn::create(const QVec
     return new QGalleryTrackerFilePathColumn;
 }
 
-QVariant QGalleryTrackerThumbnailCacheIdColumn::value(QVector<QVariant>::const_iterator row) const
-{
-    return QCryptographicHash::hash(
-#ifdef Q_WS_MAEMO_5
-            QUrl::fromLocalFile(row->toString()).toString().toUtf8(),
-#else
-            QUrl::fromLocalFile(row->toString()).toEncoded(),
-#endif
-            QCryptographicHash::Md5).toHex();
-
-}
-
-QGalleryTrackerCompositeColumn *QGalleryTrackerThumbnailCacheIdColumn::create(const QVector<int> &)
-{
-    return new QGalleryTrackerThumbnailCacheIdColumn;
-}
-
 #include "moc_qgallerytrackerlistcolumn_p.cpp"
 
 QTM_END_NAMESPACE
