@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 // Constants
-const QString m_managerNameSymbian("symbian");
+const QString managerNameSymbian("symbian");
 const int KNoOfItems = 100; 
 
 // We need to be able to pass QOrganizerItem as parameter from
@@ -60,11 +60,13 @@ class TestDetailDefs : public QObject
    Q_OBJECT
    
 private slots:
-   void init();
-   void cleanup();
+   void initTestCase();
+   void cleanupTestCase();
    
 private slots:
    void saveDetails();
+   void removeDetails();
+   void fetchDetails();
    
 public slots:
    void detailDefsSaveRequestStateChanged(
@@ -77,11 +79,6 @@ public slots:
            QOrganizerItemAbstractRequest::State currentState);
    void detailDefsFetchRequestResultsAvailable();
 
-
-private:
-   void removeDetails();
-   void fetchDetails();
-   
 private:
     QStringList                                     m_definitionNames;
     QOrganizerItemManager*                          m_om;
@@ -91,10 +88,10 @@ private:
 
 };
 
-void TestDetailDefs::init()
+void TestDetailDefs::initTestCase()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(m_managerNameSymbian);
+    m_om = new QOrganizerItemManager(managerNameSymbian);
         
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds(), 0);
@@ -131,7 +128,7 @@ void TestDetailDefs::init()
 
 }
 
-void TestDetailDefs::cleanup()
+void TestDetailDefs::cleanupTestCase()
 {
 
     if (m_om) {
@@ -155,10 +152,6 @@ void TestDetailDefs::saveDetails()
     m_detailDefsSaveRequest->setManager(m_om);
     // Start save details request
     QVERIFY(m_detailDefsSaveRequest->start());
-    
-    // Wait for the request to be completed
-    QTest::qWait(1000);
-
 }
 
 void TestDetailDefs::detailDefsSaveRequestStateChanged(
@@ -209,7 +202,6 @@ void TestDetailDefs::detailDefsSaveRequestResultsAvailable()
     for (int index(0); index < count; index++){
         QCOMPARE(QOrganizerItemManager::NotSupportedError, errorMap[index]);
     }
-    removeDetails();
 }
 
 void TestDetailDefs::removeDetails()
@@ -267,7 +259,6 @@ void TestDetailDefs::detailDefsRemoveRequestResultsAvailable()
     for (int index(0); index < count; index++){
         QCOMPARE(QOrganizerItemManager::NotSupportedError, errorMap[index]);
     }
-    fetchDetails();
 }
 
 void TestDetailDefs::fetchDetails()
@@ -297,6 +288,8 @@ void TestDetailDefs::fetchDetails()
     m_detailDefsFetchRequest->setItemType(QOrganizerItemType::TypeEvent);
     m_detailDefsFetchRequest->setManager(m_om);
     m_detailDefsFetchRequest->start();
+    // Wait for the request to be completed
+    QTest::qWait(1000);
 }
 
 void TestDetailDefs::detailDefsFetchRequestStateChanged(

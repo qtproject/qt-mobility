@@ -49,7 +49,7 @@
 QTM_USE_NAMESPACE
 
 // Constants
-const QString m_managerNameSymbian("symbian");
+const QString managerNameSymbian("symbian");
 const int KNumberOfEntries = 5; 
 
 // We need to be able to pass QOrganizerItem as parameter from
@@ -89,7 +89,7 @@ private:
 void TestFetchItems::init()
 {
     // Create a new item manager instance
-    m_om = new QOrganizerItemManager(m_managerNameSymbian);
+    m_om = new QOrganizerItemManager(managerNameSymbian);
     // Cleanup by deleting all items
     m_om->removeItems(m_om->itemIds(), 0);
     
