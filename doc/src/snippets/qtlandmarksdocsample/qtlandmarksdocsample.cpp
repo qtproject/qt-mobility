@@ -473,7 +473,7 @@ void importExportLandmark() {
     //! [ImportExport landmark simple]
     landmarkManager->importLandmarks("places.gpx");
 
-    landmarkManager->exportLandmarks("myplaces.gpx");
+    landmarkManager->exportLandmarks("myplaces.gpx","GpxV1.1");
     //! [ImportExport landmark simple]
 }
 

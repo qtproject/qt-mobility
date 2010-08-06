@@ -123,9 +123,9 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::Error *error,
-                                 QString *errorString) ;
-    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds,
+    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& id,
+                                QLandmarkManager::Error *error, QString *errorString);
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
                                  QLandmarkManager::Error *error, QString *errorString) const;
     virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 

@@ -771,6 +771,17 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
     QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3.categoryId()).attribute("ni"), QVariant());
     QCOMPARE(m_manager->category(cat3.categoryId()).attribute("san").toInt(), 3);
+
+    //try adding a category when a category already exists
+    QLandmarkCategory cat1Duplicate;
+    cat1Duplicate.setName("CAT1");
+    QVERIFY(!m_manager->saveCategory(&cat1Duplicate));
+    QCOMPARE(m_manager->error(), QLandmarkManager::AlreadyExistsError);
+
+    //try renaming an existing category to a name that already exists
+    cat2.setName("CAT1");
+    QVERIFY(!m_manager->saveCategory(&cat2));
+    QCOMPARE(m_manager->error(),QLandmarkManager::AlreadyExistsError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
@@ -830,10 +841,10 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("san").toInt(), 3);
 
     //remove an attribute
-    cat3.setAttribute("ni", QVariant());
-    QCOMPARE(cat3.attributeKeys().count(),2);
+    cat3saved.setAttribute("ni", QVariant());
+    QCOMPARE(cat3saved.attributeKeys().count(),2);
 
-    saveCategoryRequest.setCategory(cat3);
+    saveCategoryRequest.setCategory(cat3saved);
     saveCategoryRequest.start();
     QVERIFY(waitForAsync(spy, &saveCategoryRequest));
     QCOMPARE(saveCategoryRequest.categories().count(),1);
@@ -842,6 +853,19 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ichi").toInt(), 1);
     QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("ni"), QVariant());
     QCOMPARE(m_manager->category(cat3saved.categoryId()).attribute("san").toInt(), 3);
+
+     //try adding a category when a category already exists
+    QLandmarkCategory cat1Duplicate;
+    cat1Duplicate.setName("CAT1");
+    saveCategoryRequest.setCategory(cat3);
+
+    QVERIFY(!m_manager->saveCategory(&cat1Duplicate));
+    QCOMPARE(m_manager->error(), QLandmarkManager::AlreadyExistsError);
+
+    //try renaming an existing category to a name that already exists
+    cat2.setName("CAT1");
+    QVERIFY(!m_manager->saveCategory(&cat2));
+    QCOMPARE(m_manager->error(),QLandmarkManager::AlreadyExistsError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateCategory() {

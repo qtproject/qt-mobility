@@ -130,11 +130,14 @@ public:
 
     bool importLandmarks(QIODevice *device,
                          const QString &format,
+                         QLandmarkManager::ImportExportOption option,
+                         const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
                          const QString &format,
                          QList<QLandmarkId> landmarkIds,
+                         QLandmarkManager::ImportExportOption option,
                          QLandmarkManager::Error *error,
                          QString *errorString) const;
     QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;

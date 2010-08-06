@@ -379,13 +379,20 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     is expected to adhere to the provided \a format.  If no \a format is provided,
     the manager engine tries to autodetect the \a format.
 
+    The \a option can be used to control whether categories in the imported
+    file will be added during the import.  If the \c AttachSingleCategory option is used, then
+    all the landmarks in the import file are assigned to the category identified by
+    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    doesn't exist when using \c AttachSingleCategory, QLandmarkManager::DoesNotExist error is returned.  Note that
+    some file formats may not support categories at all.
+
     Returns true if all landmarks could be imported, otherwise returns false.
     It may be possible that only a subset of landmarks are imported.
 
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& categoryId,
         QLandmarkManager::Error *error, QString *errorString)
 {
     Q_ASSERT(error);
@@ -401,6 +408,12 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     all landmarks will be exported, otherwise only those landmarks that
     match \a landmarkIds will be exported.
 
+    The \a option can be used to control whether categories will be exported or not.
+    Note that the \c AttachSingleCategory option has no meaning during
+    export and the manager will export as if \a option was \c IncludeCategoryData.
+    Also, be aware that some file formats may not support categories at all and for
+    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
@@ -408,7 +421,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds,
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
