@@ -53,6 +53,7 @@ class CoverArtModel : public ThumbnailModel
 public:
     CoverArtModel(QAbstractGallery *gallery, QObject *parent = 0);
 
+#if defined(Q_WS_MAEMO_5)
 protected:
     QString imagePath(const QModelIndex &index) const;
 
@@ -61,6 +62,7 @@ private:
 
     QRegExp illegalCharacters;
     QString whitespace;
+#endif
 };
 
 #endif

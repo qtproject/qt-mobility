@@ -46,19 +46,11 @@
 
 #include <qdocumentgallery.h>
 
-#if defined(Q_WS_MAEMO_5)
 #include "coverartmodel.h"
-#else
-#include "thumbnailmodel.h"
-#endif
 
 AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags flags)
     : GalleryView(parent, flags)
-#if defined(Q_WS_MAEMO_5)
     , model(new CoverArtModel(gallery))
-#else
-    , model(new QGalleryQueryModel(gallery))
-#endif
 {
     model->setRootType(QDocumentGallery::Album);
 
@@ -72,7 +64,7 @@ AlbumView::AlbumView(QAbstractGallery *gallery, QWidget *parent, Qt::WindowFlags
             << QDocumentGallery::title);
 
     QListView *view = new QListView;
-    view->setIconSize(ThumbnailModel::thumbnailSize);
+    view->setIconSize(CoverArtModel::thumbnailSize);
     view->setFlow(QListView::LeftToRight);
     view->setViewMode(QListView::IconMode);
     view->setSpacing(4);
