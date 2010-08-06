@@ -688,7 +688,7 @@ QDocumentGallery::~QDocumentGallery()
 
 }
 
-bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type) const
+bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::RequestType) const
 {
     return false;
 }
