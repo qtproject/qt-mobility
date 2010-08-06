@@ -118,7 +118,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#static-public-members">Static Public Members</a></li>
@@ -126,14 +126,13 @@
 </ul>
 </div>
 <h1 class="title">QContactGlobalPresence Class Reference</h1>
-<!-- $$$QContactGlobalPresence-brief -->
 <p>The QContactGlobalPresence class provides aggregated presence information for a contact, synthesized or supplied by the backend. <a href="#details">More...</a></p>
-<!-- @@@QContactGlobalPresence -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactGlobalPresence&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <ul>
 <li><a href="qcontactglobalpresence-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactglobalpresence.html#customMessage">customMessage</a></b> () const</td></tr>
@@ -152,7 +151,8 @@
 <ul>
 <li class="fn">29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
-<a name="static-public-members"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactglobalpresence.html#DefinitionName-var">DefinitionName</a></b></td></tr>
@@ -163,112 +163,75 @@
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactglobalpresence.html#FieldPresenceStateText-var">FieldPresenceStateText</a></b></td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactglobalpresence.html#FieldTimestamp-var">FieldTimestamp</a></b></td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QContactGlobalPresence-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactGlobalPresence class provides aggregated presence information for a contact, synthesized or supplied by the backend.</p>
 </div>
-<!-- @@@QContactGlobalPresence -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$customMessage[overload1]$$$customMessage -->
-<h3 class="fn"><a name="customMessage"></a>QString QContactGlobalPresence::customMessage () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="customMessage"></a>QString QContactGlobalPresence::customMessage () const</h3>
 <p>Returns the custom status message from the contact for the aggregate presence detail.</p>
 <p>See also <a href="qcontactglobalpresence.html#setCustomMessage">setCustomMessage</a>().</p>
-<!-- @@@customMessage -->
-<!-- $$$nickname[overload1]$$$nickname -->
-<h3 class="fn"><a name="nickname"></a>QString QContactGlobalPresence::nickname () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="nickname"></a>QString QContactGlobalPresence::nickname () const</h3>
 <p>Returns the last-known nickname used by the contact during communications via any online account about which this detail aggregates presence information.</p>
 <p>See also <a href="qcontactglobalpresence.html#setNickname">setNickname</a>().</p>
-<!-- @@@nickname -->
-<!-- $$$presenceState[overload1]$$$presenceState -->
-<h3 class="fn"><a name="presenceState"></a><a href="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceState</a> QContactGlobalPresence::presenceState () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="presenceState"></a><a href="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceState</a> QContactGlobalPresence::presenceState () const</h3>
 <p>Returns the aggregate presence state of any online accounts about which this detail aggregates presence information.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceState">setPresenceState</a>().</p>
-<!-- @@@presenceState -->
-<!-- $$$presenceStateImageUrl[overload1]$$$presenceStateImageUrl -->
-<h3 class="fn"><a name="presenceStateImageUrl"></a>QUrl QContactGlobalPresence::presenceStateImageUrl () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="presenceStateImageUrl"></a>QUrl QContactGlobalPresence::presenceStateImageUrl () const</h3>
 <p>Returns the last-known status image url of the contact.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceStateImageUrl">setPresenceStateImageUrl</a>().</p>
-<!-- @@@presenceStateImageUrl -->
-<!-- $$$presenceStateText[overload1]$$$presenceStateText -->
-<h3 class="fn"><a name="presenceStateText"></a>QString QContactGlobalPresence::presenceStateText () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="presenceStateText"></a>QString QContactGlobalPresence::presenceStateText () const</h3>
 <p>Returns the text corresponding to the current presence state.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceStateText">setPresenceStateText</a>().</p>
-<!-- @@@presenceStateText -->
-<!-- $$$setCustomMessage[overload1]$$$setCustomMessageconstQString& -->
-<h3 class="fn"><a name="setCustomMessage"></a>void QContactGlobalPresence::setCustomMessage ( const QString &amp; <i>customMessage</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setCustomMessage"></a>void QContactGlobalPresence::setCustomMessage ( const QString &amp; <i>customMessage</i> )</h3>
 <p>Sets the custom status message from the contact for the aggregate presence detail, to <i>customMessage</i>.</p>
 <p>See also <a href="qcontactglobalpresence.html#customMessage">customMessage</a>().</p>
-<!-- @@@setCustomMessage -->
-<!-- $$$setNickname[overload1]$$$setNicknameconstQString& -->
-<h3 class="fn"><a name="setNickname"></a>void QContactGlobalPresence::setNickname ( const QString &amp; <i>nickname</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setNickname"></a>void QContactGlobalPresence::setNickname ( const QString &amp; <i>nickname</i> )</h3>
 <p>Sets the last-known nickname used by the contact during communications via any online account about which this detail aggregates presence information to <i>nickname</i>.</p>
 <p>See also <a href="qcontactglobalpresence.html#nickname">nickname</a>().</p>
-<!-- @@@setNickname -->
-<!-- $$$setPresenceState[overload1]$$$setPresenceStateQContactPresence::PresenceState -->
-<h3 class="fn"><a name="setPresenceState"></a>void QContactGlobalPresence::setPresenceState ( <a href="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceState</a> <i>presenceState</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPresenceState"></a>void QContactGlobalPresence::setPresenceState ( <a href="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceState</a> <i>presenceState</i> )</h3>
 <p>Sets the presence state of this aggregate detail according to the presence information available from the presence providers which this detail aggregates to the given <i>presenceState</i>.</p>
 <p>See also <a href="qcontactglobalpresence.html#presenceState">presenceState</a>().</p>
-<!-- @@@setPresenceState -->
-<!-- $$$setPresenceStateImageUrl[overload1]$$$setPresenceStateImageUrlconstQUrl& -->
-<h3 class="fn"><a name="setPresenceStateImageUrl"></a>void QContactGlobalPresence::setPresenceStateImageUrl ( const QUrl &amp; <i>presenceStateImageUrl</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPresenceStateImageUrl"></a>void QContactGlobalPresence::setPresenceStateImageUrl ( const QUrl &amp; <i>presenceStateImageUrl</i> )</h3>
 <p>Sets the last-known status image url of the contact to <i>presenceStateImageUrl</i>.</p>
 <p>See also <a href="qcontactglobalpresence.html#presenceStateImageUrl">presenceStateImageUrl</a>().</p>
-<!-- @@@setPresenceStateImageUrl -->
-<!-- $$$setPresenceStateText[overload1]$$$setPresenceStateTextconstQString& -->
-<h3 class="fn"><a name="setPresenceStateText"></a>void QContactGlobalPresence::setPresenceStateText ( const QString &amp; <i>presenceStateText</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPresenceStateText"></a>void QContactGlobalPresence::setPresenceStateText ( const QString &amp; <i>presenceStateText</i> )</h3>
 <p>Sets the text corresponding to the presence state to <i>presenceStateText</i>. This function is generally called by presence providers to allow custom naming of states, or to allow finer grained state reporting than is provided by the presence state API.</p>
 <p>See also <a href="qcontactglobalpresence.html#presenceStateText">presenceStateText</a>().</p>
-<!-- @@@setPresenceStateText -->
-<!-- $$$setTimestamp[overload1]$$$setTimestampconstQDateTime& -->
-<h3 class="fn"><a name="setTimestamp"></a>void QContactGlobalPresence::setTimestamp ( const QDateTime &amp; <i>updateTimestamp</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setTimestamp"></a>void QContactGlobalPresence::setTimestamp ( const QDateTime &amp; <i>updateTimestamp</i> )</h3>
 <p>Sets the update timestamp of the global presence detail to be <i>updateTimestamp</i>.</p>
 <p>See also <a href="qcontactglobalpresence.html#timestamp">timestamp</a>().</p>
-<!-- @@@setTimestamp -->
-<!-- $$$timestamp[overload1]$$$timestamp -->
-<h3 class="fn"><a name="timestamp"></a>QDateTime QContactGlobalPresence::timestamp () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="timestamp"></a>QDateTime QContactGlobalPresence::timestamp () const</h3>
 <p>Returns the timestamp at which the data in the global presence detail was valid.</p>
 <p>See also <a href="qcontactglobalpresence.html#setTimestamp">setTimestamp</a>().</p>
-<!-- @@@timestamp -->
 </div>
+<hr />
 <div class="vars"/>
 <h2>Member Variable Documentation</h2>
-<!-- $$$DefinitionName -->
-<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::DefinitionName</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::DefinitionName</h3>
 <p>The string constant for the definition name of <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> details.</p>
-<!-- @@@DefinitionName -->
-<!-- $$$FieldCustomMessage -->
-<h3 class="fn"><a name="FieldCustomMessage-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldCustomMessage</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldCustomMessage-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldCustomMessage</h3>
 <p>The field key constant for the user-entered custom presence message.</p>
 <p>See also <a href="qcontactglobalpresence.html#setCustomMessage">setCustomMessage</a>() and <a href="qcontactglobalpresence.html#customMessage">customMessage</a>().</p>
-<!-- @@@FieldCustomMessage -->
-<!-- $$$FieldNickname -->
-<h3 class="fn"><a name="FieldNickname-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldNickname</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldNickname-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldNickname</h3>
 <p>The field key constant for the nickname value.</p>
 <p>See also <a href="qcontactglobalpresence.html#setNickname">setNickname</a>() and <a href="qcontactglobalpresence.html#nickname">nickname</a>().</p>
-<!-- @@@FieldNickname -->
-<!-- $$$FieldPresenceState -->
-<h3 class="fn"><a name="FieldPresenceState-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceState</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldPresenceState-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceState</h3>
 <p>The field key constant for the presence state enumeration value.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceState">setPresenceState</a>() and <a href="qcontactglobalpresence.html#presenceState">presenceState</a>().</p>
-<!-- @@@FieldPresenceState -->
-<!-- $$$FieldPresenceStateImageUrl -->
-<h3 class="fn"><a name="FieldPresenceStateImageUrl-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateImageUrl</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldPresenceStateImageUrl-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateImageUrl</h3>
 <p>The field key constant for the presence state image URL.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceStateImageUrl">setPresenceStateImageUrl</a>() and <a href="qcontactglobalpresence.html#presenceStateImageUrl">presenceStateImageUrl</a>().</p>
-<!-- @@@FieldPresenceStateImageUrl -->
-<!-- $$$FieldPresenceStateText -->
-<h3 class="fn"><a name="FieldPresenceStateText-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateText</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldPresenceStateText-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateText</h3>
 <p>The field key constant for the presence state description value.</p>
 <p>See also <a href="qcontactglobalpresence.html#setPresenceStateText">setPresenceStateText</a>() and <a href="qcontactglobalpresence.html#presenceStateText">presenceStateText</a>().</p>
-<!-- @@@FieldPresenceStateText -->
-<!-- $$$FieldTimestamp -->
-<h3 class="fn"><a name="FieldTimestamp-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldTimestamp</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="FieldTimestamp-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldTimestamp</h3>
 <p>The field key constant for the timestamp value.</p>
 <p>See also <a href="qcontactglobalpresence.html#setTimestamp">setTimestamp</a>() and <a href="qcontactglobalpresence.html#timestamp">timestamp</a>().</p>
-<!-- @@@FieldTimestamp -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -276,15 +239,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -119,7 +119,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -127,19 +127,19 @@
 </ul>
 </div>
 <h1 class="title">QGalleryProperty Class Reference</h1>
-<!-- $$$QGalleryProperty-brief -->
 <p>The QGalleryProperty class provides an identifier for a gallery property. <a href="#details">More...</a></p>
-<!-- @@@QGalleryProperty -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QGalleryProperty&gt;</pre><ul>
 <li><a href="qgalleryproperty-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#Attribute-enum">Attribute</a></b> { CanRead, CanWrite, CanSort, CanFilter }</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#Attribute-enum">Attributes</a></b></td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#QGalleryProperty">QGalleryProperty</a></b> ( const char * <i>name</i> )</td></tr>
@@ -153,16 +153,15 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-gt">operator&gt;</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-gt-eq">operator&gt;=</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QGalleryProperty-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryProperty class provides an identifier for a gallery property.</p>
 </div>
-<!-- @@@QGalleryProperty -->
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<!-- $$$Attribute -->
 <h3 class="flags"><a name="Attribute-enum"></a>enum QGalleryProperty::Attribute<br/>flags QGalleryProperty::Attributes</h3>
 <p>This enumeration describes the attributes of a property.</p>
 <table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
@@ -172,50 +171,30 @@
 <tr><td  class="topAlign"><tt>QGalleryProperty::CanFilter</tt></td><td class=" topAlign"><tt>0x08</tt></td><td  class="topAlign">The value of this property can be used in a filter.</td></tr>
 </table>
 <p>The Attributes type is a typedef for <a href="qflags.html">QFlags</a>&lt;Attribute&gt;. It stores an OR combination of Attribute values.</p>
-<!-- @@@Attribute -->
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QGalleryProperty[overload1]$$$QGalleryPropertyconstchar* -->
-<h3 class="fn"><a name="QGalleryProperty"></a>QGalleryProperty::QGalleryProperty ( const char * <i>name</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QGalleryProperty"></a>QGalleryProperty::QGalleryProperty ( const char * <i>name</i> )</h3>
 <p>Constructs a property from a string literal <i>name</i>.</p>
-<!-- @@@QGalleryProperty -->
-<!-- $$$ascending[overload1]$$$ascending -->
-<h3 class="fn"><a name="ascending"></a>QString QGalleryProperty::ascending () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="ascending"></a>QString QGalleryProperty::ascending () const</h3>
 <p>Returns a sort key which indicating items should be sorted a property in ascending order.</p>
-<!-- @@@ascending -->
-<!-- $$$descending[overload1]$$$descending -->
-<h3 class="fn"><a name="descending"></a>QString QGalleryProperty::descending () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="descending"></a>QString QGalleryProperty::descending () const</h3>
 <p>Returns a sort key which indicating items should be sorted a property in descending order.</p>
-<!-- @@@descending -->
-<!-- $$$name[overload1]$$$name -->
-<h3 class="fn"><a name="name"></a>QString QGalleryProperty::name () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QGalleryProperty::name () const</h3>
 <p>Returns the name of a property.</p>
-<!-- @@@name -->
-<!-- $$$operator QString[overload1]$$$operator QString -->
-<h3 class="fn"><a name="operator-QString"></a>QGalleryProperty::operator QString () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-QString"></a>QGalleryProperty::operator QString () const</h3>
 <p>Returns the name of a property.</p>
-<!-- @@@operator QString -->
-<!-- $$$operator<[overload1]$$$operator<constQVariant& -->
-<h3 class="fn"><a name="operator-lt"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&lt; ( const QVariant &amp; <i>value</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-lt"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&lt; ( const QVariant &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is less than a <i>value</i>.</p>
-<!-- @@@operator< -->
-<!-- $$$operator<=[overload1]$$$operator<=constQVariant& -->
-<h3 class="fn"><a name="operator-lt-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&lt;= ( const QVariant &amp; <i>value</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-lt-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&lt;= ( const QVariant &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is less than or equal to a <i>value</i>.</p>
-<!-- @@@operator<= -->
-<!-- $$$operator==[overload1]$$$operator==constQVariant& -->
-<h3 class="fn"><a name="operator-eq-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator== ( const QVariant &amp; <i>value</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-eq-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator== ( const QVariant &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is equal to a <i>value</i>.</p>
-<!-- @@@operator== -->
-<!-- $$$operator>[overload1]$$$operator>constQVariant& -->
-<h3 class="fn"><a name="operator-gt"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&gt; ( const QVariant &amp; <i>value</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-gt"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&gt; ( const QVariant &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is greater than a <i>value</i>.</p>
-<!-- @@@operator> -->
-<!-- $$$operator>=[overload1]$$$operator>=constQVariant& -->
-<h3 class="fn"><a name="operator-gt-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&gt;= ( const QVariant &amp; <i>value</i> ) const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="operator-gt-eq"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::operator&gt;= ( const QVariant &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is greater than or equal to a <i>value</i>.</p>
-<!-- @@@operator>= -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -223,15 +202,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

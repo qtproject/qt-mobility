@@ -119,20 +119,19 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
 <h1 class="title">QContactActionFactory Class Reference</h1>
-<!-- $$$QContactActionFactory-brief -->
 <p>The QContactActionFactory class provides an interface for clients to retrieve instances of action implementations <a href="#details">More...</a></p>
-<!-- @@@QContactActionFactory -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QContactActionFactory&gt;</pre><ul>
 <li><a href="qcontactactionfactory-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qcontactactionfactory.html#dtor.QContactActionFactory">~QContactActionFactory</a></b> () = 0</td></tr>
@@ -141,35 +140,25 @@
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QContactAction * </td><td class="memItemRight bottomAlign"><b><a href="qcontactactionfactory.html#instance">instance</a></b> ( const QContactActionDescriptor &amp; <i>descriptor</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> virtual QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactactionfactory.html#name">name</a></b> () const = 0</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QContactActionFactory-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactActionFactory class provides an interface for clients to retrieve instances of action implementations</p>
 </div>
-<!-- @@@QContactActionFactory -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$~QContactActionFactory[overload1]$$$~QContactActionFactory -->
-<h3 class="fn"><a name="dtor.QContactActionFactory"></a>QContactActionFactory::~QContactActionFactory ()<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QContactActionFactory"></a>QContactActionFactory::~QContactActionFactory ()<tt> [pure virtual]</tt></h3>
 <p>Clears any memory in use by this factory</p>
-<!-- @@@~QContactActionFactory -->
-<!-- $$$actionDescriptors[overload1]$$$actionDescriptors -->
-<h3 class="fn"><a name="actionDescriptors"></a>QList&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContactActionFactory::actionDescriptors () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="actionDescriptors"></a>QList&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContactActionFactory::actionDescriptors () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved from this factory.</p>
-<!-- @@@actionDescriptors -->
-<!-- $$$actionMetadata[overload1]$$$actionMetadataconstQContactActionDescriptor& -->
-<h3 class="fn"><a name="actionMetadata"></a>QVariantMap QContactActionFactory::actionMetadata ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="actionMetadata"></a>QVariantMap QContactActionFactory::actionMetadata ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns the metadata associated with the action identified by the given <i>descriptor</i></p>
-<!-- @@@actionMetadata -->
-<!-- $$$instance[overload1]$$$instanceconstQContactActionDescriptor& -->
-<h3 class="fn"><a name="instance"></a><a href="qcontactaction.html">QContactAction</a> * QContactActionFactory::instance ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="instance"></a><a href="qcontactaction.html">QContactAction</a> * QContactActionFactory::instance ( const <a href="qcontactactiondescriptor.html">QContactActionDescriptor</a> &amp; <i>descriptor</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Returns a pointer to an instance of the implementation of the action described by the given <i>descriptor</i>. The caller takes ownership of the action instance returned from this function, and must delete it when they are finished using it in order to avoid a memory leak.</p>
-<!-- @@@instance -->
-<!-- $$$name[overload1]$$$name -->
-<h3 class="fn"><a name="name"></a>QString QContactActionFactory::name () const<tt> [pure virtual]</tt></h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="name"></a>QString QContactActionFactory::name () const<tt> [pure virtual]</tt></h3>
 <p>Returns the name of this factory. The name is used to identify the factory when it is retrieved using the Qt Plugin framework.</p>
-<!-- @@@name -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -177,15 +166,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

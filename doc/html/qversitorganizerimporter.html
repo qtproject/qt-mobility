@@ -118,7 +118,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-types">Public Types</a></li>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
@@ -126,18 +126,18 @@
 </ul>
 </div>
 <h1 class="title">QVersitOrganizerImporter Class Reference</h1>
-<!-- $$$QVersitOrganizerImporter-brief -->
 <p>The QVersitOrganizerImporter class converts <a href="qversitdocument.html">QVersitDocuments</a> to <a href="qorganizeritem.html">QOrganizerItems</a>. <a href="#details">More...</a></p>
-<!-- @@@QVersitOrganizerImporter -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QVersitOrganizerImporter&gt;</pre><ul>
 <li><a href="qversitorganizerimporter-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-types"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerimporter.html#Error-enum">Error</a></b> { NoError, InvalidDocumentError, EmptyDocumentError }</td></tr>
 </table>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerimporter.html#QVersitOrganizerImporter">QVersitOrganizerImporter</a></b> ()</td></tr>
@@ -149,62 +149,45 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerimporter.html#setPropertyHandler">setPropertyHandler</a></b> ( QVersitOrganizerImporterPropertyHandler * <i>handler</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qversitorganizerimporter.html#setResourceHandler">setResourceHandler</a></b> ( QVersitResourceHandler * <i>handler</i> )</td></tr>
 </table>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QVersitOrganizerImporter-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitOrganizerImporter class converts <a href="qversitdocument.html">QVersitDocuments</a> to <a href="qorganizeritem.html">QOrganizerItems</a>.</p>
 <p>This class is used to convert a <a href="qversitdocument.html">QVersitDocuments</a> (which may be produced by a <a href="qversitreader.html">QVersitReader</a>) to lists of <a href="qorganizeritem.html">QOrganizerItems</a> (which may be saved into a <a href="qorganizeritemmanager.html">QOrganizerItemManager</a>. Unless there is an error, there is a one-to-one mapping between sub-documents of the input Versit document and QOrganizerItems.</p>
 </div>
-<!-- @@@QVersitOrganizerImporter -->
+<hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<!-- $$$Error -->
-<h3 class="fn"><a name="Error-enum"></a>enum QVersitOrganizerImporter::Error</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- @@@Error -->
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitOrganizerImporter::Error</h3>
 </div>
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$QVersitOrganizerImporter[overload1]$$$QVersitOrganizerImporter -->
-<h3 class="fn"><a name="QVersitOrganizerImporter"></a>QVersitOrganizerImporter::QVersitOrganizerImporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="QVersitOrganizerImporter"></a>QVersitOrganizerImporter::QVersitOrganizerImporter ()</h3>
 <p>Constructs a new importer</p>
-<!-- @@@QVersitOrganizerImporter -->
-<!-- $$$~QVersitOrganizerImporter[overload1]$$$~QVersitOrganizerImporter -->
-<h3 class="fn"><a name="dtor.QVersitOrganizerImporter"></a>QVersitOrganizerImporter::~QVersitOrganizerImporter ()</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="dtor.QVersitOrganizerImporter"></a>QVersitOrganizerImporter::~QVersitOrganizerImporter ()</h3>
 <p>Frees the memory used by the importer</p>
-<!-- @@@~QVersitOrganizerImporter -->
-<!-- $$$errors[overload1]$$$errors -->
-<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitorganizerimporter.html#Error-enum">Error</a>&gt; QVersitOrganizerImporter::errors () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="errors"></a>QMap&lt;int, <a href="qversitorganizerimporter.html#Error-enum">Error</a>&gt; QVersitOrganizerImporter::errors () const</h3>
 <p>Returns the map of errors encountered in the most recent call to importDocuments(). The key is the index into the input list of documents and the value is the error that occurred on that document.</p>
 <p>See also importDocuments().</p>
-<!-- @@@errors -->
-<!-- $$$importDocument[overload1]$$$importDocumentconstQVersitDocument& -->
-<h3 class="fn"><a name="importDocument"></a>bool QVersitOrganizerImporter::importDocument ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="importDocument"></a>bool QVersitOrganizerImporter::importDocument ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i> )</h3>
 <p>Converts <i>document</i> into a corresponding list of QOrganizerItems. After calling this, the converted organizer items can be retrieved by calling <a href="qversitorganizerimporter.html#items">items</a>().</p>
 <p>Returns true on success. The document should contain at least one subdocument. In the importing process, each subdocument roughly corresponds to a <a href="qorganizeritem.html">QOrganizerItem</a>. If any of the subdocuments cannot be imported as organizer items (eg. they don't conform to the iCalendar format), false is returned and <a href="qversitorganizerimporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully imported items will still be available via <a href="qversitorganizerimporter.html#items">items</a>().</p>
 <p>See also <a href="qversitorganizerimporter.html#items">items</a>() and <a href="qversitorganizerimporter.html#errors">errors</a>().</p>
-<!-- @@@importDocument -->
-<!-- $$$items[overload1]$$$items -->
-<h3 class="fn"><a name="items"></a>QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; QVersitOrganizerImporter::items () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="items"></a>QList&lt;<a href="qorganizeritem.html">QOrganizerItem</a>&gt; QVersitOrganizerImporter::items () const</h3>
 <p>Returns the organizer items imported in the most recent call to importDocuments().</p>
 <p>See also importDocuments().</p>
-<!-- @@@items -->
-<!-- $$$resourceHandler[overload1]$$$resourceHandler -->
-<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitOrganizerImporter::resourceHandler () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitOrganizerImporter::resourceHandler () const</h3>
 <p>Returns the associated resource handler.</p>
 <p>See also <a href="qversitorganizerimporter.html#setResourceHandler">setResourceHandler</a>().</p>
-<!-- @@@resourceHandler -->
-<!-- $$$setPropertyHandler[overload1]$$$setPropertyHandlerQVersitOrganizerImporterPropertyHandler* -->
-<h3 class="fn"><a name="setPropertyHandler"></a>void QVersitOrganizerImporter::setPropertyHandler ( QVersitOrganizerImporterPropertyHandler * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPropertyHandler"></a>void QVersitOrganizerImporter::setPropertyHandler ( QVersitOrganizerImporterPropertyHandler * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler for processing QVersitProperties, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
-<!-- @@@setPropertyHandler -->
-<!-- $$$setResourceHandler[overload1]$$$setResourceHandlerQVersitResourceHandler* -->
-<h3 class="fn"><a name="setResourceHandler"></a>void QVersitOrganizerImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setResourceHandler"></a>void QVersitOrganizerImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitorganizerimporter.html#resourceHandler">resourceHandler</a>().</p>
-<!-- @@@setResourceHandler -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -212,15 +195,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

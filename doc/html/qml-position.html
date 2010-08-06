@@ -118,75 +118,58 @@
         <div class="content">
 <h1 class="title">QML Position Element</h1>
 <span class="subtitle"></span>
-<!-- $$$Position-brief -->
-<p>The Position element holds various positional data, such as latitude, longtitude, altitude and speed. <a href="#details">More...</a></p>
-<!-- @@@Position -->
-<a name="Propertiesx"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<p>The Position element holds various positional data, such as <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#longitude-prop">longitude</a>, <a href="qml-position.html#altitude-prop">altitude</a> and <a href="qml-position.html#speed-prop">speed</a>. <a href="#details">More...</a></p>
+<a name="Propertiesx"></a>
 <h2>Properties</h2>
+<table class="qmlsummary">
 <tr class="odd topAlign"><ul>
 <li class="fn"><b><b><a href="qml-position.html#altitude-prop">altitude</a></b></b> : double</li>
 <li class="fn"><b><b><a href="qml-position.html#altitudeValid-prop">altitudeValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#latitude-prop">latitude</a></b></b> : double</li>
 <li class="fn"><b><b><a href="qml-position.html#latitudeValid-prop">latitudeValid</a></b></b> : bool</li>
-<li class="fn"><b><b><a href="qml-position.html#longtitude-prop">longtitude</a></b></b> : double</li>
-<li class="fn"><b><b><a href="qml-position.html#longtitudeValid-prop">longtitudeValid</a></b></b> : bool</li>
+<li class="fn"><b><b><a href="qml-position.html#longitude-prop">longitude</a></b></b> : double</li>
+</ul></td><td class="topAlign"><ul>
+<li class="fn"><b><b><a href="qml-position.html#longitudeValid-prop">longitudeValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#speed-prop">speed</a></b></b> : double</li>
 <li class="fn"><b><b><a href="qml-position.html#speedValid-prop">speedValid</a></b></b> : bool</li>
 <li class="fn"><b><b><a href="qml-position.html#timestamp-prop">timestamp</a></b></b> : date</li>
 </ul>
-<!-- $$$Position-description -->
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+</td></tr>
+</table>
+<a name="details"></a>
 <h2>Detailed Description</h2>
-<p>The Position element holds various positional data, such as latitude, longtitude, altitude and speed. Not all of these are always available (e.g&#x2e; latitude and longtitude may be valid, but speed update has not been received or set manually), and hence there are corresponding validity attributes which can be used when writing applications.</p>
+<p>The Position element holds various positional data, such as <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#longitude-prop">longitude</a>, <a href="qml-position.html#altitude-prop">altitude</a> and <a href="qml-position.html#speed-prop">speed</a>. Not all of these are always available (e.g&#x2e; latitude and longitude may be valid, but speed update has not been received or set manually), and hence there are corresponding validity attributes which can be used when writing applications.</p>
 <p>The main parameters are writable, so application writer can create his/her own position elements or even store (record) received updates to e.g&#x2e; later render a walked path.</p>
 <p>The Position element is part of the <b>QtMobility.location 1.0</b> module.</p>
 <p>See also <a href="qml-positionsource.html">PositionSource</a>.</p>
-<!-- @@@Position -->
+<hr />
 <h2>Property Documentation</h2>
-<!-- $$$altitude -->
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitude-prop"></a>altitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of altitude (metres above sea level). If the property has not been set, its default value is zero.</p>
-<p>See also altitudeValid, longtitude, latitude, and speed.</p>
-</div></div><!-- @@@altitude -->
-<br/>
-<!-- $$$altitudeValid -->
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitudeValid-prop"></a>altitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if altitude has been set.</p>
-<p>See also altitude.</p>
-</div></div><!-- @@@altitudeValid -->
-<br/>
-<!-- $$$latitude -->
+<p>See also <a href="qml-position.html#altitudeValid-prop">altitudeValid</a>, <a href="qml-position.html#longitude-prop">longitude</a>, <a href="qml-position.html#latitude-prop">latitude</a>, and <a href="qml-position.html#speed-prop">speed</a>.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="altitudeValid-prop"></a>altitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#altitude-prop">altitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#altitude-prop">altitude</a>.</p>
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitude-prop"></a>latitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds latitude value of the geographical position (decimal degrees). A positive latitude indicates the Northern Hemisphere, and a negative latitude indicates the Southern Hemisphere. If the property has not been set, its default value is zero.</p>
-<p>See also latitudeValid, longtitude, speed, and altitude.</p>
-</div></div><!-- @@@latitude -->
-<br/>
-<!-- $$$latitudeValid -->
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitudeValid-prop"></a>latitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if latitude has been set.</p>
-<p>See also latitude.</p>
-</div></div><!-- @@@latitudeValid -->
-<br/>
-<!-- $$$longtitude -->
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longtitude-prop"></a>longtitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the longtitude value of the geographical position (decimal degrees). A positive longitude indicates the Eastern Hemisphere, and a negative longitude indicates the Western Hemisphere If the property has not been set, its default value is zero.</p>
-<p>See also longtitudeValid, latitude, speed, and altitude.</p>
-</div></div><!-- @@@longtitude -->
-<br/>
-<!-- $$$longtitudeValid -->
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longtitudeValid-prop"></a>longtitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if longtitude has been set.</p>
-<p>See also longtitude.</p>
-</div></div><!-- @@@longtitudeValid -->
-<br/>
-<!-- $$$speed -->
+<p>See also <a href="qml-position.html#latitudeValid-prop">latitudeValid</a>, <a href="qml-position.html#longitude-prop">longitude</a>, <a href="qml-position.html#speed-prop">speed</a>, and <a href="qml-position.html#altitude-prop">altitude</a>.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="latitudeValid-prop"></a>latitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#latitude-prop">latitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#latitude-prop">latitude</a>.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longitude-prop"></a>longitude : double</td></tr></table></div><div class="qmldoc"><p>This property holds the longitude value of the geographical position (decimal degrees). A positive longitude indicates the Eastern Hemisphere, and a negative longitude indicates the Western Hemisphere If the property has not been set, its default value is zero.</p>
+<p>See also <a href="qml-position.html#longitudeValid-prop">longitudeValid</a>, <a href="qml-position.html#latitude-prop">latitude</a>, <a href="qml-position.html#speed-prop">speed</a>, and <a href="qml-position.html#altitude-prop">altitude</a>.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="longitudeValid-prop"></a>longitudeValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#longitude-prop">longitude</a> has been set.</p>
+<p>See also <a href="qml-position.html#longitude-prop">longitude</a>.</p>
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speed-prop"></a>speed : double</td></tr></table></div><div class="qmldoc"><p>This property holds the value of speed (groundspeed, metres / second). If the property has not been set, its default value is zero.</p>
-<p>See also speedValid, altitude, longtitude, and latitude.</p>
-</div></div><!-- @@@speed -->
-<br/>
-<!-- $$$speedValid -->
-<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speedValid-prop"></a>speedValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if speed has been set.</p>
-<p>See also speed.</p>
-</div></div><!-- @@@speedValid -->
-<br/>
-<!-- $$$timestamp -->
+<p>See also <a href="qml-position.html#speedValid-prop">speedValid</a>, <a href="qml-position.html#altitude-prop">altitude</a>, <a href="qml-position.html#longitude-prop">longitude</a>, and <a href="qml-position.html#latitude-prop">latitude</a>.</p>
+</div></div><br/>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="speedValid-prop"></a>speedValid : bool</td></tr></table></div><div class="qmldoc"><p>This property is true if <a href="qml-position.html#speed-prop">speed</a> has been set.</p>
+<p>See also <a href="qml-position.html#speed-prop">speed</a>.</p>
+</div></div><br/>
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr class="odd"><td><p><a name="timestamp-prop"></a>timestamp : date</td></tr></table></div><div class="qmldoc"><p>This property holds the timestamp when this position was received. If the property has not been set, it is invalid.</p>
-</div></div><!-- @@@timestamp -->
-<br/>
+</div></div><br/>
 <p>
 </p>
 <p /><address><hr /><div align="center">
@@ -195,15 +178,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

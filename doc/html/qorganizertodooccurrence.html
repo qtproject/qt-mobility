@@ -119,21 +119,20 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#public-functions">Public Functions</a></li>
 <li class="level1"><a href="#details">Detailed Description</a></li>
 </ul>
 </div>
 <h1 class="title">QOrganizerTodoOccurrence Class Reference</h1>
-<!-- $$$QOrganizerTodoOccurrence-brief -->
 <p>An occurrence of a task which should be completed <a href="#details">More...</a></p>
-<!-- @@@QOrganizerTodoOccurrence -->
 <pre class="highlightedCode brush: cpp"> #include &lt;QOrganizerTodoOccurrence&gt;</pre><p>Inherits <a href="qorganizeritem.html">QOrganizerItem</a>.</p>
 <ul>
 <li><a href="qorganizertodooccurrence-members.html">List of all members, including inherited members</a></li>
 </ul>
-<a name="public-functions"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<hr />
+<a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary">
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qorganizertodooccurrence.html#Q_DECLARE_CUSTOM_ORGANIZER_ITEM">Q_DECLARE_CUSTOM_ORGANIZER_ITEM</a></b> ( QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence )</td></tr>
@@ -156,93 +155,61 @@
 <ul>
 <li class="fn">33 public functions inherited from <a href="qorganizeritem.html#public-functions">QOrganizerItem</a></li>
 </ul>
-<a name="details"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- $$$QOrganizerTodoOccurrence-description -->
+<a name="details"></a>
+<hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
 <p>An occurrence of a task which should be completed</p>
 <p>A todo occurrence is a specific instance of a todo item. An occurrence which is retrieved from a manager may not actually be persisted in that manager (for example, it may be generated automatically from the recurrence rule of the parent todo stored in the manager), in which case it will have a zero-id and differ from the parent todo only in its start date. Alternatively, it may be persisted in the manager (that is, the client has saved the occurrence previously) where it is stored as an exception to its parent todo.</p>
 </div>
-<!-- @@@QOrganizerTodoOccurrence -->
+<hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<!-- $$$Q_DECLARE_CUSTOM_ORGANIZER_ITEM[overload1]$$$Q_DECLARE_CUSTOM_ORGANIZER_ITEMQOrganizerTodoOccurrenceQOrganizerItemType::TypeTodoOccurrence -->
-<h3 class="fn"><a name="Q_DECLARE_CUSTOM_ORGANIZER_ITEM"></a>QOrganizerTodoOccurrence::Q_DECLARE_CUSTOM_ORGANIZER_ITEM ( QOrganizerTodoOccurrence, <a href="qorganizeritemtype.html#TypeTodoOccurrence-var">QOrganizerItemType::TypeTodoOccurrence</a> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
-<!-- @@@Q_DECLARE_CUSTOM_ORGANIZER_ITEM -->
-<!-- $$$dueDateTime[overload1]$$$dueDateTime -->
-<h3 class="fn"><a name="dueDateTime"></a>QDateTime QOrganizerTodoOccurrence::dueDateTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="Q_DECLARE_CUSTOM_ORGANIZER_ITEM"></a>QOrganizerTodoOccurrence::Q_DECLARE_CUSTOM_ORGANIZER_ITEM ( QOrganizerTodoOccurrence, <a href="qorganizeritemtype.html#TypeTodoOccurrence-var">QOrganizerItemType::TypeTodoOccurrence</a> )</h3>
+<h3 class="fn"><a name="dueDateTime"></a>QDateTime QOrganizerTodoOccurrence::dueDateTime () const</h3>
 <p>Returns the date time by which the task should be completed</p>
 <p>See also <a href="qorganizertodooccurrence.html#setDueDateTime">setDueDateTime</a>().</p>
-<!-- @@@dueDateTime -->
-<!-- $$$finishedDateTime[overload1]$$$finishedDateTime -->
-<h3 class="fn"><a name="finishedDateTime"></a>QDateTime QOrganizerTodoOccurrence::finishedDateTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="finishedDateTime"></a>QDateTime QOrganizerTodoOccurrence::finishedDateTime () const</h3>
 <p>Returns the date and time at which the task described by the todo occurrence was completed, if known.</p>
 <p>See also <a href="qorganizertodooccurrence.html#setFinishedDateTime">setFinishedDateTime</a>().</p>
-<!-- @@@finishedDateTime -->
-<!-- $$$originalDate[overload1]$$$originalDate -->
-<h3 class="fn"><a name="originalDate"></a>QDate QOrganizerTodoOccurrence::originalDate () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="originalDate"></a>QDate QOrganizerTodoOccurrence::originalDate () const</h3>
 <p>Returns the date at which the occurrence was originally going to occur.</p>
 <p>See also <a href="qorganizertodooccurrence.html#setOriginalDate">setOriginalDate</a>().</p>
-<!-- @@@originalDate -->
-<!-- $$$parentLocalId[overload1]$$$parentLocalId -->
-<h3 class="fn"><a name="parentLocalId"></a><a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> QOrganizerTodoOccurrence::parentLocalId () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="parentLocalId"></a><a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> QOrganizerTodoOccurrence::parentLocalId () const</h3>
 <p>Returns the local id of the todo which is this occurrence's parent</p>
 <p>See also <a href="qorganizertodooccurrence.html#setParentLocalId">setParentLocalId</a>().</p>
-<!-- @@@parentLocalId -->
-<!-- $$$priority[overload1]$$$priority -->
-<h3 class="fn"><a name="priority"></a><a href="qorganizeritempriority.html#Priority-enum">QOrganizerItemPriority::Priority</a> QOrganizerTodoOccurrence::priority () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="priority"></a><a href="qorganizeritempriority.html#Priority-enum">QOrganizerItemPriority::Priority</a> QOrganizerTodoOccurrence::priority () const</h3>
 <p>Returns the priority of the todo occurrence.</p>
 <p>See also <a href="qorganizertodooccurrence.html#setPriority">setPriority</a>().</p>
-<!-- @@@priority -->
-<!-- $$$progressPercentage[overload1]$$$progressPercentage -->
-<h3 class="fn"><a name="progressPercentage"></a>int QOrganizerTodoOccurrence::progressPercentage () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="progressPercentage"></a>int QOrganizerTodoOccurrence::progressPercentage () const</h3>
 <p>Returns the percentage of progress completed on the task described by the todo occurrence.</p>
 <p>See also <a href="qorganizertodooccurrence.html#setProgressPercentage">setProgressPercentage</a>().</p>
-<!-- @@@progressPercentage -->
-<!-- $$$setDueDateTime[overload1]$$$setDueDateTimeconstQDateTime& -->
-<h3 class="fn"><a name="setDueDateTime"></a>void QOrganizerTodoOccurrence::setDueDateTime ( const QDateTime &amp; <i>dueDateTime</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setDueDateTime"></a>void QOrganizerTodoOccurrence::setDueDateTime ( const QDateTime &amp; <i>dueDateTime</i> )</h3>
 <p>Sets the date time by which the task should be completed to <i>dueDateTime</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#dueDateTime">dueDateTime</a>().</p>
-<!-- @@@setDueDateTime -->
-<!-- $$$setFinishedDateTime[overload1]$$$setFinishedDateTimeconstQDateTime& -->
-<h3 class="fn"><a name="setFinishedDateTime"></a>void QOrganizerTodoOccurrence::setFinishedDateTime ( const QDateTime &amp; <i>finishedDateTime</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setFinishedDateTime"></a>void QOrganizerTodoOccurrence::setFinishedDateTime ( const QDateTime &amp; <i>finishedDateTime</i> )</h3>
 <p>Sets the date and time at which the task described by the todo occurrence was completed to <i>finishedDateTime</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#finishedDateTime">finishedDateTime</a>().</p>
-<!-- @@@setFinishedDateTime -->
-<!-- $$$setOriginalDate[overload1]$$$setOriginalDateconstQDate& -->
-<h3 class="fn"><a name="setOriginalDate"></a>void QOrganizerTodoOccurrence::setOriginalDate ( const QDate &amp; <i>date</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setOriginalDate"></a>void QOrganizerTodoOccurrence::setOriginalDate ( const QDate &amp; <i>date</i> )</h3>
 <p>Sets the date at which this occurrence was originally going to occur, to the given <i>date</i>.</p>
 <p>See also <a href="qorganizertodooccurrence.html#originalDate">originalDate</a>().</p>
-<!-- @@@setOriginalDate -->
-<!-- $$$setParentLocalId[overload1]$$$setParentLocalIdconstQOrganizerItemLocalId& -->
-<h3 class="fn"><a name="setParentLocalId"></a>void QOrganizerTodoOccurrence::setParentLocalId ( const <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> &amp; <i>parentLocalId</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setParentLocalId"></a>void QOrganizerTodoOccurrence::setParentLocalId ( const <a href="qorganizeritemid.html#QOrganizerItemLocalId-typedef">QOrganizerItemLocalId</a> &amp; <i>parentLocalId</i> )</h3>
 <p>Sets the todo occurrence's parent to be the todo identified by the given <i>parentLocalId</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#parentLocalId">parentLocalId</a>().</p>
-<!-- @@@setParentLocalId -->
-<!-- $$$setPriority[overload1]$$$setPriorityQOrganizerItemPriority::Priority -->
-<h3 class="fn"><a name="setPriority"></a>void QOrganizerTodoOccurrence::setPriority ( <a href="qorganizeritempriority.html#Priority-enum">QOrganizerItemPriority::Priority</a> <i>priority</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setPriority"></a>void QOrganizerTodoOccurrence::setPriority ( <a href="qorganizeritempriority.html#Priority-enum">QOrganizerItemPriority::Priority</a> <i>priority</i> )</h3>
 <p>Sets the priority of the todo occurrence to <i>priority</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#priority">priority</a>().</p>
-<!-- @@@setPriority -->
-<!-- $$$setProgressPercentage[overload1]$$$setProgressPercentageint -->
-<h3 class="fn"><a name="setProgressPercentage"></a>void QOrganizerTodoOccurrence::setProgressPercentage ( int <i>percentage</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setProgressPercentage"></a>void QOrganizerTodoOccurrence::setProgressPercentage ( int <i>percentage</i> )</h3>
 <p>Sets the percentage of progress completed on the task described by the todo occurrence item to <i>percentage</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#progressPercentage">progressPercentage</a>().</p>
-<!-- @@@setProgressPercentage -->
-<!-- $$$setStatus[overload1]$$$setStatusQOrganizerTodoProgress::Status -->
-<h3 class="fn"><a name="setStatus"></a>void QOrganizerTodoOccurrence::setStatus ( <a href="qorganizertodoprogress.html#Status-enum">QOrganizerTodoProgress::Status</a> <i>status</i> )</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="setStatus"></a>void QOrganizerTodoOccurrence::setStatus ( <a href="qorganizertodoprogress.html#Status-enum">QOrganizerTodoProgress::Status</a> <i>status</i> )</h3>
 <p>Sets the progress status of the todo occurrence to <i>status</i></p>
 <p>See also <a href="qorganizertodooccurrence.html#status">status</a>().</p>
-<!-- @@@setStatus -->
-<!-- $$$startDateTime[overload1]$$$startDateTime -->
-<h3 class="fn"><a name="startDateTime"></a>QDateTime QOrganizerTodoOccurrence::startDateTime () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="startDateTime"></a>QDateTime QOrganizerTodoOccurrence::startDateTime () const</h3>
 <p>Returns the date time at which the task should be started</p>
-<!-- @@@startDateTime -->
-<!-- $$$status[overload1]$$$status -->
-<h3 class="fn"><a name="status"></a><a href="qorganizertodoprogress.html#Status-enum">QOrganizerTodoProgress::Status</a> QOrganizerTodoOccurrence::status () const</h3><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<h3 class="fn"><a name="status"></a><a href="qorganizertodoprogress.html#Status-enum">QOrganizerTodoProgress::Status</a> QOrganizerTodoOccurrence::status () const</h3>
 <p>Returns the progress status of the task described by the todo occurrence</p>
 <p>See also <a href="qorganizertodooccurrence.html#setStatus">setStatus</a>().</p>
-<!-- @@@status -->
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
@@ -250,15 +217,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

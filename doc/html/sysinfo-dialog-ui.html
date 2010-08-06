@@ -117,7 +117,6 @@
         <div class="content">
 <h1 class="title">dialog.ui Example File</h1>
 <span class="small-subtitle">sysinfo/dialog.ui</span>
-<!-- $$$sysinfo/dialog.ui-description -->
 <div class="descr"/>
 <pre class="highlightedCode brush: cpp"> &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
  &lt;ui version=&quot;4.0&quot;&gt;
@@ -138,7 +137,7 @@
     &lt;item row=&quot;0&quot; column=&quot;0&quot;&gt;
      &lt;widget class=&quot;QTabWidget&quot; name=&quot;tabWidget&quot;&gt;
       &lt;property name=&quot;currentIndex&quot;&gt;
-       &lt;number&gt;0&lt;/number&gt;
+       &lt;number&gt;2&lt;/number&gt;
       &lt;/property&gt;
       &lt;widget class=&quot;QWidget&quot; name=&quot;generaltab&quot;&gt;
        &lt;attribute name=&quot;title&quot;&gt;
@@ -631,8 +630,8 @@
        &lt;attribute name=&quot;title&quot;&gt;
         &lt;string&gt;Display&lt;/string&gt;
        &lt;/attribute&gt;
-       &lt;layout class=&quot;QGridLayout&quot; name=&quot;gridLayout_7&quot;&gt;
-        &lt;item row=&quot;0&quot; column=&quot;0&quot;&gt;
+       &lt;layout class=&quot;QVBoxLayout&quot; name=&quot;verticalLayout&quot;&gt;
+        &lt;item&gt;
          &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_8&quot;&gt;
           &lt;item&gt;
            &lt;widget class=&quot;QLabel&quot; name=&quot;label_40&quot;&gt;
@@ -650,7 +649,7 @@
           &lt;/item&gt;
          &lt;/layout&gt;
         &lt;/item&gt;
-        &lt;item row=&quot;1&quot; column=&quot;0&quot;&gt;
+        &lt;item&gt;
          &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_7&quot;&gt;
           &lt;item&gt;
            &lt;widget class=&quot;QLabel&quot; name=&quot;label_41&quot;&gt;
@@ -668,113 +667,18 @@
           &lt;/item&gt;
          &lt;/layout&gt;
         &lt;/item&gt;
-        &lt;item row=&quot;2&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_3&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;Orientation&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;orientationLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
-        &lt;/item&gt;
-        &lt;item row=&quot;3&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_2&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_4&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;Contrast&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;contrastLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
-        &lt;/item&gt;
-        &lt;item row=&quot;4&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_3&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_5&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;DPI Width&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;dpiWidthLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
-        &lt;/item&gt;
-        &lt;item row=&quot;5&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_4&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_6&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;DPI Height&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;dpiHeightLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
-        &lt;/item&gt;
-        &lt;item row=&quot;6&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_5&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_8&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;Physical Width&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;physicalWidthLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
-        &lt;/item&gt;
-        &lt;item row=&quot;7&quot; column=&quot;0&quot;&gt;
-         &lt;layout class=&quot;QHBoxLayout&quot; name=&quot;horizontalLayout_6&quot;&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;label_7&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string&gt;Physical Height&lt;/string&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-          &lt;item&gt;
-           &lt;widget class=&quot;QLabel&quot; name=&quot;physicalHeightLabel&quot;&gt;
-            &lt;property name=&quot;text&quot;&gt;
-             &lt;string/&gt;
-            &lt;/property&gt;
-           &lt;/widget&gt;
-          &lt;/item&gt;
-         &lt;/layout&gt;
+        &lt;item&gt;
+         &lt;spacer name=&quot;verticalSpacer&quot;&gt;
+          &lt;property name=&quot;orientation&quot;&gt;
+           &lt;enum&gt;Qt::Vertical&lt;/enum&gt;
+          &lt;/property&gt;
+          &lt;property name=&quot;sizeHint&quot; stdset=&quot;0&quot;&gt;
+           &lt;size&gt;
+            &lt;width&gt;20&lt;/width&gt;
+            &lt;height&gt;418&lt;/height&gt;
+           &lt;/size&gt;
+          &lt;/property&gt;
+         &lt;/spacer&gt;
         &lt;/item&gt;
        &lt;/layout&gt;
       &lt;/widget&gt;
@@ -1198,22 +1102,11 @@
   &lt;connections/&gt;
  &lt;/ui&gt;</pre>
 </div>
-<!-- @@@sysinfo/dialog.ui -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

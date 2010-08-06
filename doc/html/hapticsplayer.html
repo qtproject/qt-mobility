@@ -117,7 +117,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#overview">Overview</a></li>
 <li class="level2"><a href="#use-case">Use Case</a></li>
@@ -127,7 +127,6 @@
 </div>
 <h1 class="title">HapticsPlayer</h1>
 <span class="subtitle"></span>
-<!-- $$$hapticsplayer-description -->
 <div class="descr"/>
 <p>Files:</p>
 <ul>
@@ -137,7 +136,7 @@
 <li><a href="hapticsplayer-main-cpp.html">hapticsplayer/main.cpp</a></li>
 <li><a href="hapticsplayer-hapticsplayer-pro.html">hapticsplayer/hapticsplayer.pro</a></li>
 </ul>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>This example shows how to use various haptic effects in an application via the <a href="feedback.html">Qt Mobility Feedback API</a>.</p>
 <p>It provides an example of how to use the Qt Mobility libraries to:</p>
@@ -146,34 +145,23 @@
 <li>play a dynamic custom effect, single or repeating</li>
 <li>play a custom effect which is stored in a file</li>
 </ul>
-<a name="use-case"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="use-case"></a>
 <h3>Use Case</h3>
 <p>This example is more feature complete than the <a href="hapticsquare.html">Hapticsquare</a> example, but is intended more as a way to test the haptics provider plugins which are available on a system, than as an example for application developers.</p>
 <p>It is useful for people who wish to learn how to use the API to create and play custom effects dynamically, or to allow users of an application to select which haptic effect to play when a particular event occurs. It is a more complex example than the <a href="hapticsquare.html">Hapticsquare</a> example, so it is suggested that developers look at that example first.</p>
-<a name="interface"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="interface"></a>
 <h3>Interface</h3>
 <p>The application is designed to work on desktop and mobile platforms with minimal differences in code between the platforms. The interface consists of three tabs which allow the user to select and play different custom, system theme, and file effects, respectively. The custom effect tab also allows the user to modify the custom effect dynamically, and see the effect of attack and fade, intensity and duration, and periodicity, on the user experience.</p>
-<a name="known-issues"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>The example will not work correctly on platforms which do not have a QFeedbackHapticInterface (haptic effect provider) plugin loaded. On such platforms, the example will do nothing.</p>
 <p>Currently, the Maemo 5 platform has no haptic effect provider plugin available.</p>
 </div>
-<!-- @@@hapticsplayer -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

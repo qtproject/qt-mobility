@@ -117,7 +117,6 @@
         <div class="content">
 <h1 class="title">mainwindow.cpp Example File</h1>
 <span class="small-subtitle">mapviewer/mainwindow.cpp</span>
-<!-- $$$mapviewer/mainwindow.cpp-description -->
 <div class="descr"/>
 <pre class="highlightedCode brush: cpp"><span class="comment"> /****************************************************************************
  **
@@ -161,8 +160,8 @@
  ****************************************************************************/</span>
 
  #include &quot;mainwindow.h&quot;
- #include &quot;ui_mainwindow.h&quot;
 
+ #include &lt;QApplication&gt;
  #include &lt;QPointF&gt;
  #include &lt;QNetworkProxy&gt;
  #include &lt;QNetworkProxyFactory&gt;
@@ -235,7 +234,8 @@
      QGeoMapWidget(manager),
      coordQueryState(false),
      panActive(false),
-     kineticTimer(new QTimer)
+     kineticTimer(new QTimer),
+     lastCircle(0)
  {
      for (int i = 0; i &lt; 5; ++i) mouseHistory.append(MouseHistoryEntry());
 
@@ -254,21 +254,24 @@
  {
      setFocus();
      if (event-&gt;button() == Qt::LeftButton) {
-
-         if (coordQueryState) {
-             emit coordQueryResult(screenPositionToCoordinate(event-&gt;lastPos()));
-             return;
+         if (event-&gt;modifiers() &amp; Qt::ControlModifier) {
          }
+         else {
+             if (coordQueryState) {
+                 emit coordQueryResult(screenPositionToCoordinate(event-&gt;lastPos()));
+                 return;
+             }
 
-         panActive = true;
+             panActive = true;
 
-         <span class="comment">// When pressing, stop the timer and stop all current kinetic panning</span>
-         kineticTimer-&gt;stop();
-         kineticPanSpeed = QPointF();
+             <span class="comment">// When pressing, stop the timer and stop all current kinetic panning</span>
+             kineticTimer-&gt;stop();
+             kineticPanSpeed = QPointF();
 
-         lastMoveTime = QTime::currentTime();
-         <span class="comment">// TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.</span>
-         startPanning();
+             lastMoveTime = QTime::currentTime();
+             <span class="comment">// TODO: Maybe call stopPanning or skip the call to startPanning if the timer was still running.</span>
+             startPanning();
+         }
      }
 
      event-&gt;accept();
@@ -277,31 +280,33 @@
  void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
  {
      if (event-&gt;button() == Qt::LeftButton) {
-         panActive = false;
+         if (panActive) {
+             panActive = false;
 
-         if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) &gt; holdTimeThreshold) {
-             stopPanning();
-             return;
-         }
-
-         kineticPanSpeed = QPointF();
-         int entries_considered = 0;
-
-         QTime currentTime = QTime::currentTime();
-         foreach (MouseHistoryEntry entry, mouseHistory) {
-             <span class="comment">// first=speed, second=time</span>
-             int deltaTime = entry.second.msecsTo(currentTime);
-             if (deltaTime &lt; holdTimeThreshold) {
-                 kineticPanSpeed += entry.first;
-                 entries_considered++;
+             if (!enableKineticPanning || lastMoveTime.msecsTo(QTime::currentTime()) &gt; holdTimeThreshold) {
+                 stopPanning();
+                 return;
              }
-         }
-         if (entries_considered &gt; 0) kineticPanSpeed /= entries_considered;
-         lastMoveTime = currentTime;
 
-         <span class="comment">// When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).</span>
-         kineticTimer-&gt;start();
-         panDecellerate = true;
+             kineticPanSpeed = QPointF();
+             int entries_considered = 0;
+
+             QTime currentTime = QTime::currentTime();
+             foreach (MouseHistoryEntry entry, mouseHistory) {
+                 <span class="comment">// first=speed, second=time</span>
+                 int deltaTime = entry.second.msecsTo(currentTime);
+                 if (deltaTime &lt; holdTimeThreshold) {
+                     kineticPanSpeed += entry.first;
+                     entries_considered++;
+                 }
+             }
+             if (entries_considered &gt; 0) kineticPanSpeed /= entries_considered;
+             lastMoveTime = currentTime;
+
+             <span class="comment">// When releasing the mouse button/finger while moving, start the kinetic panning timer (which also takes care of calling stopPanning).</span>
+             kineticTimer-&gt;start();
+             panDecellerate = true;
+         }
      }
 
      event-&gt;accept();
@@ -309,7 +314,15 @@
 
  void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
  {
-     if (panActive) {
+     if (event-&gt;modifiers() &amp; Qt::ControlModifier) {
+         if (lastCircle) {
+             removeMapObject(lastCircle);
+             lastCircle-&gt;setCenter(this-&gt;screenPositionToCoordinate(event-&gt;pos()));
+             addMapObject(lastCircle);
+             lastCircle-&gt;objectUpdate();
+         }
+     }
+     else if (panActive) {
          <span class="comment">// Calculate time delta</span>
          QTime currentTime = QTime::currentTime();
          int deltaTime = lastMoveTime.msecsTo(currentTime);
@@ -395,6 +408,7 @@
                  setZoomLevel(zoomLevel() + 1);
              }
              break;
+
          case Qt::Key_T:
              if (mapType() == QGeoMapWidget::StreetMap)
                  setMapType(QGeoMapWidget::SatelliteMapDay);
@@ -412,22 +426,23 @@
              if (!event-&gt;isAutoRepeat()) {
                  switch (event-&gt;key()) {
                      case Qt::Key_Left:
-                         panDir += QPoint(-1, 0);
+                         panDir.setX(-1);
                          break;
 
                      case Qt::Key_Right:
-                         panDir += QPoint(1, 0);
+                         panDir.setX(1);
                          break;
 
                      case Qt::Key_Up:
-                         panDir += QPoint(0, -1);
+                         panDir.setY(-1);
                          break;
 
                      case Qt::Key_Down:
-                         panDir += QPoint(0, 1);
+                         panDir.setY(1);
                          break;
                  }
 
+                 lastMoveTime = QTime::currentTime();
                  kineticTimer-&gt;start();
                  panDecellerate = false;
 
@@ -448,19 +463,13 @@
 
      switch (event-&gt;key()) {
          case Qt::Key_Left:
-             panDir -= QPoint(-1, 0);
-             break;
-
          case Qt::Key_Right:
-             panDir -= QPoint(1, 0);
+             panDir.setX(0);
              break;
 
          case Qt::Key_Up:
-             panDir -= QPoint(0, -1);
-             break;
-
          case Qt::Key_Down:
-             panDir -= QPoint(0, 1);
+             panDir.setY(0);
              break;
 
          case Qt::Key_Shift:
@@ -647,8 +656,8 @@
      widget-&gt;setLayout(layout);
      setCentralWidget(widget);
 
-     setContextMenuPolicy(Qt::CustomContextMenu);
-     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&amp;)),
+     qgv-&gt;setContextMenuPolicy(Qt::CustomContextMenu);
+     QObject::connect(qgv, SIGNAL(customContextMenuRequested(const QPoint&amp;)),
                       this, SLOT(customContextMenuRequest(const QPoint&amp;)));
 
      resize(652, 519);
@@ -743,6 +752,11 @@
      QAction* menuItem;
      m_popupMenu = new QMenu(this);
 
+     menuItem = new QAction(tr(&quot;Spawn stuff&quot;), this);
+     m_popupMenu-&gt;addAction(menuItem);
+     QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                      this, SLOT(demo(bool)));
+
      <span class="comment">//**************************************************************</span>
      QMenu* subMenuItem = new QMenu(tr(&quot;Marker&quot;), this);
      m_popupMenu-&gt;addMenu(subMenuItem);
@@ -781,6 +795,11 @@
      QObject::connect(menuItem, SIGNAL(triggered(bool)),
                       this, SLOT(drawPolygon(bool)));
 
+     menuItem = new QAction(tr(&quot;Circle&quot;), this);
+     subMenuItem-&gt;addAction(menuItem);
+     QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                      this, SLOT(drawCircle(bool)));
+
      <span class="comment">//**************************************************************</span>
      subMenuItem = new QMenu(tr(&quot;Route&quot;), this);
      m_popupMenu-&gt;addMenu(subMenuItem);
@@ -789,6 +808,18 @@
      subMenuItem-&gt;addAction(menuItem);
      QObject::connect(menuItem, SIGNAL(triggered(bool)),
                       this, SLOT(calcRoute(bool)));
+ }
+
+ #define MVTEST_MARK(pos) do { QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(pos, QPoint(-(MARKER_WIDTH / 2), -MARKER_HEIGHT), m_markerIcon); m_mapWidget-&gt;addMapObject(marker); markerObjects.append(marker); } while (0)
+ #define MVTEST_MARK2(lat,lng) MVTEST_MARK(QGeoCoordinate(lat,lng))
+ void MainWindow::demo(bool <span class="comment">/*checked*/</span>)
+ {
+     MVTEST_MARK2(-30,175);
+     MVTEST_MARK2(-20,170);
+     MVTEST_MARK2(-25,-175);
+     drawRect(false);
+     drawPolygon(false);
+     drawCircle(false);
  }
 
  void MainWindow::drawRect(bool <span class="comment">/*checked*/</span>)
@@ -844,6 +875,30 @@
      m_mapWidget-&gt;addMapObject(polygon);
  }
 
+ void MainWindow::drawCircle(bool <span class="comment">/*checked*/</span>)
+ {
+     if (markerObjects.count() &lt; 2) return;
+
+     QGeoMapMarkerObject* p1 = markerObjects.at(0);
+     QGeoMapMarkerObject* p2 = markerObjects.at(markerObjects.count()-1);<span class="comment">//1);</span>
+
+     <span class="comment">// center of the circle</span>
+     QGeoCoordinate center = p1-&gt;coordinate();
+     <span class="comment">// its radius, in meters</span>
+     qreal radius = center.distanceTo(p2-&gt;coordinate());
+
+     QPen pen(Qt::white);
+     pen.setWidth(2);
+     QGeoMapCircleObject *circle = new QGeoMapCircleObject(center, radius);
+     circle-&gt;setPen(pen);
+     QColor fill(Qt::black);
+     fill.setAlpha(65);
+     circle-&gt;setBrush(QBrush(fill));
+     m_mapWidget-&gt;addMapObject(circle);
+
+     m_mapWidget-&gt;lastCircle = circle;
+ }
+
  void MainWindow::drawMarker(bool <span class="comment">/*checked*/</span>)
  {
      QGeoMapMarkerObject *marker = new QGeoMapMarkerObject(m_mapWidget-&gt;screenPositionToCoordinate(lastClicked),
@@ -863,14 +918,19 @@
 
  void MainWindow::customContextMenuRequest(const QPoint&amp; point)
  {
-     lastClicked = point - qgv-&gt;geometry().topLeft();
+     lastClicked = point;
+ #ifdef Q_OS_SYMBIAN
+     <span class="comment">// Work around a bug with QGraphicsView's customContextMenuRequeste signal on Symbian</span>
+     <span class="comment">// TODO: adjust this #ifdef, so it doesn't break with versions that fix the bug</span>
+     lastClicked -= qgv-&gt;geometry().topLeft();
+ #endif
 
      if (focusWidget() == qgv) {
 
          if (!m_popupMenu)
              createMenus();
 
-         m_popupMenu-&gt;popup(mapToGlobal(point));
+         m_popupMenu-&gt;popup(qgv-&gt;mapToGlobal(lastClicked));
      }
  }
 
@@ -950,22 +1010,11 @@
                                         );
  }</pre>
 </div>
-<!-- @@@mapviewer/mainwindow.cpp -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

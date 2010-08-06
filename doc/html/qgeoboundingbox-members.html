@@ -122,6 +122,7 @@
 <p>This is the complete list of members for <a href="qgeoboundingbox.html">QGeoBoundingBox</a>, including inherited members.</p>
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
+<li class="fn">enum <b><a href="qgeoboundingarea.html#AreaType-enum">AreaType</a></b></li>
 <li class="fn"><b><a href="qgeoboundingbox.html#QGeoBoundingBox">QGeoBoundingBox</a></b> ()</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-2">QGeoBoundingBox</a></b> ( const QGeoCoordinate &amp;, double, double )</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-3">QGeoBoundingBox</a></b> ( const QGeoCoordinate &amp;, const QGeoCoordinate &amp; )</li>
@@ -133,23 +134,25 @@
 <li class="fn"><b><a href="qgeoboundingbox.html#contains">contains</a></b> ( const QGeoCoordinate &amp; ) const : bool</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#contains-2">contains</a></b> ( const QGeoBoundingBox &amp; ) const : bool</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#height">height</a></b> () : double</li>
-<li class="fn"><b><a href="qgeoboundingbox.html#intersected">intersected</a></b> ( const QGeoBoundingBox &amp; ) const : QGeoBoundingBox</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#intersects">intersects</a></b> ( const QGeoBoundingBox &amp; ) const : bool</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#isEmpty">isEmpty</a></b> () const : bool</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#isValid">isValid</a></b> () const : bool</li>
-<li class="fn"><b><a href="qgeoboundingbox.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeoboundingbox.html#setBottomLeft">setBottomLeft</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeoboundingbox.html#setBottomRight">setBottomRight</a></b> ( const QGeoCoordinate &amp; )</li>
 </ul></td><td class="topAlign"><ul>
+<li class="fn"><b><a href="qgeoboundingbox.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#setHeight">setHeight</a></b> ( double )</li>
+<li class="fn"><b><a href="qgeoboundingbox.html#setTopLeft">setTopLeft</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeoboundingbox.html#setTopRight">setTopRight</a></b> ( const QGeoCoordinate &amp; )</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#setWidth">setWidth</a></b> ( double )</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#topLeft">topLeft</a></b> () const : QGeoCoordinate</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#topRight">topRight</a></b> () const : QGeoCoordinate</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#translate">translate</a></b> ( double, double )</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#translated">translated</a></b> ( double, double ) const : QGeoBoundingBox</li>
+<li class="fn"><b><a href="qgeoboundingbox.html#type">type</a></b> () const : QGeoBoundingArea::AreaType</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#united">united</a></b> ( const QGeoBoundingBox &amp; ) const : QGeoBoundingBox</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#width">width</a></b> () const : double</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#operator-not-eq">operator!=</a></b> ( const QGeoBoundingBox &amp; ) const : bool</li>
-<li class="fn"><b><a href="qgeoboundingbox.html#operator-and">operator&amp;</a></b> ( const QGeoBoundingBox &amp; ) const : QGeoBoundingBox</li>
-<li class="fn"><b><a href="qgeoboundingbox.html#operator-and-eq">operator&amp;=</a></b> ( const QGeoBoundingBox &amp; ) : QGeoBoundingBox &amp;</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#operator-eq">operator=</a></b> ( const QGeoBoundingBox &amp; ) : QGeoBoundingBox &amp;</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#operator-eq-eq">operator==</a></b> ( const QGeoBoundingBox &amp; ) const : bool</li>
 <li class="fn"><b><a href="qgeoboundingbox.html#operator-7c">operator|</a></b> ( const QGeoBoundingBox &amp; ) const : QGeoBoundingBox</li>
@@ -163,15 +166,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

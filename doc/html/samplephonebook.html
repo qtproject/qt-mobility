@@ -117,7 +117,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#phone-book">Phone Book</a></li>
 <li class="level2"><a href="#motivation">Motivation</a></li>
@@ -128,7 +128,6 @@
 </div>
 <h1 class="title">Sample Phonebook Example</h1>
 <span class="subtitle"></span>
-<!-- $$$samplephonebook-description -->
 <div class="descr"/>
 <p>Files:</p>
 <ul>
@@ -143,10 +142,10 @@
 <li><a href="samplephonebook-main-cpp.html">samplephonebook/main.cpp</a></li>
 <li><a href="samplephonebook-samplephonebook-pro.html">samplephonebook/samplephonebook.pro</a></li>
 </ul>
-<a name="phone-book"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="phone-book"></a>
 <h2>Phone Book</h2>
 <p>This example shows how to write a simple phonebook with the <a href="contacts.html">Contacts API</a>.</p>
-<a name="motivation"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="motivation"></a>
 <h3>Motivation</h3>
 <p>This application was written to provide an example to developers of how to use the <a href="qtcontacts.html">QtContacts</a> and <a href="qtversit.html">QtVersit</a> APIs.</p>
 <p>It provides an example of how to use the QtMobility libraries to:</p>
@@ -159,10 +158,10 @@
 <li>import and export contact lists as vCards<sup>&reg;</sup> *</li>
 </ul>
 <p>[*] <i>vCard is a registered trademark of the Internet Mail Consortium</i></p>
-<a name="use-case"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="use-case"></a>
 <h3>Use Case</h3>
 <p>Most people have a need to store information (such as addresses, telephone numbers and email addresses) of people that they know. This sample application provides a simple phone book that allows users to store certain pieces of information about their contacts, and save them to the contacts database of their device.</p>
-<a name="interface"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="interface"></a>
 <h3>Interface</h3>
 <p>The application is designed to work on desktop and mobile platforms with minimal differences in code between the platforms. The interface is organized into a paged view, showing the <i>Contact List</i> by default. Contacts can be added, edited or deleted using the buttons at the bottom of the contact list. To search for a contact in the list, a filter can be applied using the <i>Apply Filter</i> item in the <i>Contacts</i> menu.</p>
 <p>Here we see the <i>Contact List</i> with some names added.</p>
@@ -171,7 +170,7 @@
 <p class="centerAlign"><img src="images/sample-phonebook-3.png" /></p><p>which gives us a subset of the list of contacts.</p>
 <p class="centerAlign"><img src="images/sample-phonebook-4.png" /></p><p>To reset this, just select <i>Clear Filter</i> from the <i>Contacts</i> menu.</p>
 <p>The contact list can also be imported and exported to the vCard format through the <i>Import Contacts</i> and <i>Export Contacts</i> items in the <i>Contacts</i> menu. This functionality can be used to populate the list from another device or application.</p>
-<a name="known-issues"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>The example is not intended to be feature complete. Only a very limited subset of detail types are supported by the application. It exercises only a very small portion of the Qt Contacts API.</p>
 <p>In particular:</p>
@@ -182,22 +181,11 @@
 <li>Contact groups are not supported. The <a href="qtcontacts.html">QtContacts</a> API supports two methods of grouping contacts. One way is to use contacts of type <a href="qcontacttype.html#TypeGroup-var">TypeGroup</a>, along with the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a>. The other way is to use the <a href="qcontacttag.html">QContactTag</a> detail by giving related contacts the same tag. A real application may support grouping via one or both of these methods.</li>
 </ul>
 </div>
-<!-- @@@samplephonebook -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

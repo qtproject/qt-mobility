@@ -123,11 +123,15 @@
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
 <li class="fn">enum <b><a href="qgeomapobject.html#Type-enum">Type</a></b></li>
-<li class="fn"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject">QGeoMapCircleObject</a></b> ( QGeoMapObject * )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject">QGeoMapCircleObject</a></b> ( const QGeoBoundingCircle &amp;, QGeoMapObject * )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#QGeoMapCircleObject-2">QGeoMapCircleObject</a></b> ( const QGeoCoordinate &amp;, qreal, QGeoMapObject * )</li>
 <li class="fn"><b><a href="qgeomapcircleobject.html#dtor.QGeoMapCircleObject">~QGeoMapCircleObject</a></b> ()</li>
 <li class="fn"><b><a href="qgeomapobject.html#addChildObject">addChildObject</a></b> ( QGeoMapObject * )</li>
 <li class="fn"><b><a href="qgeomapobject.html#boundingBox">boundingBox</a></b> () const : QGeoBoundingBox</li>
-<li class="fn"><b><a href="qgeomapcircleobject.html#center">center</a></b> () const : QGeoCoordinate</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#brush-prop">brush</a></b> () const : QBrush</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#brushChanged">brushChanged</a></b> ( const QBrush &amp; )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#center-prop">center</a></b> () const : QGeoCoordinate</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#centerChanged">centerChanged</a></b> ( const QGeoCoordinate &amp; )</li>
 <li class="fn"><b><a href="qgeomapobject.html#childObjects">childObjects</a></b> () const : QList&lt;QGeoMapObject *&gt;</li>
 <li class="fn"><b><a href="qgeomapobject.html#contains">contains</a></b> ( const QGeoCoordinate &amp; ) const : bool</li>
 <li class="fn"><b><a href="qgeomapobject.html#d_ptr-var">d_ptr</a></b> : QGeoMapObjectPrivate *</li>
@@ -136,10 +140,15 @@
 <li class="fn"><b><a href="qgeomapobject.html#objectUpdate">objectUpdate</a></b> ()</li>
 </ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qgeomapobject.html#parentObject">parentObject</a></b> () const : QGeoMapObject *</li>
-<li class="fn"><b><a href="qgeomapcircleobject.html#radius">radius</a></b> () const : qreal</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#pen-prop">pen</a></b> () const : QPen</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#penChanged">penChanged</a></b> ( const QPen &amp; )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#radius-prop">radius</a></b> () const : qreal</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#radiusChanged">radiusChanged</a></b> ( qreal )</li>
 <li class="fn"><b><a href="qgeomapobject.html#removeChildObject">removeChildObject</a></b> ( QGeoMapObject * )</li>
-<li class="fn"><b><a href="qgeomapcircleobject.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
-<li class="fn"><b><a href="qgeomapcircleobject.html#setRadius">setRadius</a></b> ( qreal )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#brush-prop">setBrush</a></b> ( const QBrush &amp; )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#center-prop">setCenter</a></b> ( const QGeoCoordinate &amp; )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#pen-prop">setPen</a></b> ( const QPen &amp; )</li>
+<li class="fn"><b><a href="qgeomapcircleobject.html#radius-prop">setRadius</a></b> ( qreal )</li>
 <li class="fn"><b><a href="qgeomapobject.html#setVisible">setVisible</a></b> ( bool )</li>
 <li class="fn"><b><a href="qgeomapobject.html#setZValue">setZValue</a></b> ( int )</li>
 <li class="fn"><b><a href="qgeomapobject.html#type">type</a></b> () const : Type</li>
@@ -155,15 +164,5 @@
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -117,7 +117,7 @@
         </div>
         <div class="content">
 <div class="toc">
-<h3><a name="toc">Contents</a></h3>
+<h3>Contents</h3>
 <ul>
 <li class="level1"><a href="#overview">Overview</a></li>
 <li class="level2"><a href="#use-case">Use Case</a></li>
@@ -127,7 +127,6 @@
 </div>
 <h1 class="title">Hapticsquare</h1>
 <span class="subtitle"></span>
-<!-- $$$hapticsquare-description -->
 <div class="descr"/>
 <p>Files:</p>
 <ul>
@@ -136,7 +135,7 @@
 <li><a href="hapticsquare-main-cpp.html">hapticsquare/main.cpp</a></li>
 <li><a href="hapticsquare-hapticsquare-pro.html">hapticsquare/hapticsquare.pro</a></li>
 </ul>
-<a name="overview"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="overview"></a>
 <h2>Overview</h2>
 <p>This example shows how to use simple haptic effects in an application via the <a href="feedback.html">Qt Mobility Feedback API</a>.</p>
 <p>It provides an example of how to use the Qt Mobility libraries to:</p>
@@ -144,7 +143,7 @@
 <li>play &quot;system theme&quot; haptic effects corresponding to certain predefined events</li>
 <li>play a custom effect, single or repeating</li>
 </ul>
-<a name="use-case"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="use-case"></a>
 <h3>Use Case</h3>
 <p>Compelling applications attempt to immerse the user in the application experience. There are many elements to an immersive experience, including a consistent and beautiful graphical user interface design, unobtrusive yet informative sound design, and intuitive program flow. Another important aspect of immersive applications in tactile feedback and haptic effects.</p>
 <p>The <a href="feedback.html">Qt Mobility Feedback API</a> allows application developers to include tactile feedback into their application via a simple to use and extensible API. Some common uses for tactile feedback are:</p>
@@ -155,7 +154,7 @@
 <li>immersive gaming experiences (explosions, impacts, collisions, etc)</li>
 </ul>
 <p>This example application provides some short snippets which illustrate how the first two of those use cases may be fulfilled.</p>
-<a name="interface"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="interface"></a>
 <h3>Interface</h3>
 <p>The application is designed to work on desktop and mobile platforms with minimal differences in code between the platforms. The interface consists of four buttons arranged into a square, each of which causes a different tactile effect to be played by the default tactile effect provider plugin on the platform.</p>
 <p>The buttons are labeled &quot;Rumble!&quot;, &quot;Ocean&quot;, &quot;Click&quot; and &quot;Oops!&quot;.</p>
@@ -165,27 +164,16 @@
 <li>&quot;Click&quot; plays the system theme effect for a basic button click</li>
 <li>&quot;Oops!&quot; plays the system theme effect for a negative or invalid response</li>
 </ul>
-<a name="known-issues"></a><div class="navTop"><a href="#toc"><img src="./images/bullet_up.png"></a></div>
+<a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>The example is not intended to exercise the entire API. Instead, it is a simple example which illustrates some simple uses of the API. Also, the example will not work correctly on platforms which do not have a QFeedbackHapticInterface (haptic effect provider) plugin loaded. On such platforms, clicking the buttons will have no effect.</p>
 <p>In particular, the Maemo5 platform currently has no haptic effect provider plugin; it is a work in progress.</p>
 </div>
-<!-- @@@hapticsquare -->
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-  <!-- <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-4457116-5']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script> -->
 </body>
 </html>

@@ -81,6 +81,9 @@
                     <section ref="qcameraexposurecontrol.html" title="QCameraExposureControl Class Reference">
                         <section ref="qcameraexposurecontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcameraflashcontrol.html" title="QCameraFlashControl Class Reference">
+                        <section ref="qcameraflashcontrol-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcamerafocus.html" title="QCameraFocus Class Reference">
                         <section ref="qcamerafocus-members.html" title="List of all members"/>
                     </section>
@@ -384,8 +387,14 @@
                     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
                         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qgeoboundingarea.html" title="QGeoBoundingArea Class Reference">
+                        <section ref="qgeoboundingarea-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qgeoboundingbox.html" title="QGeoBoundingBox Class Reference">
                         <section ref="qgeoboundingbox-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeoboundingcircle.html" title="QGeoBoundingCircle Class Reference">
+                        <section ref="qgeoboundingcircle-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
                         <section ref="qgeocoordinate-members.html" title="List of all members"/>
@@ -1087,6 +1096,7 @@
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
                     <section ref="flickrdemo.html" title="Flickr Demo Example"/>
+                    <section ref="geoservicedemo.html" title="Geo Service Demo"/>
                     <section ref="hapticsplayer.html" title="HapticsPlayer"/>
                     <section ref="hapticsquare.html" title="Hapticsquare"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
@@ -1099,7 +1109,6 @@
                     <section ref="notesmanagerplugin.html" title="Notes Manager Plugin Example"/>
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
-                    <section ref="qgeoapiui.html" title="QGeoApiUi Example"/>
                     <section ref="querymessages.html" title="Query Messages Example"/>
                     <section ref="quickstart.html" title="Quickstart Example"/>
                     <section ref="radio.html" title="Radio Example"/>
@@ -1161,7 +1170,7 @@
                     <section ref="organizerschema.html" title="Qt Organizer Schema"/>
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
-                    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project 1.0.2 patch release"/>
+                    <section ref="qtmobility-release-notes.html" title="Release Notes of the QtMobility Project release"/>
                     <section ref="sensors-api.html" title="Sensors"/>
                     <section ref="sensors-backend.html" title="Sensors Backend"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
@@ -1212,6 +1221,7 @@
             <keyword name="Flickr Demo Example" id="Flickr Demo Example" ref="flickrdemo.html"/>
             <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
+            <keyword name="Geo Service Demo" id="Geo Service Demo" ref="geoservicedemo.html"/>
             <keyword name="HapticsPlayer" id="HapticsPlayer" ref="hapticsplayer.html"/>
             <keyword name="Hapticsquare" id="Hapticsquare" ref="hapticsquare.html"/>
             <keyword name="IMPLEMENT_READING" id="IMPLEMENT_READING" ref="qsensorreading.html#IMPLEMENT_READING"/>
@@ -1225,8 +1235,6 @@
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
             <keyword name="Map Viewer Example" id="Map Viewer Example" ref="mapviewer.html"/>
-            <keyword name="mapviewer/images/house.png" id="mapviewer::mapviewer/images/house.png" ref="mapviewer-images-house-png.html"/>
-            <keyword name="mapviewer/images/qt.png" id="mapviewer::mapviewer/images/qt.png" ref="mapviewer-images-qt-png.html"/>
             <keyword name="Media Browser" id="Media Browser" ref="mediabrowser.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
@@ -1649,21 +1657,25 @@
             <keyword name="exposureParameterFlags" id="QCameraExposureControl::exposureParameterFlags" ref="qcameraexposurecontrol.html#exposureParameterFlags"/>
             <keyword name="exposureParameterRangeChanged" id="QCameraExposureControl::exposureParameterRangeChanged" ref="qcameraexposurecontrol.html#exposureParameterRangeChanged"/>
             <keyword name="extendedParameterName" id="QCameraExposureControl::extendedParameterName" ref="qcameraexposurecontrol.html#extendedParameterName"/>
-            <keyword name="flashMode" id="QCameraExposureControl::flashMode" ref="qcameraexposurecontrol.html#flashMode"/>
             <keyword name="flashReady" id="QCameraExposureControl::flashReady" ref="qcameraexposurecontrol.html#flashReady"/>
             <keyword name="isExposureModeSupported" id="QCameraExposureControl::isExposureModeSupported" ref="qcameraexposurecontrol.html#isExposureModeSupported"/>
-            <keyword name="isFlashModeSupported" id="QCameraExposureControl::isFlashModeSupported" ref="qcameraexposurecontrol.html#isFlashModeSupported"/>
-            <keyword name="isFlashReady" id="QCameraExposureControl::isFlashReady" ref="qcameraexposurecontrol.html#isFlashReady"/>
             <keyword name="isMeteringModeSupported" id="QCameraExposureControl::isMeteringModeSupported" ref="qcameraexposurecontrol.html#isMeteringModeSupported"/>
             <keyword name="isParameterSupported" id="QCameraExposureControl::isParameterSupported" ref="qcameraexposurecontrol.html#isParameterSupported"/>
             <keyword name="meteringMode" id="QCameraExposureControl::meteringMode" ref="qcameraexposurecontrol.html#meteringMode"/>
             <keyword name="setExposureMode" id="QCameraExposureControl::setExposureMode" ref="qcameraexposurecontrol.html#setExposureMode"/>
             <keyword name="setExposureParameter" id="QCameraExposureControl::setExposureParameter" ref="qcameraexposurecontrol.html#setExposureParameter"/>
-            <keyword name="setFlashMode" id="QCameraExposureControl::setFlashMode" ref="qcameraexposurecontrol.html#setFlashMode"/>
             <keyword name="setMeteringMode" id="QCameraExposureControl::setMeteringMode" ref="qcameraexposurecontrol.html#setMeteringMode"/>
             <keyword name="supportedParameterRange" id="QCameraExposureControl::supportedParameterRange" ref="qcameraexposurecontrol.html#supportedParameterRange"/>
             <keyword name="~QCameraExposureControl" id="QCameraExposureControl::~QCameraExposureControl" ref="qcameraexposurecontrol.html#dtor.QCameraExposureControl"/>
             <keyword name="QCameraExposureControl_iid" id="QCameraExposureControl_iid" ref="qcameraexposurecontrol.html#QCameraExposureControl_iid"/>
+            <keyword name="QCameraFlashControl" id="QCameraFlashControl" ref="qcameraflashcontrol.html"/>
+            <keyword name="flashMode" id="QCameraFlashControl::flashMode" ref="qcameraflashcontrol.html#flashMode"/>
+            <keyword name="flashReady" id="QCameraFlashControl::flashReady" ref="qcameraflashcontrol.html#flashReady"/>
+            <keyword name="isFlashModeSupported" id="QCameraFlashControl::isFlashModeSupported" ref="qcameraflashcontrol.html#isFlashModeSupported"/>
+            <keyword name="isFlashReady" id="QCameraFlashControl::isFlashReady" ref="qcameraflashcontrol.html#isFlashReady"/>
+            <keyword name="setFlashMode" id="QCameraFlashControl::setFlashMode" ref="qcameraflashcontrol.html#setFlashMode"/>
+            <keyword name="~QCameraFlashControl" id="QCameraFlashControl::~QCameraFlashControl" ref="qcameraflashcontrol.html#dtor.QCameraFlashControl"/>
+            <keyword name="QCameraFlashControl_iid" id="QCameraFlashControl_iid" ref="qcameraflashcontrol.html#QCameraFlashControl_iid"/>
             <keyword name="QCameraFocus" id="QCameraFocus" ref="qcamerafocus.html"/>
             <keyword name="QCameraFocus::FocusMode" id="QCameraFocus::FocusMode" ref="qcamerafocus.html#FocusMode-enum"/>
             <keyword name="QCameraFocus::ManualFocus" id="QCameraFocus::ManualFocus" ref="qcamerafocus.html#FocusMode-enum"/>
@@ -1798,14 +1810,10 @@
             <keyword name="isProcessingParameterSupported" id="QCameraImageProcessingControl::isProcessingParameterSupported" ref="qcameraimageprocessingcontrol.html#isProcessingParameterSupported"/>
             <keyword name="isWhiteBalanceModeSupported" id="QCameraImageProcessingControl::isWhiteBalanceModeSupported" ref="qcameraimageprocessingcontrol.html#isWhiteBalanceModeSupported"/>
             <keyword name="manualWhiteBalance" id="QCameraImageProcessingControl::manualWhiteBalance" ref="qcameraimageprocessingcontrol.html#manualWhiteBalance"/>
-            <keyword name="preset" id="QCameraImageProcessingControl::preset" ref="qcameraimageprocessingcontrol.html#preset"/>
-            <keyword name="presetDescription" id="QCameraImageProcessingControl::presetDescription" ref="qcameraimageprocessingcontrol.html#presetDescription"/>
             <keyword name="processingParameter" id="QCameraImageProcessingControl::processingParameter" ref="qcameraimageprocessingcontrol.html#processingParameter"/>
             <keyword name="setManualWhiteBalance" id="QCameraImageProcessingControl::setManualWhiteBalance" ref="qcameraimageprocessingcontrol.html#setManualWhiteBalance"/>
-            <keyword name="setPreset" id="QCameraImageProcessingControl::setPreset" ref="qcameraimageprocessingcontrol.html#setPreset"/>
             <keyword name="setProcessingParameter" id="QCameraImageProcessingControl::setProcessingParameter" ref="qcameraimageprocessingcontrol.html#setProcessingParameter"/>
             <keyword name="setWhiteBalanceMode" id="QCameraImageProcessingControl::setWhiteBalanceMode" ref="qcameraimageprocessingcontrol.html#setWhiteBalanceMode"/>
-            <keyword name="supportedPresets" id="QCameraImageProcessingControl::supportedPresets" ref="qcameraimageprocessingcontrol.html#supportedPresets"/>
             <keyword name="whiteBalanceMode" id="QCameraImageProcessingControl::whiteBalanceMode" ref="qcameraimageprocessingcontrol.html#whiteBalanceMode"/>
             <keyword name="~QCameraImageProcessingControl" id="QCameraImageProcessingControl::~QCameraImageProcessingControl" ref="qcameraimageprocessingcontrol.html#dtor.QCameraImageProcessingControl"/>
             <keyword name="QCameraImageProcessingControl_iid" id="QCameraImageProcessingControl_iid" ref="qcameraimageprocessingcontrol.html#QCameraImageProcessingControl_iid"/>
@@ -3022,13 +3030,12 @@
             <keyword name="setPostCode" id="QGeoAddress::setPostCode" ref="qgeoaddress.html#setPostCode"/>
             <keyword name="setPostOfficeBox" id="QGeoAddress::setPostOfficeBox" ref="qgeoaddress.html#setPostOfficeBox"/>
             <keyword name="setState" id="QGeoAddress::setState" ref="qgeoaddress.html#setState"/>
-            <keyword name="setThoroughfareName" id="QGeoAddress::setThoroughfareName" ref="qgeoaddress.html#setThoroughfareName"/>
-            <keyword name="setThoroughfareNumber" id="QGeoAddress::setThoroughfareNumber" ref="qgeoaddress.html#setThoroughfareNumber"/>
+            <keyword name="setStreet" id="QGeoAddress::setStreet" ref="qgeoaddress.html#setStreet"/>
+            <keyword name="setStreetNumber" id="QGeoAddress::setStreetNumber" ref="qgeoaddress.html#setStreetNumber"/>
             <keyword name="state" id="QGeoAddress::state" ref="qgeoaddress.html#state"/>
-            <keyword name="thoroughfareName" id="QGeoAddress::thoroughfareName" ref="qgeoaddress.html#thoroughfareName"/>
-            <keyword name="thoroughfareNumber" id="QGeoAddress::thoroughfareNumber" ref="qgeoaddress.html#thoroughfareNumber"/>
+            <keyword name="street" id="QGeoAddress::street" ref="qgeoaddress.html#street"/>
+            <keyword name="streetNumber" id="QGeoAddress::streetNumber" ref="qgeoaddress.html#streetNumber"/>
             <keyword name="~QGeoAddress" id="QGeoAddress::~QGeoAddress" ref="qgeoaddress.html#dtor.QGeoAddress"/>
-            <keyword name="QGeoApiUi Example" id="QGeoApiUi Example" ref="qgeoapiui.html"/>
             <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
             <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
             <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
@@ -3038,33 +3045,59 @@
             <keyword name="setCenter" id="QGeoAreaMonitor::setCenter" ref="qgeoareamonitor.html#center-prop"/>
             <keyword name="setRadius" id="QGeoAreaMonitor::setRadius" ref="qgeoareamonitor.html#radius-prop"/>
             <keyword name="~QGeoAreaMonitor" id="QGeoAreaMonitor::~QGeoAreaMonitor" ref="qgeoareamonitor.html#dtor.QGeoAreaMonitor"/>
+            <keyword name="QGeoBoundingArea" id="QGeoBoundingArea" ref="qgeoboundingarea.html"/>
+            <keyword name="QGeoBoundingArea::AreaType" id="QGeoBoundingArea::AreaType" ref="qgeoboundingarea.html#AreaType-enum"/>
+            <keyword name="QGeoBoundingArea::BoxType" id="QGeoBoundingArea::BoxType" ref="qgeoboundingarea.html#AreaType-enum"/>
+            <keyword name="QGeoBoundingArea::CircleType" id="QGeoBoundingArea::CircleType" ref="qgeoboundingarea.html#AreaType-enum"/>
+            <keyword name="contains" id="QGeoBoundingArea::contains" ref="qgeoboundingarea.html#contains"/>
+            <keyword name="isEmpty" id="QGeoBoundingArea::isEmpty" ref="qgeoboundingarea.html#isEmpty"/>
+            <keyword name="isValid" id="QGeoBoundingArea::isValid" ref="qgeoboundingarea.html#isValid"/>
+            <keyword name="type" id="QGeoBoundingArea::type" ref="qgeoboundingarea.html#type"/>
+            <keyword name="~QGeoBoundingArea" id="QGeoBoundingArea::~QGeoBoundingArea" ref="qgeoboundingarea.html#dtor.QGeoBoundingArea"/>
             <keyword name="QGeoBoundingBox" id="QGeoBoundingBox" ref="qgeoboundingbox.html"/>
             <keyword name="bottomLeft" id="QGeoBoundingBox::bottomLeft" ref="qgeoboundingbox.html#bottomLeft"/>
             <keyword name="bottomRight" id="QGeoBoundingBox::bottomRight" ref="qgeoboundingbox.html#bottomRight"/>
             <keyword name="center" id="QGeoBoundingBox::center" ref="qgeoboundingbox.html#center"/>
             <keyword name="contains" id="QGeoBoundingBox::contains" ref="qgeoboundingbox.html#contains"/>
             <keyword name="height" id="QGeoBoundingBox::height" ref="qgeoboundingbox.html#height"/>
-            <keyword name="intersected" id="QGeoBoundingBox::intersected" ref="qgeoboundingbox.html#intersected"/>
             <keyword name="intersects" id="QGeoBoundingBox::intersects" ref="qgeoboundingbox.html#intersects"/>
             <keyword name="isEmpty" id="QGeoBoundingBox::isEmpty" ref="qgeoboundingbox.html#isEmpty"/>
             <keyword name="isValid" id="QGeoBoundingBox::isValid" ref="qgeoboundingbox.html#isValid"/>
             <keyword name="operator!=" id="QGeoBoundingBox::operator!=" ref="qgeoboundingbox.html#operator-not-eq"/>
-            <keyword name="operator&amp;" id="QGeoBoundingBox::operator&amp;" ref="qgeoboundingbox.html#operator-and"/>
-            <keyword name="operator&amp;=" id="QGeoBoundingBox::operator&amp;=" ref="qgeoboundingbox.html#operator-and-eq"/>
             <keyword name="operator=" id="QGeoBoundingBox::operator=" ref="qgeoboundingbox.html#operator-eq"/>
             <keyword name="operator==" id="QGeoBoundingBox::operator==" ref="qgeoboundingbox.html#operator-eq-eq"/>
             <keyword name="operator|" id="QGeoBoundingBox::operator|" ref="qgeoboundingbox.html#operator-7c"/>
             <keyword name="operator|=" id="QGeoBoundingBox::operator|=" ref="qgeoboundingbox.html#operator-7c-eq"/>
+            <keyword name="setBottomLeft" id="QGeoBoundingBox::setBottomLeft" ref="qgeoboundingbox.html#setBottomLeft"/>
+            <keyword name="setBottomRight" id="QGeoBoundingBox::setBottomRight" ref="qgeoboundingbox.html#setBottomRight"/>
             <keyword name="setCenter" id="QGeoBoundingBox::setCenter" ref="qgeoboundingbox.html#setCenter"/>
             <keyword name="setHeight" id="QGeoBoundingBox::setHeight" ref="qgeoboundingbox.html#setHeight"/>
+            <keyword name="setTopLeft" id="QGeoBoundingBox::setTopLeft" ref="qgeoboundingbox.html#setTopLeft"/>
+            <keyword name="setTopRight" id="QGeoBoundingBox::setTopRight" ref="qgeoboundingbox.html#setTopRight"/>
             <keyword name="setWidth" id="QGeoBoundingBox::setWidth" ref="qgeoboundingbox.html#setWidth"/>
             <keyword name="topLeft" id="QGeoBoundingBox::topLeft" ref="qgeoboundingbox.html#topLeft"/>
             <keyword name="topRight" id="QGeoBoundingBox::topRight" ref="qgeoboundingbox.html#topRight"/>
             <keyword name="translate" id="QGeoBoundingBox::translate" ref="qgeoboundingbox.html#translate"/>
             <keyword name="translated" id="QGeoBoundingBox::translated" ref="qgeoboundingbox.html#translated"/>
+            <keyword name="type" id="QGeoBoundingBox::type" ref="qgeoboundingbox.html#type"/>
             <keyword name="united" id="QGeoBoundingBox::united" ref="qgeoboundingbox.html#united"/>
             <keyword name="width" id="QGeoBoundingBox::width" ref="qgeoboundingbox.html#width"/>
             <keyword name="~QGeoBoundingBox" id="QGeoBoundingBox::~QGeoBoundingBox" ref="qgeoboundingbox.html#dtor.QGeoBoundingBox"/>
+            <keyword name="QGeoBoundingCircle" id="QGeoBoundingCircle" ref="qgeoboundingcircle.html"/>
+            <keyword name="center" id="QGeoBoundingCircle::center" ref="qgeoboundingcircle.html#center"/>
+            <keyword name="contains" id="QGeoBoundingCircle::contains" ref="qgeoboundingcircle.html#contains"/>
+            <keyword name="isEmpty" id="QGeoBoundingCircle::isEmpty" ref="qgeoboundingcircle.html#isEmpty"/>
+            <keyword name="isValid" id="QGeoBoundingCircle::isValid" ref="qgeoboundingcircle.html#isValid"/>
+            <keyword name="operator!=" id="QGeoBoundingCircle::operator!=" ref="qgeoboundingcircle.html#operator-not-eq"/>
+            <keyword name="operator=" id="QGeoBoundingCircle::operator=" ref="qgeoboundingcircle.html#operator-eq"/>
+            <keyword name="operator==" id="QGeoBoundingCircle::operator==" ref="qgeoboundingcircle.html#operator-eq-eq"/>
+            <keyword name="radius" id="QGeoBoundingCircle::radius" ref="qgeoboundingcircle.html#radius"/>
+            <keyword name="setCenter" id="QGeoBoundingCircle::setCenter" ref="qgeoboundingcircle.html#setCenter"/>
+            <keyword name="setRadius" id="QGeoBoundingCircle::setRadius" ref="qgeoboundingcircle.html#setRadius"/>
+            <keyword name="translate" id="QGeoBoundingCircle::translate" ref="qgeoboundingcircle.html#translate"/>
+            <keyword name="translated" id="QGeoBoundingCircle::translated" ref="qgeoboundingcircle.html#translated"/>
+            <keyword name="type" id="QGeoBoundingCircle::type" ref="qgeoboundingcircle.html#type"/>
+            <keyword name="~QGeoBoundingCircle" id="QGeoBoundingCircle::~QGeoBoundingCircle" ref="qgeoboundingcircle.html#dtor.QGeoBoundingCircle"/>
             <keyword name="QGeoCoordinate" id="QGeoCoordinate" ref="qgeocoordinate.html"/>
             <keyword name="QGeoCoordinate::CoordinateFormat" id="QGeoCoordinate::CoordinateFormat" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
             <keyword name="QGeoCoordinate::Degrees" id="QGeoCoordinate::Degrees" ref="qgeocoordinate.html#CoordinateFormat-enum"/>
@@ -3093,10 +3126,18 @@
             <keyword name="type" id="QGeoCoordinate::type" ref="qgeocoordinate.html#type"/>
             <keyword name="~QGeoCoordinate" id="QGeoCoordinate::~QGeoCoordinate" ref="qgeocoordinate.html#dtor.QGeoCoordinate"/>
             <keyword name="QGeoMapCircleObject" id="QGeoMapCircleObject" ref="qgeomapcircleobject.html"/>
-            <keyword name="center" id="QGeoMapCircleObject::center" ref="qgeomapcircleobject.html#center"/>
-            <keyword name="radius" id="QGeoMapCircleObject::radius" ref="qgeomapcircleobject.html#radius"/>
-            <keyword name="setCenter" id="QGeoMapCircleObject::setCenter" ref="qgeomapcircleobject.html#setCenter"/>
-            <keyword name="setRadius" id="QGeoMapCircleObject::setRadius" ref="qgeomapcircleobject.html#setRadius"/>
+            <keyword name="brush" id="QGeoMapCircleObject::brush" ref="qgeomapcircleobject.html#brush-prop"/>
+            <keyword name="brushChanged" id="QGeoMapCircleObject::brushChanged" ref="qgeomapcircleobject.html#brushChanged"/>
+            <keyword name="center" id="QGeoMapCircleObject::center" ref="qgeomapcircleobject.html#center-prop"/>
+            <keyword name="centerChanged" id="QGeoMapCircleObject::centerChanged" ref="qgeomapcircleobject.html#centerChanged"/>
+            <keyword name="pen" id="QGeoMapCircleObject::pen" ref="qgeomapcircleobject.html#pen-prop"/>
+            <keyword name="penChanged" id="QGeoMapCircleObject::penChanged" ref="qgeomapcircleobject.html#penChanged"/>
+            <keyword name="radius" id="QGeoMapCircleObject::radius" ref="qgeomapcircleobject.html#radius-prop"/>
+            <keyword name="radiusChanged" id="QGeoMapCircleObject::radiusChanged" ref="qgeomapcircleobject.html#radiusChanged"/>
+            <keyword name="setBrush" id="QGeoMapCircleObject::setBrush" ref="qgeomapcircleobject.html#brush-prop"/>
+            <keyword name="setCenter" id="QGeoMapCircleObject::setCenter" ref="qgeomapcircleobject.html#center-prop"/>
+            <keyword name="setPen" id="QGeoMapCircleObject::setPen" ref="qgeomapcircleobject.html#pen-prop"/>
+            <keyword name="setRadius" id="QGeoMapCircleObject::setRadius" ref="qgeomapcircleobject.html#radius-prop"/>
             <keyword name="~QGeoMapCircleObject" id="QGeoMapCircleObject::~QGeoMapCircleObject" ref="qgeomapcircleobject.html#dtor.QGeoMapCircleObject"/>
             <keyword name="QGeoMapData" id="QGeoMapData" ref="qgeomapdata.html"/>
             <keyword name="addMapObject" id="QGeoMapData::addMapObject" ref="qgeomapdata.html#addMapObject"/>
@@ -3156,13 +3197,13 @@
             <keyword name="QGeoMapWidget::SatelliteMapNight" id="QGeoMapWidget::SatelliteMapNight" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::TerrainMap" id="QGeoMapWidget::TerrainMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="addMapObject" id="QGeoMapWidget::addMapObject" ref="qgeomapwidget.html#addMapObject"/>
-            <keyword name="center" id="QGeoMapWidget::center" ref="qgeomapwidget.html#center"/>
-            <keyword name="centered" id="QGeoMapWidget::centered" ref="qgeomapwidget.html#centered"/>
+            <keyword name="center" id="QGeoMapWidget::center" ref="qgeomapwidget.html#center-prop"/>
+            <keyword name="centerChanged" id="QGeoMapWidget::centerChanged" ref="qgeomapwidget.html#centerChanged"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapWidget::coordinateToScreenPosition" ref="qgeomapwidget.html#coordinateToScreenPosition"/>
             <keyword name="mapObjects" id="QGeoMapWidget::mapObjects" ref="qgeomapwidget.html#mapObjects"/>
             <keyword name="mapObjectsAtScreenPosition" id="QGeoMapWidget::mapObjectsAtScreenPosition" ref="qgeomapwidget.html#mapObjectsAtScreenPosition"/>
             <keyword name="mapObjectsInScreenRect" id="QGeoMapWidget::mapObjectsInScreenRect" ref="qgeomapwidget.html#mapObjectsInScreenRect"/>
-            <keyword name="mapType" id="QGeoMapWidget::mapType" ref="qgeomapwidget.html#mapType"/>
+            <keyword name="mapType" id="QGeoMapWidget::mapType" ref="qgeomapwidget.html#mapType-prop"/>
             <keyword name="mapTypeChanged" id="QGeoMapWidget::mapTypeChanged" ref="qgeomapwidget.html#mapTypeChanged"/>
             <keyword name="maximumZoomLevel" id="QGeoMapWidget::maximumZoomLevel" ref="qgeomapwidget.html#maximumZoomLevel"/>
             <keyword name="minimumZoomLevel" id="QGeoMapWidget::minimumZoomLevel" ref="qgeomapwidget.html#minimumZoomLevel"/>
@@ -3171,21 +3212,20 @@
             <keyword name="removeMapObject" id="QGeoMapWidget::removeMapObject" ref="qgeomapwidget.html#removeMapObject"/>
             <keyword name="resizeEvent" id="QGeoMapWidget::resizeEvent" ref="qgeomapwidget.html#resizeEvent"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapWidget::screenPositionToCoordinate" ref="qgeomapwidget.html#screenPositionToCoordinate"/>
-            <keyword name="setCenter" id="QGeoMapWidget::setCenter" ref="qgeomapwidget.html#setCenter"/>
-            <keyword name="setMapType" id="QGeoMapWidget::setMapType" ref="qgeomapwidget.html#setMapType"/>
-            <keyword name="setZoomLevel" id="QGeoMapWidget::setZoomLevel" ref="qgeomapwidget.html#setZoomLevel"/>
+            <keyword name="setCenter" id="QGeoMapWidget::setCenter" ref="qgeomapwidget.html#center-prop"/>
+            <keyword name="setMapType" id="QGeoMapWidget::setMapType" ref="qgeomapwidget.html#mapType-prop"/>
+            <keyword name="setZoomLevel" id="QGeoMapWidget::setZoomLevel" ref="qgeomapwidget.html#zoomLevel-prop"/>
             <keyword name="shape" id="QGeoMapWidget::shape" ref="qgeomapwidget.html#shape"/>
             <keyword name="startPanning" id="QGeoMapWidget::startPanning" ref="qgeomapwidget.html#startPanning"/>
             <keyword name="stopPanning" id="QGeoMapWidget::stopPanning" ref="qgeomapwidget.html#stopPanning"/>
             <keyword name="supportedMapTypes" id="QGeoMapWidget::supportedMapTypes" ref="qgeomapwidget.html#supportedMapTypes"/>
             <keyword name="visibleMapObjects" id="QGeoMapWidget::visibleMapObjects" ref="qgeomapwidget.html#visibleMapObjects"/>
-            <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel"/>
+            <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel-prop"/>
             <keyword name="zoomLevelChanged" id="QGeoMapWidget::zoomLevelChanged" ref="qgeomapwidget.html#zoomLevelChanged"/>
             <keyword name="~QGeoMapWidget" id="QGeoMapWidget::~QGeoMapWidget" ref="qgeomapwidget.html#dtor.QGeoMapWidget"/>
             <keyword name="QGeoMappingManager" id="QGeoMappingManager" ref="qgeomappingmanager.html"/>
             <keyword name="createMapData" id="QGeoMappingManager::createMapData" ref="qgeomappingmanager.html#createMapData"/>
             <keyword name="managerName" id="QGeoMappingManager::managerName" ref="qgeomappingmanager.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoMappingManager::managerParameters" ref="qgeomappingmanager.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoMappingManager::managerVersion" ref="qgeomappingmanager.html#managerVersion"/>
             <keyword name="maximumImageSize" id="QGeoMappingManager::maximumImageSize" ref="qgeomappingmanager.html#maximumImageSize"/>
             <keyword name="maximumZoomLevel" id="QGeoMappingManager::maximumZoomLevel" ref="qgeomappingmanager.html#maximumZoomLevel"/>
@@ -3197,7 +3237,6 @@
             <keyword name="QGeoMappingManagerEngine" id="QGeoMappingManagerEngine" ref="qgeomappingmanagerengine.html"/>
             <keyword name="createMapData" id="QGeoMappingManagerEngine::createMapData" ref="qgeomappingmanagerengine.html#createMapData"/>
             <keyword name="managerName" id="QGeoMappingManagerEngine::managerName" ref="qgeomappingmanagerengine.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoMappingManagerEngine::managerParameters" ref="qgeomappingmanagerengine.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoMappingManagerEngine::managerVersion" ref="qgeomappingmanagerengine.html#managerVersion"/>
             <keyword name="maximumImageSize" id="QGeoMappingManagerEngine::maximumImageSize" ref="qgeomappingmanagerengine.html#maximumImageSize"/>
             <keyword name="maximumZoomLevel" id="QGeoMappingManagerEngine::maximumZoomLevel" ref="qgeomappingmanagerengine.html#maximumZoomLevel"/>
@@ -3212,12 +3251,27 @@
             <keyword name="supportedMapTypes" id="QGeoMappingManagerEngine::supportedMapTypes" ref="qgeomappingmanagerengine.html#supportedMapTypes"/>
             <keyword name="~QGeoMappingManagerEngine" id="QGeoMappingManagerEngine::~QGeoMappingManagerEngine" ref="qgeomappingmanagerengine.html#dtor.QGeoMappingManagerEngine"/>
             <keyword name="QGeoNavigationInstruction" id="QGeoNavigationInstruction" ref="qgeonavigationinstruction.html"/>
+            <keyword name="QGeoNavigationInstruction::InstructionDirection" id="QGeoNavigationInstruction::InstructionDirection" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::NoDirection" id="QGeoNavigationInstruction::NoDirection" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionForward" id="QGeoNavigationInstruction::DirectionForward" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionBearRight" id="QGeoNavigationInstruction::DirectionBearRight" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionLightRight" id="QGeoNavigationInstruction::DirectionLightRight" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionRight" id="QGeoNavigationInstruction::DirectionRight" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionHardRight" id="QGeoNavigationInstruction::DirectionHardRight" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionUTurnRight" id="QGeoNavigationInstruction::DirectionUTurnRight" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionUTurnLeft" id="QGeoNavigationInstruction::DirectionUTurnLeft" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionHardLeft" id="QGeoNavigationInstruction::DirectionHardLeft" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionLeft" id="QGeoNavigationInstruction::DirectionLeft" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionLightLeft" id="QGeoNavigationInstruction::DirectionLightLeft" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="QGeoNavigationInstruction::DirectionBearLeft" id="QGeoNavigationInstruction::DirectionBearLeft" ref="qgeonavigationinstruction.html#InstructionDirection-enum"/>
+            <keyword name="direction" id="QGeoNavigationInstruction::direction" ref="qgeonavigationinstruction.html#direction"/>
             <keyword name="distanceToNextInstruction" id="QGeoNavigationInstruction::distanceToNextInstruction" ref="qgeonavigationinstruction.html#distanceToNextInstruction"/>
             <keyword name="instructionText" id="QGeoNavigationInstruction::instructionText" ref="qgeonavigationinstruction.html#instructionText"/>
             <keyword name="operator!=" id="QGeoNavigationInstruction::operator!=" ref="qgeonavigationinstruction.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoNavigationInstruction::operator=" ref="qgeonavigationinstruction.html#operator-eq"/>
             <keyword name="operator==" id="QGeoNavigationInstruction::operator==" ref="qgeonavigationinstruction.html#operator-eq-eq"/>
             <keyword name="position" id="QGeoNavigationInstruction::position" ref="qgeonavigationinstruction.html#position"/>
+            <keyword name="setDirection" id="QGeoNavigationInstruction::setDirection" ref="qgeonavigationinstruction.html#setDirection"/>
             <keyword name="setDistanceToNextInstruction" id="QGeoNavigationInstruction::setDistanceToNextInstruction" ref="qgeonavigationinstruction.html#setDistanceToNextInstruction"/>
             <keyword name="setInstructionText" id="QGeoNavigationInstruction::setInstructionText" ref="qgeonavigationinstruction.html#setInstructionText"/>
             <keyword name="setPosition" id="QGeoNavigationInstruction::setPosition" ref="qgeonavigationinstruction.html#setPosition"/>
@@ -3225,19 +3279,16 @@
             <keyword name="timeToNextInstruction" id="QGeoNavigationInstruction::timeToNextInstruction" ref="qgeonavigationinstruction.html#timeToNextInstruction"/>
             <keyword name="~QGeoNavigationInstruction" id="QGeoNavigationInstruction::~QGeoNavigationInstruction" ref="qgeonavigationinstruction.html#dtor.QGeoNavigationInstruction"/>
             <keyword name="QGeoPlace" id="QGeoPlace" ref="qgeoplace.html"/>
-            <keyword name="QGeoPlace::PlaceType" id="QGeoPlace::PlaceType" ref="qgeoplace.html#PlaceType-enum"/>
-            <keyword name="QGeoPlace::GeoPlaceType" id="QGeoPlace::GeoPlaceType" ref="qgeoplace.html#PlaceType-enum"/>
-            <keyword name="QGeoPlace::LandmarkType" id="QGeoPlace::LandmarkType" ref="qgeoplace.html#PlaceType-enum"/>
             <keyword name="address" id="QGeoPlace::address" ref="qgeoplace.html#address"/>
-            <keyword name="boundingBox" id="QGeoPlace::boundingBox" ref="qgeoplace.html#boundingBox"/>
             <keyword name="coordinate" id="QGeoPlace::coordinate" ref="qgeoplace.html#coordinate"/>
+            <keyword name="isLandmark" id="QGeoPlace::isLandmark" ref="qgeoplace.html#isLandmark"/>
             <keyword name="operator!=" id="QGeoPlace::operator!=" ref="qgeoplace.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoPlace::operator=" ref="qgeoplace.html#operator-eq"/>
             <keyword name="operator==" id="QGeoPlace::operator==" ref="qgeoplace.html#operator-eq-eq"/>
             <keyword name="setAddress" id="QGeoPlace::setAddress" ref="qgeoplace.html#setAddress"/>
-            <keyword name="setBoundingBox" id="QGeoPlace::setBoundingBox" ref="qgeoplace.html#setBoundingBox"/>
             <keyword name="setCoordinate" id="QGeoPlace::setCoordinate" ref="qgeoplace.html#setCoordinate"/>
-            <keyword name="type" id="QGeoPlace::type" ref="qgeoplace.html#type"/>
+            <keyword name="setViewport" id="QGeoPlace::setViewport" ref="qgeoplace.html#setViewport"/>
+            <keyword name="viewport" id="QGeoPlace::viewport" ref="qgeoplace.html#viewport"/>
             <keyword name="~QGeoPlace" id="QGeoPlace::~QGeoPlace" ref="qgeoplace.html#dtor.QGeoPlace"/>
             <keyword name="QGeoPositionInfo" id="QGeoPositionInfo" ref="qgeopositioninfo.html"/>
             <keyword name="QGeoPositionInfo::Attribute" id="QGeoPositionInfo::Attribute" ref="qgeopositioninfo.html#Attribute-enum"/>
@@ -3283,7 +3334,9 @@
             <keyword name="QGeoRoute" id="QGeoRoute" ref="qgeoroute.html"/>
             <keyword name="bounds" id="QGeoRoute::bounds" ref="qgeoroute.html#bounds"/>
             <keyword name="distance" id="QGeoRoute::distance" ref="qgeoroute.html#distance"/>
+            <keyword name="operator!=" id="QGeoRoute::operator!=" ref="qgeoroute.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoRoute::operator=" ref="qgeoroute.html#operator-eq"/>
+            <keyword name="operator==" id="QGeoRoute::operator==" ref="qgeoroute.html#operator-eq-eq"/>
             <keyword name="path" id="QGeoRoute::path" ref="qgeoroute.html#path"/>
             <keyword name="request" id="QGeoRoute::request" ref="qgeoroute.html#request"/>
             <keyword name="routeId" id="QGeoRoute::routeId" ref="qgeoroute.html#routeId"/>
@@ -3355,7 +3408,9 @@
             <keyword name="excludeAreas" id="QGeoRouteRequest::excludeAreas" ref="qgeorouterequest.html#excludeAreas"/>
             <keyword name="instructionDetail" id="QGeoRouteRequest::instructionDetail" ref="qgeorouterequest.html#instructionDetail"/>
             <keyword name="numberAlternativeRoutes" id="QGeoRouteRequest::numberAlternativeRoutes" ref="qgeorouterequest.html#numberAlternativeRoutes"/>
+            <keyword name="operator!=" id="QGeoRouteRequest::operator!=" ref="qgeorouterequest.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoRouteRequest::operator=" ref="qgeorouterequest.html#operator-eq"/>
+            <keyword name="operator==" id="QGeoRouteRequest::operator==" ref="qgeorouterequest.html#operator-eq-eq"/>
             <keyword name="routeOptimization" id="QGeoRouteRequest::routeOptimization" ref="qgeorouterequest.html#routeOptimization"/>
             <keyword name="segmentDetail" id="QGeoRouteRequest::segmentDetail" ref="qgeorouterequest.html#segmentDetail"/>
             <keyword name="setAvoidFeatureTypes" id="QGeoRouteRequest::setAvoidFeatureTypes" ref="qgeorouterequest.html#setAvoidFeatureTypes"/>
@@ -3372,7 +3427,9 @@
             <keyword name="QGeoRouteSegment" id="QGeoRouteSegment" ref="qgeoroutesegment.html"/>
             <keyword name="distance" id="QGeoRouteSegment::distance" ref="qgeoroutesegment.html#distance"/>
             <keyword name="instruction" id="QGeoRouteSegment::instruction" ref="qgeoroutesegment.html#instruction"/>
+            <keyword name="operator!=" id="QGeoRouteSegment::operator!=" ref="qgeoroutesegment.html#operator-not-eq"/>
             <keyword name="operator=" id="QGeoRouteSegment::operator=" ref="qgeoroutesegment.html#operator-eq"/>
+            <keyword name="operator==" id="QGeoRouteSegment::operator==" ref="qgeoroutesegment.html#operator-eq-eq"/>
             <keyword name="path" id="QGeoRouteSegment::path" ref="qgeoroutesegment.html#path"/>
             <keyword name="setDistance" id="QGeoRouteSegment::setDistance" ref="qgeoroutesegment.html#setDistance"/>
             <keyword name="setInstruction" id="QGeoRouteSegment::setInstruction" ref="qgeoroutesegment.html#setInstruction"/>
@@ -3385,7 +3442,6 @@
             <keyword name="error" id="QGeoRoutingManager::error" ref="qgeoroutingmanager.html#error"/>
             <keyword name="finished" id="QGeoRoutingManager::finished" ref="qgeoroutingmanager.html#finished"/>
             <keyword name="managerName" id="QGeoRoutingManager::managerName" ref="qgeoroutingmanager.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoRoutingManager::managerParameters" ref="qgeoroutingmanager.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoRoutingManager::managerVersion" ref="qgeoroutingmanager.html#managerVersion"/>
             <keyword name="supportedAvoidFeatureTypes" id="QGeoRoutingManager::supportedAvoidFeatureTypes" ref="qgeoroutingmanager.html#supportedAvoidFeatureTypes"/>
             <keyword name="supportedInstructionDetails" id="QGeoRoutingManager::supportedInstructionDetails" ref="qgeoroutingmanager.html#supportedInstructionDetails"/>
@@ -3402,7 +3458,6 @@
             <keyword name="error" id="QGeoRoutingManagerEngine::error" ref="qgeoroutingmanagerengine.html#error"/>
             <keyword name="finished" id="QGeoRoutingManagerEngine::finished" ref="qgeoroutingmanagerengine.html#finished"/>
             <keyword name="managerName" id="QGeoRoutingManagerEngine::managerName" ref="qgeoroutingmanagerengine.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoRoutingManagerEngine::managerParameters" ref="qgeoroutingmanagerengine.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoRoutingManagerEngine::managerVersion" ref="qgeoroutingmanagerengine.html#managerVersion"/>
             <keyword name="setSupportedAvoidFeatureTypes" id="QGeoRoutingManagerEngine::setSupportedAvoidFeatureTypes" ref="qgeoroutingmanagerengine.html#setSupportedAvoidFeatureTypes"/>
             <keyword name="setSupportedInstructionDetails" id="QGeoRoutingManagerEngine::setSupportedInstructionDetails" ref="qgeoroutingmanagerengine.html#setSupportedInstructionDetails"/>
@@ -3460,12 +3515,13 @@
             <keyword name="finished" id="QGeoSearchManager::finished" ref="qgeosearchmanager.html#finished"/>
             <keyword name="geocode" id="QGeoSearchManager::geocode" ref="qgeosearchmanager.html#geocode"/>
             <keyword name="managerName" id="QGeoSearchManager::managerName" ref="qgeosearchmanager.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoSearchManager::managerParameters" ref="qgeosearchmanager.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoSearchManager::managerVersion" ref="qgeosearchmanager.html#managerVersion"/>
-            <keyword name="placeSearch" id="QGeoSearchManager::placeSearch" ref="qgeosearchmanager.html#placeSearch"/>
+            <keyword name="reverseGeocode" id="QGeoSearchManager::reverseGeocode" ref="qgeosearchmanager.html#reverseGeocode"/>
+            <keyword name="search" id="QGeoSearchManager::search" ref="qgeosearchmanager.html#search"/>
             <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManager::setAdditionalLandmarkManagers" ref="qgeosearchmanager.html#setAdditionalLandmarkManagers"/>
             <keyword name="supportedSearchTypes" id="QGeoSearchManager::supportedSearchTypes" ref="qgeosearchmanager.html#supportedSearchTypes"/>
             <keyword name="supportsGeocoding" id="QGeoSearchManager::supportsGeocoding" ref="qgeosearchmanager.html#supportsGeocoding"/>
+            <keyword name="supportsReverseGeocoding" id="QGeoSearchManager::supportsReverseGeocoding" ref="qgeosearchmanager.html#supportsReverseGeocoding"/>
             <keyword name="~QGeoSearchManager" id="QGeoSearchManager::~QGeoSearchManager" ref="qgeosearchmanager.html#dtor.QGeoSearchManager"/>
             <keyword name="QGeoSearchManagerEngine" id="QGeoSearchManagerEngine" ref="qgeosearchmanagerengine.html"/>
             <keyword name="addAdditionalLandmarkManager" id="QGeoSearchManagerEngine::addAdditionalLandmarkManager" ref="qgeosearchmanagerengine.html#addAdditionalLandmarkManager"/>
@@ -3475,15 +3531,17 @@
             <keyword name="finished" id="QGeoSearchManagerEngine::finished" ref="qgeosearchmanagerengine.html#finished"/>
             <keyword name="geocode" id="QGeoSearchManagerEngine::geocode" ref="qgeosearchmanagerengine.html#geocode"/>
             <keyword name="managerName" id="QGeoSearchManagerEngine::managerName" ref="qgeosearchmanagerengine.html#managerName"/>
-            <keyword name="managerParameters" id="QGeoSearchManagerEngine::managerParameters" ref="qgeosearchmanagerengine.html#managerParameters"/>
             <keyword name="managerVersion" id="QGeoSearchManagerEngine::managerVersion" ref="qgeosearchmanagerengine.html#managerVersion"/>
-            <keyword name="placeSearch" id="QGeoSearchManagerEngine::placeSearch" ref="qgeosearchmanagerengine.html#placeSearch"/>
+            <keyword name="reverseGeocode" id="QGeoSearchManagerEngine::reverseGeocode" ref="qgeosearchmanagerengine.html#reverseGeocode"/>
+            <keyword name="search" id="QGeoSearchManagerEngine::search" ref="qgeosearchmanagerengine.html#search"/>
             <keyword name="setAdditionalLandmarkManagers" id="QGeoSearchManagerEngine::setAdditionalLandmarkManagers" ref="qgeosearchmanagerengine.html#setAdditionalLandmarkManagers"/>
             <keyword name="setDefaultLandmarkManager" id="QGeoSearchManagerEngine::setDefaultLandmarkManager" ref="qgeosearchmanagerengine.html#setDefaultLandmarkManager"/>
             <keyword name="setSupportedSearchTypes" id="QGeoSearchManagerEngine::setSupportedSearchTypes" ref="qgeosearchmanagerengine.html#setSupportedSearchTypes"/>
             <keyword name="setSupportsGeocoding" id="QGeoSearchManagerEngine::setSupportsGeocoding" ref="qgeosearchmanagerengine.html#setSupportsGeocoding"/>
+            <keyword name="setSupportsReverseGeocoding" id="QGeoSearchManagerEngine::setSupportsReverseGeocoding" ref="qgeosearchmanagerengine.html#setSupportsReverseGeocoding"/>
             <keyword name="supportedSearchTypes" id="QGeoSearchManagerEngine::supportedSearchTypes" ref="qgeosearchmanagerengine.html#supportedSearchTypes"/>
             <keyword name="supportsGeocoding" id="QGeoSearchManagerEngine::supportsGeocoding" ref="qgeosearchmanagerengine.html#supportsGeocoding"/>
+            <keyword name="supportsReverseGeocoding" id="QGeoSearchManagerEngine::supportsReverseGeocoding" ref="qgeosearchmanagerengine.html#supportsReverseGeocoding"/>
             <keyword name="~QGeoSearchManagerEngine" id="QGeoSearchManagerEngine::~QGeoSearchManagerEngine" ref="qgeosearchmanagerengine.html#dtor.QGeoSearchManagerEngine"/>
             <keyword name="QGeoSearchReply" id="QGeoSearchReply" ref="qgeosearchreply.html"/>
             <keyword name="QGeoSearchReply::Error" id="QGeoSearchReply::Error" ref="qgeosearchreply.html#Error-enum"/>
@@ -3492,19 +3550,24 @@
             <keyword name="QGeoSearchReply::CommunicationError" id="QGeoSearchReply::CommunicationError" ref="qgeosearchreply.html#Error-enum"/>
             <keyword name="QGeoSearchReply::ParseError" id="QGeoSearchReply::ParseError" ref="qgeosearchreply.html#Error-enum"/>
             <keyword name="QGeoSearchReply::UnsupportedOptionError" id="QGeoSearchReply::UnsupportedOptionError" ref="qgeosearchreply.html#Error-enum"/>
+            <keyword name="QGeoSearchReply::CombinationError" id="QGeoSearchReply::CombinationError" ref="qgeosearchreply.html#Error-enum"/>
             <keyword name="QGeoSearchReply::UnknownError" id="QGeoSearchReply::UnknownError" ref="qgeosearchreply.html#Error-enum"/>
             <keyword name="abort" id="QGeoSearchReply::abort" ref="qgeosearchreply.html#abort"/>
             <keyword name="addPlace" id="QGeoSearchReply::addPlace" ref="qgeosearchreply.html#addPlace"/>
-            <keyword name="bounds" id="QGeoSearchReply::bounds" ref="qgeosearchreply.html#bounds"/>
             <keyword name="error" id="QGeoSearchReply::error" ref="qgeosearchreply.html#error"/>
             <keyword name="errorString" id="QGeoSearchReply::errorString" ref="qgeosearchreply.html#errorString"/>
             <keyword name="finished" id="QGeoSearchReply::finished" ref="qgeosearchreply.html#finished"/>
             <keyword name="isFinished" id="QGeoSearchReply::isFinished" ref="qgeosearchreply.html#isFinished"/>
             <keyword name="places" id="QGeoSearchReply::places" ref="qgeosearchreply.html#places"/>
-            <keyword name="setBounds" id="QGeoSearchReply::setBounds" ref="qgeosearchreply.html#setBounds"/>
+            <keyword name="resultsCount" id="QGeoSearchReply::resultsCount" ref="qgeosearchreply.html#resultsCount"/>
+            <keyword name="resultsOffset" id="QGeoSearchReply::resultsOffset" ref="qgeosearchreply.html#resultsOffset"/>
             <keyword name="setError" id="QGeoSearchReply::setError" ref="qgeosearchreply.html#setError"/>
             <keyword name="setFinished" id="QGeoSearchReply::setFinished" ref="qgeosearchreply.html#setFinished"/>
             <keyword name="setPlaces" id="QGeoSearchReply::setPlaces" ref="qgeosearchreply.html#setPlaces"/>
+            <keyword name="setResultsCount" id="QGeoSearchReply::setResultsCount" ref="qgeosearchreply.html#setResultsCount"/>
+            <keyword name="setResultsOffset" id="QGeoSearchReply::setResultsOffset" ref="qgeosearchreply.html#setResultsOffset"/>
+            <keyword name="setViewport" id="QGeoSearchReply::setViewport" ref="qgeosearchreply.html#setViewport"/>
+            <keyword name="viewport" id="QGeoSearchReply::viewport" ref="qgeosearchreply.html#viewport"/>
             <keyword name="~QGeoSearchReply" id="QGeoSearchReply::~QGeoSearchReply" ref="qgeosearchreply.html#dtor.QGeoSearchReply"/>
             <keyword name="QGeoServiceProvider" id="QGeoServiceProvider" ref="qgeoserviceprovider.html"/>
             <keyword name="QGeoServiceProvider::Error" id="QGeoServiceProvider::Error" ref="qgeoserviceprovider.html#Error-enum"/>
@@ -3647,17 +3710,14 @@
             <keyword name="setAttribute" id="QLandmarkAttributeFilter::setAttribute" ref="qlandmarkattributefilter.html#setAttribute"/>
             <keyword name="~QLandmarkAttributeFilter" id="QLandmarkAttributeFilter::~QLandmarkAttributeFilter" ref="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter"/>
             <keyword name="QLandmarkBoxFilter" id="QLandmarkBoxFilter" ref="qlandmarkboxfilter.html"/>
-            <keyword name="bottomRightCoordinate" id="QLandmarkBoxFilter::bottomRightCoordinate" ref="qlandmarkboxfilter.html#bottomRightCoordinate"/>
-            <keyword name="setBottomRightCoordinate" id="QLandmarkBoxFilter::setBottomRightCoordinate" ref="qlandmarkboxfilter.html#setBottomRightCoordinate"/>
-            <keyword name="setTopLeftCoordinate" id="QLandmarkBoxFilter::setTopLeftCoordinate" ref="qlandmarkboxfilter.html#setTopLeftCoordinate"/>
-            <keyword name="topLeftCoordinate" id="QLandmarkBoxFilter::topLeftCoordinate" ref="qlandmarkboxfilter.html#topLeftCoordinate"/>
+            <keyword name="boundingBox" id="QLandmarkBoxFilter::boundingBox" ref="qlandmarkboxfilter.html#boundingBox"/>
+            <keyword name="setBoundingBox" id="QLandmarkBoxFilter::setBoundingBox" ref="qlandmarkboxfilter.html#setBoundingBox"/>
             <keyword name="~QLandmarkBoxFilter" id="QLandmarkBoxFilter::~QLandmarkBoxFilter" ref="qlandmarkboxfilter.html#dtor.QLandmarkBoxFilter"/>
             <keyword name="QLandmarkCategory" id="QLandmarkCategory" ref="qlandmarkcategory.html"/>
             <keyword name="attribute" id="QLandmarkCategory::attribute" ref="qlandmarkcategory.html#attribute"/>
             <keyword name="attributeKeys" id="QLandmarkCategory::attributeKeys" ref="qlandmarkcategory.html#attributeKeys"/>
             <keyword name="categoryId" id="QLandmarkCategory::categoryId" ref="qlandmarkcategory.html#categoryId"/>
             <keyword name="clear" id="QLandmarkCategory::clear" ref="qlandmarkcategory.html#clear"/>
-            <keyword name="description" id="QLandmarkCategory::description" ref="qlandmarkcategory.html#description"/>
             <keyword name="iconUrl" id="QLandmarkCategory::iconUrl" ref="qlandmarkcategory.html#iconUrl"/>
             <keyword name="name" id="QLandmarkCategory::name" ref="qlandmarkcategory.html#name"/>
             <keyword name="operator!=" id="QLandmarkCategory::operator!=" ref="qlandmarkcategory.html#operator-not-eq"/>
@@ -3665,7 +3725,6 @@
             <keyword name="operator==" id="QLandmarkCategory::operator==" ref="qlandmarkcategory.html#operator-eq-eq"/>
             <keyword name="setAttribute" id="QLandmarkCategory::setAttribute" ref="qlandmarkcategory.html#setAttribute"/>
             <keyword name="setCategoryId" id="QLandmarkCategory::setCategoryId" ref="qlandmarkcategory.html#setCategoryId"/>
-            <keyword name="setDescription" id="QLandmarkCategory::setDescription" ref="qlandmarkcategory.html#setDescription"/>
             <keyword name="setIconUrl" id="QLandmarkCategory::setIconUrl" ref="qlandmarkcategory.html#setIconUrl"/>
             <keyword name="setName" id="QLandmarkCategory::setName" ref="qlandmarkcategory.html#setName"/>
             <keyword name="~QLandmarkCategory" id="QLandmarkCategory::~QLandmarkCategory" ref="qlandmarkcategory.html#dtor.QLandmarkCategory"/>
@@ -3719,10 +3778,12 @@
             <keyword name="~QLandmarkDistanceSort" id="QLandmarkDistanceSort::~QLandmarkDistanceSort" ref="qlandmarkdistancesort.html#dtor.QLandmarkDistanceSort"/>
             <keyword name="QLandmarkExportRequest" id="QLandmarkExportRequest" ref="qlandmarkexportrequest.html"/>
             <keyword name="device" id="QLandmarkExportRequest::device" ref="qlandmarkexportrequest.html#device"/>
+            <keyword name="exportOption" id="QLandmarkExportRequest::exportOption" ref="qlandmarkexportrequest.html#exportOption"/>
             <keyword name="fileName" id="QLandmarkExportRequest::fileName" ref="qlandmarkexportrequest.html#fileName"/>
             <keyword name="format" id="QLandmarkExportRequest::format" ref="qlandmarkexportrequest.html#format"/>
             <keyword name="landmarkIds" id="QLandmarkExportRequest::landmarkIds" ref="qlandmarkexportrequest.html#landmarkIds"/>
             <keyword name="setDevice" id="QLandmarkExportRequest::setDevice" ref="qlandmarkexportrequest.html#setDevice"/>
+            <keyword name="setExportOption" id="QLandmarkExportRequest::setExportOption" ref="qlandmarkexportrequest.html#setExportOption"/>
             <keyword name="setFileName" id="QLandmarkExportRequest::setFileName" ref="qlandmarkexportrequest.html#setFileName"/>
             <keyword name="setFormat" id="QLandmarkExportRequest::setFormat" ref="qlandmarkexportrequest.html#setFormat"/>
             <keyword name="setLandmarkIds" id="QLandmarkExportRequest::setLandmarkIds" ref="qlandmarkexportrequest.html#setLandmarkIds"/>
@@ -3756,6 +3817,14 @@
             <keyword name="QLandmarkFilter::UnionFilter" id="QLandmarkFilter::UnionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::AttributeFilter" id="QLandmarkFilter::AttributeFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::LandmarkIdFilter" id="QLandmarkFilter::LandmarkIdFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
+            <keyword name="QLandmarkFilter::MatchFlag" id="QLandmarkFilter::MatchFlag" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchExactly" id="QLandmarkFilter::MatchExactly" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchContains" id="QLandmarkFilter::MatchContains" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchStartsWith" id="QLandmarkFilter::MatchStartsWith" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchEndsWith" id="QLandmarkFilter::MatchEndsWith" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchFixedString" id="QLandmarkFilter::MatchFixedString" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchCaseSensitive" id="QLandmarkFilter::MatchCaseSensitive" ref="qlandmarkfilter.html#MatchFlag-enum"/>
+            <keyword name="QLandmarkFilter::MatchFlags" id="QLandmarkFilter::MatchFlags" ref="qlandmarkfilter.html#MatchFlag-enum"/>
             <keyword name="operator!=" id="QLandmarkFilter::operator!=" ref="qlandmarkfilter.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmarkFilter::operator=" ref="qlandmarkfilter.html#operator-eq"/>
             <keyword name="operator==" id="QLandmarkFilter::operator==" ref="qlandmarkfilter.html#operator-eq-eq"/>
@@ -3794,13 +3863,17 @@
             <keyword name="setMatchingScheme" id="QLandmarkIdFilter::setMatchingScheme" ref="qlandmarkidfilter.html#setMatchingScheme"/>
             <keyword name="~QLandmarkIdFilter" id="QLandmarkIdFilter::~QLandmarkIdFilter" ref="qlandmarkidfilter.html#dtor.QLandmarkIdFilter"/>
             <keyword name="QLandmarkImportRequest" id="QLandmarkImportRequest" ref="qlandmarkimportrequest.html"/>
+            <keyword name="categoryId" id="QLandmarkImportRequest::categoryId" ref="qlandmarkimportrequest.html#categoryId"/>
             <keyword name="device" id="QLandmarkImportRequest::device" ref="qlandmarkimportrequest.html#device"/>
             <keyword name="fileName" id="QLandmarkImportRequest::fileName" ref="qlandmarkimportrequest.html#fileName"/>
             <keyword name="format" id="QLandmarkImportRequest::format" ref="qlandmarkimportrequest.html#format"/>
+            <keyword name="importOption" id="QLandmarkImportRequest::importOption" ref="qlandmarkimportrequest.html#importOption"/>
             <keyword name="landmarkIds" id="QLandmarkImportRequest::landmarkIds" ref="qlandmarkimportrequest.html#landmarkIds"/>
+            <keyword name="setCategoryId" id="QLandmarkImportRequest::setCategoryId" ref="qlandmarkimportrequest.html#setCategoryId"/>
             <keyword name="setDevice" id="QLandmarkImportRequest::setDevice" ref="qlandmarkimportrequest.html#setDevice"/>
             <keyword name="setFileName" id="QLandmarkImportRequest::setFileName" ref="qlandmarkimportrequest.html#setFileName"/>
             <keyword name="setFormat" id="QLandmarkImportRequest::setFormat" ref="qlandmarkimportrequest.html#setFormat"/>
+            <keyword name="setImportOption" id="QLandmarkImportRequest::setImportOption" ref="qlandmarkimportrequest.html#setImportOption"/>
             <keyword name="~QLandmarkImportRequest" id="QLandmarkImportRequest::~QLandmarkImportRequest" ref="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest"/>
             <keyword name="QLandmarkIntersectionFilter" id="QLandmarkIntersectionFilter" ref="qlandmarkintersectionfilter.html"/>
             <keyword name="append" id="QLandmarkIntersectionFilter::append" ref="qlandmarkintersectionfilter.html#append"/>
@@ -3826,15 +3899,19 @@
             <keyword name="QLandmarkManager::ParsingError" id="QLandmarkManager::ParsingError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::CancelError" id="QLandmarkManager::CancelError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::UnknownError" id="QLandmarkManager::UnknownError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::FilterSupportLevel" id="QLandmarkManager::FilterSupportLevel" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::Native" id="QLandmarkManager::Native" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::Emulated" id="QLandmarkManager::Emulated" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::None" id="QLandmarkManager::None" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
+            <keyword name="QLandmarkManager::ImportExportOption" id="QLandmarkManager::ImportExportOption" ref="qlandmarkmanager.html#ImportExportOption-enum"/>
+            <keyword name="QLandmarkManager::IncludeCategoryData" id="QLandmarkManager::IncludeCategoryData" ref="qlandmarkmanager.html#ImportExportOption-enum"/>
+            <keyword name="QLandmarkManager::ExcludeCategoryData" id="QLandmarkManager::ExcludeCategoryData" ref="qlandmarkmanager.html#ImportExportOption-enum"/>
+            <keyword name="QLandmarkManager::AttachSingleCategory" id="QLandmarkManager::AttachSingleCategory" ref="qlandmarkmanager.html#ImportExportOption-enum"/>
             <keyword name="QLandmarkManager::LandmarkFeature" id="QLandmarkManager::LandmarkFeature" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
             <keyword name="QLandmarkManager::GenericLandmarkAttributes" id="QLandmarkManager::GenericLandmarkAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
             <keyword name="QLandmarkManager::GenericCategoryAttributes" id="QLandmarkManager::GenericCategoryAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
             <keyword name="QLandmarkManager::PlatformLandmarkAttributes" id="QLandmarkManager::PlatformLandmarkAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
             <keyword name="QLandmarkManager::PlatformCategoryAttributes" id="QLandmarkManager::PlatformCategoryAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::SupportLevel" id="QLandmarkManager::SupportLevel" ref="qlandmarkmanager.html#SupportLevel-enum"/>
+            <keyword name="QLandmarkManager::Native" id="QLandmarkManager::Native" ref="qlandmarkmanager.html#SupportLevel-enum"/>
+            <keyword name="QLandmarkManager::Emulated" id="QLandmarkManager::Emulated" ref="qlandmarkmanager.html#SupportLevel-enum"/>
+            <keyword name="QLandmarkManager::None" id="QLandmarkManager::None" ref="qlandmarkmanager.html#SupportLevel-enum"/>
             <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
             <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
             <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
@@ -3871,6 +3948,8 @@
             <keyword name="saveCategory" id="QLandmarkManager::saveCategory" ref="qlandmarkmanager.html#saveCategory"/>
             <keyword name="saveLandmark" id="QLandmarkManager::saveLandmark" ref="qlandmarkmanager.html#saveLandmark"/>
             <keyword name="saveLandmarks" id="QLandmarkManager::saveLandmarks" ref="qlandmarkmanager.html#saveLandmarks"/>
+            <keyword name="sortOrderSupportLevel" id="QLandmarkManager::sortOrderSupportLevel" ref="qlandmarkmanager.html#sortOrderSupportLevel"/>
+            <keyword name="supportedFormats" id="QLandmarkManager::supportedFormats" ref="qlandmarkmanager.html#supportedFormats"/>
             <keyword name="~QLandmarkManager" id="QLandmarkManager::~QLandmarkManager" ref="qlandmarkmanager.html#dtor.QLandmarkManager"/>
             <keyword name="QLandmarkManagerEngine" id="QLandmarkManagerEngine" ref="qlandmarkmanagerengine.html"/>
             <keyword name="addSorted" id="QLandmarkManagerEngine::addSorted" ref="qlandmarkmanagerengine.html#addSorted"/>
@@ -3910,7 +3989,9 @@
             <keyword name="saveLandmark" id="QLandmarkManagerEngine::saveLandmark" ref="qlandmarkmanagerengine.html#saveLandmark"/>
             <keyword name="saveLandmarks" id="QLandmarkManagerEngine::saveLandmarks" ref="qlandmarkmanagerengine.html#saveLandmarks"/>
             <keyword name="sortLandmarks" id="QLandmarkManagerEngine::sortLandmarks" ref="qlandmarkmanagerengine.html#sortLandmarks"/>
+            <keyword name="sortOrderSupportLevel" id="QLandmarkManagerEngine::sortOrderSupportLevel" ref="qlandmarkmanagerengine.html#sortOrderSupportLevel"/>
             <keyword name="startRequest" id="QLandmarkManagerEngine::startRequest" ref="qlandmarkmanagerengine.html#startRequest"/>
+            <keyword name="supportedFormats" id="QLandmarkManagerEngine::supportedFormats" ref="qlandmarkmanagerengine.html#supportedFormats"/>
             <keyword name="testFilter" id="QLandmarkManagerEngine::testFilter" ref="qlandmarkmanagerengine.html#testFilter"/>
             <keyword name="updateLandmarkCategoryFetchRequest" id="QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest" ref="qlandmarkmanagerengine.html#updateLandmarkCategoryFetchRequest"/>
             <keyword name="updateLandmarkCategoryIdFetchRequest" id="QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest" ref="qlandmarkmanagerengine.html#updateLandmarkCategoryIdFetchRequest"/>
@@ -3931,9 +4012,9 @@
             <keyword name="supportedImplementationVersions" id="QLandmarkManagerEngineFactory::supportedImplementationVersions" ref="qlandmarkmanagerenginefactory.html#supportedImplementationVersions"/>
             <keyword name="~QLandmarkManagerEngineFactory" id="QLandmarkManagerEngineFactory::~QLandmarkManagerEngineFactory" ref="qlandmarkmanagerenginefactory.html#dtor.QLandmarkManagerEngineFactory"/>
             <keyword name="QLandmarkNameFilter" id="QLandmarkNameFilter" ref="qlandmarknamefilter.html"/>
-            <keyword name="caseSensitivity" id="QLandmarkNameFilter::caseSensitivity" ref="qlandmarknamefilter.html#caseSensitivity"/>
+            <keyword name="matchFlags" id="QLandmarkNameFilter::matchFlags" ref="qlandmarknamefilter.html#matchFlags"/>
             <keyword name="name" id="QLandmarkNameFilter::name" ref="qlandmarknamefilter.html#name"/>
-            <keyword name="setCaseSensitivity" id="QLandmarkNameFilter::setCaseSensitivity" ref="qlandmarknamefilter.html#setCaseSensitivity"/>
+            <keyword name="setMatchFlags" id="QLandmarkNameFilter::setMatchFlags" ref="qlandmarknamefilter.html#setMatchFlags"/>
             <keyword name="setName" id="QLandmarkNameFilter::setName" ref="qlandmarknamefilter.html#setName"/>
             <keyword name="~QLandmarkNameFilter" id="QLandmarkNameFilter::~QLandmarkNameFilter" ref="qlandmarknamefilter.html#dtor.QLandmarkNameFilter"/>
             <keyword name="QLandmarkNameSort" id="QLandmarkNameSort" ref="qlandmarknamesort.html"/>
@@ -4095,8 +4176,8 @@
             <keyword name="altitudeValid" id="Position::altitudeValid" ref="qml-position.html#altitudeValid-prop"/>
             <keyword name="latitude" id="Position::latitude" ref="qml-position.html#latitude-prop"/>
             <keyword name="latitudeValid" id="Position::latitudeValid" ref="qml-position.html#latitudeValid-prop"/>
-            <keyword name="longtitude" id="Position::longtitude" ref="qml-position.html#longtitude-prop"/>
-            <keyword name="longtitudeValid" id="Position::longtitudeValid" ref="qml-position.html#longtitudeValid-prop"/>
+            <keyword name="longitude" id="Position::longitude" ref="qml-position.html#longitude-prop"/>
+            <keyword name="longitudeValid" id="Position::longitudeValid" ref="qml-position.html#longitudeValid-prop"/>
             <keyword name="speed" id="Position::speed" ref="qml-position.html#speed-prop"/>
             <keyword name="speedValid" id="Position::speedValid" ref="qml-position.html#speedValid-prop"/>
             <keyword name="timestamp" id="Position::timestamp" ref="qml-position.html#timestamp-prop"/>
@@ -6802,7 +6883,7 @@
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
-            <keyword name="Release Notes of the QtMobility Project 1.0.2 patch release" id="Release Notes of the QtMobility Project 1.0.2 patch release" ref="qtmobility-release-notes.html"/>
+            <keyword name="Release Notes of the QtMobility Project release" id="Release Notes of the QtMobility Project release" ref="qtmobility-release-notes.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Sensors" id="Sensors" ref="sensors-api.html"/>
             <keyword name="Sensors Backend" id="Sensors Backend" ref="sensors-backend.html"/>
@@ -6903,7 +6984,6 @@
             <file>qgeotiledmapreply.html</file>
             <file>qml-galleryitem.html</file>
             <file>qcontactrelationshipfilter.html</file>
-            <file>qgeoapiui-tabbedwindow-h.html</file>
             <file>bearercloud.html</file>
             <file>bearercloud-wlan-svg.html</file>
             <file>documentshare-documentshare-pro.html</file>
@@ -6930,7 +7010,7 @@
             <file>qmessagefilter-members.html</file>
             <file>qtmultimediakit.html</file>
             <file>qcontactonlineaccount-members.html</file>
-            <file>qgeoapiui-routetab-h.html</file>
+            <file>geoservicedemo-tabbedwindow-cpp.html</file>
             <file>qaudioformat-members.html</file>
             <file>qaccelerometerreading.html</file>
             <file>qcontactmanager.html</file>
@@ -6951,6 +7031,7 @@
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qproximityfilter-members.html</file>
             <file>qlandmarkcategory-members.html</file>
+            <file>qcameraflashcontrol.html</file>
             <file>hapticsplayer-dialog-h.html</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qvideorenderercontrol.html</file>
@@ -6973,7 +7054,6 @@
             <file>qmediacontainercontrol.html</file>
             <file>radio.html</file>
             <file>mediabrowser-main-cpp.html</file>
-            <file>qgeoapiui-placepresenter-h.html</file>
             <file>qvideoencodercontrol.html</file>
             <file>serviceactions-main-cpp.html</file>
             <file>qgeoserviceproviderfactory-members.html</file>
@@ -6992,6 +7072,7 @@
             <file>qradiotunercontrol.html</file>
             <file>qorganizeritemdetailrangefilter.html</file>
             <file>quickstart.html</file>
+            <file>qgeoboundingarea.html</file>
             <file>qorganizeritemdisplaylabel.html</file>
             <file>flickrdemo-flickrdemo-h.html</file>
             <file>qcontacttag.html</file>
@@ -7040,6 +7121,8 @@
             <file>bearermonitor-bearermonitor-maemo-ui.html</file>
             <file>qcontactdetailfilter-members.html</file>
             <file>qml-positionsource.html</file>
+            <file>geoservicedemo-geocodingtab-h.html</file>
+            <file>geoservicedemo-servicestab-cpp.html</file>
             <file>qorganizeritemguid-members.html</file>
             <file>qdocumentgallery-members.html</file>
             <file>qlandmark-members.html</file>
@@ -7056,6 +7139,7 @@
             <file>sfw-notes-sfw-notes-pro.html</file>
             <file>qgalleryabstractresponse.html</file>
             <file>qmessagefolder.html</file>
+            <file>geoservicedemo-routepresenter-cpp.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-h.html</file>
             <file>images/sensors-rotation3.jpg</file>
             <file>qgeomapdata.html</file>
@@ -7068,12 +7152,10 @@
             <file>qserviceplugininterface-members.html</file>
             <file>documentshare-downloaddelegate-h.html</file>
             <file>qsysteminfo-members.html</file>
-            <file>qgeoapiui-main-cpp.html</file>
             <file>qmessagefolderfilter-members.html</file>
             <file>qaudioinput.html</file>
             <file>qcameraimageprocessingcontrol.html</file>
             <file>qmediaplaylistreader-members.html</file>
-            <file>qgeoapiui-tabbedwindow-cpp.html</file>
             <file>declarative-sfw-dialer-declarative-sfw-dialer-content-dialbutton-qml.html</file>
             <file>qmagnetometerfilter-members.html</file>
             <file>qabstractsecuritysession.html</file>
@@ -7098,9 +7180,11 @@
             <file>qlandmarknamefilter.html</file>
             <file>qlandmarkidfilter-members.html</file>
             <file>images/lightmaps-oslo.png</file>
+            <file>geoservicedemo-placepresenter-h.html</file>
             <file>qversitproperty-members.html</file>
             <file>qcontactrelationshipfetchrequest-members.html</file>
             <file>qservicemanager.html</file>
+            <file>qgeoboundingarea-members.html</file>
             <file>qmessageid-members.html</file>
             <file>qvideorenderercontrol-members.html</file>
             <file>bearercloud-bearercloud-h.html</file>
@@ -7187,7 +7271,6 @@
             <file>qservicemanager-members.html</file>
             <file>weatherinfo-icons-weather-storm-svg.html</file>
             <file>qcontactgeolocation.html</file>
-            <file>qgeoapiui-revgeocodingtab-cpp.html</file>
             <file>qsystemscreensaver-members.html</file>
             <file>flickrdemo-flickrdemo-cpp.html</file>
             <file>qgallerymetadatafilter-members.html</file>
@@ -7220,9 +7303,9 @@
             <file>qimageencodercontrol.html</file>
             <file>qorganizereventtimerange-members.html</file>
             <file>mediabrowser-photoview-h.html</file>
-            <file>qgeoapiui-geopresenter-h.html</file>
             <file>qgalleryurlrequest.html</file>
             <file>notesmanagerplugin.html</file>
+            <file>qcameraflashcontrol-members.html</file>
             <file>qambientlightreading-members.html</file>
             <file>flickrdemo-xqlistwidget-cpp.html</file>
             <file>player-player-cpp.html</file>
@@ -7260,7 +7343,6 @@
             <file>images/servicebrowser.png</file>
             <file>qfeedbackhapticseffect.html</file>
             <file>qfeedbackhapticseffect-members.html</file>
-            <file>qgeoapiui-placepresenter-cpp.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qlandmarkcategoryid.html</file>
             <file>qmediaplaylistsourcecontrol.html</file>
@@ -7287,18 +7369,19 @@
             <file>landmarkbrowser-landmarkadddialog-h.html</file>
             <file>qorganizeritemfetchrequest.html</file>
             <file>qlandmark.html</file>
+            <file>geoservicedemo-routetab-cpp.html</file>
             <file>qgeosearchreply.html</file>
             <file>qorganizeritemmemoryengine.html</file>
             <file>radio-main-cpp.html</file>
             <file>qcontactonlineaccount.html</file>
             <file>qremoteservicecontrol-members.html</file>
+            <file>geoservicedemo-main-cpp.html</file>
             <file>qml-soundeffect.html</file>
             <file>qml-position.html</file>
             <file>qorganizeritemmemoryengine-members.html</file>
             <file>sfw-notes-sfwnotes-small-ui.html</file>
             <file>bearermonitor-sessionwidget-ui.html</file>
             <file>qcontactorganization-members.html</file>
-            <file>qgeoapiui-routetab-cpp.html</file>
             <file>organizer.html</file>
             <file>weatherinfo-icons-weather-showers-svg.html</file>
             <file>qorganizeritemdetail-members.html</file>
@@ -7330,6 +7413,7 @@
             <file>qorganizeritemfetchhint-members.html</file>
             <file>qaudiodeviceinfo.html</file>
             <file>images/slideshow-img1.png</file>
+            <file>geoservicedemo-tabbedwindow-h.html</file>
             <file>qvaluespacesubscriber-members.html</file>
             <file>qcontactabstractrequest-members.html</file>
             <file>qmessageaccountfilter.html</file>
@@ -7347,16 +7431,13 @@
             <file>qgalleryqueryrequest.html</file>
             <file>logfilepositionsource.html</file>
             <file>weatherinfo-icons-weather-snow-svg.html</file>
-            <file>qgeoapiui-routepresenter-cpp.html</file>
             <file>qorganizeritemdetailfielddefinition.html</file>
-            <file>mapviewer-images-house-png.html</file>
             <file>qvideowidgetcontrol.html</file>
             <file>images/sample-phonebook-3.png</file>
             <file>qvideoencodersettings.html</file>
             <file>qtelephonycalllist-members.html</file>
             <file>querymessages.html</file>
             <file>qtapsensor-members.html</file>
-            <file>qgeoapiui-geocodingtab-h.html</file>
             <file>qorganizeritemid.html</file>
             <file>qversitcontactexporter.html</file>
             <file>flickrdemo-connectivityhelper-cpp.html</file>
@@ -7370,7 +7451,6 @@
             <file>qcontactactiondescriptor-members.html</file>
             <file>qmediaplaylist.html</file>
             <file>qmediabindableinterface.html</file>
-            <file>player-mediakeysobserver-h.html</file>
             <file>qlandmarkmanager-members.html</file>
             <file>qgeomappingmanager-members.html</file>
             <file>qtapfilter.html</file>
@@ -7409,7 +7489,6 @@
             <file>qsystemstorageinfo-members.html</file>
             <file>contactsengines.html</file>
             <file>qorganizertodoprogress-members.html</file>
-            <file>qgeoapiui-routepresenter-h.html</file>
             <file>qlandmarkcategoryfilter.html</file>
             <file>qorganizerevent.html</file>
             <file>bearermonitor-bearermonitor-240-320-ui.html</file>
@@ -7480,7 +7559,6 @@
             <file>hapticsquare-dialog-h.html</file>
             <file>qtorganizer.html</file>
             <file>qorganizeritemabstractrequest-members.html</file>
-            <file>qgeoapiui-qgeoapiui-pro.html</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>qcontactemailaddress.html</file>
             <file>qcontactabstractrequest.html</file>
@@ -7529,6 +7607,7 @@
             <file>qcontactbirthday.html</file>
             <file>slideshow.html</file>
             <file>publ-subs.html</file>
+            <file>geoservicedemo.html</file>
             <file>qradiotuner-members.html</file>
             <file>landmarkbrowser-landmarkbrowser-ui.html</file>
             <file>qmediaplaylistreader.html</file>
@@ -7549,7 +7628,6 @@
             <file>qcontactdetailrangefilter-members.html</file>
             <file>mediabrowser-photodelegate-h.html</file>
             <file>qcontactdetaildefinitionsaverequest.html</file>
-            <file>qgeoapiui-geocodingtab-cpp.html</file>
             <file>qcompassfilter-members.html</file>
             <file>qcontactdetail-members.html</file>
             <file>qlandmarkintersectionfilter.html</file>
@@ -7576,6 +7654,7 @@
             <file>qlandmarkmanagerenginefactory.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qmediaplaylistioplugin.html</file>
+            <file>qgeoboundingcircle.html</file>
             <file>qcamerafocuscontrol.html</file>
             <file>qabstractvideobuffer-members.html</file>
             <file>qmediaplaylistcontrol.html</file>
@@ -7604,6 +7683,7 @@
             <file>qsensorfilter.html</file>
             <file>qorganizeritemmanager.html</file>
             <file>qmetadatawritercontrol.html</file>
+            <file>geoservicedemo-placepresenter-cpp.html</file>
             <file>qgeoareamonitor.html</file>
             <file>qmessagecontentcontainerid-members.html</file>
             <file>qnetworkconfigurationmanager.html</file>
@@ -7672,8 +7752,8 @@
             <file>qmessagecontentcontainer.html</file>
             <file>images/weatherinfo-bris.png</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
+            <file>geoservicedemo-geoservicedemo-pro.html</file>
             <file>qcameraexposure-members.html</file>
-            <file>qgeoapiui-servicestab-cpp.html</file>
             <file>qcontactrelationship.html</file>
             <file>qlandmarkintersectionfilter-members.html</file>
             <file>servicefw.html</file>
@@ -7685,6 +7765,7 @@
             <file>bearercloud-unknown-svg.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
             <file>qcontactbirthday-members.html</file>
+            <file>qgeoboundingcircle-members.html</file>
             <file>qmessageservice-members.html</file>
             <file>qserviceplugininterface.html</file>
             <file>qfeedbackhapticsinterface-members.html</file>
@@ -7696,7 +7777,6 @@
             <file>gallery-examples.html</file>
             <file>qorganizeritemtype.html</file>
             <file>qgallerytype-members.html</file>
-            <file>mapviewer-images-qt-png.html</file>
             <file>qmediacontainercontrol-members.html</file>
             <file>serviceactions.html</file>
             <file>documentshare-download-h.html</file>
@@ -7707,7 +7787,6 @@
             <file>qvideoencodersettings-members.html</file>
             <file>slideshow-main-cpp.html</file>
             <file>qsensorplugininterface-members.html</file>
-            <file>qgeoapiui-revgeocodingtab-h.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>contacts.html</file>
             <file>qversitorganizerexporter-members.html</file>
@@ -7726,11 +7805,11 @@
             <file>qcontactactionfactory.html</file>
             <file>serviceactions-serviceactions-pro.html</file>
             <file>qorganizeritemlocalidfetchrequest-members.html</file>
+            <file>geoservicedemo-routepresenter-h.html</file>
             <file>sysinfo-main-cpp.html</file>
             <file>qgeoaddress.html</file>
             <file>qcamera-members.html</file>
             <file>images/flickr-demo.png</file>
-            <file>player-mediakeysobserver-cpp.html</file>
             <file>qimageencodercontrol-members.html</file>
             <file>filemanagerplugin.html</file>
             <file>documentshare-downloadmodel-cpp.html</file>
@@ -7776,9 +7855,9 @@
             <file>qgeoboundingbox-members.html</file>
             <file>qorganizeritemdetaildefinition.html</file>
             <file>images/sysinfo.png</file>
+            <file>geoservicedemo-geocodingtab-cpp.html</file>
             <file>qmediaservicesupporteddevicesinterface-members.html</file>
             <file>documentshare-downloaddelegate-cpp.html</file>
-            <file>mapviewer-images-qrc.html</file>
             <file>mediabrowser-albumview-h.html</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>qcameraimagecapturecontrol.html</file>
@@ -7828,11 +7907,11 @@
             <file>audiorecorder-audiorecorder-ui.html</file>
             <file>mapviewer-mapviewer-pro.html</file>
             <file>weatherinfo-icons-weather-icy-svg.html</file>
+            <file>geoservicedemo-revgeocodingtab-cpp.html</file>
             <file>qlandmarkabstractrequest-members.html</file>
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qcontactringtone.html</file>
             <file>bearer-management.html</file>
-            <file>qgeoapiui.html</file>
             <file>qgeoroutingmanagerengine.html</file>
             <file>gallery-requests.html</file>
             <file>qlandmarkmanager.html</file>
@@ -7872,6 +7951,7 @@
             <file>qml-galleryfilterunion.html</file>
             <file>qcontactfilter-members.html</file>
             <file>qmessageaccountsortorder-members.html</file>
+            <file>geoservicedemo-revgeocodingtab-h.html</file>
             <file>qml-galleryquerymodel.html</file>
             <file>qlandmarknamefilter-members.html</file>
             <file>qorganizeritemlocation.html</file>
@@ -7891,8 +7971,10 @@
             <file>qsensorbackend-members.html</file>
             <file>qremoteservicecontrol.html</file>
             <file>images/sensors-coordinates2.jpg</file>
+            <file>geoservicedemo-routetab-h.html</file>
             <file>hapticsplayer-dialog-cpp.html</file>
             <file>qsensor.html</file>
+            <file>geoservicedemo-servicestab-h.html</file>
             <file>qorganizeritemabstractrequest.html</file>
             <file>gallery.html</file>
             <file>qvideowindowcontrol.html</file>
@@ -7933,7 +8015,6 @@
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>qlandmarknamesort.html</file>
             <file>qlandmarkimportrequest.html</file>
-            <file>mapviewer-mainwindow-ui.html</file>
             <file>calendardemo-src-calendardemo-cpp.html</file>
             <file>qorganizeritemdetaildefinition-members.html</file>
             <file>qmediaplaylistprovider.html</file>
@@ -7959,11 +8040,11 @@
             <file>qmessageaccountid-members.html</file>
             <file>qcontactfetchhint.html</file>
             <file>qorganizeritemlocation-members.html</file>
+            <file>geoservicedemo-geopresenter-h.html</file>
             <file>qversitwriter-members.html</file>
             <file>qmessagesortorder-members.html</file>
             <file>qfeedbackthemeinterface-members.html</file>
             <file>qservice.html</file>
-            <file>qgeoapiui-servicestab-h.html</file>
             <file>qcontactname.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
             <file>qcameracontrol.html</file>
