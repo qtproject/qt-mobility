@@ -123,18 +123,22 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::Error *error,
-                                 QString *errorString) ;
-    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds,
+    virtual bool importLandmarks(QIODevice *device, const QString& format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId& id,
+                                QLandmarkManager::Error *error, QString *errorString);
+    virtual bool exportLandmarks(QIODevice *device, const QString& format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option,
                                  QLandmarkManager::Error *error, QString *errorString) const;
     virtual QStringList supportedFormats(QLandmarkManager::Error *error, QString *errorString) const;
 
-    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QLandmarkManager::SupportLevel filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual bool isReadOnly(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) const = 0;
+
+    virtual QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
+    virtual QStringList platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const = 0;
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;

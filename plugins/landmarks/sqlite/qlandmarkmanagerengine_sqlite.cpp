@@ -1122,6 +1122,12 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         }
     }
 
+    int offset = fetchHint.offset();
+    if (offset >= result.count()) {
+        result.clear();
+        return result;
+    }
+
     if (!alreadySorted && sortOrders.count() > 0 ) {
         //TODO: optimize this
         QList<QLandmark> landmarks;
@@ -1142,9 +1148,9 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         result = QLandmarkManagerEngineSqlite::sortLandmarks(landmarks, sortOrders);
     }
 
-    int offset = fetchHint.offset();
     if (offset < 0 )
         offset = 0;
+
     return result.mid(offset, fetchHint.maxItems());
 }
 
@@ -1847,7 +1853,6 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
-    bool transacting = db.transaction();
     QString q1 = QString("SELECT %1 FROM category WHERE id = %2;").arg(columns.join(",")).arg(landmarkCategoryId.localId());
     QSqlQuery query(q1, db);
     bool found = false;
@@ -1859,8 +1864,6 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
             if (errorString)
                 *errorString = "Database corruption, non-unique primary key in table \"category\"";
             qWarning() << "Non-unique primary key in table \"category\"";
-            if (transacting)
-                db.rollback();
             return QLandmarkCategory();
         } else {
             found = true;
@@ -1868,9 +1871,9 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
 
         if (!query.value(0).isNull())
             cat.setName(query.value(0).toString());
-
-        if (!query.value(1).isNull())
-            cat.setDescription(query.value(1).toString());
+// TODO: category description is not a common data attribute, make it a platform specific attribute
+//        if (!query.value(1).isNull())
+//            cat.setDescription(query.value(1).toString());
 
         if (!query.value(2).isNull())
             cat.setIconUrl(query.value(2).toString());
@@ -1879,9 +1882,6 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
     }
 
     if (!found) {
-        if (transacting)
-            db.rollback();
-
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
@@ -1890,17 +1890,12 @@ QLandmarkCategory category(const QString &connectionName, const QLandmarkCategor
         QMap<QString,QVariant> bindValues;
         bindValues.insert("catId", cat.categoryId().localId());
         if (!executeQuery(&query, "SELECT key, value from category_attribute WHERE category_id=:catId",bindValues, error, errorString )) {
-            if (transacting)
-                db.rollback();
             return QLandmarkCategory();
          }
 
         while(query.next()) {
             cat.setAttribute(query.value(0).toString(),query.value(1));
         }
-
-        if (transacting)
-            db.commit();
 
         if (error)
             *error = QLandmarkManager::NoError;
@@ -1988,7 +1983,12 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
     QSqlDatabase db = QSqlDatabase::database(connectionName);
 
-    bool transacting = db.transaction();
+    if (!db.transaction()) {
+        *error = QLandmarkManager::UnknownError;
+        *errorString = QString("Save category: unable to begin transaction, reason: %1").arg(db.lastError().text());
+        return false;
+    }
+
 
     QMap<QString, QVariant> bindValues;
     QSqlQuery query(db);
@@ -1997,14 +1997,14 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
         QString q0 = QString("SELECT 1 FROM category WHERE id = :id;");
         if (!executeQuery(&query,q0, bindValues,error,errorString)) {
-            if (transacting)
-                db.rollback();
-             return false;
+            db.rollback();
+            return false;
         }
 
         if (!query.next()) {
-            if (transacting)
-                db.rollback();
+            query.clear();
+            query.finish();
+            db.rollback();
 
             if (error)
                 *error = QLandmarkManager::DoesNotExistError;
@@ -2021,10 +2021,29 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
     else
         bindValues.insert("name", QVariant());
 
-    if (!category->description().isEmpty())
-        bindValues.insert("description", category->description());
-    else
-        bindValues.insert("description", QVariant());
+    QMap<QString,QVariant> tempBindValues;
+    tempBindValues.insert("name", bindValues.value("name"));
+    if (!executeQuery(&query, "SELECT id FROM category WHERE name = :name", tempBindValues,error,errorString)) {
+        db.rollback();
+        return false;
+    }
+
+
+    if (query.next()) {
+        if (!update || (update && (query.value(0).toString() != category->categoryId().localId()))) {
+           query.finish();
+           query.clear();
+            db.rollback();
+           *error = QLandmarkManager::AlreadyExistsError;
+           *errorString = QString("Category with name: %1 already exists").arg(category->name());
+           return false;
+        }
+    }
+
+//    if (!category->description().isEmpty())
+//        bindValues.insert("description", category->description());
+//    else
+//        bindValues.insert("description", QVariant());
 
     if (!category->iconUrl().isEmpty())
         bindValues.insert("icon_url", category->iconUrl().toString());
@@ -2046,10 +2065,8 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
         q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(keys.join(",")).arg(QString(":").append(keys.join(",:")));
     }
 
-
     if (!executeQuery(&query,q1,bindValues,error,errorString)) {
-        if (transacting)
-            db.rollback();
+        db.rollback();
         return false;
     }
 
@@ -2064,8 +2081,7 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
     bindValues.insert("catId",category->categoryId().localId());
     QStringList attributekeys = category->attributeKeys();
     if (!executeQuery(&query,"DELETE FROM category_attribute WHERE category_id= :catId", bindValues, error, errorString)) {
-        if (transacting)
-            db.rollback();
+        db.rollback();
         return false;
     }
 
@@ -2077,36 +2093,14 @@ bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
 
         if (!executeQuery(&query,"INSERT INTO category_attribute (category_id,key,value) VALUES(:catId,:key,:value)", bindValues,
                          error, errorString)) {
-            if (transacting) {
-                db.rollback();
-            }
+            db.rollback();
             return false;
         }
     }
 
-    if (transacting)
-        db.commit();
-
-    //TODO: notifications
-    /*if (!update) {
-        QList<QLandmarkCategoryId> ids;
-        ids << category->categoryId();
-        emit categoriesAdded(ids);
-    } else {
-        QList<QLandmarkCategoryId> ids;
-        ids << category->categoryId();
-        emit categoriesChanged(ids);
-    }*/
-
-    /*
-    // grab keys from attributes tables for current id
-    // delete those we no longer have
-    // use replace for the rest
-
-    // loop through attributes
-
-    */
-
+    query.finish();
+    query.clear();
+    db.commit();
     if (error)
         *error = QLandmarkManager::NoError;
     if (errorString)
@@ -2510,7 +2504,8 @@ QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkM
       errorMap(QMap<int,QLandmarkManager::Error>()),
       managerUri(uri),
       isCanceled(false),
-      engine(eng)
+      engine(eng),
+      gpxHandler(0)
 {
 };
 
@@ -2730,7 +2725,7 @@ void QueryRun::run()
 
 QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
         : m_dbFilename(filename),
-        m_dbConnectionName("landmarks"),
+        m_dbConnectionName(QUuid::createUuid().toString()),
         m_dbWatcher(NULL),
         m_latestTimestamp(0.0)
 {
@@ -3462,6 +3457,8 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    const QString &format,
+                                                   QLandmarkManager::ImportExportOption,
+                                                   const QLandmarkCategoryId &categoryId,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
@@ -3471,6 +3468,7 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
                                                    const QString &format,
                                                    QList<QLandmarkId> landmarkIds,
+                                                   QLandmarkManager::ImportExportOption,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString) const
 {
@@ -3489,7 +3487,17 @@ QStringList QLandmarkManagerEngineSqlite::supportedFormats(QLandmarkManager::Err
     return formats;
 }
 
-QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter, QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+
+    return QLandmarkManager::Native;
+}
+
+QLandmarkManager::SupportLevel QLandmarkManagerEngineSqlite::sortOrderSupportLevel(const QList<QLandmarkSortOrder>&, QLandmarkManager::Error *error, QString *errorString) const
 {
     Q_ASSERT(error);
     Q_ASSERT(errorString);
@@ -3509,11 +3517,31 @@ bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::Landmark
     switch(feature) {
         case (QLandmarkManager::GenericLandmarkAttributes):
         case (QLandmarkManager::GenericCategoryAttributes):
+        case (QLandmarkManager::PlatformLandmarkAttributes):
+        case (QLandmarkManager::PlatformCategoryAttributes):
             return false;
             break;
         default:
             return false;
     }
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
+}
+
+QStringList QLandmarkManagerEngineSqlite::platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+    *error = QLandmarkManager::NoError;
+    *errorString = "";
+    return QStringList();
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly(QLandmarkManager::Error *error, QString *errorString) const

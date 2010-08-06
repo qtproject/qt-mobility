@@ -41,7 +41,9 @@
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkmanagerengine.h"
+#include "qlandmarkmanager_p.h"
 #include <QDebug>
+#include <QMutexLocker>
 
 QTM_USE_NAMESPACE
 
@@ -85,6 +87,23 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     \value  ImportRequest A request import landmarks.
     \value  ExportRequest A request export landmarks.
 */
+QLandmarkAbstractRequestPrivate::~QLandmarkAbstractRequestPrivate()
+{
+}
+
+void QLandmarkAbstractRequestPrivate::notifyEngine(QLandmarkAbstractRequest* request)
+{
+        Q_ASSERT(request);
+        QLandmarkAbstractRequestPrivate* d = request->d_ptr;
+        if (d) {
+            QMutexLocker ml(&d->mutex);
+            QLandmarkManagerEngine *engine = QLandmarkManagerPrivate::getEngine(d->manager);
+            ml.unlock();
+            if (engine) {
+                engine->requestDestroyed(request);
+            }
+        }
+}
 
 /*!
     \enum QLandmarkAbstractRequest::State
@@ -118,6 +137,7 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
+    QLandmarkAbstractRequestPrivate::notifyEngine(this);
     delete d_ptr;
 }
 

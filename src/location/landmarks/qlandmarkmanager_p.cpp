@@ -102,6 +102,13 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
     }
 }
 
+QLandmarkManagerEngine* QLandmarkManagerPrivate::getEngine(const QLandmarkManager* manager)
+{
+    if (manager)
+        return manager->d_ptr->engine;
+    return 0;
+}
+
  QHash<QString, QLandmarkManagerEngineFactory*>  QLandmarkManagerPrivate::factories(bool reload)
  {
     static QHash<QString, QLandmarkManagerEngineFactory*> factories;

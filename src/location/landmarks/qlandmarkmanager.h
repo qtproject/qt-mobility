@@ -64,7 +64,6 @@ class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
-    friend class QLandmarkAbstractRequest;
     Q_OBJECT
 public:
     enum Error {
@@ -83,7 +82,7 @@ public:
         UnknownError,
     };
 
-    enum FilterSupportLevel {
+    enum SupportLevel {
         Native,
         Emulated,
         None
@@ -96,6 +95,11 @@ public:
         PlatformCategoryAttributes
     };
 
+    enum ImportExportOption {
+        IncludeCategoryData,
+        ExcludeCategoryData,
+        AttachSingleCategory
+    };
 #ifdef Q_QDOC
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
@@ -135,18 +139,22 @@ public:
                                    const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
                                    const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 
-    bool importLandmarks(QIODevice *device, const QString &format= QString());
-    bool importLandmarks(const QString &fileName, const QString &format = QString());
-    bool exportLandmarks(QIODevice *device, const QString &format = QString(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
-    bool exportLandmarks(const QString &, const QString &format = QString(), QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool importLandmarks(QIODevice *device, const QString &format= QString() ,QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
+    bool importLandmarks(const QString &fileName, const QString &format = QString(),QLandmarkManager::ImportExportOption option = IncludeCategoryData, const QLandmarkCategoryId& = QLandmarkCategoryId());
+    bool exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::ImportExportOption option = IncludeCategoryData) const;
+    bool exportLandmarks(const QString &, const QString &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>(), QLandmarkManager::ImportExportOption option = IncludeCategoryData) const;
 
     QStringList supportedFormats() const;
 
     Error error() const;
     QString errorString() const;
 
-    FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const;
     bool isFeatureSupported(LandmarkFeature feature) const;
+
+    QStringList platformLandmarkAttributeKeys() const;
+    QStringList platformCategoryAttributeKeys() const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
@@ -179,7 +187,7 @@ protected:
 private:
     QLandmarkManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QLandmarkManager)
-
+    friend class QLandmarkAbstractRequest;
     QLandmarkManagerEngine *engine();
 };
 

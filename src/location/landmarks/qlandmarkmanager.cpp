@@ -154,11 +154,12 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkManager::FilterSupportLevel
-    Defines the possible support levels the manager can provide for a given filter.
-    \value Native The manager natively supports the filter.
-    \value Emulated The manager emulates the behaviour of the filter.  An emulated filter will inherently be slower than a natively supported filter.
-    \value None The manager does not support the filter at all.
+    \enum QLandmarkManager::SupportLevel
+    Defines the possible support levels the manager can provide for a given filter or sort order list.
+    \value Native The manager natively supports the filter or sort order list.
+    \value Emulated The manager emulates the behaviour of the filter or sort order list.
+                     Emulated behaviour will inherently be slower than a natively supported implementation.
+    \value None The manager does not support the filter or sort order list at all.
 */
 
 
@@ -703,14 +704,21 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, 
     is expected to adhere to the provided \a format.  If no \a format is provided,
     the manager tries to auto detect the \a format.
 
+    The \a option can be used to control whether categories in the imported
+    file will be added during the import.  If the \c AttachSingleCategory option is used, then
+    all the landmarks in the import file are assigned to the category identified by
+    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    doesn't exist when using \c AttachSingleCategory, QLandmarkManager::DoesNotExist error is returned.  Note that
+    some file formats may not support categories at all.
+
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of
-    landmarks are imported.
+    landmarks are imported depending upon the backed implementation.
 
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkManager);
 
@@ -722,6 +730,8 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
 
     return d->engine->importLandmarks(device,
                                       format,
+                                      option,
+                                      categoryId,
                                       &(d->errorCode),
                                       &(d->errorString));
 }
@@ -732,6 +742,13 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
     to auto detect the \a format.  Internally a QFile is opened with
     QIODevice::ReadOnly permissions.
 
+    The \a option can be used to control whether categories in the imported
+    file will be added during the import.  If the \c AttachSingleCategory option is used, then
+    all the landmarks in the import file are assigned to the category identified by
+    \a categoryId, in all other cirumstances \a categoryId is ignored.  If \a categoryId
+    doesn't exist when using \c AttachSingleCategory, QLandmarkManager::DoesNotExist error is returned.  Note that
+    some file formats may not support categories at all.
+
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of landmarks
     are imported.
@@ -739,11 +756,11 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format)
     The current default managers for the maemo and desktop platforms
     support GPX version 1.1, and the format to use is \c GpxV1.1.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
-    return importLandmarks(&file, format);
+    return importLandmarks(&file, format,option,categoryId);
 }
 
 /*!
@@ -752,13 +769,19 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &f
     all landmarks will be exported, otherwise only those landmarks that
     match \a landmarkIds will be exported.
 
+    The \a option can be used to control whether categories will be exported or not.
+    Note that the \c AttachSingleCategory option has no meaning during
+    export and the manager will export as if \a option was \c IncludeCategoryData.
+    Also, be aware that some file formats may not support categories at all and for
+    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
 {
-    Q_D(QLandmarkManager);
+    Q_D(const QLandmarkManager);
 
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
@@ -769,6 +792,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
     return d->engine->exportLandmarks(device,
                                       format,
                                       landmarkIds,
+                                      option,
                                       &(d->errorCode),
                                       &(d->errorString));
 }
@@ -792,15 +816,21 @@ QStringList QLandmarkManager::supportedFormats() const
     If \a landmarkIds is empty, then all landmarks will be exported, otherwise
     only those landmarks that match \a landmarkIds will be exported.
 
+    The \a option can be used to control whether categories will be exported or not.
+    Note that the \c AttachSingleCategory option has no meaning during
+    export and the manager will export as if \a option was \c IncludeCategoryData.
+    Also, be aware that some file formats may not support categories at all and for
+    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QString &format, QList<QLandmarkId> landmarkIds, QLandmarkManager::ImportExportOption option) const
 {
     QFile file(fileName);
 
-    return exportLandmarks(&file, format,landmarkIds);
+    return exportLandmarks(&file, format,landmarkIds, option);
 }
 
 /*!
@@ -842,7 +872,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
 /*!
     Returns the support level the manager provides for the given \a filter.
 */
-QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
+QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
     Q_D(const QLandmarkManager);
 
@@ -853,6 +883,45 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
     }
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns the support level the manager provides for the given list of \a sortOrders.
+*/
+QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const
+{
+    Q_D(const QLandmarkManager);
+
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return QLandmarkManager::None;
+    }
+
+    return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
+}
+
+QStringList QLandmarkManager::platformLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
+QStringList QLandmarkManager::platformCategoryAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+    return  d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 /*!
