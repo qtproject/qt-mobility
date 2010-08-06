@@ -61,7 +61,10 @@ public:
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
 
+    const QMetaObject* dbusMetaObject() const;
+
     const QMetaObject* serviceMetaObject() const;
+    QObject* serviceObject();
 
 /*protected:
     void connectNotify(const char* signal);
@@ -70,8 +73,21 @@ public:
 private:
     QServiceMetaObjectDBusPrivate* d;
     QVector<bool> localSignals;
+    int customMetaId;
 };
 
+
+struct QServiceUserTypeDBus
+{
+    QByteArray typeName;
+    QByteArray variantBuffer;
+};
+
+QDBusArgument &operator<<(QDBusArgument &argument, const QServiceUserTypeDBus &myType);
+const QDBusArgument &operator>>(const QDBusArgument &argument, QServiceUserTypeDBus &myType);
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus))
 
 #endif //QSERVICE_METAOBJECT_DBUS_H

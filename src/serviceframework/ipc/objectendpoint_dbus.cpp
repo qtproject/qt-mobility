@@ -48,6 +48,7 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QVarLengthArray>
+#include <qservicefilter.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -179,7 +180,10 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
     connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
     connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
     if (type == Client) {
-        return; //we are waiting for conctructProxy() call
+        // client waiting for construct proxy and registers DBus custom type
+        qDBusRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
+        qRegisterMetaType<QTM_PREPEND_NAMESPACE(QServiceUserTypeDBus)>();
+        return;
     } else {
         if (dispatch->packageAvailable())
             QTimer::singleShot(0, this, SLOT(newPackageReady()));
@@ -254,10 +258,10 @@ void ObjectEndPoint::newPackageReady()
                 objectRequest(p);
                 break;
             case QServicePackage::MethodCall:
-                methodCall(p);
+                //methodCall(p);
                 break;
             case QServicePackage::PropertyCall:
-                propertyCall(p);
+                //propertyCall(p);
                 break;
             default:
                 qWarning() << "Unknown package type received.";
@@ -265,6 +269,7 @@ void ObjectEndPoint::newPackageReady()
     }
 }
 
+/*
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
     if (p.d->responseType == QServicePackage::NotAResponse ) {
@@ -318,7 +323,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
             d->triggerConnectedSlots(service, service->metaObject(), metaIndex, a.data());
             return;
         }
-        */
+        
 
         // Service side 
         Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
@@ -350,6 +355,8 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                                    QGenericArgument(typenames[7], param[7]),
                                    QGenericArgument(typenames[8], param[8]),
                                    QGenericArgument(typenames[9], param[9]));
+
+            qDebug() << "DID IT WORK?" << result;
         } else {
             // Result buffer for method call
             QVariant returnValue;
@@ -468,11 +475,7 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
     }
 }
-
-QUuid ObjectEndPoint::myInstanceID()
-{
-    return d->serviceInstanceId;
-}
+*/
 
 void ObjectEndPoint::objectRequest(const QServicePackage& p)
 {
@@ -532,7 +535,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
  
         ////////// DBUS META OBJECT ////////////
         QServiceMetaObjectDBus *serviceDBus = new QServiceMetaObjectDBus(service);
-        const QMetaObject *d_meta = serviceDBus->metaObject();
 
         const QMetaObject *s_meta = serviceDBus->serviceMetaObject();
         qDebug() << "++++++++++++++++++++SERVICE++++++++++++++++++++++++";
@@ -551,6 +553,8 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
                     break;
                 case QMetaMethod::Slot:
                     type = "SLOT";
+                    break;
+                default:
                     break;
             }
 
@@ -597,6 +601,8 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
                 case QMetaMethod::Slot:
                     type = "SLOT";
                     break;
+                default:
+                    break;
             }
 
             QString returnType = mm.typeName();
@@ -640,113 +646,42 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 */
 QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg, int /*returnType*/, QMetaObject::Call c )
 {
-    // Writing to property, direct DBus call
+    const QMetaObject *imeta = service->metaObject();
+    QMetaProperty property = imeta->property(metaIndex);
     
     if (c == QMetaObject::WriteProperty) {
-        const QMetaObject *imeta = service->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
+        // Writing property, direct property DBus call
         if (!iface->setProperty(property.name(), arg)) {
-            qWarning() << "Service property call failed";
+            qWarning() << "Service property write call failed";
         }
+
         return QVariant();
-    } 
-    
-    else if (c == QMetaObject::ResetProperty) {
-        const QMetaObject *imeta = service->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
-        
+
+    } else if (c == QMetaObject::ResetProperty) {
+        // Resetting property, direct special method DBus call
         QVariantList args;
         args << QVariant(property.name());
-        iface->callWithArgumentList(QDBus::Block, "propertyReset", args);
+        QDBusMessage msg = iface->callWithArgumentList(QDBus::Block, "propertyReset", args);
+        if (msg.type() == QDBusMessage::InvalidMessage) { 
+            qWarning() << "Service property reset call failed";
+        }
 
         return QVariant();
-    } 
 
-    else if (c == QMetaObject::ReadProperty) {
-        const QMetaObject *imeta = service->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
-        
+    } else if (c == QMetaObject::ReadProperty) {
+        // Reading property, direct special method DBus call
         QVariantList args;
         args << QVariant(property.name());
         QDBusMessage msg = iface->callWithArgumentList(QDBus::Block, "propertyRead", args);
-        QVariantList retList = msg.arguments();
-
-        return retList[0];
-    }
-  
-    /*
-    if (c == QMetaObject::WriteProperty) {
-        const QMetaObject *imeta = iface->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
-        QVariantList args;
-        args << QVariant("") << QVariant(property.name()) << QVariant::fromValue(QDBusVariant(arg));
-        //iface->callWithArgumentList(QDBus::Block, "Set", args);
-        iface->setProperty(property.name(), arg);
-        return QVariant();
-    }  else if (c == QMetaObject::ResetProperty) {
-        const QMetaObject *imeta = iface->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
-
-        QVariantList args;
-        args << QVariant("") << QVariant(property.name()) << QVariant::fromValue(QDBusVariant("FFF"));
-        iface->callWithArgumentList(QDBus::Block, "Set", args);
-        return QVariant();
-    } else if (c == QMetaObject::ReadProperty) {
-        const QMetaObject *imeta = iface->metaObject();
-        QMetaProperty property = imeta->property(metaIndex);
-
-        QVariantList args;
-        args << QVariant("") << QVariant(property.name());
-        QDBusMessage msg = iface->callWithArgumentList(QDBus::Block, "Get", args);
-        qDebug() << "RESULTTTTTTTTTTTTTTTT" << msg.type() << msg.arguments();
-        return result;
-    } */
-    
-
-    
-    // Request property access from service side
-    QServicePackage p;
-    p.d = new QServicePackagePrivate();
-    p.d->packageType = QServicePackage::PropertyCall;
-    p.d->messageId = QUuid::createUuid();
-
-    // Serialize the property call and the DBus object path
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
-    stream << metaIndex << arg << c << iface->path();
-    p.d->payload = data;
-
-    if (c == QMetaObject::ResetProperty) {
-        // Resetting a property
-        dispatch->writePackage(p);
-    } else {
-        // Reading a property, create response and block for answer
-        Response* response = new Response();
-        openRequests()->insert(p.d->messageId, response);
-        
-        dispatch->writePackage(p);
-        waitForResponse(p.d->messageId);
-   
-        QVariant result;
-        QVariant* resultPointer; 
-        if (response->isFinished) {
-            if (response->result == 0) {
-                qWarning() << "Service property call failed";
-            } else {
-                resultPointer = reinterpret_cast<QVariant* >(response->result);
-                result = (*resultPointer);
-            }
+        if (msg.type() == QDBusMessage::ReplyMessage) { 
+            QVariantList retList = msg.arguments();
+            return retList[0];
         } else {
-            qDebug() << "Response passed but not finished";
+            qWarning() << "Service property read call failed";
+            return QVariant();
         }
-         
-        openRequests()->take(p.d->messageId);
-        delete resultPointer;
-        delete response;
-
-        return result;
     }
-
+ 
     return QVariant();
 }
 
@@ -764,14 +699,34 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
     int index = methodName.indexOf("(");
     methodName.chop(methodName.size()-index);
   
+    // Process arguments
     QVariantList convertedList = args;
-
-    //qDebug() << "I WANT TO INVOKE" << metaIndex << method.signature();
     QList<QByteArray> plist = method.parameterTypes();
     for (int i=0; i<plist.size(); i++) {
-        if (plist[i] == "QVariant") {
-            QDBusVariant replacement(args[i]);
-            convertedList.replace(i, QVariant::fromValue(replacement));
+        const QByteArray& type = plist[i];
+        int variantType = QVariant::nameToType(type);
+        
+        if (variantType == QVariant::UserType) {
+            variantType = QMetaType::type(type);
+        
+            if (variantType == QMetaType::QVariant) {
+            // Wrap QVariants in a QDBusVariant
+                QDBusVariant replacement(args[i]);
+                convertedList.replace(i, QVariant::fromValue(replacement));
+            } else {
+                // Wrap custom types in a QDBusVariant as a buffer of its data
+
+                QByteArray buffer;
+                QDataStream stream(&buffer, QIODevice::ReadWrite | QIODevice::Append);
+                stream << args[i];
+
+                QServiceUserTypeDBus customType;
+                customType.typeName = type;
+                customType.variantBuffer = buffer;
+
+                QDBusVariant replacement(QVariant::fromValue(customType));
+                convertedList.replace(i, QVariant::fromValue(replacement));
+            }
         }
     }
 
@@ -795,60 +750,39 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 	else {
             // Use DBus return value
             QVariantList retList = msg.arguments();
-           
+
+            // Process return
             const QByteArray& retType = QByteArray(method.typeName());
-            if (retType == "QVariant") {
-                QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(retList[0]);
-                return dbusVariant.variant();
+            int variantType = QVariant::nameToType(retType);
+                if (variantType == QVariant::UserType) {
+                    variantType = QMetaType::type(retType);
+
+                    if (variantType == QMetaType::QVariant) {
+                        // QVariant return from QDBusVariant wrapper
+                        QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(retList[0]);
+                        return dbusVariant.variant();
+                    } else {
+                        // custom return
+                        QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(retList[0]);
+                        QVariant convert = dbusVariant.variant();
+
+                        QServiceUserTypeDBus customType = qdbus_cast<QServiceUserTypeDBus>(convert);
+                        QByteArray buffer = customType.variantBuffer;
+                        QDataStream stream(&buffer, QIODevice::ReadWrite);
+
+                        // load our buffered variant-wrapped custom return
+                        QVariant *customReturn = new QVariant(variantType, (const void*)0);
+                        QMetaType::load(stream, QMetaType::QVariant, customReturn);
+
+                        return QVariant(variantType, customReturn->data());
+                    }
             } else {
+                // standard return type
                 return retList[0];
             }
         }
     } else {  
-        qDebug() << "I SHOULD NEVER BE HEREEEEEEEEEEEEE";
-
-        // Request method access from service side
-	QServicePackage p;
-	p.d = new QServicePackagePrivate();
-	p.d->packageType = QServicePackage::MethodCall;
-	p.d->messageId = QUuid::createUuid();
-
-        // Serialize the method call and the DBus object path
-	QByteArray data;
-	QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
-	stream << metaIndex << args << iface->path();
-	p.d->payload = data;
-
-	if (returnType == QMetaType::Void) {
-            // Void method call
-	    dispatch->writePackage(p);
-	} else {
-	    // Create response and block for answer
-	    Response* response = new Response();
-	    openRequests()->insert(p.d->messageId, response);
-
-	    dispatch->writePackage(p);
-	    waitForResponse(p.d->messageId);
-
-	    QVariant result;
-	    QVariant* resultPointer; 
-	    if (response->isFinished) {
-		if (response->result == 0) {
-		    qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
-		} else {
-		    resultPointer = reinterpret_cast<QVariant* >(response->result);
-		    result = (*resultPointer);
-		}
-	    } else {
-		qDebug() << "Response passed but not finished";
-	    }
-
-	    openRequests()->take(p.d->messageId);
-	    delete resultPointer;
-	    delete response;
-
-	    return result;
-	} 
+        qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
     }
 
     return QVariant();

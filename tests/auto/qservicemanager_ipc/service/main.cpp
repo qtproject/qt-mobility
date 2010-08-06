@@ -377,20 +377,12 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    //qRegisterServiceMetaType<QServiceFilter>();
-
-    //qDBusRegisterMetaType<QServiceFilter>();
-
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     
-    // QVariant is built in with 4.7
-    // QTBUG-11316 causes a crash so this is a work around
-//#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
     qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
-//#endif
-
+   
     registerExampleService();
 
     QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);

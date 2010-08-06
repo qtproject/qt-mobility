@@ -65,7 +65,6 @@
 #endif
 
 QTM_USE_NAMESPACE
-
 Q_DECLARE_METATYPE(QServiceFilter)
 
 class tst_QServiceManager_IPC: public QObject
@@ -151,7 +150,7 @@ void tst_QServiceManager_IPC::initTestCase()
     lackey = 0;
     serviceUnique = 0;
     serviceShared = 0;
-    qRegisterMetaType<QServiceFilter>();
+    qRegisterMetaType<QServiceFilter>("QServiceFilter");
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
     QServiceManager* manager = new QServiceManager(this);
 
@@ -787,7 +786,7 @@ void tst_QServiceManager_IPC::verifyUniqueEnumerator()
 
 void tst_QServiceManager_IPC::testInvokableFunctions()
 {
-    // test function input with calculated return value
+    // test invokable method input with calculated return value
     QString temp;
     QString result;
     QString patternShared("%1 + 3 = %2");
@@ -816,7 +815,7 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
         QCOMPARE(temp, result);
     }
 
-    // test function with QVariant return type
+    // test invokable method with QVariant return type
     QList<QVariant> variants;
     variants << QVariant("CANT BE NULL") << QVariant(6) << QVariant(QString("testString"));
     for(int i = 0; i<variants.count(); i++) {
@@ -835,8 +834,7 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
         QCOMPARE(variants.at(i), varResult);
     }
 
-    /*
-    //test function with custom return type
+    //test invokable method with custom return type
     QServiceFilter f;
     // Shared service
     QMetaObject::invokeMethod(serviceShared, "testFunctionWithCustomReturnValue",
@@ -853,7 +851,6 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
     QCOMPARE(f.interfaceName(), QString("com.nokia.qt.ipcunittest"));
     QCOMPARE(f.majorVersion(), 6);
     QCOMPARE(f.minorVersion(), 7);
-    */
 }
 
 #ifdef UNIQUE_TESTS
@@ -899,91 +896,58 @@ void tst_QServiceManager_IPC::testSignalling()
 
 void tst_QServiceManager_IPC::testSlotInvokation()
 {
-#ifdef UNIQUE_TESTS
     QObject *service = serviceUnique;
-#else
-    QObject *service = serviceShared;
-#endif
 
+    // check the success of our invokable slot by using a hash of the method and its parameters
     uint hash = 1;
     uint expectedHash = 0;
-    //to check whether the slot was properly invoked we
-    //generate a hash value based on the slot name and its parameters
-
     QMetaObject::invokeMethod(service, "setConfirmationHash",
                               Q_ARG(uint, 0));
     QMetaObject::invokeMethod(service, "slotConfirmation",
                               Q_RETURN_ARG(uint, hash));
     QCOMPARE(hash, (uint)0);
 
+    // test invokable slot with no arguments
     QMetaObject::invokeMethod(service, "testSlot");
     QMetaObject::invokeMethod(service, "slotConfirmation",
                                Q_RETURN_ARG(uint, hash));
     expectedHash = qHash(QString("testSlot()"));
     QCOMPARE(hash, expectedHash);
 
-    QString output;
-    /*
-    // test slot function with custom argument
-    QServiceFilter f("com.myInterface" , "4.5");
-    f.setServiceName("MyService");
-
-    QMetaObject::invokeMethod(service, "testSlotWithCustomArg",
-                              Q_ARG(QServiceFilter, f));
-    
-    output("%1: %2 - %3.%4");
-    output = output.arg(f.serviceName()).arg(f.interfaceName())
-            .arg(f.majorVersion()).arg(f.minorVersion());
-    expectedHash = qHash(output); 
-    
-    QMetaObject::invokeMethod(service, "slotConfirmation",
-                              Q_RETURN_ARG(uint, hash));
-    
-    QCOMPARE(hash, expectedHash);
-    */
-
-    //should fail as QServiceInterfaceDescriptor is not registered as meta type
-    QServiceInterfaceDescriptor desc;
-    QMetaObject::invokeMethod(service, "testSlotWithUnknownArg",
-          Q_ARG(QServiceInterfaceDescriptor, desc));
-    QMetaObject::invokeMethod(service, "slotConfirmation",
-              Q_RETURN_ARG(uint, hash));
-    //if testSlotWithUnknownArg reaches service then it would set the hash value to 1
-    //confirm that it doesn't happen
-    QVERIFY(hash != 1);
-
+    // test invokable slot with various arguments
     QVariant test("CANT BE NULL");
     QByteArray d = "array";
     int num = 5;
-    QMetaObject::invokeMethod(service, "testSlotWithArgs",
-          Q_ARG(QByteArray, d), Q_ARG(int, num), Q_ARG(QVariant, test));
-    output = QString("%1, %2, %3, %4");
-    output = output.arg(d.constData()).arg(num).arg(test.toString()).arg(test.isValid());
-    expectedHash = qHash(output);
-    QMetaObject::invokeMethod(service, "slotConfirmation",
-              Q_RETURN_ARG(uint, hash));
-    QCOMPARE(hash, expectedHash);
-
-    /*
-    QVariant var;
-    output = QVariant("TEST").toString();
-    expectedHash = qHash(output);
-    QMetaObject::invokeMethod(service, "testFunctionWithVariantReturnValue",
-                              Q_RETURN_ARG(QVariant, var),
-                              Q_ARG(QVariant, QVariant("TEST")));
-    QMetaObject::invokeMethod(service, "slotConfirmation",
-                              Q_RETURN_ARG(uint, hash));
-    QCOMPARE(hash, expectedHash);
-    
-    test = QVariant(QString("teststring"));
-    output = QString("%1, %2, %3, %4");
+    QString output = QString("%1, %2, %3, %4");
     output = output.arg(d.constData()).arg(num).arg(test.toString()).arg(test.isValid());
     expectedHash = qHash(output);
     QMetaObject::invokeMethod(service, "testSlotWithArgs",
                               Q_ARG(QByteArray, d), Q_ARG(int, num), Q_ARG(QVariant, test));
     QMetaObject::invokeMethod(service, "slotConfirmation",
-                              Q_RETURN_ARG(uint, hash));*/
-    //QCOMPARE(hash, expectedHash);
+                              Q_RETURN_ARG(uint, hash));
+    QCOMPARE(hash, expectedHash);
+    
+    // test failed invokable slot since QServiceInterfaceDescriptor is not a registered meta type
+    // by checking that the service didn't set the hash to -1 due to being called
+    QServiceInterfaceDescriptor desc;
+    QMetaObject::invokeMethod(service, "testSlotWithUnknownArg",
+                              Q_ARG(QServiceInterfaceDescriptor, desc));
+    QMetaObject::invokeMethod(service, "slotConfirmation",
+                              Q_RETURN_ARG(uint, hash));
+    QVERIFY(hash != 1);
+    
+    // test slot function with custom argument
+    QServiceFilter f("com.myInterface" , "4.5");
+    f.setServiceName("MyService");
+    output = QString("%1: %2 - %3.%4");
+    output = output.arg(f.serviceName()).arg(f.interfaceName())
+            .arg(f.majorVersion()).arg(f.minorVersion());
+    expectedHash = qHash(output); 
+    QMetaObject::invokeMethod(service, "testSlotWithCustomArg",
+                              Q_ARG(QServiceFilter, f));
+    QMetaObject::invokeMethod(service, "slotConfirmation",
+                              Q_RETURN_ARG(uint, hash));
+    QCOMPARE(hash, expectedHash);
 }
 
 #ifdef UNIQUE_TESTS
