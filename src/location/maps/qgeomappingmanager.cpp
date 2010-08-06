@@ -44,6 +44,7 @@
 #include "qgeomappingmanagerengine.h"
 
 #include <QNetworkProxy>
+#include <QLocale>
 
 QTM_BEGIN_NAMESPACE
 
@@ -230,6 +231,20 @@ QSize QGeoMappingManager::maximumImageSize() const
 //        return QSize();
 
     return d_ptr->engine->maximumImageSize();
+}
+
+/*!
+*/
+void QGeoMappingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoMappingManager::locale() const
+{
+    return d_ptr->engine->locale();
 }
 
 /*******************************************************************************

@@ -48,6 +48,8 @@
 #include <QSize>
 #include <QPair>
 
+class QLocale;
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoBoundingBox;
@@ -81,6 +83,9 @@ public:
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
 
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);

@@ -43,6 +43,8 @@
 #include "qgeoroutingmanager_p.h"
 #include "qgeoroutingmanagerengine.h"
 
+#include <QLocale>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -370,6 +372,20 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 //        return QGeoRouteRequest::InstructionDetails();
 
     return d_ptr->engine->supportedInstructionDetails();
+}
+
+/*!
+*/
+void QGeoRoutingManager::setLocale(const QLocale &locale)
+{
+    d_ptr->engine->setLocale(locale);
+}
+
+/*!
+*/
+QLocale QGeoRoutingManager::locale() const
+{
+    return d_ptr->engine->locale();
 }
 
 /*!

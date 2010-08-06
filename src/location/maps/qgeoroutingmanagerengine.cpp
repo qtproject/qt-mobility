@@ -371,6 +371,20 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstruct
 }
 
 /*!
+*/
+void QGeoRoutingManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoRoutingManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
+
+/*!
 \fn void QGeoRoutingManagerEngine::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
