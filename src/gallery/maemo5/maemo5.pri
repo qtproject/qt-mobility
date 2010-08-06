@@ -5,7 +5,7 @@ QT += dbus
 
 DEFINES += QT_DOCUMENT_GALLERY_MAEMO_5
 
-HEADERS += \
+PRIVATE_HEADERS += \
         $$PWD/qgallerydbusinterface_p.h \
         $$PWD/qgallerytrackerchangenotifier_p.h \
         $$PWD/qgallerytrackereditableresultset_p.h \

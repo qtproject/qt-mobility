@@ -47,10 +47,11 @@ SOURCES = \
         qgallerytype.cpp \
         qgallerytyperequest.cpp
 
-HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 unix: contains(QT_CONFIG, dbus): include (maemo5/maemo5.pri)
 else: DEFINES += QT_DOCUMENT_GALLERY_NULL
+
+HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
