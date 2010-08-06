@@ -71,7 +71,7 @@ class QGeoTiledMapRequest;
 class QGeoTiledMappingManagerEnginePrivate : public QGeoMappingManagerEnginePrivate
 {
 public:
-    QGeoTiledMappingManagerEnginePrivate(const QMap<QString, QString> &parameters);
+    QGeoTiledMappingManagerEnginePrivate();
     QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other);
     ~QGeoTiledMappingManagerEnginePrivate();
 

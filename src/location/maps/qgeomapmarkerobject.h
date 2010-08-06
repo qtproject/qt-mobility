@@ -54,13 +54,28 @@ class QGeoMapMarkerObjectPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
 {
+    Q_OBJECT
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QPixmap icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QPoint anchor READ anchor WRITE setAnchor NOTIFY anchorChanged)
+
 public:
     QGeoMapMarkerObject(const QGeoCoordinate &coordinate, const QPoint &anchor = QPoint(0, 0), const QPixmap &icon = QPixmap(), QGeoMapObject *parent = 0);
     ~QGeoMapMarkerObject();
 
     QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
+
     QPixmap icon() const;
+    void setIcon(const QPixmap &icon);
+
     QPoint anchor() const;
+    void setAnchor(const QPoint &anchor);
+
+signals:
+    void coordinateChanged(const QGeoCoordinate &coordinate);
+    void iconChanged(const QPixmap &pixmap);
+    void anchorChanged(const QPoint &anchor);
 
 private:
     Q_DECLARE_PRIVATE(QGeoMapMarkerObject)

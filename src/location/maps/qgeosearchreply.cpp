@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-places
 
     Instances of QGeoSearchReply manage the state and results of these
@@ -184,11 +184,11 @@ QString QGeoSearchReply::errorString() const
 }
 
 /*!
-    Sets the viewport which contains the results to \a bounds.
+    Sets the viewport which contains the results to \a viewport.
 */
-void QGeoSearchReply::setBounds(const QGeoBoundingBox &bounds)
+void QGeoSearchReply::setViewport(const QGeoBoundingBox &viewport)
 {
-    d_ptr->bounds = bounds;
+    d_ptr->viewport = viewport;
 }
 
 /*!
@@ -197,9 +197,9 @@ void QGeoSearchReply::setBounds(const QGeoBoundingBox &bounds)
     This function will return an invalid QGeoBoundingBox if no viewport bias
     was specified in the QGeoSearchManager function which created this reply.
 */
-QGeoBoundingBox QGeoSearchReply::bounds() const
+QGeoBoundingBox QGeoSearchReply::viewport() const
 {
-    return d_ptr->bounds;
+    return d_ptr->viewport;
 }
 
 /*!
@@ -286,7 +286,7 @@ QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &oth
         : error(error),
         errorString(errorString),
         isFinished(isFinished),
-        bounds(other.bounds),
+        viewport(other.viewport),
         places(other.places) {}
 
 QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
@@ -296,7 +296,7 @@ QGeoSearchReplyPrivate& QGeoSearchReplyPrivate::operator= (const QGeoSearchReply
     error = other.error;
     errorString = other.errorString;
     isFinished = other.isFinished;
-    bounds = other.bounds;
+    viewport = other.viewport;
     places = other.places;
 
     return *this;

@@ -52,7 +52,7 @@ class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters,
+    QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
     ~QGeoRoutingManagerEngineNokia();

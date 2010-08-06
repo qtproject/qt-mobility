@@ -48,7 +48,7 @@
 #include <QMap>
 
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
-    const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error,
+    const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error,
     QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("address.s2g.gate5.de")
@@ -58,13 +58,13 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
     QList<QString> keys = parameters.keys();
 
     if (keys.contains("places.proxy")) {
-        QString proxy = parameters.value("places.proxy");
+        QString proxy = parameters.value("places.proxy").toString();
         if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("places.host")) {
-        QString host = parameters.value("places.host");
+        QString host = parameters.value("places.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }

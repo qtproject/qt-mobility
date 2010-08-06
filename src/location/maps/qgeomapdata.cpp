@@ -66,7 +66,7 @@ QTM_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    
+
     \ingroup maps-impl
 
     Instances of QGeoMapData are created with
@@ -187,7 +187,7 @@ void QGeoMapData::stopPanning() {}
 
 /*!
     Pans the map view \a dx pixels in the x direction and \a dy pixels
-    in they y direction.
+    in the y direction.
 
     The x and y axes are specified in Graphics View Framework coordinates.
     By default this will mean that positive values of \a dx move the
@@ -265,10 +265,10 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects()
 QList<QGeoMapObject*> QGeoMapData::visibleMapObjects()
 {
     QList<QGeoMapObject*> objectsOnScreen
-            = mapObjectsInScreenRect(QRectF(0.0,
-                                            0.0,
-                                            d_ptr->viewportSize.width(),
-                                            d_ptr->viewportSize.height()));
+    = mapObjectsInScreenRect(QRectF(0.0,
+                                    0.0,
+                                    d_ptr->viewportSize.width(),
+                                    d_ptr->viewportSize.height()));
 
     QList<QGeoMapObject*> visibleObjects;
 
@@ -344,9 +344,9 @@ void QGeoMapData::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 *******************************************************************************/
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-    : engine(engine),
-    widget(widget),
-    zoomLevel(-1.0)
+        : engine(engine),
+        widget(widget),
+        zoomLevel(-1.0)
 {
     containerObject = new QGeoMapObject(this);
 }
@@ -382,7 +382,7 @@ QGeoMapObjectInfo* QGeoMapDataPrivate::createObjectInfo(const QGeoMapObjectPriva
 {
     QGeoMapObjectInfo* info = 0;
 
-    switch(mapObjectPrivate->type) {
+    switch (mapObjectPrivate->type) {
         case QGeoMapObject::RectangleType:
             info = createRectangleObjectInfo(mapObjectPrivate);
             break;

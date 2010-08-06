@@ -40,12 +40,15 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-
-// The actual module provided:
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
+#include "qdeclarativelandmark_p.h"
+#include "qdeclarativelandmarkcategory_p.h"
+#include "qdeclarativelandmarksource_p.h"
+#include "qdeclarativelandmarkcategorysource_p.h"
+
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
 QT_BEGIN_NAMESPACE
 QTM_USE_NAMESPACE
@@ -57,8 +60,15 @@ class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.location"));
+        // Elements available since Qt mobility 1.1:
         qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
         qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
+        qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
+        qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
+        qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
+        qmlRegisterType<QDeclarativeLandmarkSource>(uri, 1, 1, "LandmarkSource");
+        qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
+        qmlRegisterType<QDeclarativeLandmarkCategorySource>(uri, 1, 1, "LandmarkCategorySource");
     }
 };
 

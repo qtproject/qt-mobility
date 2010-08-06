@@ -71,17 +71,16 @@ public:
     ~QGeoSearchManager();
 
     QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
     QGeoSearchReply* geocode(const QGeoAddress &address,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
     QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                                    const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
     QGeoSearchReply* search(const QString &searchString,
-                                  SearchTypes searchTypes = SearchTypes(SearchAll),
-                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                            SearchTypes searchTypes = SearchTypes(SearchAll),
+                            const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
     bool supportsGeocoding() const;
     SearchTypes supportedSearchTypes() const;

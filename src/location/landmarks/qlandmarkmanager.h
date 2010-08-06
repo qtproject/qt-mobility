@@ -64,7 +64,6 @@ class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
-    friend class QLandmarkAbstractRequest;
     Q_OBJECT
 public:
     enum Error {
@@ -83,7 +82,7 @@ public:
         UnknownError,
     };
 
-    enum FilterSupportLevel {
+    enum SupportLevel {
         Native,
         Emulated,
         None
@@ -150,8 +149,12 @@ public:
     Error error() const;
     QString errorString() const;
 
-    FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const;
     bool isFeatureSupported(LandmarkFeature feature) const;
+
+    QStringList platformLandmarkAttributeKeys() const;
+    QStringList platformCategoryAttributeKeys() const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
@@ -184,7 +187,7 @@ protected:
 private:
     QLandmarkManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QLandmarkManager)
-
+    friend class QLandmarkAbstractRequest;
     QLandmarkManagerEngine *engine();
 };
 
