@@ -51,20 +51,16 @@ QTM_BEGIN_NAMESPACE
 class QServiceMetaObjectDBusPrivate;
 class QServiceMetaObjectDBus : public QObject
 {
-    //Note: Do not put Q_OBJECT here
+
 public:
     QServiceMetaObjectDBus(QObject* service);
     virtual ~QServiceMetaObjectDBus();
 
-    //provide custom Q_OBJECT implementation
     virtual const QMetaObject* metaObject() const;
     int qt_metacall(QMetaObject::Call c, int id, void **a);
     void *qt_metacast(const char* className);
 
     const QMetaObject* dbusMetaObject() const;
-
-    const QMetaObject* serviceMetaObject() const;
-    QObject* serviceObject();
 
 /*protected:
     void connectNotify(const char* signal);
@@ -72,7 +68,7 @@ public:
 
 private:
     QServiceMetaObjectDBusPrivate* d;
-    QVector<bool> localSignals;
+    //QVector<bool> localSignals;
     int customMetaId;
 };
 

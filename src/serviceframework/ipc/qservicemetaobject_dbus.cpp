@@ -41,8 +41,6 @@
 
 #include "qservicemetaobject_dbus_p.h"
 #include "qmetaobjectbuilder_p.h"
-#include "qservicefilter.h"
-
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -98,6 +96,10 @@ QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
     delete d;
 }
 
+/*!
+    Build a metaobject that represents the service object as a valid service that 
+    satisfies the QtDBus type system.
+*/
 const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject() const
 {
     // Create a meta-object to represent all the contents of our service on DBus
@@ -219,32 +221,28 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject() const
     return mo;
 }
 
-const QMetaObject* QServiceMetaObjectDBus::serviceMetaObject() const
-{
-    return d->serviceMeta;
-}
-
-QObject* QServiceMetaObjectDBus::serviceObject()
-{
-    return d->service;
-}
-
-//provide custom Q_OBJECT implementation
+/*! 
+    Provide custom Q_OBJECT implementation of the metaObject
+*/
 const QMetaObject* QServiceMetaObjectDBus::metaObject() const
 {
-    // provide our construected dbus metaobject
+    // Provide our construected DBus service metaobject
     return d->dbusMeta;
 }
 
+/*!
+    Overrides metacall which relays the DBus service call to the actual service
+    meta object. Positive return will indicate that the metacall was unsuccessful
+*/
 int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
 {
-    // relay the meta-object call to the service object
+    // Relay the meta-object call to the service object
     if (c == QMetaObject::InvokeMetaMethod) {
         // METHOD
         QMetaMethod method = d->dbusMeta->method(id);
 
         ///////////////////// CHECK SPECIAL PROPERTY ///////////////////////
-        // this is required because property READ/RESET doesn't function
+        // This is required because property READ/RESET doesn't function
         // as desired over DBus without the use of adaptors. Temporary
         // methods propertyRead and propertyReset are added to the published
         // meta object and relay the correct property call
@@ -264,7 +262,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
         }
         ////////////////////////////////////////////////////////////////////
 
-        // find the corresponding signature to our service object
+        // Find the corresponding signature to our service object
         QByteArray sig(method.signature());
         int count = methodName.size() + 1;
         const QList<QByteArray> xTypes = method.parameterTypes();
@@ -276,7 +274,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
                 variantType = QMetaType::type(t);
             }
 
-            // check for QVariants or custom types
+            // Check for QVariants or custom types
             if (t == "QDBusVariant") {
                 QVariant convert = QVariant(variantType, a[i+1]);
                 QDBusVariant dbusVariant = qvariant_cast<QDBusVariant>(convert);
@@ -296,21 +294,21 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
                     replacement = userType.typeName;
                 }
 
-                // replace "QDBusVariant" with "QVariant" or custom type name
+                // Replace "QDBusVariant" with "QVariant" or custom type name
                 sig.replace(count, 12, replacement);
                 count += replacement.size();
 
             } else {
-                // supported type so skip this paramater
+                // Supported type so skip this paramater
                 count += t.size();
             }
 
-            // skips the comma if not last parameter
+            // Skips the comma if not last parameter
             if (i < xTypesCount)
                 count += 1;
         }
 
-        // find the corresponding metaindex to our service object
+        // Find the corresponding method metaindex to our service object
         id = d->serviceMeta->indexOfMethod(sig);
         QMetaMethod mm = d->serviceMeta->method(id);
 
@@ -321,7 +319,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
         const void* params[] = {0,0,0,0,0,0,0,0,0,0};
         bool isCustomType = false;
 
-        // process arguments
+        // Process arguments
         for (int i=0; i < pTypesCount; i++) {
             const QByteArray& t = pTypes[i];
             int variantType = QVariant::nameToType(t);
@@ -330,12 +328,12 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
             }
            
             if (variantType == QMetaType::User) {
-                // custom argument
+                // Custom argument
                 QVariant convert = QVariant(QVariant::ByteArray, a[i+1]);
                 QByteArray buffer = convert.toByteArray();
                 QDataStream stream(&buffer, QIODevice::ReadWrite);
                
-                // load our buffered variant-wrapped custom type
+                // Load our buffered variant-wrapped custom type
                 QVariant *customType = new QVariant(variantType, (const void*)0);
                 QMetaType::load(stream, QMetaType::QVariant, customType); 
               
@@ -345,52 +343,49 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
             }
         }
         
-        // check for non-standard return types and make the metacall
+        // Check for custom return types and make the metacall
         const QByteArray& type = mm.typeName();
         int retType = QVariant::nameToType(type);
-        if (retType == QVariant::UserType) {
-            // QVariant or custom return types
-            retType = QMetaType::type(type);
-       
-            if (retType != QMetaType::User) {
-                // QVariant return type
-                id = d->service->qt_metacall(c, id, a);
-            } else {
-                // custom argument as return type
-                bool result = false;
-                QVariant returnValue = QVariant(retType, (const void*)0);
-                QGenericReturnArgument ret(type, returnValue.data());
-                result = mm.invoke(d->service, ret,
-                         QGenericArgument(typeNames[0], params[0]),
-                         QGenericArgument(typeNames[1], params[1]),
-                         QGenericArgument(typeNames[2], params[2]),
-                         QGenericArgument(typeNames[3], params[3]),
-                         QGenericArgument(typeNames[4], params[4]),
-                         QGenericArgument(typeNames[5], params[5]),
-                         QGenericArgument(typeNames[6], params[6]),
-                         QGenericArgument(typeNames[7], params[7]),
-                         QGenericArgument(typeNames[8], params[8]),
-                         QGenericArgument(typeNames[9], params[9]));
-                if (result) {
-                    QByteArray buffer;
-                    QDataStream stream(&buffer, QIODevice::WriteOnly | QIODevice::Append);
-                    stream << returnValue;
+        retType = QMetaType::type(type);
+        if (retType >= QMetaType::User) {
+            // Invoke the object method directly for custom return types
+            bool result = false;
+            QVariant returnValue = QVariant(retType, (const void*)0);
+            QGenericReturnArgument ret(type, returnValue.data());
+            result = mm.invoke(d->service, ret,
+                    QGenericArgument(typeNames[0], params[0]),
+                    QGenericArgument(typeNames[1], params[1]),
+                    QGenericArgument(typeNames[2], params[2]),
+                    QGenericArgument(typeNames[3], params[3]),
+                    QGenericArgument(typeNames[4], params[4]),
+                    QGenericArgument(typeNames[5], params[5]),
+                    QGenericArgument(typeNames[6], params[6]),
+                    QGenericArgument(typeNames[7], params[7]),
+                    QGenericArgument(typeNames[8], params[8]),
+                    QGenericArgument(typeNames[9], params[9]));
+            
+            if (result) {
+                // Wrap custom return type in a QDBusVariant of the type
+                // and a buffer of its variant-wrapped data
+                QByteArray buffer;
+                QDataStream stream(&buffer, QIODevice::WriteOnly | QIODevice::Append);
+                stream << returnValue;
 
-                    QServiceUserTypeDBus customType;
-                    customType.typeName = type;
-                    customType.variantBuffer = buffer;
+                QServiceUserTypeDBus customType;
+                customType.typeName = type;
+                customType.variantBuffer = buffer;
 
-                    QDBusVariant replacement(QVariant::fromValue(customType));
-                    *reinterpret_cast<QDBusVariant*>(a[0]) = replacement;
+                QDBusVariant replacement(QVariant::fromValue(customType));
+                *reinterpret_cast<QDBusVariant*>(a[0]) = replacement;
 
-                    // return negative id to say metacall was handled externally
-                    return -1;
-                }
+                // Return negative id to say metacall was handled externally
+                return -1;
             }
+
         } else {
-            // void or standard return types
+            // Void or standard return types
             if (isCustomType == true) {
-                // invoke the object method directly for custom arguments
+                // Invoke the object method directly for custom arguments
                 bool result = false;
                 result = mm.invoke(d->service,
                          QGenericArgument(typeNames[0], params[0]),
@@ -404,11 +399,11 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
                          QGenericArgument(typeNames[8], params[8]),
                          QGenericArgument(typeNames[9], params[9]));
                 if (result) {
-                    // return negative id to say metacall was handled externally
+                    // Return negative id to say metacall was handled externally
                     return -1;
                 }
             } else {
-                // relay standard metacall to service object
+                // Relay standard metacall to service object
                 id = d->service->qt_metacall(c, id, a);
             }
         }
@@ -416,12 +411,12 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
     } else {
         // PROPERTY
 
-        // find the corresponding metaindex of our service object
+        // Find the corresponding property metaindex of our service object
         QMetaProperty property = d->dbusMeta->property(id);
         QByteArray name(property.name());
         id = d->serviceMeta->indexOfProperty(name);
         
-        // metacall our service object property
+        // Metacall our service object property
         id = d->service->qt_metacall(c, id, a);
     }
 
