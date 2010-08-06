@@ -1612,8 +1612,8 @@ void mountCallback2(DADiskRef diskRef, void *context)
             }
         }
         IOObjectRelease(mediaService);
+        CFRelease(wholeDisk);
     }
-    CFRelease(wholeDisk);
 }
 
 void unmountCallback(DADiskRef disk, void *context)
@@ -1737,6 +1737,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     DADiskRef diskRef;
     DASessionRef sessionRef;
     CFBooleanRef boolRef;
+    CFBooleanRef boolRef2;
     CFDictionaryRef descriptionDictionary;
 
     sessionRef = DASessionCreate(NULL);
@@ -1747,14 +1748,14 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     diskRef = DADiskCreateFromBSDName(NULL, sessionRef, mountEntriesHash.key(driveVolume).toLatin1());
     if (diskRef == NULL) {
         CFRelease(sessionRef);
-        return QSystemStorageInfo::RemoteDrive; //?
+        return QSystemStorageInfo::NoDrive;
     }
 
     descriptionDictionary = DADiskCopyDescription(diskRef);
     if (descriptionDictionary == NULL) {
         CFRelease(diskRef);
         CFRelease(sessionRef);
-        return QSystemStorageInfo::NoDrive;
+        return QSystemStorageInfo::RemoteDrive;
     }
 
     boolRef = (CFBooleanRef)
@@ -1764,6 +1765,13 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             drivetype = QSystemStorageInfo::RemovableDrive;
         } else {
             drivetype = QSystemStorageInfo::InternalDrive;
+        }
+    }
+    boolRef2 = (CFBooleanRef)
+              CFDictionaryGetValue(descriptionDictionary, kDADiskDescriptionVolumeNetworkKey);
+    if (boolRef2) {
+        if(CFBooleanGetValue(boolRef2)) {
+            drivetype = QSystemStorageInfo::RemoteDrive;
         }
     }
 
@@ -1788,6 +1796,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     CFRelease(diskRef);
     CFRelease(descriptionDictionary);
     CFRelease(boolRef);
+    CFRelease(boolRef2);
     CFRelease(sessionRef);
 
     return drivetype;
