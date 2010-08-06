@@ -3079,7 +3079,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksName() {
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QLandmarkNameFilter filter("TEST");
-    filter.setCaseSensitivity(Qt::CaseInsensitive);
+    filter.setMatchFlags(0);
 
     QList<QLandmarkId> ids1 = m_manager->landmarkIds(filter);
 
@@ -3088,7 +3088,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksName() {
     QCOMPARE(ids1.at(1), lm3.landmarkId());
     QCOMPARE(ids1.at(2), lm5.landmarkId());
 
-    filter.setCaseSensitivity(Qt::CaseSensitive);
+    filter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     QList<QLandmarkId> ids2 = m_manager->landmarkIds(filter);
 
     QCOMPARE(ids2.size(), 1);
@@ -3125,7 +3125,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNameAsync() {
     QVERIFY(m_manager->saveLandmark(&lm6));
 
     QLandmarkNameFilter filter("TEST");
-    filter.setCaseSensitivity(Qt::CaseInsensitive);
+    filter.setMatchFlags(0);
 
     QLandmarkFetchRequest fetchRequest(m_manager);
     fetchRequest.setFilter(filter);
@@ -3147,7 +3147,7 @@ void tst_QLandmarkManagerEngineSqlite::filterLandmarksNameAsync() {
     QVERIFY(checkIdFetchRequest(lms1,filter));
 
     //do a case sensitive filter this time
-    filter.setCaseSensitivity(Qt::CaseSensitive);
+    filter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
     fetchRequest.setFilter(filter);
     spy.clear();
     fetchRequest.start();
@@ -5567,8 +5567,6 @@ void tst_QLandmarkManagerEngineSqlite::supportedFormats() {
         QCOMPARE(formats.count(), 1);
         QVERIFY(formats.at(0) == "GpxV1.1");
 }
-
-
 
 QTEST_MAIN(tst_QLandmarkManagerEngineSqlite)
 #include "tst_qlandmarkmanagerengine_sqlite.moc"

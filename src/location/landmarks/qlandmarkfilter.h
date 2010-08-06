@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include <QSharedData>
+#include <Qt>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,6 +66,18 @@ public:
                      UnionFilter, AttributeFilter,
                      LandmarkIdFilter
                     };
+
+    enum MatchFlag {
+        MatchExactly = Qt::MatchExactly,        //0
+        MatchContains = Qt::MatchContains,      //1
+        MatchStartsWith = Qt::MatchStartsWith,  //2
+        MatchEndsWith = Qt::MatchEndsWith,      //3
+        MatchFixedString =  Qt::MatchFixedString, //8
+        MatchCaseSensitive = Qt::MatchCaseSensitive //16
+    };
+
+    Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
+
     QLandmarkFilter();
     QLandmarkFilter(const QLandmarkFilter &other);
     QLandmarkFilter &operator=(const QLandmarkFilter &other);
@@ -81,6 +94,8 @@ protected:
     QLandmarkFilter(QLandmarkFilterPrivate *dd);
     QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QLandmarkFilter::MatchFlags);
 
 const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
 const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);

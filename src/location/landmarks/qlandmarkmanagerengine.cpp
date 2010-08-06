@@ -1151,7 +1151,13 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::NameFilter:
         {
             QLandmarkNameFilter nameFilter(filter);
-            return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity()) == 0;
+            Qt::CaseSensitivity cs;
+            if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
+                cs = Qt::CaseSensitive;
+            else
+                cs = Qt::CaseInsensitive;
+
+            return QString::compare(nameFilter.name(), landmark.name(), cs) == 0;
         }
         case QLandmarkFilter::ProximityFilter:
         {
