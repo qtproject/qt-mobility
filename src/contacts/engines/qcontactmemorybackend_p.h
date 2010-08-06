@@ -72,17 +72,11 @@
 #include "qcontactabstractrequest.h"
 #include "qcontactchangeset.h"
 
-#ifdef QT_SIMULATOR
-#include "contactconnection_simulator_p.h"
-#endif
-#ifdef SIMULATOR_APPLICATION
-    class MobilityClient;
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 class QContactAbstractRequest;
 class QContactManagerEngine;
+class QContactMemoryEngine;
 class QContactMemoryEngineData : public QSharedData
 {
 public:
@@ -107,6 +101,8 @@ public:
     ~QContactMemoryEngineData()
     {
     }
+
+    static QContactMemoryEngineData *data(QContactMemoryEngine *engine);
 
     QAtomicInt m_refCount;
     QString m_id;                                  // the id parameter value
@@ -223,17 +219,13 @@ protected:
     virtual bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
     virtual bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
 
+private:
     void performAsynchronousOperation(QContactAbstractRequest* request);
 
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngineData*> engineDatas;
 
-#ifdef SIMULATOR_APPLICATION
-    friend class ::MobilityClient;
-#endif
-#ifdef QT_SIMULATOR
-    friend class Simulator::ContactConnection;
-#endif
+    friend class QContactMemoryEngineData;
 };
 
 QTM_END_NAMESPACE
