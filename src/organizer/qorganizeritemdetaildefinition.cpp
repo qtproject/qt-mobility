@@ -46,6 +46,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QOrganizerItemDetailDefinition
+  \brief The QOrganizerItemDetailDefintion class provides the specification for fields in a detail.
+  \inmodule QtOrganizer
 
   The QOrganizerItemDetailDefinition class provides the specification for
   a detail that can be included in any particular QOrganizerItem.
@@ -112,7 +114,7 @@ void QOrganizerItemDetailDefinition::setName(const QString& definitionName)
 }
 
 /*!
-  Sets whether a organizeritem can have more than one detail of this type.
+  Sets whether an organizer item can have more than one detail of this type.
   If \a unique is true, only one detail of this type can be added.
   Otherwise, any number can be added.
  */
@@ -127,7 +129,7 @@ QString QOrganizerItemDetailDefinition::name() const
     return d->m_name;
 }
 
-/*! Returns the per-organizeritem uniqueness of this definition */
+/*! Returns the per-organizer item uniqueness of this definition */
 bool QOrganizerItemDetailDefinition::isUnique() const
 {
     return d->m_unique;

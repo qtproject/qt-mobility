@@ -45,6 +45,10 @@
 #include "qmobilityglobal.h"
 
 #include <QList>
+#include <QObject>
+
+class QPainter;
+class QRectF;
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,8 +57,12 @@ class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
 
-class Q_LOCATION_EXPORT QGeoMapObject
+class QGeoMapDataPrivate;
+
+class Q_LOCATION_EXPORT QGeoMapObject : public QObject
 {
+    Q_OBJECT
+
 public:
     enum Type {
         ContainerType,
@@ -63,6 +71,7 @@ public:
         PolylineType,
         PolygonType,
         MarkerType,
+        GeoRouteType
     };
 
     QGeoMapObject(QGeoMapObject *parent = 0);
@@ -86,16 +95,24 @@ public:
     void removeChildObject(QGeoMapObject *childObject);
     QList<QGeoMapObject*> childObjects() const;
 
+    void objectUpdate();
+    void mapUpdate();
+
+    bool operator<(const QGeoMapObject &other) const;
+    bool operator>(const QGeoMapObject &other) const;
+
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
 
     QGeoMapObjectPrivate *d_ptr;
 
 private:
-
+    QGeoMapObject(QGeoMapDataPrivate *mapData);
 
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
+
+    friend class QGeoMapDataPrivate;
 };
 
 QTM_END_NAMESPACE

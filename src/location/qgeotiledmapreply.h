@@ -72,6 +72,8 @@ public:
     Error error() const;
     QString errorString() const;
 
+    bool isCached() const;
+
     QGeoTiledMapRequest request() const;
 
     QByteArray mapImageData() const;
@@ -87,6 +89,8 @@ signals:
 protected:
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
+
+    void setCached(bool cached);
 
     void setMapImageData(const QByteArray &data);
     void setMapImageFormat(const QString &format);

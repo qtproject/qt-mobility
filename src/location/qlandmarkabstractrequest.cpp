@@ -61,7 +61,7 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
 
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality
@@ -91,7 +91,6 @@ QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManage
     Defines the possible states of asynchronous requests.
     \value  InactiveState Operation not yet started.
     \value  ActiveState Operation started, not yet finished.
-    \value  CanceledState Operation is finished due to cancelation.
     \value  FinishedState Operation completed.  (Can be mean either successful or
             unsuccessful completion).
 */
@@ -166,16 +165,6 @@ bool QLandmarkAbstractRequest::isActive() const
 bool QLandmarkAbstractRequest::isFinished() const
 {
     return d_ptr->state == QLandmarkAbstractRequest::FinishedState;
-}
-
-/*!
-    Returns true if the request is in the \c QLandmarkAbstractRequest::Canceled state;
-    otherwise, returns false.
-    \sa state()
-*/
-bool QLandmarkAbstractRequest::isCanceled() const
-{
-    return d_ptr->state == QLandmarkAbstractRequest::CanceledState;
 }
 
 /*!
@@ -259,9 +248,8 @@ bool QLandmarkAbstractRequest::cancel()
 
     if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
         return engine->cancelRequest(this);
-    else {
+    else
         return true;
-    }
 }
 
 /*!
@@ -285,7 +273,6 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     switch(d_ptr->state) {
         case QLandmarkAbstractRequest::ActiveState:
             return engine->waitForRequestFinished(this, msecs);
-        case QLandmarkAbstractRequest::CanceledState:
         case QLandmarkAbstractRequest::FinishedState:
             return true;
         default:

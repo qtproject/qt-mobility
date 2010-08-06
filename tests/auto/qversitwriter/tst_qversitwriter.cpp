@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//TESTED_COMPONENT=src/versit
+
 #include "tst_qversitwriter.h"
 #include "qversitwriter.h"
 #include "qversitdocument.h"
@@ -312,6 +314,15 @@ void tst_QVersitWriter::testWritingDocument_data()
     QTest::newRow("basic vCard 3.0") << document << QByteArray(
             "BEGIN:VCARD\r\n"
             "VERSION:3.0\r\n"
+            "FN:Bob\r\n"
+            "END:VCARD\r\n"
+            );
+
+    document.setComponentType(QLatin1String("VCARD"));
+    document.setType(QVersitDocument::VCard40Type);
+    QTest::newRow("basic vCard 4.0") << document << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:4.0\r\n"
             "FN:Bob\r\n"
             "END:VCARD\r\n"
             );

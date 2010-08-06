@@ -11,8 +11,12 @@ symbian {
 }
 maemo6:SUBDIRS += maemo6
 maemo5 {
-    SUBDIRS += maemo5
-    contains(build_unit_tests, yes):SUBDIRS += maemo5/tsrc
+    contains(maemo5-calendar_enabled, yes) {
+        SUBDIRS += maemo5
+        contains(build_unit_tests, yes):SUBDIRS += maemo5/tsrc
+    } else {
+        message("Unable to build organizer backend plugin for maemo5!  Please install calendar-backend-dev to build this plugin!")
+    }
 }
 
 # To start with

@@ -198,7 +198,7 @@ a particular search criteria:
     \snippet snippets/qtorganizerdocsample/qtorganizerdocsample.cpp Retrieving any entry (not occurrence) which matches a search criteria
 
 
-\section3 Modifying an existing item and saving the modifications
+\section3 \bold{Modifying an existing item and saving the modifications}
 
 The client retrieves an item, modifies one of its details, adds a new
 detail, and then saves the item back to the manager.

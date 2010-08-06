@@ -101,54 +101,125 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
 
     setCentralWidget(stack);
     showArtists();
+
+#ifdef Q_WS_MAEMO_5
+    setAttribute(Qt::WA_Maemo5StackedWindow);
+#endif
 }
 
 Browser::~Browser()
 {
 }
 
+void Browser::showArtists()
+{
+    showView(artistView, tr("Artists"));
+}
+
 void Browser::showArtists(const QVariant &containerId, const QString &title)
 {
-    artistView->showChildren(containerId);
+#ifdef Q_WS_MAEMO_5
+    ArtistView *artistView = new ArtistView(QDocumentGallery::Artist);
+    artistView->setGallery(gallery);
+    connect(artistView, SIGNAL(showAlbums(QVariant,QString)),
+            this, SLOT(showAlbums(QVariant,QString)));
+    connect(artistView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
+#endif
 
-    stack->setCurrentWidget(artistView);
+    showView(artistView, containerId, title);
+}
 
-    setWindowTitle(containerId.isValid() ? title : tr("Artists"));
+void Browser::showAlbumArtists()
+{
+    showView(albumArtistView, tr("Album Artists"));
 }
 
 void Browser::showAlbumArtists(const QVariant &containerId, const QString &title)
 {
-    albumArtistView->showChildren(containerId);
+#ifdef Q_WS_MAEMO_5
+    ArtistView *albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
+    albumArtistView->setGallery(gallery);
+    connect(albumArtistView, SIGNAL(showAlbums(QVariant,QString)),
+            this, SLOT(showAlbums(QVariant,QString)));
+    connect(albumArtistView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
+#endif
 
-    stack->setCurrentWidget(albumArtistView);
+    showView(albumArtistView, containerId, title);
+}
 
-    setWindowTitle(containerId.isValid() ? title : tr("Album Artists"));
+void Browser::showAlbums()
+{
+    showView(albumView, tr("Albums"));
 }
 
 void Browser::showAlbums(const QVariant &containerId, const QString &title)
 {
-    albumView->showChildren(containerId);
+#ifdef Q_WS_MAEMO_5
+    AlbumView *albumView = new AlbumView;
+    albumView->setGallery(gallery);
+    connect(albumView, SIGNAL(showSongs(QVariant,QString)),
+            this, SLOT(showSongs(QVariant,QString)));
+#endif
 
-    stack->setCurrentWidget(albumView);
+    showView(albumView, containerId, title);
+}
 
-    setWindowTitle(containerId.isValid() ? title : tr("Albums"));
+void Browser::showSongs()
+{
+    showView(songView, tr("Songs"));
 }
 
 void Browser::showSongs(const QVariant &containerId, const QString &title)
 {
-    songView->showChildren(containerId);
+#ifdef Q_WS_MAEMO_5
+    SongView *songView = new SongView;
+    songView->setGallery(gallery);
+#endif
 
-    stack->setCurrentWidget(songView);
+    showView(songView, containerId, title);
+}
 
-    setWindowTitle(containerId.isValid() ? title : tr("Songs"));
+void Browser::showPhotos()
+{
+    showView(photoView, tr("Photos"));
 }
 
 void Browser::showPhotos(const QVariant &containerId, const QString &title)
 {
-    photoView->showChildren(containerId);
+#ifdef Q_WS_MAEMO_5
+    PhotoView *photoView = new PhotoView;
+    photoView->setGallery(gallery);
+#endif
 
-    stack->setCurrentWidget(photoView);
-
-    setWindowTitle(containerId.isValid() ? title : tr("Photos"));
+    showView(photoView, containerId, title);
 }
 
+void Browser::showView(GalleryView *view, const QString &title)
+{
+    view->showChildren(QVariant());
+
+    stack->setCurrentWidget(view);
+
+    setWindowTitle(title);
+}
+
+void Browser::showView(GalleryView *view, const QVariant &containerId, const QString &title)
+{
+    view->showChildren(containerId);
+
+#ifdef Q_WS_MAEMO_5
+    QWidget *parent = qobject_cast<QWidget *>(sender());
+    if (parent)
+        view->setParent(parent->window(), Qt::Window);
+    view->setAttribute(Qt::WA_Maemo5StackedWindow);
+    view->setAttribute(Qt::WA_DeleteOnClose);
+    view->setWindowTitle(title);
+    view->show();
+#else
+    stack->setCurrentWidget(view);
+
+    setWindowTitle(title);
+#endif
+}

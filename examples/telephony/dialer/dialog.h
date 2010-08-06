@@ -38,14 +38,10 @@
 **
 ****************************************************************************/
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#include "ui_dialog.h"
 
-#include <QDialog>
-
-namespace Ui {
-    class Dialog;
-}
+#ifndef DIALOG_H_
+#define DIALOG_H_
 
 class Dialer;
 class Dialog : public QDialog {
@@ -71,7 +67,7 @@ private slots:
     void button9() { addNumber(9); }
 
 private:
-    Ui::Dialog *ui;
+    Ui_Dialog ui;
     void addNumber(int val);
     Dialer* dialer;
 };

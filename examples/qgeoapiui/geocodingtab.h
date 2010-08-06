@@ -47,6 +47,7 @@
 
 class QTreeWidget;
 class QLineEdit;
+class QPushButton;
 
 QTM_USE_NAMESPACE
 
@@ -76,5 +77,6 @@ private:
     QLineEdit *m_street;
     QLineEdit *m_streetNumber;
     QTreeWidget *m_resultTree;
+    QPushButton *requestBtn;
 };
 #endif /* ROUTETAB_H_ */

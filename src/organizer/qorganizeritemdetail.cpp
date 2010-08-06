@@ -70,15 +70,16 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 /*!
   \class QOrganizerItemDetail
 
-  \brief The QOrganizerItemDetail class represents a single, complete detail about a organizeritem.
+  \brief The QOrganizerItemDetail class represents a single, complete detail about an organizer item.
+  \inmodule QtOrganizer
   \ingroup organizer-main
 
-  All of the information for a organizeritem is stored in one or more QOrganizerItemDetail objects.
+  All of the information for an organizer item is stored in one or more QOrganizerItemDetail objects.
 
   A detail is a group of logically related bits of data - for example, a street address is a single
   detail that has multiple fields (number, region, country etc).  Every QOrganizerItemDetail has the name of an
   associated QOrganizerItemDetailDefinition that describes the fields, their data type, and any
-  restrictions on their values.  Different organizeritem managers might have different detail definitions
+  restrictions on their values.  Different organizer item managers might have different detail definitions
   for the same name, depending on their capabilities.  For example, for the QOrganizerItemGeoLocation definition name,
   one manager might not support the altitude field, while a different manager may add an extra field for
   specific extra information not present in the default schema.
@@ -91,7 +92,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
   access constraints provided with it, like \l ReadOnly or \l Irremovable.  This might mean that the
   supplied detail is calculated or otherwise not modifiable by the user.
   Also, some details may be marked \l Irremovable.  These are typically things that
-  a organizeritem has to have - like a QOrganizerItemType.
+  an organizer item has to have - like a QOrganizerItemType.
 
   It is possible to inherit from QOrganizerItemDetail to provide convenience or
   standardized access to values.  For example, \l QOrganizerEventTimeRange provides
@@ -104,7 +105,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
     of a field start with the name of that field
   (e.g. \c TypeEvent is a predefined constant for \c FieldType).
 
-  If you wish to create your own, customized organizeritem detail, you should use
+  If you wish to create your own, customized organizer item detail, you should use
   the \l Q_DECLARE_CUSTOM_ORGANIZER_DETAIL macro in order to ensure proper
   operation, and declare your own field constants with \l Q_DECLARE_LATIN1_CONSTANT.
   See the predefined detail subclasses (like \l QOrganizerEventTimeRange,
@@ -153,7 +154,7 @@ Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
 
   If you are creating a convenience class for a type of QOrganizerItemDetail,
   you should use this macro when declaring your class to ensure that
-  it interoperates with other organizeritem functionality.
+  it interoperates with other organizer item functionality.
 
   Here is an example of a class (\l QOrganizerItemDescription) using this macro.
   Note that the class provides some predefined constants
@@ -304,7 +305,7 @@ QString QOrganizerItemDetail::definitionName() const
 
 /*!
     Compares this detail to \a other.  Returns true if the definition, access constraints and values of \a other are equal to those of this detail.
-    The keys of each detail are not considered during the comparison, in order to allow details from different organizeritems to
+    The keys of each detail are not considered during the comparison, in order to allow details from different organizer items to
     be compared according to their values.
  */
 bool QOrganizerItemDetail::operator==(const QOrganizerItemDetail& other) const
@@ -561,11 +562,11 @@ QVariantMap QOrganizerItemDetail::variantValues() const
   \enum QOrganizerItemDetail::AccessConstraint
 
   This enum defines the access constraints for a detail.  This information is typically provided by
-  the manager when a organizeritem is retrieved.
+  the manager when an organizer item is retrieved.
 
   \value NoConstraint Users can read, write, and otherwise modify this detail in any manner.
   \value ReadOnly Users cannot write or modify values in this detail.
-  \value Irremovable Users cannot remove this detail from a organizeritem.
+  \value Irremovable Users cannot remove this detail from an organizer item.
  */
 
 
@@ -573,7 +574,7 @@ QVariantMap QOrganizerItemDetail::variantValues() const
   Returns the access constraints associated with the detail.
 
   Some details may not be written to, while other details may
-  not be removed from a organizeritem.
+  not be removed from an organizer item.
 
   \sa QOrganizerItemDetail::AccessConstraints
  */

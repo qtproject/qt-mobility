@@ -77,6 +77,8 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
+    void startPanning();
+    void stopPanning();
     void pan(int dx, int dy);
 
     void setCenter(const QGeoCoordinate &center);
@@ -103,7 +105,7 @@ protected:
 signals:
     void zoomLevelChanged(qreal zoomLevel);
     void centered(const QGeoCoordinate &coordinate);
-    void mapTypeChanged(MapType mapType);
+    void mapTypeChanged(QGeoMapWidget::MapType mapType);
 
 private:
     QGeoMapWidgetPrivate *d_ptr;

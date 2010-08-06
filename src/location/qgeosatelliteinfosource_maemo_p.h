@@ -81,11 +81,13 @@ private Q_SLOTS:
     void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
     void onServiceDisconnect();
     void onServiceConnect();
+    void requestTimerExpired();
 
 private:
     DBusComm* dbusComm;
-    bool registered;
     bool running;
+    bool satInViewSeen;
+    QTimer* requestTimer; 
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 

@@ -106,129 +106,126 @@ bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 */
 bool QGeoBoundingBox::isValid() const
 {
-    return ((d_ptr->center.isValid())
-            && (qIsFinite(d_ptr->width))
-            && (qIsFinite(d_ptr->height)));
+    return (d_ptr->topLeft.isValid() && d_ptr->bottomRight.isValid());
 }
 
 /*!
 */
 bool QGeoBoundingBox::isEmpty() const
 {
-    return ((d_ptr->width == 0.0) || (d_ptr->height == 0.0));
+    return (!isValid() || (d_ptr->topLeft == d_ptr->bottomRight));
 }
 
 /*!
 */
 QGeoCoordinate QGeoBoundingBox::topLeft() const
 {
-    return QGeoCoordinate(d_ptr->center.latitude() + (d_ptr->height / 2.0),
-                          d_ptr->center.longitude() - (d_ptr->width / 2.0));
+    return d_ptr->topLeft;
 }
 
 /*!
 */
 QGeoCoordinate QGeoBoundingBox::topRight() const
 {
-    return QGeoCoordinate(d_ptr->center.latitude() + (d_ptr->height / 2.0),
-                          d_ptr->center.longitude() + (d_ptr->width / 2.0));
+    return QGeoCoordinate(d_ptr->topLeft.latitude(), d_ptr->bottomRight.longitude());
 }
 
 /*!
 */
 QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 {
-    return QGeoCoordinate(d_ptr->center.latitude() - (d_ptr->height / 2.0),
-                          d_ptr->center.longitude() - (d_ptr->width / 2.0));
+    return QGeoCoordinate(d_ptr->bottomRight.latitude(), d_ptr->topLeft.longitude());
 }
 
 /*!
 */
 QGeoCoordinate QGeoBoundingBox::bottomRight() const
 {
-    return QGeoCoordinate(d_ptr->center.latitude() - (d_ptr->height / 2.0),
-                          d_ptr->center.longitude() + (d_ptr->width / 2.0));
+    return d_ptr->bottomRight;
 }
 
 /*!
 */
 void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 {
-    d_ptr->center = center;
+//    d_ptr->center = center;
 }
 
 /*!
 */
 QGeoCoordinate QGeoBoundingBox::center() const
 {
-    return d_ptr->center;
+//    return d_ptr->center;
+    return QGeoCoordinate();
 }
 
 /*!
 */
 void QGeoBoundingBox::setWidth(double degreesWidth)
 {
-    if (degreesWidth > 360.0)
-        d_ptr->width = 360.0;
-    else
-        d_ptr->width = degreesWidth;
+//    if (degreesWidth > 360.0)
+//        d_ptr->width = 360.0;
+//    else
+//        d_ptr->width = degreesWidth;
 }
 
 /*!
 */
 double QGeoBoundingBox::width() const
 {
-    return d_ptr->width;
+//    return d_ptr->width;
+    return 0.0;
 }
 
 /*!
 */
 void QGeoBoundingBox::setHeight(double degreesHeight)
 {
-    if (degreesHeight > 360.0)
-        d_ptr->height = 360.0;
-    else
-        d_ptr->height = degreesHeight;
+//    if (degreesHeight > 360.0)
+//        d_ptr->height = 360.0;
+//    else
+//        d_ptr->height = degreesHeight;
 }
 
 /*!
 */
 double QGeoBoundingBox::height()
 {
-    return d_ptr->height;
+//    return d_ptr->height;
+    return 0.0;
 }
 
 /*!
 */
 bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
 {
-    double leftBound = QGeoBoundingBoxPrivate::degreesLeft(d_ptr->center.longitude(), d_ptr->width / 2.0);
-    double rightBound = QGeoBoundingBoxPrivate::degreesRight(d_ptr->center.longitude(), d_ptr->width / 2.0);
-    double topBound = QGeoBoundingBoxPrivate::degreesUp(d_ptr->center.latitude(), d_ptr->height / 2.0);
-    double bottomBound = QGeoBoundingBoxPrivate::degreesDown(d_ptr->center.latitude(), d_ptr->height / 2.0);
+//    double leftBound = d_ptr->topLeft.longitude();
+//    double rightBound = d_ptr->bottomRight.lat
+//    double topBound = QGeoBoundingBoxPrivate::degreesUp(d_ptr->center.latitude(), d_ptr->height / 2.0);
+//    double bottomBound = QGeoBoundingBoxPrivate::degreesDown(d_ptr->center.latitude(), d_ptr->height / 2.0);
 
-    if ((d_ptr->width == 0.0) || (d_ptr->height == 0.0))
-        return false;
+//    if ((d_ptr->width == 0.0) || (d_ptr->height == 0.0))
+//        return false;
 
-    if (d_ptr->width != 360.0) {
-        if (leftBound < rightBound) {
-            if ((coordinate.longitude() < leftBound) || (rightBound < coordinate.longitude()))
-                return false;
-        } else {
-            if ((leftBound < coordinate.longitude()) && (coordinate.longitude() < rightBound))
-                return false;
-        }
-    }
+//    if (d_ptr->width != 360.0) {
+//        if (leftBound < rightBound) {
+//            if ((coordinate.longitude() < leftBound) || (rightBound < coordinate.longitude()))
+//                return false;
+//        } else {
+//            if ((leftBound < coordinate.longitude()) && (coordinate.longitude() < rightBound))
+//                return false;
+//        }
+//    }
 
-    if (d_ptr->height != 360.0) {
-        if (bottomBound < topBound) {
-            if ((coordinate.latitude() < bottomBound) || (topBound < coordinate.latitude()))
-                return false;
-        } else {
-            if ((bottomBound < coordinate.latitude()) && (coordinate.latitude() < topBound))
-                return false;
-        }
-    }
+//    if (d_ptr->height != 360.0) {
+//        if (bottomBound < topBound) {
+//            if ((coordinate.latitude() < bottomBound) || (topBound < coordinate.latitude()))
+//                return false;
+//        } else {
+//            if ((bottomBound < coordinate.latitude()) && (coordinate.latitude() < topBound))
+//                return false;
+//        }
+//    }
 
     return true;
 }
@@ -259,10 +256,10 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
 {
     // TODO - mod degrees latitude into -90 < dlat < 90
     // TODO - mod degrees longitude into -180 < dlon < 180
-    QGeoCoordinate center = d_ptr->center;
-    center.setLatitude(QGeoBoundingBoxPrivate::latitudeShift(center.latitude(), degreesLatitude));
-    center.setLongitude(QGeoBoundingBoxPrivate::longitudeShift(center.longitude(), degreesLongitude));
-    d_ptr->center = center;
+//    QGeoCoordinate center = d_ptr->center;
+//    center.setLatitude(QGeoBoundingBoxPrivate::latitudeShift(center.latitude(), degreesLatitude));
+//    center.setLongitude(QGeoBoundingBoxPrivate::longitudeShift(center.longitude(), degreesLongitude));
+//    d_ptr->center = center;
 }
 
 /*!
@@ -328,115 +325,94 @@ QGeoBoundingBox& QGeoBoundingBox::operator &= (const QGeoBoundingBox & boundingB
 *******************************************************************************/
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate()
-    : QSharedData(),
-      width(0.0),
-      height(0.0)
-{
-}
+    : QSharedData() {}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
-        : QSharedData(),
-        center(center),
-        width(degreesWidth),
-        height(degreesHeight)
+        : QSharedData()
 {
-    if (degreesWidth > 360.0)
-        width = 360.0;
-    if (degreesHeight > 360.0)
-        height = 360.0;
+    // TODO
 }
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-        : QSharedData()
-{
-    center = QGeoCoordinate((topLeft.latitude() + bottomRight.latitude()) / 2.0,
-                            (topLeft.longitude() + bottomRight.longitude()) / 2.0);
-
-    width = degreesLeft(center.longitude(), topLeft.longitude())
-            + degreesRight(center.longitude(), bottomRight.longitude());
-    height = degreesUp(center.latitude(), topLeft.latitude())
-             + degreesDown(center.latitude(), bottomRight.latitude());
-}
+        : QSharedData(),
+        topLeft(topLeft),
+        bottomRight(bottomRight) {}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
         : QSharedData(),
-        center(other.center),
-        width(other.width),
-        height(other.height) {}
+        topLeft(other.topLeft),
+        bottomRight(other.bottomRight) {}
 
 QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
 
 QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate & other)
 {
-    center = other.center;
-    width = other.width;
-    height = other.height;
+    topLeft = other.topLeft;
+    bottomRight = other.bottomRight;
 
     return *this;
 }
 
 bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) const
 {
-    return ((center == other.center)
-            && (qFuzzyCompare(width,other.width))
-            && (qFuzzyCompare(height,other.height)));
+    return ((topLeft == other.topLeft) && (bottomRight == other.bottomRight));
 }
 
-// assumes longitude is in the range  -180 <= l <= 180
-double QGeoBoundingBoxPrivate::longitudeShift(double longitudeFrom, double delta)
-{
-    double result = longitudeFrom + delta;
+//// assumes longitude is in the range  -180 <= l <= 180
+//double QGeoBoundingBoxPrivate::longitudeShift(double longitudeFrom, double delta)
+//{
+//    double result = longitudeFrom + delta;
 
-    if (result < -180.0)
-        result += 360.0;
-    else if (result > 180.0)
-        result -= 360.0;
+//    if (result < -180.0)
+//        result += 360.0;
+//    else if (result > 180.0)
+//        result -= 360.0;
 
-    return result;
-}
+//    return result;
+//}
 
-// assumes latitude is in the range  -90 <= l <= 90
-double QGeoBoundingBoxPrivate::latitudeShift(double latitudeFrom, double delta)
-{
-    double result = latitudeFrom + delta;
+//// assumes latitude is in the range  -90 <= l <= 90
+//double QGeoBoundingBoxPrivate::latitudeShift(double latitudeFrom, double delta)
+//{
+//    double result = latitudeFrom + delta;
 
-    if (result < -90.0)
-        result = -180.0 - result;
-    else if (result > 90.0)
-        result = 180.0 - result;
+//    if (result < -90.0)
+//        result = -180.0 - result;
+//    else if (result > 90.0)
+//        result = 180.0 - result;
 
-    return result;
-}
+//    return result;
+//}
 
-// assumes longitude is in the range  -180 <= l <= 180
-double QGeoBoundingBoxPrivate::degreesLeft(double longitudeFrom, double longitudeTo)
-{
-    if (longitudeFrom >= longitudeTo)
-        return longitudeFrom - longitudeTo;
-    else
-        return 360.0 + longitudeFrom - longitudeTo;
-}
+//// assumes longitude is in the range  -180 <= l <= 180
+//double QGeoBoundingBoxPrivate::degreesLeft(double longitudeFrom, double longitudeTo)
+//{
+//    if (longitudeFrom >= longitudeTo)
+//        return longitudeFrom - longitudeTo;
+//    else
+//        return 360.0 + longitudeFrom - longitudeTo;
+//}
 
-// assumes longitude is in the range  -180 <= l <= 180
-double QGeoBoundingBoxPrivate::degreesRight(double longitudeFrom, double longitudeTo)
-{
-    return degreesLeft(longitudeTo, longitudeFrom);
-}
+//// assumes longitude is in the range  -180 <= l <= 180
+//double QGeoBoundingBoxPrivate::degreesRight(double longitudeFrom, double longitudeTo)
+//{
+//    return degreesLeft(longitudeTo, longitudeFrom);
+//}
 
-// assumes latitude is in the range  -90 <= l <= 90
-double QGeoBoundingBoxPrivate::degreesUp(double latitudeFrom, double latitudeTo)
-{
-    if (latitudeTo >= latitudeFrom)
-        return latitudeTo - latitudeFrom;
-    else
-        return 180.0 + latitudeTo - latitudeFrom;
-}
+//// assumes latitude is in the range  -90 <= l <= 90
+//double QGeoBoundingBoxPrivate::degreesUp(double latitudeFrom, double latitudeTo)
+//{
+//    if (latitudeTo >= latitudeFrom)
+//        return latitudeTo - latitudeFrom;
+//    else
+//        return 180.0 + latitudeTo - latitudeFrom;
+//}
 
-// assumes latitude is in the range  -90 <= l <= 90
-double QGeoBoundingBoxPrivate::degreesDown(double latitudeFrom, double latitudeTo)
-{
-    return degreesUp(latitudeTo, latitudeFrom);
-}
+//// assumes latitude is in the range  -90 <= l <= 90
+//double QGeoBoundingBoxPrivate::degreesDown(double latitudeFrom, double latitudeTo)
+//{
+//    return degreesUp(latitudeTo, latitudeFrom);
+//}
 
 QTM_END_NAMESPACE
 

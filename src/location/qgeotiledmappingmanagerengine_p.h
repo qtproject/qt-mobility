@@ -54,13 +54,19 @@
 //
 
 #include "qgeomappingmanagerengine_p.h"
+#include "qgeotiledmapreply.h"
 
 #include <QSize>
 #include <QRectF>
+#include <QList>
+#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerThread;
+class QGeoTiledMappingManagerEngine;
+class QGeoTiledMapRequestHandler;
+class QGeoTiledMapData;
+class QGeoTiledMapRequest;
 
 class QGeoTiledMappingManagerEnginePrivate : public QGeoMappingManagerEnginePrivate
 {
@@ -73,93 +79,7 @@ public:
 
     QList<QString> supportedImageFormats;
     QSize tileSize;
-    QGeoTiledMappingManagerThread *thread;
 };
-
-class QGeoTileIterator
-{
-public:
-    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
-    
-    bool hasNext();
-    void next();
-    int row() const;
-    int col() const;
-    int zoomLevel() const;
-    QRectF tileRect() const;
-
-private:
-    bool aHasNext;
-    int aRow;
-    int aCol;
-    QRectF aScreenRect;
-    QSize aTileSize;
-    int aZoomLevel;
-    QPointF currTopLeft;
-    QRectF aTileRect;
-};
-
-/*
-
-class QGeoTiledMapRequestHandler : public QObject
-{
-    Q_OBJECT
-public:
-    QGeoTiledMapRequestHandler(QGeoTiledMapNetworkThread *thread, QGeoTiledMapViewport *viewport);
-    ~QGeoTiledMapRequestHandler();
-
-public slots:
-    void setRequests(const QList<QGeoTieldMapRequest> &requests);
-
-private slots:
-    void sendNextRequest();
-
-    void replyFinished();
-    void replyError(QGeoTiledMapReply::Error, const QString &errorString);
-
-signals:
-    void tileFinished(QGeoTieldMapReply *reply);
-    void tileError(QGeoTiledMapReply *reply, QGeoTieldMapReply::Error error, QString errorString);
-
-private:
-    QGeoTiledMapNetworkThread *m_thread;
-    QGeoTiledMapViewport *m_viewport;
-    QList<QGeoTiledMapRequest> m_queue;
-    QSet<QGeoTiledMapReply*> m_replies;
-};
-
-// TODO make public and subclassable - this is where the tile requests go
-// and the tile manager engine class acts as a factory and provided capability information
-class QGeoTiledMapNetworkThread : public QThread
-{
-    Q_OBJECT
-public:
-    QGeoTiledMapNetworkThread(QGeoTiledMappingManagerEngine *engine);
-    ~QGeoTiledMapNetworkThread();
-
-    QGeoTiledMappingManagerEngine *engine();
-    QNetworkAccessManager* networkAccessManager() const;
-
-    void removeViewport(QGeoTiledMapViewport* viewport);
-
-protected:
-    void run();
-
-public slots:
-    void setRequests(QGeoTiledMapViewport* viewport, const QList<QGeoMapTileRequest*> &requests);
-
-signals:
-    void tileFinished(QGeoMapTileResponse *response);
-    void tileError(QGeoMapTileResponse *response, QGeoMapReply::Error error, QString errorString);
-
-private:
-    QGeoTiledMappingManagerEngine *m_engine;
-    QNetworkAccessManager *m_networkManager;
-    QNetworkDiskCache *m_diskCache;
-
-    QHash<QGeoTiledMapViewport*, QGeoTiledMapRequestHandler*> m_handlers;
-};
-*/
 
 QTM_END_NAMESPACE
 

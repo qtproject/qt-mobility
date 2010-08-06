@@ -51,7 +51,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
 /*!
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRectF &tileRect)
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRect &tileRect)
         : d_ptr(new QGeoTiledMapRequestPrivate())
 {
     d_ptr->mapData = mapData;
@@ -127,16 +127,16 @@ int QGeoTiledMapRequest::column() const
 
 /*!
 */
-QRectF QGeoTiledMapRequest::tileRect() const
+QRect QGeoTiledMapRequest::tileRect() const
 {
     return d_ptr->tileRect;
 }
 
 uint qHash(const QGeoTiledMapRequest &key)
 {
-    uint result = QT_PREPEND_NAMESPACE(qHash)(key.row());
-    result += QT_PREPEND_NAMESPACE(qHash)(key.column());
-    result += QT_PREPEND_NAMESPACE(qHash)(key.zoomLevel());
+    uint result = QT_PREPEND_NAMESPACE(qHash)(key.row() * 13);
+    result += QT_PREPEND_NAMESPACE(qHash)(key.column() * 17);
+    result += QT_PREPEND_NAMESPACE(qHash)(key.zoomLevel() * 19);
     result += QT_PREPEND_NAMESPACE(qHash)(static_cast<int>(key.mapType()));
     return result;
 }

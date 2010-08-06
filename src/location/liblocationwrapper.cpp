@@ -41,6 +41,8 @@
 
 #include "liblocationwrapper_p.h"
 
+#include <QDateTime>
+
 using namespace std;
 
 QTM_BEGIN_NAMESPACE
@@ -166,7 +168,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_SPEED_SET) {
                 posInfo.setAttribute(QGeoPositionInfo::GroundSpeed,
-                                     device->fix->speed);
+                                     device->fix->speed / 3.6);
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_CLIMB_SET) {
@@ -212,30 +214,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 
     posInfo.setCoordinate(coordinate);
 
-    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) && 
-        ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
-         (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
-        object->setLocation(posInfo, true);
-    } else {
-        object->setLocation(posInfo, false);
-    }
-}
-
-void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
-                                     bool locationValid)
-{
-    validLastSatUpdate = locationValid;
-    lastSatUpdate = update;
-}
-
-QGeoPositionInfo LiblocationWrapper::position()
-{
-    return lastSatUpdate;
-}
-
-bool LiblocationWrapper::fixIsValid()
-{
-    return validLastSatUpdate;
+    emit object->positionUpdated(posInfo);
 }
 
 QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const

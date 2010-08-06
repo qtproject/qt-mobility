@@ -64,7 +64,8 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemMemoryEngine
   \brief The QOrganizerItemMemoryEngine class provides an in-memory implementation
-  of a organizeritems backend.
+  of an organizer item backend.
+  \inmodule QtOrganizer
  
   It may be used as a reference implementation, or when persistent storage is not required.
  
@@ -151,7 +152,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::item(const QOrganizerItemLocalId& org
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
     if (index != -1) {
-        // found the organizeritem successfully.
+        // found the organizer item successfully.
         *error = QOrganizerItemManager::NoError;
         return d->m_organizeritems.at(index);
     }
@@ -551,7 +552,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
 
     QList<QOrganizerItem> sorted;
 
-    /* First filter out organizeritems - check for default filter first */
+    /* First filter out organizer items - check for default filter first */
     if (filter.type() == QOrganizerItemFilter::DefaultFilter) {
         foreach(const QOrganizerItem&c, d->m_organizeritems) {
             QOrganizerItemManagerEngine::addSorted(&sorted,c, sortOrders);
@@ -566,16 +567,16 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
     return sorted;
 }
 
-/*! Saves the given organizeritem \a theOrganizerItem, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems as required */
+/*! Saves the given organizer item \a theOrganizerItem, storing any error to \a error and
+    filling the \a changeSet with ids of changed organizer items as required */
 bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
-    // ensure that the organizeritem's details conform to their definitions
+    // ensure that the organizer item's details conform to their definitions
     if (!validateItem(*theOrganizerItem, error)) {
         return false;
     }
 
-    // check to see if this organizeritem already exists
+    // check to see if this organizer item already exists
     int index = d->m_organizeritemIds.indexOf(theOrganizerItem->id().localId());
     if (index != -1) {
         /* We also need to check that there are no modified create only details */
@@ -603,19 +604,19 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         QOrganizerItemId newId;
         newId.setManagerUri(managerUri());
         if (theOrganizerItem->id() != QOrganizerItemId() && theOrganizerItem->id() != newId) {
-            // the ID is not empty, and it doesn't identify an existing organizeritem in our database either.
+            // the ID is not empty, and it doesn't identify an existing organizer item in our database either.
             *error = QOrganizerItemManager::DoesNotExistError;
             return false;
         }
 
-        /* New organizeritem */
+        /* New organizer item */
         QOrganizerItemTimestamp ts = theOrganizerItem->detail(QOrganizerItemTimestamp::DefinitionName);
         ts.setLastModified(QDateTime::currentDateTime());
         ts.setCreated(ts.lastModified());
         setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
-        // update the organizeritem item - set its ID
+        // update the organizer item - set its ID
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
@@ -623,9 +624,9 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
             return false;
         }
 
-        // finally, add the organizeritem to our internal lists and return
-        d->m_organizeritems.append(*theOrganizerItem);                   // add organizeritem to list
-        d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizeritem id.
+        // finally, add the organizer item to our internal lists and return
+        d->m_organizeritems.append(*theOrganizerItem);                   // add organizer item to list
+        d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizer item id.
 
         changeSet.insertAddedItem(theOrganizerItem->localId());
 
@@ -749,8 +750,8 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
     return (*error == QOrganizerItemManager::NoError);
 }
 
-/*! Removes the organizeritem identified by the given \a organizeritemId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems and relationships as required */
+/*! Removes the organizer item identified by the given \a organizeritemId, storing any error to \a error and
+    filling the \a changeSet with ids of changed organizer items and relationships as required */
 bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     int index = d->m_organizeritemIds.indexOf(organizeritemId);
@@ -760,7 +761,7 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
         return false;
     }
 
-    // remove the organizeritem from the lists.
+    // remove the organizer item from the lists.
     QOrganizerItemId thisOrganizerItem;
     thisOrganizerItem.setManagerUri(managerUri());
     thisOrganizerItem.setLocalId(organizeritemId);
@@ -811,7 +812,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMemoryEngine::detail
 }
 
 /*! Saves the given detail definition \a def, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems as required */
+    filling the \a changeSet with ids of changed organizer items as required */
 bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
@@ -840,11 +841,11 @@ bool QOrganizerItemMemoryEngine::saveDetailDefinition(const QOrganizerItemDetail
 }
 
 /*! Removes the detail definition identified by \a definitionId, storing any error to \a error and
-    filling the \a changeSet with ids of changed organizeritems as required */
+    filling the \a changeSet with ids of changed organizer items as required */
 bool QOrganizerItemMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...
-    // we should also check to see if the changes have invalidated any organizeritem data, and add the ids of those organizeritems
+    // we should also check to see if the changes have invalidated any organizer item data, and add the ids of those organizer items
     // to the change set.  TODO!
     Q_UNUSED(changeSet);
 
@@ -968,8 +969,8 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
         case QOrganizerItemAbstractRequest::ItemRemoveRequest:
         {
             // this implementation provides scant information to the user
-            // the operation either succeeds (all organizeritems matching the filter were removed)
-            // or it fails (one or more organizeritems matching the filter could not be removed)
+            // the operation either succeeds (all organizer items matching the filter were removed)
+            // or it fails (one or more organizer items matching the filter could not be removed)
             // if a failure occurred, the request error will be set to the most recent
             // error that occurred during the remove operation.
             QOrganizerItemRemoveRequest* r = static_cast<QOrganizerItemRemoveRequest*>(currentRequest);

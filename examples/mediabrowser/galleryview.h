@@ -58,7 +58,7 @@ class GalleryView : public QWidget
 {
     Q_OBJECT
 public:
-    GalleryView(QWidget *parent = 0);
+    GalleryView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~GalleryView();
 
     QAbstractGallery *gallery() const;

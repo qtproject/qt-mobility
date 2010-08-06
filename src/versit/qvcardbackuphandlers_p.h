@@ -76,8 +76,8 @@ public:
     QVCardImporterBackupHandler();
     void propertyProcessed(const QVersitDocument& document,
                            const QVersitProperty& property,
-                           bool alreadyProcessed,
                            const QContact& contact,
+                           bool* alreadyProcessed,
                            QList<QContactDetail>* updatedDetails);
     void documentProcessed(const QVersitDocument& document,
                            QContact* contact);
@@ -95,8 +95,8 @@ public:
     QVCardExporterBackupHandler();
     void detailProcessed(const QContact& contact,
                          const QContactDetail& detail,
-                         const QSet<QString>& processedFields,
                          const QVersitDocument& document,
+                         QSet<QString>* processedFields,
                          QList<QVersitProperty>* toBeRemoved,
                          QList<QVersitProperty>* toBeAdded);
     void contactProcessed(const QContact& contact,

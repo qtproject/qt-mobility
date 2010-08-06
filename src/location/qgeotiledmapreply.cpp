@@ -120,6 +120,16 @@ QString QGeoTiledMapReply::errorString() const
     return d_ptr->errorString;
 }
 
+bool QGeoTiledMapReply::isCached() const
+{
+    return d_ptr->isCached;
+}
+
+void QGeoTiledMapReply::setCached(bool cached)
+{
+    d_ptr->isCached = cached;
+}
+
 QGeoTiledMapRequest QGeoTiledMapReply::request() const
 {
     return d_ptr->request;
@@ -168,17 +178,20 @@ QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &re
         : error(QGeoTiledMapReply::NoError),
         errorString(""),
         isFinished(false),
+        isCached(false),
         request(request) {}
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString)
         : error(error),
         errorString(errorString),
-        isFinished(true) {}
+        isFinished(true),
+        isCached(false) {}
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapReplyPrivate &other)
-        : error(error),
-        errorString(errorString),
-        isFinished(isFinished),
+        : error(other.error),
+        errorString(other.errorString),
+        isFinished(other.isFinished),
+        isCached(other.isCached),
         request(other.request),
         mapImageData(other.mapImageData),
         mapImageFormat(other.mapImageFormat) {}
@@ -190,6 +203,7 @@ QGeoTiledMapReplyPrivate& QGeoTiledMapReplyPrivate::operator= (const QGeoTiledMa
     error = other.error;
     errorString = other.errorString;
     isFinished = other.isFinished;
+    isCached = other.isCached;
     request = other.request;
     mapImageData = other.mapImageData;
     mapImageFormat = other.mapImageFormat;

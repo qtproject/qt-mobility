@@ -107,9 +107,8 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::contactFilter(const QVariant& value) const
+  \fn QContactAction::contactFilter() const
   Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
-  If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
  */
 
 /*!

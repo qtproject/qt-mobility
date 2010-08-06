@@ -66,7 +66,8 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEng
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return 0;
+    return new QGeoSearchManagerEngineNokia(parameters, error, errorString);
+    //return 0;
 }
 
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,

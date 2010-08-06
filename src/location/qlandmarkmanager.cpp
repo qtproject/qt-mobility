@@ -100,7 +100,7 @@ QTM_USE_NAMESPACE
     Categories may be retrieved in a similar manner:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve categories synchronously simple
 
-    \section2 Saving and deleting
+    \section1 Saving and deleting
     Saving and deleting landmarks and categories are fairly straightforward.  To add a new landmark or category
     simply instantiate a QLandmark or QLandmarkCategory, set its data fields(e.g name, coordiante etc) and pass
     a pointer to the appropriate save operation.  For example:
@@ -113,7 +113,7 @@ QTM_USE_NAMESPACE
     Removal of landmark may be done as follows:
     \snippet doc/src/snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously simple
 
-    \section2 Importing and exporting
+    \section1 Importing and exporting
     Import and exporting are potentially long operations, to perform these operations asynchronously
     see QLandmarkImportRequest and QLandmarkExportRequest.  The simplest way to perform import and export
     operations is to specify a filename:
@@ -142,6 +142,8 @@ QTM_USE_NAMESPACE
     \value InvalidManagerError The most recent operation failed because the manager failed to initialize correctly and is invalid.
            This could be due using a manager name that is not recognised/available. A landmark request object will return this error if
            if is assigned a null manager pointer.
+    \value ParsingError The most recent operation failed because the imported file could not be parsed.
+    \value CancelError The most recent operation failed to complete due to user cancelation.
     \value UnknownError The most recent operation failed for an unknown reason.
 */
 
@@ -741,7 +743,6 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray
 {
     Q_D(QLandmarkManager);
     QFile file(fileName);
-
     return importLandmarks(&file, format);
 }
 
@@ -786,12 +787,7 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray
 {
     QFile file(fileName);
 
-    if (!file.open(QIODevice::WriteOnly)) {
-        // TODO set error
-        return false;
-    }
-
-    return exportLandmarks(&file, format, landmarkIds);
+    return exportLandmarks(&file, format,landmarkIds);
 }
 
 /*!
@@ -827,7 +823,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feat
         return false;
     }
 
-    return d->engine->isFeatureSupported(feature);
+    return d->engine->isFeatureSupported(feature, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -843,9 +839,30 @@ QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const 
         return QLandmarkManager::None;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->filterSupportLevel(filter);
+    return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
+}
+
+QStringList QLandmarkManager::platformLandmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
+QStringList QLandmarkManager::platformCategoryAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+    return  d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -861,9 +878,7 @@ bool QLandmarkManager::isReadOnly() const
         return true;
     }
 
-    d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
-    return d->engine->isReadOnly();
+    return d->engine->isReadOnly(&(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -882,7 +897,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
         return true;
     }
 
-    return d->engine->isReadOnly(landmarkId);
+    return d->engine->isReadOnly(landmarkId, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -901,7 +916,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
         return true;
     }
 
-    return d->engine->isReadOnly(categoryId);
+    return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
 }
 
 /*!
@@ -1105,10 +1120,17 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 }
 
 /*!
+    \fn QLandmarkManager::dataChanged()
+    This signal is emitted by the manager if its internal state changes and it is unable to precisely determine
+    the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload
+    all data.  If the signal is emitted, no other signals will be emitted for the associated changes.
+*/
+
+/*!
     \fn void QLandmarkManager::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been added to the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksChanged(), landmarksRemoved()
 */
 
@@ -1116,7 +1138,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksAdded(), landmarksRemoved()
 */
 
@@ -1124,7 +1146,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been removed from the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa landmarksAdded(), landmarksChanged()
 */
 
@@ -1132,7 +1154,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been added to the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesChanged(), categoriesRemoved()
 */
 
@@ -1140,7 +1162,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been modified in the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesAdded(), categoriesRemoved()
 */
 
@@ -1148,7 +1170,7 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been removed from the datastore managed by this manager.
-
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
     \sa categoriesAdded(), categoriesChanged()
 */
 

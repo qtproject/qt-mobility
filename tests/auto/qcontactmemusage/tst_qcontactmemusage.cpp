@@ -44,6 +44,7 @@
 
 #include "qtcontacts.h"
 
+//TESTED_COMPONENT=src/contacts
 //TESTED_CLASS=
 //TESTED_FILES=
 

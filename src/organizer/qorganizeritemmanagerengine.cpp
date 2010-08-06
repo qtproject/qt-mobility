@@ -62,6 +62,8 @@ QTM_BEGIN_NAMESPACE
   \class QOrganizerItemManagerEngine
   \brief The QOrganizerItemManagerEngine class provides the interface for all
   implementations of the organizer item manager backend functionality.
+
+  \inmodule QtOrganizer
   \ingroup organizer-backends
 
   Instances of this class are usually provided by a
@@ -102,12 +104,12 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QOrganizerItemManagerEngine::itemsAdded(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been added to
+  This signal is emitted some time after a set of organizer items has been added to
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have added the organizeritems, the timing cannot be determined.
+  have added the organizer items, the timing cannot be determined.
 
-  The list of ids of organizeritems added is given by \a organizeritemIds.  There may be one or more
+  The list of ids of organizer items added is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
@@ -116,12 +118,12 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QOrganizerItemManagerEngine::itemsChanged(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been modified in
+  This signal is emitted some time after a set of organizer items has been modified in
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have modified the organizeritems, the timing cannot be determined.
+  have modified the organizer items, the timing cannot be determined.
 
-  The list of ids of changed organizeritems is given by \a organizeritemIds.  There may be one or more
+  The list of ids of changed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
@@ -130,12 +132,12 @@ QTM_BEGIN_NAMESPACE
 /*!
   \fn QOrganizerItemManagerEngine::itemsRemoved(const QList<QOrganizerItemLocalId>& organizeritemIds);
 
-  This signal is emitted some time after a set of organizeritems has been removed from
+  This signal is emitted some time after a set of organizer items has been removed from
   this engine where the \l dataChanged() signal was not emitted for those changes.
   As it is possible that other processes (or other devices) may
-  have removed the organizeritems, the timing cannot be determined.
+  have removed the organizer items, the timing cannot be determined.
 
-  The list of ids of removed organizeritems is given by \a organizeritemIds.  There may be one or more
+  The list of ids of removed organizer items is given by \a organizeritemIds.  There may be one or more
   ids in the list.
 
   \sa dataChanged()
@@ -234,7 +236,7 @@ QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganize
 /*!
   Returns a list of organizer item ids that match the given \a filter, sorted according to the given
   list of \a sortOrders.  Depending on the backend, this filtering operation may involve retrieving
-  all the organizeritems.  Any error which occurs will be saved in \a error.
+  all the organizer items.  Any error which occurs will be saved in \a error.
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
@@ -246,13 +248,13 @@ QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::itemIds(const QOrganiz
 }
 
 /*!
-  Returns the list of organizeritems which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
+  Returns the list of organizer items which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
 
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
   If the \a fetchHint is the default constructed hint, all existing details and relationships
-  in the matching organizeritems will be returned.  A client should not make changes to an item which has
+  in the matching organizer items will be returned.  A client should not make changes to an item which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the item back to the manager (as the "new" restricted item will
   replace the previously saved item in the backend).
@@ -301,7 +303,7 @@ QOrganizerItem QOrganizerItemManagerEngine::item(const QOrganizerItemLocalId& or
 }
 
 /*!
-  Returns true if the given \a feature is supported by this engine for organizeritems of the given \a organizeritemType
+  Returns true if the given \a feature is supported by this engine for organizer items of the given \a organizeritemType
  */
 bool QOrganizerItemManagerEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
@@ -1282,7 +1284,7 @@ bool QOrganizerItemManagerEngine::validateDefinition(const QOrganizerItemDetailD
 }
 
 /*!
-  Returns the registered detail definitions which are valid for organizeritems whose type is of the given \a organizeritemType in this engine.
+  Returns the registered detail definitions which are valid for organizer items whose type is of the given \a organizeritemType in this engine.
 
   Any errors encountered during this operation should be stored to
   \a error.
@@ -1296,7 +1298,7 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManagerEngine::detai
 
 /*!
   Returns the definition identified by the given \a definitionName that
-  is valid for organizeritems whose type is of the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition
+  is valid for organizer items whose type is of the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition
   if no such definition exists
 
   Any errors encountered during this operation should be stored to
@@ -1315,7 +1317,7 @@ QOrganizerItemDetailDefinition QOrganizerItemManagerEngine::detailDefinition(con
 }
 
 /*!
-  Persists the given definition \a def in the database, which is valid for organizeritems whose type is the given \a organizeritemType.
+  Persists the given definition \a def in the database, which is valid for organizer items whose type is the given \a organizeritemType.
 
   Returns true if the definition was saved successfully, and otherwise returns false.
 
@@ -1335,7 +1337,7 @@ bool QOrganizerItemManagerEngine::saveDetailDefinition(const QOrganizerItemDetai
 }
 
 /*!
-  Removes the definition identified by the given \a definitionName from the database, where it was valid for organizeritems whose type was the given \a organizeritemType.
+  Removes the definition identified by the given \a definitionName from the database, where it was valid for organizer items whose type was the given \a organizeritemType.
 
   Returns true if the definition was removed successfully, otherwise returns false.
 
@@ -1375,7 +1377,7 @@ void QOrganizerItemManagerEngine::setDetailAccessConstraints(QOrganizerItemDetai
 /*!
   Adds the given \a organizeritem to the database if \a organizeritem has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero, otherwise updates the organizeritem in
+  this manager and a local id of zero, otherwise updates the organizer item in
   the database which has the same id to be the given \a organizeritem.
   If the id is non-zero but does not identify any item stored in the
   manager, the function will return false and \a error will be set to
@@ -1435,14 +1437,14 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
 }
 
 /*!
-  Adds the list of organizeritems given by \a organizeritems list to the database.
-  Returns true if the organizeritems were saved successfully, otherwise false.
+  Adds the list of organizer items given by \a organizeritems list to the database.
+  Returns true if the organizer items were saved successfully, otherwise false.
 
   The engine might populate \a errorMap (the map of indices of the \a organizeritems list to
   the error which occurred when saving the item at that index) for
   every index for which the item could not be saved, if it is able.
   The \l QOrganizerItemManager::error() function will only return \c QOrganizerItemManager::NoError
-  if all organizeritems were saved successfully.
+  if all organizer items were saved successfully.
 
   For each newly saved item that was successful, the id of the item
   in the \a organizeritems list will be updated with the new value.  If a failure occurs
@@ -1462,8 +1464,8 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
 }
 
 /*!
-  Remove every item whose id is contained in the list of organizeritems ids
-  \a organizeritemIds.  Returns true if all organizeritems were removed successfully,
+  Remove every item whose id is contained in the list of organizer items ids
+  \a organizeritemIds.  Returns true if all organizer items were removed successfully,
   otherwise false.
 
   Any item that was removed successfully will have the relationships
@@ -1473,11 +1475,11 @@ bool QOrganizerItemManagerEngine::saveItems(QList<QOrganizerItem>* organizeritem
   the error which occurred when saving the item at that index) for every
   index for which the item could not be removed, if it is able.
   The \l QOrganizerItemManager::error() function will
-  only return \c QOrganizerItemManager::NoError if all organizeritems were removed
+  only return \c QOrganizerItemManager::NoError if all organizer items were removed
   successfully.
 
   If the list contains ids which do not identify a valid item in the manager, the function will
-  remove any organizeritems which are identified by ids in the \a organizeritemIds list, insert
+  remove any organizer items which are identified by ids in the \a organizeritemIds list, insert
   \c QOrganizerItemManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
   in the \a organizeritemIds list, return false, and set the overall operation error to
   \c QOrganizerItemManager::DoesNotExistError.
@@ -1670,7 +1672,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 if (cdf.detailDefinitionName().isEmpty())
                     return false;
 
-                /* See if this organizeritem has one of these details in it */
+                /* See if this organizer item has one of these details in it */
                 const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
@@ -1783,7 +1785,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 if (cdf.detailDefinitionName().isEmpty())
                     return false; /* we do not know which field to check */
 
-                /* See if this organizeritem has one of these details in it */
+                /* See if this organizer item has one of these details in it */
                 const QList<QOrganizerItemDetail>& details = organizeritem.details(cdf.detailDefinitionName());
 
                 if (details.count() == 0)
@@ -1928,7 +1930,7 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
 
 
 /*!
-  Compares two organizeritems (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
+  Compares two organizer items (\a a and \a b) using the given list of \a sortOrders.  Returns a negative number if \a a should appear
   before \a b according to the sort order, a positive number if \a a should appear after \a b according to the sort order,
   and zero if the two are unable to be sorted.
  */
@@ -1998,7 +2000,7 @@ void QOrganizerItemManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const
     sorted->append(toAdd);
 }
 
-/*! Sorts the given list of organizeritems \a cs according to the provided \a sortOrders */
+/*! Sorts the given list of organizer items \a cs according to the provided \a sortOrders */
 QList<QOrganizerItemLocalId> QOrganizerItemManagerEngine::sortItems(const QList<QOrganizerItem>& cs, const QList<QOrganizerItemSortOrder>& sortOrders)
 {
     QList<QOrganizerItemLocalId> sortedIds;

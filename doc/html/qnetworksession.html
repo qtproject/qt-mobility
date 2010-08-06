@@ -1,18 +1,128 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qnetworksession.cpp -->
-  <title>Qt Mobility Project 1.1: QNetworkSession Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
-<body class="offline narrow" >
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
-<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li><a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a></li>
+  <title>Qt 1.1: QNetworkSession Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css"
+ />  <!--[if IE]>
+<meta name="MSSmartTagsPreventParsing" content="true">
+<meta http-equiv="imagetoolbar" content="no">
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+<![endif]-->
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
+ <script src="./scripts/superfish.js" type="text/javascript"></script>
+ <script src="./scripts/narrow.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="style/superfish.css" />  <link rel="stylesheet" type="text/css" href="style/narrow.css" /></head>
+<body class="" onload="CheckEmptyAndLoadList();">
+ <div class="header" id="qtdocheader">
+    <div id="nav-logo">
+      <a href="index.html">Home</a></div>
+    <a href="index.html" class="qtref"><span>Qt Mobility Reference Documentation</span></a>
+    <div id="nav-topright">
+      <ul>
+        <li class="nav-topright-home"><a href="http://qt.nokia.com/">Qt HOME</a></li>
+        <li class="nav-topright-dev"><a href="http://qt.nokia.com/developer">DEV</a></li>
+        <li class="nav-topright-labs"><a href="http://labs.qt.nokia.com/blogs/">LABS</a></li>
+        <li class="nav-topright-doc nav-topright-doc-active"><a href="http://doc.qt.nokia.com/">
+          DOC</a></li>
+        <li class="nav-topright-blog"><a href="http://blog.qt.nokia.com/">BLOG</a></li>
+        <li class="nav-topright-shop"><a title="SHOP" href="http://shop.qt.nokia.com">SHOP</a></li>
+      </ul>
+    </div>
+    <div id="shortCut">
+      <ul>
+        <li class="shortCut-topleft-inactive"><span><a href="index.html">Mobility 1.1</a></span></li>
+        <li class="shortCut-topleft-active"><a href="http://qt.nokia.com/doc/">ALL Qt VERSIONS        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrapper">
+    <div class="hd">
+      <span></span>
+    </div>
+    <div class="bd group">
+      <div class="sidebar">
+        <div class="searchlabel">
+          Search index:</div>
+        <div class="search">
+          <form id="qtdocsearch" action="">
+            <fieldset>
+              <input type="text" name="searchstring" id="pageType" value="" />
+            </fieldset>
+          </form>
+        </div>
+        <div class="box first bottombar" id="lookup">
+          <h2><span></span>
+            API Lookup</h2>
+          <div  id="list001" class="list">
+          <ul id="ul001" >
+              <li class="defaultLink"><a href="classes.html">Class index</a></li>
+              <li class="defaultLink"><a href="functions.html">Function index</a></li>
+              <li class="defaultLink"><a href="modules.html">Modules</a></li>
+              <li class="defaultLink"><a href="namespaces.html">Namespaces</a></li>
+              <li class="defaultLink"><a href="qtglobal.html">Global stuff</a></li>
+              <li class="defaultLink"><a href="qdeclarativeelements.html">QML elements</a></li>
+            </ul> 
+          </div>
+        </div>
+        <div class="box bottombar" id="topics">
+          <h2><span></span>
+            Qt Topics</h2>
+          <div id="list002" class="list">
+            <ul id="ul002" >
+              <li class="defaultLink"><a href="qt-basic-concepts.html">Basic Qt architecture</a></li>
+              <li class="defaultLink"><a href="declarativeui.html">Device UI's &amp; Qt Quick</a></li>
+              <li class="defaultLink"><a href="qt-gui-concepts.html">Desktop UI components</a></li>
+              <li class="defaultLink"><a href="platform-specific.html">Platform-specific info</a></li>
+            </ul>  
+          </div>
+        </div>
+        <div class="box" id="examples">
+          <h2><span></span>
+            Examples</h2>
+          <div id="list003" class="list">
+        <ul id="ul003">
+              <li class="defaultLink"><a href="all-examples.html">Examples</a></li>
+              <li class="defaultLink"><a href="tutorials.html">Tutorials</a></li>
+              <li class="defaultLink"><a href="demos.html">Demos</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html">QML Examples</a></li>
+              <li class="defaultLink"><a href="qdeclarativeexamples.html#Demos">QML Demos</a></li>
+            </ul> 
+          </div>
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="toolbar">
+          <div class="breadcrumb toolblock">
+            <ul>
+              <li class="first"><a href="index.html">Home</a></li>
+              <!--  Bread crumbs goes here -->
+              <li><a href="modules.html">Modules</a></li>              <li><a href="qtnetwork.html">QtNetwork</a></li>
               <li>QNetworkSession</li>
+            </ul>
+          </div>
+          <div class="toolbuttons toolblock">
+            <ul>
+              <li id="smallA" class="t_button">A</li>
+              <li id="medA" class="t_button active">A</li>
+              <li id="bigA" class="t_button">A</li>
+              <li id="print" class="t_button"><a href="javascript:this.print();">
+                <span>Print</span></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="content">
 <div class="toc">
 <h3>Contents</h3>
 <ul>
@@ -26,8 +136,7 @@
 </div>
 <h1 class="title">QNetworkSession Class Reference</h1>
 <p>The QNetworkSession class provides control over the system's access points and enables session management for cases when multiple clients access the same access point. <a href="#details">More...</a></p>
-<pre class="highlightedCode brush: cpp">    #include &lt;QNetworkSession&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<ul>
+<pre class="highlightedCode brush: cpp"> #include &lt;QNetworkSession&gt;</pre><ul>
 <li><a href="qnetworksession-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -56,9 +165,6 @@
 <tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#waitForOpened">waitForOpened</a></b> ( int <i>msecs</i> = 30000 )</td></tr>
 </table>
-<ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
@@ -71,9 +177,6 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#reject">reject</a></b> ()</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#stop">stop</a></b> ()</td></tr>
 </table>
-<ul>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-</ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
@@ -85,17 +188,6 @@
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a></b> ( const QNetworkConfiguration &amp; <i>config</i>, bool <i>isSeamless</i> )</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qnetworksession.html#stateChanged">stateChanged</a></b> ( QNetworkSession::State <i>state</i> )</td></tr>
 </table>
-<ul>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <div class="descr"/>
@@ -138,7 +230,7 @@
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QNetworkSession"></a>QNetworkSession::QNetworkSession ( const <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> &amp; <i>connectionConfig</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QNetworkSession"></a>QNetworkSession::QNetworkSession ( const <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> &amp; <i>connectionConfig</i>, QObject * <i>parent</i> = 0 )</h3>
 <p>Constructs a session based on <i>connectionConfig</i> with the given <i>parent</i>.</p>
 <p>See also <a href="qnetworkconfiguration.html">QNetworkConfiguration</a>.</p>
 <h3 class="fn"><a name="dtor.QNetworkSession"></a>QNetworkSession::~QNetworkSession ()<tt> [virtual]</tt></h3>
@@ -146,18 +238,20 @@
 <h3 class="fn"><a name="accept"></a>void QNetworkSession::accept ()<tt> [slot]</tt></h3>
 <p>Instructs the session to permanently accept the new access point. Once this function has been called the session may not return to the old access point.</p>
 <p>The old access point may be closed in the process if there are no other network sessions for it. Therefore any open socket that still uses the old access point may become unusable and should be closed before completing the migration.</p>
-<h3 class="fn"><a name="activeTime"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::activeTime () const</h3>
+<h3 class="fn"><a name="activeTime"></a>quint64 QNetworkSession::activeTime () const</h3>
 <p>Returns the number of seconds that the session has been active.</p>
-<h3 class="fn"><a name="bytesReceived"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesReceived () const</h3>
+<h3 class="fn"><a name="bytesReceived"></a>quint64 QNetworkSession::bytesReceived () const</h3>
 <p>Returns the amount of data received in bytes; otherwise 0.</p>
 <p>This field value includes the usage across all open network sessions which use the same network interface.</p>
 <p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
 <p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
-<h3 class="fn"><a name="bytesWritten"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QNetworkSession::bytesWritten () const</h3>
+<p><b>Note:</b> On some platforms this function may run the main event loop.</p>
+<h3 class="fn"><a name="bytesWritten"></a>quint64 QNetworkSession::bytesWritten () const</h3>
 <p>Returns the amount of data sent in bytes; otherwise 0.</p>
 <p>This field value includes the usage across all open network sessions which use the same network interface.</p>
 <p>If the session is based on a service network configuration the number of sent bytes across all active member configurations are returned.</p>
 <p>This function may not always be supported on all platforms and returns 0. The platform capability can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::DataStatistics</a>.</p>
+<p><b>Note:</b> On some platforms this function may run the main event loop.</p>
 <h3 class="fn"><a name="close"></a>void QNetworkSession::close ()<tt> [slot]</tt></h3>
 <p>Decreases the session counter on the associated network configuration. If the session counter reaches zero the active network interface is shut down. This also means that <a href="qnetworksession.html#state">state</a>() will only change from <a href="qnetworksession.html#State-enum">Connected</a> to <a href="qnetworksession.html#State-enum">Disconnected</a> if the current session was the last open session.</p>
 <p>If the platform does not support out-of-process sessions calling this function does not stop the interface. In this case <a href="qnetworksession.html#stop">stop</a>() has to be used to force a shut down. The platform capabilities can be detected via <a href="qnetworkconfigurationmanager.html#capabilities">QNetworkConfigurationManager::capabilities</a>().</p>
@@ -174,15 +268,15 @@
 <h3 class="fn"><a name="error-2"></a>void QNetworkSession::error ( <a href="qnetworksession.html#SessionError-enum">QNetworkSession::SessionError</a> <i>error</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted after an error occurred. The <i>error</i> parameter describes the error that occurred.</p>
 <p>See also <a href="qnetworksession.html#error">error</a>() and <a href="qnetworksession.html#errorString">errorString</a>().</p>
-<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QNetworkSession::errorString () const</h3>
+<h3 class="fn"><a name="errorString"></a>QString QNetworkSession::errorString () const</h3>
 <p>Returns a human-readable description of the last device error that occurred.</p>
 <p>See also <a href="qnetworksession.html#error">error</a>().</p>
 <h3 class="fn"><a name="ignore"></a>void QNetworkSession::ignore ()<tt> [slot]</tt></h3>
 <p>This function indicates that the application does not wish to roam the session.</p>
 <p>See also <a href="qnetworksession.html#migrate">migrate</a>().</p>
-<h3 class="fn"><a name="interface"></a><a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> QNetworkSession::interface () const</h3>
+<h3 class="fn"><a name="interface"></a>QNetworkInterface QNetworkSession::interface () const</h3>
 <p>Returns the network interface that is used by this session.</p>
-<p>This function only returns a valid <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> when this session is <a href="qnetworksession.html#State-enum">Connected</a>.</p>
+<p>This function only returns a valid QNetworkInterface when this session is <a href="qnetworksession.html#State-enum">Connected</a>.</p>
 <p>The returned interface may change as a result of a roaming process.</p>
 <p>Note: this function does not work in Symbian emulator due to the way the connectivity is emulated on Windows.</p>
 <p>See also <a href="qnetworksession.html#state">state</a>().</p>
@@ -214,33 +308,33 @@
 <h3 class="fn"><a name="reject"></a>void QNetworkSession::reject ()<tt> [slot]</tt></h3>
 <p>The new access point is not suitable for the application. By calling this function the session returns to the previous access point/configuration. This action may invalidate any socket that has been created via the not desired access point.</p>
 <p>See also <a href="qnetworksession.html#accept">accept</a>().</p>
-<h3 class="fn"><a name="sessionProperty"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QNetworkSession::sessionProperty ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="sessionProperty"></a>QVariant QNetworkSession::sessionProperty ( const QString &amp; <i>key</i> ) const</h3>
 <p>Returns the value for property <i>key</i>.</p>
 <p>A network session can have properties attached which may describe the session in more details. This function can be used to gain access to those properties.</p>
 <p>The following property keys are guaranteed to be specified on all platforms:</p>
 <table class="generic">
 <thead><tr class="qt-style topAlign"><th>Key</th><th>Description</th></tr></thead>
 <tr class="odd topAlign"><td><p>ActiveConfiguration</p></td><td><p>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that is used by this session; otherwise an empty string.<p>The main purpose of this key is to determine which Internet access point is used if the session is based on a <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a>. The following code snippet highlights the difference:</p>
-<pre class="highlightedCode brush: cpp">    QNetworkConfigurationManager mgr;
-    QNetworkConfiguration ap = mgr.defaultConfiguration();
-    QNetworkSession* session = new QNetworkSession(ap);
-    ... <span class="comment">//code activates session</span>
+<pre class="highlightedCode brush: cpp"> QNetworkConfigurationManager mgr;
+ QNetworkConfiguration ap = mgr.defaultConfiguration();
+ QNetworkSession* session = new QNetworkSession(ap);
+ ... <span class="comment">//code activates session</span>
 
-    QString ident = session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString();
-    if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
-        Q_ASSERT( ap.identifier() != ident );
-        Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
-    } else if ( ap.type() == QNetworkConfiguration::InternetAccessPoint ) {
-        Q_ASSERT( ap.identifier() == ident );
-    }</pre>
+ QString ident = session-&gt;sessionProperty(&quot;ActiveConfiguration&quot;).toString();
+ if ( ap.type() == QNetworkConfiguration::ServiceNetwork ) {
+     Q_ASSERT( ap.identifier() != ident );
+     Q_ASSERT( ap.children().contains( mgr.configurationFromIdentifier(ident) ) );
+ } else if ( ap.type() == QNetworkConfiguration::InternetAccessPoint ) {
+     Q_ASSERT( ap.identifier() == ident );
+ }</pre>
 </p></td></tr>
 <tr class="even topAlign"><td><p>UserChoiceConfiguration</p></td><td><p>If the session <a href="qnetworksession.html#isOpen">isOpen</a>() and is bound to a <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> of type UserChoice, this property returns the identifier of the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the configuration resolved to when <a href="qnetworksession.html#open">open</a>() was called; otherwise an empty string.<p>The purpose of this key is to determine the real <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> that the session is using. This key is different to <i>ActiveConfiguration</i> in that this key may return an identifier for either a <a href="qnetworkconfiguration.html#Type-enum">service network</a> or a <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations whereas <i>ActiveConfiguration</i> always returns identifiers to <a href="qnetworkconfiguration.html#Type-enum">Internet access points</a> configurations.</p>
 </p></td></tr>
 <tr class="odd topAlign"><td><p>ConnectInBackground</p></td><td><p>Setting this property to <i>true</i> before calling <a href="qnetworksession.html#open">open</a>() implies that the connection attempt is made but if no connection can be established, the user is not connsulted and asked to select a suitable connection. This property is not set by default and support for it depends on the platform.</p></td></tr>
 </table>
 <p>See also <a href="qnetworksession.html#setSessionProperty">setSessionProperty</a>().</p>
-<h3 class="fn"><a name="setSessionProperty"></a>void QNetworkSession::setSessionProperty ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
-<p>Sets the property <i>value</i> on the session. The property is identified using <i>key</i>. Removing an already set property can be achieved by passing an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
+<h3 class="fn"><a name="setSessionProperty"></a>void QNetworkSession::setSessionProperty ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</h3>
+<p>Sets the property <i>value</i> on the session. The property is identified using <i>key</i>. Removing an already set property can be achieved by passing an invalid QVariant.</p>
 <p>Note that the <i>UserChoiceConfiguration</i> and <i>ActiveConfiguration</i> properties are read only and cannot be changed using this method.</p>
 <p>See also <a href="qnetworksession.html#sessionProperty">sessionProperty</a>().</p>
 <h3 class="fn"><a name="state"></a><a href="qnetworksession.html#State-enum">State</a> QNetworkSession::state () const</h3>
@@ -259,16 +353,17 @@
 <h3 class="fn"><a name="waitForOpened"></a>bool QNetworkSession::waitForOpened ( int <i>msecs</i> = 30000 )</h3>
 <p>Waits until the session has been opened, up to <i>msecs</i> milliseconds. If the session has been opened, this function returns true; otherwise it returns false. In the case where it returns false, you can call <a href="qnetworksession.html#error">error</a>() to determine the cause of the error.</p>
 <p>The following example waits up to one second for the session to be opened:</p>
-<pre class="highlightedCode brush: cpp">    session-&gt;open();
-    if (session-&gt;waitForOpened(1000))
-        qDebug(&quot;Open!&quot;);</pre>
+<pre class="highlightedCode brush: cpp"> session-&gt;open();
+ if (session-&gt;waitForOpened(1000))
+     qDebug(&quot;Open!&quot;);</pre>
 <p>If <i>msecs</i> is -1, this function will not time out.</p>
 <p>See also <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#error">error</a>().</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2009-2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

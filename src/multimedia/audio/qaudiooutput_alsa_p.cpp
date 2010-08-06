@@ -800,3 +800,5 @@ qint64 OutputPrivate::writeData(const char* data, qint64 len)
 }
 
 QT_END_NAMESPACE
+
+#include "moc_qaudiooutput_alsa_p.cpp"

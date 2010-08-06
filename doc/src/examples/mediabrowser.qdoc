@@ -46,6 +46,32 @@
 
     \title Media Browser
 
-    The example demonstrates using the Document Gallery to navigate a meta-data
-    based folders.
+    This example demonstrates using the Document Gallery to navigate
+    collections of media documents organized using meta-data.
+
+    The \l QGalleryQueryRequest class is used to query the document gallery
+    for items of a specific type, and for the children of container documents.
+    And the \l QGalleryItemListModel class is used to present the documents
+    returned by the queries, in an item view.
+
+    The browser has five views that can be selected from the application menu
+    each displaying a different type of document or collection.
+
+    The \i Artists view displays a list of all artists who performed songs
+    in the gallery and the total number of songs attributed to them.  The
+    \i {Album Artists} view  is similar to the Artists view except it lists
+    the title artists of albums in the gallery.  Selecting an artist from
+    one of these views will display a list of albums the artist has
+    contributed to, or is the title artist of respectively.
+
+    The \i Albums view displays a list of all albums in the gallery, including
+    the title artist, album cover, and the number of songs on the album.
+    Selecting an album from this list will display a list of all songs on the
+    album.
+
+    The \i Songs and \i Photos views display all the audio and image files in
+    the gallery respectively.  The Songs view includes the track number, title,
+    duration, artist, and album artist properties of the listed songs, all
+    of which with the exception of duration can be edited.  The Photos view is
+    a grid of image thumbnails.
 */

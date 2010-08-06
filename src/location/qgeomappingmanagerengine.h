@@ -73,7 +73,7 @@ public:
     virtual QGeoMapData* createMapData(QGeoMapWidget *widget) = 0;
     virtual void removeMapData(QGeoMapData *mapData);
 
-    virtual void updateMapImage(QGeoMapData *mapData) = 0;
+    //virtual void updateMapImage(QGeoMapData *mapData) = 0;
 
     QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 

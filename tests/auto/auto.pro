@@ -3,8 +3,7 @@ TEMPLATE = subdirs
 include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
-           servicemetadata \
+    SUBDIRS += servicemetadata \                   #service framework
            qserviceinterfacedescriptor \
            qservicefilter \
            qservicemanager \
@@ -15,6 +14,8 @@ contains(mobility_modules,serviceframework) {
            qservicemanager_ipc \
            qremoteserviceclassregister \
            servicedatabase
+         # databasemanager # disabled from auto builds
+
 }
 
 contains(mobility_modules,bearer) {
@@ -36,6 +37,9 @@ contains(mobility_modules,location) {
           #qlandmarkmanagerplugins \
           qlandmarkmanagerengine
 
+     contains(QT_CONFIG, declarative) {
+         SUBDIRS += qdeclarativeposition
+     }
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
@@ -123,11 +127,13 @@ contains(mobility_modules,versit) {
 }
 
 contains(mobility_modules,telephony) {
-    SUBDIRS += qtelephony
+    # TODO change this when other backends are developed
+    linux-*: SUBDIRS += qtelephony
 }
 
 contains(mobility_modules,multimedia) {
-    SUBDIRS += \             #Multimedia
+    # Multimedia
+    SUBDIRS += \
         qaudiocapturesource \
         qgraphicsvideoitem \
         qmediaimageviewer \

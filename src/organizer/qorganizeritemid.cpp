@@ -49,10 +49,12 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QOrganizerItemId
   \brief The QOrganizerItemId class provides information that uniquely identifies
-  a organizeritem in a particular manager.
+  an organizer item in a particular manager.
 
-  It consists of a manager URI which identifies the manager which contains the organizeritem,
-  and the local id of the organizeritem in that manager.
+  \inmodule QtOrganizer
+
+  It consists of a manager URI which identifies the manager which contains the organizer item,
+  and the local id of the organizer item in that manager.
 
   A "null" QOrganizerItemId has an empty manager URI, and an invalid QOrganizerItemLocalId (0).
 
@@ -62,10 +64,10 @@ QTM_BEGIN_NAMESPACE
 /*!
   \typedef QOrganizerItemLocalId
   \relates QOrganizerItemId
-  \brief The QOrganizerItemLocalId type represents the unique id of a organizeritem within its manager.
+  \brief The QOrganizerItemLocalId type represents the unique id of an organizer item within its manager.
 
   Most operations within a \l QOrganizerItemManager accept a QOrganizerItemLocalId.  Some operations
-  (involving links to organizeritems outside a particular manager) also accept a manager URI - this
+  (involving links to organizer items outside a particular manager) also accept a manager URI - this
   combination is stored in a \l QOrganizerItemId.
 
   An invalid QOrganizerItemLocalId is represented by a zero (0) value.
@@ -74,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
- * Constructs a new organizeritem id
+ * Constructs a new organizer item id
  */
 QOrganizerItemId::QOrganizerItemId()
         : d(new QOrganizerItemIdPrivate)
@@ -82,26 +84,26 @@ QOrganizerItemId::QOrganizerItemId()
 }
 
 /*!
- * Cleans up the memory in use by the organizeritem id
+ * Cleans up the memory in use by the organizer item id
  */
 QOrganizerItemId::~QOrganizerItemId()
 {
 }
 
-/*! Constructs a new organizeritem id as a copy of \a other */
+/*! Constructs a new organizer item id as a copy of \a other */
 QOrganizerItemId::QOrganizerItemId(const QOrganizerItemId& other)
         : d(other.d)
 {
 }
 
-/*! Assigns the organizeritem id to be equal to \a other */
+/*! Assigns the organizer item id to be equal to \a other */
 QOrganizerItemId& QOrganizerItemId::operator=(const QOrganizerItemId& other)
 {
     d = other.d;
     return *this;
 }
 
-/*! Returns true if the organizeritem id has the same manager URI and local id as \a other */
+/*! Returns true if the organizer item id has the same manager URI and local id as \a other */
 bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
 {
     if (d->m_managerUri != other.d->m_managerUri)
@@ -111,7 +113,7 @@ bool QOrganizerItemId::operator==(const QOrganizerItemId& other) const
     return true;
 }
 
-/*! Returns true if either the manager URI or local id of the organizeritem id is different to that of \a other */
+/*! Returns true if either the manager URI or local id of the organizer item id is different to that of \a other */
 bool QOrganizerItemId::operator!=(const QOrganizerItemId& other) const
 {
     return !(*this == other);
@@ -158,7 +160,7 @@ QDebug operator<<(QDebug dbg, const QOrganizerItemId& id)
 #endif
 
 /*!
- * Returns the URI of the manager which contains the organizeritem identified by this id
+ * Returns the URI of the manager which contains the organizer item identified by this id
  */
 QString QOrganizerItemId::managerUri() const
 {
@@ -166,7 +168,7 @@ QString QOrganizerItemId::managerUri() const
 }
 
 /*!
- * Returns the manager-local id of the organizeritem identified by this organizeritem id
+ * Returns the manager-local id of the organizer item identified by this organizer item id
  */
 QOrganizerItemLocalId QOrganizerItemId::localId() const
 {
@@ -174,7 +176,7 @@ QOrganizerItemLocalId QOrganizerItemId::localId() const
 }
 
 /*!
- * Sets the URI of the manager which contains the organizeritem identified by this id to \a uri
+ * Sets the URI of the manager which contains the organizer item identified by this id to \a uri
  */
 void QOrganizerItemId::setManagerUri(const QString& uri)
 {
@@ -182,7 +184,7 @@ void QOrganizerItemId::setManagerUri(const QString& uri)
 }
 
 /*!
- * Sets the manager-local id of the organizeritem identified by this organizeritem id to \a id
+ * Sets the manager-local id of the organizer item identified by this organizer item id to \a id
  */
 void QOrganizerItemId::setLocalId(const QOrganizerItemLocalId& id)
 {
