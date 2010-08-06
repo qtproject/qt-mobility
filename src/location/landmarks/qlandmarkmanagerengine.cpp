@@ -412,7 +412,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QString &f
     Note that the \c AttachSingleCategory option has no meaning during
     export and the manager will export as if \a option was \c IncludeCategoryData.
     Also, be aware that some file formats may not support categories at all and for
-    these formats, the \a option is always treated as if it was \a ExcludeCategoryData.
+    these formats, the \a option is always treated as if it was \c ExcludeCategoryData.
 
     Returns true if all specified landmarks were successfully exported,
     otherwise returns false.  It may be possible that only a subset
@@ -1156,8 +1156,17 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
                 cs = Qt::CaseSensitive;
             else
                 cs = Qt::CaseInsensitive;
-
-            return QString::compare(nameFilter.name(), landmark.name(), cs) == 0;
+            if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith) {
+                return landmark.name().endsWith(nameFilter.name(), cs);
+            } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith) {
+                return landmark.name().startsWith(nameFilter.name(), cs);
+            } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains) {
+                return landmark.name().contains(nameFilter.name(),cs);
+            } else if (nameFilter.matchFlags() & QLandmarkFilter::MatchFixedString) {
+                return landmark.name().compare(nameFilter.name(),cs) == 0;
+            } else {
+                return QVariant(landmark.name()) == QVariant(nameFilter.name());
+            }
         }
         case QLandmarkFilter::ProximityFilter:
         {

@@ -389,25 +389,78 @@ private slots:
     {
         //test for match - case matches, filter-case insensitive
         QLandmarkNameFilter nameFilter;
-        nameFilter.setName("madara");
-
         QLandmark lm;
         lm.setName("madara");
 
-        QVERIFY(MockEngine::testFilter(nameFilter, lm));
+        //test case insensitive, start with
+        nameFilter.setName("mad");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchStartsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Mad");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
 
-        //test for match, case mismatch, filter is case insensitive
-        lm.setName("Madara");
-        QVERIFY(MockEngine::testFilter(nameFilter, lm));
-
-        //test for no match,case mismatch, filter is case sensitive
-        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
+        //test case sensitive starts with
+        nameFilter.setName("mad");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchStartsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Mad");
         QVERIFY(!MockEngine::testFilter(nameFilter,lm));
 
-        //test for match, case matches, filter is case sensitive
+        //test case insensitive, ends with
+        nameFilter.setName("ara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchEndsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ara");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, ends with
+        nameFilter.setName("ara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchEndsWith);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        //test case insensitive, contains
+        nameFilter.setName("ada");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchContains);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ada");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, contains
+        nameFilter.setName("ada");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchContains);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Ada");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        //test case insensitive, fixed string
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags( QLandmarkFilter::MatchFixedString);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
         nameFilter.setName("Madara");
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+
+        //test case sensitive, fixed string
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive | QLandmarkFilter::MatchFixedString);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+
+        //test case variant match
+        nameFilter.setName("madara");
+        nameFilter.setMatchFlags(0);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        nameFilter.setName("madara");
         nameFilter.setMatchFlags(QLandmarkFilter::MatchCaseSensitive);
         QVERIFY(MockEngine::testFilter(nameFilter,lm));
+        nameFilter.setName("Madara");
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
     }
 
     void testNearestFilter()
