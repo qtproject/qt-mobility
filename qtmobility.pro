@@ -173,6 +173,24 @@ contains(build_docs, yes):SUBDIRS+=demos
         qtmheadersorganizer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtOrganizer/*
         INSTALLS += qtmheadersorganizer
     }
+
+    contains(mobility_modules,telephony) {
+        qtmheaderstelephony.path = $${QT_MOBILITY_INCLUDE}/QtTelephony
+        qtmheaderstelephony.files = $${QT_MOBILITY_BUILD_TREE}/include/QtTelephony/*
+        INSTALLS += qtmheaderstelephony
+    }
+
+    contains(mobility_modules,feedback) {
+        qtmheadersfeedback.path = $${QT_MOBILITY_INCLUDE}/QtFeedback
+        qtmheadersfeedback.files = $${QT_MOBILITY_BUILD_TREE}/include/QtFeedback/*
+        INSTALLS += qtmheadersfeedback
+    }
+
+    contains(mobility_modules,gallery) {
+        qtmheadersgallery.path = $${QT_MOBILITY_INCLUDE}/QtGallery
+        qtmheadersgallery.files = $${QT_MOBILITY_BUILD_TREE}/include/QtGallery/*
+        INSTALLS += qtmheadersgallery
+    }
 } else {
     #absolute path does not work and 
     #include <QtMyLibrary/class.h> style does not work either
@@ -189,7 +207,8 @@ contains(build_docs, yes):SUBDIRS+=demos
 
 
     qtmAppHeaders = include/QtContacts/* \
-                          include/QtVersit/*
+                       include/QtVersit/* \
+                       include/Organizer/*
 
     qtmMwHeaders = include/QtBearer/* \
                        include/QtLocation/* \
@@ -199,9 +218,11 @@ contains(build_docs, yes):SUBDIRS+=demos
                        include/QtServiceFramework/* \
                        include/QtSystemInfo/* \
                        include/QtSensors/* \
-                       include/QtOrganizer/*
+                       include/QtTelephony/* \
+                       include/QtFeedback/* \
+                       include/QtGallery/*
 
-    contains(mobility_modules,contacts|versit) {
+    contains(mobility_modules,contacts|versit|organizer) {
         for(api, qtmAppHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove
@@ -213,7 +234,7 @@ contains(build_docs, yes):SUBDIRS+=demos
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|telephony|feedback|sensors|gallery) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove
