@@ -53,7 +53,7 @@ class CoverArtModel : public ThumbnailModel
 public:
     CoverArtModel(QAbstractGallery *gallery, QObject *parent = 0);
 
-#if defined(Q_WS_MAEMO_5)
+#if defined(Q_OS_UNIX) && !(defined(Q_OS_SYMBIAN) || defined(Q_OS_MAC))
 protected:
     QString imagePath(const QModelIndex &index) const;
 
