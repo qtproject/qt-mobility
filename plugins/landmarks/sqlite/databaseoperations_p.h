@@ -176,6 +176,7 @@ namespace DatabaseOperations {
                          QIODevice *device,
                          const QString &format,
                          QLandmarkManager::ImportExportOption option,
+                         const QLandmarkCategoryId &categoryId,
                          QLandmarkManager::Error *error,
                          QString *errorString, const QString &managerUri,
                          QueryRun *queryRun = 0);

@@ -364,12 +364,14 @@ bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory 
 bool importLandmarksLmx(const QString &connectionName,
                         QIODevice *device,
                         QLandmarkManager::ImportExportOption option,
+                        const QLandmarkCategoryId &categoryId,
                         QLandmarkManager::Error *error,
                         QString *errorString,
                         const QString &managerUri)
 {
     QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
     lmxHandler.setImportExportOption(option);
+    lmxHandler.setCategoryId(categoryId);
     bool result = lmxHandler.importData(device);
     if (!result) {
         *error = lmxHandler.errorCode();
@@ -2390,6 +2392,7 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
                      QIODevice *device,
                      const QString &format,
                      QLandmarkManager::ImportExportOption option,
+                     const QLandmarkCategoryId &categoryId,
                      QLandmarkManager::Error *error,
                      QString *errorString, const QString &managerUri,
                      QueryRun *queryRun)
@@ -2414,7 +2417,7 @@ bool DatabaseOperations::importLandmarks(const QString &connectionName,
     }
 
     if (format ==  "LmxV1.0") {
-            return importLandmarksLmx(connectionName, device, option, error, errorString, managerUri);
+            return importLandmarksLmx(connectionName, device, option, categoryId, error, errorString, managerUri);
     } else if (format == "GpxV1.1") {
         return importLandmarksGpx(connectionName, device, error, errorString, managerUri, queryRun);
     } else {
@@ -2652,8 +2655,10 @@ void DatabaseOperations::QueryRun::run()
                 QLandmarkImportRequest *importRequest = static_cast<QLandmarkImportRequest *> (request);
 
                 DatabaseOperations::importLandmarks(connectionName, importRequest->device(),
-                                                importRequest->format(), importRequest->importOption(), &error, &errorString,
-                                                managerUri, this);
+                                                    importRequest->format(), importRequest->importOption(),
+                                                    importRequest->categoryId(),
+                                                    &error, &errorString,
+                                                    managerUri, this);
                 if (this->gpxHandler) {
                     delete gpxHandler;
                     gpxHandler = 0;

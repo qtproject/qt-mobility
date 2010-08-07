@@ -309,7 +309,7 @@ bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    return DatabaseOperations::importLandmarks(m_dbConnectionName, device, format, option, error, errorString, managerUri());
+    return DatabaseOperations::importLandmarks(m_dbConnectionName, device, format, option, categoryId, error, errorString, managerUri());
 }
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,

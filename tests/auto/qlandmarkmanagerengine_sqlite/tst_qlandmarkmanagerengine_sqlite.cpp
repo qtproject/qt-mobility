@@ -416,7 +416,8 @@ private slots:
     void importGpxAsync();
 
     void importLmx();
-    void importLmxExcludeCategories();
+    void importLmxExcludeCategoryData();
+    void importLmxAttachSingleCategory();
 
     //TODO: Test async lmx import
 
@@ -5473,7 +5474,7 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
     QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
 }
 
-void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategories() {
+void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategoryData() {
     //TODO: Test Signal emission
     QLandmarkCategory cat0;
     cat0.setName("cat0");
@@ -5489,6 +5490,61 @@ void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategories() {
 
     foreach(const QLandmark &lm, landmarks) {
         QCOMPARE(lm.categoryIds().count(),0);
+    }
+
+    QLandmarkNameFilter nameFilter;
+    nameFilter.setName("w0");
+    landmarks = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(landmarks.count(), 1);
+    QLandmark lm = landmarks.at(0);
+    QCOMPARE(lm.name(), QString("w0"));
+    QCOMPARE(lm.address().street(), QString("1 Main St"));
+    QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
+    QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
+}
+
+void tst_QLandmarkManagerEngineSqlite::importLmxAttachSingleCategory() {
+    //TODO: Test Signal emission
+    QLandmarkCategory cat0;
+    cat0.setName("cat0");
+    m_manager->saveCategory(&cat0);
+
+    QLandmarkCategory catAlpha;
+    catAlpha.setName("catAlpha");
+    m_manager->saveCategory(&catAlpha);
+
+    //try with a null id
+    QLandmarkCategoryId nullId;
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, nullId));
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+    //try with an id with the wrong manager;
+    QLandmarkCategoryId wrongManagerId;
+    wrongManagerId.setLocalId(cat0.categoryId().localId());
+    wrongManagerId.setManagerUri("wrong.manager");
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, wrongManagerId));
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+
+    //try with the correct manager but with a non-existent localid
+    QLandmarkCategoryId wrongLocalId;
+    wrongLocalId.setLocalId("500");
+    wrongLocalId.setManagerUri(cat0.categoryId().managerUri());
+    QVERIFY(!m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory, wrongLocalId));
+    QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+
+    //try with a valid category id
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::AttachSingleCategory,catAlpha.categoryId()));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QList<QLandmarkCategory> categories = m_manager->categories();
+    QCOMPARE(categories.count(), 2
+    );
+    QList<QLandmark> landmarks = m_manager->landmarks();
+    QCOMPARE(landmarks.count(), 16);
+
+    foreach(const QLandmark &lm, landmarks) {
+        QCOMPARE(lm.categoryIds().count(),1);
+        QCOMPARE(lm.categoryIds().at(0), catAlpha.categoryId());
     }
 
     QLandmarkNameFilter nameFilter;

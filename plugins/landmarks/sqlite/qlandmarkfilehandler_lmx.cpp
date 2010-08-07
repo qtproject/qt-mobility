@@ -92,6 +92,11 @@ void QLandmarkFileHandlerLmx::setImportExportOption(QLandmarkManager::ImportExpo
     m_option = option;
 }
 
+void QLandmarkFileHandlerLmx::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+    m_categoryId = categoryId;
+}
+
 bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
 {
     if (m_reader)
@@ -107,21 +112,48 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
         return false;
     }
 
+    if (m_option == QLandmarkManager::AttachSingleCategory) {
+        if (m_categoryId.managerUri() != m_managerUri) {
+            db.rollback();
+            m_errorCode = QLandmarkManager::BadArgumentError;
+            m_error = "Category Id manager URI does not refer to this manager";
+            return false;
+        }
 
-    QList<QLandmarkCategory> categories = DatabaseOperations::categories(m_connectionName,
-                                                QList<QLandmarkCategoryId>(),
-                                                   QLandmarkNameSort(),
-                                                   &m_errorCode,
-                                                   &m_error,
-                                                   m_managerUri,
-                                                   true);
-    if (m_errorCode != QLandmarkManager::NoError) {
-        db.rollback();
-        return false;
+        QList<QLandmarkCategoryId> catIdList;
+        catIdList << m_categoryId;
+        QList<QLandmarkCategory> categories;
+        categories = DatabaseOperations::categories(m_connectionName, catIdList, QLandmarkNameSort(),
+                                        &m_errorCode, &m_error,m_managerUri, true);
+        if (m_errorCode != QLandmarkManager::NoError) {
+            db.rollback();
+            return false;
+        }
+
+        if (categories.count() != 1) {
+            db.rollback();
+            m_errorCode = QLandmarkManager::DoesNotExistError;
+            m_error = QString("Category with local id, %1, does not exist").arg(m_categoryId.localId());
+            return false;
+        }
     }
 
-    foreach(const QLandmarkCategory &category, categories) {
-        m_catIdLookup.insert(category.name(), category.categoryId());
+    if (m_option == QLandmarkManager::IncludeCategoryData) {
+        QList<QLandmarkCategory> categories = DatabaseOperations::categories(m_connectionName,
+                                                                             QList<QLandmarkCategoryId>(),
+                                                                             QLandmarkNameSort(),
+                                                                             &m_errorCode,
+                                                                             &m_error,
+                                                                             m_managerUri,
+                                                                             true);
+        if (m_errorCode != QLandmarkManager::NoError) {
+            db.rollback();
+            return false;
+        }
+
+        foreach(const QLandmarkCategory &category, categories) {
+            m_catIdLookup.insert(category.name(), category.categoryId());
+        }
     }
 
     if (!readLmx()) {
@@ -142,6 +174,10 @@ bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
     }
 
     foreach(QLandmark lm, m_landmarks) {
+        if (m_option == QLandmarkManager::AttachSingleCategory) {
+            lm.addCategoryId(m_categoryId);
+        }
+
         if (!DatabaseOperations::saveLandmarkHelper(m_connectionName, &lm, &m_errorCode, &m_error, m_managerUri)){
             db.rollback();
             return false;

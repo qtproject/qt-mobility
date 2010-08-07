@@ -76,6 +76,7 @@ public:
     void setLandmarks(const QList<QLandmark> &landmarks);
 
     void setImportExportOption(QLandmarkManager::ImportExportOption option);
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     bool importData(QIODevice *device);
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
@@ -115,6 +116,7 @@ private:
     QXmlStreamWriter *m_writer;
 
     QLandmarkManager::ImportExportOption m_option;
+    QLandmarkCategoryId m_categoryId;
     QString m_connectionName;
     QString m_managerUri;
     QString m_error;
