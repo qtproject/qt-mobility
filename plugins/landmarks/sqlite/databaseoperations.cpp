@@ -367,22 +367,14 @@ bool importLandmarksLmx(const QString &connectionName,
                         QString *errorString,
                         const QString &managerUri)
 {
-    QLandmarkFileHandlerLmx lmxHandler;
+    QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
     bool result = lmxHandler.importData(device);
-
-    if (result) {
-        saveLandmarks(connectionName, &lmxHandler.landmarks(), 0, error, errorString, managerUri);
-
-        if (error && *error != QLandmarkManager::NoError) {
-            result = false;
-        } else {
-            if (errorString)
-                *errorString = "";
-        }
+    if (!result) {
+        *error = lmxHandler.errorCode();
+        *errorString = lmxHandler.errorString();
     } else {
-        if (errorString)
-            *errorString = lmxHandler.errorString();
-        // TODO set error code
+        *error = QLandmarkManager::NoError;
+        *errorString = "";
     }
 
     return result;
@@ -479,7 +471,7 @@ bool exportLandmarksLmx(const QString &connectionName,
                         QString *errorString,
                         const QString &managerUri)
 {
-    QLandmarkFileHandlerLmx lmxHandler;
+    QLandmarkFileHandlerLmx lmxHandler(connectionName, managerUri);
 
     QLandmarkIdFilter idFilter(landmarkIds, QLandmarkIdFilter::MatchAll);
     QList<QLandmarkSortOrder> sortOrders;
@@ -1729,8 +1721,10 @@ bool DatabaseOperations::saveLandmarks(const QString &connectionName, QList<QLan
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Save landmarks: unable to begin transaction, reason: %1").arg(db.lastError().text());
 
-        for (int i=0; i < landmark->size(); ++i)
-            errorMap->insert(i, *error);
+        if (errorMap) {
+            for (int i=0; i < landmark->size(); ++i)
+                errorMap->insert(i, *error);
+        }
         return false;
     }
 
@@ -1826,8 +1820,10 @@ bool DatabaseOperations::removeLandmarks(const QString &connectionName, const QL
         *error = QLandmarkManager::UnknownError;
         *errorString = QString("Remove landmars: unable to begin transaction, reason: %1").arg(db.lastError().text());
 
-        for (int i=0; i < landmarkIds.size(); ++i)
-            errorMap->insert(i, *error);
+        if (errorMap) {
+            for (int i=0; i < landmarkIds.size(); ++i)
+                errorMap->insert(i, *error);
+        }
         return false;
     }
 
@@ -2076,6 +2072,14 @@ bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLand
                 QLandmarkManager::Error *error,
                 QString *errorString, const QString &managerUri)
 {
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    if (category->name().isEmpty()) {
+        *error = QLandmarkManager::BadArgumentError;
+        *errorString = "Category name must not be empty";
+        return false;
+    }
 
     if (!category->categoryId().managerUri().isEmpty() && category->categoryId().managerUri() != managerUri) {
         if (error)

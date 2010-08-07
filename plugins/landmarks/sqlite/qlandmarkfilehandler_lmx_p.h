@@ -54,6 +54,8 @@
 //
 
 #include <qlandmark.h>
+#include <qlandmarkmanager.h>
+#include <qlandmarkcategoryid.h>
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -67,7 +69,7 @@ class QLandmarkFileHandlerLmx : public QObject
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx();
+    QLandmarkFileHandlerLmx(const QString &connectionName, const QString &managerUri);
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
@@ -77,7 +79,9 @@ public:
     bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
+    QLandmarkManager::Error errorCode() const;
 
+//TODO: remove obsolete signals
 signals:
     void error(const QString &error);
     void finishedImport();
@@ -108,7 +112,11 @@ private:
     QXmlStreamReader *m_reader;
     QXmlStreamWriter *m_writer;
 
+    QString m_connectionName;
+    QString m_managerUri;
     QString m_error;
+    QLandmarkManager::Error m_errorCode;
+    QHash<QString, QLandmarkCategoryId> m_catIdLookup;//<name,id>
 };
 
 #endif // #ifndef QLANDMARKFILEHANDLER_LMX_P_H

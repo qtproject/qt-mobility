@@ -416,6 +416,8 @@ private slots:
     void importGpx();
     void importGpxAsync();
 
+    void importLmx();
+
     void exportGpx();
     void exportGpxAsync();
 
@@ -788,6 +790,10 @@ void tst_QLandmarkManagerEngineSqlite::retrieveLandmark() {
     cat2.setName("CAT1");
     QVERIFY(!m_manager->saveCategory(&cat2));
     QCOMPARE(m_manager->error(),QLandmarkManager::AlreadyExistsError);
+
+    //try save an empty category name
+    QVERIFY(!m_manager->saveCategory(&emptyCategory));
+    QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
 }
 
 void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
@@ -867,14 +873,19 @@ void tst_QLandmarkManagerEngineSqlite::addCategoryAsync() {
     QLandmarkCategory cat1Duplicate;
     cat1Duplicate.setName("CAT1");
     saveCategoryRequest.setCategory(cat3);
-
-    QVERIFY(!m_manager->saveCategory(&cat1Duplicate));
-    QCOMPARE(m_manager->error(), QLandmarkManager::AlreadyExistsError);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest,QLandmarkManager::AlreadyExistsError));
 
     //try renaming an existing category to a name that already exists
     cat2.setName("CAT1");
-    QVERIFY(!m_manager->saveCategory(&cat2));
-    QCOMPARE(m_manager->error(),QLandmarkManager::AlreadyExistsError);
+    saveCategoryRequest.setCategory(cat2);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest,QLandmarkManager::AlreadyExistsError));
+
+    //try save an empty category name
+    saveCategoryRequest.setCategory(emptyCategory);
+    saveCategoryRequest.start();
+    QVERIFY(waitForAsync(spy, &saveCategoryRequest,QLandmarkManager::BadArgumentError));
 }
 
 void tst_QLandmarkManagerEngineSqlite::updateCategory() {
@@ -5415,6 +5426,49 @@ void tst_QLandmarkManagerEngineSqlite::importGpxAsync() {
     QCOMPARE(spyRemove.count(), 0);
     QCOMPARE(spyChange.count(), 0);
     QCOMPARE(spyAdd.count(), 0);
+}
+
+void tst_QLandmarkManagerEngineSqlite::importLmx() {
+    //TODO: Test Signal emission
+    QLandmarkCategory cat0;
+    cat0.setName("cat0");
+    m_manager->saveCategory(&cat0);
+
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0"));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QList<QLandmarkCategory> categories = m_manager->categories();
+
+    QCOMPARE(categories.count(), 3);
+    QList<QLandmark> landmarks = m_manager->landmarks();
+
+    QCOMPARE(landmarks.count(), 16);
+    QLandmarkNameFilter nameFilter;
+    nameFilter.setName("w16");
+    landmarks = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(landmarks.count(), 1);
+    QLandmark lm = landmarks.at(0);
+    QCOMPARE(lm.categoryIds().count(), 3);
+
+    QSet<QString> catNames;
+    foreach(const QLandmarkCategoryId &categoryId, lm.categoryIds()) {
+        catNames.insert(m_manager->category(categoryId).name());
+    }
+
+    QCOMPARE(catNames.count(), 3);
+    QVERIFY(catNames.contains("cat0"));
+    QVERIFY(catNames.contains("cat1"));
+    QVERIFY(catNames.contains("cat2"));
+
+    nameFilter.setName("w0");
+    landmarks = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(landmarks.count(), 1);
+    lm = landmarks.at(0);
+    QCOMPARE(lm.name(), QString("w0"));
+    QCOMPARE(lm.address().street(), QString("1 Main St"));
+    QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
+    QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
 }
 
 void tst_QLandmarkManagerEngineSqlite::exportGpx() {
