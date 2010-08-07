@@ -64,6 +64,7 @@ QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(const QString &connectionName, 
     : QObject(),
     m_writer(0),
     m_reader(0),
+    m_option(QLandmarkManager::IncludeCategoryData),
     m_connectionName(connectionName),
     m_managerUri(managerUri)
 {
@@ -85,6 +86,10 @@ QList<QLandmark> QLandmarkFileHandlerLmx::landmarks() const
 void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
 {
     m_landmarks = landmarks;
+}
+
+void QLandmarkFileHandlerLmx::setImportExportOption(QLandmarkManager::ImportExportOption option) {
+    m_option = option;
 }
 
 bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
@@ -355,7 +360,9 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
         QLandmarkCategoryId id;
         if (!readCategory(id))
             return false;
-        categoryIds << id;
+
+        if (m_option  ==  QLandmarkManager::IncludeCategoryData)
+            categoryIds << id;
 
         if (!m_reader->readNextStartElement()) {
             landmark.setCategoryIds(categoryIds);
@@ -702,10 +709,11 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
     if (m_reader->name() == "name") {
         QString name = m_reader->readElementText();
         if (!m_reader->readNextStartElement()) {
-            QLandmarkCategoryId catId;
-            if (m_catIdLookup.contains(name)) {
-                categoryId = m_catIdLookup.value(name);
-            } else {
+            if (m_option == QLandmarkManager::IncludeCategoryData) {
+                QLandmarkCategoryId catId;
+                if (m_catIdLookup.contains(name)) {
+                    categoryId = m_catIdLookup.value(name);
+                } else {
                     QLandmarkCategory cat;
                     cat.setName(name);
                     if (!DatabaseOperations::saveCategoryHelper(m_connectionName,&cat,&m_errorCode, &m_error, m_managerUri))
@@ -714,8 +722,8 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
                         categoryId = cat.categoryId();
                         m_catIdLookup.insert(cat.name(), cat.categoryId());
                     }
+                }
             }
-
             return true;
         }
     }

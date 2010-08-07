@@ -412,11 +412,13 @@ private slots:
     void sortLandmarksDistance();
     void sortLandmarksDistanceAsync();
 
-
     void importGpx();
     void importGpxAsync();
 
     void importLmx();
+    void importLmxExcludeCategories();
+
+    //TODO: Test async lmx import
 
     void exportGpx();
     void exportGpxAsync();
@@ -5465,6 +5467,36 @@ void tst_QLandmarkManagerEngineSqlite::importLmx() {
     QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
     QCOMPARE(landmarks.count(), 1);
     lm = landmarks.at(0);
+    QCOMPARE(lm.name(), QString("w0"));
+    QCOMPARE(lm.address().street(), QString("1 Main St"));
+    QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));
+    QVERIFY(qFuzzyCompare(lm.coordinate().longitude(),2));
+}
+
+void tst_QLandmarkManagerEngineSqlite::importLmxExcludeCategories() {
+    //TODO: Test Signal emission
+    QLandmarkCategory cat0;
+    cat0.setName("cat0");
+    m_manager->saveCategory(&cat0);
+
+    QVERIFY(m_manager->importLandmarks(":data/convert-collection-in.xml", "LmxV1.0",QLandmarkManager::ExcludeCategoryData));
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QList<QLandmarkCategory> categories = m_manager->categories();
+
+    QCOMPARE(categories.count(), 1);
+    QList<QLandmark> landmarks = m_manager->landmarks();
+    QCOMPARE(landmarks.count(), 16);
+
+    foreach(const QLandmark &lm, landmarks) {
+        QCOMPARE(lm.categoryIds().count(),0);
+    }
+
+    QLandmarkNameFilter nameFilter;
+    nameFilter.setName("w0");
+    landmarks = m_manager->landmarks(nameFilter);
+    QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+    QCOMPARE(landmarks.count(), 1);
+    QLandmark lm = landmarks.at(0);
     QCOMPARE(lm.name(), QString("w0"));
     QCOMPARE(lm.address().street(), QString("1 Main St"));
     QVERIFY(qFuzzyCompare(lm.coordinate().latitude(),1));

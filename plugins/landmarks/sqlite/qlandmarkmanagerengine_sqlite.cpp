@@ -304,12 +304,12 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
                                                    const QString &format,
-                                                   QLandmarkManager::ImportExportOption,
+                                                   QLandmarkManager::ImportExportOption option,
                                                    const QLandmarkCategoryId &categoryId,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    return DatabaseOperations::importLandmarks(m_dbConnectionName, device, format, error, errorString, managerUri());
+    return DatabaseOperations::importLandmarks(m_dbConnectionName, device, format, option, error, errorString, managerUri());
 }
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
