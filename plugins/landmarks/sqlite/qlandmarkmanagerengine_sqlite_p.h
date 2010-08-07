@@ -53,16 +53,15 @@
 // We mean it.
 //
 
-#include "qlandmarkmanagerengine.h"
+#include <qlandmarkmanagerengine.h>
 #include "databasefilewatcher_p.h"
 
 #include <QSqlDatabase>
 #include <QHash>
+#include "databaseoperations_p.h"
 
 QTM_USE_NAMESPACE
-typedef QMap<int, QLandmarkManager::Error>  ERROR_MAP;
-
-class QueryRun;
+using namespace DatabaseOperations;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -195,15 +194,6 @@ protected:
     void disconnectNotify(const char *signal);
 
 private:
-    bool saveLandmarkInternal(QLandmark* landmark,
-                              QLandmarkManager::Error *error,
-                              QString *errorString,
-                              bool *added,
-                              bool *changed);
-    bool removeLandmarkInternal(const QLandmarkId &landmarkId,
-                                QLandmarkManager::Error *error,
-                                QString *errorString,
-                                bool *removed);
 
     void setChangeNotificationsEnabled(bool enabled);
 
@@ -212,7 +202,7 @@ private:
     QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
-    friend class QueryRun;
+    friend class DatabaseOperations::QueryRun;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

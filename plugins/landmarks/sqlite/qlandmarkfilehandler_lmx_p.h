@@ -62,8 +62,6 @@ class QIODevice;
 
 QTM_USE_NAMESPACE
 
-class QLandmarkManagerEngine;
-
 class QLandmarkFileHandlerLmx : public QObject
 {
     Q_OBJECT
