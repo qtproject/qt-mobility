@@ -3336,6 +3336,8 @@ bool SharedMemoryLayer::removeValue(QValueSpacePublisher *creator,
         ++index;
 
     fullPath.append(path.mid(index).toUtf8());
+    while (fullPath.length() > 1 && fullPath.endsWith('/'))
+        fullPath.chop(1);
 
     return remItems(owner, fullPath);
 }

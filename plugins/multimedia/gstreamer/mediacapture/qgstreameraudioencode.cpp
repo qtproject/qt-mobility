@@ -155,7 +155,6 @@ void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settin
 }
 
 
-
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
     QString codec = m_audioSettings.codec();

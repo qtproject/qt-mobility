@@ -488,7 +488,7 @@ setlocal
     ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else {
+    ) else (
         REM Make for other builds
         call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
         REM have to check error level for windows / other builds to be sure.
@@ -578,6 +578,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\landmarks
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\maps
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location\maps\tiled
 ) else if %FIRST% == messaging (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (

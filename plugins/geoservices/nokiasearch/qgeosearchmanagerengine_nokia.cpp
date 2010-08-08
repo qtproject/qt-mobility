@@ -51,7 +51,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
     const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error,
     QString *errorString)
         : QGeoSearchManagerEngine(parameters),
-        m_host("cgu02.tst.nav.svc.ovi.com")
+        m_host("address.s2g.gate5.de")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -69,7 +69,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(
             m_host = host;
     }
 
-    setSupportsGeocoding(false);
+    setSupportsGeocoding(true);
 
     QGeoSearchManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
@@ -98,18 +98,49 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoAddress &addres
 
     QString requestString = "http://";
     requestString += m_host;
+    requestString += "/nsp?vi=where&la=eng-uk&to=20&q=";
+
+
+    if (!address.street().isEmpty()) {
+        requestString += address.street();
+        requestString += ",";
+    }
+
+    if (!address.streetNumber().isEmpty()) {
+        requestString += address.streetNumber();
+        requestString += ",";
+    }
+
+    if (!address.postCode().isEmpty()) {
+        requestString += address.postCode();
+        requestString += ",";
+    }
+
+    if (!address.city().isEmpty()) {
+        requestString += address.city();
+        requestString += ",";
+    }
+
+    if (!address.state().isEmpty()) {
+        requestString += address.state();
+        requestString += ",";
+    }
+
+    if (!address.country().isEmpty()) {
+        requestString += address.country();
+    }
 
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coordinate,
+QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
     const QGeoBoundingBox &bounds)
 {
     Q_UNUSED(bounds)
 
     if (!supportsGeocoding()) {
         QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-            "Geocoding is not supported by this service provider.", this);
+            "Reverse geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -120,7 +151,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::geocode(const QGeoCoordinate &coo
     return search(requestString);
 }
 
-QGeoSearchReply* QGeoSearchManagerEngineNokia::placeSearch(const QString &searchString,
+QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
     QGeoSearchManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
     // NOTE this will eventually replaced by a much improved implementation
@@ -143,8 +174,13 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::placeSearch(const QString &search
         return reply;
     }
 
+    QString q = searchString;
+
     QString requestString = "http://";
     requestString += m_host;
+    requestString += "/nsp?";
+    requestString += "vi=where&la=eng-uk&to=20&q=";
+    requestString += q;
 
     return search(requestString);
 }

@@ -124,10 +124,7 @@ int main(int argc, char** argv)
 
     //this only works
     QRemoteServiceControl* control = new QRemoteServiceControl();
-    control->publishServices("qt_sfw_example_echo");
-#ifdef Q_OS_SYMBIAN
-    RProcess::Rendezvous(KErrNone);
-#endif
+    control->publishServices("sfwecho_service");
 
     int res =  app.exec();
     delete control;    

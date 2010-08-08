@@ -44,7 +44,7 @@
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qvariant.h>
 #endif
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 #include "qmessagemanager.h"
 #include "winhelpers_p.h"
 #include <qvariant.h>
@@ -62,7 +62,7 @@ typedef QSet<QMessageFolderId> FolderIdSet;
 typedef QSet<QString> FolderIdSet;
 #endif
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 class MapiFolderIterator {
 public:
     MapiFolderIterator();
@@ -139,7 +139,7 @@ public:
     
     QList<SortedMessageFilterList> _filterList;
 #endif
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
     enum Field { None = 0, Id, Type, Sender, SenderName, SenderAddress, Recipients, RecipientName, RecipientAddress, Subject, TimeStamp, ReceptionTimeStamp, Status, Priority, Size, ParentAccountId, ParentFolderId, AncestorFolderIds, MessageFilter, AccountFilter, FolderFilter, AncestorFilter };
     enum Comparator { Equality = 0, Relation, Inclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
@@ -197,7 +197,7 @@ public:
 #endif
 };
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) && !defined(QT_SIMULATOR)
 class MapiRestriction {
 public:
     MapiRestriction(const QMessageFilter &filter);

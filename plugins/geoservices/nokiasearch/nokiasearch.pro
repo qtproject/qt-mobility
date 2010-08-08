@@ -11,6 +11,7 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
+            qgeocodeparser.h \
             qgeosearchreply_nokia.h \
             qgeosearchmanagerengine_nokia.h \
             qgeorouteparser.h \
@@ -19,6 +20,7 @@ HEADERS += \
             qgeoserviceproviderplugin_nokia.h
 
 SOURCES += \
+            qgeocodeparser.cpp \
             qgeosearchreply_nokia.cpp \
             qgeosearchmanagerengine_nokia.cpp \
             qgeorouteparser.cpp \
@@ -26,8 +28,9 @@ SOURCES += \
             qgeoroutingmanagerengine_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
-INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation
-INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
+INCLUDEPATH += $$SOURCE_DIR/src/location \
+                $$SOURCE_DIR/src/location/maps \
+                $$SOURCE_DIR/src/location/maps/tiled
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

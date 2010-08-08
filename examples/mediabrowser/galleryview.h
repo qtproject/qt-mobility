@@ -41,18 +41,7 @@
 #ifndef GALLERYVIEW_H
 #define GALLERYVIEW_H
 
-#include <qmobilityglobal.h>
-
 #include <QtGui/QWidget>
-
-QTM_BEGIN_NAMESPACE
-class QAbstractGallery;
-class QGalleryCountRequest;
-class QGalleryItemList;
-class QGalleryQueryRequest;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
 
 class GalleryView : public QWidget
 {
@@ -61,33 +50,9 @@ public:
     GalleryView(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~GalleryView();
 
-    QAbstractGallery *gallery() const;
-    void setGallery(QAbstractGallery *gallery);
-
-    int count() const;
-
 public slots:
-    void showChildren(const QVariant &containerId);
+    virtual void showChildren(const QVariant &itemId) = 0;
 
-Q_SIGNALS:
-    void countChanged(int count);
-
-protected:
-    void setType(const QString &type);
-    void setFields(const QStringList &fields);
-    void setSortFields(const QStringList &fields);
-
-    QGalleryItemList *media() const;
-
-protected slots:
-    virtual void mediaChanged(QGalleryItemList *media) = 0;
-
-private slots:
-    void requestCountChanged();
-
-private:
-    QGalleryQueryRequest *request;
-    QGalleryCountRequest *countRequest;
 };
 
 #endif

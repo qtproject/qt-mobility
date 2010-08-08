@@ -221,12 +221,12 @@ public:
     int colorDepth(int screen);
 
 
-    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
-    float contrast(int screen);
-    int getDPIWidth(int screen);
-    int getDPIHeight(int screen);
-    int physicalHeight(int screen);
-    int physicalWidth(int screen);
+//     QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+//     float contrast(int screen);
+//     int getDPIWidth(int screen);
+//     int getDPIHeight(int screen);
+//     int physicalHeight(int screen);
+//     int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoLinuxCommonPrivate : public QObject

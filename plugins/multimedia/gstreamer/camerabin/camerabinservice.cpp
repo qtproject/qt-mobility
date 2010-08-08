@@ -51,6 +51,7 @@
 #include "camerabinlocks.h"
 #include "camerabinmetadata.h"
 #include "camerabinexposure.h"
+#include "camerabinflash.h"
 #include "camerabinfocus.h"
 #include "camerabinimagecapture.h"
 #include "camerabinimageprocessing.h"
@@ -67,6 +68,10 @@
 
 #include <QtCore/qdebug.h>
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "camerabuttonlistener_maemo.h"
+#endif
+
 
 CameraBinService::CameraBinService(const QString &service, QObject *parent):
     QMediaService(parent)
@@ -82,7 +87,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_videoRenderer = 0;
     m_videoWindow = 0;
     m_videoWidgetControl = 0;
-    m_imageCaptureControl = 0;
+    m_imageCaptureControl = 0;   
 
     if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new CameraBinSession(this);
@@ -94,7 +99,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
                 m_captureSession, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+            m_captureSession->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));        
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoWindow = new QGstreamerVideoOverlay(this);
@@ -117,6 +122,11 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_metaDataControl = new CameraBinMetaData(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
             m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    new CameraButtonListener(this);
+#endif
+
 }
 
 CameraBinService::~CameraBinService()
@@ -179,6 +189,9 @@ QMediaControl *CameraBinService::requestControl(const char *name)
 
     if (qstrcmp(name, QCameraExposureControl_iid) == 0)
         return m_captureSession->cameraExposureControl();
+
+    if (qstrcmp(name, QCameraFlashControl_iid) == 0)
+        return m_captureSession->cameraFlashControl();
 
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
         return m_captureSession->cameraFocusControl();

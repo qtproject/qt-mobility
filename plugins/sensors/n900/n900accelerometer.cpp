@@ -62,8 +62,6 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
 
 void n900accelerometer::start()
 {
-    FILE *fd;
-
     if (!QFile::exists(QLatin1String(filename)))
         goto error;
 

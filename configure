@@ -548,6 +548,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         location)
             $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/landmarks
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/maps
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location/maps/tiled
             ;;
         serviceframework)
             $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework

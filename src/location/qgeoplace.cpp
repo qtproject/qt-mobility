@@ -173,23 +173,27 @@ QGeoPlace::PlaceType QGeoPlace::type() const
 }
 
 /*!
-    Returns a bounding box that completely encloses this place.
+    Returns the viewport associated with this place.
+
+    The viewport is a suggestion for a size and position of a map window
+    which aims to view this palce.
 */
-QGeoBoundingBox QGeoPlace::boundingBox() const
+QGeoBoundingBox QGeoPlace::viewport() const
 {
     Q_D(const QGeoPlace);
-    return d->boundingBox;
+    return d->viewport;
 }
 
 /*!
-    Sets the \a boundingBox of this place.
+    Sets the viewport associated with this place to \a viewport.
 
-    The \a boundingBox should completely enclose this place.
+    The viewport is a suggestion for a size and position of a map window
+    which aims to view this palce.
 */
-void QGeoPlace::setBoundingBox(const QGeoBoundingBox &boundingBox)
+void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 {
     Q_D(QGeoPlace);
-    d->boundingBox = boundingBox;
+    d->viewport = viewport;
 }
 
 /*!
@@ -238,7 +242,7 @@ QGeoPlacePrivate::QGeoPlacePrivate()
 QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         : QSharedData(other),
         type(other.type),
-        boundingBox(other.boundingBox),
+        viewport(other.viewport),
         coordinate(other.coordinate),
         address(other.address) {}
 
@@ -247,7 +251,7 @@ QGeoPlacePrivate::~QGeoPlacePrivate() {}
 QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 {
     type = other.type;
-    boundingBox = other.boundingBox;
+    viewport = other.viewport;
     coordinate = other.coordinate;
     address = other.address;
 
@@ -257,7 +261,7 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
     return ((type == other.type)
-            && (boundingBox == other.boundingBox)
+            && (viewport == other.viewport)
             && (coordinate == other.coordinate)
             && (address == other.address));
 }

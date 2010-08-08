@@ -76,6 +76,12 @@ void QWmpVideoOverlay::setWinId(WId id)
 {
     m_winId = id;
 
+    if (QWidget *widget = QWidget::find(m_winId)) {
+        const QColor color = widget->palette().color(QPalette::Window);
+
+        m_windowColor = RGB(color.red(), color.green(), color.blue());
+    }
+
     if (m_inPlaceObject && m_winId) {
         RECT rcPos = 
         { 
@@ -182,6 +188,26 @@ void QWmpVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 
 void QWmpVideoOverlay::repaint()
 {
+    PAINTSTRUCT paint;
+
+    if (HDC dc = ::BeginPaint(m_winId, &paint)) {
+        HPEN pen = ::CreatePen(PS_SOLID, 1, m_windowColor);
+        HBRUSH brush = ::CreateSolidBrush(m_windowColor);
+        ::SelectObject(dc, pen);
+        ::SelectObject(dc, brush);
+
+        ::Rectangle(
+                dc,
+                m_displayRect.left(),
+                m_displayRect.top(),
+                m_displayRect.right() + 1,
+                m_displayRect.bottom() + 1);
+
+        ::DeleteObject(pen);
+        ::DeleteObject(brush);
+
+        ::EndPaint(m_winId, &paint);
+    }
 }
 
 int QWmpVideoOverlay::brightness() const
