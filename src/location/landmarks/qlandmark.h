@@ -89,9 +89,15 @@ public:
     double radius() const;
     void setRadius(double radius);
 
-    QVariant attribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    QVariant attribute(const QString &key) const;
     void setAttribute(const QString &key, const QVariant &value);
     QStringList attributeKeys() const;
+    void removeAttribute(const QString &key);
+
+    QVariant customAttribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    void setCustomAttribute(const QString &key, const QVariant &value);
+    QStringList customAttributeKeys() const;
+    void removeCustomAttribute(const QString &key);
 
     QString phone() const;
     void setPhone(const QString &phone);

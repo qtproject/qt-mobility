@@ -190,7 +190,7 @@ public:
     }
 
 private slots:
-    void testFiltterAttribute() {
+    void testFilterAttribute() {
         QLandmark lm;
         lm.setAttribute("capacity", 30);
 
@@ -210,6 +210,118 @@ private slots:
 
         lm.setAttribute("capacity", 45);
         QVERIFY(MockEngine::testFilter(filter, lm));
+
+        //test multiple manager attributes AND operation
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(MockEngine::testFilter(filter, lm));
+
+        //test that the AND operation fails when one attribute doesn't match
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(!MockEngine::testFilter(filter, lm));
+
+        //test multiple manager attributes OR operation
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",45);
+        filter.setAttribute("height", 9);
+        QVERIFY(MockEngine::testFilter(filter,lm));
+
+        //test multiple manager with an OR operation that doesn't match
+        lm.clear();
+        lm.setAttribute("name", "LM1");
+        lm.setAttribute("capacity", 45);
+        lm.setAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",46);
+        filter.setAttribute("height", 9);
+        QVERIFY(!MockEngine::testFilter(filter,lm));
+
+
+        //test multiple custom attributes ,AND operation
+        QLandmark lm2;
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(MockEngine::testFilter(filter, lm2));
+
+        //test that the AND operation fails when one attribute doesn't match
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::AndOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LM", QLandmarkFilter::MatchEndsWith);
+        filter.setAttribute("capacity", 45);
+        filter.setAttribute("height", QVariant());
+        QVERIFY(!MockEngine::testFilter(filter, lm2));
+
+        //test multiple manager attributes OR operation
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",45);
+        filter.setAttribute("height", 9);
+        QVERIFY(MockEngine::testFilter(filter,lm2));
+
+        //test multiple manager with an OR operation that doesn't match
+        lm2.clear();
+        lm2.setCustomAttribute("name", "LM1");
+        lm2.setCustomAttribute("capacity", 45);
+        lm2.setCustomAttribute("height", 10);
+        filter.clearAttributes();
+        filter.setOperationType(QLandmarkAttributeFilter::OrOperation);
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        filter.setAttribute("name", "LANDMARK", QLandmarkFilter::MatchStartsWith);
+        filter.setAttribute("capacity",46);
+        filter.setAttribute("height", 9);
+        QVERIFY(!MockEngine::testFilter(filter,lm2));
+
+        //try landmark with the same key in both extended and custom attributes but values differ
+        //make sure the filter operates on the right attributes
+        QLandmark lm3;
+        lm3.setAttribute("capacity", 10);
+        lm3.setCustomAttribute("capcity", 5);
+        filter.clearAttributes();
+        filter.setAttribute("capacity", 10);
+        filter.setAttributeType(QLandmarkAttributeFilter::ManagerAttributes);
+        QVERIFY(MockEngine::testFilter(filter,lm3));
+        filter.setAttributeType(QLandmarkAttributeFilter::CustomAttributes);
+        QVERIFY(!MockEngine::testFilter(filter,lm3));
+        filter.setAttribute("capcity", 5);
+        QVERIFY(MockEngine::testFilter(filter,lm3));
     }
 
     void testFilterBox() {

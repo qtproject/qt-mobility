@@ -58,7 +58,8 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
       name(QString()),
       iconUrl(QUrl()),
       description(QString()),
-      attributes(QHash<QString, QVariant>()),
+      managerAttributes(QHash<QString, QVariant>()),
+      customAttributes(QHash<QString, QVariant>()),
       id(QLandmarkCategoryId())
 {
 }
@@ -68,7 +69,8 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
       name(other.name),
       iconUrl(other.iconUrl),
       description(other.description),
-      attributes(other.attributes),
+      managerAttributes(other.managerAttributes),
+      customAttributes(other.customAttributes),
       id(other.id)
 {
 }
@@ -82,7 +84,8 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
-    attributes = other.attributes;
+    managerAttributes = other.managerAttributes;
+    customAttributes = other.customAttributes;
     id = other.id;
 
     return *this;
@@ -93,7 +96,8 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
             && (description == other.description)
-            && (attributes == other.attributes)
+            && (managerAttributes == other.managerAttributes)
+            && (customAttributes == other.customAttributes)
             && (id == other.id));
 }
 
@@ -102,7 +106,6 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
-
 
     \inmodule QtLocation
 
@@ -243,11 +246,9 @@ void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 
 /*!
     Returns the value of the attribute corresponding to \a key.
-    If the attribute does not exist, returns \a defaultValue.
-
-    If no default value is specified, a default QVariant is returned.
+    If the key doest exist, an invalid QVariant is returned.
 */
-QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaultValue) const
+QVariant QLandmarkCategory::attribute(const QString &key) const
 {
 
     if (key.compare("name",Qt::CaseInsensitive) == 0) {
@@ -256,11 +257,12 @@ QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaul
         return iconUrl();
     }
 
-    return d->attributes.value(key, defaultValue);
+    return d->managerAttributes.value(key);
 }
 
 /*!
     Sets the \a value of the attribute corresponding to \a key.
+    If the \a key does not already exist this function has no effect.
 */
 void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 {
@@ -273,10 +275,8 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
         return;
     }
 
-    if (!value.isValid())
-        d->attributes.remove(key);
-    else
-        d->attributes[key] = value;
+    if (d->managerAttributes.contains(key))
+        d->managerAttributes[key] = value;
 }
 
 /*!
@@ -286,7 +286,61 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 */
 QStringList QLandmarkCategory::attributeKeys() const
 {
-    return d->commonKeys + d->attributes.keys();
+    return d->commonKeys + d->managerAttributes.keys();
+}
+
+/*!
+    Removes the attribute corresponding to \a key.
+    Common cross platform attributes cannot be removed,
+    only extended attributes may be removed using this function.
+*/
+void QLandmarkCategory::removeAttribute(const QString &key)
+{
+    if (d->commonKeys.contains(key))
+        return;
+    else
+        d->managerAttributes.remove(key);
+}
+
+/*!
+    Returns the value of the custom attribute corresponding to \a key.
+    If the custom attribute doest exist, returns \a defaultValue.
+
+    If no default value is specified, a default QVariant is returned.
+*/
+QVariant QLandmarkCategory::customAttribute(const QString &key, const QVariant &defaultValue) const
+{
+    return d->customAttributes.value(key,defaultValue);
+}
+
+/*!
+    Sets the \a value of the custom attribute corresponding to \a key.
+    Setting an invalid QVariant removes the key.
+*/
+void QLandmarkCategory::setCustomAttribute(const QString &key, const QVariant &value)
+{
+    if (!value.isValid())
+        d->customAttributes.remove(key);
+    else
+        d->customAttributes[key] = value;
+}
+
+/*!
+    Returns a list of custom Attribute keys.
+
+    \sa customAttribute(), setCustomAttribute()
+*/
+QStringList QLandmarkCategory::customAttributeKeys() const
+{
+    return d->customAttributes.keys();
+}
+
+/*!
+    Removes the custom attribute corresponding to \a key.
+*/
+void QLandmarkCategory::removeCustomAttribute(const QString &key)
+{
+    d->customAttributes.remove(key);
 }
 
 /*!
@@ -297,6 +351,7 @@ void QLandmarkCategory::clear()
     d->name.clear();
     d->iconUrl.clear();
     d->description.clear();
-    d->attributes.clear();
+    d->managerAttributes.clear();
+    d->customAttributes.clear();
     d->id = QLandmarkCategoryId();
 }

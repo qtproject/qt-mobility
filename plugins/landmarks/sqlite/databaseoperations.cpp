@@ -823,7 +823,7 @@ QLandmark DatabaseOperations::retrieveLandmark(const QString &connectionName, co
         }
 
         while(query.next()) {
-            lm.setAttribute(query.value(0).toString(),query.value(1));
+            lm.setCustomAttribute(query.value(0).toString(),query.value(1));
         }
 
         if (transacting)
@@ -1642,7 +1642,7 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
         landmark->setLandmarkId(id);
     }
 
-    QStringList attributekeys = landmark->attributeKeys();
+    QStringList attributekeys = landmark->customAttributeKeys();
     QSqlQuery query(db);
     if( !query.prepare("DELETE FROM landmark_attribute WHERE landmark_id= :lmId"))
     {
@@ -1671,7 +1671,7 @@ bool DatabaseOperations::saveLandmarkHelper(const QString &connectionName, QLand
 
         query.bindValue(":lmId", landmark->landmarkId().localId());
         query.bindValue(":key", attributekeys[i]);
-        query.bindValue(":value", landmark->attribute(attributekeys.at(i)));
+        query.bindValue(":value", landmark->customAttribute(attributekeys.at(i)));
 
         if (!query.exec()) {
             *error = QLandmarkManager::UnknownError;
@@ -2004,7 +2004,7 @@ QLandmarkCategory DatabaseOperations::category(const QString &connectionName, co
          }
 
         while(query.next()) {
-            cat.setAttribute(query.value(0).toString(),query.value(1));
+            cat.setCustomAttribute(query.value(0).toString(),query.value(1));
         }
 
         if (error)
@@ -2176,7 +2176,7 @@ bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLand
 
     bindValues.clear();
     bindValues.insert("catId",category->categoryId().localId());
-    QStringList attributekeys = category->attributeKeys();
+    QStringList attributekeys = category->customAttributeKeys();
     if (!executeQuery(&query,"DELETE FROM category_attribute WHERE category_id= :catId", bindValues, error, errorString)) {
         return false;
     }
@@ -2185,7 +2185,7 @@ bool DatabaseOperations::saveCategoryHelper(const QString &connectionName, QLand
         bindValues.clear();
         bindValues.insert("catId",category->categoryId().localId());
         bindValues.insert("key",attributekeys[i]);
-        bindValues.insert("value",category->attribute(attributekeys.at(i)));
+        bindValues.insert("value",category->customAttribute(attributekeys.at(i)));
 
         if (!executeQuery(&query,"INSERT INTO category_attribute (category_id,key,value) VALUES(:catId,:key,:value)", bindValues,
                          error, errorString)) {

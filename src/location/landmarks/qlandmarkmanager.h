@@ -89,10 +89,8 @@ public:
     };
 
     enum LandmarkFeature {
-        GenericLandmarkAttributes,
-        GenericCategoryAttributes,
-        PlatformLandmarkAttributes,
-        PlatformCategoryAttributes
+        ExtendedAttributes,
+        CustomAttributes
     };
 
     enum ImportExportOption {
@@ -153,12 +151,18 @@ public:
     SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder>& sortOrders) const;
     bool isFeatureSupported(LandmarkFeature feature) const;
 
-    QStringList platformLandmarkAttributeKeys() const;
-    QStringList platformCategoryAttributeKeys() const;
-
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;
     bool isReadOnly(const QLandmarkCategoryId &id) const;
+
+    QStringList landmarkAttributeKeys() const;
+    QStringList categoryAttributeKeys() const;
+
+    bool isCustomAttributesEnabled() const;
+    void setCustomAttributesEnabled(bool enabled);
+
+    bool isExtendedAttributesEnabled() const;
+    void setExtendedAttributesEnabled(bool enabled);
 
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;

@@ -80,7 +80,8 @@ public:
     QString description;
     QUrl iconUrl;
     double radius;
-    QHash<QString, QVariant> attributes;
+    QHash<QString, QVariant> managerAttributes;
+    QHash<QString, QVariant> customAttributes;
     QString phone;
     QUrl url;
     QLandmarkId id;

@@ -145,8 +145,14 @@ public:
     QLandmarkManager::SupportLevel sortOrderSupportLevel(const QList<QLandmarkSortOrder> &sortOrders, QLandmarkManager::Error *error, QString *errorString) const;
     bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature, QLandmarkManager::Error *error, QString *errorString) const;
 
-    QStringList platformLandmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
-    QStringList platformCategoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+    QStringList categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const;
+
+    bool isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;;
+    void setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);;
+
+    bool isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
+    void setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString);
 
     virtual bool isReadOnly(QLandmarkManager::Error *error, QString *errorString) const;
     virtual bool isReadOnly(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString) const;
@@ -203,6 +209,8 @@ private:
     DatabaseFileWatcher *m_dbWatcher;
     qreal m_latestTimestamp;
     friend class DatabaseOperations::QueryRun;
+    bool m_isExtendedAttributesEnabled;
+    bool m_isCustomAttributesEnabled;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

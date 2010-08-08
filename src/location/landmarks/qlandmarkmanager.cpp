@@ -770,7 +770,6 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, const QString &format, QLandmarkManager::ImportExportOption option, const QLandmarkCategoryId &categoryId)
 {
-    Q_D(QLandmarkManager);
     QFile file(fileName);
     return importLandmarks(&file, format,option,categoryId);
 }
@@ -913,29 +912,6 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLi
     return d->engine->sortOrderSupportLevel(sortOrders, &(d->errorCode), &(d->errorString));
 }
 
-QStringList QLandmarkManager::platformLandmarkAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-
-    return d->engine->platformLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
-QStringList QLandmarkManager::platformCategoryAttributeKeys() const
-{
-    Q_D(const QLandmarkManager);
-
-    if (!d->engine) {
-        d->errorCode = QLandmarkManager::InvalidManagerError;
-        d->errorString = QString("Invalid Manager");
-    }
-    return  d->engine->platformCategoryAttributeKeys(&(d->errorCode), &(d->errorString));
-}
-
 /*!
     Returns true if the manager is entirely read-only.  Meaning
     landmarks and categories cannot be added, modified or removed.
@@ -988,6 +964,116 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
     }
 
     return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns the list of attribute keys the landmarks will have.
+    If extended attributes are enabled (provided manager supported them)
+    landmarks will possess  extra keys in addition to the standard cross platform keys.
+
+    Note: When saving a landark with extended attributes, all attributes much match
+    those of the manager otherwise a QLandmarkManager::BadArgumentError is set.
+    If the landmark does not have one of the extended attributes in its list,
+    then that particular attribute is ignored.  This differs from the semantics
+    for custom attributes where if a custom attribute is not present then it
+    is removed when the landmark is saved.
+*/
+QStringList QLandmarkManager::landmarkAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->landmarkAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns the list of attribute keys the categories will have.
+    If extended attributes are enabled (provided the manager supports them),
+    categories will possess extra keys in addition to the standad cross platform keys.
+*/
+QStringList QLandmarkManager::categoryAttributeKeys() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+    return  d->engine->categoryAttributeKeys(&(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns whether extended attributes specific to this manager are enabled or not.
+    If extended attributes are enabled, retrieved landmarks will have
+    extra attribute keys accessible through the QLandmark::attribute() function.
+    Extended attributes must be enabled to save any landmarks which possess
+    extended attributes.  This same behaviour will also apply to categories
+    if extended category attributes are supported.
+*/
+bool QLandmarkManager::isExtendedAttributesEnabled() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+    return  d->engine->isExtendedAttributesEnabled(&(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Sets whether extended attributes are \a enabled or not
+*/
+void QLandmarkManager::setExtendedAttributesEnabled(bool enabled)
+{
+    Q_D(QLandmarkManager);
+
+   if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    d->engine->setExtendedAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Returns whether custom attributes are enabled or not. Custom attributes
+    are arbitrary attributes created by the application for a landmark or category.
+    If custom attributes are enabled (and the manager supports them),
+    retrieved landmarks and categories will have extra attributes accessible
+    using QLandmark::customAttributes().  Custom attributes must be enabled
+    to save any landmarks with possess custom attributes.  This same behaviour
+    applies to categories if custom category attributes are supported.
+*/
+bool QLandmarkManager::isCustomAttributesEnabled() const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    return d->engine->isCustomAttributesEnabled(&(d->errorCode), &(d->errorString));
+}
+
+/*!
+    Sets whether custom attributes are \a enabled or not.
+*/
+void QLandmarkManager::setCustomAttributesEnabled(bool enabled)
+{
+    Q_D(QLandmarkManager);
+
+        if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+    }
+
+    d->engine->setCustomAttributesEnabled(enabled, &(d->errorCode), &(d->errorString));
 }
 
 /*!

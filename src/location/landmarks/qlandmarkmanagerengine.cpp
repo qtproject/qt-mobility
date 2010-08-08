@@ -46,6 +46,8 @@
 #include "qlandmarkcategoryid.h"
 
 #include "qlandmarkrequests_p.h"
+#include "qlandmark_p.h"
+#include "qlandmarkcategory_p.h"
 
 #include "qlandmarkabstractrequest.h"
 #include "qlandmarkidfetchrequest.h"
@@ -75,6 +77,25 @@
 
 QTM_BEGIN_NAMESPACE
 
+bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
+{
+    Qt::CaseSensitivity cs;
+    if (matchFlags & QLandmarkFilter::MatchCaseSensitive)
+        cs = Qt::CaseSensitive;
+    else
+        cs = Qt::CaseInsensitive;
+    if ((matchFlags & 3) == QLandmarkFilter::MatchEndsWith) {
+        return sourceString.endsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchStartsWith) {
+        return sourceString.startsWith(matchString, cs);
+    } else if ((matchFlags & 3) == QLandmarkFilter::MatchContains) {
+        return sourceString.contains(matchString,cs);
+    } else if (matchFlags & QLandmarkFilter::MatchFixedString) {
+        return sourceString.compare(matchString,cs) == 0;
+    } else {
+        return QVariant(sourceString) == QVariant(matchString);
+    }
+}
 /*!
     \class QLandmarkManagerEngine
     \brief The QLandmarkManagerEngine class provides the interface for all implementations
@@ -493,6 +514,103 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::Error *er
     If \a categoryId does not refer to an existing category,
     it is considered writable unless the manager engine is exclusively read-only.
     Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    Returns the list of attribute keys the landmarks will have.
+    If extended attributes are enabled (provided manager supported them),
+    landmarks will possess  extra keys in addition to the standard cross platform keys.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::landmarkAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString  = "";
+
+    //TODO: optimize
+    QStringList commonKeys = QStringList()
+                             << "name"
+                             << "description"
+                             << "iconurl"
+                             << "radius"
+                             << "phone"
+                             << "url"
+                             << "latitude"
+                             << "longitude"
+                             << "altitude"
+                             << "country"
+                             << "countryCode"
+                             << "state"
+                             << "county"
+                             << "city"
+                             << "district"
+                             << "street"
+                             << "streetNumber"
+                             << "postCode";
+    return commonKeys;
+}
+
+/*!
+    Returns the list of attribute keys the categories will have.
+    If extended attributes are enabled (provided manager supported them),
+    categories will possess  extra keys in addition to the standard cross platform keys.
+    Errors are stored in \a error and \a errorString.
+*/
+QStringList QLandmarkManagerEngine::categoryAttributeKeys(QLandmarkManager::Error *error, QString *errorString) const
+{
+    Q_ASSERT(error);
+    Q_ASSERT(errorString);
+
+    *error = QLandmarkManager::NoError;
+    *errorString  = "";
+
+
+    //TODO: Optimize
+    QStringList commonKeys = QStringList() << "name"
+                             << "iconurl";
+    return commonKeys;
+}
+
+/*!
+    \fn bool QLandmarkManagerEngine::isExtendedAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const
+
+    Returns whether extended attributes specific to this manager are enabled or not.
+    If extended attributes are enabled, retrieved landmarks will have
+    extra attribute keys accessible through the QLandmark::attribute() function.
+    Extended attributes must be enabled to save any landmarks which possess
+    extended attributes.  This same behaviour will also apply to categories
+    if extended category attributes are supported.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn void QLandmarkManagerEngine::setExtendedAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
+
+    Sets whether extended attributes are \a enabled or not.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn bool QLandmarkManagerEngine::isCustomAttributesEnabled(QLandmarkManager::Error *error, QString *errorString) const;
+
+    Returns whether custom attributes are enabled or not. Custom attributes
+    are arbitrary attributes created by the application for a landmark.
+    If custom attributes are enabled (and the manager supports them),
+    retrieved landmarks will have extra attributes accessible
+    using QLandmark::customAttributes().  Custom attributes must be enabled
+    to save any landmarks with possess custom attributes.  This same behaviour
+    applies to categories if custom category attributes are supported.
+    Errors are stored in \a error and \a errorString.
+*/
+
+/*!
+    \fn void QLandmarkManagerEngine::setCustomAttributesEnabled(bool enabled, QLandmarkManager::Error *error, QString *errorString)
+
+     Sets whether custom attributes are \a enabled or not.
+     Errors are stored in \a error and \a errorString.
 */
 
 /*!
@@ -1057,23 +1175,67 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         {
             const QLandmarkAttributeFilter attribFilter(filter);
             QStringList filterKeys = attribFilter.attributeKeys();
-            QStringList landmarkKeys = attribFilter.attributeKeys();
 
-            foreach(const QString filterKey, filterKeys)
-            {
-                if (landmarkKeys.contains(filterKey)) {
-                    if (!attribFilter.attribute(filterKey).isValid())
-                        continue;
+            QStringList landmarkKeys;
+            if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                landmarkKeys = landmark.attributeKeys();
+            else
+                landmarkKeys = landmark.customAttributeKeys();
 
-                    if (attribFilter.attribute(filterKey) == landmark.attribute(filterKey))
-                        continue;
-                    else
+            if (attribFilter.operationType() ==  QLandmarkAttributeFilter::AndOperation) {
+                QVariant lmAttributeValue;
+                foreach(const QString filterKey, filterKeys)
+                {
+                    if (landmarkKeys.contains(filterKey)) {
+                        if (!attribFilter.attribute(filterKey).isValid())
+                            continue;
+
+                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                            lmAttributeValue = landmark.attribute(filterKey);
+                        else
+                            lmAttributeValue = landmark.customAttribute(filterKey);
+
+                        if (lmAttributeValue.type() == QVariant::String) {
+                            QString lmString = lmAttributeValue.toString();
+                            QString attribString = attribFilter.attribute(filterKey).toString();
+                            if (matchString(lmString, attribString, attribFilter.matchFlags(filterKey)))
+                                continue;
+                        } else if (attribFilter.attribute(filterKey) == lmAttributeValue) {
+                            continue;
+                        }
+
                         return false;
-                } else {
-                    return false;
+                    } else {
+                        return false;
+                    }
                 }
+                return true;
+            } else {//must be OR operation
+                QVariant lmAttributeValue;
+                foreach(const QString filterKey, filterKeys) {
+                    if (landmarkKeys.contains(filterKey)) {
+                        if (!(attribFilter.attribute(filterKey).isValid()))
+                            return true;
+
+                        if (attribFilter.attributeType() == QLandmarkAttributeFilter::ManagerAttributes)
+                            lmAttributeValue = landmark.attribute(filterKey);
+                        else
+                            lmAttributeValue = landmark.customAttribute(filterKey);
+
+                        if (lmAttributeValue.type() == QVariant::String) {
+                            QString lmString = lmAttributeValue.toString();
+                            QString attribString = attribFilter.attribute(filterKey).toString();
+                            if (matchString(lmString, attribString, attribFilter.matchFlags(filterKey)))
+                                return true;
+                        }
+
+                        if (attribFilter.attribute(filterKey) == lmAttributeValue) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
-            return true;
         }
         case QLandmarkFilter::BoxFilter:
         {
@@ -1151,22 +1313,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::NameFilter:
         {
             QLandmarkNameFilter nameFilter(filter);
-            Qt::CaseSensitivity cs;
-            if (nameFilter.matchFlags() & QLandmarkFilter::MatchCaseSensitive)
-                cs = Qt::CaseSensitive;
-            else
-                cs = Qt::CaseInsensitive;
-            if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchEndsWith) {
-                return landmark.name().endsWith(nameFilter.name(), cs);
-            } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchStartsWith) {
-                return landmark.name().startsWith(nameFilter.name(), cs);
-            } else if ((nameFilter.matchFlags() & 3) == QLandmarkFilter::MatchContains) {
-                return landmark.name().contains(nameFilter.name(),cs);
-            } else if (nameFilter.matchFlags() & QLandmarkFilter::MatchFixedString) {
-                return landmark.name().compare(nameFilter.name(),cs) == 0;
-            } else {
-                return QVariant(landmark.name()) == QVariant(nameFilter.name());
-            }
+            return matchString(landmark.name(), nameFilter.name(), nameFilter.matchFlags());
         }
         case QLandmarkFilter::ProximityFilter:
         {
