@@ -68,6 +68,10 @@
 
 #include <QtCore/qdebug.h>
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "camerabuttonlistener_maemo.h"
+#endif
+
 
 CameraBinService::CameraBinService(const QString &service, QObject *parent):
     QMediaService(parent)
@@ -83,7 +87,7 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_videoRenderer = 0;
     m_videoWindow = 0;
     m_videoWidgetControl = 0;
-    m_imageCaptureControl = 0;
+    m_imageCaptureControl = 0;   
 
     if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new CameraBinSession(this);
@@ -118,6 +122,11 @@ CameraBinService::CameraBinService(const QString &service, QObject *parent):
     m_metaDataControl = new CameraBinMetaData(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
             m_captureSession, SLOT(setMetaData(QMap<QByteArray,QVariant>)));
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    new CameraButtonListener(this);
+#endif
+
 }
 
 CameraBinService::~CameraBinService()

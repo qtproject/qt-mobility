@@ -1044,7 +1044,6 @@ TContactItemId CPplContactTable::OwnCardIdL()
 	{
 	if (iOwnCardId != 0)
 	    {
-    	RDebug::Print(_L("CPplContactTable::OwnCardIdL() exit %d"), iOwnCardId);
 	    return iOwnCardId;
 	    }
 	    

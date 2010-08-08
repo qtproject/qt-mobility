@@ -2156,7 +2156,7 @@ void RCntModel::GetDefinitionsOfExistingViewsL(const TDesC& aDbName, RPointerArr
 	{
 	RBuf8 buf;
 	CleanupClosePushL(buf);
-	buf.Create(256);
+	buf.CreateL(256);
 	TIpcArgs args(&aDbName, &buf);
 
 	TInt newBufSize;

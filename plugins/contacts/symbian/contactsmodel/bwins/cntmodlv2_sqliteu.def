@@ -539,4 +539,6 @@ EXPORTS
 	?AddObserverV2L@CContactDatabase@@QAEXAAVMContactDbObserverV2@@@Z @ 538 NONAME ; void CContactDatabase::AddObserverV2L(class MContactDbObserverV2 &)
 	?OpenV2L@CContactDatabase@@SAPAV1@W4TThreadAccess@1@@Z @ 539 NONAME ; class CContactDatabase * CContactDatabase::OpenV2L(enum CContactDatabase::TThreadAccess)
 	?CreateV2L@CContactDatabase@@SAPAV1@W4TThreadAccess@1@@Z @ 540 NONAME ; class CContactDatabase * CContactDatabase::CreateV2L(enum CContactDatabase::TThreadAccess)
+	?RemoveContactsFromGroupL@CContactDatabase@@QAEXAAV?$RArray@J@@J@Z @ 541 NONAME ; void CContactDatabase::RemoveContactsFromGroupL(class RArray<long> &, long)
+	?AddContactsToGroupL@CContactDatabase@@QAEXAAV?$RArray@J@@J@Z @ 542 NONAME ; void CContactDatabase::AddContactsToGroupL(class RArray<long> &, long)
 

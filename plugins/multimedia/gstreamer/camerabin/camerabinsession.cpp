@@ -130,10 +130,11 @@ static gboolean imgCaptured(GstElement *camera, const gchar *filename, gpointer 
 
 CameraBinSession::CameraBinSession(QObject *parent)
     :QObject(parent),
-     m_state(QCamera::StoppedState),
-     m_pendingState(QCamera::StoppedState),
+     m_state(QCamera::UnloadedState),
+     m_pendingState(QCamera::UnloadedState),
+     m_pendingResolutionUpdate(false),
      m_muted(false),
-     m_captureMode(QCamera::CaptureDisabled),
+     m_captureMode(QCamera::CaptureStillImage),
      m_audioInputFactory(0),
      m_videoInputFactory(0),
      m_viewfinder(0),
@@ -217,7 +218,7 @@ bool CameraBinSession::setupCameraBin()
         g_object_set(m_pipeline, AUDIO_ENCODER_PROPERTY, m_audioEncodeControl->createEncoder(), NULL);
         g_object_set(m_pipeline, VIDEO_MUXER_PROPERTY,
                      gst_element_factory_make(m_mediaContainerControl->formatElementName().constData(), NULL), NULL);
-    }
+    }    
 
     if (m_videoInputHasChanged) {
         m_videoSrc = buildVideoSrc();
@@ -324,6 +325,20 @@ void CameraBinSession::captureImage(int requestId, const QString &fileName)
     m_imageFileName = actualFileName;
 }
 
+void CameraBinSession::setCaptureMode(QCamera::CaptureMode mode)
+{
+    m_captureMode = mode;
+
+    switch (m_captureMode) {
+    case QCamera::CaptureStillImage:
+        g_object_set(m_pipeline, MODE_PROPERTY, CAMERABIN_IMAGE_MODE, NULL);
+        break;
+    case QCamera::CaptureVideo:
+        g_object_set(m_pipeline, MODE_PROPERTY, CAMERABIN_VIDEO_MODE, NULL);
+        break;
+    }
+}
+
 QUrl CameraBinSession::outputLocation() const
 {
     //return the location service wrote data to, not one set by user, it can be empty.
@@ -428,15 +443,15 @@ void CameraBinSession::setState(QCamera::State newState)
     qDebug() << Q_FUNC_INFO << newState;
 
     switch (newState) {
-    case QCamera::StoppedState:
-    case QCamera::IdleState:
+    case QCamera::UnloadedState:
+    case QCamera::LoadedState:
         //focus is lost when the state is changed from Active to Idle
         if (m_state == QCamera::ActiveState)
             emit focusStatusChanged(QCamera::Unlocked, QCamera::LockLost);
 
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
         m_state = newState;
-        if (m_state == QCamera::IdleState && m_videoInputHasChanged) {
+        if (m_state == QCamera::LoadedState && m_videoInputHasChanged) {
             m_videoSrc = buildVideoSrc();
             g_object_set(m_pipeline, VIDEO_SOURCE_PROPERTY, m_videoSrc, NULL);
             updateVideoSourceCaps();
@@ -445,13 +460,15 @@ void CameraBinSession::setState(QCamera::State newState)
         emit stateChanged(m_state);
         break;
     case QCamera::ActiveState:
-        if (setupCameraBin())
-            gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+        if (setupCameraBin()) {
+            m_pendingResolutionUpdate = true;
+            gst_element_set_state(m_pipeline, GST_STATE_READY);
+        }
 
-        bool continuous = false;
+        /*bool continuous = false;
         supportedFrameRates(QSize(), &continuous);
         supportedResolutions(QPair<int,int>(0,0), &continuous);
-        break;
+        break;*/
     }
 }
 
@@ -662,17 +679,19 @@ void CameraBinSession::busMessage(const QGstreamerMessage &message)
                     switch (newState) {
                     case GST_STATE_VOID_PENDING:
                     case GST_STATE_NULL:
+                        if (m_state != QCamera::UnloadedState)
+                            emit stateChanged(m_state = QCamera::UnloadedState);
+                        break;
                     case GST_STATE_READY:
-                        {
-                            QCamera::State state = m_captureMode == QCamera::CaptureDisabled ?
-                                                   QCamera::StoppedState : QCamera::IdleState;
-                            if (m_state != state)
-                                emit stateChanged(m_state = state);
+                        if (m_pendingResolutionUpdate) {
+                            m_pendingResolutionUpdate = false;
+                            setupCaptureResolution();
+                            gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
                         }
+                        if (m_state != QCamera::LoadedState)
+                            emit stateChanged(m_state = QCamera::LoadedState);
                         break;
-                    case GST_STATE_PAUSED:                        
-                        setupCaptureResolution();
-                        break;
+                    case GST_STATE_PAUSED:
                     case GST_STATE_PLAYING:
                         emit stateChanged(m_state = QCamera::ActiveState);
                         break;
@@ -715,8 +734,6 @@ void CameraBinSession::recordVideo()
         QString ext = m_mediaContainerControl->containerMimeType();
         m_actualSink = generateFileName("clip_", defaultDir(QCamera::CaptureVideo), ext);
     }
-
-    setupCaptureResolution();
 
     g_object_set(G_OBJECT(m_pipeline), FILENAME_PROPERTY, m_actualSink.toEncoded().constData(), NULL);
 
@@ -801,7 +818,8 @@ QList< QPair<int,int> > CameraBinSession::supportedFrameRates(const QSize &frame
         GstStructure *structure = gst_caps_get_structure(caps, i);
         gst_structure_set_name(structure, "video/x-raw-yuv");
         const GValue *oldRate = gst_structure_get_value(structure, "framerate");
-        GValue rate = {0};
+        GValue rate;
+        memset(&rate, 0, sizeof(rate));
         g_value_init(&rate, G_VALUE_TYPE(oldRate));
         g_value_copy(oldRate, &rate);
         gst_structure_remove_all_fields(structure);
@@ -864,8 +882,10 @@ QList<QSize> CameraBinSession::supportedResolutions(QPair<int,int> rate, bool *c
         gst_structure_set_name(structure, "video/x-raw-yuv");
         const GValue *oldW = gst_structure_get_value(structure, "width");
         const GValue *oldH = gst_structure_get_value(structure, "height");
-        GValue w = {0};
-        GValue h = {0};
+        GValue w;
+        memset(&w, 0, sizeof(GValue));
+        GValue h;
+        memset(&h, 0, sizeof(GValue));
         g_value_init(&w, G_VALUE_TYPE(oldW));
         g_value_init(&h, G_VALUE_TYPE(oldH));
         g_value_copy(oldW, &w);
