@@ -68,7 +68,7 @@ public:
 
 private:
     QServiceMetaObjectDBusPrivate* d;
-    //QVector<bool> localSignals;
+    QVector<bool> localSignals;
     int customMetaId;
 };
 

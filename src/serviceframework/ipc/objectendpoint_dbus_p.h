@@ -85,6 +85,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void newPackageReady();
     void disconnected();
+    void remainFocused(int a);
 
 //private:
 public:

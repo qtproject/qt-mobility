@@ -64,27 +64,22 @@ QServiceMetaObjectDBus::QServiceMetaObjectDBus(QObject* service)
     d->service = service;
     d->serviceMeta = service->metaObject();
     d->dbusMeta = dbusMetaObject();
-   
-    /*
-    QDataStream stream(d->metadata);
-    QMetaObjectBuilder builder;
-    QMap<QByteArray, const QMetaObject*> refs;
 
-    builder.deserialize(stream, refs);
-    if (stream.status() != QDataStream::Ok) {
-        qWarning() << "Invalid metaObject for service received";
-    } else {
-        QMetaMethodBuilder b = builder.addSignal("errorUnrecoverableIPCFault(QService::UnrecoverableIPCError)");
+    // Connect the signals
+    const QMetaObject *mo = d->dbusMeta;
+    for (int i = mo->methodOffset(); i < mo->methodCount(); i++) {
+        const QMetaMethod mm = mo->method(i);
+        if (mm.methodType() == QMetaMethod::Signal) {
+            QByteArray sig(mm.signature());
+            sig.replace(QByteArray("QDBusVariant"), QByteArray("QVariant"));
         
-        // After all methods are filled in, otherwise qvector won't be big enough
-        localSignals.fill(false, builder.methodCount());        
-        localSignals.replace(b.index(), true); // Call activate locally
-        
-        d->meta = builder.toMetaObject();
-        qWarning() << "Proxy object for" << d->meta->className() << "created.";
+            int serviceIndex = d->serviceMeta->indexOfMethod(sig);
+
+            if (serviceIndex > 0 && sig!=QByteArray("valueChanged()")) {
+                QMetaObject::connect(d->service, serviceIndex, this, i, Qt::DirectConnection, 0);
+            }
+        }
     }
-    */
-
 }
 
 QServiceMetaObjectDBus::~QServiceMetaObjectDBus()
@@ -160,7 +155,7 @@ const QMetaObject* QServiceMetaObjectDBus::dbusMetaObject() const
                 method = builder->addSlot(sig);
                 break;
             case QMetaMethod::Signal:
-                // TODO: signal conversion to DBUS
+                method = builder->addSignal(sig);
                 break;
             default:
                 break;
@@ -247,8 +242,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
         // methods propertyRead and propertyReset are added to the published
         // meta object and relay the correct property call
         QString methodName(method.signature());
-        int index = methodName.indexOf("(");
-        methodName.chop(methodName.size()-index);
+        methodName.truncate(methodName.indexOf("("));
         
         if (methodName == "propertyRead") {
             int index = d->dbusMeta->indexOfProperty("value");
@@ -307,7 +301,16 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
             if (i < xTypesCount)
                 count += 1;
         }
-
+        
+        // Check if this is a signal emit
+        const bool isSignal = (method.methodType() == QMetaMethod::Signal);
+        if (isSignal) {
+            // is a signal so trigger connected slot
+            //qDebug() << "YEEEEEEEEHAW" << d->serviceMeta->className() << method.signature() << id;
+            QMetaObject::activate(this, d->dbusMeta, id, a);
+            return id;
+        }
+        
         // Find the corresponding method metaindex to our service object
         id = d->serviceMeta->indexOfMethod(sig);
         QMetaMethod mm = d->serviceMeta->method(id);
@@ -335,7 +338,7 @@ int QServiceMetaObjectDBus::qt_metacall(QMetaObject::Call c, int id, void **a)
                
                 // Load our buffered variant-wrapped custom type
                 QVariant *customType = new QVariant(variantType, (const void*)0);
-                QMetaType::load(stream, QMetaType::QVariant, customType); 
+                QMetaType::load(stream, QMetaType::type("QVariant"), customType); 
               
                 typeNames[i] = customType->typeName();
                 params[i] = customType->constData();
