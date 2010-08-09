@@ -349,7 +349,7 @@ void COrganizerItemRequestsServiceProvider::FetchItemsandFilterL(
             fetchHint, &iError);
     QOrganizerItemManagerEngine::updateItemFetchRequest(
             (QOrganizerItemFetchRequest*)(iReq), iItemList, 
-            &iError, QOrganizerItemAbstractRequest::FinishedState);
+            iError, QOrganizerItemAbstractRequest::FinishedState);
     }
 
 // Fetch detail definition
