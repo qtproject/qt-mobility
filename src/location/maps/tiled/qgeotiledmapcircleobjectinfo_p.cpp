@@ -40,13 +40,12 @@
 ****************************************************************************/
 
 #include "qgeotiledmapcircleobjectinfo_p.h"
-#include "makepoly_p.h"
 
 #include "qgeotiledmapobjectinfo_p.h"
 #include "qgeotiledmapdata.h"
 #include "qgeotiledmapdata_p.h"
 
-#include "qgeomapcircleobject_p.h"
+#include "qgeomapcircleobject.h"
 
 #include <QGraphicsItem>
 
@@ -58,11 +57,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate)
-        : QGeoTiledMapObjectInfo(mapObjectPrivate),
+QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject)
+        : QGeoTiledMapObjectInfo(mapData, mapObject),
         polygonItem(0)
 {
-    circle = static_cast<const QGeoMapCircleObjectPrivate*>(mapObjectPrivate);
+    circle = static_cast<QGeoMapCircleObject*>(mapObject);
 }
 
 QGeoTiledMapCircleObjectInfo::~QGeoTiledMapCircleObjectInfo() {}
@@ -82,8 +81,8 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
 {
     QList<QGeoCoordinate> path;
 
-    QGeoCoordinate center = circle->circle.center();
-    double radius = circle->circle.radius() / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
+    QGeoCoordinate center = circle->center();
+    double radius = circle->radius() / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 
     // To simplify things, we're using formulae from astronomy, namely those from the nautic triangle for converting from horizontal system to equatorial system.
     // First, we calculate the input coordinates (horizontal system)
@@ -186,29 +185,25 @@ void QGeoTiledMapCircleObjectInfo::objectUpdate()
         path.append(QGeoCoordinate(lat, lng));
     }
 
-    //makepoly(*this, path, circle, points, true, mapData->q_ptr->coordinateToWorldPixel(center).y() + (center.latitude() > 0 ? 50 : -50)); // 50px towards the closest pole
-    //makepoly(*this, path, circle, points, true); // always north pole
-    makepoly(*this, path, circle, points, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
+    points = createPolygon(path, tiledMapData, true, center.latitude() > 0 ? -100 : tiledMapData->maxZoomSize().height()+100); // 100px beyond the closest pole
+    //makepoly(points, path, mapData, true, center.latitude() > 0 ? -100 : mapData->maxZoomSize.height()+100); // 100px beyond the closest pole
 
     if (!polygonItem)
         polygonItem = new QGraphicsPolygonItem();
 
     polygonItem->setPolygon(points);
-    polygonItem->setBrush(circle->brush);
+    polygonItem->setBrush(circle->brush());
 
     graphicsItem1 = polygonItem;
 }
 
 void QGeoTiledMapCircleObjectInfo::mapUpdate()
 {
-    const QGeoMapCircleObjectPrivate *polygon = circle;
-    // --- copy-pasted from polygon ---
     if (polygonItem) {
-        QPen pen = polygon->pen;
-        pen.setWidthF(pen.widthF() * mapData->zoomFactor);
+        QPen pen = circle->pen();
+        pen.setWidthF(pen.widthF() * tiledMapData->zoomFactor());
         polygonItem->setPen(pen);
     }
-    // --- snip ---
 }
 
 QTM_END_NAMESPACE

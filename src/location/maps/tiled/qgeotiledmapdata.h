@@ -57,37 +57,36 @@ public:
     QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoTiledMapData();
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+    void setViewportSize(const QSizeF &size);
+
+    void setZoomLevel(qreal zoomLevel);
+
+    void startPanning();
+    void stopPanning();
+    void pan(int dx, int dy);
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
     void setMapType(QGeoMapWidget::MapType mapType);
 
-    void setZoomLevel(qreal zoomLevel);
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
-    void setViewportSize(const QSizeF &size);
-
-    void startPanning();
-    void stopPanning();
-    void pan(int dx, int dy);
-
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
+    void setupMapObject(QGeoMapObject *mapObject);
 
     virtual QPoint coordinateToWorldPixel(const QGeoCoordinate &coordinate) const;
     virtual QGeoCoordinate worldPixelToCoordinate(const QPoint &pixel) const;
 
-protected:
-    virtual void updateMapImage();
-    void clearRequests();
-
-    void paintMap(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    void paintMapObjects(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    QPoint maxZoomCenter() const;
+    QSize maxZoomSize () const;
+    QRect maxZoomScreenRect() const;
+    int zoomFactor () const;
 
 private slots:
     void processRequests();
@@ -95,11 +94,10 @@ private slots:
     void tileError(QGeoTiledMapReply::Error error, QString errorString);
 
 private:
-    void cleanupCaches();
-
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
     Q_DISABLE_COPY(QGeoTiledMapData)
     friend class QGeoTiledMappingManagerEngine;
+    friend class QGeoTiledMapObjectInfo;
 };
 
 QTM_END_NAMESPACE

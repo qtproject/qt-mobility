@@ -316,6 +316,19 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
     d->maximumImageSize = maximumImageSize;
 }
 
+/*!
+*/
+void QGeoMappingManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoMappingManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
 
 /*******************************************************************************
 *******************************************************************************/

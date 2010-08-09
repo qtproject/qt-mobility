@@ -64,16 +64,15 @@ QTM_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 
 class QGeoMapObjectInfo;
+class QGeoMapOverlay;
 
 class QGeoMapDataPrivate
 {
 public:
-    QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    QGeoMapDataPrivate(const QGeoMapDataPrivate &other);
+    QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapDataPrivate();
-    QGeoMapDataPrivate& operator= (const QGeoMapDataPrivate &other);
 
-    QGeoMapObjectInfo* createObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    void setObjectInfo(QGeoMapObject *object, QGeoMapObjectInfo *info);
 
     QGeoMappingManagerEngine *engine;
     QGeoMapWidget *widget;
@@ -84,13 +83,12 @@ public:
     QSizeF viewportSize;
     QGeoMapWidget::MapType mapType;
 
-protected:
-    virtual QGeoMapObjectInfo* createRectangleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    virtual QGeoMapObjectInfo* createCircleObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    virtual QGeoMapObjectInfo* createPolylineObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    virtual QGeoMapObjectInfo* createPolygonObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    virtual QGeoMapObjectInfo* createMarkerObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
-    virtual QGeoMapObjectInfo* createRouteObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) const;
+    QList<QGeoMapOverlay*> overlays;
+
+    QGeoMapData *q_ptr;
+    Q_DECLARE_PUBLIC(QGeoMapData)
+private:
+    Q_DISABLE_COPY(QGeoMapDataPrivate)
 };
 
 QTM_END_NAMESPACE

@@ -374,20 +374,8 @@ QList<QGeoMapObject*> QGeoMapWidget::mapObjects()
 }
 
 /*!
-    Returns the list of map objects managed by this widget which are currently
-    visible and at least partially within the viewport of the map.
-*/
-QList<QGeoMapObject*> QGeoMapWidget::visibleMapObjects()
-{
-    if (d_ptr->mapData)
-        return d_ptr->mapData->visibleMapObjects();
-
-    return QList<QGeoMapObject*>();
-}
-
-/*!
-    Returns the list of map objects managed by this widget which are visible
-    and contain the point \a screenPosition within their boundaries.
+    Returns the list of map objects managed by this widget which
+    contain the point \a screenPosition within their boundaries.
 */
 QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
@@ -398,8 +386,8 @@ QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &s
 }
 
 /*!
-    Returns the list of map objects managed by this widget which are visible
-    and which are displayed at least partially within the on screen rectangle
+    Returns the list of map objects managed by this widget which are
+    displayed at least partially within the on screen rectangle
     \a screenRect.
 */
 QList<QGeoMapObject*> QGeoMapWidget::mapObjectsInScreenRect(const QRectF &screenRect)

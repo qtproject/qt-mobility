@@ -431,6 +431,20 @@ void QGeoSearchManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *lan
 }
 
 /*!
+*/
+void QGeoSearchManagerEngine::setLocale(const QLocale &locale)
+{
+    d_ptr->locale = locale;
+}
+
+/*!
+*/
+QLocale QGeoSearchManagerEngine::locale() const
+{
+    return d_ptr->locale;
+}
+
+/*!
 \fn void QGeoSearchManagerEngine::finished(QGeoSearchReply* reply)
 
     This signal is emitted when \a reply has finished processing.

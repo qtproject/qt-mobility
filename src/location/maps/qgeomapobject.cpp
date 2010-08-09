@@ -42,7 +42,8 @@
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
 
-#include "qgeomapdata_p.h"
+#include "qgeomapdata.h"
+
 #include <QtAlgorithms>
 
 QTM_BEGIN_NAMESPACE
@@ -90,7 +91,7 @@ QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
 /*!
     Constructs a new root map object associated with \a mapData.
 */
-QGeoMapObject::QGeoMapObject(QGeoMapDataPrivate *mapData)
+QGeoMapObject::QGeoMapObject(QGeoMapData *mapData)
         : d_ptr(new QGeoMapObjectPrivate(this, mapData)) {}
 
 /*!
@@ -129,12 +130,13 @@ QGeoMapObject::Type QGeoMapObject::type() const
 void QGeoMapObject::setZValue(int zValue)
 {
     Q_D(QGeoMapObject);
-    bool reinsert = (d->zValue != zValue);
-    d->zValue = zValue;
-
-    if (reinsert && d->parent) {
-        d->parent->removeChildObject(this);
-        d->parent->addChildObject(this);
+    if (d->zValue != zValue) {
+        d->zValue = zValue;
+        if (d->parent) {
+            d->parent->removeChildObject(this);
+            d->parent->addChildObject(this);
+        }
+        emit zValueChanged();
     }
 }
 
@@ -162,7 +164,10 @@ int QGeoMapObject::zValue() const
 void QGeoMapObject::setVisible(bool visible)
 {
     Q_D(QGeoMapObject);
-    d->isVisible = visible;
+    if (d->isVisible != visible) {
+        d->isVisible = visible;
+        emit visibleChanged();
+    }
 }
 
 /*!
@@ -316,11 +321,11 @@ QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *p
 {
     if (parent) {
         mapData = parent->d_ptr->mapData;
-        info = mapData->createObjectInfo(this);
+        mapData->setupMapObject(q_ptr);
     }
 }
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapDataPrivate *mapData, QGeoMapObject::Type type)
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapData *mapData, QGeoMapObject::Type type)
         : type(type),
         parent(0),
         info(0),
@@ -345,11 +350,10 @@ QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
         delete info;
 }
 
-void QGeoMapObjectPrivate::setMapData(QGeoMapDataPrivate *mapData)
+void QGeoMapObjectPrivate::setMapData(QGeoMapData *mapData)
 {
     this->mapData = mapData;
-    if (!info)
-        info = mapData->createObjectInfo(this);
+    mapData->setupMapObject(q_ptr);
     int size = children.size();
     for (int i = 0; i < size; ++i)
         children[i]->d_ptr->setMapData(mapData);
@@ -376,24 +380,18 @@ void QGeoMapObjectPrivate::removeFromParent()
 
 void QGeoMapObjectPrivate::objectUpdate()
 {
-    if (!mapData)
+    if (!info)
         return;
 
-    if (!info)
-        info = mapData->createObjectInfo(this);
-    else
-        info->objectUpdate();
+    info->objectUpdate();
 }
 
 void QGeoMapObjectPrivate::mapUpdate()
 {
-    if (!mapData)
+    if (!info)
         return;
 
-    if (!info)
-        info = mapData->createObjectInfo(this);
-    else
-        info->mapUpdate();
+    info->mapUpdate();
 
     for (int i = 0; i < children.size(); ++i)
         children[i]->mapUpdate();
@@ -401,37 +399,19 @@ void QGeoMapObjectPrivate::mapUpdate()
 
 QGeoBoundingBox QGeoMapObjectPrivate::boundingBox() const
 {
-    if (!mapData)
-        return QGeoBoundingBox();
-
     if (!info)
-        info = mapData->createObjectInfo(this);
+        return QGeoBoundingBox();
 
     return info->boundingBox();
 }
 
 bool QGeoMapObjectPrivate::contains(const QGeoCoordinate &coord) const
 {
-    if (!mapData)
-        return false;
-
     if (!info)
-        info = mapData->createObjectInfo(this);
+        return false;
 
     return info->contains(coord);
 }
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoMapObjectInfo::QGeoMapObjectInfo(const QGeoMapObjectPrivate *mapObjectPrivate) :
-        mapObjectPrivate(mapObjectPrivate) {}
-
-QGeoMapObjectInfo::~QGeoMapObjectInfo() {}
-
-void QGeoMapObjectInfo::objectUpdate() {}
-
-void QGeoMapObjectInfo::mapUpdate() {}
 
 /*******************************************************************************
 *******************************************************************************/

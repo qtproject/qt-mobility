@@ -39,64 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEONAVIGATOR_P_H
-#define QGEONAVIGATOR_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QGEOMAPOBJECTINFO_H
+#define QGEOMAPOBJECTINFO_H
 
 #include "qmobilityglobal.h"
-
-#include <QList>
-#include <QPair>
-#include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoPositionInfoSource;
-class QGeoRoutingManager;
-class QGeoRouteReply;
-class QGeoRoute;
+class QGeoBoundingBox;
 
-class QGeoNavigatorPrivate
+class QGeoMapData;
+class QGeoMapObject;
+class QGeoMapObjectInfoPrivate;
+
+class Q_LOCATION_EXPORT QGeoMapObjectInfo
 {
 public:
-    QGeoNavigatorPrivate();
-    QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other);
-    ~QGeoNavigatorPrivate();
-    QGeoNavigatorPrivate& operator= (const QGeoNavigatorPrivate &other);
+    QGeoMapObjectInfo(QGeoMapData *mapData, QGeoMapObject *mapObject);
+    virtual ~QGeoMapObjectInfo();
 
-    QGeoRoutingManager* routingManager;
-    QGeoRouteReply *routeReply;
+    virtual void addToParent() = 0;
+    virtual void removeFromParent() = 0;
 
-    qreal routeWidth;
+    virtual void objectUpdate() = 0;
+    virtual void mapUpdate() = 0;
 
-    QGeoRoute routeTravelled;
-    QGeoRoute routeRemaining;
+    virtual QGeoBoundingBox boundingBox() const = 0;
+    virtual bool contains(const QGeoCoordinate &coord) const = 0;
 
-    QList<QGeoCoordinate> offRoutePath;
+protected:
+    QGeoMapData* mapData();
+    QGeoMapObject* mapObject();
 
-    int nextWaypointIndex;
-
-    int currentSegmentIndex;
-    int currentSegmentPathIndex;
-
-    QDateTime currentSegmentStartTime;
-    QList<QPair<QGeoCoordinate, QGeoCoordinate> > currentSegmentCooridor;
-
-    //QDateTime departTime
-    // OR
-    // bool origin passed
-    //QDateTime originTime
+private:
+    QGeoMapObjectInfoPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoMapObjectInfo)
 };
 
 QTM_END_NAMESPACE

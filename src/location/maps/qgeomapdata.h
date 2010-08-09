@@ -56,6 +56,7 @@ class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
 class QGeoMapObject;
 class QGeoMapDataPrivate;
+class QGeoMapOverlay;
 
 class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
@@ -85,14 +86,20 @@ public:
     void removeMapObject(QGeoMapObject *mapObject);
     QList<QGeoMapObject*> mapObjects();
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+
+    QList<QGeoMapOverlay*> mapOverlays() const;
+    void addMapOverlay(QGeoMapOverlay *overlay);
+    void removeMapOverlay(QGeoMapOverlay *overlay);
+    void clearMapOverlays();
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+
+    virtual void setupMapObject(QGeoMapObject *mapObject);
 
 protected:
     QGeoMapData(QGeoMapDataPrivate *dd);
