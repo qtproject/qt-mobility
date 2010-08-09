@@ -119,8 +119,60 @@ static bool halAvailable()
     return false;
 }
 
+static bool udisksAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.freedesktop.UDisks");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        } else {
+            qDebug() << "not";
+        }
+    }
+#endif
+    return false;
+}
+
+static bool connmanAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.moblin.connman");
+        if (reply.isValid() && reply.value()) {
+            return reply.value();
+        }
+    }
+#endif
+    return false;
+}
+
+static bool ofonoAvailable()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    if (dbusConnection.isConnected()) {
+        QDBusConnectionInterface *dbiface = dbusConnection.interface();
+        QDBusReply<bool> reply = dbiface->isServiceRegistered("org.ofono");
+        if (reply.isValid() && reply.value()) {
+            qDebug() << Q_FUNC_INFO <<reply.value();
+            return reply.value();
+        }
+    }
+#endif
+    qDebug() << Q_FUNC_INFO <<"false";
+
+    return false;
+}
 
 bool halIsAvailable;
+bool udisksIsAvailable;
+bool connmanIsAvailable;
+bool ofonoIsAvailable;
 
 QTM_BEGIN_NAMESPACE
 
@@ -402,15 +454,54 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
     return false;
 }
 
-QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
+#if !defined(QT_NO_DBUS)
+    connmanIsAvailable = connmanAvailable();
+    if(connmanIsAvailable) {
+        initConnman();
+    }
+    ofonoIsAvailable = ofonoAvailable();
+    if(ofonoIsAvailable) {
+        initOfono();
+    }
+#endif
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
+
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+
+//    QSystemNetworkInfo::UndefinedStatus
+//    QSystemNetworkInfo::NoNetworkAvailable
+//    QSystemNetworkInfo::EmergencyOnly
+//    QSystemNetworkInfo::Searching
+//    QSystemNetworkInfo::Busy
+//    QSystemNetworkInfo::Connected
+//    QSystemNetworkInfo::HomeNetwork
+//    QSystemNetworkInfo::Denied
+//    QSystemNetworkInfo::Roaming
+
+    if(connmanIsAvailable) {
+        QDBusObjectPath path = connmanManager->lookupService(modeToTechnology(mode));
+        QConnmanServiceInterface serviceIface(path.path(),this);
+
+        if(mode == QSystemNetworkInfo::GsmMode ||
+           mode == QSystemNetworkInfo::CdmaMode ||
+           mode == QSystemNetworkInfo::WcdmaMode) {
+            return getOfonoStatus();
+        }
+//        if(serviceIface.isRoaming()) {
+//            return QSystemNetworkInfo::Roaming;
+//        }
+        return stateToStatus(serviceIface.getState());
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -464,19 +555,48 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
     default:
         break;
     };
+#endif
     return QSystemNetworkInfo::UndefinedStatus;
 }
+
+#if !defined(QT_NO_CONNMAN)
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getOfonoStatus()
+{
+    QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    if(ofonoIsAvailable) {
+
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
+        QString status = ofonoNetwork.getStatus();
+        networkStatus = ofonoStatusToStatus(status);
+}
+    // Busy
+    return networkStatus;
+}
+#endif
 
 QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
     QString netname = "";
+    if(networkStatus(mode) != QSystemNetworkInfo::Connected
+       && networkStatus(mode) != QSystemNetworkInfo::Roaming
+       && networkStatus(mode) != QSystemNetworkInfo::HomeNetwork) {
+        return netname;
+    }
+#if !defined(QT_NO_CONNMAN)
+    QString tech = modeToTechnology(mode);
+    if(tech.contains("cellular")) {
+        QOfonoNetworkInterface ofonoOpNetwork(ofonoManager->currentModem().path(),this);
+        return ofonoOpNetwork.getOperatorName();
 
+    } else {
+        QDBusObjectPath path = connmanManager->lookupService(tech);
+        QConnmanServiceInterface service(path.path(),this);
+        netname = service.getName();
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
-                return netname;
-            }
 
             QString wlanInterface;
             const QString baseSysDir = "/sys/class/net/";
@@ -542,11 +662,21 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     default:
         break;
     };
+#endif
     return netname;
 }
 
 QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QConnmanTechnologyInterface technology(connmanManager->getPathForTechnology(modeToTechnology(mode)),this);
+        foreach(const QString dev,technology.getDevices()) {
+            QConnmanDeviceInterface devIface(dev);
+            return devIface.getAddress();
+        }
+    }
+#else
     switch(mode) {
         case QSystemNetworkInfo::WlanMode:
         {
@@ -600,6 +730,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     default:
         break;
     };
+#endif
     return QString();
 }
 
@@ -635,6 +766,27 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
 
 qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        qint32 sig=0;
+
+        QString tech = modeToTechnology(mode);
+        if(tech.contains("cellular")) {
+            QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
+            return ofonoNetwork.getSignalStrength();
+        } else {
+            QDBusObjectPath path = connmanManager->lookupService(tech);
+            QConnmanServiceInterface service(path.path(),this);
+            sig = service.getSignalStrength();
+
+            if(sig == 0 && (service.getState() == "ready" ||
+                            service.getState() == "online")) {
+                sig = 100;
+            }
+        }
+        return sig;
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -691,12 +843,22 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
         break;
     };
 
+#endif
     return -1;
 }
 
 QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
 #if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QConnmanTechnologyInterface technology(connmanManager->getPathForTechnology(modeToTechnology(mode)),this);
+        foreach(const QString dev,technology.getDevices()) {
+            QConnmanDeviceInterface devIface(dev);
+            return QNetworkInterface::interfaceFromName(devIface.getInterface());
+        }
+    }
+#else
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -767,6 +929,7 @@ QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystem
     default:
         break;
     };
+#endif
 #else
     QString result;
     const QString baseSysDir = "/sys/class/net/";
@@ -867,6 +1030,447 @@ QString QSystemNetworkInfoLinuxCommonPrivate::getBluetoothInfo(const QString &fi
     return QString();
 }
 #endif
+
+#if !defined(QT_NO_CONNMAN)
+void QSystemNetworkInfoLinuxCommonPrivate::initConnman()
+{
+    connmanManager = new QConnmanManagerInterface(this);
+    connect(connmanManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(connmanPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    foreach(const QString servicePath, connmanManager->getServices()) {
+        QConnmanServiceInterface *serviceIface;
+        serviceIface = new QConnmanServiceInterface(servicePath,this);
+
+        connect(serviceIface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                this,SLOT(connmanServicePropertyChangedContext(QString,QString,QDBusVariant)));
+    }
+
+    foreach(const QString techPath, connmanManager->getTechnologies()) {
+        QConnmanTechnologyInterface *tech;
+        tech = new QConnmanTechnologyInterface(techPath, this);
+
+        connect(tech,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                this,SLOT(connmanTechnologyPropertyChangedContext(QString,QString,QDBusVariant)));
+
+        foreach(const QString devicePath,tech->getDevices()) {
+            QConnmanDeviceInterface *dev;
+            dev = new QConnmanDeviceInterface(devicePath);
+                connect(dev,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+                        this,SLOT(connmanDevicePropertyChangedContext(QString,QString,QDBusVariant)));
+        }
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::initOfono()
+{
+    ofonoManager = new QOfonoManagerInterface(this);
+    connect(ofonoManager,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    Q_FOREACH(QDBusObjectPath path, ofonoManager->getModems()) {
+        initModem(path.path());
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::initModem(const QString &path)
+{
+    QOfonoModemInterface *modemIface;
+    modemIface = new QOfonoModemInterface(path,this);
+    knownModems << path;
+
+    connect(modemIface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoModemPropertyChangedContext(QString,QString,QDBusVariant)));
+
+    QOfonoNetworkInterface *ofonoNetworkInterface;
+    ofonoNetworkInterface = new QOfonoNetworkInterface(path,this);
+    connect(ofonoNetworkInterface,SIGNAL(propertyChangedContext(QString,QString,QDBusVariant)),
+            this,SLOT(ofonoNetworkPropertyChangedContext(QString,QString,QDBusVariant)));
+}
+
+#endif
+
+void QSystemNetworkInfoLinuxCommonPrivate::connectNotify(const char *signal)
+{
+/*
+   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
+   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
+   void currentMobileCountryCodeChanged(const QString &);
+   void currentMobileNetworkCodeChanged(const QString &);
+   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
+   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+*/    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+
+    }
+}
+
+#if !defined(QT_NO_CONNMAN)
+QString QSystemNetworkInfoLinuxCommonPrivate::modeToTechnology(QSystemNetworkInfo::NetworkMode mode)
+{
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            return "wifi";
+        }
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+            return "ethernet";
+        }
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
+        {
+            return "bluetooth";
+        }
+        break;
+    case QSystemNetworkInfo::GsmMode:
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
+        {
+            return "cellular";
+        }
+        break;
+    case QSystemNetworkInfo::WimaxMode:
+        {
+            return "wimax";
+        }
+        break;
+    default:
+        break;
+    };
+    return QString();
+}
+
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::stateToStatus(const QString &state)
+{
+    if(state == "idle") {
+        return QSystemNetworkInfo::NoNetworkAvailable;
+    } else if(state == "failure") {
+        return QSystemNetworkInfo::Denied;
+    } else if(state == "association" || state == "configuration" || state == "login") {
+        return QSystemNetworkInfo::Searching;
+    } else if(state == "ready" || state == "online") {
+        return QSystemNetworkInfo::Connected;
+    }
+    return QSystemNetworkInfo::UndefinedStatus;
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::typeToMode(const QString &type)
+{
+    if(type == "ethernet") {
+        return QSystemNetworkInfo::EthernetMode;
+    } else if(type == "wifi") {
+        return QSystemNetworkInfo::WlanMode;
+
+    } else if(type == "bluetooth") {
+        return QSystemNetworkInfo::BluetoothMode;
+
+    } else if(type == "wimax") {
+        return QSystemNetworkInfo::WimaxMode;
+
+    } else if(type == "cellular") {
+        if(ofonoIsAvailable) {
+
+            QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
+            return ofonoTechToMode(ofonoNetwork.getTechnology());
+        }
+    }
+    return QSystemNetworkInfo::UnknownMode;
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::ofonoTechToMode(const QString &ofonoTech)
+{
+    if(ofonoTech == "gsm") {
+        return QSystemNetworkInfo::GsmMode;
+    }
+    if(ofonoTech == "edge"){
+        return QSystemNetworkInfo::GsmMode;
+    }
+    if(ofonoTech == "umts"){
+        return QSystemNetworkInfo::WcdmaMode;
+    }
+    if(ofonoTech == "hspa"){
+        // handle this?
+         return QSystemNetworkInfo::WcdmaMode;
+    }
+    if(ofonoTech == "lte"){
+        return QSystemNetworkInfo::WimaxMode;
+    }
+    return QSystemNetworkInfo::GsmMode; //its ofono, default to gsm
+}
+
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::ofonoStatusToStatus(const QString &status)
+{
+    QSystemNetworkInfo::NetworkStatus networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    if(status == "unregistered") {
+        networkStatus = QSystemNetworkInfo::EmergencyOnly;
+    }
+    if(status == "registered") {
+        networkStatus = QSystemNetworkInfo::Connected;
+        if( currentMobileNetworkCode() ==  homeMobileNetworkCode()) {
+            networkStatus = QSystemNetworkInfo::HomeNetwork;
+        }
+    }
+    if(status == "searching") {
+        networkStatus = QSystemNetworkInfo::Searching;
+    }
+    if(status == "denied") {
+        networkStatus = QSystemNetworkInfo::Denied;
+    }
+    if(status == "unknown") {
+        networkStatus = QSystemNetworkInfo::UndefinedStatus;
+    }
+    if(status == "roaming") {
+        networkStatus = QSystemNetworkInfo::Roaming;
+    }
+    return networkStatus;
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "Services") {
+    }
+
+    if(item == "State") {
+        // qDebug() << value.variant();
+    }
+
+    if(item == "DefaultTechnology") {
+        // qDebug() << value.variant();
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkNameChanged(typeToMode(value.variant().toString()), serviceIface.getName());
+        emit networkModeChanged(typeToMode(value.variant().toString()));
+    }
+
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanTechnologyPropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
+{
+//        qDebug() << __FUNCTION__ << path << item << value.variant();
+
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanDevicePropertyChangedContext(const QString &/*path*/,const QString &/*item*/, const QDBusVariant &/*value*/)
+{
+  //      qDebug() << __FUNCTION__ << path << item << value.variant();
+
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "State") {
+        QConnmanServiceInterface serviceIface(path,this);
+      //  QString type = serviceIface.getType();
+        QString state = value.variant().toString();
+        QSystemNetworkInfo::NetworkMode mode = typeToMode(serviceIface.getType());
+        emit networkStatusChanged(mode, stateToStatus(state));
+        if(state == "idle" || state == "failure") {
+            emit networkNameChanged(mode, QString());
+            emit networkSignalStrengthChanged(mode, 0);
+        } else  if(state == "ready" || state == "online")
+        emit networkNameChanged(mode, serviceIface.getName());
+        if(serviceIface.isRoaming()) {
+            emit networkStatusChanged(mode, QSystemNetworkInfo::Roaming);
+        }
+    }
+    if(item == "Strength") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkSignalStrengthChanged(typeToMode(serviceIface.getType()),value.variant().toUInt());
+    }
+    if(item == "Roaming") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit networkStatusChanged(typeToMode(serviceIface.getType()), QSystemNetworkInfo::Roaming);
+    }
+    if(item == "MCC") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit currentMobileCountryCodeChanged(value.variant().toString());
+    }
+    if(item == "MNC") {
+        QConnmanServiceInterface serviceIface(path,this);
+        emit currentMobileNetworkCodeChanged(value.variant().toString());
+    }
+    if(item == "Mode") {
+        //"gprs" "edge" "umts"
+//        QConnmanServiceInterface serviceIface(path,this);
+//        emit currentMobileNetworkCodeChanged(value.variant().toString());
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    if(item == "Modems") {
+        QList <QDBusObjectPath> modems =  qdbus_cast<QList <QDBusObjectPath> > (value.variant());
+
+        if(modems.count() >  knownModems.count()) {
+            //add a modem
+            Q_FOREACH(QDBusObjectPath path, modems) {
+                if(!knownModems.contains(path.path())) {
+                    initModem(path.path());
+                }
+            }
+        }  else {
+            //remove one
+            QStringList newModemList;
+            Q_FOREACH(QDBusObjectPath path, modems) {
+                newModemList << path.path();
+            }
+
+            Q_FOREACH(const QString &path, knownModems) {
+                if(!newModemList.contains(path)) {
+                    knownModems.removeAll(path);
+                }
+            }
+        }
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+    QOfonoNetworkInterface netiface(path);
+//    QOfonoNetworkOperatorInterface netop(path);
+//    qDebug() << netop.getTechnologies();
+
+    if(item == "Strength") {
+        Q_EMIT networkSignalStrengthChanged(ofonoTechToMode(netiface.getTechnology()),value.variant().toInt());
+    }
+    if(item == "Status") {
+
+       Q_EMIT networkStatusChanged(ofonoTechToMode(netiface.getTechnology()), ofonoStatusToStatus(value.variant().toString()));
+    }
+    if(item == "LocationAreaCode") {
+
+    }
+    if(item == "CellId") {
+
+    }
+    if(item == "Technology") {
+
+    }
+    if(item == "Name") {
+        Q_EMIT networkNameChanged(ofonoTechToMode(netiface.getTechnology()), value.variant().toString());
+
+    }
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value)
+{
+//    qDebug() << __FUNCTION__ << path << item << value.variant();
+
+}
+
+#endif
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoLinuxCommonPrivate::currentMode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(connmanIsAvailable) {
+        QString curMode = connmanManager->getDefaultTechnology();
+        if(curMode == "wifi") {
+            return QSystemNetworkInfo::WlanMode;
+        } else if(curMode == "ethernet") {
+            return QSystemNetworkInfo::EthernetMode;
+        } else if(curMode == "cellular") {
+            return QSystemNetworkInfo::WlanMode;
+        } else if(curMode == "bluetooth") {
+            return QSystemNetworkInfo::BluetoothMode;
+        } else if(curMode == "wimax") {
+            return QSystemNetworkInfo::WimaxMode;
+        }
+    }
+#endif
+    return QSystemNetworkInfo::UnknownMode;
+}
+
+int QSystemNetworkInfoLinuxCommonPrivate::cellId()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
+        return ofonoNetwork.getCellId();
+    }
+#endif
+    return 0;
+}
+
+int QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode()
+{
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetwork(ofonoManager->currentModem().path(),this);
+        return ofonoNetwork.getLac();
+    }
+    return 0;
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
+        foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
+            QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+            if(netop.getStatus() == "current")
+                return netop.getMcc();
+        }
+    }
+#endif
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoNetworkInterface ofonoNetworkOperator(ofonoManager->currentModem().path(),this);
+        foreach(const QDBusObjectPath opPath, ofonoNetworkOperator.getOperators()) {
+            QOfonoNetworkOperatorInterface netop(opPath.path(),this);
+            if(netop.getStatus() == "current")
+                return netop.getMnc();
+        }
+    }
+#endif
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoSimInterface simInterface(ofonoManager->currentModem().path(),this);
+        if(simInterface.isPresent()) {
+            return simInterface.getHomeMcc();
+        }
+    }
+#endif
+    return QString();
+}
+
+QString QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode()
+{
+#if !defined(QT_NO_CONNMAN)
+    if(ofonoIsAvailable) {
+        QOfonoSimInterface simInterface(ofonoManager->currentModem().path(),this);
+        if(simInterface.isPresent()) {
+            return simInterface.getHomeMnc();
+        }
+    }
+#endif
+    return QString();
+}
+
 
 QSystemDisplayInfoLinuxCommonPrivate::QSystemDisplayInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
@@ -1078,9 +1682,13 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+    udisksIsAvailable = udisksAvailable();
 
 #if !defined(QT_NO_DBUS)
-    halIface = new QHalInterface();
+    if(halIsAvailable)
+        halIface = new QHalInterface(this);
+    if(udisksIsAvailable)
+        udisksIface = new QUDisksInterface(this);
 #endif
     logicalDrives();
 }
@@ -1093,31 +1701,32 @@ void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
-    }
-
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
-        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
-                this,SLOT(deviceChanged(const QString &)));
+        if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+            connect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
+                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+#endif
+        } else {
+            mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+            connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                    this,SLOT(deviceChanged(const QString &)));
+        }
     }
 }
 
 void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
-        delete mtabWatcherA;
-        mtabWatcherA = 0;
-
-    }
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-        delete mtabWatcherB;
-        mtabWatcherB = 0;
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDriveChanged(bool, const QString &))))) {
+        if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+            disconnect(udisksIface,SIGNAL(deviceChanged(QDBusObjectPath)),
+                    this,SLOT(udisksDeviceChanged(QDBusObjectPath)));
+#endif
+        } else {
+            delete mtabWatcherA;
+            mtabWatcherA = 0;
+        }
     }
 }
 
@@ -1157,6 +1766,25 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
     }
 }
 
+void QSystemStorageInfoLinuxCommonPrivate::udisksDeviceChanged(const QDBusObjectPath &path)
+{
+    if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QUDisksDeviceInterface devIface(path.path());
+        QString mountp;
+        if(devIface.deviceMountPaths().count() > 0)
+            mountp = devIface.deviceMountPaths().at(0);
+
+        if(devIface.deviceIsMounted()) {
+            emit logicalDriveChanged(true, mountp);
+        } else {
+            qDebug() << mountEntriesMap.key(devIface.deviceFilePresentation());
+            emit logicalDriveChanged(false, mountEntriesMap.key(devIface.deviceFilePresentation()));
+        }
+#endif
+    }
+}
+
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
 {
     if(driveVolume.left(2) == "//") {
@@ -1189,6 +1817,24 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
 
 QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive(const QString &driveVolume)
 {
+
+    if(udisksIsAvailable) {
+#if !defined(QT_NO_DBUS)
+        QUDisksDeviceInterface devIface("/org/freedesktop/UDisks/devices/"+mountEntriesMap.value(driveVolume));
+        if(devIface.deviceIsMounted()) {
+            QString chopper = devIface.deviceFile();
+            QString mountp;
+            if(devIface.deviceMountPaths().count() > 0)
+                mountp = devIface.deviceMountPaths().at(0);
+
+            if(devIface.deviceIsRemovable()) {
+                return QSystemStorageInfo::RemovableDrive;
+            } else {
+                return QSystemStorageInfo::InternalDrive;
+            }
+        }
+#endif
+    }
     if(halIsAvailable) {
 #if !defined(QT_NO_DBUS)
         QStringList mountedVol;
@@ -1255,7 +1901,23 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 
 QStringList QSystemStorageInfoLinuxCommonPrivate::logicalDrives()
 {
+#if !defined(QT_NO_DBUS)
+
+    if(udisksAvailable()) {
+        mountEntriesMap.clear();
+        foreach(const QDBusObjectPath device,udisksIface->enumerateDevices() ) {
+            QUDisksDeviceInterface devIface(device.path());
+            if(devIface.deviceIsMounted()) {
+                QString fsname = devIface.deviceMountPaths().at(0);
+                if( !mountEntriesMap.keys().contains(fsname)) {
+                    mountEntriesMap[fsname] = devIface.deviceFilePresentation();
+                }
+            }
+        }
+    } else
+#endif
     mountEntries();
+
     return mountEntriesMap.keys();
 }
 

@@ -66,8 +66,15 @@
 #include "qsystemstorageinfo.h"
 
 #include <qmobilityglobal.h>
+
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
+#include "qdevicekitservice_linux_p.h"
+
+#if !defined(QT_NO_CONNMAN)
+#include "qconnmanservice_linux_p.h"
+#include "qofonoservice_linux_p.h"
+#endif
 #endif
 
 QT_BEGIN_HEADER
@@ -130,21 +137,25 @@ public:
 
     virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    int cellId() {return 0;}
-    int locationAreaCode() {return 0;}
+    virtual int cellId();
+    virtual int locationAreaCode();
 
-    QString currentMobileCountryCode() {return QString();}
-    QString currentMobileNetworkCode() {return QString();}
+    virtual QString currentMobileCountryCode();
+    virtual QString currentMobileNetworkCode();
 
-    QString homeMobileCountryCode() {return QString();}
-    QString homeMobileNetworkCode() {return QString();}
+    virtual QString homeMobileCountryCode();
+    virtual QString homeMobileNetworkCode();
 
     virtual QString networkName(QSystemNetworkInfo::NetworkMode mode);
     virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-   // virtual QSystemNetworkInfo::NetworkMode currentMode();
+    virtual QSystemNetworkInfo::NetworkMode currentMode();
 
+
+#if !defined(QT_NO_CONNMAN)
+    QSystemNetworkInfo::NetworkStatus getOfonoStatus();
+#endif
 //public Q_SLOTS:
 //    void getPrimaryMode();
 
@@ -161,9 +172,40 @@ protected:
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
+
+#if !defined(QT_NO_CONNMAN)
+    QConnmanManagerInterface *connmanManager;
+    QOfonoManagerInterface *ofonoManager;
+    void initConnman();
+    void initOfono();
+    void initModem(const QString &path);
+    QString modeToTechnology(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkStatus stateToStatus(const QString &state);
+    QSystemNetworkInfo::NetworkMode typeToMode(const QString &type);
+    QSystemNetworkInfo::NetworkMode ofonoTechToMode(const QString &tech);
+    QSystemNetworkInfo::NetworkStatus ofonoStatusToStatus(const QString &state);
+
+    QStringList knownModems;
 #endif
+
+#endif
+
+private Q_SLOTS:
+#if !defined(QT_NO_CONNMAN)
+    void connmanPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanTechnologyPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanDevicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void connmanServicePropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+
+    void ofonoPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoNetworkPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+    void ofonoModemPropertyChangedContext(const QString &path,const QString &item, const QDBusVariant &value);
+#endif
+
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 };
 
 class QSystemDisplayInfoLinuxCommonPrivate : public QObject
@@ -212,9 +254,13 @@ private:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
+
+    QUDisksInterface *udisksIface;
+    QUDisksDeviceInterface *udisksDeviceIface;
 #endif
 private Q_SLOTS:
     void deviceChanged(const QString &path);
+    void udisksDeviceChanged(const QDBusObjectPath &);
 
 protected:
     void connectNotify(const char *signal);

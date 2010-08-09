@@ -168,6 +168,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 #if !defined(QT_NO_NETWORKMANAGER)
 void QSystemNetworkInfoPrivate::setupNmConnections()
 {
+#if defined(QT_NO_CONNMAN)
     iface = new QNetworkManagerInterface(this);
 
    foreach(const QDBusObjectPath path, iface->getDevices()) {
@@ -202,6 +203,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
             break;
         };
     }
+#endif
 }
 
 
@@ -209,6 +211,7 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
 {
     bool isDefault = false;
 
+#if defined(QT_NO_CONNMAN)
     QMapIterator<QString, QString> i(activePaths);
     QString devicepath;
     while (i.hasNext()) {
@@ -219,6 +222,7 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
             isDefault = activeCon->defaultRoute();
         }
     }
+#endif
     return isDefault;
 }
 
@@ -231,6 +235,7 @@ void QSystemNetworkInfoPrivate::primaryModeChanged()
 
 void QSystemNetworkInfoPrivate::updateActivePaths()
 {
+#if defined(QT_NO_CONNMAN)
     activePaths.clear();
     QScopedPointer<QNetworkManagerInterface> dbIface;
     dbIface.reset(new QNetworkManagerInterface(this));
@@ -246,6 +251,7 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
             activePaths.insert(activeconpath.path(),device.path());
         }
     }
+#endif
 }
 
 void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
@@ -350,6 +356,9 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quin
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+#endif
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
@@ -411,38 +420,59 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::cellId();
+#endif
     return -1;
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::locationAreaCode();
+#endif
     return -1;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::currentMobileCountryCode();
+#endif
     return QString();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::currentMobileNetworkCode();
+#endif
     return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::homeMobileCountryCode();
+#endif
     return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::homeMobileNetworkCode();
+#endif
     return QString();
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+#if !defined(QT_NO_CONNMAN)
+    return QSystemNetworkInfoLinuxCommonPrivate::currentMode();
+#endif
 
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
 #if !defined(QT_NO_NETWORKMANAGER)
     bool anyDefaultRoute = false;
 

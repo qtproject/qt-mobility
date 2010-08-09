@@ -61,24 +61,37 @@ unix: {
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
+
     !maemo5:!maemo6:linux-*: {
-LIBS+=-lX11 -lXrandr
-        SOURCES += qsysteminfo_linux.cpp
-        HEADERS += qsysteminfo_linux_p.h
-        contains(QT_CONFIG,dbus): {
-            QT += dbus
-            SOURCES += qhalservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h
+            LIBS+=-lX11 -lXrandr
+            SOURCES += qsysteminfo_linux.cpp
+            HEADERS += qsysteminfo_linux_p.h
+            contains(QT_CONFIG,dbus): {
+                QT += dbus
+                SOURCES += qhalservice_linux.cpp
+                HEADERS += qhalservice_linux_p.h
+
+                SOURCES += qdevicekitservice_linux.cpp
+                HEADERS += qdevicekitservice_linux_p.h
+                
                 contains(networkmanager_enabled, yes): {
                     SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
                     HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
                 } else {
-                DEFINES += QT_NO_NETWORKMANAGER
+                    DEFINES += QT_NO_NETWORKMANAGER
                 }
-        } else {
-           DEFINES += QT_NO_NETWORKMANAGER
+                
+                contains(connman_enabled, yes): {
+                    SOURCES+= qconnmanservice_linux.cpp qofonoservice_linux.cpp
+                    HEADERS+= qconnmanservice_linux_p.h qofonoservice_linux_p.h
+                } else {
+                    DEFINES += QT_NO_CONNMAN
+                }
+            } else {
+                DEFINES += QT_NO_NETWORKMANAGER
+            }
         }
-    }
+        
     maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
@@ -159,15 +172,15 @@ LIBS+=-lX11 -lXrandr
             -lgdi \
             -lecom \
 
-	    contains(hb_symbian_enabled,yes) {	    	
-	    		CONFIG += qt hb        
-	        	DEFINES += HB_SUPPORTED        
-	        	message("s60_HbKeymap enabled")	            	            
-	        	LIBS += -lhbcore	        
-    	} else {
-            LIBS += -lptiengine 
+        contains(hb_symbian_enabled,yes) {
+                CONFIG += qt hb
+                DEFINES += HB_SUPPORTED
+                message("s60_HbKeymap enabled")
+                LIBS += -lhbcore
+        } else {
+            LIBS += -lptiengine
         }
-        
+
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
@@ -180,6 +193,6 @@ LIBS+=-lX11 -lXrandr
     }
 }
 
-HEADERS += $$PUBLIC_HEADERS 
+HEADERS += $$PUBLIC_HEADERS
 CONFIG += middleware
 include (../../features/deploy.pri)
